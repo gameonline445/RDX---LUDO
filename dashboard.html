@@ -1,1 +1,1466 @@
-<!doctype html><html><meta name="viewport" content="width=device-width,initial-scale=1"><title>RDX LUDO</title><style>*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f7f9ff;color:#101a38}.top{height:80px;background:#eef4ff;border-bottom:1px solid #cbd9f7;display:flex;align-items:center;justify-content:space-between;padding:12px}.menu,.pill{border:0;border-radius:18px;padding:13px;background:white}.menu{background:#ff765f;color:white;font-size:24px}.logo{display:inline-block;margin-left:8px;font-weight:900;color:#1760e8}.icons{display:flex;gap:7px}.main{max-width:850px;margin:auto;padding:25px 18px 110px}.ref,.game,.soon{background:white;border:1px solid #cbd8ee;border-radius:24px;padding:22px;margin-top:20px}.ref{display:flex;justify-content:space-between;align-items:center;background:#eef4ff}.ref strong{display:block;font-size:30px;margin-top:7px}.go{border:0;border-radius:50%;width:55px;height:55px;background:#2869e8;color:white;font-size:25px}.game{padding:0;overflow:hidden;position:relative}.game img{width:100%;height:260px;object-fit:cover}.play{position:absolute;bottom:20px;right:20px;background:#2869e8;color:#fff;padding:13px 22px;border-radius:22px;text-decoration:none;font-weight:800}.soon{display:flex;gap:18px;align-items:center}.soon img{width:85px;height:85px;object-fit:cover;border-radius:16px}.bottom{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #ccd7eb;display:grid;grid-template-columns:repeat(4,1fr);padding:10px}.bottom a{text-align:center;text-decoration:none;color:#65728d;font-size:13px}.bottom b{display:block;font-size:22px;margin-bottom:4px}.active{color:#2869e8!important}</style><header class=top><div><button class=menu>☰</button><span class=logo>RDX LUDO</span></div><div class=icons><button class=pill>🔔</button><a class=pill href=wallet.html>▣ 0</a><a class=pill href=profile.html>♙</a></div></header><main class=main><h1>Hey, User</h1><p style="color:#70809b">Welcome to RDX LUDO</p><a class=ref href=profile.html><div><small>REFER & EARN</small><strong>2% Refer</strong></div><button class=go>↗</button></a><h3 style="color:#2869e8;letter-spacing:3px;margin-top:35px">GAMES</h3><div class=game><img src=ludo-classic.jpg><a class=play href=index.html>▶ Play</a></div><div class=soon><img src=ludo-1-goti.jpg><div><h3>1 Goti Ludo</h3><p>Coming soon</p></div></div></main><nav class=bottom><a class=active href=dashboard.html><b>⌂</b>Home</a><a href=wallet.html><b>▣</b>Wallet</a><a href=support.html><b>◉</b>Support</a><a href=profile.html><b>♙</b>Profile</a></nav></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      viewport-fit=cover">
+
+<title>RDX LUDO - Dashboard</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,
+    "Segoe UI",Roboto,Arial,sans-serif;
+
+    background:#f7f9ff;
+    color:#101a38;
+    min-height:100vh;
+}
+
+/* ================= HEADER ================= */
+
+.top-header{
+
+    height:76px;
+
+    background:
+    linear-gradient(110deg,#eef4ff,#ffffff);
+
+    border-bottom:1px solid #cbd8f0;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    position:sticky;
+    top:0;
+
+    z-index:100;
+
+    box-shadow:
+    0 5px 18px rgba(36,75,150,.08);
+}
+
+/* LEFT */
+
+.header-left{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+/* MENU */
+
+.menu-btn{
+
+    width:48px;
+    height:48px;
+
+    border:0;
+    border-radius:16px;
+
+    background:
+    linear-gradient(145deg,#ff7165,#ff8a70);
+
+    color:white;
+
+    font-size:27px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    box-shadow:
+    0 6px 15px rgba(255,93,80,.25);
+
+    cursor:pointer;
+}
+
+/* LOGO */
+
+.logo{
+
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(145deg,#ffffff,#e7efff);
+
+    border:3px solid #d3e1ff;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    color:#1762df;
+
+    font-size:13px;
+    font-weight:900;
+
+    box-shadow:
+    0 5px 12px rgba(36,93,190,.15);
+}
+
+/* RIGHT ICONS */
+
+.header-right{
+
+    display:flex;
+    align-items:center;
+    gap:9px;
+}
+
+/* ROUND ICON */
+
+.header-icon{
+
+    width:48px;
+    height:48px;
+
+    border:0;
+
+    border-radius:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:22px;
+
+    cursor:pointer;
+
+    color:white;
+
+    box-shadow:
+    0 6px 15px rgba(0,0,0,.12);
+}
+
+/* NOTIFICATION */
+
+.notification{
+
+    background:
+    linear-gradient(145deg,#746df4,#817eff);
+}
+
+/* WALLET */
+
+.wallet-top{
+
+    background:
+    linear-gradient(145deg,#20c36b,#43d77e);
+
+    min-width:72px;
+
+    padding:0 12px;
+
+    font-size:17px;
+
+    font-weight:800;
+}
+
+/* REDEEM */
+
+.redeem-top{
+
+    background:
+    linear-gradient(145deg,#ff8a35,#ffad45);
+
+    min-width:72px;
+
+    padding:0 12px;
+
+    font-size:17px;
+
+    font-weight:800;
+}
+
+
+/* ================= MAIN ================= */
+
+.container{
+
+    width:100%;
+
+    max-width:850px;
+
+    margin:auto;
+
+    padding:
+    0 18px
+    125px;
+}
+
+
+/* ================= WELCOME ================= */
+
+.welcome{
+
+    padding-top:35px;
+}
+
+.welcome h1{
+
+    font-size:29px;
+
+    font-weight:850;
+
+    letter-spacing:-.7px;
+}
+
+.welcome p{
+
+    margin-top:8px;
+
+    color:#71809d;
+
+    font-size:17px;
+}
+
+
+/* ================= REFERRAL ================= */
+
+.referral{
+
+    margin-top:30px;
+
+    min-height:140px;
+
+    border:1.5px solid #abc2f4;
+
+    border-radius:27px;
+
+    padding:28px 25px;
+
+    background:
+    radial-gradient(
+        circle at 100% 0%,
+        #dce8ff,
+        transparent 40%
+    ),
+    linear-gradient(
+        135deg,
+        #eef4ff,
+        #ffffff
+    );
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    box-shadow:
+    0 15px 35px rgba(40,88,175,.10);
+
+    cursor:pointer;
+}
+
+.referral small{
+
+    display:block;
+
+    color:#61708c;
+
+    font-weight:800;
+
+    letter-spacing:1.5px;
+
+    font-size:13px;
+}
+
+.referral strong{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:38px;
+
+    letter-spacing:-1px;
+}
+
+.referral-text{
+
+    color:#52627f;
+
+    font-size:15px;
+
+    margin-top:2px;
+}
+
+.referral-arrow{
+
+    width:56px;
+    height:56px;
+
+    border-radius:50%;
+
+    background:#2868e8;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:29px;
+
+    box-shadow:
+    0 10px 22px rgba(40,104,232,.28);
+}
+
+
+/* ================= SECTION ================= */
+
+.section-head{
+
+    margin-top:38px;
+
+    margin-bottom:16px;
+}
+
+.section-head small{
+
+    color:#2564da;
+
+    font-size:14px;
+
+    font-weight:850;
+
+    letter-spacing:2px;
+}
+
+.section-head h2{
+
+    margin-top:6px;
+
+    font-size:25px;
+}
+
+
+/* ================= GAME ================= */
+
+.game-card{
+
+    height:290px;
+
+    border-radius:26px;
+
+    overflow:hidden;
+
+    position:relative;
+
+    background:#111;
+
+    box-shadow:
+    0 15px 35px rgba(0,0,0,.18);
+}
+
+.game-card img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:cover;
+}
+
+.game-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    padding:25px;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:flex-end;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        0deg,
+        rgba(0,0,0,.78),
+        rgba(0,0,0,.02) 70%
+    );
+}
+
+.live{
+
+    width:max-content;
+
+    padding:7px 13px;
+
+    border-radius:20px;
+
+    background:#15944d;
+
+    color:white;
+
+    font-size:12px;
+
+    font-weight:800;
+}
+
+.game-overlay h3{
+
+    margin-top:12px;
+
+    font-size:29px;
+}
+
+.game-overlay p{
+
+    margin-top:5px;
+
+    font-size:14px;
+
+    color:#e8edf7;
+}
+
+.play-btn{
+
+    margin-top:16px;
+
+    width:max-content;
+
+    padding:12px 22px;
+
+    border:0;
+
+    border-radius:25px;
+
+    background:#2770ee;
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+
+/* ================= COMING SOON ================= */
+
+.soon-card{
+
+    margin-top:16px;
+
+    min-height:120px;
+
+    padding:16px;
+
+    background:#fff;
+
+    border:1px solid #dce2ed;
+
+    border-radius:23px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+
+    box-shadow:
+    0 8px 20px rgba(30,60,120,.05);
+}
+
+.soon-card img{
+
+    width:82px;
+    height:82px;
+
+    object-fit:cover;
+
+    border-radius:17px;
+}
+
+.soon-info{
+
+    flex:1;
+}
+
+.soon-info h3{
+
+    font-size:19px;
+}
+
+.soon-info p{
+
+    margin-top:5px;
+
+    color:#75819a;
+
+    font-size:14px;
+}
+
+.soon-badge{
+
+    background:#f3f5f9;
+
+    border:1px solid #dce1e9;
+
+    color:#65718a;
+
+    padding:9px 12px;
+
+    border-radius:20px;
+
+    font-size:11px;
+
+    font-weight:800;
+}
+
+
+/* ================= SIDE MENU ================= */
+
+.menu-panel{
+
+    position:fixed;
+
+    top:0;
+    left:-290px;
+
+    width:280px;
+    height:100vh;
+
+    background:white;
+
+    z-index:300;
+
+    padding:25px;
+
+    box-shadow:
+    10px 0 35px rgba(0,0,0,.15);
+
+    transition:.3s;
+}
+
+.menu-panel.open{
+
+    left:0;
+}
+
+.menu-title{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:30px;
+}
+
+.menu-title h2{
+
+    font-size:23px;
+}
+
+.close-menu{
+
+    border:0;
+
+    background:#eef2fa;
+
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+
+    font-size:20px;
+}
+
+.menu-item{
+
+    width:100%;
+
+    border:0;
+
+    background:#f5f7fc;
+
+    padding:15px;
+
+    border-radius:15px;
+
+    margin-bottom:12px;
+
+    text-align:left;
+
+    font-size:16px;
+
+    color:#243250;
+
+    cursor:pointer;
+}
+
+.menu-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(0,0,0,.35);
+
+    z-index:250;
+
+    display:none;
+}
+
+.menu-overlay.show{
+
+    display:block;
+}
+
+
+/* ================= BOTTOM NAV ================= */
+
+.bottom-nav{
+
+    position:fixed;
+
+    bottom:0;
+    left:0;
+
+    width:100%;
+
+    height:82px;
+
+    background:
+    rgba(255,255,255,.97);
+
+    border-top:1px solid #d6deee;
+
+    display:flex;
+
+    justify-content:space-around;
+
+    align-items:center;
+
+    z-index:200;
+
+    box-shadow:
+    0 -5px 20px rgba(30,65,130,.08);
+
+    backdrop-filter:blur(15px);
+}
+
+.nav-item{
+
+    width:25%;
+
+    height:100%;
+
+    border:0;
+
+    background:transparent;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:5px;
+
+    color:#66738d;
+
+    font-size:13px;
+
+    cursor:pointer;
+}
+
+.nav-icon{
+
+    width:44px;
+    height:44px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:22px;
+}
+
+.nav-item.active{
+
+    color:#202d49;
+
+    font-weight:700;
+}
+
+.nav-item.active .nav-icon{
+
+    background:#536df5;
+
+    color:white;
+
+    box-shadow:
+    0 7px 17px rgba(83,109,245,.3);
+}
+
+
+/* ================= TOAST ================= */
+
+.toast{
+
+    position:fixed;
+
+    left:50%;
+    top:90px;
+
+    transform:
+    translateX(-50%)
+    translateY(-20px);
+
+    background:#182440;
+
+    color:white;
+
+    padding:13px 18px;
+
+    border-radius:14px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:500;
+
+    font-size:14px;
+}
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:700px){
+
+    .top-header{
+
+        height:70px;
+
+        padding:0 12px;
+    }
+
+    .menu-btn{
+
+        width:46px;
+        height:46px;
+
+        font-size:25px;
+    }
+
+    .logo{
+
+        width:45px;
+        height:45px;
+
+        font-size:12px;
+    }
+
+    .header-right{
+
+        gap:6px;
+    }
+
+    .header-icon{
+
+        width:44px;
+        height:44px;
+
+        border-radius:16px;
+    }
+
+    .wallet-top,
+    .redeem-top{
+
+        min-width:48px;
+
+        padding:0;
+
+        font-size:0;
+    }
+
+    .wallet-top::before{
+
+        content:"💰";
+
+        font-size:20px;
+    }
+
+    .redeem-top::before{
+
+        content:"🎁";
+
+        font-size:20px;
+    }
+
+    .container{
+
+        padding:
+        0 12px
+        105px;
+    }
+
+    .welcome{
+
+        padding-top:30px;
+    }
+
+    .welcome h1{
+
+        font-size:27px;
+    }
+
+    .welcome p{
+
+        font-size:15px;
+    }
+
+    .referral{
+
+        min-height:130px;
+
+        padding:22px;
+
+        border-radius:23px;
+    }
+
+    .referral strong{
+
+        font-size:34px;
+    }
+
+    .referral-arrow{
+
+        width:50px;
+        height:50px;
+    }
+
+    .game-card{
+
+        height:235px;
+
+        border-radius:23px;
+    }
+
+    .game-overlay{
+
+        padding:20px;
+    }
+
+    .game-overlay h3{
+
+        font-size:25px;
+    }
+
+    .soon-card{
+
+        min-height:105px;
+    }
+
+    .soon-card img{
+
+        width:70px;
+        height:70px;
+    }
+
+    .soon-badge{
+
+        padding:7px 9px;
+
+        font-size:10px;
+    }
+
+    .bottom-nav{
+
+        height:78px;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<!-- ================= TOP HEADER ================= -->
+
+<header class="top-header">
+
+    <div class="header-left">
+
+        <!-- THREE LINE -->
+
+        <button
+            class="menu-btn"
+            onclick="openMenu()">
+
+            ☰
+
+        </button>
+
+
+        <!-- LOGO -->
+
+        <div class="logo">
+
+            RDX
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+
+        <!-- NOTIFICATION -->
+
+        <button
+            class="header-icon notification"
+            onclick="showMessage('No new notifications')">
+
+            🔔
+
+        </button>
+
+
+        <!-- WALLET -->
+
+        <button
+            class="header-icon wallet-top"
+            onclick="goWallet()">
+
+            💰 <span id="topBalance">0</span>
+
+        </button>
+
+
+        <!-- REDEEM -->
+
+        <button
+            class="header-icon redeem-top"
+            onclick="goRedeem()">
+
+            🎁 <span id="topRedeem">0</span>
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<!-- ================= SIDE MENU ================= -->
+
+<div
+    class="menu-overlay"
+    id="menuOverlay"
+    onclick="closeMenu()">
+</div>
+
+
+<div
+    class="menu-panel"
+    id="menuPanel">
+
+
+    <div class="menu-title">
+
+        <h2>RDX LUDO</h2>
+
+        <button
+            class="close-menu"
+            onclick="closeMenu()">
+
+            ×
+
+        </button>
+
+    </div>
+
+
+    <button
+        class="menu-item"
+        onclick="goHome()">
+
+        🏠 &nbsp; Home
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        onclick="goWallet()">
+
+        💰 &nbsp; Wallet
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        onclick="goSupport()">
+
+        🎧 &nbsp; Support
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        onclick="goProfile()">
+
+        👤 &nbsp; Profile
+
+    </button>
+
+
+    <button
+        class="menu-item"
+        onclick="goRedeem()">
+
+        🎁 &nbsp; Refer & Earn
+
+    </button>
+
+
+</div>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="container">
+
+
+    <!-- WELCOME -->
+
+    <section class="welcome">
+
+        <h1 id="username">
+
+            Hey, BossUser4981
+
+        </h1>
+
+        <p>
+
+            Welcome to RDX LUDO
+
+        </p>
+
+    </section>
+
+
+    <!-- REFERRAL -->
+
+    <section
+        class="referral"
+        onclick="goRedeem()">
+
+
+        <div>
+
+            <small>
+
+                REFER & EARN
+
+            </small>
+
+
+            <strong>
+
+                2% Refer
+
+            </strong>
+
+
+            <div class="referral-text">
+
+                Invite friends and earn rewards
+
+            </div>
+
+        </div>
+
+
+        <div class="referral-arrow">
+
+            ↗
+
+        </div>
+
+
+    </section>
+
+
+    <!-- GAMES -->
+
+    <div class="section-head">
+
+        <small>
+
+            GAMES
+
+        </small>
+
+        <h2>
+
+            Play Your Game
+
+        </h2>
+
+    </div>
+
+
+    <!-- LUDO CLASSIC -->
+
+    <article class="game-card">
+
+
+        <img
+            src="ludo-classic.jpg"
+            alt="Ludo Classic">
+
+
+        <div class="game-overlay">
+
+
+            <span class="live">
+
+                ● LIVE
+
+            </span>
+
+
+            <h3>
+
+                Ludo Classic
+
+            </h3>
+
+
+            <p>
+
+                Ludo game
+
+            </p>
+
+
+            <button
+                class="play-btn"
+                onclick="showMessage('Game opening soon')">
+
+                ▶ Play Now
+
+            </button>
+
+
+        </div>
+
+    </article>
+
+
+    <!-- 1 GOTI -->
+
+    <section class="soon-card">
+
+
+        <img
+            src="ludo-1-goti.jpg"
+            alt="1 Goti Ludo">
+
+
+        <div class="soon-info">
+
+            <h3>
+
+                1 Goti Ludo
+
+            </h3>
+
+            <p>
+
+                Coming soon
+
+            </p>
+
+        </div>
+
+
+        <span class="soon-badge">
+
+            🔒 SOON
+
+        </span>
+
+
+    </section>
+
+
+</main>
+
+
+<!-- ================= BOTTOM NAV ================= -->
+
+<nav class="bottom-nav">
+
+
+    <!-- HOME -->
+
+    <button
+        class="nav-item active"
+        onclick="goHome()">
+
+        <div class="nav-icon">
+
+            🏠
+
+        </div>
+
+        <span>
+
+            Home
+
+        </span>
+
+    </button>
+
+
+    <!-- WALLET -->
+
+    <button
+        class="nav-item"
+        onclick="goWallet()">
+
+        <div class="nav-icon">
+
+            💰
+
+        </div>
+
+        <span>
+
+            Wallet
+
+        </span>
+
+    </button>
+
+
+    <!-- SUPPORT -->
+
+    <button
+        class="nav-item"
+        onclick="goSupport()">
+
+        <div class="nav-icon">
+
+            🎧
+
+        </div>
+
+        <span>
+
+            Support
+
+        </span>
+
+    </button>
+
+
+    <!-- PROFILE -->
+
+    <button
+        class="nav-item"
+        onclick="goProfile()">
+
+        <div class="nav-icon">
+
+            👤
+
+        </div>
+
+        <span>
+
+            Profile
+
+        </span>
+
+    </button>
+
+
+</nav>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+<script>
+
+/* ================= USERNAME ================= */
+
+const savedUsername =
+    localStorage.getItem("rdxUsername");
+
+if(savedUsername){
+
+    document.getElementById("username").textContent =
+        "Hey, " + savedUsername;
+
+}
+
+
+/* ================= MENU ================= */
+
+function openMenu(){
+
+    document
+    .getElementById("menuPanel")
+    .classList.add("open");
+
+    document
+    .getElementById("menuOverlay")
+    .classList.add("show");
+
+}
+
+
+function closeMenu(){
+
+    document
+    .getElementById("menuPanel")
+    .classList.remove("open");
+
+    document
+    .getElementById("menuOverlay")
+    .classList.remove("show");
+
+}
+
+
+/* ================= NAVIGATION ================= */
+
+function goHome(){
+
+    closeMenu();
+
+    window.location.href =
+        "./dashboard.html";
+
+}
+
+
+function goWallet(){
+
+    closeMenu();
+
+    window.location.href =
+        "./wallet.html";
+
+}
+
+
+function goSupport(){
+
+    closeMenu();
+
+    window.location.href =
+        "./support.html";
+
+}
+
+
+function goProfile(){
+
+    closeMenu();
+
+    window.location.href =
+        "./profile.html";
+
+}
+
+
+function goRedeem(){
+
+    closeMenu();
+
+    window.location.href =
+        "./profile.html#referral";
+
+}
+
+
+/* ================= TOAST ================= */
+
+function showMessage(message){
+
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+
+    setTimeout(function(){
+
+        toast.classList.remove("show");
+
+    },1800);
+
+}
+
+</script>
+
+</body>
+</html>
