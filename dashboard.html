@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0,
       viewport-fit=cover">
@@ -26,12 +29,14 @@ body{
 
     background:#f7f9ff;
     color:#101a38;
+
     min-height:100vh;
 }
 
 button{
     font:inherit;
 }
+
 
 /* ================= HEADER ================= */
 
@@ -66,7 +71,6 @@ button{
     gap:12px;
 }
 
-/* THREE LINE */
 
 .menu-btn{
 
@@ -93,7 +97,6 @@ button{
     cursor:pointer;
 }
 
-/* LOGO */
 
 .logo{
 
@@ -120,7 +123,6 @@ button{
     0 5px 12px rgba(36,93,190,.15);
 }
 
-/* RIGHT ICONS */
 
 .header-right{
 
@@ -152,7 +154,6 @@ button{
     0 6px 15px rgba(0,0,0,.12);
 }
 
-/* NOTIFICATION */
 
 .notification{
 
@@ -160,7 +161,6 @@ button{
     linear-gradient(145deg,#746df4,#817eff);
 }
 
-/* WALLET */
 
 .wallet-top{
 
@@ -176,7 +176,6 @@ button{
     font-weight:800;
 }
 
-/* REDEEM */
 
 .redeem-top{
 
@@ -271,6 +270,13 @@ button{
     0 15px 35px rgba(40,88,175,.10);
 
     cursor:pointer;
+
+    -webkit-tap-highlight-color:transparent;
+}
+
+.referral:active{
+
+    transform:scale(.99);
 }
 
 .referral small{
@@ -1092,6 +1098,7 @@ button{
         height:78px;
     }
 
+
     /* MOBILE MENU */
 
     .menu-panel{
@@ -1160,9 +1167,11 @@ button{
 
         font-size:25px;
     }
+
 }
 
 </style>
+
 </head>
 
 
@@ -1175,8 +1184,6 @@ button{
 
     <div class="header-left">
 
-        <!-- THREE LINE -->
-
         <button
             class="menu-btn"
             onclick="openMenu()">
@@ -1185,8 +1192,6 @@ button{
 
         </button>
 
-
-        <!-- LOGO -->
 
         <div class="logo">
 
@@ -1222,7 +1227,7 @@ button{
         </button>
 
 
-        <!-- REDEEM -->
+        <!-- REFER -->
 
         <button
             class="header-icon redeem-top"
@@ -1235,6 +1240,7 @@ button{
     </div>
 
 </header>
+
 
 
 <!-- ================= SIDE MENU ================= -->
@@ -1258,7 +1264,9 @@ button{
         <div class="menu-brand">
 
             <div class="menu-logo">
+
                 RDX
+
             </div>
 
             <div class="menu-user">
@@ -1442,6 +1450,7 @@ button{
 </div>
 
 
+
 <!-- ================= MAIN ================= -->
 
 <main class="container">
@@ -1466,7 +1475,18 @@ button{
     </section>
 
 
-    <!-- REFERRAL -->
+
+    <!-- ================= REFER & EARN ================= -->
+
+    <!--
+
+        IMPORTANT:
+        Is card par click karne se
+        DIRECT referral.html open hoga.
+
+        Profile page nahi khulega.
+
+    -->
 
     <section
         class="referral"
@@ -1504,11 +1524,11 @@ button{
 
         </div>
 
-
     </section>
 
 
-    <!-- GAMES -->
+
+    <!-- ================= GAMES ================= -->
 
     <div class="section-head">
 
@@ -1527,7 +1547,8 @@ button{
     </div>
 
 
-    <!-- LUDO CLASSIC -->
+
+    <!-- ================= LUDO CLASSIC ================= -->
 
     <article class="game-card">
 
@@ -1575,7 +1596,8 @@ button{
     </article>
 
 
-    <!-- 1 GOTI -->
+
+    <!-- ================= 1 GOTI ================= -->
 
     <section class="soon-card">
 
@@ -1615,6 +1637,7 @@ button{
 </main>
 
 
+
 <!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom-nav">
@@ -1641,6 +1664,7 @@ button{
     </button>
 
 
+
     <!-- WALLET -->
 
     <button
@@ -1662,6 +1686,7 @@ button{
     </button>
 
 
+
     <!-- SUPPORT -->
 
     <button
@@ -1681,6 +1706,7 @@ button{
         </span>
 
     </button>
+
 
 
     <!-- PROFILE -->
@@ -1707,7 +1733,8 @@ button{
 </nav>
 
 
-<!-- TOAST -->
+
+<!-- ================= TOAST ================= -->
 
 <div
     class="toast"
@@ -1715,17 +1742,23 @@ button{
 </div>
 
 
+
 <script>
 
-/* ================= USERNAME ================= */
+
+/* =====================================================
+   USERNAME
+===================================================== */
 
 const savedUsername =
     localStorage.getItem("rdxUsername");
+
 
 if(savedUsername){
 
     document.getElementById("username").textContent =
         "Hey, " + savedUsername;
+
 
     document.getElementById("menuUsername").textContent =
         savedUsername;
@@ -1733,13 +1766,17 @@ if(savedUsername){
 }
 
 
-/* ================= MENU ================= */
+
+/* =====================================================
+   MENU
+===================================================== */
 
 function openMenu(){
 
     document
     .getElementById("menuPanel")
     .classList.add("open");
+
 
     document
     .getElementById("menuOverlay")
@@ -1754,6 +1791,7 @@ function closeMenu(){
     .getElementById("menuPanel")
     .classList.remove("open");
 
+
     document
     .getElementById("menuOverlay")
     .classList.remove("show");
@@ -1761,7 +1799,10 @@ function closeMenu(){
 }
 
 
-/* ================= NAVIGATION ================= */
+
+/* =====================================================
+   HOME
+===================================================== */
 
 function goHome(){
 
@@ -1773,6 +1814,11 @@ function goHome(){
 }
 
 
+
+/* =====================================================
+   WALLET
+===================================================== */
+
 function goWallet(){
 
     closeMenu();
@@ -1782,6 +1828,11 @@ function goWallet(){
 
 }
 
+
+
+/* =====================================================
+   SUPPORT
+===================================================== */
 
 function goSupport(){
 
@@ -1793,6 +1844,11 @@ function goSupport(){
 }
 
 
+
+/* =====================================================
+   PROFILE
+===================================================== */
+
 function goProfile(){
 
     closeMenu();
@@ -1803,25 +1859,55 @@ function goProfile(){
 }
 
 
+
+/* =====================================================
+   REFER & EARN
+
+   IMPORTANT FIX:
+
+   Pehle yahan:
+
+   ./profile.html#referral
+
+   tha.
+
+   Ab direct:
+
+   ./referral.html
+
+   hoga.
+
+   Isliye Dashboard ka Refer & Earn card,
+   Header ka 🎁 button,
+   aur Side Menu ka Refer & Earn
+
+   tino same referral page kholenge.
+===================================================== */
+
 function goRedeem(){
 
     closeMenu();
 
     window.location.href =
-        "./profile.html#referral";
+        "./referral.html";
 
 }
 
 
-/* ================= TOAST ================= */
+
+/* =====================================================
+   TOAST
+===================================================== */
 
 function showMessage(message){
 
     const toast =
         document.getElementById("toast");
 
+
     toast.textContent =
         message;
+
 
     toast.classList.add("show");
 
@@ -1836,5 +1922,7 @@ function showMessage(message){
 
 </script>
 
+
 </body>
+
 </html>
