@@ -1,1 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
+<title>RDX LUDO - Login</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 10% 20%,#d9e7ff 0,#eef4ff 35%,#ffffff 75%);
+    color:#101a38;
+}
+
+button,
+input{
+    font:inherit;
+}
+
+.page{
+    min-height:100vh;
+    padding:18px 18px 40px;
+}
+
+/* BACK BUTTON */
+
+.back{
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
+    padding:11px 18px;
+    border:1px solid #9bbaf5;
+    border-radius:30px;
+    background:rgba(255,255,255,.72);
+    color:#263650;
+    font-weight:750;
+    cursor:pointer;
+    box-shadow:0 5px 18px rgba(55,100,190,.08);
+}
+
+.back-icon{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#2165e9;
+    color:white;
+    font-size:21px;
+}
+
+/* LOGO */
+
+.brand{
+    text-align:center;
+    margin-top:28px;
+}
+
+.logo{
+    width:108px;
+    height:108px;
+    border-radius:50%;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:
+        linear-gradient(145deg,#ffffff,#dbe8ff);
+    border:5px solid #b8cffc;
+    box-shadow:0 10px 30px rgba(36,94,220,.18);
+    overflow:hidden;
+}
+
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.logo-text{
+    font-size:27px;
+    font-weight:950;
+    color:#1760e8;
+}
+
+.brand h1{
+    margin-top:18px;
+    font-size:32px;
+    letter-spacing:-1px;
+}
+
+.brand p{
+    margin-top:7px;
+    color:#71809b;
+    font-size:18px;
+}
+
+/* STEPS */
+
+.steps{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:42px auto 26px;
+    max-width:430px;
+}
+
+.step{
+    min-width:145px;
+    padding:12px 18px;
+    border:1px solid #b9cdf7;
+    border-radius:30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    color:#2261d6;
+    background:rgba(255,255,255,.55);
+    font-weight:800;
+}
+
+.step.inactive{
+    color:#8490a6;
+    border-color:#d8deea;
+    background:#f4f6fa;
+}
+
+.line{
+    width:70px;
+    height:2px;
+    background:#cbd8ef;
+}
+
+/* LOGIN CARD */
+
+.login-card{
+    width:100%;
+    max-width:655px;
+    margin:auto;
+    padding:32px;
+    border:2px solid #bfd2f7;
+    border-radius:27px;
+    background:rgba(255,255,255,.86);
+    box-shadow:
+        0 18px 55px rgba(37,87,180,.13);
+    backdrop-filter:blur(14px);
+}
+
+.badge{
+    display:inline-flex;
+    padding:8px 14px;
+    border:1px solid #9dbbf2;
+    border-radius:25px;
+    color:#2561d5;
+    background:#edf4ff;
+    font-weight:800;
+    font-size:13px;
+}
+
+.login-card h2{
+    margin-top:19px;
+    font-size:35px;
+    letter-spacing:-1px;
+}
+
+.description{
+    margin-top:9px;
+    color:#74819a;
+    font-size:17px;
+}
+
+/* PHONE */
+
+.label{
+    display:block;
+    margin-top:32px;
+    margin-bottom:10px;
+    color:#3b465d;
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.5px;
+}
+
+.phone-row{
+    display:flex;
+    gap:12px;
+}
+
+.country{
+    width:84px;
+    min-width:84px;
+    height:64px;
+    border:1px solid #a8c0ec;
+    border-radius:18px;
+    background:#eaf1ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#2462d6;
+    font-weight:850;
+    font-size:17px;
+}
+
+.phone-input{
+    width:100%;
+    height:64px;
+    border:1px solid #d7dce6;
+    border-radius:18px;
+    background:#f6f7fa;
+    padding:0 20px;
+    outline:none;
+    font-size:19px;
+    color:#17223e;
+}
+
+.phone-input:focus{
+    border-color:#4280ef;
+    background:white;
+    box-shadow:0 0 0 4px rgba(48,105,231,.08);
+}
+
+.phone-input::placeholder{
+    color:#9aa5b8;
+}
+
+/* BUTTON */
+
+.primary{
+    width:100%;
+    height:64px;
+    margin-top:22px;
+    border:0;
+    border-radius:22px;
+    background:linear-gradient(90deg,#2162e9,#3979ef);
+    color:white;
+    font-size:20px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 10px 28px rgba(38,101,232,.30);
+}
+
+.primary:active{
+    transform:scale(.99);
+}
+
+/* FEATURES */
+
+.features{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+    margin-top:28px;
+    padding-top:25px;
+    border-top:1px solid #e2e6ee;
+}
+
+.feature{
+    text-align:center;
+}
+
+.feature-icon{
+    font-size:22px;
+    color:#2865d8;
+}
+
+.feature strong{
+    display:block;
+    margin-top:7px;
+    font-size:14px;
+}
+
+.feature span{
+    display:block;
+    margin-top:4px;
+    color:#77839a;
+    font-size:12px;
+}
+
+/* OTP */
+
+.otp-box{
+    display:none;
+}
+
+.otp-box.show{
+    display:block;
+}
+
+.otp-title{
+    margin-top:25px;
+    color:#34415b;
+    font-size:15px;
+    font-weight:750;
+}
+
+.otp-input{
+    width:100%;
+    height:65px;
+    margin-top:12px;
+    border:1px solid #b6c9ed;
+    border-radius:18px;
+    background:white;
+    text-align:center;
+    letter-spacing:12px;
+    font-size:26px;
+    font-weight:850;
+    outline:none;
+}
+
+.verify{
+    width:100%;
+    height:60px;
+    margin-top:15px;
+    border:0;
+    border-radius:20px;
+    background:#2165e9;
+    color:white;
+    font-size:18px;
+    font-weight:850;
+    cursor:pointer;
+}
+
+.resend{
+    display:block;
+    margin:15px auto 0;
+    border:0;
+    background:transparent;
+    color:#2165e9;
+    font-weight:750;
+    cursor:pointer;
+}
+
+/* MESSAGE */
+
+.message{
+    display:none;
+    margin-top:15px;
+    padding:12px 15px;
+    border-radius:13px;
+    text-align:center;
+    background:#eef5ff;
+    color:#245ecb;
+    font-size:14px;
+    font-weight:700;
+}
+
+.message.show{
+    display:block;
+}
+
+/* FOOTER */
+
+.footer{
+    max-width:600px;
+    margin:25px auto 0;
+    text-align:center;
+    color:#7b879c;
+    font-size:13px;
+    line-height:1.5;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .page{
+        padding:14px 12px 30px;
+    }
+
+    .back{
+        padding:8px 14px 8px 8px;
+        font-size:14px;
+    }
+
+    .back-icon{
+        width:32px;
+        height:32px;
+    }
+
+    .brand{
+        margin-top:25px;
+    }
+
+    .logo{
+        width:105px;
+        height:105px;
+    }
+
+    .brand h1{
+        font-size:30px;
+    }
+
+    .brand p{
+        font-size:17px;
+    }
+
+    .steps{
+        margin-top:38px;
+    }
+
+    .step{
+        min-width:128px;
+        padding:11px 10px;
+        font-size:13px;
+    }
+
+    .line{
+        width:35px;
+    }
+
+    .login-card{
+        padding:25px 20px;
+        border-radius:25px;
+    }
+
+    .login-card h2{
+        font-size:30px;
+    }
+
+    .description{
+        font-size:16px;
+    }
+
+    .country{
+        width:84px;
+        min-width:84px;
+    }
+
+    .features{
+        gap:4px;
+    }
+
+    .feature strong{
+        font-size:13px;
+    }
+
+    .feature span{
+        font-size:11px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <!-- BACK -->
+
+    <button class="back" onclick="goHome()">
+        <span class="back-icon">←</span>
+        Back to home
+    </button>
+
+
+    <!-- BRAND -->
+
+    <div class="brand">
+
+        <div class="logo">
+
+            <!-- अगर RDX logo लगाना हो तो नीचे वाली line रखें -->
+            <!-- <img src="rdx-logo.png" alt="RDX LUDO"> -->
+
+            <span class="logo-text">RDX</span>
+
+        </div>
+
+        <h1>RDX LUDO</h1>
+
+        <p>
+            Play · Win · Earn real cash
+        </p>
+
+    </div>
+
+
+    <!-- STEPS -->
+
+    <div class="steps">
+
+        <div class="step">
+            ☎ &nbsp; PHONE
+        </div>
+
+        <div class="line"></div>
+
+        <div class="step inactive">
+            🔑 &nbsp; VERIFY
+        </div>
+
+    </div>
+
+
+    <!-- LOGIN -->
+
+    <section class="login-card">
+
+        <span class="badge">
+            ✣ STEP 1
+        </span>
+
+        <h2>
+            Enter Mobile Number
+        </h2>
+
+        <p class="description">
+            We'll send a secure OTP to verify your account
+        </p>
+
+
+        <label class="label">
+            PHONE NUMBER
+        </label>
+
+
+        <div class="phone-row">
+
+            <div class="country">
+                +91
+            </div>
+
+            <input
+                id="phone"
+                class="phone-input"
+                type="tel"
+                inputmode="numeric"
+                maxlength="10"
+                placeholder="10-digit mobile number"
+            >
+
+        </div>
+
+
+        <button
+            id="sendBtn"
+            class="primary"
+            onclick="sendOTP()">
+
+            Send OTP
+
+        </button>
+
+
+        <!-- OTP -->
+
+        <div
+            id="otpBox"
+            class="otp-box">
+
+            <div class="otp-title">
+                Enter the OTP sent to your mobile number
+            </div>
+
+            <input
+                id="otp"
+                class="otp-input"
+                type="tel"
+                inputmode="numeric"
+                maxlength="6"
+                placeholder="••••••"
+            >
+
+            <button
+                class="verify"
+                onclick="verifyOTP()">
+
+                Verify OTP
+
+            </button>
+
+            <button
+                class="resend"
+                onclick="sendOTP()">
+
+                Resend OTP
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="message"
+            class="message">
+        </div>
+
+
+        <!-- FEATURES -->
+
+        <div class="features">
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ♢
+                </div>
+
+                <strong>
+                    Secure OTP
+                </strong>
+
+                <span>
+                    Account verification
+                </span>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ϟ
+                </div>
+
+                <strong>
+                    Instant Access
+                </strong>
+
+                <span>
+                    Quick login
+                </span>
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ♧
+                </div>
+
+                <strong>
+                    24/7 Support
+                </strong>
+
+                <span>
+                    We're here to help
+                </span>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer">
+
+        By continuing, you agree to use the platform responsibly
+        and accept the applicable terms and conditions.
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* GO BACK TO HOME */
+
+function goHome(){
+
+    window.location.href = "index.html";
+
+}
+
+
+/* SEND OTP - DEMO */
+
+function sendOTP(){
+
+    const phone =
+        document.getElementById("phone").value.trim();
+
+    const message =
+        document.getElementById("message");
+
+    if(phone.length !== 10){
+
+        showMessage(
+            "Please enter a valid 10-digit mobile number."
+        );
+
+        return;
+    }
+
+
+    document.getElementById("otpBox")
+        .classList.add("show");
+
+    document.getElementById("sendBtn")
+        .style.display = "none";
+
+
+    showMessage(
+        "Demo OTP: 123456"
+    );
+
+}
+
+
+/* VERIFY OTP - DEMO */
+
+function verifyOTP(){
+
+    const otp =
+        document.getElementById("otp").value.trim();
+
+    if(otp === "123456"){
+
+        showMessage(
+            "Login successful. Welcome to RDX LUDO!"
+        );
+
+        setTimeout(function(){
+
+            window.location.href = "index.html";
+
+        },1200);
+
+    }else{
+
+        showMessage(
+            "Invalid OTP. Please try again."
+        );
+
+    }
+
+}
+
+
+/* MESSAGE */
+
+function showMessage(text){
+
+    const message =
+        document.getElementById("message");
+
+    message.textContent = text;
+
+    message.classList.add("show");
+
+}
+
+</script>
+
+</body>
+</html>
