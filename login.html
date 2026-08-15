@@ -1,1 +1,447 @@
-<!doctype html><html><meta name="viewport" content="width=device-width,initial-scale=1"><title>RDX LUDO Login</title><style>body{font-family:Arial;background:#f1f6ff;margin:0;padding:25px;color:#101a38}.box{max-width:520px;margin:50px auto;background:white;padding:28px;border-radius:25px;border:2px solid #bdd0f5}input,button{width:100%;padding:16px;margin-top:12px;border-radius:16px;font-size:17px}input{border:1px solid #ccd5e5}button{border:0;background:#2869e8;color:white;font-weight:800}.logo{text-align:center;font-size:32px;font-weight:900;color:#1760e8}</style><div class=box><div class=logo>RDX LUDO</div><h2>Enter Mobile Number</h2><p>We'll send a secure OTP to verify your account.</p><input id=p maxlength=10 inputmode=numeric placeholder="10-digit mobile number"><button onclick=go()>Send OTP</button><p style="font-size:12px;color:#777">Frontend demo. Connect an approved OTP/backend service for real authentication.</p></div><script>function go(){let p=document.getElementById('p').value.replace(/\D/g,'');if(p.length!=10)return alert('Enter valid 10-digit number');localStorage.rdxLoggedIn=1;location='dashboard.html'}</script>
+<!doctype html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,initial-scale=1">
+
+<title>RDX LUDO - Login</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Arial,
+    sans-serif;
+
+    background:
+    linear-gradient(135deg,#eef4ff,#f8faff);
+
+    margin:0;
+
+    min-height:100vh;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:20px;
+
+    color:#101a38;
+}
+
+.box{
+
+    width:100%;
+
+    max-width:520px;
+
+    background:#fff;
+
+    padding:28px;
+
+    border-radius:27px;
+
+    border:1.5px solid #bdd0f5;
+
+    box-shadow:
+    0 18px 45px rgba(40,88,175,.12);
+}
+
+.logo{
+
+    text-align:center;
+
+    font-size:32px;
+
+    font-weight:950;
+
+    color:#1760e8;
+
+    letter-spacing:-1px;
+}
+
+.subtitle{
+
+    text-align:center;
+
+    color:#71809d;
+
+    margin-top:6px;
+
+    font-size:14px;
+}
+
+h2{
+
+    margin-top:30px;
+
+    font-size:23px;
+}
+
+label{
+
+    display:block;
+
+    margin-top:18px;
+
+    margin-bottom:7px;
+
+    font-size:14px;
+
+    font-weight:800;
+
+    color:#354361;
+}
+
+input{
+
+    width:100%;
+
+    height:52px;
+
+    padding:0 15px;
+
+    border-radius:15px;
+
+    border:1px solid #ccd5e5;
+
+    background:#f8faff;
+
+    color:#101a38;
+
+    font-size:17px;
+
+    outline:none;
+}
+
+input:focus{
+
+    border-color:#2869e8;
+
+    box-shadow:
+    0 0 0 3px rgba(40,105,232,.10);
+}
+
+button{
+
+    width:100%;
+
+    height:53px;
+
+    margin-top:22px;
+
+    border:0;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(145deg,#2869e8,#4d7ff0);
+
+    color:white;
+
+    font-size:17px;
+
+    font-weight:850;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 9px 20px rgba(40,105,232,.20);
+}
+
+button:active{
+
+    transform:scale(.98);
+}
+
+.note{
+
+    margin-top:18px;
+
+    text-align:center;
+
+    color:#7b8699;
+
+    font-size:12px;
+
+    line-height:1.5;
+}
+
+.error{
+
+    display:none;
+
+    margin-top:12px;
+
+    padding:10px 12px;
+
+    border-radius:12px;
+
+    background:#fff0f0;
+
+    color:#d33c46;
+
+    font-size:13px;
+
+    font-weight:700;
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="box">
+
+
+    <div class="logo">
+        RDX LUDO
+    </div>
+
+
+    <div class="subtitle">
+        Play · Compete · Enjoy
+    </div>
+
+
+    <h2>
+        Create / Login Account
+    </h2>
+
+
+    <!-- NAME -->
+
+    <label for="name">
+        Your Name
+    </label>
+
+    <input
+        id="name"
+        type="text"
+        maxlength="40"
+        autocomplete="name"
+        placeholder="Enter your name">
+
+
+    <!-- MOBILE -->
+
+    <label for="mobile">
+        Mobile Number
+    </label>
+
+    <input
+        id="mobile"
+        type="tel"
+        maxlength="10"
+        inputmode="numeric"
+        autocomplete="tel"
+        placeholder="10-digit mobile number">
+
+
+    <div
+        class="error"
+        id="error">
+    </div>
+
+
+    <button
+        onclick="loginUser()">
+
+        Continue
+
+    </button>
+
+
+    <div class="note">
+
+        Demo frontend login.<br>
+
+        Real OTP verification के लिए approved
+        OTP/backend service connect करनी होगी।
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+function loginUser(){
+
+    const nameInput =
+        document.getElementById("name");
+
+    const mobileInput =
+        document.getElementById("mobile");
+
+    const error =
+        document.getElementById("error");
+
+
+    const name =
+        nameInput.value.trim();
+
+
+    const mobile =
+        mobileInput.value
+        .replace(/\D/g,"");
+
+
+    /* NAME VALIDATION */
+
+    if(name.length < 2){
+
+        showError(
+            "कृपया अपना सही नाम दर्ज करें।"
+        );
+
+        nameInput.focus();
+
+        return;
+    }
+
+
+    /* MOBILE VALIDATION */
+
+    if(mobile.length !== 10){
+
+        showError(
+            "कृपया 10 digit mobile number दर्ज करें।"
+        );
+
+        mobileInput.focus();
+
+        return;
+    }
+
+
+    /* USER ID */
+
+    let userId =
+        localStorage.getItem("rdxUserId");
+
+
+    if(!userId){
+
+        userId =
+            "RDX" +
+            Date.now().toString(36).toUpperCase() +
+            Math.random()
+            .toString(36)
+            .substring(2,6)
+            .toUpperCase();
+
+        localStorage.setItem(
+            "rdxUserId",
+            userId
+        );
+    }
+
+
+    /* SAVE USER DATA */
+
+    localStorage.setItem(
+        "rdxUsername",
+        name
+    );
+
+
+    localStorage.setItem(
+        "rdxMobile",
+        mobile
+    );
+
+
+    localStorage.setItem(
+        "rdxLoggedIn",
+        "1"
+    );
+
+
+    /* INITIAL VIRTUAL COINS */
+
+    if(
+        localStorage.getItem("rdxCoins") === null
+    ){
+
+        localStorage.setItem(
+            "rdxCoins",
+            "1000"
+        );
+    }
+
+
+    /* GO DASHBOARD */
+
+    window.location.href =
+        "./dashboard.html";
+
+}
+
+
+/* ERROR */
+
+function showError(message){
+
+    const error =
+        document.getElementById("error");
+
+    error.textContent =
+        message;
+
+    error.style.display =
+        "block";
+
+}
+
+
+/* REMOVE ERROR WHEN TYPING */
+
+document
+.getElementById("name")
+.addEventListener(
+    "input",
+    clearError
+);
+
+document
+.getElementById("mobile")
+.addEventListener(
+    "input",
+    clearError
+);
+
+
+function clearError(){
+
+    document
+    .getElementById("error")
+    .style.display =
+    "none";
+
+}
+
+</script>
+
+
+</body>
+
+</html>
