@@ -72,6 +72,8 @@ button{
 }
 
 
+/* MENU BUTTON */
+
 .menu-btn{
 
     width:48px;
@@ -95,8 +97,12 @@ button{
     0 6px 15px rgba(255,93,80,.25);
 
     cursor:pointer;
+
+    -webkit-tap-highlight-color:transparent;
 }
 
+
+/* LOGO */
 
 .logo{
 
@@ -123,6 +129,8 @@ button{
     0 5px 12px rgba(36,93,190,.15);
 }
 
+
+/* HEADER RIGHT */
 
 .header-right{
 
@@ -152,8 +160,12 @@ button{
 
     box-shadow:
     0 6px 15px rgba(0,0,0,.12);
+
+    -webkit-tap-highlight-color:transparent;
 }
 
+
+/* NOTIFICATION */
 
 .notification{
 
@@ -161,6 +173,8 @@ button{
     linear-gradient(145deg,#746df4,#817eff);
 }
 
+
+/* WALLET */
 
 .wallet-top{
 
@@ -176,6 +190,8 @@ button{
     font-weight:800;
 }
 
+
+/* REFER */
 
 .redeem-top{
 
@@ -446,6 +462,9 @@ button{
     color:#e8edf7;
 }
 
+
+/* PLAY BUTTON */
+
 .play-btn{
 
     margin-top:16px;
@@ -467,6 +486,16 @@ button{
     font-weight:800;
 
     cursor:pointer;
+
+    box-shadow:
+    0 8px 20px rgba(39,112,238,.30);
+
+    -webkit-tap-highlight-color:transparent;
+}
+
+.play-btn:active{
+
+    transform:scale(.96);
 }
 
 
@@ -1478,16 +1507,6 @@ button{
 
     <!-- ================= REFER & EARN ================= -->
 
-    <!--
-
-        IMPORTANT:
-        Is card par click karne se
-        DIRECT referral.html open hoga.
-
-        Profile page nahi khulega.
-
-    -->
-
     <section
         class="referral"
         onclick="goRedeem()">
@@ -1582,9 +1601,11 @@ button{
             </p>
 
 
+            <!-- PLAY NOW -->
+
             <button
                 class="play-btn"
-                onclick="showMessage('Game opening soon')">
+                onclick="goBattles()">
 
                 ▶ Play Now
 
@@ -1816,6 +1837,26 @@ function goHome(){
 
 
 /* =====================================================
+   BATTLES
+===================================================== */
+
+/*
+   Ludo Classic ke Play Now par click karne par
+   battles.html open hoga.
+*/
+
+function goBattles(){
+
+    closeMenu();
+
+    window.location.href =
+        "./battles.html";
+
+}
+
+
+
+/* =====================================================
    WALLET
 ===================================================== */
 
@@ -1862,26 +1903,6 @@ function goProfile(){
 
 /* =====================================================
    REFER & EARN
-
-   IMPORTANT FIX:
-
-   Pehle yahan:
-
-   ./profile.html#referral
-
-   tha.
-
-   Ab direct:
-
-   ./referral.html
-
-   hoga.
-
-   Isliye Dashboard ka Refer & Earn card,
-   Header ka 🎁 button,
-   aur Side Menu ka Refer & Earn
-
-   tino same referral page kholenge.
 ===================================================== */
 
 function goRedeem(){
