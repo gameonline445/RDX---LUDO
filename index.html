@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDX LUDO</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f7ff;font-family:Arial,sans-serif;color:#102044}
+.wrap{max-width:460px;margin:auto;padding:14px}
+header{display:flex;align-items:center;justify-content:space-between;padding:10px 4px 18px}
+.logo{width:54px;height:54px;border-radius:50%;background:#fff;border:3px solid #bcd0ff;display:grid;place-items:center;font-weight:900;color:#1765df;text-align:center;font-size:13px;line-height:12px}
+.brand{display:flex;align-items:center;gap:10px}.brand h2{margin:0;font-size:20px}.brand small{color:#71809c}
+button{border:0;cursor:pointer;font-weight:700}.topbtn{background:white;border:1px solid #9db9f5;border-radius:25px;padding:12px 18px;color:#17243e;font-size:15px}
+.hero,.section{background:linear-gradient(135deg,#edf4ff,#dce8ff);border:1px solid #bfd2f8;border-radius:28px;padding:22px;margin-bottom:18px;box-shadow:0 8px 25px #b9c8e622}
+.badge{display:inline-block;border:1px solid #8eb1f5;border-radius:20px;padding:7px 12px;color:#2670e7;font-size:12px;font-weight:800}
+h1{font-size:38px;line-height:1.05;margin:18px 0 10px}.blue{color:#286ee4}.hero p,.section p{color:#71809c;line-height:1.5}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#ffffff88;border:1px solid #d0dcf3;border-radius:18px;text-align:center;padding:14px 5px;font-weight:800}.stat small{display:block;color:#71809c;margin-top:5px;font-weight:500}
+.label{color:#3977db;font-size:12px;font-weight:800;letter-spacing:2px;margin:8px 2px}
+.game{min-height:235px;border-radius:24px;padding:22px;color:#fff;background:linear-gradient(135deg,#7a2b20,#007b5c,#173c89);position:relative;overflow:hidden;margin-bottom:12px}
+.game:before{content:"";position:absolute;width:130px;height:130px;border-radius:50%;background:#ef334055;top:-30px;left:60px;box-shadow:190px 10px #22a95b55,180px 140px #1f66d655,-20px 150px #e5a82055}
+.game>*{position:relative}.live{display:inline-block;background:#0b1512aa;border-radius:18px;padding:7px 12px;font-size:12px}.game h2{margin-top:62px;font-size:25px}.play{background:#2675ee;color:white;border-radius:22px;padding:12px 18px}
+.locked{background:white;border:1px dashed #bbc8dd;border-radius:20px;padding:16px;display:flex;justify-content:space-between;align-items:center}.soon{background:#f1f3f7;border-radius:20px;padding:9px 14px;color:#71809c}
+.feature{background:#fff;border:2px solid #6e9ff4;border-radius:20px;padding:18px;margin:14px 0}.feature strong{font-size:31px}.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:#fff;border:1px solid #dbe2ef;border-radius:18px;padding:17px;min-height:110px}.card b{display:block;margin:12px 0 6px}.card small{color:#71809c}
+.join{width:100%;background:#1768e8;color:#fff;border-radius:18px;padding:17px;font-size:17px;margin-top:14px}
+footer{text-align:center;color:#8190a9;font-size:12px;padding:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="brand">
+    <div class="logo">RDX<br>LUDO</div>
+    <div><h2>RDX LUDO</h2><small>Play · Demo · Earn</small></div>
+  </div>
+  <button class="topbtn" onclick="login()">Sign In →</button>
+</header>
+
+<section class="hero">
+  <span class="badge">✦ WELCOME TO RDX LUDO</span>
+  <h1>Play Ludo.<br><span class="blue">Play Smart.</span></h1>
+  <p>Welcome to your Ludo match platform. Create and join friendly matches with your opponents.</p>
+  <div class="stats">
+    <div class="stat">2%<small>Referral</small></div>
+    <div class="stat">24/7<small>Support</small></div>
+    <div class="stat">Live<small>Chat & Call</small></div>
+  </div>
+</section>
+
+<div class="label">GAME ARENA</div>
+<h3>Pick Your Mode</h3>
+<section class="game">
+  <span class="live">● LIVE NOW</span>
+  <h2>Ludo Classic</h2>
+  <p>Head-to-head Ludo matches</p>
+  <button class="play" onclick="login()">▶ Play Now</button>
+</section>
+
+<div class="locked"><div><b>♟ 1 Goti Ludo</b><br><small>Fast-paced single-token mode</small></div><span class="soon">🔒 SOON</span></div>
+
+<section class="section" style="margin-top:18px">
+  <span class="badge">✦ DEMO PLATFORM</span>
+  <h2>Built for Players</h2>
+  <p>Everything you need to manage your matches in one place.</p>
+  <div class="feature"><small>REFERRAL PROGRAM</small><br><strong>2<span class="blue">%</span></strong><br><small>Refer</small><button class="play" style="float:right" onclick="login()">↗</button></div>
+  <div class="cards">
+    <div class="card"><b>🏆 Skill Battles</b><small>Head-to-head Ludo match interface.</small></div>
+    <div class="card" onclick="login()"><b>▣ Wallet</b><small>Demo wallet interface for the platform.</small></div>
+    <div class="card" onclick="login()"><b>♣ Refer & Earn</b><small>Share your referral link with friends.</small></div>
+    <div class="card" onclick="login()"><b>◉ Live Support</b><small>Customer support and help section.</small></div>
+  </div>
+  <button class="join" onclick="login()">↪ Join RDX LUDO</button>
+</section>
+<footer>RDX LUDO · Demo Platform · Play Responsibly</footer>
+</div>
+<script>
+function login(){ window.location.href='login.html'; }
+</script>
+</body>
+</html>
