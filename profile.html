@@ -32,18 +32,11 @@ body{
     min-height:100vh;
 }
 
-
-/* =====================================================
-   TOP HEADER
-===================================================== */
+/* ================= TOP HEADER ================= */
 
 .top-header{
-
     height:70px;
-
-    background:
-    linear-gradient(110deg,#eef4ff,#ffffff);
-
+    background:linear-gradient(110deg,#eef4ff,#ffffff);
     border-bottom:1px solid #cbd8f0;
 
     display:flex;
@@ -54,64 +47,45 @@ body{
 
     position:sticky;
     top:0;
-
     z-index:100;
 
-    box-shadow:
-    0 5px 18px rgba(36,75,150,.08);
+    box-shadow:0 5px 18px rgba(36,75,150,.08);
 }
 
-
 .header-left{
-
     display:flex;
     align-items:center;
     gap:10px;
 }
 
-
-/* MENU BUTTON */
-
 .menu-btn{
-
     width:46px;
     height:46px;
 
     border:0;
-
     border-radius:16px;
 
-    background:
-    linear-gradient(145deg,#ff7165,#ff8a70);
+    background:linear-gradient(145deg,#ff7165,#ff8a70);
 
     color:white;
-
     font-size:25px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    box-shadow:
-    0 6px 15px rgba(255,93,80,.25);
+    box-shadow:0 6px 15px rgba(255,93,80,.25);
 
     cursor:pointer;
-
-    -webkit-tap-highlight-color:transparent;
 }
 
-
-/* RDX LOGO */
-
 .logo{
-
     width:45px;
     height:45px;
 
     border-radius:50%;
 
-    background:
-    linear-gradient(145deg,#ffffff,#e7efff);
+    background:linear-gradient(145deg,#ffffff,#e7efff);
 
     border:3px solid #d3e1ff;
 
@@ -124,29 +98,20 @@ body{
     font-size:12px;
     font-weight:900;
 
-    box-shadow:
-    0 5px 12px rgba(36,93,190,.15);
+    box-shadow:0 5px 12px rgba(36,93,190,.15);
 }
 
-
-/* HEADER RIGHT */
-
 .header-right{
-
     display:flex;
     align-items:center;
-
     gap:6px;
 }
 
-
 .header-icon{
-
     width:44px;
     height:44px;
 
     border:0;
-
     border-radius:16px;
 
     display:flex;
@@ -154,67 +119,34 @@ body{
     justify-content:center;
 
     font-size:20px;
-
     color:white;
 
-    box-shadow:
-    0 6px 15px rgba(0,0,0,.12);
+    box-shadow:0 6px 15px rgba(0,0,0,.12);
 
     cursor:pointer;
-
-    -webkit-tap-highlight-color:transparent;
 }
-
-
-/* NOTIFICATION */
 
 .notification{
-
-    background:
-    linear-gradient(145deg,#746df4,#817eff);
+    background:linear-gradient(145deg,#746df4,#817eff);
 }
-
-
-/* WALLET */
 
 .wallet-top{
-
-    background:
-    linear-gradient(145deg,#20c36b,#43d77e);
-
-    min-width:48px;
-
-    padding:0;
+    background:linear-gradient(145deg,#20c36b,#43d77e);
 }
-
-
-/* REDEEM */
 
 .redeem-top{
-
-    background:
-    linear-gradient(145deg,#ff8a35,#ffad45);
-
-    min-width:48px;
-
-    padding:0;
+    background:linear-gradient(145deg,#ff8a35,#ffad45);
 }
 
-
-/* =====================================================
-   SIDE MENU
-===================================================== */
+/* ================= SIDE MENU ================= */
 
 .menu-overlay{
-
     position:fixed;
-
     inset:0;
 
     background:rgba(0,0,0,.35);
 
     z-index:250;
-
     display:none;
 }
 
@@ -222,9 +154,7 @@ body{
     display:block;
 }
 
-
 .menu-panel{
-
     position:fixed;
 
     top:0;
@@ -239,8 +169,7 @@ body{
 
     padding:25px 18px;
 
-    box-shadow:
-    10px 0 35px rgba(0,0,0,.15);
+    box-shadow:10px 0 35px rgba(0,0,0,.15);
 
     transition:.3s ease;
 
@@ -251,44 +180,30 @@ body{
     left:0;
 }
 
-
-/* MENU HEADER */
-
 .menu-title{
-
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
 
     padding-bottom:22px;
-
     margin-bottom:18px;
 
     border-bottom:1px solid #e3e8f2;
 }
 
-
 .menu-brand{
-
     display:flex;
-
     align-items:center;
-
     gap:12px;
 }
 
-
 .menu-logo{
-
     width:50px;
     height:50px;
 
     border-radius:50%;
 
-    background:
-    linear-gradient(145deg,#ffffff,#e7efff);
+    background:linear-gradient(145deg,#ffffff,#e7efff);
 
     border:3px solid #d3e1ff;
 
@@ -299,29 +214,21 @@ body{
     color:#1762df;
 
     font-size:13px;
-
     font-weight:900;
 }
-
 
 .menu-brand h2{
     font-size:20px;
 }
 
 .menu-brand p{
-
     color:#71809d;
-
     font-size:12px;
-
     margin-top:3px;
 }
 
-
 .close-menu{
-
     border:0;
-
     background:#eef2fa;
 
     width:42px;
@@ -330,17 +237,12 @@ body{
     border-radius:50%;
 
     font-size:25px;
-
     color:#66738d;
 
     cursor:pointer;
 }
 
-
-/* MENU ITEM */
-
 .menu-item{
-
     width:100%;
 
     border:1px solid #e0e5ef;
@@ -356,13 +258,11 @@ body{
     text-align:left;
 
     font-size:17px;
-
     color:#182440;
 
     cursor:pointer;
 
     display:flex;
-
     align-items:center;
 
     gap:14px;
@@ -374,16 +274,13 @@ body{
     transform:scale(.98);
 }
 
-
 .menu-icon{
-
     width:40px;
     height:40px;
 
     border-radius:13px;
 
     display:flex;
-
     align-items:center;
     justify-content:center;
 
@@ -394,36 +291,24 @@ body{
     flex-shrink:0;
 }
 
-
 .menu-item span:nth-child(2){
     flex:1;
 }
 
-
-/* =====================================================
-   MAIN
-===================================================== */
+/* ================= MAIN ================= */
 
 .main{
-
     width:100%;
-
     max-width:650px;
 
     margin:auto;
 
-    padding:
-    22px 12px
-    115px;
+    padding:22px 12px 115px;
 }
 
-
-/* =====================================================
-   PROFILE CARD
-===================================================== */
+/* ================= PROFILE CARD ================= */
 
 .profile-card{
-
     border:1px solid #b9cdfc;
 
     border-radius:25px;
@@ -446,23 +331,14 @@ body{
     0 12px 30px rgba(40,88,175,.08);
 }
 
-
-/* PROFILE TOP */
-
 .profile-top{
-
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
-
     gap:12px;
 }
 
-
 .profile-badge{
-
     display:inline-flex;
 
     align-items:center;
@@ -484,11 +360,7 @@ body{
     letter-spacing:.8px;
 }
 
-
-/* EDIT BUTTON */
-
 .edit-btn{
-
     border:1px solid #aebfe2;
 
     background:rgba(255,255,255,.55);
@@ -506,11 +378,7 @@ body{
     cursor:pointer;
 }
 
-
-/* PROFILE DETAILS */
-
 .profile-details{
-
     display:flex;
 
     align-items:center;
@@ -520,9 +388,7 @@ body{
     margin-top:18px;
 }
 
-
 .avatar{
-
     width:76px;
     height:76px;
 
@@ -552,28 +418,20 @@ body{
     0 8px 20px rgba(40,105,232,.25);
 }
 
-
 .profile-info{
     min-width:0;
 }
 
-
 .profile-info h2{
-
     font-size:22px;
-
     line-height:1.15;
 
     overflow:hidden;
-
     text-overflow:ellipsis;
-
     white-space:nowrap;
 }
 
-
 .mobile-number{
-
     margin-top:6px;
 
     color:#71809d;
@@ -581,11 +439,7 @@ body{
     font-size:14px;
 }
 
-
-/* KYC */
-
 .kyc-btn{
-
     margin-top:10px;
 
     border:0;
@@ -604,7 +458,6 @@ body{
     color:white;
 
     font-size:13px;
-
     font-weight:800;
 
     cursor:pointer;
@@ -613,13 +466,9 @@ body{
     0 7px 16px rgba(34,99,233,.22);
 }
 
-
-/* =====================================================
-   REFERRAL APPLIED
-===================================================== */
+/* ================= REFERRAL ================= */
 
 .referral-applied{
-
     margin-top:18px;
 
     padding:18px;
@@ -639,19 +488,13 @@ body{
     0 8px 22px rgba(30,60,120,.05);
 }
 
-
 .referral-head{
-
     display:flex;
-
     align-items:center;
-
     gap:12px;
 }
 
-
 .referral-icon{
-
     width:43px;
     height:43px;
 
@@ -664,22 +507,17 @@ body{
     color:#2865d6;
 
     display:flex;
-
     align-items:center;
     justify-content:center;
 
     font-size:20px;
 }
 
-
 .referral-head h3{
-
     font-size:17px;
 }
 
-
 .referral-head p{
-
     margin-top:3px;
 
     color:#71809d;
@@ -687,9 +525,7 @@ body{
     font-size:12px;
 }
 
-
 .referral-code{
-
     margin-top:14px;
 
     min-height:58px;
@@ -703,15 +539,12 @@ body{
     display:flex;
 
     align-items:center;
-
     justify-content:space-between;
 
     padding:8px 9px 8px 15px;
 }
 
-
 .referral-code strong{
-
     font-size:18px;
 
     letter-spacing:1.5px;
@@ -719,9 +552,7 @@ body{
     color:#26324b;
 }
 
-
 .code-check{
-
     width:45px;
     height:45px;
 
@@ -739,15 +570,10 @@ body{
     font-size:20px;
 }
 
-
-/* =====================================================
-   SECTION TITLE
-===================================================== */
+/* ================= SECTION ================= */
 
 .section-label{
-
     margin-top:22px;
-
     margin-bottom:10px;
 
     color:#2865d6;
@@ -759,13 +585,9 @@ body{
     letter-spacing:1.8px;
 }
 
-
-/* =====================================================
-   STATS
-===================================================== */
+/* ================= STATS ================= */
 
 .stats{
-
     display:grid;
 
     grid-template-columns:
@@ -774,9 +596,7 @@ body{
     gap:10px;
 }
 
-
 .stat-card{
-
     min-height:120px;
 
     padding:14px 7px;
@@ -803,9 +623,7 @@ body{
     text-align:center;
 }
 
-
 .stat-icon{
-
     width:39px;
     height:39px;
 
@@ -825,9 +643,7 @@ body{
     font-size:18px;
 }
 
-
 .stat-card small{
-
     margin-top:8px;
 
     color:#71809d;
@@ -839,9 +655,7 @@ body{
     letter-spacing:.7px;
 }
 
-
 .stat-card strong{
-
     margin-top:4px;
 
     font-size:18px;
@@ -849,13 +663,9 @@ body{
     color:#101a38;
 }
 
-
-/* =====================================================
-   QUICK ACTIONS
-===================================================== */
+/* ================= QUICK ================= */
 
 .quick-grid{
-
     display:grid;
 
     grid-template-columns:
@@ -864,9 +674,7 @@ body{
     gap:12px;
 }
 
-
 .quick-card{
-
     min-height:137px;
 
     border:1px solid #b9ccef;
@@ -895,9 +703,7 @@ body{
     0 8px 20px rgba(30,60,120,.05);
 }
 
-
 .quick-top{
-
     display:flex;
 
     align-items:center;
@@ -905,9 +711,7 @@ body{
     justify-content:space-between;
 }
 
-
 .quick-icon{
-
     width:42px;
     height:42px;
 
@@ -927,9 +731,7 @@ body{
     font-size:20px;
 }
 
-
 .quick-arrow{
-
     width:30px;
     height:30px;
 
@@ -949,17 +751,12 @@ body{
     font-size:17px;
 }
 
-
 .quick-card h3{
-
     margin-top:10px;
-
     font-size:17px;
 }
 
-
 .quick-card p{
-
     margin-top:4px;
 
     color:#75819a;
@@ -967,11 +764,7 @@ body{
     font-size:12px;
 }
 
-
-/* REFERRAL REDEEM FULL CARD */
-
 .redeem-card{
-
     margin-top:12px;
 
     min-height:82px;
@@ -998,26 +791,19 @@ body{
     cursor:pointer;
 }
 
-
 .redeem-card .quick-icon{
     flex-shrink:0;
 }
 
-
 .redeem-content{
-
     flex:1;
 }
 
-
 .redeem-content h3{
-
     font-size:17px;
 }
 
-
 .redeem-content p{
-
     margin-top:4px;
 
     color:#75819a;
@@ -1025,13 +811,9 @@ body{
     font-size:12px;
 }
 
-
-/* =====================================================
-   LOGOUT
-===================================================== */
+/* ================= LOGOUT ================= */
 
 .logout{
-
     width:100%;
 
     min-height:62px;
@@ -1042,8 +824,7 @@ body{
 
     border:1px solid #e4b8b8;
 
-    background:
-    #fff7f7;
+    background:#fff7f7;
 
     color:#bf3030;
 
@@ -1054,13 +835,9 @@ body{
     cursor:pointer;
 }
 
-
-/* =====================================================
-   BOTTOM NAV
-===================================================== */
+/* ================= BOTTOM NAV ================= */
 
 .bottom{
-
     position:fixed;
 
     bottom:0;
@@ -1069,8 +846,7 @@ body{
 
     height:78px;
 
-    background:
-    rgba(255,255,255,.97);
+    background:rgba(255,255,255,.97);
 
     border-top:1px solid #ccd7eb;
 
@@ -1089,9 +865,7 @@ body{
     0 -5px 20px rgba(30,65,130,.08);
 }
 
-
 .bottom a{
-
     text-align:center;
 
     text-decoration:none;
@@ -1111,9 +885,7 @@ body{
     gap:3px;
 }
 
-
 .bottom b{
-
     width:40px;
     height:40px;
 
@@ -1127,19 +899,13 @@ body{
     font-size:21px;
 }
 
-
 .bottom .active{
-
     color:#2869e8 !important;
-
     font-weight:700;
 }
 
-
 .bottom .active b{
-
-    background:
-    #536df5;
+    background:#536df5;
 
     color:white;
 
@@ -1147,13 +913,9 @@ body{
     0 7px 17px rgba(83,109,245,.3);
 }
 
-
-/* =====================================================
-   TOAST
-===================================================== */
+/* ================= TOAST ================= */
 
 .toast{
-
     position:fixed;
 
     left:50%;
@@ -1184,9 +946,7 @@ body{
     white-space:nowrap;
 }
 
-
 .toast.show{
-
     opacity:1;
 
     transform:
@@ -1194,45 +954,221 @@ body{
     translateY(0);
 }
 
+/* ================= EDIT MODAL ================= */
 
-/* =====================================================
-   MOBILE
-===================================================== */
+.modal-overlay{
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(10,25,60,.45);
+
+    backdrop-filter:blur(5px);
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+
+    z-index:600;
+}
+
+.modal-overlay.show{
+    display:flex;
+}
+
+.edit-modal{
+    width:100%;
+    max-width:430px;
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:22px;
+
+    box-shadow:
+    0 20px 60px rgba(0,0,0,.25);
+}
+
+.modal-header{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:20px;
+}
+
+.modal-header h2{
+    font-size:21px;
+}
+
+.modal-close{
+    width:40px;
+    height:40px;
+
+    border:0;
+
+    border-radius:50%;
+
+    background:#eef2fa;
+
+    font-size:22px;
+
+    color:#65728d;
+
+    cursor:pointer;
+}
+
+.input-label{
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#53617c;
+
+    font-size:13px;
+
+    font-weight:700;
+}
+
+.name-input{
+    width:100%;
+
+    height:52px;
+
+    border:1px solid #cbd7eb;
+
+    border-radius:15px;
+
+    padding:0 15px;
+
+    font-size:16px;
+
+    color:#101a38;
+
+    outline:none;
+}
+
+.name-input:focus{
+    border-color:#3976ed;
+
+    box-shadow:
+    0 0 0 3px rgba(57,118,237,.12);
+}
+
+.modal-save{
+    width:100%;
+
+    height:52px;
+
+    margin-top:15px;
+
+    border:0;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #2162e9,
+        #3976ed
+    );
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+/* ================= KYC INFO MODAL ================= */
+
+.kyc-modal{
+    width:100%;
+    max-width:430px;
+
+    background:white;
+
+    border-radius:25px;
+
+    padding:24px;
+
+    box-shadow:
+    0 20px 60px rgba(0,0,0,.25);
+}
+
+.kyc-icon{
+    width:58px;
+    height:58px;
+
+    border-radius:18px;
+
+    background:#e5f8ed;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:28px;
+
+    margin-bottom:15px;
+}
+
+.kyc-modal h2{
+    font-size:22px;
+}
+
+.kyc-modal p{
+    margin-top:10px;
+
+    color:#687690;
+
+    font-size:14px;
+
+    line-height:1.55;
+}
+
+.kyc-ok{
+    width:100%;
+
+    height:50px;
+
+    margin-top:18px;
+
+    border:0;
+
+    border-radius:15px;
+
+    background:#2162e9;
+
+    color:white;
+
+    font-size:15px;
+
+    font-weight:800;
+}
+
+/* ================= MOBILE ================= */
 
 @media(max-width:700px){
 
     .top-header{
-
         height:70px;
-
         padding:0 10px;
     }
 
-
-    .menu-btn{
-
-        width:46px;
-        height:46px;
-
-        font-size:25px;
-    }
-
-
-    .logo{
-
-        width:45px;
-        height:45px;
-    }
-
-
     .header-right{
-
         gap:5px;
     }
 
-
     .header-icon{
-
         width:43px;
         height:43px;
 
@@ -1241,130 +1177,93 @@ body{
         font-size:19px;
     }
 
-
     .main{
-
         padding:
         18px 12px
         105px;
     }
 
-
     .profile-card{
-
         padding:18px;
-
         border-radius:23px;
     }
 
-
     .profile-details{
-
         gap:11px;
     }
 
-
     .avatar{
-
         width:68px;
         height:68px;
 
         font-size:24px;
     }
 
-
     .profile-info h2{
-
         font-size:20px;
     }
 
-
     .mobile-number{
-
         font-size:13px;
     }
 
-
     .kyc-btn{
-
         padding:8px 13px;
-
         font-size:12px;
     }
 
-
     .stats{
-
         gap:7px;
     }
 
-
     .stat-card{
-
         min-height:115px;
-
         padding:10px 4px;
     }
 
-
     .stat-icon{
-
         width:37px;
         height:37px;
     }
 
-
     .quick-card{
-
         min-height:132px;
-
         padding:14px;
     }
 
-
     .bottom{
-
         height:78px;
     }
-
 }
-
 
 @media(max-width:360px){
 
     .header-icon{
-
         width:39px;
         height:39px;
     }
 
     .menu-btn{
-
         width:42px;
         height:42px;
     }
 
     .logo{
-
         width:42px;
         height:42px;
     }
 
     .profile-details{
-
         align-items:flex-start;
     }
 
     .stats{
-
         gap:5px;
     }
 
     .stat-card small{
-
         font-size:9px;
     }
-
 }
 
 </style>
@@ -1375,17 +1274,11 @@ body{
 <body>
 
 
-<!-- =====================================================
-     TOP HEADER
-===================================================== -->
+<!-- ================= TOP HEADER ================= -->
 
 <header class="top-header">
 
-
     <div class="header-left">
-
-
-        <!-- THREE LINE MENU -->
 
         <button
             class="menu-btn"
@@ -1396,13 +1289,8 @@ body{
 
         </button>
 
-
-        <!-- RDX LOGO -->
-
         <div class="logo">
-
             RDX
-
         </div>
 
     </div>
@@ -1410,51 +1298,36 @@ body{
 
     <div class="header-right">
 
-
-        <!-- NOTIFICATION -->
-
         <button
             class="header-icon notification"
-            onclick="showMessage('No new notifications')"
-            aria-label="Notifications">
+            onclick="showMessage('No new notifications')">
 
             🔔
 
         </button>
 
-
-        <!-- WALLET -->
-
         <button
             class="header-icon wallet-top"
-            onclick="goWallet()"
-            aria-label="Wallet">
+            onclick="goWallet()">
 
             💰
 
         </button>
 
-
-        <!-- REDEEM -->
-
         <button
             class="header-icon redeem-top"
-            onclick="goRedeem()"
-            aria-label="Redeem">
+            onclick="goRedeem()">
 
             🎁
 
         </button>
-
 
     </div>
 
 </header>
 
 
-<!-- =====================================================
-     MENU OVERLAY
-===================================================== -->
+<!-- ================= MENU OVERLAY ================= -->
 
 <div
     class="menu-overlay"
@@ -1463,29 +1336,19 @@ body{
 </div>
 
 
-<!-- =====================================================
-     SIDE MENU
-===================================================== -->
+<!-- ================= SIDE MENU ================= -->
 
 <div
     class="menu-panel"
     id="menuPanel">
 
-
-    <!-- MENU HEADER -->
-
     <div class="menu-title">
-
 
         <div class="menu-brand">
 
-
             <div class="menu-logo">
-
                 RDX
-
             </div>
-
 
             <div>
 
@@ -1499,9 +1362,7 @@ body{
 
             </div>
 
-
         </div>
-
 
         <button
             class="close-menu"
@@ -1511,11 +1372,8 @@ body{
 
         </button>
 
-
     </div>
 
-
-    <!-- HOME -->
 
     <button
         class="menu-item"
@@ -1525,18 +1383,12 @@ body{
             🏠
         </div>
 
-        <span>
-            Home
-        </span>
+        <span>Home</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- MY PROFILE -->
 
     <button
         class="menu-item"
@@ -1546,18 +1398,12 @@ body{
             👤
         </div>
 
-        <span>
-            My Profile
-        </span>
+        <span>My Profile</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- MY WALLET -->
 
     <button
         class="menu-item"
@@ -1567,18 +1413,12 @@ body{
             💰
         </div>
 
-        <span>
-            My Wallet
-        </span>
+        <span>My Wallet</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- REFER & EARN -->
 
     <button
         class="menu-item"
@@ -1588,18 +1428,12 @@ body{
             🎁
         </div>
 
-        <span>
-            Refer & Earn
-        </span>
+        <span>Refer & Earn</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- HISTORY -->
 
     <button
         class="menu-item"
@@ -1609,18 +1443,12 @@ body{
             🕘
         </div>
 
-        <span>
-            History
-        </span>
+        <span>History</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- NOTIFICATIONS -->
 
     <button
         class="menu-item"
@@ -1630,18 +1458,12 @@ body{
             🔔
         </div>
 
-        <span>
-            Notifications
-        </span>
+        <span>Notifications</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- SUPPORT -->
 
     <button
         class="menu-item"
@@ -1651,18 +1473,12 @@ body{
             🎧
         </div>
 
-        <span>
-            Support
-        </span>
+        <span>Support</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
-
-    <!-- LOGOUT -->
 
     <button
         class="menu-item"
@@ -1672,43 +1488,27 @@ body{
             🚪
         </div>
 
-        <span>
-            Logout
-        </span>
+        <span>Logout</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
-
 
 </div>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
+<!-- ================= MAIN ================= -->
 
 <main class="main">
 
 
-    <!-- =================================================
-         MY PROFILE
-    ================================================== -->
-
     <section class="profile-card">
-
 
         <div class="profile-top">
 
-
             <span class="profile-badge">
-
                 MY PROFILE
-
             </span>
-
 
             <button
                 class="edit-btn"
@@ -1718,12 +1518,10 @@ body{
 
             </button>
 
-
         </div>
 
 
         <div class="profile-details">
-
 
             <div
                 class="avatar"
@@ -1735,7 +1533,6 @@ body{
 
 
             <div class="profile-info">
-
 
                 <h2 id="profileName">
                     RDX User
@@ -1759,32 +1556,24 @@ body{
 
                 </button>
 
-
             </div>
 
-
         </div>
-
 
     </section>
 
 
-    <!-- =================================================
-         REFERRAL APPLIED
-    ================================================== -->
+    <!-- ================= REFERRAL ================= -->
 
     <section
         class="referral-applied"
         id="referral">
 
-
         <div class="referral-head">
-
 
             <div class="referral-icon">
                 🎟
             </div>
-
 
             <div>
 
@@ -1798,151 +1587,110 @@ body{
 
             </div>
 
-
         </div>
 
 
         <div class="referral-code">
 
-
             <strong id="referralCode">
                 GTOEY2
             </strong>
-
 
             <div class="code-check">
                 ✓
             </div>
 
-
         </div>
-
 
     </section>
 
 
-    <!-- =================================================
-         YOUR STATS
-    ================================================== -->
+    <!-- ================= STATS ================= -->
 
     <div class="section-label">
-
         YOUR STATS
-
     </div>
 
 
     <section class="stats">
 
-
-        <!-- COIN WON -->
-
         <div class="stat-card">
-
 
             <div class="stat-icon">
                 ▣
             </div>
 
-
             <small>
                 COIN WON
             </small>
-
 
             <strong id="coinWon">
                 ₹0
             </strong>
 
-
         </div>
 
 
-        <!-- GAME PLAYED -->
-
         <div class="stat-card">
-
 
             <div class="stat-icon">
                 🎮
             </div>
 
-
             <small>
                 GAME PLAYED
             </small>
-
 
             <strong id="gamePlayed">
                 0
             </strong>
 
-
         </div>
 
 
-        <!-- REFERRAL -->
-
         <div class="stat-card">
-
 
             <div class="stat-icon">
                 🏆
             </div>
 
-
             <small>
                 REFERRAL
             </small>
-
 
             <strong id="referralCount">
                 0
             </strong>
 
-
         </div>
-
 
     </section>
 
 
-    <!-- =================================================
-         QUICK ACTIONS
-    ================================================== -->
+    <!-- ================= QUICK ACTIONS ================= -->
 
     <div class="section-label">
-
         QUICK ACTIONS
-
     </div>
 
 
     <section class="quick-grid">
 
-
-        <!-- HISTORY -->
-
         <div
             class="quick-card"
             onclick="goHistory()">
 
-
             <div class="quick-top">
-
 
                 <div class="quick-icon">
                     🕘
                 </div>
 
-
                 <div class="quick-arrow">
                     ↗
                 </div>
 
-
             </div>
-
 
             <div>
 
@@ -1956,32 +1704,24 @@ body{
 
             </div>
 
-
         </div>
 
-
-        <!-- SUPPORT -->
 
         <div
             class="quick-card"
             onclick="goSupport()">
 
-
             <div class="quick-top">
-
 
                 <div class="quick-icon">
                     🎧
                 </div>
 
-
                 <div class="quick-arrow">
                     ↗
                 </div>
 
-
             </div>
-
 
             <div>
 
@@ -1995,26 +1735,20 @@ body{
 
             </div>
 
-
         </div>
-
 
     </section>
 
 
-    <!-- =================================================
-         REFERRAL REDEEM
-    ================================================== -->
+    <!-- ================= REDEEM ================= -->
 
     <section
         class="redeem-card"
         onclick="goRedeem()">
 
-
         <div class="quick-icon">
             🎁
         </div>
-
 
         <div class="redeem-content">
 
@@ -2028,18 +1762,14 @@ body{
 
         </div>
 
-
         <div class="quick-arrow">
             ↗
         </div>
 
-
     </section>
 
 
-    <!-- =================================================
-         LOGOUT
-    ================================================== -->
+    <!-- ================= LOGOUT ================= -->
 
     <button
         class="logout"
@@ -2049,21 +1779,14 @@ body{
 
     </button>
 
-
 </main>
 
 
-<!-- =====================================================
-     BOTTOM NAVIGATION
-===================================================== -->
+<!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom">
 
-
-    <!-- HOME -->
-
-    <a
-        href="dashboard.html">
+    <a href="dashboard.html">
 
         <b>
             🏠
@@ -2074,10 +1797,7 @@ body{
     </a>
 
 
-    <!-- WALLET -->
-
-    <a
-        href="wallet.html">
+    <a href="wallet.html">
 
         <b>
             💰
@@ -2088,10 +1808,7 @@ body{
     </a>
 
 
-    <!-- SUPPORT -->
-
-    <a
-        href="support.html">
+    <a href="support.html">
 
         <b>
             🎧
@@ -2101,8 +1818,6 @@ body{
 
     </a>
 
-
-    <!-- PROFILE -->
 
     <a
         class="active"
@@ -2116,17 +1831,106 @@ body{
 
     </a>
 
-
 </nav>
 
 
-<!-- =====================================================
-     TOAST
-===================================================== -->
+<!-- ================= TOAST ================= -->
 
 <div
     class="toast"
     id="toast">
+</div>
+
+
+<!-- ================= EDIT NAME MODAL ================= -->
+
+<div
+    class="modal-overlay"
+    id="editModal">
+
+    <div class="edit-modal">
+
+        <div class="modal-header">
+
+            <h2>
+                Edit Profile
+            </h2>
+
+            <button
+                class="modal-close"
+                onclick="closeEditModal()">
+
+                ×
+
+            </button>
+
+        </div>
+
+
+        <label class="input-label">
+            Real Name
+        </label>
+
+
+        <input
+            type="text"
+            id="realNameInput"
+            class="name-input"
+            placeholder="Enter your real name"
+            maxlength="60"
+            autocomplete="name">
+
+
+        <button
+            class="modal-save"
+            onclick="saveRealName()">
+
+            Save Name
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= KYC MODAL ================= -->
+
+<div
+    class="modal-overlay"
+    id="kycModal">
+
+    <div class="kyc-modal">
+
+        <div class="kyc-icon">
+            🛡️
+        </div>
+
+        <h2>
+            Secure KYC
+        </h2>
+
+        <p>
+            Aadhaar OTP verification को production में
+            authorised KYC service और secure backend के
+            माध्यम से connect करना होगा।
+        </p>
+
+        <p>
+            Aadhaar number या OTP को इस HTML page में
+            save या सीधे handle नहीं किया जाएगा।
+        </p>
+
+        <button
+            class="kyc-ok"
+            onclick="closeKYC()">
+
+            OK
+
+        </button>
+
+    </div>
+
 </div>
 
 
@@ -2146,7 +1950,7 @@ const savedReferral =
     localStorage.getItem("rdxReferral");
 
 
-/* USERNAME */
+/* ================= LOAD NAME ================= */
 
 if(savedUsername){
 
@@ -2159,13 +1963,14 @@ if(savedUsername){
     .getElementById("avatar")
     .textContent =
         savedUsername
+        .trim()
         .charAt(0)
         .toUpperCase();
 
 }
 
 
-/* MOBILE */
+/* ================= LOAD MOBILE ================= */
 
 if(savedMobile){
 
@@ -2177,7 +1982,7 @@ if(savedMobile){
 }
 
 
-/* REFERRAL */
+/* ================= LOAD REFERRAL ================= */
 
 if(savedReferral){
 
@@ -2299,8 +2104,100 @@ function goNotifications(){
 
 function editProfile(){
 
+    const modal =
+        document.getElementById("editModal");
+
+    const input =
+        document.getElementById("realNameInput");
+
+    const currentName =
+        localStorage.getItem("rdxUsername");
+
+    if(currentName){
+
+        input.value =
+            currentName;
+
+    }else{
+
+        input.value = "";
+
+    }
+
+    modal.classList.add("show");
+
+    setTimeout(function(){
+
+        input.focus();
+
+    },100);
+
+}
+
+
+function closeEditModal(){
+
+    document
+    .getElementById("editModal")
+    .classList.remove("show");
+
+}
+
+
+function saveRealName(){
+
+    const input =
+        document.getElementById("realNameInput");
+
+    const name =
+        input.value.trim();
+
+
+    if(name.length < 2){
+
+        showMessage(
+            "Please enter your real name"
+        );
+
+        return;
+
+    }
+
+
+    /*
+       Save name locally for now.
+
+       Later, when backend is connected,
+       this same action can be changed to
+       update the authenticated user's
+       profile in the database.
+    */
+
+    localStorage.setItem(
+        "rdxUsername",
+        name
+    );
+
+
+    document
+    .getElementById("profileName")
+    .textContent =
+        name;
+
+
+    document
+    .getElementById("avatar")
+    .textContent =
+        name
+        .charAt(0)
+        .toUpperCase();
+
+
+    closeEditModal();
+
+
     showMessage(
-        "Profile editing will be available soon"
+        "Name updated successfully"
     );
 
 }
@@ -2312,9 +2209,18 @@ function editProfile(){
 
 function completeKYC(){
 
-    showMessage(
-        "KYC verification will be available soon"
-    );
+    document
+    .getElementById("kycModal")
+    .classList.add("show");
+
+}
+
+
+function closeKYC(){
+
+    document
+    .getElementById("kycModal")
+    .classList.remove("show");
 
 }
 
@@ -2358,7 +2264,39 @@ function showMessage(message){
 
 
 /* =====================================================
-   ESC KEY CLOSE MENU
+   CLOSE MODALS BY OUTSIDE CLICK
+===================================================== */
+
+document.addEventListener(
+    "click",
+    function(event){
+
+        const editModal =
+            document.getElementById("editModal");
+
+        const kycModal =
+            document.getElementById("kycModal");
+
+
+        if(event.target === editModal){
+
+            closeEditModal();
+
+        }
+
+
+        if(event.target === kycModal){
+
+            closeKYC();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   ESC KEY
 ===================================================== */
 
 document.addEventListener(
@@ -2368,6 +2306,10 @@ document.addEventListener(
         if(event.key === "Escape"){
 
             closeMenu();
+
+            closeEditModal();
+
+            closeKYC();
 
         }
 
