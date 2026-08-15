@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width,initial-scale=1">
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>RDX LUDO - Login</title>
 
@@ -14,6 +14,12 @@
 
 *{
     box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
 }
 
 body{
@@ -22,15 +28,547 @@ body{
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
+    Roboto,
     Arial,
     sans-serif;
 
-    background:
-    linear-gradient(135deg,#eef4ff,#f8faff);
-
-    margin:0;
-
     min-height:100vh;
+
+    color:#101a38;
+
+    background:
+
+    radial-gradient(
+        circle at 10% 10%,
+        rgba(83,125,255,.28),
+        transparent 30%
+    ),
+
+    radial-gradient(
+        circle at 90% 15%,
+        rgba(255,116,93,.22),
+        transparent 28%
+    ),
+
+    radial-gradient(
+        circle at 50% 100%,
+        rgba(91,218,172,.18),
+        transparent 35%
+    ),
+
+    linear-gradient(
+        135deg,
+        #edf4ff,
+        #ffffff 50%,
+        #f4f7ff
+    );
+
+    overflow-x:hidden;
+}
+
+
+/* =====================================================
+   TOP BACK BUTTON
+===================================================== */
+
+.top-bar{
+
+    width:100%;
+
+    padding:
+    18px 18px 0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:flex-start;
+}
+
+
+.back-btn{
+
+    border:1px solid #a8c4f8;
+
+    background:
+    linear-gradient(
+        135deg,
+        rgba(255,255,255,.95),
+        rgba(234,242,255,.95)
+    );
+
+    color:#172542;
+
+    min-height:54px;
+
+    padding:7px 18px 7px 8px;
+
+    border-radius:30px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:11px;
+
+    font-size:16px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 8px 25px rgba(44,93,190,.13);
+
+    transition:.2s;
+}
+
+.back-btn:active{
+
+    transform:scale(.96);
+}
+
+
+.back-icon{
+
+    width:40px;
+    height:40px;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    background:
+    linear-gradient(
+        145deg,
+        #2467e9,
+        #4b80f1
+    );
+
+    color:white;
+
+    font-size:25px;
+
+    box-shadow:
+    0 6px 15px rgba(36,103,233,.25);
+}
+
+
+/* =====================================================
+   PAGE
+===================================================== */
+
+.page{
+
+    width:100%;
+
+    max-width:780px;
+
+    margin:auto;
+
+    padding:
+    25px 18px
+    70px;
+}
+
+
+/* =====================================================
+   LOGO AREA
+===================================================== */
+
+.brand{
+
+    text-align:center;
+
+    margin-top:12px;
+
+    margin-bottom:25px;
+}
+
+
+.logo{
+
+    width:112px;
+    height:112px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #e7efff
+    );
+
+    border:
+    6px solid #b8cff9;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    color:#2565df;
+
+    font-size:25px;
+
+    font-weight:950;
+
+    box-shadow:
+
+    0 0 0 8px rgba(73,120,232,.08),
+
+    0 18px 40px rgba(44,92,190,.18);
+
+    position:relative;
+}
+
+
+.logo::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:9px;
+
+    border-radius:50%;
+
+    border:
+    3px solid #ef4444;
+
+    opacity:.75;
+}
+
+
+.logo span{
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.brand h1{
+
+    margin-top:18px;
+
+    font-size:38px;
+
+    line-height:1;
+
+    font-weight:950;
+
+    letter-spacing:-1.5px;
+
+    background:
+
+    linear-gradient(
+        90deg,
+        #195fe2,
+        #6b5df4,
+        #e84c74
+    );
+
+    -webkit-background-clip:text;
+
+    background-clip:text;
+
+    color:transparent;
+}
+
+
+.brand p{
+
+    margin-top:10px;
+
+    color:#6c7c9c;
+
+    font-size:18px;
+
+    font-weight:600;
+}
+
+
+/* =====================================================
+   LOGIN CARD
+===================================================== */
+
+.login-card{
+
+    width:100%;
+
+    background:
+
+    linear-gradient(
+        145deg,
+        rgba(255,255,255,.98),
+        rgba(248,251,255,.98)
+    );
+
+    border:
+    1px solid #b9cdf5;
+
+    border-radius:30px;
+
+    padding:34px;
+
+    box-shadow:
+
+    0 25px 65px rgba(38,82,165,.14),
+
+    0 5px 20px rgba(38,82,165,.07);
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+
+.login-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:190px;
+    height:190px;
+
+    border-radius:50%;
+
+    background:
+    rgba(70,115,240,.10);
+
+    top:-90px;
+    right:-70px;
+
+    pointer-events:none;
+}
+
+
+.login-card::after{
+
+    content:"";
+
+    position:absolute;
+
+    width:150px;
+    height:150px;
+
+    border-radius:50%;
+
+    background:
+    rgba(255,105,125,.07);
+
+    bottom:-80px;
+    left:-60px;
+
+    pointer-events:none;
+}
+
+
+.step{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:7px;
+
+    padding:9px 15px;
+
+    border-radius:22px;
+
+    border:1px solid #a9c5f8;
+
+    background:#edf4ff;
+
+    color:#2865d6;
+
+    font-size:12px;
+
+    font-weight:900;
+
+    letter-spacing:1px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.login-card h2{
+
+    margin-top:22px;
+
+    font-size:32px;
+
+    line-height:1.15;
+
+    letter-spacing:-.8px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.subtitle{
+
+    margin-top:10px;
+
+    color:#71809d;
+
+    font-size:16px;
+
+    line-height:1.5;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+/* =====================================================
+   FORM
+===================================================== */
+
+.form-group{
+
+    margin-top:24px;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.form-group label{
+
+    display:block;
+
+    margin-bottom:9px;
+
+    color:#34415e;
+
+    font-size:15px;
+
+    font-weight:850;
+}
+
+
+.input-wrap{
+
+    position:relative;
+}
+
+
+.input-icon{
+
+    position:absolute;
+
+    left:17px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    font-size:20px;
+
+    z-index:3;
+}
+
+
+input{
+
+    width:100%;
+
+    height:62px;
+
+    border-radius:18px;
+
+    border:
+    1px solid #c5d3eb;
+
+    outline:none;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #f5f8ff
+    );
+
+    color:#17213a;
+
+    font-size:17px;
+
+    font-weight:600;
+
+    padding:
+    0 17px 0 52px;
+
+    transition:.2s;
+
+    box-shadow:
+    inset 0 2px 5px rgba(35,65,120,.03);
+}
+
+
+input::placeholder{
+
+    color:#9aa7bc;
+
+    font-weight:500;
+}
+
+
+input:focus{
+
+    border-color:#4c7fe8;
+
+    background:#ffffff;
+
+    box-shadow:
+    0 0 0 4px rgba(54,111,230,.10);
+}
+
+
+/* =====================================================
+   MOBILE INPUT
+===================================================== */
+
+.mobile-wrap{
+
+    display:grid;
+
+    grid-template-columns:
+    94px 1fr;
+
+    gap:10px;
+}
+
+
+.country-code{
+
+    height:62px;
+
+    border-radius:18px;
+
+    border:
+    1px solid #aac5f6;
+
+    background:
+    linear-gradient(
+        145deg,
+        #edf4ff,
+        #e2ecff
+    );
 
     display:flex;
 
@@ -38,166 +576,406 @@ body{
 
     justify-content:center;
 
-    padding:20px;
-
-    color:#101a38;
-}
-
-.box{
-
-    width:100%;
-
-    max-width:520px;
-
-    background:#fff;
-
-    padding:28px;
-
-    border-radius:27px;
-
-    border:1.5px solid #bdd0f5;
-
-    box-shadow:
-    0 18px 45px rgba(40,88,175,.12);
-}
-
-.logo{
-
-    text-align:center;
-
-    font-size:32px;
-
-    font-weight:950;
-
-    color:#1760e8;
-
-    letter-spacing:-1px;
-}
-
-.subtitle{
-
-    text-align:center;
-
-    color:#71809d;
-
-    margin-top:6px;
-
-    font-size:14px;
-}
-
-h2{
-
-    margin-top:30px;
-
-    font-size:23px;
-}
-
-label{
-
-    display:block;
-
-    margin-top:18px;
-
-    margin-bottom:7px;
-
-    font-size:14px;
-
-    font-weight:800;
-
-    color:#354361;
-}
-
-input{
-
-    width:100%;
-
-    height:52px;
-
-    padding:0 15px;
-
-    border-radius:15px;
-
-    border:1px solid #ccd5e5;
-
-    background:#f8faff;
-
-    color:#101a38;
+    color:#2865d6;
 
     font-size:17px;
 
-    outline:none;
+    font-weight:900;
 }
 
-input:focus{
 
-    border-color:#2869e8;
+.mobile-wrap input{
 
-    box-shadow:
-    0 0 0 3px rgba(40,105,232,.10);
+    padding-left:18px;
 }
 
-button{
+
+/* =====================================================
+   CONTINUE BUTTON
+===================================================== */
+
+.continue-btn{
 
     width:100%;
 
-    height:53px;
+    min-height:64px;
 
-    margin-top:22px;
+    margin-top:28px;
 
     border:0;
 
-    border-radius:16px;
+    border-radius:20px;
 
     background:
-    linear-gradient(145deg,#2869e8,#4d7ff0);
+
+    linear-gradient(
+        100deg,
+        #1762e9,
+        #477bed,
+        #705cf0
+    );
 
     color:white;
 
-    font-size:17px;
+    font-size:19px;
 
-    font-weight:850;
+    font-weight:900;
 
     cursor:pointer;
 
     box-shadow:
-    0 9px 20px rgba(40,105,232,.20);
+
+    0 12px 28px
+    rgba(43,100,226,.28);
+
+    transition:.2s;
+
+    position:relative;
+
+    z-index:2;
 }
 
-button:active{
+
+.continue-btn:active{
 
     transform:scale(.98);
 }
 
-.note{
 
-    margin-top:18px;
+.continue-btn:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+}
+
+
+/* =====================================================
+   FEATURES
+===================================================== */
+
+.features{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:10px;
+
+    margin-top:25px;
+
+    padding-top:22px;
+
+    border-top:
+    1px solid #e2e8f3;
+
+    position:relative;
+
+    z-index:2;
+}
+
+
+.feature{
 
     text-align:center;
 
-    color:#7b8699;
+    color:#667590;
 
     font-size:12px;
 
-    line-height:1.5;
+    font-weight:700;
 }
 
-.error{
 
-    display:none;
+.feature-icon{
 
-    margin-top:12px;
+    width:42px;
+    height:42px;
 
-    padding:10px 12px;
+    margin:auto;
 
-    border-radius:12px;
+    border-radius:14px;
 
-    background:#fff0f0;
+    display:flex;
 
-    color:#d33c46;
+    align-items:center;
+    justify-content:center;
+
+    background:#edf4ff;
+
+    border:1px solid #c1d3f5;
+
+    font-size:19px;
+
+    margin-bottom:7px;
+}
+
+
+/* =====================================================
+   INFO
+===================================================== */
+
+.info-text{
+
+    text-align:center;
+
+    margin-top:25px;
+
+    color:#7a879e;
 
     font-size:13px;
 
-    font-weight:700;
+    line-height:1.6;
+
+    padding:0 8px;
+}
+
+
+.info-text strong{
+
+    color:#2865d6;
+}
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+
+    position:fixed;
+
+    left:50%;
+
+    bottom:35px;
+
+    transform:
+    translateX(-50%)
+    translateY(20px);
+
+    background:#17213a;
+
+    color:white;
+
+    padding:
+    13px 18px;
+
+    border-radius:14px;
+
+    font-size:14px;
+
+    font-weight:650;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:999;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.2);
+
+    white-space:nowrap;
+}
+
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media(max-width:600px){
+
+    .top-bar{
+
+        padding:
+        14px 12px 0;
+    }
+
+
+    .back-btn{
+
+        min-height:50px;
+
+        padding:
+        6px 15px 6px 6px;
+
+        font-size:14px;
+    }
+
+
+    .back-icon{
+
+        width:38px;
+        height:38px;
+
+        font-size:23px;
+    }
+
+
+    .page{
+
+        padding:
+        20px 12px
+        55px;
+    }
+
+
+    .brand{
+
+        margin-top:8px;
+
+        margin-bottom:20px;
+    }
+
+
+    .logo{
+
+        width:94px;
+        height:94px;
+
+        font-size:21px;
+    }
+
+
+    .brand h1{
+
+        font-size:31px;
+
+        margin-top:16px;
+    }
+
+
+    .brand p{
+
+        font-size:16px;
+    }
+
+
+    .login-card{
+
+        padding:24px 18px;
+
+        border-radius:25px;
+    }
+
+
+    .login-card h2{
+
+        font-size:27px;
+
+        margin-top:19px;
+    }
+
+
+    .subtitle{
+
+        font-size:14px;
+    }
+
+
+    .form-group{
+
+        margin-top:21px;
+    }
+
+
+    input,
+    .country-code{
+
+        height:58px;
+
+        border-radius:16px;
+    }
+
+
+    .mobile-wrap{
+
+        grid-template-columns:
+        82px 1fr;
+
+        gap:8px;
+    }
+
+
+    .continue-btn{
+
+        min-height:60px;
+
+        font-size:18px;
+
+        border-radius:18px;
+    }
+
+
+    .features{
+
+        gap:4px;
+
+        margin-top:22px;
+
+        padding-top:18px;
+    }
+
+
+    .feature{
+
+        font-size:10px;
+    }
+
+
+    .feature-icon{
+
+        width:38px;
+        height:38px;
+
+        border-radius:12px;
+
+        font-size:17px;
+    }
+
+}
+
+
+@media(max-width:360px){
+
+    .brand h1{
+
+        font-size:28px;
+    }
+
+
+    .login-card{
+
+        padding:
+        21px 15px;
+    }
+
+
+    .login-card h2{
+
+        font-size:24px;
+    }
+
+
+    .mobile-wrap{
+
+        grid-template-columns:
+        75px 1fr;
+    }
+
 }
 
 </style>
@@ -208,155 +986,322 @@ button:active{
 <body>
 
 
-<div class="box">
+<!-- =====================================================
+     BACK BUTTON
+===================================================== -->
 
-
-    <div class="logo">
-        RDX LUDO
-    </div>
-
-
-    <div class="subtitle">
-        Play · Compete · Enjoy
-    </div>
-
-
-    <h2>
-        Create / Login Account
-    </h2>
-
-
-    <!-- NAME -->
-
-    <label for="name">
-        Your Name
-    </label>
-
-    <input
-        id="name"
-        type="text"
-        maxlength="40"
-        autocomplete="name"
-        placeholder="Enter your name">
-
-
-    <!-- MOBILE -->
-
-    <label for="mobile">
-        Mobile Number
-    </label>
-
-    <input
-        id="mobile"
-        type="tel"
-        maxlength="10"
-        inputmode="numeric"
-        autocomplete="tel"
-        placeholder="10-digit mobile number">
-
-
-    <div
-        class="error"
-        id="error">
-    </div>
-
+<div class="top-bar">
 
     <button
-        onclick="loginUser()">
+        class="back-btn"
+        onclick="goBack()">
 
-        Continue
+        <span class="back-icon">
+            ←
+        </span>
+
+        <span>
+            Back to Phone Login
+        </span>
 
     </button>
 
+</div>
 
-    <div class="note">
 
-        Demo frontend login.<br>
+<!-- =====================================================
+     MAIN PAGE
+===================================================== -->
 
-        Real OTP verification के लिए approved
-        OTP/backend service connect करनी होगी।
+<main class="page">
 
-    </div>
 
+    <!-- BRAND -->
+
+    <section class="brand">
+
+
+        <div class="logo">
+
+            <span>
+                RDX
+            </span>
+
+        </div>
+
+
+        <h1>
+            RDX LUDO
+        </h1>
+
+
+        <p>
+            Play · Compete · Enjoy
+        </p>
+
+
+    </section>
+
+
+    <!-- =================================================
+         LOGIN CARD
+    ================================================== -->
+
+    <section class="login-card">
+
+
+        <span class="step">
+
+            ✨ STEP 2
+
+        </span>
+
+
+        <h2>
+            Create / Login Account
+        </h2>
+
+
+        <p class="subtitle">
+
+            Enter your details to continue
+            to your RDX LUDO account.
+
+        </p>
+
+
+        <!-- NAME -->
+
+        <div class="form-group">
+
+            <label for="name">
+                Your Name
+            </label>
+
+
+            <div class="input-wrap">
+
+                <span class="input-icon">
+                    👤
+                </span>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your name"
+                    autocomplete="name"
+                    maxlength="50">
+
+            </div>
+
+        </div>
+
+
+        <!-- MOBILE -->
+
+        <div class="form-group">
+
+            <label>
+                Mobile Number
+            </label>
+
+
+            <div class="mobile-wrap">
+
+
+                <div class="country-code">
+                    +91
+                </div>
+
+
+                <input
+                    type="tel"
+                    id="mobile"
+                    placeholder="10-digit mobile number"
+                    inputmode="numeric"
+                    maxlength="10"
+                    autocomplete="tel">
+
+            </div>
+
+        </div>
+
+
+        <!-- CONTINUE -->
+
+        <button
+            class="continue-btn"
+            id="continueBtn"
+            onclick="continueAccount()">
+
+            Continue
+
+        </button>
+
+
+        <!-- FEATURES -->
+
+        <div class="features">
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    🛡️
+                </div>
+
+                Secure Account
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ⚡
+                </div>
+
+                Quick Access
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    🎧
+                </div>
+
+                Support
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- INFO -->
+
+    <p class="info-text">
+
+        By continuing, you agree to use the platform
+        responsibly and securely.<br>
+
+        <strong>
+            Real OTP verification will be connected with the backend later.
+        </strong>
+
+    </p>
+
+
+</main>
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
 </div>
 
 
 <script>
 
+/* =====================================================
+   BACK TO PREVIOUS PAGE
+===================================================== */
 
-function loginUser(){
+function goBack(){
 
-    const nameInput =
-        document.getElementById("name");
+    /*
+       history.back() se user
+       previous Phone Login page
+       par chala jayega.
+    */
 
-    const mobileInput =
-        document.getElementById("mobile");
+    if(document.referrer){
 
-    const error =
-        document.getElementById("error");
+        window.history.back();
+
+    }else{
+
+        /*
+           Agar previous page available nahi hai
+           to aapka first login page yahan set karein.
+        */
+
+        window.location.href =
+            "./login.html";
+
+    }
+
+}
+
+
+/* =====================================================
+   CONTINUE ACCOUNT
+===================================================== */
+
+function continueAccount(){
 
 
     const name =
-        nameInput.value.trim();
+        document
+        .getElementById("name")
+        .value
+        .trim();
 
 
     const mobile =
-        mobileInput.value
+        document
+        .getElementById("mobile")
+        .value
         .replace(/\D/g,"");
 
 
-    /* NAME VALIDATION */
+    /* NAME CHECK */
 
     if(name.length < 2){
 
-        showError(
-            "कृपया अपना सही नाम दर्ज करें।"
+        showMessage(
+            "Please enter your real name"
         );
 
-        nameInput.focus();
+        document
+        .getElementById("name")
+        .focus();
 
         return;
+
     }
 
 
-    /* MOBILE VALIDATION */
+    /* MOBILE CHECK */
 
-    if(mobile.length !== 10){
+    if(!/^[6-9]\d{9}$/.test(mobile)){
 
-        showError(
-            "कृपया 10 digit mobile number दर्ज करें।"
+        showMessage(
+            "Please enter a valid 10-digit mobile number"
         );
 
-        mobileInput.focus();
+        document
+        .getElementById("mobile")
+        .focus();
 
         return;
+
     }
 
 
-    /* USER ID */
+    /*
+       Save user details temporarily.
 
-    let userId =
-        localStorage.getItem("rdxUserId");
-
-
-    if(!userId){
-
-        userId =
-            "RDX" +
-            Date.now().toString(36).toUpperCase() +
-            Math.random()
-            .toString(36)
-            .substring(2,6)
-            .toUpperCase();
-
-        localStorage.setItem(
-            "rdxUserId",
-            userId
-        );
-    }
-
-
-    /* SAVE USER DATA */
+       Backend connect hone ke baad
+       yahi data server/database me jayega.
+    */
 
     localStorage.setItem(
         "rdxUsername",
@@ -366,76 +1311,111 @@ function loginUser(){
 
     localStorage.setItem(
         "rdxMobile",
-        mobile
+        "+91 " + mobile
     );
 
 
-    localStorage.setItem(
-        "rdxLoggedIn",
-        "1"
+    /*
+       Continue ke baad abhi
+       aapke existing dashboard par bhej rahe hain.
+
+       Real OTP/backend connect hone par
+       yahan OTP verification page lagaya jayega.
+    */
+
+    showMessage(
+        "Details saved successfully"
     );
 
 
-    /* INITIAL VIRTUAL COINS */
+    setTimeout(function(){
 
-    if(
-        localStorage.getItem("rdxCoins") === null
-    ){
+        window.location.href =
+            "./dashboard.html";
 
-        localStorage.setItem(
-            "rdxCoins",
-            "1000"
-        );
-    }
-
-
-    /* GO DASHBOARD */
-
-    window.location.href =
-        "./dashboard.html";
+    },800);
 
 }
 
 
-/* ERROR */
-
-function showError(message){
-
-    const error =
-        document.getElementById("error");
-
-    error.textContent =
-        message;
-
-    error.style.display =
-        "block";
-
-}
-
-
-/* REMOVE ERROR WHEN TYPING */
-
-document
-.getElementById("name")
-.addEventListener(
-    "input",
-    clearError
-);
+/* =====================================================
+   MOBILE INPUT
+===================================================== */
 
 document
 .getElementById("mobile")
 .addEventListener(
     "input",
-    clearError
+    function(){
+
+        this.value =
+            this.value
+            .replace(/\D/g,"")
+            .slice(0,10);
+
+    }
 );
 
 
-function clearError(){
+/* =====================================================
+   NAME INPUT
+===================================================== */
 
-    document
-    .getElementById("error")
-    .style.display =
-    "none";
+document
+.getElementById("name")
+.addEventListener(
+    "input",
+    function(){
+
+        this.value =
+            this.value
+            .replace(/\s{2,}/g," ");
+
+    }
+);
+
+
+/* =====================================================
+   ENTER KEY
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Enter"){
+
+            continueAccount();
+
+        }
+
+    }
+);
+
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+function showMessage(message){
+
+    const toast =
+        document
+        .getElementById("toast");
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add("show");
+
+
+    setTimeout(function(){
+
+        toast.classList.remove("show");
+
+    },1800);
 
 }
 
