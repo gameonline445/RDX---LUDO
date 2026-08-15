@@ -1,1 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RDX Style Ludo Demo</title>
+<style>
+:root{
+  --blue:#2f6ff3; --blue2:#4b8cff; --ink:#14213d; --muted:#71809b;
+  --line:#c8d7f4; --bg:#f7faff; --card:#ffffff;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}
+button{font:inherit}
+.app{max-width:620px;margin:auto;min-height:100vh;padding-bottom:30px}
+.topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:#eef4ff;border-bottom:1px solid #d3e0f7;position:sticky;top:0;z-index:10}
+.brand{display:flex;align-items:center;gap:10px}
+.logo{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#fff,#dceaff);border:2px solid #a9c7fb;font-weight:900;color:#2870ee;font-size:12px}
+.brand b{font-size:18px}.brand span{display:block;font-size:11px;color:#71809b;margin-top:1px}
+.signin{border:1px solid #9ebcf1;border-radius:24px;background:#fff;padding:10px 17px;font-weight:700;color:#14213d}
+main{padding:14px 22px}
+.hero,.platform{border:1px solid var(--line);border-radius:26px;background:linear-gradient(135deg,#fdfefe,#e7efff);box-shadow:0 12px 32px rgba(58,103,190,.10)}
+.hero{padding:24px 22px 20px}
+.badge{display:inline-block;padding:7px 13px;border-radius:18px;border:1px solid #a9c7fb;color:#3b76db;background:#eaf2ff;font-size:12px;font-weight:800;letter-spacing:.5px}
+.hero h1{font-size:34px;line-height:1.05;margin:18px 0 6px;letter-spacing:-1.5px}
+.hero h1 em{font-style:normal;color:#2f70e9}.hero p{color:#7887a1;margin:0 0 20px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{border:1px solid #d0def5;border-radius:18px;text-align:center;padding:13px 4px;background:#edf4ff}
+.stat b{display:block;font-size:17px}.stat span{font-size:11px;color:#687893}
+.section-title{margin:28px 0 12px}
+.kicker{font-size:11px;letter-spacing:2px;color:#3576e8;font-weight:900}
+.section-title h2{font-size:19px;margin:5px 0}
+.live{float:right;margin-top:-31px;background:#dff8eb;border:1px solid #8fd5af;color:#2d8c5b;padding:5px 11px;border-radius:16px;font-size:11px;font-weight:800}
+.game{height:190px;border-radius:23px;overflow:hidden;position:relative;background:
+radial-gradient(circle at 25% 25%,#e84242 0 13%,transparent 14%),
+radial-gradient(circle at 75% 25%,#2d9b5d 0 13%,transparent 14%),
+radial-gradient(circle at 25% 75%,#e7bd34 0 13%,transparent 14%),
+radial-gradient(circle at 75% 75%,#3182dc 0 13%,transparent 14%),
+linear-gradient(45deg,#9b5b22,#d4b15a 25%,#efe5bd 26%,#f5f1df 50%,#ddd7b9 51%,#6c9f57 75%,#315e9b);
+border:1px solid #b7c7e4}
+.game:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(5,16,35,.75))}
+.game-content{position:absolute;left:18px;bottom:18px;z-index:2;color:white}
+.game-content small{background:rgba(0,0,0,.45);padding:6px 10px;border-radius:14px}
+.game-content h3{font-size:23px;margin:12px 0 3px}.game-content p{margin:0 0 10px;color:#e4ecff}
+.play{border:0;border-radius:22px;padding:10px 18px;background:#3c83ff;color:#fff;font-weight:800;box-shadow:0 8px 18px rgba(47,111,243,.35)}
+.coming{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding:14px;border:1px dashed #b9c7dd;border-radius:20px;background:#fff}
+.coming-icon{width:55px;height:55px;border-radius:16px;background:linear-gradient(135deg,#8a61d7,#29a9d9);display:grid;place-items:center;color:white;font-size:20px}
+.coming-left{display:flex;align-items:center;gap:14px}.coming b{font-size:15px}.coming p{margin:3px 0;color:#7a879d;font-size:13px}
+.soon{border:0;background:#f5f6f9;border-radius:20px;padding:8px 13px;color:#66738b;font-weight:700}
+.platform{margin-top:28px;padding:24px 20px}
+.platform h2{font-size:28px;margin:12px 0 4px}.platform>p{color:#71809b;margin:0 0 20px}
+.ref{border:1.5px solid #6a99ef;border-radius:22px;padding:20px;background:linear-gradient(135deg,#fdfdff,#edf4ff);display:flex;align-items:center;justify-content:space-between}
+.ref small{color:#60708c;font-weight:800;letter-spacing:1px}.ref b{display:block;font-size:34px;margin-top:5px}.ref span{color:#71809b}
+.arrow{width:48px;height:48px;border-radius:50%;display:grid;place-items:center;background:#367af1;color:white;font-size:24px;box-shadow:0 8px 20px rgba(54,122,241,.3)}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.feature{border:1px solid #dbe1ea;background:#fff;border-radius:18px;padding:18px;min-height:120px}
+.feature .ico{width:34px;height:34px;border-radius:10px;background:#eaf1ff;color:#3b7aee;display:grid;place-items:center;margin-bottom:12px}
+.feature b{display:block;font-size:15px}.feature p{font-size:12px;color:#71809b;line-height:1.4;margin:6px 0 0}
+.join{width:100%;border:0;background:linear-gradient(90deg,#286bf0,#3d86fa);color:white;border-radius:18px;padding:16px;margin-top:22px;font-size:17px;font-weight:850;box-shadow:0 10px 24px rgba(48,111,239,.28)}
+.demo-note{margin:16px 0 0;padding:12px 14px;border-radius:14px;background:#fff4d9;border:1px solid #f1d38a;color:#755b1c;font-size:12px;line-height:1.45}
+@media(max-width:480px){main{padding:12px 16px}.hero h1{font-size:31px}.game{height:180px}.platform h2{font-size:25px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="topbar">
+  <div class="brand">
+    <div class="logo">RDX<br>LUDO</div>
+    <div><b>RDX LUDO</b><span>Play · Demo · Earn</span></div>
+  </div>
+  <button class="signin" onclick="alert('Demo login screen — OTP backend will be added later.')">Sign In →</button>
+</header>
 
+<main>
+<section class="hero">
+  <span class="badge">✦ WELCOME TO RDX LUDO</span>
+  <h1>Play Ludo.<br><em>Play Smart.</em></h1>
+  <p>Welcome to your Ludo match platform</p>
+  <div class="stats">
+    <div class="stat"><b>2%</b><span>Referral</span></div>
+    <div class="stat"><b>24/7</b><span>Support</span></div>
+    <div class="stat"><b>Live</b><span>Chat & Call</span></div>
+  </div>
+</section>
+
+<div class="section-title">
+  <div class="kicker">GAME ARENA</div>
+  <h2>Pick Your Mode</h2>
+  <span class="live">1 LIVE</span>
+</div>
+
+<section class="game">
+  <div class="game-content">
+    <small>● LIVE NOW</small>
+    <h3>Ludo Classic</h3>
+    <p>Head-to-head match mode</p>
+    <button class="play" onclick="alert('Demo match screen will open here.')">▶ Play Now</button>
+  </div>
+</section>
+
+<section class="coming">
+  <div class="coming-left">
+    <div class="coming-icon">♟</div>
+    <div><b>1 Goti Ludo</b><p>Fast-paced single-token mode</p></div>
+  </div>
+  <button class="soon">🔒 SOON</button>
+</section>
+
+<section class="platform">
+  <span class="badge">✦ DEMO PLATFORM</span>
+  <h2>Built for Players</h2>
+  <p>Everything you need to manage your matches in one place.</p>
+
+  <div class="ref">
+    <div><small>REFERRAL PROGRAM</small><b>2<span style="font-size:20px;color:#3476eb">%</span></b><span>Refer</span></div>
+    <div class="arrow">↗</div>
+  </div>
+
+  <div class="features">
+    <div class="feature"><div class="ico">🏆</div><b>Skill Battles</b><p>Head-to-head Ludo match management.</p></div>
+    <div class="feature"><div class="ico">▣</div><b>Demo Wallet</b><p>Virtual balance and transaction screens.</p></div>
+    <div class="feature"><div class="ico">♧</div><b>Refer & Earn</b><p>Share your referral link with friends.</p></div>
+    <div class="feature"><div class="ico">◉</div><b>Live Support</b><p>Customer support and help section.</p></div>
+  </div>
+
+  <button class="join" onclick="alert('Demo registration screen — OTP/backend will be connected in the next step.')">↪ Join RDX LUDO</button>
+  <div class="demo-note"><b>DEMO MODE:</b> This starter contains no real-money payment, withdrawal, or cash-out functionality.</div>
+</section>
+</main>
+</div>
+</body>
+</html>
