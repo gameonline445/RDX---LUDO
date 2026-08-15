@@ -367,6 +367,7 @@ button{
     display:flex;
     justify-content:space-between;
     align-items:center;
+    cursor:pointer;
 }
 
 .referral small{
@@ -649,7 +650,8 @@ button{
 
     </div>
 
-    <button class="signin" onclick="showMessage('Sign In selected')">
+    <!-- SIGN IN → LOGIN -->
+    <button class="signin" onclick="goToLogin()">
         Sign In&nbsp; →
     </button>
 
@@ -764,9 +766,10 @@ button{
                     Fast · Instant · Fair battles
                 </p>
 
+                <!-- PLAY NOW → LOGIN -->
                 <button
                     class="play"
-                    onclick="showMessage('Play Now selected')">
+                    onclick="goToLogin()">
 
                     ▶ Play Now
 
@@ -852,7 +855,10 @@ button{
         </p>
 
 
-        <div class="referral">
+        <!-- REFERRAL PROGRAM → LOGIN -->
+        <div
+            class="referral"
+            onclick="goToLogin()">
 
             <div>
 
@@ -984,9 +990,10 @@ button{
         </div>
 
 
+        <!-- JOIN RDX LUDO → LOGIN -->
         <button
             class="join"
-            onclick="showMessage('Join RDX LUDO selected')">
+            onclick="goToLogin()">
 
             ↪ &nbsp; Join RDX LUDO
 
@@ -1005,6 +1012,15 @@ button{
 
 <script>
 
+/* ALL LOGIN BUTTONS GO TO login.html */
+function goToLogin(){
+
+    window.location.href = "./login.html";
+
+}
+
+
+/* Existing toast function kept */
 function showMessage(message){
 
     const toast =
@@ -1020,6 +1036,7 @@ function showMessage(message){
         toast.classList.remove("show");
 
     },1800);
+
 }
 
 </script>
