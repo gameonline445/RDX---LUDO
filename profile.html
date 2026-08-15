@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width,initial-scale=1">
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>RDX LUDO - Profile</title>
 
@@ -18,114 +18,203 @@
     padding:0;
 }
 
+html{
+    scroll-behavior:smooth;
+}
+
 body{
     font-family:-apple-system,BlinkMacSystemFont,
     "Segoe UI",Roboto,Arial,sans-serif;
+
     background:#f7f9ff;
     color:#101a38;
+
     min-height:100vh;
 }
 
-/* ================= HEADER ================= */
+
+/* =====================================================
+   TOP HEADER
+===================================================== */
 
 .top-header{
+
     height:70px;
-    background:linear-gradient(110deg,#eef4ff,#ffffff);
+
+    background:
+    linear-gradient(110deg,#eef4ff,#ffffff);
+
     border-bottom:1px solid #cbd8f0;
+
     display:flex;
     align-items:center;
     justify-content:space-between;
+
     padding:0 12px;
+
     position:sticky;
     top:0;
+
     z-index:100;
-    box-shadow:0 5px 18px rgba(36,75,150,.08);
+
+    box-shadow:
+    0 5px 18px rgba(36,75,150,.08);
 }
 
+
 .header-left{
+
     display:flex;
     align-items:center;
     gap:10px;
 }
 
-/* THREE LINE */
+
+/* MENU BUTTON */
 
 .menu-btn{
+
     width:46px;
     height:46px;
+
     border:0;
+
     border-radius:16px;
-    background:linear-gradient(145deg,#ff7165,#ff8a70);
+
+    background:
+    linear-gradient(145deg,#ff7165,#ff8a70);
+
     color:white;
+
     font-size:25px;
+
     display:flex;
     align-items:center;
     justify-content:center;
-    box-shadow:0 6px 15px rgba(255,93,80,.25);
+
+    box-shadow:
+    0 6px 15px rgba(255,93,80,.25);
+
     cursor:pointer;
+
+    -webkit-tap-highlight-color:transparent;
 }
 
-/* LOGO */
+
+/* RDX LOGO */
 
 .logo{
+
     width:45px;
     height:45px;
+
     border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#e7efff);
+
+    background:
+    linear-gradient(145deg,#ffffff,#e7efff);
+
     border:3px solid #d3e1ff;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     color:#1762df;
+
     font-size:12px;
     font-weight:900;
-    box-shadow:0 5px 12px rgba(36,93,190,.15);
+
+    box-shadow:
+    0 5px 12px rgba(36,93,190,.15);
 }
+
 
 /* HEADER RIGHT */
 
 .header-right{
+
     display:flex;
     align-items:center;
+
     gap:6px;
 }
 
+
 .header-icon{
+
     width:44px;
     height:44px;
+
     border:0;
+
     border-radius:16px;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     font-size:20px;
+
     color:white;
-    box-shadow:0 6px 15px rgba(0,0,0,.12);
+
+    box-shadow:
+    0 6px 15px rgba(0,0,0,.12);
+
+    cursor:pointer;
+
+    -webkit-tap-highlight-color:transparent;
 }
+
+
+/* NOTIFICATION */
 
 .notification{
-    background:linear-gradient(145deg,#746df4,#817eff);
+
+    background:
+    linear-gradient(145deg,#746df4,#817eff);
 }
+
+
+/* WALLET */
 
 .wallet-top{
-    background:linear-gradient(145deg,#20c36b,#43d77e);
+
+    background:
+    linear-gradient(145deg,#20c36b,#43d77e);
+
     min-width:48px;
+
     padding:0;
 }
+
+
+/* REDEEM */
 
 .redeem-top{
-    background:linear-gradient(145deg,#ff8a35,#ffad45);
+
+    background:
+    linear-gradient(145deg,#ff8a35,#ffad45);
+
     min-width:48px;
+
     padding:0;
 }
 
-/* ================= SIDE MENU ================= */
+
+/* =====================================================
+   SIDE MENU
+===================================================== */
 
 .menu-overlay{
+
     position:fixed;
+
     inset:0;
+
     background:rgba(0,0,0,.35);
+
     z-index:250;
+
     display:none;
 }
 
@@ -133,17 +222,28 @@ body{
     display:block;
 }
 
+
 .menu-panel{
+
     position:fixed;
+
     top:0;
     left:-310px;
+
     width:300px;
     height:100vh;
+
     background:white;
+
     z-index:300;
+
     padding:25px 18px;
-    box-shadow:10px 0 35px rgba(0,0,0,.15);
+
+    box-shadow:
+    10px 0 35px rgba(0,0,0,.15);
+
     transition:.3s ease;
+
     overflow-y:auto;
 }
 
@@ -151,254 +251,1118 @@ body{
     left:0;
 }
 
+
 /* MENU HEADER */
 
 .menu-title{
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
+
     padding-bottom:22px;
+
     margin-bottom:18px;
+
     border-bottom:1px solid #e3e8f2;
 }
 
+
 .menu-brand{
+
     display:flex;
+
     align-items:center;
+
     gap:12px;
 }
 
+
 .menu-logo{
+
     width:50px;
     height:50px;
+
     border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#e7efff);
+
+    background:
+    linear-gradient(145deg,#ffffff,#e7efff);
+
     border:3px solid #d3e1ff;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     color:#1762df;
+
     font-size:13px;
+
     font-weight:900;
 }
+
 
 .menu-brand h2{
     font-size:20px;
 }
 
 .menu-brand p{
+
     color:#71809d;
+
     font-size:12px;
+
     margin-top:3px;
 }
 
+
 .close-menu{
+
     border:0;
+
     background:#eef2fa;
+
     width:42px;
     height:42px;
+
     border-radius:50%;
+
     font-size:25px;
+
     color:#66738d;
+
     cursor:pointer;
 }
 
-/* MENU ITEMS */
+
+/* MENU ITEM */
 
 .menu-item{
+
     width:100%;
+
     border:1px solid #e0e5ef;
+
     background:#fafbfe;
+
     padding:15px 16px;
+
     border-radius:17px;
+
     margin-bottom:12px;
+
     text-align:left;
+
     font-size:17px;
+
     color:#182440;
+
     cursor:pointer;
+
     display:flex;
+
     align-items:center;
+
     gap:14px;
+
     min-height:58px;
 }
 
-.menu-item:hover{
-    background:#f0f5ff;
+.menu-item:active{
+    transform:scale(.98);
 }
+
 
 .menu-icon{
+
     width:40px;
     height:40px;
+
     border-radius:13px;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
+
     background:#e8efff;
+
     font-size:20px;
+
+    flex-shrink:0;
 }
 
-.menu-item span:last-child{
+
+.menu-item span:nth-child(2){
     flex:1;
 }
 
-/* ================= MAIN ================= */
+
+/* =====================================================
+   MAIN
+===================================================== */
 
 .main{
-    max-width:650px;
-    margin:auto;
-    padding:25px 18px 105px;
-}
 
-.page-title{
-    margin-top:20px;
-    font-size:27px;
-}
-
-/* PROFILE */
-
-.profile{
-    background:linear-gradient(135deg,#eef4ff,#ffffff);
-    border:1px solid #b9cdfc;
-    border-radius:24px;
-    padding:25px;
-    margin-top:18px;
-    text-align:center;
-    box-shadow:0 12px 30px rgba(40,88,175,.08);
-}
-
-.avatar{
-    width:85px;
-    height:85px;
-    border-radius:50%;
-    margin:auto;
-    background:linear-gradient(145deg,#1762df,#4385ee);
-    color:white;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:30px;
-    font-weight:800;
-    box-shadow:0 8px 20px rgba(40,105,232,.25);
-}
-
-.profile h2{
-    margin-top:14px;
-}
-
-.profile p{
-    margin-top:5px;
-    color:#71809d;
-}
-
-/* ROWS */
-
-.row{
-    background:white;
-    border:1px solid #d5deed;
-    border-radius:20px;
-    padding:20px;
-    margin-top:15px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.row span{
-    color:#52627f;
-}
-
-.row b{
-    color:#1762df;
-}
-
-/* LOGOUT */
-
-.logout{
     width:100%;
-    padding:15px;
-    border-radius:18px;
-    border:1px solid #e1baba;
-    background:#fff7f7;
-    color:#b22;
-    font-weight:800;
-    margin-top:20px;
-    font-size:16px;
+
+    max-width:650px;
+
+    margin:auto;
+
+    padding:
+    22px 12px
+    115px;
+}
+
+
+/* =====================================================
+   PROFILE CARD
+===================================================== */
+
+.profile-card{
+
+    border:1px solid #b9cdfc;
+
+    border-radius:25px;
+
+    padding:20px;
+
+    background:
+    radial-gradient(
+        circle at 100% 0%,
+        #dce8ff,
+        transparent 42%
+    ),
+    linear-gradient(
+        135deg,
+        #eef4ff,
+        #ffffff
+    );
+
+    box-shadow:
+    0 12px 30px rgba(40,88,175,.08);
+}
+
+
+/* PROFILE TOP */
+
+.profile-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:12px;
+}
+
+
+.profile-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:8px 13px;
+
+    border-radius:20px;
+
+    border:1px solid #8fb2f5;
+
+    background:#edf4ff;
+
+    color:#2865d6;
+
+    font-size:12px;
+
+    font-weight:850;
+
+    letter-spacing:.8px;
+}
+
+
+/* EDIT BUTTON */
+
+.edit-btn{
+
+    border:1px solid #aebfe2;
+
+    background:rgba(255,255,255,.55);
+
+    color:#1d2a45;
+
+    padding:9px 15px;
+
+    border-radius:20px;
+
+    font-size:14px;
+
+    font-weight:750;
+
     cursor:pointer;
 }
 
-/* ================= BOTTOM NAV ================= */
+
+/* PROFILE DETAILS */
+
+.profile-details{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    margin-top:18px;
+}
+
+
+.avatar{
+
+    width:76px;
+    height:76px;
+
+    flex-shrink:0;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #1762df,
+        #4385ee
+    );
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:27px;
+
+    font-weight:800;
+
+    box-shadow:
+    0 8px 20px rgba(40,105,232,.25);
+}
+
+
+.profile-info{
+    min-width:0;
+}
+
+
+.profile-info h2{
+
+    font-size:22px;
+
+    line-height:1.15;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+}
+
+
+.mobile-number{
+
+    margin-top:6px;
+
+    color:#71809d;
+
+    font-size:14px;
+}
+
+
+/* KYC */
+
+.kyc-btn{
+
+    margin-top:10px;
+
+    border:0;
+
+    border-radius:22px;
+
+    padding:9px 15px;
+
+    background:
+    linear-gradient(
+        90deg,
+        #2162e9,
+        #3976ed
+    );
+
+    color:white;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 7px 16px rgba(34,99,233,.22);
+}
+
+
+/* =====================================================
+   REFERRAL APPLIED
+===================================================== */
+
+.referral-applied{
+
+    margin-top:18px;
+
+    padding:18px;
+
+    border:1px solid #c4d2eb;
+
+    border-radius:22px;
+
+    background:
+    linear-gradient(
+        135deg,
+        #ffffff,
+        #f5f8ff
+    );
+
+    box-shadow:
+    0 8px 22px rgba(30,60,120,.05);
+}
+
+
+.referral-head{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+}
+
+
+.referral-icon{
+
+    width:43px;
+    height:43px;
+
+    border-radius:13px;
+
+    background:#e4edff;
+
+    border:1px solid #b8cbee;
+
+    color:#2865d6;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:20px;
+}
+
+
+.referral-head h3{
+
+    font-size:17px;
+}
+
+
+.referral-head p{
+
+    margin-top:3px;
+
+    color:#71809d;
+
+    font-size:12px;
+}
+
+
+.referral-code{
+
+    margin-top:14px;
+
+    min-height:58px;
+
+    border-radius:17px;
+
+    background:#ffffff;
+
+    border:1px solid #e1e6ef;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:8px 9px 8px 15px;
+}
+
+
+.referral-code strong{
+
+    font-size:18px;
+
+    letter-spacing:1.5px;
+
+    color:#26324b;
+}
+
+
+.code-check{
+
+    width:45px;
+    height:45px;
+
+    border-radius:14px;
+
+    background:#a8c6fa;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:20px;
+}
+
+
+/* =====================================================
+   SECTION TITLE
+===================================================== */
+
+.section-label{
+
+    margin-top:22px;
+
+    margin-bottom:10px;
+
+    color:#2865d6;
+
+    font-size:13px;
+
+    font-weight:850;
+
+    letter-spacing:1.8px;
+}
+
+
+/* =====================================================
+   STATS
+===================================================== */
+
+.stats{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:10px;
+}
+
+
+.stat-card{
+
+    min-height:120px;
+
+    padding:14px 7px;
+
+    border:1px solid #cbd7eb;
+
+    border-radius:20px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #f9fbff,
+        #ffffff
+    );
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+}
+
+
+.stat-icon{
+
+    width:39px;
+    height:39px;
+
+    border-radius:12px;
+
+    background:#e5edff;
+
+    border:1px solid #b9cbed;
+
+    color:#3672db;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:18px;
+}
+
+
+.stat-card small{
+
+    margin-top:8px;
+
+    color:#71809d;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    letter-spacing:.7px;
+}
+
+
+.stat-card strong{
+
+    margin-top:4px;
+
+    font-size:18px;
+
+    color:#101a38;
+}
+
+
+/* =====================================================
+   QUICK ACTIONS
+===================================================== */
+
+.quick-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(2,1fr);
+
+    gap:12px;
+}
+
+
+.quick-card{
+
+    min-height:137px;
+
+    border:1px solid #b9ccef;
+
+    border-radius:21px;
+
+    padding:16px;
+
+    background:
+    radial-gradient(
+        circle at 100% 0%,
+        #e3edff,
+        transparent 55%
+    ),
+    #ffffff;
+
+    cursor:pointer;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    box-shadow:
+    0 8px 20px rgba(30,60,120,.05);
+}
+
+
+.quick-top{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+}
+
+
+.quick-icon{
+
+    width:42px;
+    height:42px;
+
+    border-radius:13px;
+
+    background:#e3edff;
+
+    border:1px solid #b8cbed;
+
+    color:#3470da;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:20px;
+}
+
+
+.quick-arrow{
+
+    width:30px;
+    height:30px;
+
+    border-radius:50%;
+
+    background:#ffffff;
+
+    border:1px solid #e2e6ee;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    color:#6b7890;
+
+    font-size:17px;
+}
+
+
+.quick-card h3{
+
+    margin-top:10px;
+
+    font-size:17px;
+}
+
+
+.quick-card p{
+
+    margin-top:4px;
+
+    color:#75819a;
+
+    font-size:12px;
+}
+
+
+/* REFERRAL REDEEM FULL CARD */
+
+.redeem-card{
+
+    margin-top:12px;
+
+    min-height:82px;
+
+    border:1px solid #b9ccef;
+
+    border-radius:21px;
+
+    padding:14px 16px;
+
+    background:
+    linear-gradient(
+        110deg,
+        #eaf1ff,
+        #ffffff
+    );
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    cursor:pointer;
+}
+
+
+.redeem-card .quick-icon{
+    flex-shrink:0;
+}
+
+
+.redeem-content{
+
+    flex:1;
+}
+
+
+.redeem-content h3{
+
+    font-size:17px;
+}
+
+
+.redeem-content p{
+
+    margin-top:4px;
+
+    color:#75819a;
+
+    font-size:12px;
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+.logout{
+
+    width:100%;
+
+    min-height:62px;
+
+    margin-top:16px;
+
+    border-radius:22px;
+
+    border:1px solid #e4b8b8;
+
+    background:
+    #fff7f7;
+
+    color:#bf3030;
+
+    font-size:17px;
+
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+
+/* =====================================================
+   BOTTOM NAV
+===================================================== */
 
 .bottom{
+
     position:fixed;
+
     bottom:0;
     left:0;
     right:0;
+
     height:78px;
-    background:rgba(255,255,255,.97);
+
+    background:
+    rgba(255,255,255,.97);
+
     border-top:1px solid #ccd7eb;
+
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+    repeat(4,1fr);
+
     padding:8px 5px;
+
     z-index:200;
+
     backdrop-filter:blur(15px);
+
+    box-shadow:
+    0 -5px 20px rgba(30,65,130,.08);
 }
 
+
 .bottom a{
+
     text-align:center;
+
     text-decoration:none;
+
     color:#65728d;
+
     font-size:13px;
+
     display:flex;
+
     flex-direction:column;
+
     align-items:center;
+
     justify-content:center;
+
     gap:3px;
 }
 
+
 .bottom b{
+
     width:40px;
     height:40px;
+
     border-radius:14px;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
+
     font-size:21px;
 }
 
-.active{
-    color:#2869e8!important;
+
+.bottom .active{
+
+    color:#2869e8 !important;
+
     font-weight:700;
 }
 
-.active b{
-    background:#536df5;
+
+.bottom .active b{
+
+    background:
+    #536df5;
+
     color:white;
-    box-shadow:0 7px 17px rgba(83,109,245,.3);
+
+    box-shadow:
+    0 7px 17px rgba(83,109,245,.3);
 }
 
-/* ================= MOBILE ================= */
+
+/* =====================================================
+   TOAST
+===================================================== */
+
+.toast{
+
+    position:fixed;
+
+    left:50%;
+    top:85px;
+
+    transform:
+    translateX(-50%)
+    translateY(-15px);
+
+    background:#182440;
+
+    color:white;
+
+    padding:12px 17px;
+
+    border-radius:14px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:500;
+
+    font-size:14px;
+
+    white-space:nowrap;
+}
+
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
 
 @media(max-width:700px){
 
-    .menu-panel{
-        width:290px;
-        left:-300px;
+    .top-header{
+
+        height:70px;
+
+        padding:0 10px;
     }
 
-    .main{
-        padding:22px 12px 105px;
-    }
 
-    .page-title{
+    .menu-btn{
+
+        width:46px;
+        height:46px;
+
         font-size:25px;
     }
 
-    .profile{
-        padding:22px;
+
+    .logo{
+
+        width:45px;
+        height:45px;
     }
 
-    .row{
+
+    .header-right{
+
+        gap:5px;
+    }
+
+
+    .header-icon{
+
+        width:43px;
+        height:43px;
+
+        border-radius:15px;
+
+        font-size:19px;
+    }
+
+
+    .main{
+
+        padding:
+        18px 12px
+        105px;
+    }
+
+
+    .profile-card{
+
         padding:18px;
+
+        border-radius:23px;
+    }
+
+
+    .profile-details{
+
+        gap:11px;
+    }
+
+
+    .avatar{
+
+        width:68px;
+        height:68px;
+
+        font-size:24px;
+    }
+
+
+    .profile-info h2{
+
+        font-size:20px;
+    }
+
+
+    .mobile-number{
+
+        font-size:13px;
+    }
+
+
+    .kyc-btn{
+
+        padding:8px 13px;
+
+        font-size:12px;
+    }
+
+
+    .stats{
+
+        gap:7px;
+    }
+
+
+    .stat-card{
+
+        min-height:115px;
+
+        padding:10px 4px;
+    }
+
+
+    .stat-icon{
+
+        width:37px;
+        height:37px;
+    }
+
+
+    .quick-card{
+
+        min-height:132px;
+
+        padding:14px;
+    }
+
+
+    .bottom{
+
+        height:78px;
+    }
+
+}
+
+
+@media(max-width:360px){
+
+    .header-icon{
+
+        width:39px;
+        height:39px;
+    }
+
+    .menu-btn{
+
+        width:42px;
+        height:42px;
+    }
+
+    .logo{
+
+        width:42px;
+        height:42px;
+    }
+
+    .profile-details{
+
+        align-items:flex-start;
+    }
+
+    .stats{
+
+        gap:5px;
+    }
+
+    .stat-card small{
+
+        font-size:9px;
     }
 
 }
@@ -411,27 +1375,34 @@ body{
 <body>
 
 
-<!-- ================= TOP HEADER ================= -->
+<!-- =====================================================
+     TOP HEADER
+===================================================== -->
 
 <header class="top-header">
 
+
     <div class="header-left">
 
-        <!-- THREE LINE -->
+
+        <!-- THREE LINE MENU -->
 
         <button
             class="menu-btn"
-            onclick="openMenu()">
+            onclick="openMenu()"
+            aria-label="Open menu">
 
             ☰
 
         </button>
 
 
-        <!-- LOGO -->
+        <!-- RDX LOGO -->
 
         <div class="logo">
+
             RDX
+
         </div>
 
     </div>
@@ -439,11 +1410,13 @@ body{
 
     <div class="header-right">
 
+
         <!-- NOTIFICATION -->
 
         <button
             class="header-icon notification"
-            onclick="showMessage('No new notifications')">
+            onclick="showMessage('No new notifications')"
+            aria-label="Notifications">
 
             🔔
 
@@ -454,7 +1427,8 @@ body{
 
         <button
             class="header-icon wallet-top"
-            onclick="goWallet()">
+            onclick="goWallet()"
+            aria-label="Wallet">
 
             💰
 
@@ -465,18 +1439,22 @@ body{
 
         <button
             class="header-icon redeem-top"
-            onclick="goRedeem()">
+            onclick="goRedeem()"
+            aria-label="Redeem">
 
             🎁
 
         </button>
+
 
     </div>
 
 </header>
 
 
-<!-- ================= MENU OVERLAY ================= -->
+<!-- =====================================================
+     MENU OVERLAY
+===================================================== -->
 
 <div
     class="menu-overlay"
@@ -485,28 +1463,42 @@ body{
 </div>
 
 
-<!-- ================= SIDE MENU ================= -->
+<!-- =====================================================
+     SIDE MENU
+===================================================== -->
 
 <div
     class="menu-panel"
     id="menuPanel">
 
 
+    <!-- MENU HEADER -->
+
     <div class="menu-title">
+
 
         <div class="menu-brand">
 
+
             <div class="menu-logo">
+
                 RDX
+
             </div>
+
 
             <div>
 
-                <h2>RDX LUDO</h2>
+                <h2>
+                    RDX LUDO
+                </h2>
 
-                <p>Play · Win · Earn</p>
+                <p>
+                    Play · Win · Earn
+                </p>
 
             </div>
+
 
         </div>
 
@@ -518,6 +1510,7 @@ body{
             ×
 
         </button>
+
 
     </div>
 
@@ -532,14 +1525,18 @@ body{
             🏠
         </div>
 
-        <span>Home</span>
+        <span>
+            Home
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
 
-    <!-- PROFILE -->
+    <!-- MY PROFILE -->
 
     <button
         class="menu-item"
@@ -549,14 +1546,18 @@ body{
             👤
         </div>
 
-        <span>My Profile</span>
+        <span>
+            My Profile
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
 
-    <!-- WALLET -->
+    <!-- MY WALLET -->
 
     <button
         class="menu-item"
@@ -566,14 +1567,18 @@ body{
             💰
         </div>
 
-        <span>My Wallet</span>
+        <span>
+            My Wallet
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
 
-    <!-- REFER -->
+    <!-- REFER & EARN -->
 
     <button
         class="menu-item"
@@ -583,9 +1588,13 @@ body{
             🎁
         </div>
 
-        <span>Refer & Earn</span>
+        <span>
+            Refer & Earn
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
@@ -600,9 +1609,13 @@ body{
             🕘
         </div>
 
-        <span>History</span>
+        <span>
+            History
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
@@ -617,9 +1630,13 @@ body{
             🔔
         </div>
 
-        <span>Notifications</span>
+        <span>
+            Notifications
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
@@ -634,9 +1651,13 @@ body{
             🎧
         </div>
 
-        <span>Support</span>
+        <span>
+            Support
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
 
@@ -651,148 +1672,526 @@ body{
             🚪
         </div>
 
-        <span>Logout</span>
+        <span>
+            Logout
+        </span>
 
-        <span>›</span>
+        <span>
+            ›
+        </span>
 
     </button>
+
 
 </div>
 
 
-<!-- ================= MAIN ================= -->
+<!-- =====================================================
+     MAIN
+===================================================== -->
 
 <main class="main">
 
 
-    <h2 class="page-title">
-        Profile
-    </h2>
+    <!-- =================================================
+         MY PROFILE
+    ================================================== -->
+
+    <section class="profile-card">
 
 
-    <!-- PROFILE -->
+        <div class="profile-top">
 
-    <section class="profile">
 
-        <div class="avatar">
-            R
+            <span class="profile-badge">
+
+                MY PROFILE
+
+            </span>
+
+
+            <button
+                class="edit-btn"
+                onclick="editProfile()">
+
+                ✎ Edit
+
+            </button>
+
+
         </div>
 
-        <h2 id="profileName">
-            RDX User
-        </h2>
 
-        <p>
-            RDX LUDO Member
-        </p>
+        <div class="profile-details">
+
+
+            <div
+                class="avatar"
+                id="avatar">
+
+                R
+
+            </div>
+
+
+            <div class="profile-info">
+
+
+                <h2 id="profileName">
+                    RDX User
+                </h2>
+
+
+                <p
+                    class="mobile-number"
+                    id="mobileNumber">
+
+                    ☎ +91 XXXXX XXXXX
+
+                </p>
+
+
+                <button
+                    class="kyc-btn"
+                    onclick="completeKYC()">
+
+                    Complete KYC
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
 
     </section>
 
 
-    <!-- REFERRAL -->
+    <!-- =================================================
+         REFERRAL APPLIED
+    ================================================== -->
 
-    <div class="row">
+    <section
+        class="referral-applied"
+        id="referral">
 
-        <span>
-            Referral Program
-        </span>
 
-        <b>
-            2%
-        </b>
+        <div class="referral-head">
+
+
+            <div class="referral-icon">
+                🎟
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Referral Applied
+                </h3>
+
+                <p>
+                    This code is locked to your account
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="referral-code">
+
+
+            <strong id="referralCode">
+                GTOEY2
+            </strong>
+
+
+            <div class="code-check">
+                ✓
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         YOUR STATS
+    ================================================== -->
+
+    <div class="section-label">
+
+        YOUR STATS
 
     </div>
 
 
-    <!-- STATUS -->
+    <section class="stats">
 
-    <div class="row">
 
-        <span>
-            Account Status
-        </span>
+        <!-- COIN WON -->
 
-        <b>
-            Active
-        </b>
+        <div class="stat-card">
+
+
+            <div class="stat-icon">
+                ▣
+            </div>
+
+
+            <small>
+                COIN WON
+            </small>
+
+
+            <strong id="coinWon">
+                ₹0
+            </strong>
+
+
+        </div>
+
+
+        <!-- GAME PLAYED -->
+
+        <div class="stat-card">
+
+
+            <div class="stat-icon">
+                🎮
+            </div>
+
+
+            <small>
+                GAME PLAYED
+            </small>
+
+
+            <strong id="gamePlayed">
+                0
+            </strong>
+
+
+        </div>
+
+
+        <!-- REFERRAL -->
+
+        <div class="stat-card">
+
+
+            <div class="stat-icon">
+                🏆
+            </div>
+
+
+            <small>
+                REFERRAL
+            </small>
+
+
+            <strong id="referralCount">
+                0
+            </strong>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         QUICK ACTIONS
+    ================================================== -->
+
+    <div class="section-label">
+
+        QUICK ACTIONS
 
     </div>
 
 
-    <!-- LOGOUT -->
+    <section class="quick-grid">
+
+
+        <!-- HISTORY -->
+
+        <div
+            class="quick-card"
+            onclick="goHistory()">
+
+
+            <div class="quick-top">
+
+
+                <div class="quick-icon">
+                    🕘
+                </div>
+
+
+                <div class="quick-arrow">
+                    ↗
+                </div>
+
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    History
+                </h3>
+
+                <p>
+                    Battles & payments
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- SUPPORT -->
+
+        <div
+            class="quick-card"
+            onclick="goSupport()">
+
+
+            <div class="quick-top">
+
+
+                <div class="quick-icon">
+                    🎧
+                </div>
+
+
+                <div class="quick-arrow">
+                    ↗
+                </div>
+
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Support
+                </h3>
+
+                <p>
+                    Chat & help
+                </p>
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         REFERRAL REDEEM
+    ================================================== -->
+
+    <section
+        class="redeem-card"
+        onclick="goRedeem()">
+
+
+        <div class="quick-icon">
+            🎁
+        </div>
+
+
+        <div class="redeem-content">
+
+            <h3>
+                Referral Redeem
+            </h3>
+
+            <p>
+                Move referral earnings to wallet
+            </p>
+
+        </div>
+
+
+        <div class="quick-arrow">
+            ↗
+        </div>
+
+
+    </section>
+
+
+    <!-- =================================================
+         LOGOUT
+    ================================================== -->
 
     <button
         class="logout"
         onclick="logout()">
 
-        🚪 &nbsp; Sign Out
+        ⇥ &nbsp; Logout
 
     </button>
+
 
 </main>
 
 
-<!-- ================= BOTTOM NAV ================= -->
+<!-- =====================================================
+     BOTTOM NAVIGATION
+===================================================== -->
 
 <nav class="bottom">
 
 
-    <a href="dashboard.html">
+    <!-- HOME -->
 
-        <b>⌂</b>
+    <a
+        href="dashboard.html">
+
+        <b>
+            🏠
+        </b>
 
         Home
 
     </a>
 
 
-    <a href="wallet.html">
+    <!-- WALLET -->
 
-        <b>▣</b>
+    <a
+        href="wallet.html">
+
+        <b>
+            💰
+        </b>
 
         Wallet
 
     </a>
 
 
-    <a href="support.html">
+    <!-- SUPPORT -->
 
-        <b>◉</b>
+    <a
+        href="support.html">
+
+        <b>
+            🎧
+        </b>
 
         Support
 
     </a>
 
 
+    <!-- PROFILE -->
+
     <a
         class="active"
         href="profile.html">
 
-        <b>♙</b>
+        <b>
+            👤
+        </b>
 
         Profile
 
     </a>
 
+
 </nav>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
 
 
 <script>
 
-/* ================= USERNAME ================= */
+/* =====================================================
+   USER DATA
+===================================================== */
 
 const savedUsername =
     localStorage.getItem("rdxUsername");
 
+const savedMobile =
+    localStorage.getItem("rdxMobile");
+
+const savedReferral =
+    localStorage.getItem("rdxReferral");
+
+
+/* USERNAME */
+
 if(savedUsername){
 
-    document.getElementById("profileName").textContent =
+    document
+    .getElementById("profileName")
+    .textContent =
         savedUsername;
+
+    document
+    .getElementById("avatar")
+    .textContent =
+        savedUsername
+        .charAt(0)
+        .toUpperCase();
 
 }
 
 
-/* ================= MENU ================= */
+/* MOBILE */
+
+if(savedMobile){
+
+    document
+    .getElementById("mobileNumber")
+    .textContent =
+        "☎ " + savedMobile;
+
+}
+
+
+/* REFERRAL */
+
+if(savedReferral){
+
+    document
+    .getElementById("referralCode")
+    .textContent =
+        savedReferral;
+
+}
+
+
+/* =====================================================
+   SIDE MENU
+===================================================== */
 
 function openMenu(){
 
@@ -820,7 +2219,9 @@ function closeMenu(){
 }
 
 
-/* ================= NAVIGATION ================= */
+/* =====================================================
+   NAVIGATION
+===================================================== */
 
 function goHome(){
 
@@ -892,7 +2293,35 @@ function goNotifications(){
 }
 
 
-/* ================= LOGOUT ================= */
+/* =====================================================
+   EDIT PROFILE
+===================================================== */
+
+function editProfile(){
+
+    showMessage(
+        "Profile editing will be available soon"
+    );
+
+}
+
+
+/* =====================================================
+   KYC
+===================================================== */
+
+function completeKYC(){
+
+    showMessage(
+        "KYC verification will be available soon"
+    );
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
 
 function logout(){
 
@@ -904,13 +2333,46 @@ function logout(){
 }
 
 
-/* ================= MESSAGE ================= */
+/* =====================================================
+   TOAST
+===================================================== */
 
 function showMessage(message){
 
-    alert(message);
+    const toast =
+        document.getElementById("toast");
+
+    toast.textContent =
+        message;
+
+    toast.classList.add("show");
+
+
+    setTimeout(function(){
+
+        toast.classList.remove("show");
+
+    },1800);
 
 }
+
+
+/* =====================================================
+   ESC KEY CLOSE MENU
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(event.key === "Escape"){
+
+            closeMenu();
+
+        }
+
+    }
+);
 
 </script>
 
