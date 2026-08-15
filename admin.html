@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>RDX LUDO - Admin Panel</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+    background:#f3f6ff;
+    color:#111b3a;
+}
+
+button,input,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+    border:0;
+}
+
+.login{
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+    background:
+    radial-gradient(circle at top left,#cfe0ff,transparent 40%),
+    radial-gradient(circle at bottom right,#ffd8e8,transparent 40%),
+    #f5f7ff;
+}
+
+.login-box{
+    width:100%;
+    max-width:430px;
+    background:white;
+    border:1px solid #d7e0f3;
+    border-radius:30px;
+    padding:35px 25px;
+    box-shadow:0 20px 60px rgba(40,80,180,.15);
+}
+
+.logo{
+    width:80px;
+    height:80px;
+    margin:auto;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(135deg,#2875ff,#713cff);
+    color:white;
+    font-weight:900;
+    font-size:20px;
+}
+
+.login-box h1{
+    text-align:center;
+    margin-top:15px;
+}
+
+.login-box p{
+    text-align:center;
+    color:#75819b;
+    margin:8px 0 25px;
+}
+
+.field{
+    margin-bottom:15px;
+}
+
+.field label{
+    display:block;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+.field input,
+.field select{
+    width:100%;
+    padding:14px 16px;
+    border:1px solid #ccd6ea;
+    border-radius:14px;
+    outline:none;
+    background:#fafcff;
+}
+
+.field input:focus,
+.field select:focus{
+    border-color:#3775ef;
+}
+
+.primary{
+    width:100%;
+    padding:15px;
+    border-radius:15px;
+    background:linear-gradient(135deg,#2869ed,#5b4df5);
+    color:white;
+    font-weight:800;
+    box-shadow:0 10px 25px rgba(42,102,235,.25);
+}
+
+.error{
+    color:#e53935;
+    text-align:center;
+    margin-top:12px;
+    display:none;
+}
+
+/* ADMIN */
+
+.admin{
+    display:none;
+    min-height:100vh;
+}
+
+.topbar{
+    height:70px;
+    background:white;
+    border-bottom:1px solid #dce3f2;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    position:sticky;
+    top:0;
+    z-index:20;
+}
+
+.brand{
+    font-weight:900;
+    font-size:20px;
+}
+
+.brand span{
+    color:#326be8;
+}
+
+.logout{
+    background:#ffe9ed;
+    color:#d62839;
+    padding:10px 15px;
+    border-radius:12px;
+    font-weight:700;
+}
+
+.layout{
+    display:flex;
+}
+
+.sidebar{
+    width:240px;
+    min-height:calc(100vh - 70px);
+    background:white;
+    border-right:1px solid #dce3f2;
+    padding:18px 12px;
+    position:sticky;
+    top:70px;
+    align-self:flex-start;
+}
+
+.menu-btn{
+    width:100%;
+    text-align:left;
+    padding:13px 15px;
+    border-radius:13px;
+    background:transparent;
+    color:#63708a;
+    margin-bottom:5px;
+    font-weight:700;
+}
+
+.menu-btn:hover,
+.menu-btn.active{
+    background:#eaf1ff;
+    color:#2869e8;
+}
+
+.content{
+    flex:1;
+    padding:25px;
+    min-width:0;
+}
+
+.page{
+    display:none;
+}
+
+.page.active{
+    display:block;
+}
+
+.title{
+    font-size:28px;
+    font-weight:900;
+    margin-bottom:20px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+}
+
+.stat{
+    background:white;
+    border:1px solid #d8e1f2;
+    border-radius:20px;
+    padding:20px;
+}
+
+.stat small{
+    color:#75819a;
+    font-weight:700;
+}
+
+.stat h2{
+    margin-top:8px;
+    font-size:30px;
+}
+
+.blue{color:#2869e8}
+.green{color:#16a765}
+.orange{color:#ef8b22}
+.red{color:#e23a4a}
+
+.card{
+    background:white;
+    border:1px solid #d8e1f2;
+    border-radius:20px;
+    padding:20px;
+    margin-top:20px;
+}
+
+.card h3{
+    margin-bottom:15px;
+}
+
+.search{
+    width:100%;
+    padding:13px 15px;
+    border:1px solid #d3dced;
+    border-radius:13px;
+    margin-bottom:15px;
+}
+
+.table-wrap{
+    overflow:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:700px;
+}
+
+th,td{
+    padding:13px 10px;
+    border-bottom:1px solid #edf0f6;
+    text-align:left;
+    white-space:nowrap;
+}
+
+th{
+    color:#6e7991;
+    font-size:13px;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:800;
+}
+
+.pending{
+    background:#fff2d9;
+    color:#bd7100;
+}
+
+.approved{
+    background:#dcf8e9;
+    color:#13834d;
+}
+
+.cancelled{
+    background:#ffe3e7;
+    color:#c72e43;
+}
+
+.win{
+    background:#ddf8e8;
+    color:#12854d;
+}
+
+.loss{
+    background:#ffe4e7;
+    color:#ca3146;
+}
+
+.action{
+    padding:7px 10px;
+    border-radius:9px;
+    font-size:12px;
+    font-weight:800;
+    margin:2px;
+}
+
+.add{
+    background:#ddf8e8;
+    color:#12854d;
+}
+
+.deduct{
+    background:#ffe4e7;
+    color:#ca3146;
+}
+
+.approve{
+    background:#e1edff;
+    color:#2869e8;
+}
+
+.cancel{
+    background:#fff0d7;
+    color:#a96600;
+}
+
+.delete{
+    background:#ffe3e7;
+    color:#c72e43;
+}
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:15px;
+}
+
+.full{
+    grid-column:1/-1;
+}
+
+.save{
+    background:#2869e8;
+    color:white;
+    padding:13px 20px;
+    border-radius:12px;
+    font-weight:800;
+}
+
+.notice{
+    background:#eef5ff;
+    border:1px solid #cbdcff;
+    color:#38578c;
+    padding:15px;
+    border-radius:15px;
+    margin-bottom:18px;
+}
+
+.empty{
+    text-align:center;
+    padding:30px;
+    color:#8590a7;
+}
+
+@media(max-width:900px){
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .sidebar{
+        width:190px;
+    }
+}
+
+@media(max-width:650px){
+    .topbar{
+        padding:0 12px;
+    }
+
+    .layout{
+        display:block;
+    }
+
+    .sidebar{
+        width:100%;
+        min-height:auto;
+        position:static;
+        display:flex;
+        overflow:auto;
+        padding:8px;
+        border-right:0;
+        border-bottom:1px solid #dce3f2;
+    }
+
+    .menu-btn{
+        min-width:max-content;
+        margin:0 3px;
+    }
+
+    .content{
+        padding:15px;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .full{
+        grid-column:auto;
+    }
+
+    .title{
+        font-size:24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<section class="login" id="loginScreen">
+
+<div class="login-box">
+
+<div class="logo">RDX</div>
+
+<h1>RDX LUDO</h1>
+<p>Virtual Coin Admin Panel</p>
+
+<div class="field">
+<label>Admin Username</label>
+<input id="username" placeholder="Enter username">
+</div>
+
+<div class="field">
+<label>Password</label>
+<input id="password" type="password" placeholder="Enter password">
+</div>
+
+<button class="primary" onclick="login()">Login</button>
+
+<div class="error" id="loginError">
+Wrong username or password
+</div>
+
+</div>
+</section>
+
+
+<!-- ADMIN -->
+
+<section class="admin" id="adminPanel">
+
+<header class="topbar">
+
+<div class="brand">
+RDX <span>LUDO</span> — ADMIN
+</div>
+
+<button class="logout" onclick="logout()">Logout</button>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<button class="menu-btn active" onclick="showPage('dashboard',this)">
+📊 Dashboard
+</button>
+
+<button class="menu-btn" onclick="showPage('users',this)">
+👥 Users
+</button>
+
+<button class="menu-btn" onclick="showPage('coins',this)">
+🪙 Coin Requests
+</button>
+
+<button class="menu-btn" onclick="showPage('history',this)">
+📜 Coin History
+</button>
+
+<button class="menu-btn" onclick="showPage('referral',this)">
+🎁 Referral
+</button>
+
+<button class="menu-btn" onclick="showPage('games',this)">
+🎮 Game History
+</button>
+
+<button class="menu-btn" onclick="showPage('settings',this)">
+⚙️ Settings
+</button>
+
+</aside>
+
+
+<main class="content">
+
+
+<!-- DASHBOARD -->
+
+<section class="page active" id="dashboard">
+
+<div class="title">Dashboard</div>
+
+<div class="stats">
+
+<div class="stat">
+<small>Total Users</small>
+<h2 class="blue" id="statUsers">0</h2>
+</div>
+
+<div class="stat">
+<small>Total Coins</small>
+<h2 class="green" id="statCoins">0</h2>
+</div>
+
+<div class="stat">
+<small>Pending Requests</small>
+<h2 class="orange" id="statPending">0</h2>
+</div>
+
+<div class="stat">
+<small>Transactions</small>
+<h2 class="red" id="statTransactions">0</h2>
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>System Information</h3>
+
+<div class="notice">
+यह panel केवल virtual/demo coins के लिए है। Coins का कोई real-money value नहीं है।
+</div>
+
+<div class="row">
+<strong>Admin Status</strong>
+<span class="badge approved">ACTIVE</span>
+</div>
+
+<div class="row">
+<strong>Coin System</strong>
+<span class="badge approved">VIRTUAL COIN</span>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- USERS -->
+
+<section class="page" id="users">
+
+<div class="title">Users</div>
+
+<div class="card">
+
+<input
+class="search"
+id="userSearch"
+placeholder="Search name / mobile / user ID..."
+oninput="renderUsers()"
+>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>User ID</th>
+<th>Name</th>
+<th>Mobile</th>
+<th>Coins</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="usersTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- COIN REQUESTS -->
+
+<section class="page" id="coins">
+
+<div class="title">Coin Requests</div>
+
+<div class="card">
+
+<div class="notice">
+Pending coin requests को यहां approve या cancel कर सकते हैं।
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>Amount</th>
+<th>Type</th>
+<th>Status</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody id="requestsTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section class="page" id="history">
+
+<div class="title">Coin History</div>
+
+<div class="card">
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>User</th>
+<th>Type</th>
+<th>Coins</th>
+<th>Status</th>
+</tr>
+</thead>
+
+<tbody id="historyTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- REFERRAL -->
+
+<section class="page" id="referral">
+
+<div class="title">Referral Commission</div>
+
+<div class="card">
+
+<div class="form-grid">
+
+<div class="field">
+<label>Commission Percentage</label>
+<input id="refPercent" type="number" min="0" max="100">
+</div>
+
+<div class="field">
+<label>Commission Coins</label>
+<input id="refCoins" type="number" min="0">
+</div>
+
+<div class="full">
+<button class="save" onclick="saveReferral()">
+Save Referral Settings
+</button>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Referral History</h3>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>User</th>
+<th>Referred User</th>
+<th>Commission</th>
+</tr>
+</thead>
+
+<tbody id="refTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- GAME HISTORY -->
+
+<section class="page" id="games">
+
+<div class="title">Game History</div>
+
+<div class="card">
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Date</th>
+<th>User</th>
+<th>Match</th>
+<th>Result</th>
+<th>Coins</th>
+</tr>
+</thead>
+
+<tbody id="gamesTable"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- SETTINGS -->
+
+<section class="page" id="settings">
+
+<div class="title">Settings</div>
+
+<div class="card">
+
+<div class="notice">
+यह settings केवल virtual coin system के display/configuration के लिए हैं।
+</div>
+
+<div class="form-grid">
+
+<div class="field">
+<label>Site Name</label>
+<input id="siteName">
+</div>
+
+<div class="field">
+<label>Coin Name</label>
+<input id="coinName">
+</div>
+
+<div class="field">
+<label>Coins Per ₹ Display</label>
+<input id="coinRate" type="number">
+</div>
+
+<div class="field">
+<label>Minimum Coin Request</label>
+<input id="minCoin" type="number">
+</div>
+
+<div class="full">
+<button class="save" onclick="saveSettings()">
+Save Settings
+</button>
+</div>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Demo Data</h3>
+
+<p style="color:#75819b;margin-bottom:15px">
+Testing के लिए sample users और transactions बनाए जा सकते हैं।
+</p>
+
+<button class="save" onclick="createDemoData()">
+Create Demo Data
+</button>
+
+<button class="action delete" onclick="clearAllData()">
+Delete All Data
+</button>
+
+</div>
+
+</section>
+
+
+</main>
+</div>
+</section>
+
+
+<script>
+
+/* =========================
+   DATABASE
+========================= */
+
+const DB = {
+
+users:"rdx_users",
+requests:"rdx_requests",
+history:"rdx_coin_history",
+games:"rdx_games",
+referrals:"rdx_referrals",
+settings:"rdx_settings"
+
+};
+
+
+function get(key){
+
+return JSON.parse(
+localStorage.getItem(key) || "[]"
+);
+
+}
+
+
+function set(key,data){
+
+localStorage.setItem(
+key,
+JSON.stringify(data)
+);
+
+}
+
+
+function getSettings(){
+
+return JSON.parse(
+localStorage.getItem(DB.settings)
+||
+JSON.stringify({
+siteName:"RDX LUDO",
+coinName:"RDX Coin",
+coinRate:1,
+minCoin:100
+})
+);
+
+}
+
+
+function saveSettingsData(data){
+
+localStorage.setItem(
+DB.settings,
+JSON.stringify(data)
+);
+
+}
+
+
+/* =========================
+   LOGIN
+========================= */
+
+function login(){
+
+let u=document.getElementById("username").value.trim();
+let p=document.getElementById("password").value;
+
+if(u==="admin" && p==="admin123"){
+
+sessionStorage.setItem("rdx_admin","1");
+
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("adminPanel").style.display="block";
+
+loadAll();
+
+}else{
+
+document.getElementById("loginError").style.display="block";
+
+}
+
+}
+
+
+function logout(){
+
+sessionStorage.removeItem("rdx_admin");
+
+location.reload();
+
+}
+
+
+if(sessionStorage.getItem("rdx_admin")==="1"){
+
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("adminPanel").style.display="block";
+
+}
+
+
+/* =========================
+   PAGE NAVIGATION
+========================= */
+
+function showPage(id,btn){
+
+document.querySelectorAll(".page")
+.forEach(x=>x.classList.remove("active"));
+
+document.getElementById(id)
+.classList.add("active");
+
+document.querySelectorAll(".menu-btn")
+.forEach(x=>x.classList.remove("active"));
+
+btn.classList.add("active");
+
+loadAll();
+
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function updateDashboard(){
+
+let users=get(DB.users);
+let history=get(DB.history);
+
+let pending=get(DB.requests)
+.filter(x=>x.status==="pending");
+
+let totalCoins=users.reduce(
+(sum,u)=>sum+Number(u.coins||0),0
+);
+
+document.getElementById("statUsers")
+.innerText=users.length;
+
+document.getElementById("statCoins")
+.innerText=totalCoins;
+
+document.getElementById("statPending")
+.innerText=pending.length;
+
+document.getElementById("statTransactions")
+.innerText=history.length;
+
+}
+
+
+/* =========================
+   USERS
+========================= */
+
+function renderUsers(){
+
+let users=get(DB.users);
+
+let q=
+(document.getElementById("userSearch")?.value || "")
+.toLowerCase();
+
+users=users.filter(u=>
+(u.id||"").toLowerCase().includes(q) ||
+(u.name||"").toLowerCase().includes(q) ||
+(u.mobile||"").includes(q)
+);
+
+let html="";
+
+if(!users.length){
+
+html=`
+<tr>
+<td colspan="6" class="empty">
+No users found
+</td>
+</tr>
+`;
+
+}else{
+
+users.forEach(u=>{
+
+html+=`
+
+<tr>
+
+<td>${escapeHTML(u.id)}</td>
+
+<td>${escapeHTML(u.name)}</td>
+
+<td>${escapeHTML(u.mobile)}</td>
+
+<td>
+<strong class="blue">${Number(u.coins||0)}</strong>
+</td>
+
+<td>
+<span class="badge approved">
+${u.status || "Active"}
+</span>
+</td>
+
+<td>
+
+<button
+class="action add"
+onclick="addCoins('${u.id}')">
++ Coin
+</button>
+
+<button
+class="action deduct"
+onclick="deductCoins('${u.id}')">
+- Coin
+</button>
+
+<button
+class="action delete"
+onclick="deleteUser('${u.id}')">
+Delete
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("usersTable").innerHTML=html;
+
+}
+
+
+/* =========================
+   ADD COINS
+========================= */
+
+function addCoins(id){
+
+let amount=prompt(
+"कितने virtual coins add करने हैं?"
+);
+
+amount=Number(amount);
+
+if(!amount || amount<=0)return;
+
+let users=get(DB.users);
+
+let user=users.find(u=>u.id===id);
+
+if(!user)return;
+
+user.coins=
+Number(user.coins||0)+amount;
+
+set(DB.users,users);
+
+addHistory(
+id,
+"ADMIN ADD",
+amount,
+"approved"
+);
+
+alert(
+amount+" virtual coins successfully added."
+);
+
+loadAll();
+
+}
+
+
+/* =========================
+   DEDUCT COINS
+========================= */
+
+function deductCoins(id){
+
+let amount=prompt(
+"कितने virtual coins deduct करने हैं?"
+);
+
+amount=Number(amount);
+
+if(!amount || amount<=0)return;
+
+let users=get(DB.users);
+
+let user=users.find(u=>u.id===id);
+
+if(!user)return;
+
+if(Number(user.coins||0)<amount){
+
+alert("User के पास इतने coins नहीं हैं।");
+return;
+
+}
+
+user.coins-=amount;
+
+set(DB.users,users);
+
+addHistory(
+id,
+"ADMIN DEDUCT",
+-amount,
+"approved"
+);
+
+loadAll();
+
+}
+
+
+/* =========================
+   DELETE USER
+========================= */
+
+function deleteUser(id){
+
+if(!confirm(
+"क्या आप इस user को delete करना चाहते हैं?"
+))return;
+
+let users=get(DB.users)
+.filter(u=>u.id!==id);
+
+set(DB.users,users);
+
+loadAll();
+
+}
+
+
+/* =========================
+   COIN REQUESTS
+========================= */
+
+function renderRequests(){
+
+let requests=get(DB.requests);
+
+let html="";
+
+if(!requests.length){
+
+html=`
+<tr>
+<td colspan="6" class="empty">
+No coin requests
+</td>
+</tr>
+`;
+
+}else{
+
+requests.forEach(r=>{
+
+let badge=
+r.status==="approved"
+?"approved":
+r.status==="cancelled"
+?"cancelled":
+"pending";
+
+html+=`
+
+<tr>
+
+<td>${escapeHTML(r.id)}</td>
+
+<td>${escapeHTML(r.userName || r.userId)}</td>
+
+<td>
+<strong>${Number(r.amount)}</strong>
+</td>
+
+<td>${escapeHTML(r.type || "COIN")}</td>
+
+<td>
+<span class="badge ${badge}">
+${escapeHTML(r.status)}
+</span>
+</td>
+
+<td>
+
+${
+r.status==="pending"
+?
+`
+<button
+class="action approve"
+onclick="approveRequest('${r.id}')">
+Approve
+</button>
+
+<button
+class="action cancel"
+onclick="cancelRequest('${r.id}')">
+Cancel
+</button>
+`
+:
+"—"
+}
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("requestsTable").innerHTML=html;
+
+}
+
+
+/* =========================
+   APPROVE REQUEST
+========================= */
+
+function approveRequest(id){
+
+let requests=get(DB.requests);
+
+let req=requests.find(x=>x.id===id);
+
+if(!req || req.status!=="pending")return;
+
+let users=get(DB.users);
+
+let user=users.find(
+u=>u.id===req.userId
+);
+
+if(!user){
+
+alert("User नहीं मिला।");
+return;
+
+}
+
+user.coins=
+Number(user.coins||0)+Number(req.amount);
+
+req.status="approved";
+
+set(DB.users,users);
+set(DB.requests,requests);
+
+addHistory(
+req.userId,
+"REQUEST APPROVED",
+Number(req.amount),
+"approved"
+);
+
+loadAll();
+
+}
+
+
+/* =========================
+   CANCEL REQUEST
+========================= */
+
+function cancelRequest(id){
+
+let requests=get(DB.requests);
+
+let req=requests.find(x=>x.id===id);
+
+if(!req || req.status!=="pending")return;
+
+req.status="cancelled";
+
+set(DB.requests,requests);
+
+addHistory(
+req.userId,
+"REQUEST CANCELLED",
+0,
+"cancelled"
+);
+
+loadAll();
+
+}
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function addHistory(
+userId,
+type,
+coins,
+status
+){
+
+let history=get(DB.history);
+
+let users=get(DB.users);
+
+let user=users.find(
+u=>u.id===userId
+);
+
+history.unshift({
+
+date:new Date().toLocaleString("en-IN"),
+
+userId:userId,
+
+userName:user ? user.name : "",
+
+type:type,
+
+coins:coins,
+
+status:status
+
+});
+
+set(DB.history,history);
+
+}
+
+
+function renderHistory(){
+
+let history=get(DB.history);
+
+let html="";
+
+if(!history.length){
+
+html=`
+<tr>
+<td colspan="5" class="empty">
+No history
+</td>
+</tr>
+`;
+
+}else{
+
+history.forEach(h=>{
+
+let badge=
+h.status==="approved"
+?"approved":
+h.status==="cancelled"
+?"cancelled":
+"pending";
+
+html+=`
+
+<tr>
+
+<td>${escapeHTML(h.date)}</td>
+
+<td>${escapeHTML(h.userName || h.userId)}</td>
+
+<td>${escapeHTML(h.type)}</td>
+
+<td>${Number(h.coins)}</td>
+
+<td>
+<span class="badge ${badge}">
+${escapeHTML(h.status)}
+</span>
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("historyTable")
+.innerHTML=html;
+
+}
+
+
+/* =========================
+   REFERRAL
+========================= */
+
+function loadReferral(){
+
+let data=
+JSON.parse(
+localStorage.getItem("rdx_ref_settings")
+||
+'{"percent":5,"coins":0}'
+);
+
+document.getElementById("refPercent")
+.value=data.percent;
+
+document.getElementById("refCoins")
+.value=data.coins;
+
+}
+
+
+function saveReferral(){
+
+let data={
+
+percent:Number(
+document.getElementById("refPercent").value
+),
+
+coins:Number(
+document.getElementById("refCoins").value
+)
+
+};
+
+localStorage.setItem(
+"rdx_ref_settings",
+JSON.stringify(data)
+);
+
+alert("Referral settings saved.");
+
+}
+
+
+function renderReferrals(){
+
+let refs=get(DB.referrals);
+
+let html="";
+
+refs.forEach(r=>{
+
+html+=`
+
+<tr>
+
+<td>${escapeHTML(r.date)}</td>
+
+<td>${escapeHTML(r.user)}</td>
+
+<td>${escapeHTML(r.referred)}</td>
+
+<td>${Number(r.commission)}</td>
+
+</tr>
+
+`;
+
+});
+
+if(!html){
+
+html=`
+<tr>
+<td colspan="4" class="empty">
+No referral history
+</td>
+</tr>
+`;
+
+}
+
+document.getElementById("refTable").innerHTML=html;
+
+}
+
+
+/* =========================
+   GAME HISTORY
+========================= */
+
+function renderGames(){
+
+let games=get(DB.games);
+
+let html="";
+
+games.forEach(g=>{
+
+let resultClass=
+g.result==="WIN"
+?"win":
+g.result==="LOSS"
+?"loss":
+"pending";
+
+html+=`
+
+<tr>
+
+<td>${escapeHTML(g.date)}</td>
+
+<td>${escapeHTML(g.user)}</td>
+
+<td>${escapeHTML(g.match)}</td>
+
+<td>
+<span class="badge ${resultClass}">
+${escapeHTML(g.result)}
+</span>
+</td>
+
+<td>${Number(g.coins||0)}</td>
+
+</tr>
+
+`;
+
+});
+
+if(!html){
+
+html=`
+<tr>
+<td colspan="5" class="empty">
+No game history
+</td>
+</tr>
+`;
+
+}
+
+document.getElementById("gamesTable").innerHTML=html;
+
+}
+
+
+/* =========================
+   SETTINGS
+========================= */
+
+function loadSettings(){
+
+let s=getSettings();
+
+document.getElementById("siteName")
+.value=s.siteName;
+
+document.getElementById("coinName")
+.value=s.coinName;
+
+document.getElementById("coinRate")
+.value=s.coinRate;
+
+document.getElementById("minCoin")
+.value=s.minCoin;
+
+}
+
+
+function saveSettings(){
+
+let data={
+
+siteName:
+document.getElementById("siteName").value,
+
+coinName:
+document.getElementById("coinName").value,
+
+coinRate:
+Number(document.getElementById("coinRate").value),
+
+minCoin:
+Number(document.getElementById("minCoin").value)
+
+};
+
+saveSettingsData(data);
+
+alert("Settings saved.");
+
+}
+
+
+/* =========================
+   DEMO DATA
+========================= */
+
+function createDemoData(){
+
+let users=get(DB.users);
+
+if(users.length){
+
+alert("Demo users already exist.");
+return;
+
+}
+
+let demoUsers=[
+
+{
+id:"RDX1001",
+name:"Rahul",
+mobile:"9876543210",
+coins:500,
+status:"Active"
+},
+
+{
+id:"RDX1002",
+name:"Amit",
+mobile:"9876501234",
+coins:1250,
+status:"Active"
+},
+
+{
+id:"RDX1003",
+name:"Vikas",
+mobile:"9988776655",
+coins:300,
+status:"Active"
+}
+
+];
+
+set(DB.users,demoUsers);
+
+set(DB.requests,[
+
+{
+id:"REQ1001",
+userId:"RDX1001",
+userName:"Rahul",
+amount:100,
+type:"COIN",
+status:"pending"
+},
+
+{
+id:"REQ1002",
+userId:"RDX1002",
+userName:"Amit",
+amount:250,
+type:"COIN",
+status:"pending"
+}
+
+]);
+
+set(DB.history,[
+
+{
+date:new Date().toLocaleString("en-IN"),
+userId:"RDX1003",
+userName:"Vikas",
+type:"ADMIN ADD",
+coins:300,
+status:"approved"
+}
+
+]);
+
+set(DB.games,[
+
+{
+date:new Date().toLocaleString("en-IN"),
+user:"Rahul",
+match:"MATCH-1001",
+result:"WIN",
+coins:50
+},
+
+{
+date:new Date().toLocaleString("en-IN"),
+user:"Amit",
+match:"MATCH-1002",
+result:"LOSS",
+coins:-30
+}
+
+]);
+
+set(DB.referrals,[]);
+
+alert("Demo data created.");
+
+loadAll();
+
+}
+
+
+/* =========================
+   CLEAR DATA
+========================= */
+
+function clearAllData(){
+
+if(!confirm(
+"सारा demo data delete हो जाएगा। Continue?"
+))return;
+
+Object.values(DB).forEach(k=>{
+localStorage.removeItem(k);
+});
+
+localStorage.removeItem("rdx_ref_settings");
+
+loadAll();
+
+}
+
+
+/* =========================
+   SECURITY HELPER
+========================= */
+
+function escapeHTML(value){
+
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* =========================
+   LOAD EVERYTHING
+========================= */
+
+function loadAll(){
+
+updateDashboard();
+
+renderUsers();
+
+renderRequests();
+
+renderHistory();
+
+renderReferrals();
+
+renderGames();
+
+loadReferral();
+
+loadSettings();
+
+}
+
+
+/* START */
+
+if(sessionStorage.getItem("rdx_admin")==="1"){
+loadAll();
+}
+
+</script>
+
+</body>
+</html>
