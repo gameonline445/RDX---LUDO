@@ -798,7 +798,6 @@ font-size:17px;
 
 </head>
 
-
 <body>
 
 
@@ -819,12 +818,10 @@ onclick="goBack()"
 </div>
 
 
-
 <main class="page">
 
 
 <section class="brand">
-
 
 <div class="logo">
 
@@ -832,16 +829,13 @@ onclick="goBack()"
 
 </div>
 
-
 <h1>RDX LUDO</h1>
 
 <p>
 Play · Compete · Enjoy
 </p>
 
-
 </section>
-
 
 
 <section class="login-card">
@@ -868,7 +862,6 @@ Enter your name and mobile number. We will send you an OTP for verification.
 </p>
 
 
-
 <!-- NAME -->
 
 <div
@@ -880,13 +873,11 @@ id="nameGroup"
 Your Name
 </label>
 
-
 <div class="input-wrap">
 
 <span class="input-icon">
 👤
 </span>
-
 
 <input
 type="text"
@@ -901,7 +892,6 @@ autocomplete="name"
 </div>
 
 
-
 <!-- MOBILE -->
 
 <div
@@ -913,14 +903,11 @@ id="mobileGroup"
 Mobile Number
 </label>
 
-
 <div class="mobile-wrap">
-
 
 <div class="country-code">
 🇮🇳 +91
 </div>
-
 
 <input
 type="tel"
@@ -936,19 +923,18 @@ autocomplete="tel"
 </div>
 
 
-
 <!-- SEND OTP -->
 
 <button
 type="button"
 class="continue-btn"
 id="continueBtn"
+disabled
 >
 
-Send OTP
+Loading OTP Service...
 
 </button>
-
 
 
 <!-- OTP SECTION -->
@@ -980,8 +966,6 @@ OTP will be sent to your mobile number.
 </p>
 
 
-<!-- VERIFY -->
-
 <button
 type="button"
 class="verify-btn"
@@ -991,8 +975,6 @@ disabled
 Verify OTP
 </button>
 
-
-<!-- RESEND -->
 
 <button
 type="button"
@@ -1005,7 +987,6 @@ Resend OTP
 
 
 </div>
-
 
 
 <!-- FEATURES -->
@@ -1052,7 +1033,6 @@ Support
 </section>
 
 
-
 <p class="info-text">
 
 Your mobile number will be verified using secure OTP verification.
@@ -1069,44 +1049,29 @@ OTP verification is required to continue.
 </main>
 
 
-
 <div
 class="toast"
 id="toast"
 ></div>
 
 
-
 <!-- =====================================================
-     MSG91 OTP WIDGET
+     MSG91 CONFIGURATION
      ===================================================== -->
 
-<script type="text/javascript">
-
-/*
-=========================================================
-MSG91 SETTINGS
-
-ONLY ONE PLACE TO CHANGE:
-
-Paste your NEW MSG91 Widget Token below.
-
-DO NOT put your MSG91 Authkey here.
-=========================================================
-*/
+<script>
 
 const MSG91_WIDGET_ID =
 "366870704943343439343834";
 
-const MSG91_TOKEN =
-"561244TCn8oI4OX6a82246aP1"
-
-
 /*
-=========================================================
-MSG91 CONFIGURATION
-=========================================================
+PASTE YOUR MSG91 OTP WIDGET TOKEN HERE
+
+Authkey नहीं डालना है.
 */
+const MSG91_TOKEN =
+"PASTE_YOUR_MSG91_WIDGET_TOKEN_HERE";
+
 
 var configuration = {
 
@@ -1121,6 +1086,9 @@ identifier:
 
 exposeMethods:
 true,
+
+captchaRenderId:
+"",
 
 success:
 function(data){
@@ -1147,15 +1115,19 @@ error
 </script>
 
 
-<!-- MSG91 SDK -->
+<!-- =====================================================
+     MSG91 SDK
+
+     IMPORTANT:
+     initSendOTP directly on SDK load
+     ===================================================== -->
 
 <script
 type="text/javascript"
 src="https://verify.msg91.com/otp-provider.js"
-onload="msg91Loaded()"
+onload="initMSG91AfterLoad()"
 >
 </script>
-
 
 
 <script>
@@ -1221,6 +1193,10 @@ let resendTimer = null;
 
 let msg91Ready = false;
 
+let msg91InitStarted = false;
+
+let msg91InitFailed = false;
+
 
 /* =====================================================
    TOAST
@@ -1244,26 +1220,43 @@ function(){
 toast.classList.remove("show");
 
 },
-3000
+3500
 );
 
 }
 
 
 /* =====================================================
-   MSG91 LOADED
+   MSG91 SDK LOADED
    ===================================================== */
 
-function msg91Loaded(){
+function initMSG91AfterLoad(){
 
 console.log(
 "MSG91 SDK loaded"
 );
 
+
+/* TOKEN CHECK */
+
 if(
+!MSG91_TOKEN ||
 MSG91_TOKEN ===
-"PASTE_YOUR_NEW_MSG91_WIDGET_TOKEN_HERE"
+"PASTE_YOUR_MSG91_WIDGET_TOKEN_HERE"
 ){
+
+console.error(
+"MSG91 Widget Token missing"
+);
+
+msg91InitFailed =
+true;
+
+continueBtn.disabled =
+true;
+
+continueBtn.textContent =
+"MSG91 Token Required";
 
 showMessage(
 "MSG91 Widget Token डालना बाकी है।"
@@ -1273,16 +1266,8 @@ return;
 
 }
 
-initializeMSG91();
 
-}
-
-
-/* =====================================================
-   INITIALIZE MSG91
-   ===================================================== */
-
-function initializeMSG91(){
+/* SDK CHECK */
 
 if(
 typeof window.initSendOTP !==
@@ -1290,25 +1275,40 @@ typeof window.initSendOTP !==
 ){
 
 console.error(
-"MSG91 initSendOTP not available"
+"initSendOTP function नहीं मिला"
 );
 
+msg91InitFailed =
+true;
+
+continueBtn.disabled =
+true;
+
+continueBtn.textContent =
+"OTP Service Error";
+
 showMessage(
-"MSG91 service load नहीं हुआ।"
+"MSG91 SDK सही तरह load नहीं हुआ।"
 );
 
 return;
 
 }
 
+
+/* INITIALIZE */
+
 try{
+
+msg91InitStarted =
+true;
 
 window.initSendOTP(
 configuration
 );
 
 console.log(
-"MSG91 initialization started"
+"MSG91 initSendOTP called"
 );
 
 waitForMSG91Methods();
@@ -1321,6 +1321,15 @@ console.error(
 "MSG91 INITIALIZATION ERROR:",
 error
 );
+
+msg91InitFailed =
+true;
+
+continueBtn.disabled =
+true;
+
+continueBtn.textContent =
+"OTP Service Error";
 
 showMessage(
 "MSG91 initialization failed."
@@ -1337,7 +1346,11 @@ showMessage(
 
 function waitForMSG91Methods(){
 
-let attempts = 0;
+let attempts =
+0;
+
+const maxAttempts =
+150;
 
 const timer =
 setInterval(
@@ -1346,15 +1359,34 @@ function(){
 attempts++;
 
 
-if(
+const sendReady =
 typeof window.sendOtp ===
-"function" &&
+"function";
 
+const verifyReady =
 typeof window.verifyOtp ===
-"function" &&
+"function";
 
+const retryReady =
 typeof window.retryOtp ===
-"function"
+"function";
+
+
+console.log(
+"MSG91 methods:",
+{
+sendReady,
+verifyReady,
+retryReady,
+attempts
+}
+);
+
+
+if(
+sendReady &&
+verifyReady &&
+retryReady
 ){
 
 clearInterval(timer);
@@ -1362,8 +1394,17 @@ clearInterval(timer);
 msg91Ready =
 true;
 
+msg91InitFailed =
+false;
+
+continueBtn.disabled =
+false;
+
+continueBtn.textContent =
+"Send OTP";
+
 console.log(
-"MSG91 methods ready"
+"MSG91 OTP methods READY"
 );
 
 return;
@@ -1372,13 +1413,23 @@ return;
 
 
 if(
-attempts >= 100
+attempts >=
+maxAttempts
 ){
 
 clearInterval(timer);
 
 msg91Ready =
 false;
+
+msg91InitFailed =
+true;
+
+continueBtn.disabled =
+true;
+
+continueBtn.textContent =
+"OTP Service Error";
 
 console.error(
 "MSG91 methods not exposed"
@@ -1404,12 +1455,10 @@ showMessage(
 function getMobile(){
 
 return mobileInput.value
-
 .replace(
 /\D/g,
 ""
 )
-
 .slice(
 0,
 10
@@ -1424,6 +1473,19 @@ return mobileInput.value
 
 function startLogin(){
 
+if(
+!msg91Ready
+){
+
+showMessage(
+"MSG91 OTP service अभी ready नहीं है।"
+);
+
+return;
+
+}
+
+
 const name =
 nameInput.value.trim();
 
@@ -1431,10 +1493,11 @@ const mobile =
 getMobile();
 
 
-/* NAME CHECK */
+/* NAME */
 
 if(
-name.length < 2
+name.length <
+2
 ){
 
 showMessage(
@@ -1448,7 +1511,7 @@ return;
 }
 
 
-/* MOBILE CHECK */
+/* MOBILE */
 
 if(
 ! /^[6-9]\d{9}$/.test(
@@ -1467,29 +1530,13 @@ return;
 }
 
 
-/* TOKEN CHECK */
-
-if(
-MSG91_TOKEN ===
-"PASTE_YOUR_NEW_MSG91_WIDGET_TOKEN_HERE"
-){
-
-showMessage(
-"MSG91 Widget Token पहले डालें।"
-);
-
-return;
-
-}
-
-
 /* IDENTIFIER */
 
 currentIdentifier =
 "91" + mobile;
 
 
-/* SAVE USER */
+/* SAVE */
 
 localStorage.setItem(
 "rdxUsername",
@@ -1528,84 +1575,24 @@ otpSection.style.display =
 otpInput.value =
 "";
 
+otpHint.textContent =
+"OTP will be sent to your mobile number.";
+
 verifyBtn.disabled =
 true;
+
+verifyBtn.textContent =
+"Verify OTP";
+
+currentReqId =
+"";
 
 otpInput.focus();
 
 
 /* SEND */
 
-if(
-msg91Ready &&
-typeof window.sendOtp ===
-"function"
-){
-
 sendOTPNow();
-
-}
-
-else{
-
-showMessage(
-"MSG91 अभी load हो रहा है..."
-);
-
-waitAndSendOTP();
-
-}
-
-}
-
-
-/* =====================================================
-   WAIT AND SEND
-   ===================================================== */
-
-function waitAndSendOTP(){
-
-let attempts = 0;
-
-const timer =
-setInterval(
-function(){
-
-attempts++;
-
-
-if(
-typeof window.sendOtp ===
-"function"
-){
-
-clearInterval(timer);
-
-msg91Ready =
-true;
-
-sendOTPNow();
-
-return;
-
-}
-
-
-if(
-attempts >= 100
-){
-
-clearInterval(timer);
-
-showMessage(
-"MSG91 Send OTP method ready नहीं हुआ।"
-);
-
-}
-
-},
-100
-);
 
 }
 
@@ -1617,6 +1604,7 @@ showMessage(
 function sendOTPNow(){
 
 if(
+!msg91Ready ||
 typeof window.sendOtp !==
 "function"
 ){
@@ -1645,6 +1633,7 @@ window.sendOtp(
 
 currentIdentifier,
 
+
 function(data){
 
 console.log(
@@ -1654,6 +1643,10 @@ data
 
 
 /* REQUEST ID */
+
+currentReqId =
+"";
+
 
 if(
 data &&
@@ -1676,11 +1669,16 @@ data.requestId;
 }
 
 
+/* SUCCESS */
+
 otpHint.textContent =
 "OTP आपके मोबाइल नंबर पर भेज दिया गया है।";
 
 verifyBtn.disabled =
 false;
+
+verifyBtn.textContent =
+"Verify OTP";
 
 showMessage(
 "OTP successfully sent."
@@ -1714,8 +1712,11 @@ true;
 resendBtn.disabled =
 false;
 
+otpHint.textContent =
+"OTP भेजने में समस्या हुई।";
+
 showMessage(
-"OTP भेजने में समस्या हुई।"
+"OTP भेजने में समस्या हुई। MSG91 Logs देखें।"
 );
 
 }
@@ -1733,12 +1734,10 @@ function verifyOTP(){
 
 const otp =
 otpInput.value
-
 .replace(
 /\D/g,
 ""
 )
-
 .slice(
 0,
 6
@@ -1783,6 +1782,11 @@ verifyBtn.textContent =
 "Verifying...";
 
 
+/*
+MSG91 official custom UI:
+OTP + success callback + failure callback + reqId
+*/
+
 window.verifyOtp(
 
 otp,
@@ -1807,6 +1811,33 @@ localStorage.setItem(
 "rdxVerifiedMobile",
 currentIdentifier
 );
+
+
+/* SAVE ACCESS TOKEN IF PROVIDED */
+
+if(
+data &&
+data.accessToken
+){
+
+localStorage.setItem(
+"rdxAccessToken",
+data.accessToken
+);
+
+}
+
+else if(
+data &&
+data.token
+){
+
+localStorage.setItem(
+"rdxAccessToken",
+data.token
+);
+
+}
 
 
 /* STOP TIMER */
@@ -1873,7 +1904,8 @@ undefined
 function resendOTP(){
 
 if(
-resendSeconds > 0
+resendSeconds >
+0
 ){
 
 return;
@@ -1896,7 +1928,7 @@ return;
 
 
 if(
-! currentReqId
+!currentReqId
 ){
 
 showMessage(
@@ -1918,6 +1950,7 @@ showMessage(
 
 /*
 SMS CHANNEL = 11
+MSG91 custom widget documentation
 */
 
 window.retryOtp(
@@ -1958,6 +1991,9 @@ data.requestId;
 
 otpInput.value =
 "";
+
+verifyBtn.disabled =
+true;
 
 otpInput.focus();
 
@@ -2022,7 +2058,8 @@ resendSeconds--;
 
 
 if(
-resendSeconds <= 0
+resendSeconds <=
+0
 ){
 
 clearInterval(
@@ -2062,12 +2099,10 @@ function(){
 
 mobileInput.value =
 mobileInput.value
-
 .replace(
 /\D/g,
 ""
 )
-
 .slice(
 0,
 10
@@ -2083,7 +2118,6 @@ function(){
 
 nameInput.value =
 nameInput.value
-
 .replace(
 /\s{2,}/g,
 " "
@@ -2099,16 +2133,21 @@ function(){
 
 otpInput.value =
 otpInput.value
-
 .replace(
 /\D/g,
 ""
 )
-
 .slice(
 0,
 6
 );
+
+
+/* ENABLE VERIFY ONLY AFTER 4 DIGITS */
+
+verifyBtn.disabled =
+otpInput.value.length <
+4;
 
 }
 );
@@ -2157,7 +2196,8 @@ document.addEventListener(
 function(event){
 
 if(
-event.key !== "Enter"
+event.key !==
+"Enter"
 ){
 
 return;
@@ -2171,7 +2211,7 @@ otpSection.style.display !==
 ){
 
 if(
-! continueBtn.disabled
+!continueBtn.disabled
 ){
 
 event.preventDefault();
@@ -2185,7 +2225,7 @@ startLogin();
 else{
 
 if(
-! verifyBtn.disabled
+!verifyBtn.disabled
 ){
 
 event.preventDefault();
@@ -2208,7 +2248,8 @@ function goBack(){
 
 if(
 document.referrer &&
-document.referrer !== location.href
+document.referrer !==
+location.href
 ){
 
 history.back();
