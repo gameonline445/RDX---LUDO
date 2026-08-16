@@ -23,7 +23,6 @@ html{
 }
 
 body{
-
     font-family:
     -apple-system,
     BlinkMacSystemFont,
@@ -37,7 +36,6 @@ body{
     color:#101a38;
 
     background:
-
     radial-gradient(
         circle at 10% 10%,
         rgba(83,125,255,.28),
@@ -67,27 +65,18 @@ body{
 }
 
 
-/* =====================================================
-   TOP BACK BUTTON
-===================================================== */
+/* =========================
+   TOP BAR
+========================= */
 
 .top-bar{
-
     width:100%;
-
-    padding:
-    18px 18px 0;
-
+    padding:18px 18px 0;
     display:flex;
-
     align-items:center;
-
-    justify-content:flex-start;
 }
 
-
 .back-btn{
-
     border:1px solid #a8c4f8;
 
     background:
@@ -106,38 +95,30 @@ body{
     border-radius:30px;
 
     display:flex;
-
     align-items:center;
 
     gap:11px;
 
     font-size:16px;
-
     font-weight:800;
 
     cursor:pointer;
 
     box-shadow:
     0 8px 25px rgba(44,93,190,.13);
-
-    transition:.2s;
 }
 
 .back-btn:active{
-
     transform:scale(.96);
 }
 
-
 .back-icon{
-
     width:40px;
     height:40px;
 
     border-radius:50%;
 
     display:flex;
-
     align-items:center;
     justify-content:center;
 
@@ -151,20 +132,15 @@ body{
     color:white;
 
     font-size:25px;
-
-    box-shadow:
-    0 6px 15px rgba(36,103,233,.25);
 }
 
 
-/* =====================================================
+/* =========================
    PAGE
-===================================================== */
+========================= */
 
 .page{
-
     width:100%;
-
     max-width:780px;
 
     margin:auto;
@@ -175,22 +151,18 @@ body{
 }
 
 
-/* =====================================================
-   LOGO AREA
-===================================================== */
+/* =========================
+   BRAND
+========================= */
 
 .brand{
-
     text-align:center;
 
     margin-top:12px;
-
     margin-bottom:25px;
 }
 
-
 .logo{
-
     width:112px;
     height:112px;
 
@@ -209,28 +181,22 @@ body{
     6px solid #b8cff9;
 
     display:flex;
-
     align-items:center;
     justify-content:center;
 
     color:#2565df;
 
     font-size:25px;
-
     font-weight:950;
 
     box-shadow:
-
     0 0 0 8px rgba(73,120,232,.08),
-
     0 18px 40px rgba(44,92,190,.18);
 
     position:relative;
 }
 
-
 .logo::before{
-
     content:"";
 
     position:absolute;
@@ -245,17 +211,12 @@ body{
     opacity:.75;
 }
 
-
 .logo span{
-
     position:relative;
-
     z-index:2;
 }
 
-
 .brand h1{
-
     margin-top:18px;
 
     font-size:38px;
@@ -267,7 +228,6 @@ body{
     letter-spacing:-1.5px;
 
     background:
-
     linear-gradient(
         90deg,
         #195fe2,
@@ -276,15 +236,12 @@ body{
     );
 
     -webkit-background-clip:text;
-
     background-clip:text;
 
     color:transparent;
 }
 
-
 .brand p{
-
     margin-top:10px;
 
     color:#6c7c9c;
@@ -295,16 +252,14 @@ body{
 }
 
 
-/* =====================================================
+/* =========================
    LOGIN CARD
-===================================================== */
+========================= */
 
 .login-card{
-
     width:100%;
 
     background:
-
     linear-gradient(
         145deg,
         rgba(255,255,255,.98),
@@ -319,9 +274,7 @@ body{
     padding:34px;
 
     box-shadow:
-
     0 25px 65px rgba(38,82,165,.14),
-
     0 5px 20px rgba(38,82,165,.07);
 
     position:relative;
@@ -329,9 +282,7 @@ body{
     overflow:hidden;
 }
 
-
 .login-card::before{
-
     content:"";
 
     position:absolute;
@@ -350,9 +301,7 @@ body{
     pointer-events:none;
 }
 
-
 .login-card::after{
-
     content:"";
 
     position:absolute;
@@ -372,8 +321,11 @@ body{
 }
 
 
-.step{
+/* =========================
+   STEP
+========================= */
 
+.step{
     display:inline-flex;
 
     align-items:center;
@@ -401,9 +353,7 @@ body{
     z-index:2;
 }
 
-
 .login-card h2{
-
     margin-top:22px;
 
     font-size:32px;
@@ -417,9 +367,7 @@ body{
     z-index:2;
 }
 
-
 .subtitle{
-
     margin-top:10px;
 
     color:#71809d;
@@ -434,12 +382,11 @@ body{
 }
 
 
-/* =====================================================
+/* =========================
    FORM
-===================================================== */
+========================= */
 
 .form-group{
-
     margin-top:24px;
 
     position:relative;
@@ -447,9 +394,7 @@ body{
     z-index:2;
 }
 
-
 .form-group label{
-
     display:block;
 
     margin-bottom:9px;
@@ -461,15 +406,11 @@ body{
     font-weight:850;
 }
 
-
 .input-wrap{
-
     position:relative;
 }
 
-
 .input-icon{
-
     position:absolute;
 
     left:17px;
@@ -483,9 +424,7 @@ body{
     z-index:3;
 }
 
-
 input{
-
     width:100%;
 
     height:62px;
@@ -514,22 +453,14 @@ input{
     0 17px 0 52px;
 
     transition:.2s;
-
-    box-shadow:
-    inset 0 2px 5px rgba(35,65,120,.03);
 }
 
-
 input::placeholder{
-
     color:#9aa7bc;
-
     font-weight:500;
 }
 
-
 input:focus{
-
     border-color:#4c7fe8;
 
     background:#ffffff;
@@ -539,12 +470,11 @@ input:focus{
 }
 
 
-/* =====================================================
-   MOBILE INPUT
-===================================================== */
+/* =========================
+   MOBILE
+========================= */
 
 .mobile-wrap{
-
     display:grid;
 
     grid-template-columns:
@@ -553,9 +483,7 @@ input:focus{
     gap:10px;
 }
 
-
 .country-code{
-
     height:62px;
 
     border-radius:18px;
@@ -573,7 +501,6 @@ input:focus{
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     color:#2865d6;
@@ -583,19 +510,69 @@ input:focus{
     font-weight:900;
 }
 
-
 .mobile-wrap input{
-
     padding-left:18px;
 }
 
 
-/* =====================================================
-   CONTINUE BUTTON
-===================================================== */
+/* =========================
+   OTP
+========================= */
+
+#otpSection{
+    display:none;
+}
+
+.otp-info{
+    margin-top:12px;
+
+    color:#667590;
+
+    font-size:14px;
+
+    line-height:1.5;
+}
+
+.otp-input{
+    text-align:center;
+
+    letter-spacing:8px;
+
+    font-size:24px !important;
+
+    font-weight:900 !important;
+
+    padding:0 15px !important;
+}
+
+.resend-btn{
+    margin-top:12px;
+
+    border:0;
+
+    background:transparent;
+
+    color:#2865d6;
+
+    font-size:14px;
+
+    font-weight:850;
+
+    cursor:pointer;
+}
+
+.resend-btn:disabled{
+    color:#9aa7bc;
+
+    cursor:not-allowed;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
 
 .continue-btn{
-
     width:100%;
 
     min-height:64px;
@@ -607,7 +584,6 @@ input:focus{
     border-radius:20px;
 
     background:
-
     linear-gradient(
         100deg,
         #1762e9,
@@ -624,7 +600,6 @@ input:focus{
     cursor:pointer;
 
     box-shadow:
-
     0 12px 28px
     rgba(43,100,226,.28);
 
@@ -635,27 +610,21 @@ input:focus{
     z-index:2;
 }
 
-
 .continue-btn:active{
-
     transform:scale(.98);
 }
 
-
 .continue-btn:disabled{
-
     opacity:.6;
-
     cursor:not-allowed;
 }
 
 
-/* =====================================================
+/* =========================
    FEATURES
-===================================================== */
+========================= */
 
 .features{
-
     display:grid;
 
     grid-template-columns:
@@ -675,9 +644,7 @@ input:focus{
     z-index:2;
 }
 
-
 .feature{
-
     text-align:center;
 
     color:#667590;
@@ -687,9 +654,7 @@ input:focus{
     font-weight:700;
 }
 
-
 .feature-icon{
-
     width:42px;
     height:42px;
 
@@ -712,12 +677,11 @@ input:focus{
 }
 
 
-/* =====================================================
+/* =========================
    INFO
-===================================================== */
+========================= */
 
 .info-text{
-
     text-align:center;
 
     margin-top:25px;
@@ -731,19 +695,16 @@ input:focus{
     padding:0 8px;
 }
 
-
 .info-text strong{
-
     color:#2865d6;
 }
 
 
-/* =====================================================
+/* =========================
    TOAST
-===================================================== */
+========================= */
 
 .toast{
-
     position:fixed;
 
     left:50%;
@@ -779,11 +740,13 @@ input:focus{
     0 10px 30px rgba(0,0,0,.2);
 
     white-space:nowrap;
+
+    max-width:90%;
+
+    text-align:center;
 }
 
-
 .toast.show{
-
     opacity:1;
 
     transform:
@@ -792,21 +755,18 @@ input:focus{
 }
 
 
-/* =====================================================
+/* =========================
    MOBILE
-===================================================== */
+========================= */
 
 @media(max-width:600px){
 
     .top-bar{
-
         padding:
         14px 12px 0;
     }
 
-
     .back-btn{
-
         min-height:50px;
 
         padding:
@@ -815,103 +775,72 @@ input:focus{
         font-size:14px;
     }
 
-
     .back-icon{
-
         width:38px;
         height:38px;
 
         font-size:23px;
     }
 
-
     .page{
-
         padding:
         20px 12px
         55px;
     }
 
-
     .brand{
-
         margin-top:8px;
-
         margin-bottom:20px;
     }
 
-
     .logo{
-
         width:94px;
         height:94px;
 
         font-size:21px;
     }
 
-
     .brand h1{
-
         font-size:31px;
-
         margin-top:16px;
     }
 
-
     .brand p{
-
         font-size:16px;
     }
 
-
     .login-card{
-
         padding:24px 18px;
-
         border-radius:25px;
     }
 
-
     .login-card h2{
-
         font-size:27px;
-
         margin-top:19px;
     }
 
-
     .subtitle{
-
         font-size:14px;
     }
 
-
     .form-group{
-
         margin-top:21px;
     }
 
-
     input,
     .country-code{
-
         height:58px;
-
         border-radius:16px;
     }
 
-
     .mobile-wrap{
-
         grid-template-columns:
         82px 1fr;
 
         gap:8px;
     }
 
-
     .continue-btn{
-
         min-height:60px;
 
         font-size:18px;
@@ -919,9 +848,7 @@ input:focus{
         border-radius:18px;
     }
 
-
     .features{
-
         gap:4px;
 
         margin-top:22px;
@@ -929,15 +856,11 @@ input:focus{
         padding-top:18px;
     }
 
-
     .feature{
-
         font-size:10px;
     }
 
-
     .feature-icon{
-
         width:38px;
         height:38px;
 
@@ -945,37 +868,27 @@ input:focus{
 
         font-size:17px;
     }
-
 }
-
 
 @media(max-width:360px){
 
     .brand h1{
-
         font-size:28px;
     }
 
-
     .login-card{
-
         padding:
         21px 15px;
     }
 
-
     .login-card h2{
-
         font-size:24px;
     }
 
-
     .mobile-wrap{
-
         grid-template-columns:
         75px 1fr;
     }
-
 }
 
 </style>
@@ -986,9 +899,7 @@ input:focus{
 <body>
 
 
-<!-- =====================================================
-     BACK BUTTON
-===================================================== -->
+<!-- BACK BUTTON -->
 
 <div class="top-bar">
 
@@ -1001,7 +912,7 @@ input:focus{
         </span>
 
         <span>
-            Back to Phone Login
+            Back
         </span>
 
     </button>
@@ -1009,17 +920,12 @@ input:focus{
 </div>
 
 
-<!-- =====================================================
-     MAIN PAGE
-===================================================== -->
-
 <main class="page">
 
 
     <!-- BRAND -->
 
     <section class="brand">
-
 
         <div class="logo">
 
@@ -1029,55 +935,49 @@ input:focus{
 
         </div>
 
-
         <h1>
             RDX LUDO
         </h1>
-
 
         <p>
             Play · Compete · Enjoy
         </p>
 
-
     </section>
 
 
-    <!-- =================================================
-         LOGIN CARD
-    ================================================== -->
+    <!-- LOGIN CARD -->
 
     <section class="login-card">
 
 
-        <span class="step">
-
-            ✨ STEP 2
-
+        <span class="step" id="stepLabel">
+            ✨ STEP 1
         </span>
 
 
-        <h2>
+        <h2 id="titleText">
             Create / Login Account
         </h2>
 
 
-        <p class="subtitle">
+        <p class="subtitle" id="subtitleText">
 
-            Enter your details to continue
-            to your RDX LUDO account.
+            Enter your name and mobile number.
+            We will send you an OTP for verification.
 
         </p>
 
 
         <!-- NAME -->
 
-        <div class="form-group">
+        <div
+            class="form-group"
+            id="nameGroup">
 
             <label for="name">
                 Your Name
             </label>
-
 
             <div class="input-wrap">
 
@@ -1099,20 +999,19 @@ input:focus{
 
         <!-- MOBILE -->
 
-        <div class="form-group">
+        <div
+            class="form-group"
+            id="mobileGroup">
 
             <label>
                 Mobile Number
             </label>
 
-
             <div class="mobile-wrap">
 
-
                 <div class="country-code">
-                    +91
+                    🇮🇳 +91
                 </div>
-
 
                 <input
                     type="tel"
@@ -1127,14 +1026,56 @@ input:focus{
         </div>
 
 
-        <!-- CONTINUE -->
+        <!-- OTP -->
+
+        <div
+            class="form-group"
+            id="otpSection">
+
+            <label for="otp">
+                Enter OTP
+            </label>
+
+            <input
+                class="otp-input"
+                type="tel"
+                id="otp"
+                placeholder="••••••"
+                inputmode="numeric"
+                maxlength="6"
+                autocomplete="one-time-code">
+
+            <p class="otp-info" id="otpInfo">
+                OTP has been sent to your mobile number.
+            </p>
+
+            <button
+                type="button"
+                class="resend-btn"
+                id="resendBtn"
+                onclick="sendOTP()">
+
+                Resend OTP
+
+            </button>
+
+        </div>
+
+
+        <!-- INVISIBLE RECAPTCHA -->
+
+        <div id="recaptcha-container"></div>
+
+
+        <!-- MAIN BUTTON -->
 
         <button
+            type="button"
             class="continue-btn"
             id="continueBtn"
-            onclick="continueAccount()">
+            onclick="handleContinue()">
 
-            Continue
+            Send OTP
 
         </button>
 
@@ -1142,7 +1083,6 @@ input:focus{
         <!-- FEATURES -->
 
         <div class="features">
-
 
             <div class="feature">
 
@@ -1176,7 +1116,6 @@ input:focus{
 
             </div>
 
-
         </div>
 
 
@@ -1187,11 +1126,11 @@ input:focus{
 
     <p class="info-text">
 
-        By continuing, you agree to use the platform
-        responsibly and securely.<br>
+        Your mobile number will be verified using
+        Firebase Phone Authentication.<br>
 
         <strong>
-            Real OTP verification will be connected with the backend later.
+            OTP verification is required to continue.
         </strong>
 
     </p>
@@ -1208,143 +1147,571 @@ input:focus{
 </div>
 
 
-<script>
+<!-- =====================================================
+     FIREBASE
+===================================================== -->
 
-/* =====================================================
-   BACK TO PREVIOUS PAGE
-===================================================== */
+<script type="module">
 
-function goBack(){
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 
-    /*
-       history.back() se user
-       previous Phone Login page
-       par chala jayega.
-    */
+import {
+    getAuth,
+    RecaptchaVerifier,
+    signInWithPhoneNumber
+}
+from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
-    if(document.referrer){
 
-        window.history.back();
+/* =========================
+   FIREBASE CONFIG
+========================= */
 
-    }else{
+const firebaseConfig = {
 
-        /*
-           Agar previous page available nahi hai
-           to aapka first login page yahan set karein.
-        */
+    apiKey:
+    "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
 
-        window.location.href =
-            "./login.html";
+    authDomain:
+    "rdx-ludo.firebaseapp.com",
 
+    projectId:
+    "rdx-ludo",
+
+    storageBucket:
+    "rdx-ludo.firebasestorage.app",
+
+    messagingSenderId:
+    "928340814840",
+
+    appId:
+    "1:928340814840:web:6eca42a8b76138b268440d"
+};
+
+
+/* =========================
+   INITIALIZE FIREBASE
+========================= */
+
+const app =
+    initializeApp(firebaseConfig);
+
+const auth =
+    getAuth(app);
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+let confirmationResult = null;
+
+let recaptchaVerifier = null;
+
+let otpSent = false;
+
+
+/* =========================
+   ELEMENTS
+========================= */
+
+const nameInput =
+    document.getElementById("name");
+
+const mobileInput =
+    document.getElementById("mobile");
+
+const otpInput =
+    document.getElementById("otp");
+
+const continueBtn =
+    document.getElementById("continueBtn");
+
+const resendBtn =
+    document.getElementById("resendBtn");
+
+const otpSection =
+    document.getElementById("otpSection");
+
+const nameGroup =
+    document.getElementById("nameGroup");
+
+const mobileGroup =
+    document.getElementById("mobileGroup");
+
+const stepLabel =
+    document.getElementById("stepLabel");
+
+const titleText =
+    document.getElementById("titleText");
+
+const subtitleText =
+    document.getElementById("subtitleText");
+
+const otpInfo =
+    document.getElementById("otpInfo");
+
+
+/* =========================
+   RECAPTCHA
+========================= */
+
+function setupRecaptcha(){
+
+    if(recaptchaVerifier){
+        return;
     }
 
+    recaptchaVerifier =
+        new RecaptchaVerifier(
+            auth,
+            "recaptcha-container",
+            {
+                size:"invisible",
+
+                callback:function(){
+
+                    console.log(
+                        "reCAPTCHA verified"
+                    );
+
+                },
+
+                "expired-callback":function(){
+
+                    showMessage(
+                        "reCAPTCHA expired. Please try again."
+                    );
+
+                }
+            }
+        );
 }
 
 
-/* =====================================================
-   CONTINUE ACCOUNT
-===================================================== */
+/* =========================
+   SEND OTP
+========================= */
 
-function continueAccount(){
-
+window.sendOTP = async function(){
 
     const name =
-        document
-        .getElementById("name")
-        .value
-        .trim();
-
+        nameInput.value.trim();
 
     const mobile =
-        document
-        .getElementById("mobile")
-        .value
+        mobileInput.value
         .replace(/\D/g,"");
 
 
-    /* NAME CHECK */
+    /* NAME */
 
     if(name.length < 2){
 
         showMessage(
-            "Please enter your real name"
+            "Please enter your name"
         );
 
-        document
-        .getElementById("name")
-        .focus();
+        nameInput.focus();
 
         return;
-
     }
 
 
-    /* MOBILE CHECK */
+    /* MOBILE */
 
     if(!/^[6-9]\d{9}$/.test(mobile)){
 
         showMessage(
-            "Please enter a valid 10-digit mobile number"
+            "Enter a valid 10-digit mobile number"
         );
 
-        document
-        .getElementById("mobile")
-        .focus();
+        mobileInput.focus();
 
         return;
-
     }
 
 
-    /*
-       Save user details temporarily.
+    continueBtn.disabled = true;
 
-       Backend connect hone ke baad
-       yahi data server/database me jayega.
-    */
-
-    localStorage.setItem(
-        "rdxUsername",
-        name
-    );
+    continueBtn.textContent =
+        "Sending OTP...";
 
 
-    localStorage.setItem(
-        "rdxMobile",
-        "+91 " + mobile
-    );
+    try{
+
+        setupRecaptcha();
 
 
-    /*
-       Continue ke baad abhi
-       aapke existing dashboard par bhej rahe hain.
-
-       Real OTP/backend connect hone par
-       yahan OTP verification page lagaya jayega.
-    */
-
-    showMessage(
-        "Details saved successfully"
-    );
+        const phoneNumber =
+            "+91" + mobile;
 
 
-    setTimeout(function(){
+        confirmationResult =
+            await signInWithPhoneNumber(
+                auth,
+                phoneNumber,
+                recaptchaVerifier
+            );
 
-        window.location.href =
-            "./dashboard.html";
 
-    },800);
+        otpSent = true;
+
+
+        /* SAVE TEMPORARY DATA */
+
+        localStorage.setItem(
+            "rdxUsername",
+            name
+        );
+
+        localStorage.setItem(
+            "rdxMobile",
+            phoneNumber
+        );
+
+
+        /* SHOW OTP */
+
+        nameGroup.style.display =
+            "none";
+
+        mobileGroup.style.display =
+            "none";
+
+        otpSection.style.display =
+            "block";
+
+
+        stepLabel.textContent =
+            "✨ STEP 2";
+
+        titleText.textContent =
+            "Verify Mobile Number";
+
+        subtitleText.textContent =
+            "Enter the 6-digit OTP sent to your mobile number.";
+
+
+        continueBtn.textContent =
+            "Verify OTP";
+
+
+        otpInput.focus();
+
+
+        otpInfo.textContent =
+            "OTP sent to +91 " + mobile;
+
+
+        showMessage(
+            "OTP sent successfully"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Firebase OTP Error:",
+            error
+        );
+
+
+        continueBtn.disabled = false;
+
+        continueBtn.textContent =
+            "Send OTP";
+
+
+        let message =
+            "Unable to send OTP. Please try again.";
+
+
+        if(
+            error.code ===
+            "auth/invalid-phone-number"
+        ){
+
+            message =
+                "Invalid mobile number.";
+
+        }else if(
+            error.code ===
+            "auth/too-many-requests"
+        ){
+
+            message =
+                "Too many attempts. Please try later.";
+
+        }else if(
+            error.code ===
+            "auth/quota-exceeded"
+        ){
+
+            message =
+                "OTP limit reached. Please try later.";
+
+        }else if(
+            error.code ===
+            "auth/operation-not-allowed"
+        ){
+
+            message =
+                "Phone login is not enabled in Firebase.";
+
+        }
+
+
+        showMessage(message);
+
+
+        /*
+           Reset reCAPTCHA so another attempt
+           can be made.
+        */
+
+        if(recaptchaVerifier){
+
+            try{
+
+                recaptchaVerifier.clear();
+
+            }catch(e){
+
+                console.log(e);
+
+            }
+
+            recaptchaVerifier = null;
+        }
+
+    }
+
+};
+
+
+/* =========================
+   VERIFY OTP
+========================= */
+
+async function verifyOTP(){
+
+    const otp =
+        otpInput.value
+        .replace(/\D/g,"");
+
+
+    if(!confirmationResult){
+
+        showMessage(
+            "Please request OTP first."
+        );
+
+        return;
+    }
+
+
+    if(!/^\d{6}$/.test(otp)){
+
+        showMessage(
+            "Enter the 6-digit OTP."
+        );
+
+        otpInput.focus();
+
+        return;
+    }
+
+
+    continueBtn.disabled = true;
+
+    continueBtn.textContent =
+        "Verifying...";
+
+
+    try{
+
+        const result =
+            await confirmationResult
+            .confirm(otp);
+
+
+        const user =
+            result.user;
+
+
+        /*
+           Save verified login information.
+        */
+
+        localStorage.setItem(
+            "rdxAuthUser",
+            user.uid
+        );
+
+        localStorage.setItem(
+            "rdxUsername",
+            nameInput.value.trim()
+        );
+
+        localStorage.setItem(
+            "rdxMobile",
+            user.phoneNumber || ""
+        );
+
+
+        showMessage(
+            "Mobile verified successfully"
+        );
+
+
+        setTimeout(function(){
+
+            window.location.href =
+                "./dashboard.html";
+
+        },800);
+
+
+    }catch(error){
+
+        console.error(
+            "OTP Verification Error:",
+            error
+        );
+
+
+        continueBtn.disabled = false;
+
+        continueBtn.textContent =
+            "Verify OTP";
+
+
+        let message =
+            "Invalid OTP. Please try again.";
+
+
+        if(
+            error.code ===
+            "auth/invalid-verification-code"
+        ){
+
+            message =
+                "Incorrect OTP. Please check and try again.";
+
+        }else if(
+            error.code ===
+            "auth/code-expired"
+        ){
+
+            message =
+                "OTP expired. Please request a new OTP.";
+
+        }
+
+
+        showMessage(message);
+
+    }
 
 }
 
 
-/* =====================================================
-   MOBILE INPUT
-===================================================== */
+/* =========================
+   CONTINUE
+========================= */
 
-document
-.getElementById("mobile")
-.addEventListener(
+window.handleContinue = function(){
+
+    if(!otpSent){
+
+        sendOTP();
+
+    }else{
+
+        verifyOTP();
+
+    }
+
+};
+
+
+/* =========================
+   RESEND TIMER
+========================= */
+
+let resendTimer = null;
+
+
+function startResendTimer(){
+
+    let seconds = 30;
+
+    resendBtn.disabled = true;
+
+    resendBtn.textContent =
+        "Resend OTP in " + seconds + "s";
+
+
+    resendTimer =
+        setInterval(function(){
+
+            seconds--;
+
+
+            if(seconds <= 0){
+
+                clearInterval(
+                    resendTimer
+                );
+
+                resendBtn.disabled =
+                    false;
+
+                resendBtn.textContent =
+                    "Resend OTP";
+
+                return;
+
+            }
+
+
+            resendBtn.textContent =
+                "Resend OTP in " +
+                seconds +
+                "s";
+
+        },1000);
+
+}
+
+
+/* =========================
+   SEND OTP WRAPPER
+========================= */
+
+const originalSendOTP =
+    window.sendOTP;
+
+
+window.sendOTP = async function(){
+
+    await originalSendOTP();
+
+    if(confirmationResult){
+
+        startResendTimer();
+
+    }
+
+};
+
+
+/* =========================
+   MOBILE INPUT
+========================= */
+
+mobileInput.addEventListener(
     "input",
     function(){
 
@@ -1357,13 +1724,28 @@ document
 );
 
 
-/* =====================================================
-   NAME INPUT
-===================================================== */
+/* =========================
+   OTP INPUT
+========================= */
 
-document
-.getElementById("name")
-.addEventListener(
+otpInput.addEventListener(
+    "input",
+    function(){
+
+        this.value =
+            this.value
+            .replace(/\D/g,"")
+            .slice(0,6);
+
+    }
+);
+
+
+/* =========================
+   NAME INPUT
+========================= */
+
+nameInput.addEventListener(
     "input",
     function(){
 
@@ -1375,33 +1757,34 @@ document
 );
 
 
-/* =====================================================
+/* =========================
    ENTER KEY
-===================================================== */
+========================= */
 
 document.addEventListener(
     "keydown",
     function(event){
 
-        if(event.key === "Enter"){
-
-            continueAccount();
-
+        if(event.key !== "Enter"){
+            return;
         }
+
+        event.preventDefault();
+
+        handleContinue();
 
     }
 );
 
 
-/* =====================================================
+/* =========================
    TOAST
-===================================================== */
+========================= */
 
 function showMessage(message){
 
     const toast =
-        document
-        .getElementById("toast");
+        document.getElementById("toast");
 
 
     toast.textContent =
@@ -1415,13 +1798,35 @@ function showMessage(message){
 
         toast.classList.remove("show");
 
-    },1800);
+    },2200);
 
 }
 
+
+/* =========================
+   BACK
+========================= */
+
+window.goBack = function(){
+
+    if(
+        document.referrer &&
+        document.referrer !==
+        window.location.href
+    ){
+
+        window.history.back();
+
+    }else{
+
+        window.location.href =
+            "./index.html";
+
+    }
+
+};
+
 </script>
 
-
 </body>
-
 </html>
