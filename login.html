@@ -12,10 +12,6 @@
 
 <style>
 
-/* =========================
-   RESET
-========================= */
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -36,7 +32,6 @@ body{
     sans-serif;
 
     min-height:100vh;
-
     color:#101a38;
 
     background:
@@ -572,6 +567,27 @@ input:focus{
 
 
 /* =========================
+   RECAPTCHA
+========================= */
+
+.recaptcha-box{
+    margin-top:20px;
+
+    min-height:78px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    position:relative;
+
+    z-index:5;
+}
+
+
+/* =========================
    BUTTON
 ========================= */
 
@@ -738,12 +754,10 @@ input:focus{
 
     transition:.25s;
 
-    z-index:999;
+    z-index:9999;
 
     box-shadow:
     0 10px 30px rgba(0,0,0,.2);
-
-    white-space:nowrap;
 
     max-width:90%;
 
@@ -876,6 +890,10 @@ input:focus{
 
         font-size:17px;
     }
+
+    .recaptcha-box{
+        overflow:hidden;
+    }
 }
 
 @media(max-width:360px){
@@ -990,9 +1008,7 @@ input:focus{
         </p>
 
 
-        <!-- =========================
-             NAME
-        ========================= -->
+        <!-- NAME -->
 
         <div
             class="form-group"
@@ -1020,9 +1036,7 @@ input:focus{
         </div>
 
 
-        <!-- =========================
-             MOBILE
-        ========================= -->
+        <!-- MOBILE -->
 
         <div
             class="form-group"
@@ -1051,9 +1065,7 @@ input:focus{
         </div>
 
 
-        <!-- =========================
-             OTP
-        ========================= -->
+        <!-- OTP -->
 
         <div
             class="form-group"
@@ -1096,12 +1108,13 @@ input:focus{
              RECAPTCHA
         ========================= -->
 
-        <div id="recaptcha-container"></div>
+        <div
+            id="recaptcha-container"
+            class="recaptcha-box">
+        </div>
 
 
-        <!-- =========================
-             MAIN BUTTON
-        ========================= -->
+        <!-- MAIN BUTTON -->
 
         <button
             type="button"
@@ -1113,9 +1126,7 @@ input:focus{
         </button>
 
 
-        <!-- =========================
-             FEATURES
-        ========================= -->
+        <!-- FEATURES -->
 
         <div class="features">
 
@@ -1157,9 +1168,7 @@ input:focus{
     </section>
 
 
-    <!-- =========================
-         INFO
-    ========================= -->
+    <!-- INFO -->
 
     <p class="info-text">
 
@@ -1176,9 +1185,7 @@ input:focus{
 </main>
 
 
-<!-- =========================
-     TOAST
-========================= -->
+<!-- TOAST -->
 
 <div
     class="toast"
@@ -1239,7 +1246,7 @@ const firebaseConfig = {
 
 
 /* =========================
-   FIREBASE INITIALIZE
+   FIREBASE INIT
 ========================= */
 
 const app =
@@ -1247,6 +1254,14 @@ const app =
 
 const auth =
     getAuth(app);
+
+
+/*
+   Firebase phone authentication
+   language
+*/
+
+auth.languageCode = "en";
 
 
 /* =========================
@@ -1305,9 +1320,14 @@ const otpInfo =
 const toast =
     document.getElementById("toast");
 
+const recaptchaContainer =
+    document.getElementById(
+        "recaptcha-container"
+    );
+
 
 /* =========================
-   SHOW MESSAGE
+   MESSAGE
 ========================= */
 
 function showMessage(message){
@@ -1321,49 +1341,86 @@ function showMessage(message){
 
         toast.classList.remove("show");
 
-    }, 2500);
+    },3000);
 
 }
 
 
 /* =========================
-   RECAPTCHA
+   RECAPTCHA SETUP
 ========================= */
 
-function setupRecaptcha(){
+async function setupRecaptcha(){
 
     if(recaptchaVerifier){
+
         return;
+
     }
 
-    recaptchaVerifier =
-        new RecaptchaVerifier(
-            auth,
-            "recaptcha-container",
-            {
 
-                size:"invisible",
+    try{
 
-                callback:() => {
+        recaptchaVerifier =
+            new RecaptchaVerifier(
+                auth,
+                "recaptcha-container",
+                {
 
-                    console.log(
-                        "reCAPTCHA verified"
-                    );
+                    /*
+                       IMPORTANT:
+                       Visible reCAPTCHA is more reliable
+                       on iPhone/Safari.
+                    */
 
-                },
+                    size:"normal",
 
-                "expired-callback":() => {
+                    callback:function(){
 
-                    showMessage(
-                        "Security check expired. Please try again."
-                    );
+                        console.log(
+                            "reCAPTCHA verified"
+                        );
 
-                    resetRecaptcha();
+                    },
+
+                    "expired-callback":function(){
+
+                        showMessage(
+                            "Security verification expired. Please try again."
+                        );
+
+                        resetRecaptcha();
+
+                    },
+
+                    "error-callback":function(){
+
+                        showMessage(
+                            "Security verification failed. Please try again."
+                        );
+
+                    }
 
                 }
+            );
 
-            }
+
+        await recaptchaVerifier.render();
+
+
+    }catch(error){
+
+        console.error(
+            "reCAPTCHA setup error:",
+            error
         );
+
+        recaptchaVerifier =
+            null;
+
+        throw error;
+
+    }
 
 }
 
@@ -1374,13 +1431,13 @@ function setupRecaptcha(){
 
 function resetRecaptcha(){
 
-    if(!recaptchaVerifier){
-        return;
-    }
-
     try{
 
-        recaptchaVerifier.clear();
+        if(recaptchaVerifier){
+
+            recaptchaVerifier.clear();
+
+        }
 
     }catch(error){
 
@@ -1391,14 +1448,19 @@ function resetRecaptcha(){
 
     }
 
+
     recaptchaVerifier =
         null;
+
+
+    recaptchaContainer.innerHTML =
+        "";
 
 }
 
 
 /* =========================
-   VALIDATE MOBILE
+   MOBILE NUMBER
 ========================= */
 
 function getMobileNumber(){
@@ -1423,7 +1485,7 @@ async function sendOTP(){
         getMobileNumber();
 
 
-    /* NAME CHECK */
+    /* NAME */
 
     if(name.length < 2){
 
@@ -1438,7 +1500,7 @@ async function sendOTP(){
     }
 
 
-    /* MOBILE CHECK */
+    /* MOBILE */
 
     if(!/^[6-9]\d{9}$/.test(mobile)){
 
@@ -1457,17 +1519,29 @@ async function sendOTP(){
         true;
 
     continueBtn.textContent =
-        "Sending OTP...";
+        "Checking security...";
 
 
     try{
 
-        setupRecaptcha();
+        /*
+           Create visible reCAPTCHA
+        */
+
+        await setupRecaptcha();
 
 
         const phoneNumber =
             "+91" + mobile;
 
+
+        continueBtn.textContent =
+            "Sending OTP...";
+
+
+        /*
+           Firebase Phone Authentication
+        */
 
         confirmationResult =
             await signInWithPhoneNumber(
@@ -1503,7 +1577,7 @@ async function sendOTP(){
             "none";
 
 
-        /* SHOW OTP */
+        /* SHOW STEP 2 */
 
         otpSection.style.display =
             "block";
@@ -1512,8 +1586,10 @@ async function sendOTP(){
         stepLabel.textContent =
             "✨ STEP 2";
 
+
         titleText.textContent =
             "Verify Mobile Number";
+
 
         subtitleText.textContent =
             "Enter the 6-digit OTP sent to your mobile number.";
@@ -1528,11 +1604,21 @@ async function sendOTP(){
 
 
         otpInfo.textContent =
-            "OTP sent to +91 " + mobile;
+            "OTP sent to " + phoneNumber;
 
 
         otpInput.value =
             "";
+
+
+        /*
+           Hide reCAPTCHA after
+           successful OTP request
+        */
+
+        recaptchaContainer.style.display =
+            "none";
+
 
         otpInput.focus();
 
@@ -1574,10 +1660,18 @@ async function sendOTP(){
                 break;
 
 
+            case "auth/missing-phone-number":
+
+                message =
+                    "Please enter your mobile number.";
+
+                break;
+
+
             case "auth/too-many-requests":
 
                 message =
-                    "Too many attempts. Please try again later.";
+                    "Too many attempts. Please wait and try again later.";
 
                 break;
 
@@ -1585,7 +1679,7 @@ async function sendOTP(){
             case "auth/quota-exceeded":
 
                 message =
-                    "Today's OTP limit has been reached.";
+                    "Firebase SMS quota has been exceeded.";
 
                 break;
 
@@ -1593,7 +1687,7 @@ async function sendOTP(){
             case "auth/operation-not-allowed":
 
                 message =
-                    "Phone login is not enabled in Firebase.";
+                    "Phone Authentication is not enabled in Firebase.";
 
                 break;
 
@@ -1601,7 +1695,31 @@ async function sendOTP(){
             case "auth/captcha-check-failed":
 
                 message =
-                    "Security verification failed. Please try again.";
+                    "reCAPTCHA verification failed.";
+
+                break;
+
+
+            case "auth/invalid-app-credential":
+
+                message =
+                    "Firebase security verification failed. Refresh the page and try again.";
+
+                break;
+
+
+            case "auth/app-not-authorized":
+
+                message =
+                    "This website is not authorized in Firebase.";
+
+                break;
+
+
+            case "auth/unauthorized-domain":
+
+                message =
+                    "This domain is not authorized in Firebase.";
 
                 break;
 
@@ -1614,10 +1732,10 @@ async function sendOTP(){
                 break;
 
 
-            case "auth/app-not-authorized":
+            case "auth/internal-error":
 
                 message =
-                    "This website is not authorized in Firebase.";
+                    "Firebase internal error. Please try again.";
 
                 break;
 
@@ -1690,8 +1808,15 @@ async function verifyOTP(){
 
 
         /* =========================
-           SAVE LOGIN INFORMATION
+           SAVE LOGIN
         ========================= */
+
+        const username =
+            localStorage.getItem(
+                "rdxUsername"
+            ) ||
+            nameInput.value.trim();
+
 
         localStorage.setItem(
             "rdxAuthUser",
@@ -1701,7 +1826,7 @@ async function verifyOTP(){
 
         localStorage.setItem(
             "rdxUsername",
-            nameInput.value.trim()
+            username
         );
 
 
@@ -1722,9 +1847,9 @@ async function verifyOTP(){
         );
 
 
-        /* =========================
-           REDIRECT
-        ========================= */
+        /*
+           Dashboard redirect
+        */
 
         setTimeout(() => {
 
@@ -1778,6 +1903,14 @@ async function verifyOTP(){
 
                 break;
 
+
+            case "auth/too-many-requests":
+
+                message =
+                    "Too many verification attempts. Please try later.";
+
+                break;
+
         }
 
 
@@ -1810,6 +1943,7 @@ function startResendTimer(){
     resendBtn.disabled =
         true;
 
+
     resendBtn.textContent =
         "Resend OTP in " +
         seconds +
@@ -1828,14 +1962,18 @@ function startResendTimer(){
                     resendTimer
                 );
 
+
                 resendTimer =
                     null;
+
 
                 resendBtn.disabled =
                     false;
 
+
                 resendBtn.textContent =
                     "Resend OTP";
+
 
                 return;
 
@@ -1846,6 +1984,7 @@ function startResendTimer(){
                 "Resend OTP in " +
                 seconds +
                 "s";
+
 
         },1000);
 
@@ -1859,19 +1998,32 @@ function startResendTimer(){
 async function resendOTP(){
 
     if(resendBtn.disabled){
+
         return;
+
     }
 
 
     /*
-       Reset old reCAPTCHA
-       before requesting a new OTP.
+       Show reCAPTCHA again
     */
+
+    recaptchaContainer.style.display =
+        "flex";
+
 
     resetRecaptcha();
 
 
-    await sendOTP();
+    /*
+       Wait for DOM
+    */
+
+    setTimeout(() => {
+
+        sendOTP();
+
+    },100);
 
 }
 
@@ -1882,7 +2034,7 @@ async function resendOTP(){
 
 continueBtn.addEventListener(
     "click",
-    () => {
+    function(){
 
         if(otpSent){
 
@@ -1967,7 +2119,9 @@ document.addEventListener(
     function(event){
 
         if(event.key !== "Enter"){
+
             return;
+
         }
 
 
@@ -2011,7 +2165,6 @@ function(){
     }
 
 };
-
 
 </script>
 
