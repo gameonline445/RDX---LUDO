@@ -1,19 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
 <title>RDX LUDO - Login</title>
 
 <style>
-
-*{
-box-sizing:border-box;
-margin:0;
-padding:0
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
@@ -27,9 +20,7 @@ radial-gradient(circle at 50% 100%,rgba(91,218,172,.18),transparent 35%),
 linear-gradient(135deg,#edf4ff,#fff 50%,#f4f7ff)
 }
 
-.top-bar{
-padding:18px 18px 0
-}
+.top-bar{padding:18px 18px 0}
 
 .back-btn{
 border:1px solid #a8c4f8;
@@ -66,10 +57,7 @@ margin:auto;
 padding:25px 18px 70px
 }
 
-.brand{
-text-align:center;
-margin:12px 0 25px
-}
+.brand{text-align:center;margin:12px 0 25px}
 
 .logo{
 width:112px;
@@ -84,9 +72,7 @@ justify-content:center;
 color:#2565df;
 font-size:25px;
 font-weight:950;
-box-shadow:
-0 0 0 8px rgba(73,120,232,.08),
-0 18px 40px rgba(44,92,190,.18);
+box-shadow:0 0 0 8px rgba(73,120,232,.08),0 18px 40px rgba(44,92,190,.18);
 position:relative
 }
 
@@ -99,10 +85,7 @@ border:3px solid #ef4444;
 opacity:.75
 }
 
-.logo span{
-position:relative;
-z-index:2
-}
+.logo span{position:relative;z-index:2}
 
 .brand h1{
 margin-top:18px;
@@ -128,9 +111,7 @@ background:linear-gradient(145deg,rgba(255,255,255,.98),rgba(248,251,255,.98));
 border:1px solid #b9cdf5;
 border-radius:30px;
 padding:34px;
-box-shadow:
-0 25px 65px rgba(38,82,165,.14),
-0 5px 20px rgba(38,82,165,.07);
+box-shadow:0 25px 65px rgba(38,82,165,.14),0 5px 20px rgba(38,82,165,.07);
 position:relative;
 overflow:hidden
 }
@@ -204,9 +185,7 @@ font-size:15px;
 font-weight:850
 }
 
-.input-wrap{
-position:relative
-}
+.input-wrap{position:relative}
 
 .input-icon{
 position:absolute;
@@ -254,9 +233,7 @@ font-size:17px;
 font-weight:900
 }
 
-.mobile-wrap input{
-padding-left:18px
-}
+.mobile-wrap input{padding-left:18px}
 
 #msg91Widget{
 display:none;
@@ -337,9 +314,7 @@ line-height:1.6;
 padding:0 8px
 }
 
-.info-text strong{
-color:#2865d6
-}
+.info-text strong{color:#2865d6}
 
 .toast{
 position:fixed;
@@ -367,9 +342,7 @@ transform:translateX(-50%) translateY(0)
 
 @media(max-width:600px){
 
-.top-bar{
-padding:14px 12px 0
-}
+.top-bar{padding:14px 12px 0}
 
 .back-btn{
 min-height:50px;
@@ -383,13 +356,9 @@ height:38px;
 font-size:23px
 }
 
-.page{
-padding:20px 12px 55px
-}
+.page{padding:20px 12px 55px}
 
-.brand{
-margin:8px 0 20px
-}
+.brand{margin:8px 0 20px}
 
 .logo{
 width:94px;
@@ -397,33 +366,19 @@ height:94px;
 font-size:21px
 }
 
-.brand h1{
-font-size:31px
-}
-
-.brand p{
-font-size:16px
-}
+.brand h1{font-size:31px}
+.brand p{font-size:16px}
 
 .login-card{
 padding:24px 18px;
 border-radius:25px
 }
 
-.login-card h2{
-font-size:27px
-}
+.login-card h2{font-size:27px}
+.subtitle{font-size:14px}
+.form-group{margin-top:21px}
 
-.subtitle{
-font-size:14px
-}
-
-.form-group{
-margin-top:21px
-}
-
-input,
-.country-code{
+input,.country-code{
 height:58px;
 border-radius:16px
 }
@@ -445,9 +400,7 @@ margin-top:22px;
 padding-top:18px
 }
 
-.feature{
-font-size:10px
-}
+.feature{font-size:10px}
 
 .feature-icon{
 width:38px;
@@ -457,25 +410,16 @@ font-size:17px
 }
 
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="top-bar">
-
-<button
-type="button"
-class="back-btn"
-onclick="goBack()"
->
-
+<button type="button" class="back-btn" onclick="goBack()">
 <span class="back-icon">←</span>
 <span>Back</span>
-
 </button>
-
 </div>
 
 <main class="page">
@@ -487,17 +431,13 @@ onclick="goBack()"
 </div>
 
 <h1>RDX LUDO</h1>
-
 <p>Play · Compete · Enjoy</p>
 
 </section>
 
 <section class="login-card">
 
-<span
-class="step"
-id="stepLabel"
->
+<span class="step" id="stepLabel">
 ✨ STEP 1
 </span>
 
@@ -505,17 +445,11 @@ id="stepLabel"
 Create / Login Account
 </h2>
 
-<p
-class="subtitle"
-id="subtitleText"
->
+<p class="subtitle" id="subtitleText">
 Enter your name and mobile number. We will send you an OTP for verification.
 </p>
 
-<div
-class="form-group"
-id="nameGroup"
->
+<div class="form-group" id="nameGroup">
 
 <label for="name">
 Your Name
@@ -523,9 +457,7 @@ Your Name
 
 <div class="input-wrap">
 
-<span class="input-icon">
-👤
-</span>
+<span class="input-icon">👤</span>
 
 <input
 type="text"
@@ -536,13 +468,9 @@ autocomplete="name"
 >
 
 </div>
-
 </div>
 
-<div
-class="form-group"
-id="mobileGroup"
->
+<div class="form-group" id="mobileGroup">
 
 <label for="mobile">
 Mobile Number
@@ -564,54 +492,37 @@ autocomplete="tel"
 >
 
 </div>
-
 </div>
 
-<!-- MSG91 WIDGET -->
+<!-- MSG91 OTP WIDGET -->
 <div id="msg91Widget"></div>
 
 <p id="otpInfo">
-OTP verification is being started securely using MSG91.
+OTP verification is in progress. Please enter the OTP manually.
 </p>
 
 <button
 type="button"
 class="continue-btn"
-id="continueBtn"
->
+id="continueBtn">
 Send OTP
 </button>
 
 <div class="features">
 
 <div class="feature">
-
-<div class="feature-icon">
-🛡️
-</div>
-
+<div class="feature-icon">🛡️</div>
 Secure Account
-
 </div>
 
 <div class="feature">
-
-<div class="feature-icon">
-⚡
-</div>
-
+<div class="feature-icon">⚡</div>
 Quick Access
-
 </div>
 
 <div class="feature">
-
-<div class="feature-icon">
-🎧
-</div>
-
+<div class="feature-icon">🎧</div>
 Support
-
 </div>
 
 </div>
@@ -632,25 +543,26 @@ OTP verification is required to continue.
 
 </main>
 
-<div
-class="toast"
-id="toast"
-></div>
+<div class="toast" id="toast"></div>
 
 
 <script>
 
 /*
 ====================================================
-RDX LUDO - MSG91 OTP LOGIN
+RDX LUDO - MSG91 OTP
 ====================================================
 
-MSG91 Widget:
-Widget ID already added.
+OTP AUTOMATICALLY ENTER NAHI HOGA.
 
-IMPORTANT:
-tokenAuth में अपना नया MSG91 token डालें.
-पुराना exposed token इस्तेमाल न करें.
+USER:
+1. Name dalega
+2. Mobile dalega
+3. Send OTP dabayega
+4. MSG91 OTP screen kholega
+5. User OTP KHUD dalega
+6. MSG91 verification successful hone par
+   dashboard.html open hoga.
 ====================================================
 */
 
@@ -659,6 +571,10 @@ const MSG91_CONFIG = {
 
     widgetId:
     "366870704943343439343834",
+
+    /*
+    YAHAN APNA NAYA MSG91 tokenAuth DALO
+    */
 
     tokenAuth:
     "YOUR_NEW_TOKEN_AUTH",
@@ -673,11 +589,11 @@ const MSG91_CONFIG = {
     function(data){
 
         console.log(
-            "MSG91 SUCCESS:",
+            "MSG91 OTP VERIFIED:",
             data
         );
 
-        handleVerificationSuccess(data);
+        loginSuccess(data);
 
     },
 
@@ -685,7 +601,7 @@ const MSG91_CONFIG = {
     function(error){
 
         console.error(
-            "MSG91 FAILURE:",
+            "MSG91 OTP ERROR:",
             error
         );
 
@@ -698,648 +614,525 @@ const MSG91_CONFIG = {
 };
 
 
-/*
-====================================================
-ELEMENTS
-====================================================
-*/
-
-const $ =
-id =>
-document.getElementById(id);
+/* ELEMENTS */
 
 const nameInput =
-$("name");
+document.getElementById("name");
 
 const mobileInput =
-$("mobile");
+document.getElementById("mobile");
 
 const continueBtn =
-$("continueBtn");
+document.getElementById("continueBtn");
 
 const msg91Widget =
-$("msg91Widget");
+document.getElementById("msg91Widget");
 
 const nameGroup =
-$("nameGroup");
+document.getElementById("nameGroup");
 
 const mobileGroup =
-$("mobileGroup");
+document.getElementById("mobileGroup");
 
 const stepLabel =
-$("stepLabel");
+document.getElementById("stepLabel");
 
 const titleText =
-$("titleText");
+document.getElementById("titleText");
 
 const subtitleText =
-$("subtitleText");
+document.getElementById("subtitleText");
 
 const otpInfo =
-$("otpInfo");
+document.getElementById("otpInfo");
 
 const toast =
-$("toast");
+document.getElementById("toast");
 
 
-/*
-====================================================
-TOAST
-====================================================
-*/
+/* TOAST */
 
 function showMessage(message){
 
-    toast.textContent =
-    message;
+toast.textContent = message;
 
-    toast.classList.add(
-        "show"
-    );
+toast.classList.add("show");
 
-    clearTimeout(
-        showMessage.timer
-    );
+clearTimeout(showMessage.timer);
 
-    showMessage.timer =
-    setTimeout(
-        function(){
+showMessage.timer =
+setTimeout(function(){
 
-            toast.classList.remove(
-                "show"
-            );
+toast.classList.remove("show");
 
-        },
-        3000
-    );
+},3000);
 
 }
 
 
-/*
-====================================================
-MOBILE
-====================================================
-*/
+/* MOBILE */
 
 function getMobile(){
 
-    return mobileInput.value
-        .replace(/\D/g,"")
-        .slice(0,10);
+return mobileInput.value
+.replace(/\D/g,"")
+.slice(0,10);
 
 }
 
 
-/*
-====================================================
-LOAD MSG91 SCRIPT
-====================================================
-*/
+/* LOAD MSG91 */
 
 function loadMSG91(){
 
-    if(
-        typeof window.initSendOTP ===
-        "function"
-    ){
+if(
+typeof window.initSendOTP ===
+"function"
+){
 
-        initializeMSG91();
+initializeMSG91();
 
-        return;
+return;
 
-    }
+}
 
+if(
+document.getElementById(
+"msg91OtpScript"
+)
+){
 
-    if(
-        document.getElementById(
-            "msg91OtpScript"
-        )
-    ){
+return;
 
-        return;
+}
 
-    }
+const script =
+document.createElement("script");
 
+script.id =
+"msg91OtpScript";
 
-    const script =
-    document.createElement(
-        "script"
-    );
+script.type =
+"text/javascript";
 
-    script.id =
-    "msg91OtpScript";
+script.async =
+true;
 
-    script.type =
-    "text/javascript";
+script.src =
+"https://verify.msg91.com/otp-provider.js";
 
-    script.async =
-    true;
+script.onload =
+function(){
 
+console.log(
+"MSG91 script loaded"
+);
 
-    /*
-    MSG91 official OTP script
-    */
+if(
+typeof window.initSendOTP ===
+"function"
+){
 
-    script.src =
-    "https://verify.msg91.com/otp-provider.js";
+initializeMSG91();
 
+}
+else{
 
-    script.onload =
-    function(){
+showMessage(
+"MSG91 OTP service could not initialize."
+);
 
-        console.log(
-            "MSG91 OTP script loaded."
-        );
+continueBtn.disabled =
+false;
 
+continueBtn.textContent =
+"Send OTP";
 
-        if(
-            typeof window.initSendOTP ===
-            "function"
-        ){
+}
 
-            initializeMSG91();
+};
 
-        }
-        else{
+script.onerror =
+function(){
 
-            showMessage(
-                "MSG91 OTP service could not initialize."
-            );
+loadMSG91Fallback();
 
-            continueBtn.disabled =
-            false;
+};
 
-            continueBtn.textContent =
-            "Send OTP";
-
-        }
-
-    };
-
-
-    script.onerror =
-    function(){
-
-        /*
-        Fallback script
-        */
-
-        loadMSG91Fallback();
-
-    };
-
-
-    document.head.appendChild(
-        script
-    );
+document.head.appendChild(script);
 
 }
 
 
-/*
-====================================================
-MSG91 FALLBACK
-====================================================
-*/
+/* FALLBACK */
 
 function loadMSG91Fallback(){
 
-    if(
-        document.getElementById(
-            "msg91OtpFallback"
-        )
-    ){
+if(
+document.getElementById(
+"msg91Fallback"
+)
+){
 
-        return;
+return;
 
-    }
+}
 
+const script =
+document.createElement("script");
 
-    const script =
-    document.createElement(
-        "script"
-    );
+script.id =
+"msg91Fallback";
 
-    script.id =
-    "msg91OtpFallback";
+script.async =
+true;
 
-    script.type =
-    "text/javascript";
+script.src =
+"https://verify.phone91.com/otp-provider.js";
 
-    script.async =
-    true;
+script.onload =
+function(){
 
-    script.src =
-    "https://verify.phone91.com/otp-provider.js";
+if(
+typeof window.initSendOTP ===
+"function"
+){
 
+initializeMSG91();
 
-    script.onload =
-    function(){
+}
+else{
 
-        console.log(
-            "MSG91 fallback OTP script loaded."
-        );
+showMessage(
+"MSG91 OTP service could not initialize."
+);
 
+}
 
-        if(
-            typeof window.initSendOTP ===
-            "function"
-        ){
+};
 
-            initializeMSG91();
+script.onerror =
+function(){
 
-        }
-        else{
+showMessage(
+"Unable to load MSG91 OTP service."
+);
 
-            showMessage(
-                "MSG91 OTP service could not initialize."
-            );
+continueBtn.disabled =
+false;
 
-            continueBtn.disabled =
-            false;
+continueBtn.textContent =
+"Send OTP";
 
-            continueBtn.textContent =
-            "Send OTP";
+};
 
-        }
-
-    };
-
-
-    script.onerror =
-    function(){
-
-        showMessage(
-            "Unable to load MSG91 OTP service."
-        );
-
-        continueBtn.disabled =
-        false;
-
-        continueBtn.textContent =
-        "Send OTP";
-
-    };
-
-
-    document.head.appendChild(
-        script
-    );
+document.head.appendChild(script);
 
 }
 
 
-/*
-====================================================
-INITIALIZE MSG91
-====================================================
-*/
+/* INITIALIZE */
 
 function initializeMSG91(){
 
-    if(
-        !MSG91_CONFIG.tokenAuth ||
-        MSG91_CONFIG.tokenAuth ===
-        "YOUR_NEW_TOKEN_AUTH"
-    ){
+if(
+!MSG91_CONFIG.tokenAuth ||
+MSG91_CONFIG.tokenAuth ===
+"YOUR_NEW_TOKEN_AUTH"
+){
 
-        showMessage(
-            "MSG91 tokenAuth अभी डालना बाकी है."
-        );
+showMessage(
+"MSG91 tokenAuth डालें."
+);
 
-        continueBtn.disabled =
-        false;
+continueBtn.disabled =
+false;
 
-        continueBtn.textContent =
-        "Send OTP";
+continueBtn.textContent =
+"Send OTP";
 
-        return;
+return;
 
-    }
+}
 
+try{
 
-    try{
+window.initSendOTP(
+MSG91_CONFIG
+);
 
-        window.initSendOTP(
-            MSG91_CONFIG
-        );
+console.log(
+"MSG91 widget initialized"
+);
 
-        console.log(
-            "MSG91 widget initialized."
-        );
+}
+catch(error){
 
-    }
-    catch(error){
+console.error(error);
 
-        console.error(
-            "MSG91 INIT ERROR:",
-            error
-        );
+showMessage(
+"MSG91 initialization failed."
+);
 
-        showMessage(
-            "MSG91 OTP initialization failed."
-        );
+continueBtn.disabled =
+false;
 
-        continueBtn.disabled =
-        false;
+continueBtn.textContent =
+"Send OTP";
 
-        continueBtn.textContent =
-        "Send OTP";
-
-    }
+}
 
 }
 
 
-/*
-====================================================
-START LOGIN
-====================================================
-*/
+/* START LOGIN */
 
 function startLogin(){
 
-    const name =
-    nameInput.value.trim();
+const name =
+nameInput.value.trim();
 
-    const mobile =
-    getMobile();
-
-
-    if(
-        name.length < 2
-    ){
-
-        showMessage(
-            "Please enter your name."
-        );
-
-        nameInput.focus();
-
-        return;
-
-    }
+const mobile =
+getMobile();
 
 
-    if(
-        !/^[6-9]\d{9}$/.test(
-            mobile
-        )
-    ){
+if(name.length < 2){
 
-        showMessage(
-            "Enter a valid 10-digit mobile number."
-        );
+showMessage(
+"Please enter your name."
+);
 
-        mobileInput.focus();
+nameInput.focus();
 
-        return;
+return;
 
-    }
+}
 
 
-    /*
-    Save user information
-    */
+if(
+!/^[6-9]\d{9}$/.test(mobile)
+){
 
-    localStorage.setItem(
-        "rdxUsername",
-        name
-    );
+showMessage(
+"Enter a valid 10-digit mobile number."
+);
 
+mobileInput.focus();
 
-    localStorage.setItem(
-        "rdxMobile",
-        "+91" + mobile
-    );
+return;
 
-
-    /*
-    Give MSG91 the mobile number
-    */
-
-    MSG91_CONFIG.identifier =
-    "+91" + mobile;
+}
 
 
-    /*
-    Change UI to STEP 2
-    */
+/*
+SAVE USER INFORMATION
+*/
 
-    nameGroup.style.display =
-    "none";
+localStorage.setItem(
+"rdxUsername",
+name
+);
 
-    mobileGroup.style.display =
-    "none";
-
-
-    stepLabel.textContent =
-    "✨ STEP 2";
-
-
-    titleText.textContent =
-    "Verify Mobile Number";
+localStorage.setItem(
+"rdxMobile",
+"+91" + mobile
+);
 
 
-    subtitleText.textContent =
-    "Enter the OTP sent to your mobile number.";
+/*
+MSG91 MOBILE
+*/
+
+MSG91_CONFIG.identifier =
+"+91" + mobile;
 
 
-    otpInfo.style.display =
-    "block";
+/*
+STEP 2
+*/
+
+nameGroup.style.display =
+"none";
+
+mobileGroup.style.display =
+"none";
+
+stepLabel.textContent =
+"✨ STEP 2";
+
+titleText.textContent =
+"Verify Mobile Number";
+
+subtitleText.textContent =
+"Enter the OTP sent to your mobile number.";
+
+otpInfo.style.display =
+"block";
+
+otpInfo.textContent =
+"OTP sent. Please enter the OTP manually.";
+
+msg91Widget.style.display =
+"block";
+
+continueBtn.style.display =
+"none";
 
 
-    otpInfo.textContent =
-    "OTP verification is in progress.";
+/*
+START MSG91
+*/
 
-
-    msg91Widget.style.display =
-    "block";
-
-
-    continueBtn.style.display =
-    "none";
-
-
-    /*
-    Load MSG91
-    */
-
-    loadMSG91();
+loadMSG91();
 
 }
 
 
 /*
 ====================================================
-MSG91 SUCCESS
+SUCCESSFUL OTP VERIFICATION
 ====================================================
 */
 
-function handleVerificationSuccess(data){
+function loginSuccess(data){
 
-    console.log(
-        "Verified data:",
-        data
-    );
+/*
+LOGIN STATUS
+*/
 
-
-    /*
-    Mark user as logged in
-    */
-
-    localStorage.setItem(
-        "rdxLoggedIn",
-        "true"
-    );
+localStorage.setItem(
+"rdxLoggedIn",
+"true"
+);
 
 
-    /*
-    Save verification response
-    */
+/*
+SAVE MSG91 RESPONSE
+*/
 
-    try{
+try{
 
-        localStorage.setItem(
-            "rdxMSG91Verification",
-            JSON.stringify(data)
-        );
+localStorage.setItem(
+"rdxMSG91Verification",
+JSON.stringify(data)
+);
 
-    }
-    catch(error){
+}
+catch(error){
 
-        console.log(
-            "Could not save verification response."
-        );
-
-    }
-
-
-    showMessage(
-        "Mobile verified successfully."
-    );
-
-
-    /*
-    Open dashboard
-    */
-
-    setTimeout(
-        function(){
-
-            window.location.href =
-            "./dashboard.html";
-
-        },
-        800
-    );
+console.log(
+"Verification response not saved."
+);
 
 }
 
 
 /*
-====================================================
-MOBILE INPUT
-====================================================
+SUCCESS MESSAGE
 */
+
+showMessage(
+"Login successful!"
+);
+
+
+/*
+GO DASHBOARD
+*/
+
+setTimeout(function(){
+
+window.location.href =
+"./dashboard.html";
+
+},800);
+
+}
+
+
+/* MOBILE INPUT */
 
 mobileInput.addEventListener(
-    "input",
-    function(){
+"input",
+function(){
 
-        mobileInput.value =
-        mobileInput.value
-        .replace(/\D/g,"")
-        .slice(0,10);
+mobileInput.value =
+mobileInput.value
+.replace(/\D/g,"")
+.slice(0,10);
 
-    }
+}
 );
 
 
-/*
-====================================================
-NAME INPUT
-====================================================
-*/
+/* NAME INPUT */
 
 nameInput.addEventListener(
-    "input",
-    function(){
+"input",
+function(){
 
-        nameInput.value =
-        nameInput.value
-        .replace(/\s{2,}/g," ");
+nameInput.value =
+nameInput.value
+.replace(/\s{2,}/g," ");
 
-    }
+}
 );
 
 
-/*
-====================================================
-CONTINUE BUTTON
-====================================================
-*/
+/* SEND OTP BUTTON */
 
 continueBtn.addEventListener(
-    "click",
-    function(){
+"click",
+function(){
 
-        startLogin();
+startLogin();
 
-    }
+}
 );
 
 
-/*
-====================================================
-ENTER KEY
-====================================================
-*/
+/* ENTER */
 
 document.addEventListener(
-    "keydown",
-    function(event){
+"keydown",
+function(event){
 
-        if(
-            event.key === "Enter" &&
-            !continueBtn.disabled
-        ){
+if(
+event.key === "Enter" &&
+!continueBtn.disabled &&
+continueBtn.style.display !== "none"
+){
 
-            event.preventDefault();
+event.preventDefault();
 
-            startLogin();
+startLogin();
 
-        }
+}
 
-    }
+}
 );
 
 
-/*
-====================================================
-BACK BUTTON
-====================================================
-*/
+/* BACK */
 
 window.goBack =
 function(){
 
-    if(
-        document.referrer &&
-        document.referrer !==
-        location.href
-    ){
+if(
+document.referrer &&
+document.referrer !==
+location.href
+){
 
-        history.back();
+history.back();
 
-    }
-    else{
+}
+else{
 
-        window.location.href =
-        "./index.html";
+window.location.href =
+"./index.html";
 
-    }
+}
 
 };
 
