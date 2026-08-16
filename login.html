@@ -573,6 +573,9 @@ id="continueBtn"
 Send OTP
 </button>
 
+
+<!-- OTP SECTION -->
+
 <div id="otpSection">
 
 <label class="otp-label">
@@ -614,6 +617,7 @@ Resend OTP
 
 </div>
 
+
 <div class="features">
 
 <div class="feature">
@@ -645,29 +649,31 @@ Your mobile number will be verified using secure OTP verification.
 
 <div class="toast" id="toast"></div>
 
-<!-- MSG91 SDK -->
+
+<!-- =====================================================
+     MSG91 SDK
+     ===================================================== -->
+
 <script
 type="text/javascript"
 src="https://verify.msg91.com/otp-provider.js"
 onload="msg91Loaded()">
 </script>
 
+
 <script>
 
 /* =====================================================
-   MSG91 SETTINGS
+   MSG91 CONFIGURATION
    ===================================================== */
-
-/*
-IMPORTANT:
-
-यहाँ अपना नया MSG91 OTP Widget Token डालें।
-
-पुराना exposed token यहाँ दोबारा मत लगाना।
-*/
 
 const MSG91_WIDGET_ID =
 "366870704943343439343834";
+
+/*
+   IMPORTANT:
+   नीचे सिर्फ अपना नया MSG91 Widget Token डालें.
+*/
 
 const MSG91_TOKEN =
 "PASTE_YOUR_NEW_MSG91_TOKEN_HERE";
@@ -736,7 +742,7 @@ let msg91Ready = false;
 
 
 /* =====================================================
-   TOAST
+   MESSAGE
    ===================================================== */
 
 function showMessage(message){
@@ -830,16 +836,6 @@ error
 
 window.initSendOTP(configuration);
 
-console.log(
-"MSG91 initialization started"
-);
-
-/*
-Methods expose होने में थोड़ा समय
-लग सकता है इसलिए तुरंत sendOtp
-call नहीं करेंगे।
-*/
-
 waitForMSG91Methods();
 
 }
@@ -860,14 +856,12 @@ showMessage(
 
 
 /* =====================================================
-   WAIT FOR MSG91 METHODS
+   WAIT FOR METHODS
    ===================================================== */
 
 function waitForMSG91Methods(){
 
 let attempts = 0;
-
-const maxAttempts = 100;
 
 const timer =
 setInterval(function(){
@@ -884,16 +878,14 @@ clearInterval(timer);
 msg91Ready = true;
 
 console.log(
-"MSG91 methods are ready"
+"MSG91 methods ready"
 );
 
 return;
 
 }
 
-if(
-attempts >= maxAttempts
-){
+if(attempts >= 100){
 
 clearInterval(timer);
 
@@ -904,7 +896,7 @@ console.error(
 );
 
 showMessage(
-"MSG91 OTP service ready नहीं हुआ। MSG91 widget settings check करें।"
+"MSG91 OTP service ready नहीं हुआ।"
 );
 
 }
@@ -915,7 +907,7 @@ showMessage(
 
 
 /* =====================================================
-   MOBILE NUMBER
+   MOBILE
    ===================================================== */
 
 function getMobile(){
@@ -966,13 +958,18 @@ return;
 }
 
 
+/*
+   Token अभी placeholder है तो
+   OTP send नहीं होगा.
+*/
+
 if(
 MSG91_TOKEN ===
 "PASTE_YOUR_NEW_MSG91_TOKEN_HERE"
 ){
 
 showMessage(
-"पहले नया MSG91 token code में डालें।"
+"MSG91 token डालना बाकी है।"
 );
 
 return;
@@ -995,7 +992,9 @@ localStorage.setItem(
 );
 
 
-/* STEP 2 */
+/* =====================================================
+   STEP 2
+   ===================================================== */
 
 nameGroup.style.display =
 "none";
@@ -1023,10 +1022,6 @@ otpInput.value = "";
 otpInput.focus();
 
 
-/*
-MSG91 methods ready होने तक wait
-*/
-
 if(msg91Ready){
 
 sendOTPNow();
@@ -1046,7 +1041,7 @@ waitAndSendOTP();
 
 
 /* =====================================================
-   WAIT AND SEND OTP
+   WAIT & SEND
    ===================================================== */
 
 function waitAndSendOTP(){
@@ -1109,8 +1104,6 @@ verifyBtn.disabled = true;
 
 resendBtn.disabled = true;
 
-continueBtn.disabled = true;
-
 showMessage(
 "OTP भेजा जा रहा है..."
 );
@@ -1128,10 +1121,7 @@ data
 );
 
 
-/*
-MSG91 response में request ID
-आ सकता है।
-*/
+/* Request ID */
 
 if(
 data &&
@@ -1158,7 +1148,7 @@ verifyBtn.disabled =
 false;
 
 otpHint.textContent =
-"OTP आपके मोबाइल नंबर पर भेज दिया गया है। OTP manually enter करें।";
+"OTP आपके मोबाइल नंबर पर भेज दिया गया है।";
 
 showMessage(
 "OTP successfully sent."
@@ -1211,11 +1201,11 @@ otpInput.value
 
 
 if(
-!/^\d{4,8}$/.test(otp)
+!/^\d{4,6}$/.test(otp)
 ){
 
 showMessage(
-"कृपया सही OTP डालें।"
+"कृपया 4 से 6 digit OTP डालें।"
 );
 
 otpInput.focus();
@@ -1257,9 +1247,7 @@ data
 );
 
 
-/*
-LOGIN SUCCESS
-*/
+/* LOGIN SUCCESS */
 
 localStorage.setItem(
 "rdxLoggedIn",
@@ -1271,21 +1259,10 @@ localStorage.setItem(
 currentIdentifier
 );
 
-try{
-
 localStorage.setItem(
-"rdxMSG91Verification",
-JSON.stringify(data)
+"rdxUsername",
+nameInput.value.trim()
 );
-
-}
-catch(error){
-
-console.log(
-"Verification data save नहीं हुआ।"
-);
-
-}
 
 
 showMessage(
@@ -1293,9 +1270,9 @@ showMessage(
 );
 
 
-/*
-DASHBOARD
-*/
+/* =====================================================
+   DASHBOARD
+   ===================================================== */
 
 setTimeout(function(){
 
@@ -1620,7 +1597,7 @@ verifyOTP();
 
 
 /* =====================================================
-   BACK
+   BACK BUTTON
    ===================================================== */
 
 function goBack(){
