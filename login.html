@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
 <title>RDX LUDO - Login</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0
+}
+
+html{
+scroll-behavior:smooth
+}
 
 body{
 font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
@@ -21,7 +35,9 @@ radial-gradient(circle at 50% 100%,rgba(91,218,172,.18),transparent 35%),
 linear-gradient(135deg,#edf4ff,#fff 50%,#f4f7ff)
 }
 
-.top-bar{padding:18px 18px 0}
+.top-bar{
+padding:18px 18px 0
+}
 
 .back-btn{
 border:1px solid #a8c4f8;
@@ -372,6 +388,27 @@ opacity:1;
 transform:translateX(-50%) translateY(0)
 }
 
+
+/*
+====================================================
+MSG91 WIDGET CONTAINER
+====================================================
+*/
+
+#msg91Widget{
+display:none;
+margin-top:20px;
+position:relative;
+z-index:10
+}
+
+
+/*
+====================================================
+MOBILE
+====================================================
+*/
+
 @media(max-width:600px){
 
 .top-bar{
@@ -464,19 +501,33 @@ font-size:17px
 }
 
 }
+
 </style>
 </head>
 
+
 <body>
 
+
 <div class="top-bar">
-<button type="button" class="back-btn" onclick="goBack()">
+
+<button
+type="button"
+class="back-btn"
+onclick="goBack()"
+>
+
 <span class="back-icon">←</span>
+
 <span>Back</span>
+
 </button>
+
 </div>
 
+
 <main class="page">
+
 
 <section class="brand">
 
@@ -493,32 +544,46 @@ font-size:17px
 
 <section class="login-card">
 
-<span class="step" id="stepLabel">
+
+<span
+class="step"
+id="stepLabel"
+>
 ✨ STEP 1
 </span>
+
 
 <h2 id="titleText">
 Create / Login Account
 </h2>
 
-<p class="subtitle" id="subtitleText">
+
+<p
+class="subtitle"
+id="subtitleText"
+>
 Enter your name and mobile number. We will send you an OTP for verification.
 </p>
 
 
 <!-- NAME -->
 
-<div class="form-group" id="nameGroup">
+<div
+class="form-group"
+id="nameGroup"
+>
 
 <label for="name">
 Your Name
 </label>
+
 
 <div class="input-wrap">
 
 <span class="input-icon">
 👤
 </span>
+
 
 <input
 type="text"
@@ -535,17 +600,23 @@ autocomplete="name"
 
 <!-- MOBILE -->
 
-<div class="form-group" id="mobileGroup">
+<div
+class="form-group"
+id="mobileGroup"
+>
 
 <label for="mobile">
 Mobile Number
 </label>
 
+
 <div class="mobile-wrap">
+
 
 <div class="country-code">
 🇮🇳 +91
 </div>
+
 
 <input
 type="tel"
@@ -561,38 +632,23 @@ autocomplete="tel"
 </div>
 
 
-<!-- OTP -->
+<!-- MSG91 WIDGET -->
 
-<div class="form-group" id="otpSection">
-
-<label for="otp">
-Enter OTP
-</label>
-
-<input
-class="otp-input"
-type="tel"
-id="otp"
-placeholder="••••••"
-inputmode="numeric"
-maxlength="6"
-autocomplete="one-time-code"
+<div
+id="msg91Widget"
 >
-
-<p class="otp-info" id="otpInfo">
-OTP has been sent to your mobile number.
-</p>
-
-<button
-type="button"
-class="resend-btn"
-id="resendBtn"
-disabled
->
-Resend OTP
-</button>
-
 </div>
+
+
+<!-- STATUS -->
+
+<p
+class="otp-info"
+id="otpInfo"
+style="display:none;"
+>
+OTP verification is in progress.
+</p>
 
 
 <!-- MAIN BUTTON -->
@@ -602,26 +658,45 @@ type="button"
 class="continue-btn"
 id="continueBtn"
 >
-Send OTP
+Continue
 </button>
 
 
 <div class="features">
 
+
 <div class="feature">
-<div class="feature-icon">🛡️</div>
+
+<div class="feature-icon">
+🛡️
+</div>
+
 Secure Account
+
 </div>
 
+
 <div class="feature">
-<div class="feature-icon">⚡</div>
+
+<div class="feature-icon">
+⚡
+</div>
+
 Quick Access
+
 </div>
 
+
 <div class="feature">
-<div class="feature-icon">🎧</div>
-Support
+
+<div class="feature-icon">
+🎧
 </div>
+
+Support
+
+</div>
+
 
 </div>
 
@@ -629,32 +704,44 @@ Support
 
 
 <p class="info-text">
+
 Your mobile number will be verified using secure OTP verification.
+
 <br>
-<strong>OTP verification is required to continue.</strong>
+
+<strong>
+OTP verification is required to continue.
+</strong>
+
 </p>
+
 
 </main>
 
 
-<div class="toast" id="toast"></div>
+<div
+class="toast"
+id="toast"
+>
+</div>
+
 
 
 <script>
 
 /*
 ====================================================
-RDX LUDO OTP LOGIN
+RDX LUDO + MSG91 OTP WIDGET
 ====================================================
 
 IMPORTANT:
-OTP API KEY IS NOT HERE.
 
-API key remains safely inside Render
-Environment Variables.
+1. tokenAuth नीचे अपना नया MSG91 tokenAuth डालें.
+2. Authkey यहाँ मत डालें.
+3. MSG91 Widget OTP verification handle करेगा.
+4. Successful verification के बाद access-token
+   Render backend को भेजा जाएगा.
 
-Render Backend:
-https://rdx-ludo-otp-backend-1.onrender.com
 ====================================================
 */
 
@@ -663,11 +750,70 @@ const API_BASE =
 "https://rdx-ludo-otp-backend-1.onrender.com";
 
 
-let otpSent = false;
-let resendTimer = null;
+/*
+====================================================
+MSG91 CONFIG
+====================================================
+
+अपना नया tokenAuth यहाँ डालें.
+
+उदाहरण:
+
+tokenAuth: "YOUR_NEW_TOKEN_AUTH"
+
+====================================================
+*/
+
+const MSG91_CONFIG = {
+
+widgetId:
+"366870704943343439343834",
+
+tokenAuth:
+"YOUR_NEW_TOKEN_AUTH",
+
+exposeMethods:
+true,
 
 
-const $ = id =>
+success:
+async function(data){
+
+console.log(
+"MSG91 SUCCESS:",
+data
+);
+
+await handleMSG91Success(data);
+
+},
+
+
+failure:
+function(error){
+
+console.error(
+"MSG91 FAILURE:",
+error
+);
+
+showMessage(
+"OTP verification failed. Please try again."
+);
+
+}
+
+};
+
+
+/*
+====================================================
+ELEMENTS
+====================================================
+*/
+
+const $ =
+id =>
 document.getElementById(id);
 
 
@@ -677,17 +823,11 @@ $("name");
 const mobileInput =
 $("mobile");
 
-const otpInput =
-$("otp");
-
 const continueBtn =
 $("continueBtn");
 
-const resendBtn =
-$("resendBtn");
-
-const otpSection =
-$("otpSection");
+const msg91Widget =
+$("msg91Widget");
 
 const nameGroup =
 $("nameGroup");
@@ -713,7 +853,7 @@ $("toast");
 
 /*
 ====================================================
-MESSAGE
+TOAST
 ====================================================
 */
 
@@ -729,11 +869,16 @@ showMessage.timer
 );
 
 showMessage.timer =
-setTimeout(() => {
+setTimeout(
+function(){
 
-toast.classList.remove("show");
+toast.classList.remove(
+"show"
+);
 
-},3000);
+},
+3000
+);
 
 }
 
@@ -755,25 +900,33 @@ return mobileInput.value
 
 /*
 ====================================================
-API REQUEST
+API
 ====================================================
 */
 
-async function api(path,body){
+async function api(
+path,
+body
+){
 
 const response =
 await fetch(
 API_BASE + path,
 {
+
 method:"POST",
 
 headers:{
 "Content-Type":
+"application/json",
+
+"Accept":
 "application/json"
 },
 
 body:
 JSON.stringify(body)
+
 }
 );
 
@@ -786,7 +939,9 @@ try{
 data =
 await response.json();
 
-}catch(error){
+}
+
+catch(error){
 
 throw new Error(
 "Server response is invalid."
@@ -802,7 +957,7 @@ if(
 
 throw new Error(
 data.message ||
-"Request failed. Please try again."
+"Request failed."
 );
 
 }
@@ -815,11 +970,11 @@ return data;
 
 /*
 ====================================================
-SEND OTP
+CONTINUE
 ====================================================
 */
 
-async function sendOTP(){
+async function startLogin(){
 
 const name =
 nameInput.value.trim();
@@ -841,7 +996,9 @@ return;
 }
 
 
-if(!/^[6-9]\d{9}$/.test(mobile)){
+if(
+!/^[6-9]\d{9}$/.test(mobile)
+){
 
 showMessage(
 "Enter a valid 10-digit mobile number."
@@ -854,27 +1011,8 @@ return;
 }
 
 
-continueBtn.disabled =
-true;
-
-continueBtn.textContent =
-"Sending OTP...";
-
-
-try{
-
-
-await api(
-"/api/send-otp",
-{
-name:name,
-mobile:"+91" + mobile
-}
-);
-
-
 /*
-Save login information locally.
+Save user information.
 */
 
 localStorage.setItem(
@@ -888,12 +1026,35 @@ localStorage.setItem(
 );
 
 
-otpSent =
+/*
+Validate mobile with backend.
+*/
+
+continueBtn.disabled =
 true;
+
+continueBtn.textContent =
+"Loading OTP...";
+
+
+try{
+
+
+await api(
+"/api/send-otp",
+{
+
+name:name,
+
+mobile:
+"+91" + mobile
+
+}
+);
 
 
 /*
-Hide Step 1.
+Hide our own inputs.
 */
 
 nameGroup.style.display =
@@ -904,12 +1065,8 @@ mobileGroup.style.display =
 
 
 /*
-Show OTP.
+Change screen.
 */
-
-otpSection.style.display =
-"block";
-
 
 stepLabel.textContent =
 "✨ STEP 2";
@@ -918,37 +1075,44 @@ titleText.textContent =
 "Verify Mobile Number";
 
 subtitleText.textContent =
-"Enter the 6-digit OTP sent to your mobile number.";
+"Complete OTP verification using the secure MSG91 verification window.";
+
+
+/*
+Show widget.
+*/
+
+msg91Widget.style.display =
+"block";
+
+
+otpInfo.style.display =
+"block";
 
 otpInfo.textContent =
-"OTP sent to +91 " + mobile;
+"OTP verification is in progress.";
 
 
-otpInput.value =
-"";
+/*
+Disable our Continue button.
+*/
 
-otpInput.focus();
-
-
-continueBtn.textContent =
-"Verify OTP";
-
-continueBtn.disabled =
-false;
+continueBtn.style.display =
+"none";
 
 
-startTimer();
+/*
+Initialize MSG91.
+*/
+
+initializeMSG91();
 
 
-showMessage(
-"OTP sent successfully."
-);
-
-
-}catch(error){
+}
+catch(error){
 
 console.error(
-"SEND OTP ERROR:",
+"START LOGIN ERROR:",
 error
 );
 
@@ -956,7 +1120,7 @@ continueBtn.disabled =
 false;
 
 continueBtn.textContent =
-"Send OTP";
+"Continue";
 
 showMessage(
 error.message
@@ -969,16 +1133,154 @@ error.message
 
 /*
 ====================================================
-VERIFY OTP
+INITIALIZE MSG91
 ====================================================
 */
 
-async function verifyOTP(){
+function initializeMSG91(){
 
-const otp =
-otpInput.value
-.replace(/\D/g,"")
-.slice(0,6);
+if(
+!MSG91_CONFIG.tokenAuth ||
+MSG91_CONFIG.tokenAuth ===
+"YOUR_NEW_TOKEN_AUTH"
+){
+
+showMessage(
+"MSG91 tokenAuth is not configured."
+);
+
+return;
+
+}
+
+
+/*
+Some MSG91 versions expose
+initSendOTP after the script loads.
+*/
+
+if(
+typeof window.initSendOTP ===
+"function"
+){
+
+window.initSendOTP(
+MSG91_CONFIG
+);
+
+return;
+
+}
+
+
+/*
+Load MSG91 OTP script.
+*/
+
+const existing =
+document.getElementById(
+"msg91OtpScript"
+);
+
+
+if(existing){
+
+return;
+
+}
+
+
+const script =
+document.createElement(
+"script"
+);
+
+script.id =
+"msg91OtpScript";
+
+script.async =
+true;
+
+
+script.src =
+"https://verify.msg91.com/otp-provider.js";
+
+
+script.onload =
+function(){
+
+console.log(
+"MSG91 OTP script loaded."
+);
+
+
+if(
+typeof window.initSendOTP ===
+"function"
+){
+
+window.initSendOTP(
+MSG91_CONFIG
+);
+
+}
+
+else{
+
+showMessage(
+"MSG91 OTP widget could not initialize."
+);
+
+}
+
+};
+
+
+script.onerror =
+function(){
+
+showMessage(
+"Unable to load MSG91 OTP service."
+);
+
+};
+
+
+document.head.appendChild(
+script
+);
+
+}
+
+
+/*
+====================================================
+MSG91 SUCCESS
+====================================================
+*/
+
+async function handleMSG91Success(data){
+
+try{
+
+const accessToken =
+extractAccessToken(data);
+
+
+if(!accessToken){
+
+console.error(
+"MSG91 response:",
+data
+);
+
+showMessage(
+"Verification token not received."
+);
+
+return;
+
+}
 
 
 const mobile =
@@ -996,7 +1298,7 @@ localStorage.getItem(
 if(!mobile){
 
 showMessage(
-"Mobile number missing. Please request OTP again."
+"Mobile number missing."
 );
 
 return;
@@ -1004,35 +1306,22 @@ return;
 }
 
 
-if(!/^\d{6}$/.test(otp)){
+/*
+Send verified MSG91 access token
+to Render backend.
+*/
 
-showMessage(
-"Enter the 6-digit OTP."
-);
-
-otpInput.focus();
-
-return;
-
-}
-
-
-continueBtn.disabled =
-true;
-
-continueBtn.textContent =
-"Verifying...";
-
-
-try{
-
-
-const data =
+const result =
 await api(
 "/api/verify-otp",
 {
-mobile:mobile,
-otp:otp
+
+mobile:
+mobile,
+
+accessToken:
+accessToken
+
 }
 );
 
@@ -1055,11 +1344,11 @@ username
 );
 
 
-if(data.userId){
+if(result.userId){
 
 localStorage.setItem(
 "rdxAuthUser",
-data.userId
+result.userId
 );
 
 }
@@ -1071,32 +1360,31 @@ showMessage(
 
 
 /*
-Go to dashboard.
+Go dashboard.
 */
 
-setTimeout(() => {
+setTimeout(
+function(){
 
 window.location.href =
 "./dashboard.html";
 
-},800);
+},
+800
+);
 
 
-}catch(error){
+}
+catch(error){
 
 console.error(
-"VERIFY OTP ERROR:",
+"MSG91 BACKEND ERROR:",
 error
 );
 
-continueBtn.disabled =
-false;
-
-continueBtn.textContent =
-"Verify OTP";
-
 showMessage(
-error.message
+error.message ||
+"Login verification failed."
 );
 
 }
@@ -1106,114 +1394,87 @@ error.message
 
 /*
 ====================================================
-RESEND OTP TIMER
+EXTRACT ACCESS TOKEN
+====================================================
+
+MSG91 response versions can differ.
+Try common locations.
 ====================================================
 */
 
-function startTimer(){
+function extractAccessToken(data){
 
-if(resendTimer){
+if(!data){
 
-clearInterval(
-resendTimer
-);
-
-}
-
-
-let seconds =
-30;
-
-
-resendBtn.disabled =
-true;
-
-resendBtn.textContent =
-"Resend OTP in " +
-seconds +
-"s";
-
-
-resendTimer =
-setInterval(() => {
-
-
-seconds--;
-
-
-if(seconds <= 0){
-
-clearInterval(
-resendTimer
-);
-
-resendTimer =
-null;
-
-resendBtn.disabled =
-false;
-
-resendBtn.textContent =
-"Resend OTP";
-
-
-}else{
-
-resendBtn.textContent =
-"Resend OTP in " +
-seconds +
-"s";
-
-}
-
-
-},1000);
+return null;
 
 }
 
 
 /*
-====================================================
-MAIN BUTTON
-====================================================
+Direct token.
 */
 
-continueBtn.addEventListener(
-"click",
-() => {
+if(
+typeof data === "string" &&
+data.length > 20
+){
 
-if(otpSent){
-
-verifyOTP();
-
-}else{
-
-sendOTP();
+return data;
 
 }
-
-}
-);
 
 
 /*
-====================================================
-RESEND BUTTON
-====================================================
+Common response fields.
 */
 
-resendBtn.addEventListener(
-"click",
-() => {
+const possible = [
 
-if(!resendBtn.disabled){
+data.accessToken,
 
-sendOTP();
+data.access_token,
+
+data["access-token"],
+
+data.token,
+
+data.response?.accessToken,
+
+data.response?.access_token,
+
+data.response?.["access-token"],
+
+data.data?.accessToken,
+
+data.data?.access_token,
+
+data.data?.["access-token"],
+
+data.data?.token
+
+];
+
+
+for(
+const token of possible
+){
+
+if(
+typeof token === "string" &&
+token.trim().length > 20
+){
+
+return token.trim();
 
 }
 
 }
-);
+
+
+return null;
+
+}
 
 
 /*
@@ -1224,31 +1485,12 @@ MOBILE INPUT
 
 mobileInput.addEventListener(
 "input",
-() => {
+function(){
 
 mobileInput.value =
 mobileInput.value
 .replace(/\D/g,"")
 .slice(0,10);
-
-}
-);
-
-
-/*
-====================================================
-OTP INPUT
-====================================================
-*/
-
-otpInput.addEventListener(
-"input",
-() => {
-
-otpInput.value =
-otpInput.value
-.replace(/\D/g,"")
-.slice(0,6);
 
 }
 );
@@ -1262,7 +1504,7 @@ NAME INPUT
 
 nameInput.addEventListener(
 "input",
-() => {
+function(){
 
 nameInput.value =
 nameInput.value
@@ -1274,28 +1516,38 @@ nameInput.value
 
 /*
 ====================================================
-ENTER KEY
+CONTINUE
+====================================================
+*/
+
+continueBtn.addEventListener(
+"click",
+function(){
+
+startLogin();
+
+}
+);
+
+
+/*
+====================================================
+ENTER
 ====================================================
 */
 
 document.addEventListener(
 "keydown",
-event => {
+function(event){
 
-if(event.key === "Enter"){
+if(
+event.key === "Enter" &&
+!continueBtn.disabled
+){
 
 event.preventDefault();
 
-
-if(otpSent){
-
-verifyOTP();
-
-}else{
-
-sendOTP();
-
-}
+startLogin();
 
 }
 
@@ -1305,20 +1557,23 @@ sendOTP();
 
 /*
 ====================================================
-BACK BUTTON
+BACK
 ====================================================
 */
 
-window.goBack = () => {
+window.goBack =
+function(){
 
 if(
 document.referrer &&
-document.referrer !== location.href
+document.referrer !==
+location.href
 ){
 
 history.back();
 
-}else{
+}
+else{
 
 window.location.href =
 "./index.html";
