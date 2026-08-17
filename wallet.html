@@ -5,38 +5,67 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+      content="width=device-width,
+      initial-scale=1.0,
+      maximum-scale=1.0,
+      user-scalable=no,
+      viewport-fit=cover">
 
 <title>RDX LUDO - Wallet</title>
 
+
 <!-- FIREBASE -->
+
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
 
 <script>
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain: "rdx-ludo.firebaseapp.com",
-    projectId: "rdx-ludo",
-    storageBucket: "rdx-ludo.firebasestorage.app",
-    messagingSenderId: "928340814840",
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+
+    apiKey:
+    "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+
+    authDomain:
+    "rdx-ludo.firebaseapp.com",
+
+    projectId:
+    "rdx-ludo",
+
+    storageBucket:
+    "rdx-ludo.firebasestorage.app",
+
+    messagingSenderId:
+    "928340814840",
+
+    appId:
+    "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
+
 let firebaseDB = null;
+
 
 try {
 
     if(!firebase.apps.length){
-        firebase.initializeApp(firebaseConfig);
+
+        firebase.initializeApp(
+            firebaseConfig
+        );
+
     }
 
-    firebaseDB = firebase.firestore();
+    firebaseDB =
+        firebase.firestore();
 
-    console.log("Firebase connected");
+    console.log(
+        "Firebase connected"
+    );
 
-} catch(error){
+}
+catch(error){
 
     console.error(
         "Firebase initialization error:",
@@ -50,21 +79,47 @@ try {
 
 <style>
 
-/* =========================
+/* =====================================================
    RESET
-========================= */
+===================================================== */
 
 *{
+
     box-sizing:border-box;
+
     margin:0;
+
     padding:0;
+
+    -webkit-tap-highlight-color:transparent;
+
 }
+
 
 html{
-    scroll-behavior:smooth;
+
+    width:100%;
+
+    height:100%;
+
+    overflow:hidden;
+
 }
 
+
 body{
+
+    width:100%;
+
+    height:100dvh;
+
+    min-height:100dvh;
+
+    overflow:hidden;
+
+    position:fixed;
+
+    inset:0;
 
     font-family:
     -apple-system,
@@ -74,42 +129,62 @@ body{
     Arial,
     sans-serif;
 
-    background:
-    linear-gradient(
-        180deg,
-        #f5f8ff 0%,
-        #ffffff 65%,
-        #f6f8ff 100%
-    );
-
     color:#101a38;
 
-    min-height:100vh;
+    background:
 
-    padding-bottom:90px;
+    radial-gradient(
+        circle at 0% 0%,
+        #dfeaff 0%,
+        transparent 35%
+    ),
+
+    radial-gradient(
+        circle at 100% 15%,
+        #e9ddff 0%,
+        transparent 35%
+    ),
+
+    linear-gradient(
+        180deg,
+        #f3f7ff 0%,
+        #ffffff 55%,
+        #f2f6ff 100%
+    );
+
 }
+
 
 button{
+
     font:inherit;
+
+    -webkit-appearance:none;
+
+    appearance:none;
+
 }
 
 
-/* =========================
+/* =====================================================
    HEADER
-========================= */
+===================================================== */
 
 .top-header{
 
-    height:76px;
+    position:fixed;
 
-    background:
-    linear-gradient(
-        110deg,
-        #edf4ff,
-        #ffffff
-    );
+    top:0;
 
-    border-bottom:1px solid #cbd8f0;
+    left:0;
+
+    right:0;
+
+    width:100%;
+
+    height:70px;
+
+    z-index:1000;
 
     display:flex;
 
@@ -117,16 +192,32 @@ button{
 
     justify-content:space-between;
 
-    padding:0 18px;
+    padding:
 
-    position:sticky;
+    0 14px;
 
-    top:0;
+    padding-top:
 
-    z-index:100;
+    env(safe-area-inset-top);
+
+    background:
+
+    linear-gradient(
+        110deg,
+        #edf4ff,
+        #ffffff,
+        #edf4ff
+    );
+
+    border-bottom:
+
+    1px solid #c8d7f3;
 
     box-shadow:
-    0 5px 18px rgba(36,75,150,.08);
+
+    0 5px 20px
+    rgba(43,82,150,.10);
+
 }
 
 
@@ -137,12 +228,14 @@ button{
     align-items:center;
 
     gap:10px;
+
 }
 
 
 .menu-btn{
 
     width:48px;
+
     height:48px;
 
     border:0;
@@ -150,13 +243,14 @@ button{
     border-radius:16px;
 
     background:
+
     linear-gradient(
         145deg,
-        #ff7165,
-        #ff8a70
+        #ff6e61,
+        #ff9077
     );
 
-    color:white;
+    color:#ffffff;
 
     font-size:26px;
 
@@ -166,28 +260,33 @@ button{
 
     justify-content:center;
 
-    cursor:pointer;
-
     box-shadow:
-    0 6px 15px rgba(255,93,80,.25);
+
+    0 8px 18px
+    rgba(255,96,80,.25);
+
 }
 
 
 .logo{
 
     width:48px;
+
     height:48px;
 
     border-radius:50%;
 
     background:
+
     linear-gradient(
         145deg,
         #ffffff,
         #e7efff
     );
 
-    border:3px solid #d3e1ff;
+    border:
+
+    3px solid #d4e2ff;
 
     display:flex;
 
@@ -197,12 +296,15 @@ button{
 
     color:#1762df;
 
-    font-size:13px;
+    font-size:14px;
 
     font-weight:900;
 
     box-shadow:
-    0 5px 12px rgba(36,93,190,.15);
+
+    0 6px 15px
+    rgba(36,93,190,.15);
+
 }
 
 
@@ -212,13 +314,15 @@ button{
 
     align-items:center;
 
-    gap:8px;
+    gap:7px;
+
 }
 
 
 .header-icon{
 
     width:47px;
+
     height:47px;
 
     border:0;
@@ -231,115 +335,153 @@ button{
 
     justify-content:center;
 
-    color:white;
+    color:#ffffff;
 
     font-size:21px;
 
-    cursor:pointer;
-
     box-shadow:
-    0 6px 15px rgba(0,0,0,.12);
+
+    0 6px 15px
+    rgba(0,0,0,.12);
+
 }
 
 
 .notification{
 
     background:
+
     linear-gradient(
         145deg,
-        #746df4,
+        #756cf3,
         #817eff
     );
+
 }
 
 
 .wallet-top{
 
     background:
+
     linear-gradient(
         145deg,
-        #20c36b,
-        #43d77e
+        #16bf68,
+        #45d980
     );
 
-    min-width:58px;
+    min-width:55px;
 
     font-weight:800;
+
 }
 
 
 .redeem-top{
 
     background:
+
     linear-gradient(
         145deg,
-        #ff8a35,
-        #ffad45
+        #ff8733,
+        #ffb04b
     );
 
-    min-width:58px;
+    min-width:55px;
 
-    font-weight:800;
 }
 
 
-/* =========================
-   MAIN
-========================= */
+/* =====================================================
+   MAIN SCREEN
+===================================================== */
 
 .container{
+
+    position:fixed;
+
+    top:70px;
+
+    left:0;
+
+    right:0;
+
+    bottom:78px;
 
     width:100%;
 
     max-width:850px;
 
-    margin:auto;
+    margin:0 auto;
 
     padding:
-    28px 18px 110px;
+
+    18px 14px 12px;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
 }
 
 
-/* =========================
+/* =====================================================
    WALLET MAIN CARD
-========================= */
+===================================================== */
 
 .wallet-card{
 
-    border:1.5px solid #afc4ef;
+    flex:0 0 auto;
 
-    border-radius:28px;
+    width:100%;
 
-    padding:27px;
+    border:
+
+    1.5px solid #aec5f1;
+
+    border-radius:27px;
+
+    padding:
+
+    25px 27px 24px;
 
     background:
 
     radial-gradient(
-        circle at 5% 0%,
-        #e5edff,
-        transparent 38%
+        circle at 0% 0%,
+        #dfeaff,
+        transparent 40%
     ),
 
     radial-gradient(
-        circle at 100% 15%,
-        #dbe8ff,
+        circle at 100% 10%,
+        #d9e8ff,
         transparent 42%
     ),
 
     linear-gradient(
         135deg,
-        #f0f5ff,
+        #f1f6ff,
         #ffffff
     );
 
     box-shadow:
-    0 15px 40px rgba(40,88,175,.10);
+
+    0 14px 35px
+    rgba(45,91,175,.10);
+
 }
 
 
-/* TOP ROW */
+/* =====================================================
+   TOP ROW
+===================================================== */
 
 .wallet-top-row{
+
+    width:100%;
 
     display:flex;
 
@@ -347,7 +489,8 @@ button{
 
     justify-content:space-between;
 
-    margin-bottom:28px;
+    margin-bottom:24px;
+
 }
 
 
@@ -361,68 +504,85 @@ button{
 
     color:#2e64d5;
 
-    border:1px solid #9db9ef;
+    border:
+
+    1px solid #9db9ef;
 
     background:#edf4ff;
 
-    padding:10px 16px;
+    padding:
+
+    10px 16px;
 
     border-radius:25px;
 
-    font-size:14px;
+    font-size:15px;
 
-    font-weight:800;
+    font-weight:850;
 
     letter-spacing:.5px;
+
 }
 
 
 .history-btn{
 
-    border:1px solid #d3dbea;
+    border:
+
+    1px solid #d0d9eb;
 
     background:
-    rgba(255,255,255,.75);
+
+    rgba(255,255,255,.90);
 
     color:#17213a;
 
-    padding:10px 17px;
+    padding:
+
+    10px 17px;
 
     border-radius:25px;
 
-    font-weight:700;
+    font-weight:750;
 
-    cursor:pointer;
+    font-size:15px;
+
 }
 
 
-/* BALANCE */
+/* =====================================================
+   TOTAL BALANCE
+===================================================== */
 
 .balance-label{
 
     color:#697895;
 
-    font-size:17px;
+    font-size:18px;
 
-    margin-bottom:3px;
+    margin-bottom:2px;
+
 }
 
 
 .balance{
 
-    font-size:50px;
+    color:#101a38;
 
-    line-height:1.1;
+    font-size:56px;
 
-    font-weight:850;
+    line-height:1;
 
-    letter-spacing:-2px;
+    font-weight:900;
 
-    color:#111a35;
+    letter-spacing:-2.5px;
+
 }
 
 
-/* ACTION BUTTONS */
+/* =====================================================
+   ACTION BUTTONS
+===================================================== */
 
 .wallet-actions{
 
@@ -432,23 +592,20 @@ button{
 
     gap:16px;
 
-    margin-top:28px;
+    margin-top:27px;
+
 }
 
 
 .action-btn{
 
-    height:64px;
+    height:66px;
 
-    border-radius:34px;
-
-    border:1px solid #b9c9e8;
+    border-radius:35px;
 
     font-size:19px;
 
-    font-weight:800;
-
-    cursor:pointer;
+    font-weight:850;
 
     display:flex;
 
@@ -457,16 +614,18 @@ button{
     justify-content:center;
 
     gap:8px;
+
 }
 
 
 .add-btn{
 
-    color:white;
+    color:#ffffff;
 
     border:0;
 
     background:
+
     linear-gradient(
         100deg,
         #2162e9,
@@ -474,7 +633,10 @@ button{
     );
 
     box-shadow:
-    0 10px 24px rgba(34,99,233,.25);
+
+    0 10px 25px
+    rgba(34,99,233,.27);
+
 }
 
 
@@ -482,67 +644,89 @@ button{
 
     color:#68758d;
 
+    border:
+
+    1.5px solid #b9c9e8;
+
     background:
-    rgba(255,255,255,.55);
+
+    rgba(255,255,255,.80);
+
 }
 
 
-.withdraw-btn:active,
-.add-btn:active{
-
-    transform:scale(.98);
-}
-
-
-/* =========================
-   BALANCE BOXES
-========================= */
+/* =====================================================
+   DEPOSIT / WINNINGS
+===================================================== */
 
 .balance-grid{
+
+    flex:1 1 auto;
+
+    min-height:0;
 
     display:grid;
 
     grid-template-columns:1fr 1fr;
 
-    gap:18px;
+    gap:14px;
 
-    margin-top:27px;
+    margin-top:15px;
+
 }
 
 
 .balance-box{
 
-    min-height:190px;
+    min-height:0;
 
-    border:1.5px solid #c3d2ee;
+    height:100%;
+
+    border:
+
+    1.5px solid #c1d1ed;
 
     border-radius:25px;
 
     background:
+
     linear-gradient(
         145deg,
-        rgba(255,255,255,.92),
-        rgba(248,250,255,.92)
+        rgba(255,255,255,.97),
+        rgba(247,250,255,.96)
     );
 
-    padding:23px;
+    padding:
+
+    18px 20px;
 
     box-shadow:
-    0 8px 20px rgba(30,60,120,.04);
+
+    0 8px 20px
+    rgba(30,60,120,.04);
+
 }
 
 
 .balance-icon{
 
-    width:52px;
+    width:48px;
 
-    height:52px;
+    height:48px;
 
-    border-radius:17px;
+    border-radius:16px;
 
-    background:#e4efff;
+    background:
 
-    border:1px solid #abc6ef;
+    linear-gradient(
+        145deg,
+        #e5f0ff,
+        #dceaff
+    );
+
+    border:
+
+    1px solid #a9c6ef;
 
     display:flex;
 
@@ -550,35 +734,38 @@ button{
 
     justify-content:center;
 
-    font-size:25px;
+    font-size:23px;
 
     color:#2871df;
+
 }
 
 
 .balance-box h3{
 
-    margin-top:19px;
+    margin-top:14px;
 
-    font-size:16px;
+    font-size:17px;
 
     color:#65728d;
 
-    font-weight:750;
+    font-weight:800;
 
-    letter-spacing:.3px;
+    letter-spacing:.4px;
+
 }
 
 
 .balance-value{
 
-    margin-top:8px;
+    margin-top:6px;
 
-    font-size:25px;
+    font-size:27px;
 
-    font-weight:850;
+    font-weight:900;
 
     color:#101a38;
+
 }
 
 
@@ -586,30 +773,40 @@ button{
 
     display:block;
 
-    margin-top:7px;
+    margin-top:6px;
 
     color:#a0aabd;
 
     font-size:14px;
+
 }
 
 
-/* =========================
+/* =====================================================
    INFO
-========================= */
+===================================================== */
 
 .info-box{
 
-    margin-top:25px;
+    flex:0 0 auto;
 
-    border:1px solid #d9deea;
+    min-height:84px;
+
+    margin-top:13px;
+
+    border:
+
+    1px solid #d5ddea;
 
     border-radius:22px;
 
     background:
-    rgba(255,255,255,.72);
 
-    padding:21px;
+    rgba(255,255,255,.88);
+
+    padding:
+
+    16px 18px;
 
     display:flex;
 
@@ -619,20 +816,24 @@ button{
 
     color:#738099;
 
-    font-size:16px;
+    font-size:15px;
 
-    line-height:1.5;
+    line-height:1.45;
+
 }
 
 
 .info-icon{
 
-    width:27px;
-    height:27px;
+    width:29px;
 
-    flex:0 0 27px;
+    height:29px;
 
-    border:2px solid #4e7ed9;
+    flex:0 0 29px;
+
+    border:
+
+    2px solid #4e7ed9;
 
     border-radius:50%;
 
@@ -644,305 +845,52 @@ button{
 
     color:#3d71d3;
 
-    font-size:16px;
-
-    font-weight:800;
-}
-
-
-/* =========================
-   SIDE MENU
-========================= */
-
-.menu-overlay{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-    rgba(17,29,55,.30);
-
-    backdrop-filter:blur(3px);
-
-    z-index:250;
-
-    display:none;
-}
-
-
-.menu-overlay.show{
-
-    display:block;
-}
-
-
-.menu-panel{
-
-    position:fixed;
-
-    top:0;
-
-    left:-100%;
-
-    width:78%;
-
-    max-width:390px;
-
-    height:100vh;
-
-    background:#ffffff;
-
-    z-index:300;
-
-    padding:20px 16px 105px;
-
-    overflow-y:auto;
-
-    box-shadow:
-    10px 0 35px rgba(0,0,0,.16);
-
-    transition:left .3s ease;
-}
-
-
-.menu-panel.open{
-
-    left:0;
-}
-
-
-.menu-title{
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:
-    5px 2px 24px;
-
-    border-bottom:1px solid #e1e6f0;
-}
-
-
-.menu-brand{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:13px;
-}
-
-
-.menu-logo{
-
-    width:54px;
-
-    height:54px;
-
-    border-radius:50%;
-
-    background:
-    linear-gradient(
-        145deg,
-        #ffffff,
-        #e7efff
-    );
-
-    border:3px solid #d3e1ff;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    color:#1762df;
-
-    font-weight:900;
-}
-
-
-.menu-user h2{
-
-    font-size:20px;
-
-    font-weight:850;
-}
-
-
-.menu-user p{
-
-    margin-top:4px;
-
-    color:#71809d;
-
-    font-size:13px;
-}
-
-
-.close-menu{
-
-    border:1px solid #e0e5ee;
-
-    background:#f6f7fb;
-
-    width:48px;
-
-    height:48px;
-
-    border-radius:50%;
-
-    font-size:27px;
-
-    color:#64718a;
-
-    cursor:pointer;
-}
-
-
-.menu-list{
-
-    margin-top:22px;
-}
-
-
-.menu-item{
-
-    width:100%;
-
-    min-height:72px;
-
-    border:1px solid #e1e5ed;
-
-    background:#ffffff;
-
-    padding:10px 14px;
-
-    border-radius:20px;
-
-    margin-bottom:12px;
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    text-align:left;
-
-    color:#17213a;
-
-    cursor:pointer;
-}
-
-
-.menu-item-icon{
-
-    width:48px;
-
-    height:48px;
-
-    flex:0 0 48px;
-
-    border-radius:16px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    color:white;
-
-    font-size:22px;
-}
-
-
-.menu-home{
-    background:linear-gradient(145deg,#716df5,#817eff);
-}
-
-
-.menu-profile{
-    background:linear-gradient(145deg,#ff743e,#ff9c39);
-}
-
-
-.menu-wallet{
-    background:linear-gradient(145deg,#18b965,#43d77e);
-}
-
-
-.menu-refer{
-    background:linear-gradient(145deg,#ff8a35,#ffb044);
-}
-
-
-.menu-history{
-    background:linear-gradient(145deg,#7259df,#9868f3);
-}
-
-
-.menu-support{
-    background:linear-gradient(145deg,#12b8e0,#27c9ef);
-}
-
-
-.menu-item-text{
-
-    flex:1;
-
     font-size:17px;
 
-    font-weight:750;
+    font-weight:800;
+
 }
 
 
-.menu-arrow{
-
-    color:#69768e;
-
-    font-size:28px;
-}
-
-
-/* =========================
-   BOTTOM NAV
-========================= */
+/* =====================================================
+   BOTTOM NAVIGATION
+===================================================== */
 
 .bottom-nav{
 
     position:fixed;
 
-    bottom:0;
-
     left:0;
+
+    right:0;
+
+    bottom:0;
 
     width:100%;
 
     height:78px;
 
-    background:
-    rgba(255,255,255,.97);
-
-    border-top:1px solid #d6deee;
+    z-index:1100;
 
     display:flex;
 
-    justify-content:space-around;
-
     align-items:center;
 
-    z-index:200;
+    justify-content:space-around;
+
+    background:
+
+    rgba(255,255,255,.98);
+
+    border-top:
+
+    1px solid #d5deef;
 
     box-shadow:
-    0 -5px 20px rgba(30,65,130,.08);
 
-    backdrop-filter:blur(15px);
+    0 -5px 20px
+    rgba(30,65,130,.09);
+
 }
 
 
@@ -970,15 +918,16 @@ button{
 
     font-size:13px;
 
-    cursor:pointer;
+    font-weight:500;
+
 }
 
 
 .nav-icon{
 
-    width:44px;
+    width:45px;
 
-    height:44px;
+    height:45px;
 
     border-radius:15px;
 
@@ -989,6 +938,7 @@ button{
     justify-content:center;
 
     font-size:22px;
+
 }
 
 
@@ -996,24 +946,366 @@ button{
 
     color:#202d49;
 
-    font-weight:700;
+    font-weight:800;
+
 }
 
 
 .nav-item.active .nav-icon{
 
-    background:#536df5;
+    background:
 
-    color:white;
+    linear-gradient(
+        145deg,
+        #536df5,
+        #596af0
+    );
+
+    color:#ffffff;
 
     box-shadow:
-    0 7px 17px rgba(83,109,245,.3);
+
+    0 8px 18px
+    rgba(83,109,245,.30);
+
 }
 
 
-/* =========================
+/* =====================================================
+   SIDE MENU
+===================================================== */
+
+.menu-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+
+    rgba(17,29,55,.30);
+
+    backdrop-filter:blur(3px);
+
+    z-index:2000;
+
+    display:none;
+
+}
+
+
+.menu-overlay.show{
+
+    display:block;
+
+}
+
+
+.menu-panel{
+
+    position:fixed;
+
+    top:0;
+
+    left:-100%;
+
+    width:78%;
+
+    max-width:390px;
+
+    height:100dvh;
+
+    background:#ffffff;
+
+    z-index:2100;
+
+    padding:
+
+    20px 16px 105px;
+
+    overflow:hidden;
+
+    transition:
+
+    left .3s ease;
+
+    box-shadow:
+
+    10px 0 35px
+    rgba(0,0,0,.16);
+
+}
+
+
+.menu-panel.open{
+
+    left:0;
+
+}
+
+
+.menu-title{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:
+
+    5px 2px 24px;
+
+    border-bottom:
+
+    1px solid #e1e6f0;
+
+}
+
+
+.menu-brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+}
+
+
+.menu-logo{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:50%;
+
+    background:
+
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #e7efff
+    );
+
+    border:
+
+    3px solid #d3e1ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#1762df;
+
+    font-weight:900;
+
+}
+
+
+.menu-user h2{
+
+    font-size:20px;
+
+    font-weight:850;
+
+}
+
+
+.menu-user p{
+
+    margin-top:4px;
+
+    color:#71809d;
+
+    font-size:13px;
+
+}
+
+
+.close-menu{
+
+    border:
+
+    1px solid #e0e5ee;
+
+    background:#f6f7fb;
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    font-size:27px;
+
+    color:#64718a;
+
+}
+
+
+.menu-list{
+
+    margin-top:22px;
+
+}
+
+
+.menu-item{
+
+    width:100%;
+
+    min-height:68px;
+
+    border:
+
+    1px solid #e1e5ed;
+
+    background:#ffffff;
+
+    padding:
+
+    10px 14px;
+
+    border-radius:20px;
+
+    margin-bottom:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    text-align:left;
+
+    color:#17213a;
+
+}
+
+
+.menu-item-icon{
+
+    width:48px;
+
+    height:48px;
+
+    flex:0 0 48px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#ffffff;
+
+    font-size:22px;
+
+}
+
+
+.menu-home{
+
+    background:
+    linear-gradient(
+        145deg,
+        #716df5,
+        #817eff
+    );
+
+}
+
+
+.menu-profile{
+
+    background:
+    linear-gradient(
+        145deg,
+        #ff743e,
+        #ff9c39
+    );
+
+}
+
+
+.menu-wallet{
+
+    background:
+    linear-gradient(
+        145deg,
+        #18b965,
+        #43d77e
+    );
+
+}
+
+
+.menu-refer{
+
+    background:
+    linear-gradient(
+        145deg,
+        #ff8a35,
+        #ffb044
+    );
+
+}
+
+
+.menu-history{
+
+    background:
+    linear-gradient(
+        145deg,
+        #7259df,
+        #9868f3
+    );
+
+}
+
+
+.menu-support{
+
+    background:
+    linear-gradient(
+        145deg,
+        #12b8e0,
+        #27c9ef
+    );
+
+}
+
+
+.menu-item-text{
+
+    flex:1;
+
+    font-size:17px;
+
+    font-weight:750;
+
+}
+
+
+.menu-arrow{
+
+    color:#69768e;
+
+    font-size:28px;
+
+}
+
+
+/* =====================================================
    TOAST
-========================= */
+===================================================== */
 
 .toast{
 
@@ -1024,14 +1316,17 @@ button{
     top:90px;
 
     transform:
+
     translateX(-50%)
     translateY(-20px);
 
     background:#182440;
 
-    color:white;
+    color:#ffffff;
 
-    padding:13px 18px;
+    padding:
+
+    13px 18px;
 
     border-radius:14px;
 
@@ -1041,11 +1336,12 @@ button{
 
     transition:.25s;
 
-    z-index:500;
+    z-index:5000;
 
     font-size:14px;
 
     text-align:center;
+
 }
 
 
@@ -1054,14 +1350,16 @@ button{
     opacity:1;
 
     transform:
+
     translateX(-50%)
     translateY(0);
+
 }
 
 
-/* =========================
+/* =====================================================
    MOBILE
-========================= */
+===================================================== */
 
 @media(max-width:700px){
 
@@ -1069,37 +1367,23 @@ button{
 
         height:70px;
 
-        padding:0 12px;
+        padding-left:12px;
+
+        padding-right:12px;
+
     }
 
-    .menu-btn{
-
-        width:46px;
-        height:46px;
-
-        font-size:25px;
-    }
-
-    .logo{
-
-        width:45px;
-        height:45px;
-
-        font-size:12px;
-    }
-
-    .header-right{
-
-        gap:6px;
-    }
 
     .header-icon{
 
         width:44px;
+
         height:44px;
 
         border-radius:16px;
+
     }
+
 
     .wallet-top,
     .redeem-top{
@@ -1107,69 +1391,94 @@ button{
         min-width:44px;
 
         font-size:0;
+
     }
+
 
     .wallet-top::before{
 
         content:"💰";
 
         font-size:20px;
+
     }
+
 
     .redeem-top::before{
 
         content:"🎁";
 
         font-size:20px;
+
     }
 
 
     .container{
 
+        top:70px;
+
+        bottom:78px;
+
         padding:
-        18px 12px 100px;
+
+        14px 12px 10px;
+
     }
 
 
     .wallet-card{
 
-        padding:22px;
+        padding:
+
+        22px 20px 20px;
 
         border-radius:25px;
+
     }
 
 
     .wallet-top-row{
 
-        margin-bottom:24px;
+        margin-bottom:20px;
+
     }
 
 
     .wallet-title{
 
-        padding:9px 14px;
+        padding:
+
+        9px 13px;
 
         font-size:13px;
+
     }
 
 
     .history-btn{
 
-        padding:9px 14px;
+        padding:
+
+        9px 13px;
 
         font-size:14px;
+
     }
 
 
     .balance-label{
 
-        font-size:16px;
+        font-size:17px;
+
     }
 
 
     .balance{
 
-        font-size:45px;
+        font-size:52px;
+
+        letter-spacing:-2px;
+
     }
 
 
@@ -1177,112 +1486,308 @@ button{
 
         gap:12px;
 
-        margin-top:24px;
+        margin-top:25px;
+
     }
 
 
     .action-btn{
 
-        height:58px;
+        height:62px;
 
-        font-size:16px;
+        font-size:17px;
 
-        border-radius:30px;
     }
 
 
     .balance-grid{
 
-        gap:12px;
+        gap:11px;
 
-        margin-top:20px;
+        margin-top:13px;
+
     }
 
 
     .balance-box{
 
-        min-height:175px;
+        padding:
 
-        padding:18px;
+        16px;
 
         border-radius:22px;
+
     }
 
 
     .balance-icon{
 
-        width:46px;
+        width:45px;
 
-        height:46px;
+        height:45px;
 
         border-radius:15px;
 
-        font-size:22px;
+        font-size:21px;
+
     }
 
 
     .balance-box h3{
 
-        margin-top:16px;
+        margin-top:12px;
 
         font-size:14px;
+
     }
 
 
     .balance-value{
 
-        font-size:22px;
+        font-size:24px;
+
     }
 
 
     .balance-note{
 
         font-size:12px;
+
     }
 
 
     .info-box{
 
-        margin-top:18px;
+        min-height:78px;
 
-        padding:17px;
+        margin-top:11px;
 
-        font-size:14px;
+        padding:
 
-        border-radius:20px;
+        14px;
+
+        font-size:13px;
+
+        border-radius:19px;
+
     }
 
 }
 
 
-/* SMALL PHONES */
+/* =====================================================
+   SMALL PHONES
+===================================================== */
 
 @media(max-width:380px){
 
+    .container{
+
+        padding:
+
+        10px 10px 8px;
+
+    }
+
+
     .wallet-card{
 
-        padding:18px;
+        padding:
+
+        17px 16px;
+
     }
+
+
+    .wallet-top-row{
+
+        margin-bottom:16px;
+
+    }
+
+
+    .wallet-title{
+
+        font-size:12px;
+
+        padding:
+
+        8px 11px;
+
+    }
+
+
+    .history-btn{
+
+        font-size:12px;
+
+        padding:
+
+        8px 11px;
+
+    }
+
+
+    .balance-label{
+
+        font-size:15px;
+
+    }
+
 
     .balance{
 
-        font-size:40px;
+        font-size:45px;
+
     }
+
 
     .wallet-actions{
 
-        grid-template-columns:1fr;
+        gap:9px;
+
+        margin-top:20px;
 
     }
+
 
     .action-btn{
 
-        width:100%;
+        height:55px;
+
+        font-size:15px;
+
     }
+
+
+    .balance-box{
+
+        padding:13px;
+
+    }
+
+
+    .balance-icon{
+
+        width:40px;
+
+        height:40px;
+
+        font-size:19px;
+
+    }
+
+
+    .balance-box h3{
+
+        margin-top:9px;
+
+        font-size:13px;
+
+    }
+
+
+    .balance-value{
+
+        font-size:21px;
+
+    }
+
+
+    .balance-note{
+
+        font-size:11px;
+
+    }
+
+
+    .info-box{
+
+        min-height:70px;
+
+        padding:11px;
+
+        font-size:12px;
+
+    }
+
+}
+
+
+/* =====================================================
+   VERY SHORT SCREENS
+===================================================== */
+
+@media(max-height:720px){
+
+    .container{
+
+        padding-top:8px;
+
+        padding-bottom:6px;
+
+    }
+
+
+    .wallet-card{
+
+        padding:
+
+        15px 18px;
+
+    }
+
+
+    .wallet-top-row{
+
+        margin-bottom:13px;
+
+    }
+
+
+    .balance{
+
+        font-size:45px;
+
+    }
+
+
+    .wallet-actions{
+
+        margin-top:17px;
+
+    }
+
+
+    .action-btn{
+
+        height:52px;
+
+    }
+
 
     .balance-grid{
 
-        grid-template-columns:1fr;
+        margin-top:9px;
+
+    }
+
+
+    .balance-box{
+
+        padding:12px;
+
+    }
+
+
+    .info-box{
+
+        margin-top:8px;
+
+        min-height:60px;
+
+        padding:10px;
+
     }
 
 }
@@ -1295,13 +1800,15 @@ button{
 <body>
 
 
-<!-- =========================
+<!-- =====================================================
      HEADER
-========================= -->
+===================================================== -->
 
 <header class="top-header">
 
+
     <div class="header-left">
+
 
         <button
             class="menu-btn"
@@ -1323,6 +1830,7 @@ button{
 
     <div class="header-right">
 
+
         <button
             class="header-icon notification"
             onclick="showMessage('No new notifications')">
@@ -1339,7 +1847,9 @@ button{
             💰
 
             <span id="topBalance">
+
                 0
+
             </span>
 
         </button>
@@ -1358,9 +1868,10 @@ button{
 </header>
 
 
-<!-- =========================
+
+<!-- =====================================================
      SIDE MENU
-========================= -->
+===================================================== -->
 
 <div
     class="menu-overlay"
@@ -1376,20 +1887,29 @@ button{
 
     <div class="menu-title">
 
+
         <div class="menu-brand">
 
+
             <div class="menu-logo">
+
                 RDX
+
             </div>
+
 
             <div class="menu-user">
 
                 <h2 id="menuUsername">
+
                     RDX LUDO
+
                 </h2>
 
                 <p>
+
                     Play · Win · Earn
+
                 </p>
 
             </div>
@@ -1415,111 +1935,170 @@ button{
             class="menu-item"
             onclick="goHome()">
 
+
             <div class="menu-item-icon menu-home">
+
                 🏠
+
             </div>
+
 
             <div class="menu-item-text">
+
                 Home
+
             </div>
 
+
             <div class="menu-arrow">
+
                 ›
+
             </div>
 
         </button>
+
 
 
         <button
             class="menu-item"
             onclick="goProfile()">
 
+
             <div class="menu-item-icon menu-profile">
+
                 👤
+
             </div>
+
 
             <div class="menu-item-text">
+
                 My Profile
+
             </div>
 
+
             <div class="menu-arrow">
+
                 ›
+
             </div>
 
         </button>
+
 
 
         <button
             class="menu-item"
             onclick="goWallet()">
 
+
             <div class="menu-item-icon menu-wallet">
+
                 💰
+
             </div>
+
 
             <div class="menu-item-text">
+
                 My Wallet
+
             </div>
 
+
             <div class="menu-arrow">
+
                 ›
+
             </div>
 
         </button>
+
 
 
         <button
             class="menu-item"
             onclick="goRedeem()">
 
+
             <div class="menu-item-icon menu-refer">
+
                 🎁
+
             </div>
+
 
             <div class="menu-item-text">
+
                 Refer & Earn
+
             </div>
 
+
             <div class="menu-arrow">
+
                 ›
+
             </div>
 
         </button>
+
 
 
         <button
             class="menu-item"
             onclick="goHistory()">
 
+
             <div class="menu-item-icon menu-history">
+
                 ↻
+
             </div>
+
 
             <div class="menu-item-text">
+
                 History
+
             </div>
 
+
             <div class="menu-arrow">
+
                 ›
+
             </div>
 
         </button>
+
 
 
         <button
             class="menu-item"
             onclick="goSupport()">
 
+
             <div class="menu-item-icon menu-support">
+
                 🎧
+
             </div>
+
 
             <div class="menu-item-text">
+
                 Support
+
             </div>
 
+
             <div class="menu-arrow">
+
                 ›
+
             </div>
 
         </button>
@@ -1529,17 +2108,16 @@ button{
 </div>
 
 
-<!-- =========================
+
+<!-- =====================================================
      MAIN WALLET
-========================= -->
+===================================================== -->
 
 <main class="container">
 
 
     <section class="wallet-card">
 
-
-        <!-- TOP -->
 
         <div class="wallet-top-row">
 
@@ -1564,7 +2142,6 @@ button{
         </div>
 
 
-        <!-- BALANCE -->
 
         <div class="balance-label">
 
@@ -1580,7 +2157,6 @@ button{
         </div>
 
 
-        <!-- ACTIONS -->
 
         <div class="wallet-actions">
 
@@ -1607,9 +2183,10 @@ button{
     </section>
 
 
-    <!-- =========================
+
+    <!-- =================================================
          DEPOSIT / WINNINGS
-    ========================= -->
+    ================================================== -->
 
     <section class="balance-grid">
 
@@ -1625,15 +2202,18 @@ button{
 
 
             <h3>
+
                 DEPOSIT
+
             </h3>
 
 
-            <div
-                class="balance-value">
+            <div class="balance-value">
 
                 ₹<span id="depositBalance">
+
                     0
+
                 </span>
 
             </div>
@@ -1648,6 +2228,7 @@ button{
         </div>
 
 
+
         <div class="balance-box">
 
 
@@ -1659,15 +2240,18 @@ button{
 
 
             <h3>
+
                 WINNINGS
+
             </h3>
 
 
-            <div
-                class="balance-value">
+            <div class="balance-value">
 
                 ₹<span id="winningBalance">
+
                     0
+
                 </span>
 
             </div>
@@ -1684,15 +2268,18 @@ button{
     </section>
 
 
-    <!-- =========================
+
+    <!-- =================================================
          INFO
-    ========================= -->
+    ================================================== -->
 
     <div class="info-box">
 
 
         <div class="info-icon">
+
             i
+
         </div>
 
 
@@ -1708,9 +2295,10 @@ button{
 </main>
 
 
-<!-- =========================
+
+<!-- =====================================================
      BOTTOM NAV
-========================= -->
+===================================================== -->
 
 <nav class="bottom-nav">
 
@@ -1719,57 +2307,84 @@ button{
         class="nav-item"
         onclick="goHome()">
 
+
         <div class="nav-icon">
+
             🏠
+
         </div>
 
+
         <span>
+
             Home
+
         </span>
 
     </button>
+
 
 
     <button
         class="nav-item active"
         onclick="goWallet()">
 
+
         <div class="nav-icon">
+
             💰
+
         </div>
 
+
         <span>
+
             Wallet
+
         </span>
 
     </button>
+
 
 
     <button
         class="nav-item"
         onclick="goSupport()">
 
+
         <div class="nav-icon">
+
             🎧
+
         </div>
 
+
         <span>
+
             Support
+
         </span>
 
     </button>
+
 
 
     <button
         class="nav-item"
         onclick="goProfile()">
 
+
         <div class="nav-icon">
+
             👤
+
         </div>
 
+
         <span>
+
             Profile
+
         </span>
 
     </button>
@@ -1777,9 +2392,10 @@ button{
 </nav>
 
 
-<!-- =========================
+
+<!-- =====================================================
      TOAST
-========================= -->
+===================================================== -->
 
 <div
     class="toast"
@@ -1787,10 +2403,11 @@ button{
 </div>
 
 
+
 <script>
 
 /* =====================================================
-   FIREBASE USER DATA
+   LOAD FIREBASE CUSTOMER
 ===================================================== */
 
 async function loadFirebaseCustomer(){
@@ -1804,6 +2421,7 @@ async function loadFirebaseCustomer(){
             );
 
             return;
+
         }
 
 
@@ -1830,10 +2448,12 @@ async function loadFirebaseCustomer(){
             );
 
             return;
+
         }
 
 
         const cleanMobile =
+
             String(mobile)
             .replace(/\D/g,"");
 
@@ -1850,16 +2470,19 @@ async function loadFirebaseCustomer(){
             );
 
             return;
+
         }
 
 
         const userRef =
+
             firebaseDB
             .collection("customers")
             .doc(cleanMobile);
 
 
         const snapshot =
+
             await userRef.get();
 
 
@@ -1870,6 +2493,7 @@ async function loadFirebaseCustomer(){
             );
 
             return;
+
         }
 
 
@@ -1880,6 +2504,7 @@ async function loadFirebaseCustomer(){
         /* TOTAL BALANCE */
 
         const balance =
+
             Number(
                 data.balance || 0
             );
@@ -1897,9 +2522,10 @@ async function loadFirebaseCustomer(){
             balance;
 
 
-        /* DEPOSIT BALANCE */
+        /* DEPOSIT */
 
         const deposit =
+
             Number(
                 data.depositBalance ||
                 data.deposit ||
@@ -1916,6 +2542,7 @@ async function loadFirebaseCustomer(){
         /* WINNINGS */
 
         const winnings =
+
             Number(
                 data.winnings ||
                 data.winningBalance ||
@@ -1932,9 +2559,11 @@ async function loadFirebaseCustomer(){
         /* USERNAME */
 
         const username =
+
             localStorage.getItem(
                 "rdxUsername"
             ) ||
+
             "User" +
             cleanMobile.slice(-4);
 
@@ -1950,8 +2579,9 @@ async function loadFirebaseCustomer(){
             data
         );
 
+    }
 
-    }catch(error){
+    catch(error){
 
         console.error(
             "Wallet Firebase error:",
@@ -1967,7 +2597,9 @@ async function loadFirebaseCustomer(){
 }
 
 
-/* LOAD */
+/* =====================================================
+   LOAD
+===================================================== */
 
 window.addEventListener(
     "load",
@@ -1986,11 +2618,16 @@ window.addEventListener(
 function openMenu(){
 
     document
-    .getElementById("menuPanel")
+    .getElementById(
+        "menuPanel"
+    )
     .classList.add("open");
 
+
     document
-    .getElementById("menuOverlay")
+    .getElementById(
+        "menuOverlay"
+    )
     .classList.add("show");
 
 }
@@ -1999,11 +2636,16 @@ function openMenu(){
 function closeMenu(){
 
     document
-    .getElementById("menuPanel")
+    .getElementById(
+        "menuPanel"
+    )
     .classList.remove("open");
 
+
     document
-    .getElementById("menuOverlay")
+    .getElementById(
+        "menuOverlay"
+    )
     .classList.remove("show");
 
 }
@@ -2019,6 +2661,7 @@ function goHome(){
 
     window.location.href =
         "./dashboard.html";
+
 }
 
 
@@ -2028,6 +2671,7 @@ function goWallet(){
 
     window.location.href =
         "./wallet.html";
+
 }
 
 
@@ -2035,13 +2679,9 @@ function goDeposit(){
 
     closeMenu();
 
-    /*
-       Deposit page अभी बनाया नहीं है।
-       अगले step में deposit.html बनाया जाएगा।
-    */
-
     window.location.href =
         "./deposit.html";
+
 }
 
 
@@ -2049,12 +2689,9 @@ function goWithdraw(){
 
     closeMenu();
 
-    /*
-       Withdrawal page अगले step में बनाया जाएगा।
-    */
-
     window.location.href =
         "./withdrawal.html";
+
 }
 
 
@@ -2064,6 +2701,7 @@ function goProfile(){
 
     window.location.href =
         "./profile.html";
+
 }
 
 
@@ -2073,6 +2711,7 @@ function goSupport(){
 
     window.location.href =
         "./support.html";
+
 }
 
 
@@ -2082,6 +2721,7 @@ function goRedeem(){
 
     window.location.href =
         "./referral.html";
+
 }
 
 
@@ -2089,13 +2729,9 @@ function goHistory(){
 
     closeMenu();
 
-    /*
-       History page अगले step में
-       transaction history के लिए बनाया जाएगा।
-    */
-
     window.location.href =
         "./history.html";
+
 }
 
 
@@ -2106,6 +2742,7 @@ function goHistory(){
 function showMessage(message){
 
     const toast =
+
         document.getElementById(
             "toast"
         );
