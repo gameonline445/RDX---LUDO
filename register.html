@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RDX LUDO - Register</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  min-height:100vh;
+  background:linear-gradient(135deg,#eef4ff,#ffffff,#f5f7ff);
+  color:#101b3d;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  padding:20px;
+}
+
+.container{
+  width:100%;
+  max-width:430px;
+}
+
+.logo{
+  width:78px;
+  height:78px;
+  margin:0 auto 15px;
+  border-radius:50%;
+  background:white;
+  border:6px solid #dbe6ff;
+  box-shadow:0 8px 25px rgba(47,105,230,.18);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:23px;
+  font-weight:900;
+  color:#2867df;
+}
+
+.card{
+  background:rgba(255,255,255,.96);
+  border:1px solid #c9d9f8;
+  border-radius:28px;
+  padding:28px 22px;
+  box-shadow:0 15px 45px rgba(34,79,160,.12);
+}
+
+h1{
+  text-align:center;
+  font-size:29px;
+  margin-bottom:7px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#71809d;
+  margin-bottom:25px;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:14px 3px 7px;
+}
+
+input{
+  width:100%;
+  height:55px;
+  border:1px solid #d3def1;
+  border-radius:15px;
+  padding:0 16px;
+  font-size:16px;
+  outline:none;
+  background:#f8faff;
+  color:#15203f;
+}
+
+input:focus{
+  border-color:#3974e8;
+  box-shadow:0 0 0 3px rgba(57,116,232,.10);
+}
+
+.ref-box{
+  background:#eef5ff;
+  border:1px solid #bcd2fb;
+  border-radius:15px;
+  padding:14px;
+  margin-top:10px;
+}
+
+.ref-title{
+  font-size:13px;
+  color:#71809d;
+  margin-bottom:5px;
+}
+
+.ref-code{
+  font-size:20px;
+  font-weight:900;
+  color:#2867df;
+}
+
+button{
+  width:100%;
+  height:56px;
+  border:0;
+  border-radius:16px;
+  background:linear-gradient(135deg,#3478ed,#245bd8);
+  color:white;
+  font-size:18px;
+  font-weight:800;
+  margin-top:22px;
+  cursor:pointer;
+  box-shadow:0 8px 20px rgba(44,105,225,.25);
+}
+
+button:active{
+  transform:scale(.98);
+}
+
+.login{
+  text-align:center;
+  margin-top:20px;
+  color:#687792;
+}
+
+.login a{
+  color:#2867df;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.message{
+  display:none;
+  margin-top:15px;
+  padding:13px;
+  border-radius:13px;
+  text-align:center;
+  font-weight:700;
+}
+
+.success{
+  display:block;
+  background:#e8fff1;
+  color:#158447;
+  border:1px solid #a9e7c2;
+}
+
+.error{
+  display:block;
+  background:#fff0f0;
+  color:#c52828;
+  border:1px solid #f1b5b5;
+}
+
+.small{
+  margin-top:16px;
+  text-align:center;
+  font-size:12px;
+  color:#8792a8;
+  line-height:1.5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="logo">RDX</div>
+
+  <div class="card">
+
+    <h1>Create Account</h1>
+    <p class="subtitle">Join RDX LUDO</p>
+
+    <form id="registerForm">
+
+      <label for="name">Full Name</label>
+      <input
+        type="text"
+        id="name"
+        placeholder="Enter your name"
+        maxlength="30"
+        required
+      >
+
+      <label for="mobile">Mobile Number</label>
+      <input
+        type="tel"
+        id="mobile"
+        placeholder="Enter mobile number"
+        maxlength="10"
+        inputmode="numeric"
+        required
+      >
+
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        placeholder="Choose username"
+        maxlength="20"
+        required
+      >
+
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        placeholder="Create password"
+        minlength="6"
+        required
+      >
+
+      <div class="ref-box">
+        <div class="ref-title">Referral Code</div>
+        <div class="ref-code" id="referralCode">None</div>
+      </div>
+
+      <button type="submit">Create Account</button>
+
+      <div id="message" class="message"></div>
+
+    </form>
+
+    <div class="login">
+      Already have an account?
+      <a href="login.html">Login</a>
+    </div>
+
+    <div class="small">
+      By creating an account, you agree to the website's terms and policies.
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ================================
+   RDX LUDO DEMO REFERRAL SYSTEM
+   ================================ */
+
+// URL se referral code lena
+const params = new URLSearchParams(window.location.search);
+const incomingReferral = params.get("ref");
+
+// Referral code screen par dikhana
+const referralElement = document.getElementById("referralCode");
+
+if(incomingReferral){
+  referralElement.textContent = incomingReferral.toUpperCase();
+}else{
+  referralElement.textContent = "None";
+}
+
+
+// Unique referral code banana
+function createReferralCode(){
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const randomLetters =
+    letters.charAt(Math.floor(Math.random()*letters.length)) +
+    letters.charAt(Math.floor(Math.random()*letters.length));
+
+  const randomNumber =
+    Math.floor(1000 + Math.random() * 9000);
+
+  return "NR" + randomLetters + randomNumber;
+}
+
+
+// Username ko safe format me convert karna
+function cleanUsername(username){
+  return username
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_]/g,"");
+}
+
+
+// Registration
+document.getElementById("registerForm").addEventListener("submit",function(e){
+
+  e.preventDefault();
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const mobile =
+    document.getElementById("mobile").value.trim();
+
+  const username =
+    cleanUsername(document.getElementById("username").value);
+
+  const password =
+    document.getElementById("password").value;
+
+  const message =
+    document.getElementById("message");
+
+
+  // Basic validation
+  if(name.length < 2){
+    showMessage("Please enter a valid name.","error");
+    return;
+  }
+
+  if(!/^[0-9]{10}$/.test(mobile)){
+    showMessage("Please enter a valid 10 digit mobile number.","error");
+    return;
+  }
+
+  if(username.length < 4){
+    showMessage("Username must contain at least 4 characters.","error");
+    return;
+  }
+
+  if(password.length < 6){
+    showMessage("Password must contain at least 6 characters.","error");
+    return;
+  }
+
+
+  // Existing users
+  let users =
+    JSON.parse(localStorage.getItem("rdx_users") || "[]");
+
+
+  // Username duplicate check
+  const usernameExists =
+    users.some(user => user.username === username);
+
+  if(usernameExists){
+    showMessage("Username already exists.","error");
+    return;
+  }
+
+
+  // Mobile duplicate check
+  const mobileExists =
+    users.some(user => user.mobile === mobile);
+
+  if(mobileExists){
+    showMessage("This mobile number is already registered.","error");
+    return;
+  }
+
+
+  // New referral code
+  const newReferralCode =
+    createReferralCode();
+
+
+  // User object
+  const newUser = {
+    id: Date.now(),
+    name: name,
+    mobile: mobile,
+    username: username,
+
+    /*
+      Demo only:
+      Real production website me password ko
+      plain localStorage me store nahi karna chahiye.
+    */
+    password: password,
+
+    referralCode: newReferralCode,
+
+    referredBy:
+      incomingReferral
+        ? incomingReferral.toUpperCase()
+        : null,
+
+    referrals: 0,
+
+    createdAt:
+      new Date().toISOString()
+  };
+
+
+  // User save
+  users.push(newUser);
+
+  localStorage.setItem(
+    "rdx_users",
+    JSON.stringify(users)
+  );
+
+
+  // Referral count update
+  if(incomingReferral){
+
+    let referralStats =
+      JSON.parse(
+        localStorage.getItem("rdx_referrals") || "{}"
+      );
+
+    const code =
+      incomingReferral.toUpperCase();
+
+    if(!referralStats[code]){
+      referralStats[code] = {
+        players: 0,
+        earnings: 0
+      };
+    }
+
+    referralStats[code].players++;
+
+    localStorage.setItem(
+      "rdx_referrals",
+      JSON.stringify(referralStats)
+    );
+  }
+
+
+  // Current user save
+  localStorage.setItem(
+    "rdx_current_user",
+    JSON.stringify(newUser)
+  );
+
+
+  showMessage(
+    "Account created successfully!",
+    "success"
+  );
+
+
+  // 1.5 sec baad home par
+  setTimeout(function(){
+
+    window.location.href = "index.html";
+
+  },1500);
+
+});
+
+
+// Message function
+function showMessage(text,type){
+
+  const message =
+    document.getElementById("message");
+
+  message.textContent = text;
+
+  message.className =
+    "message " + type;
+
+}
+</script>
+
+</body>
+</html>
