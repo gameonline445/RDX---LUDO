@@ -26,6 +26,7 @@ const firebaseConfig = {
 let firebaseDB = null;
 
 try {
+
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
@@ -33,10 +34,17 @@ try {
     firebaseDB = firebase.firestore();
 
     console.log("Firebase connected");
+
 } catch (error) {
-    console.error("Firebase initialization error:", error);
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
 }
 </script>
+
 
 <style>
 
@@ -1483,40 +1491,63 @@ async function loadFirebaseCustomer(){
 
         if(!firebaseDB){
 
-            console.error("Firebase DB not connected");
+            console.error(
+                "Firebase DB not connected"
+            );
 
-            showMessage("Firebase connect नहीं है");
+            showMessage(
+                "Firebase connect नहीं है"
+            );
 
             return;
         }
 
 
         /*
-         * Login page ने यह value save की थी:
-         *
-         * rdxFirebaseUserId = 91XXXXXXXXXX
+         * Login page ने mobile number save किया है.
          */
 
         let mobile =
-            localStorage.getItem("rdxFirebaseUserId");
+            localStorage.getItem(
+                "rdxFirebaseUserId"
+            );
 
 
         /*
-         * अगर यह नहीं मिली तो verified mobile check करें
+         * दूसरा backup mobile
          */
 
         if(!mobile){
 
             mobile =
-                localStorage.getItem("rdxVerifiedMobile");
+                localStorage.getItem(
+                    "rdxVerifiedMobile"
+                );
+        }
+
+
+        /*
+         * तीसरा backup
+         */
+
+        if(!mobile){
+
+            mobile =
+                localStorage.getItem(
+                    "rdxUserMobile"
+                );
         }
 
 
         if(!mobile){
 
-            console.error("Firebase user ID नहीं मिली");
+            console.error(
+                "Firebase user mobile नहीं मिली"
+            );
 
-            showMessage("User login information नहीं मिली");
+            showMessage(
+                "User login information नहीं मिली"
+            );
 
             return;
         }
@@ -1530,27 +1561,39 @@ async function loadFirebaseCustomer(){
             String(mobile).replace(/\D/g,"");
 
 
-        if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
+        /*
+         * अगर number 10 digit है
+         * तो 91 जोड़ें
+         */
 
-            console.error(
-                "Invalid Firebase user ID:",
-                cleanMobile
-            );
+        let firebaseDocId =
+            cleanMobile;
 
-            return;
+
+        if(
+            /^[6-9]\d{9}$/.test(cleanMobile)
+        ){
+
+            firebaseDocId =
+                "91" + cleanMobile;
+
         }
 
 
-        console.log(
-            "Loading Firebase customer:",
-            cleanMobile
-        );
-
+        /*
+         * Firebase customer document
+         */
 
         const userRef =
             firebaseDB
                 .collection("customers")
-                .doc(cleanMobile);
+                .doc(firebaseDocId);
+
+
+        console.log(
+            "Loading Firebase customer:",
+            firebaseDocId
+        );
 
 
         const snapshot =
@@ -1561,10 +1604,12 @@ async function loadFirebaseCustomer(){
 
             console.error(
                 "Customer document नहीं मिला:",
-                cleanMobile
+                firebaseDocId
             );
 
-            showMessage("Customer data नहीं मिला");
+            showMessage(
+                "Customer data नहीं मिला"
+            );
 
             return;
         }
@@ -1580,9 +1625,9 @@ async function loadFirebaseCustomer(){
         );
 
 
-        /*
-         * BALANCE
-         */
+        /* =================================================
+           BALANCE
+        ================================================= */
 
         let balance =
             Number(data.balance || 0);
@@ -1594,27 +1639,90 @@ async function loadFirebaseCustomer(){
             balance;
 
 
+        /* =================================================
+           REFER / REDEEM
+        ================================================= */
+
+        let redeem =
+            Number(
+                data.redeemBalance ||
+                data.redeem ||
+                data.referralBalance ||
+                0
+            );
+
+
+        document.getElementById(
+            "topRedeem"
+        ).textContent =
+            redeem;
+
+
+        /* =================================================
+           ACTUAL USER NAME
+        =================================================
+
+           Firebase में इनमें से कोई field हो सकती है:
+
+           name
+           fullName
+           username
+           realName
+
+        ================================================= */
+
+        let username =
+            data.name ||
+            data.fullName ||
+            data.username ||
+            data.realName ||
+            "";
+
+
         /*
-         * MOBILE
+         * अगर Firebase में नाम खाली है
+         * तो localStorage से पहले का नाम देखें.
          */
 
-        const firebaseMobile =
-            data.mobile || ("+" + cleanMobile);
+        if(
+            !username ||
+            String(username).trim() === ""
+        ){
+
+            username =
+                localStorage.getItem(
+                    "rdxUsername"
+                ) || "";
+
+        }
 
 
         /*
-         * USERNAME
-         *
-         * अभी mobile के last 4 digits दिखेंगे.
+         * अगर फिर भी नाम नहीं मिला
+         * तो mobile के last 4 digits दिखाएं.
          */
 
-        const lastFour =
-            cleanMobile.slice(-4);
+        if(
+            !username ||
+            String(username).trim() === ""
+        ){
+
+            const lastFour =
+                firebaseDocId.slice(-4);
+
+            username =
+                "User" + lastFour;
+
+        }
 
 
-        const username =
-            "User" + lastFour;
+        username =
+            String(username).trim();
 
+
+        /* =================================================
+           DASHBOARD NAME
+        ================================================= */
 
         document.getElementById(
             "username"
@@ -1622,30 +1730,32 @@ async function loadFirebaseCustomer(){
             "Hey, " + username;
 
 
+        /* =================================================
+           SIDE MENU NAME
+        ================================================= */
+
         document.getElementById(
             "menuUsername"
         ).textContent =
             username;
 
 
-        /*
-         * LocalStorage में भी रख दें
-         */
+        /* =================================================
+           LOCAL STORAGE CACHE
+        ================================================= */
 
         localStorage.setItem(
             "rdxUsername",
             username
         );
 
+
         localStorage.setItem(
             "rdxUserMobile",
-            firebaseMobile
+            data.mobile ||
+            ("+" + firebaseDocId)
         );
 
-
-        /*
-         * Balance भी local cache में
-         */
 
         localStorage.setItem(
             "rdxBalance",
@@ -1653,9 +1763,16 @@ async function loadFirebaseCustomer(){
         );
 
 
+        localStorage.setItem(
+            "rdxRedeem",
+            String(redeem)
+        );
+
+
         console.log(
             "Dashboard Firebase data loaded successfully"
         );
+
 
     } catch(error){
 
@@ -1667,7 +1784,9 @@ async function loadFirebaseCustomer(){
         showMessage(
             "Firebase data load नहीं हो पाया"
         );
+
     }
+
 }
 
 
