@@ -25,7 +25,6 @@ html{
 
 body{
     min-height:100vh;
-
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -33,9 +32,7 @@ body{
         Roboto,
         Arial,
         sans-serif;
-
     color:#101a38;
-
     overflow-x:hidden;
 
     background:
@@ -68,32 +65,22 @@ body{
 
 .back-btn{
     border:1px solid #a8c4f8;
-
     background:
         linear-gradient(
             135deg,
             #ffffff,
             #eaf2ff
         );
-
     color:#172542;
-
     min-height:54px;
-
     padding:7px 18px 7px 8px;
-
     border-radius:30px;
-
     display:flex;
     align-items:center;
-
     gap:11px;
-
     font-size:16px;
     font-weight:800;
-
     cursor:pointer;
-
     box-shadow:
         0 8px 25px rgba(44,93,190,.13);
 }
@@ -101,22 +88,17 @@ body{
 .back-icon{
     width:40px;
     height:40px;
-
     border-radius:50%;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     background:
         linear-gradient(
             145deg,
             #2467e9,
             #4b80f1
         );
-
     color:#ffffff;
-
     font-size:25px;
 }
 
@@ -135,47 +117,33 @@ body{
 .logo{
     width:112px;
     height:112px;
-
     margin:auto;
-
     border-radius:50%;
-
     background:
         linear-gradient(
             145deg,
             #ffffff,
             #e7efff
         );
-
     border:6px solid #b8cff9;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     color:#2565df;
-
     font-size:25px;
     font-weight:950;
-
     box-shadow:
         0 0 0 8px rgba(73,120,232,.08),
         0 18px 40px rgba(44,92,190,.18);
-
     position:relative;
 }
 
 .logo:before{
     content:"";
-
     position:absolute;
-
     inset:9px;
-
     border-radius:50%;
-
     border:3px solid #ef4444;
-
     opacity:.75;
 }
 
@@ -186,13 +154,9 @@ body{
 
 .brand h1{
     margin-top:18px;
-
     font-size:38px;
-
     line-height:1;
-
     font-weight:950;
-
     letter-spacing:-1.5px;
 
     background:
@@ -205,17 +169,13 @@ body{
 
     -webkit-background-clip:text;
     background-clip:text;
-
     color:transparent;
 }
 
 .brand p{
     margin-top:10px;
-
     color:#6c7c9c;
-
     font-size:18px;
-
     font-weight:600;
 }
 
@@ -226,11 +186,8 @@ body{
             rgba(255,255,255,.98),
             rgba(248,251,255,.98)
         );
-
     border:1px solid #b9cdf5;
-
     border-radius:30px;
-
     padding:34px;
 
     box-shadow:
@@ -238,129 +195,87 @@ body{
         0 5px 20px rgba(38,82,165,.07);
 
     position:relative;
-
     overflow:hidden;
 }
 
 .login-card:before{
     content:"";
-
     position:absolute;
-
     width:190px;
     height:190px;
-
     border-radius:50%;
-
     background:rgba(70,115,240,.1);
-
     top:-90px;
     right:-70px;
 }
 
 .login-card:after{
     content:"";
-
     position:absolute;
-
     width:150px;
     height:150px;
-
     border-radius:50%;
-
     background:rgba(255,105,125,.07);
-
     bottom:-80px;
     left:-60px;
 }
 
 .step{
     display:inline-flex;
-
     align-items:center;
-
     gap:7px;
-
     padding:9px 15px;
-
     border-radius:22px;
-
     border:1px solid #a9c5f8;
-
     background:#edf4ff;
-
     color:#2865d6;
-
     font-size:12px;
-
     font-weight:900;
-
     letter-spacing:1px;
-
     position:relative;
-
     z-index:2;
 }
 
 .login-card h2{
     margin-top:22px;
-
     font-size:32px;
-
     line-height:1.15;
-
     position:relative;
-
     z-index:2;
 }
 
 .subtitle{
     margin-top:10px;
-
     color:#71809d;
-
     font-size:16px;
-
     line-height:1.5;
-
     position:relative;
-
     z-index:2;
 }
 
 .form-group{
     margin-top:24px;
-
     position:relative;
-
     z-index:2;
 }
 
 .form-group label{
     display:block;
-
     margin-bottom:9px;
-
     color:#34415e;
-
     font-size:15px;
-
     font-weight:850;
 }
 
 .mobile-wrap{
     display:grid;
-
     grid-template-columns:94px 1fr;
-
     gap:10px;
 }
 
 .country-code{
     height:62px;
-
     border-radius:18px;
-
     border:1px solid #aac5f6;
 
     background:
@@ -371,26 +286,19 @@ body{
         );
 
     display:flex;
-
     align-items:center;
     justify-content:center;
 
     color:#2865d6;
-
     font-size:17px;
-
     font-weight:900;
 }
 
 .mobile-input{
     width:100%;
-
     height:62px;
-
     border-radius:18px;
-
     border:1px solid #c5d3eb;
-
     outline:none;
 
     background:
@@ -401,30 +309,22 @@ body{
         );
 
     color:#17213a;
-
     font-size:17px;
-
     font-weight:600;
-
     padding:0 17px;
 }
 
 .mobile-input:focus{
     border-color:#4c7fe8;
-
     box-shadow:
         0 0 0 4px rgba(54,111,230,.1);
 }
 
 .continue-btn,
 .verify-btn{
-
     width:100%;
-
     min-height:62px;
-
     border:0;
-
     border-radius:20px;
 
     background:
@@ -436,11 +336,8 @@ body{
         );
 
     color:#ffffff;
-
     font-size:18px;
-
     font-weight:900;
-
     cursor:pointer;
 
     box-shadow:
@@ -451,9 +348,7 @@ body{
 
 .continue-btn{
     margin-top:28px;
-
     position:relative;
-
     z-index:2;
 }
 
@@ -465,74 +360,50 @@ body{
 .continue-btn:disabled,
 .verify-btn:disabled{
     opacity:.6;
-
     cursor:not-allowed;
 }
 
 #otpSection{
     display:none;
-
     position:relative;
-
     z-index:5;
-
     margin-top:24px;
 }
 
 .otp-label{
     display:block;
-
     margin-bottom:9px;
-
     color:#34415e;
-
     font-size:15px;
-
     font-weight:850;
 }
 
 .otp-input{
     width:100%;
-
     height:64px;
-
     border-radius:18px;
-
     border:2px solid #b9cdf5;
-
     background:#ffffff;
-
     color:#17213a;
-
     font-size:28px;
-
     font-weight:900;
-
     letter-spacing:10px;
-
     text-align:center;
-
     padding:0 15px;
-
     outline:none;
 }
 
 .otp-input:focus{
     border-color:#4c7fe8;
-
     box-shadow:
         0 0 0 4px rgba(54,111,230,.1);
 }
 
 .otp-hint{
     margin-top:9px;
-
     color:#71809d;
-
     font-size:13px;
-
     line-height:1.5;
-
     text-align:center;
 }
 
@@ -542,90 +413,58 @@ body{
 
 .resend-btn{
     display:block;
-
     margin:14px auto 0;
-
     border:0;
-
     background:transparent;
-
     color:#2865d6;
-
     font-size:14px;
-
     font-weight:800;
-
     cursor:pointer;
 }
 
 .resend-btn:disabled{
     opacity:.5;
-
     cursor:not-allowed;
 }
 
 .features{
     display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
+    grid-template-columns:repeat(3,1fr);
     gap:10px;
-
     margin-top:25px;
-
     padding-top:22px;
-
     border-top:1px solid #e2e8f3;
-
     position:relative;
-
     z-index:2;
 }
 
 .feature{
     text-align:center;
-
     color:#667590;
-
     font-size:12px;
-
     font-weight:700;
 }
 
 .feature-icon{
     width:42px;
     height:42px;
-
     margin:auto;
-
     border-radius:14px;
-
     display:flex;
-
     align-items:center;
     justify-content:center;
-
     background:#edf4ff;
-
     border:1px solid #c1d3f5;
-
     font-size:19px;
-
     margin-bottom:7px;
 }
 
 .info-text{
     text-align:center;
-
     margin-top:25px;
-
     color:#7a879e;
-
     font-size:13px;
-
     line-height:1.6;
-
     padding:0 8px;
 }
 
@@ -635,9 +474,7 @@ body{
 
 .toast{
     position:fixed;
-
     left:50%;
-
     bottom:35px;
 
     transform:
@@ -645,27 +482,16 @@ body{
         translateY(20px);
 
     background:#17213a;
-
     color:#ffffff;
-
     padding:13px 18px;
-
     border-radius:14px;
-
     font-size:14px;
-
     font-weight:650;
-
     opacity:0;
-
     pointer-events:none;
-
     transition:.25s;
-
     z-index:9999;
-
     max-width:90%;
-
     text-align:center;
 }
 
@@ -768,28 +594,25 @@ body{
     .mobile-input{
         font-size:15px;
     }
-
 }
 
 </style>
 
 
 <!-- =====================================================
-     FIREBASE FIRESTORE
-     MSG91 OTP IS NOT CHANGED
+     FIREBASE
      ===================================================== -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-
 <script>
 
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+        "AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
 
     authDomain:
         "rdx-ludo.firebaseapp.com",
@@ -805,7 +628,6 @@ const firebaseConfig = {
 
     appId:
         "1:928340814840:web:6eca42a8b76138b268440d"
-
 };
 
 
@@ -814,9 +636,7 @@ let firebaseDB = null;
 
 try {
 
-    if(
-        !firebase.apps.length
-    ){
+    if (!firebase.apps.length) {
 
         firebase.initializeApp(
             firebaseConfig
@@ -831,8 +651,7 @@ try {
         "Firebase Firestore connected"
     );
 
-}
-catch(error){
+} catch(error) {
 
     console.error(
         "Firebase initialization error:",
@@ -844,43 +663,40 @@ catch(error){
 
 /* =====================================================
    FIREBASE CUSTOMER SAVE
-
    IMPORTANT:
-   Firebase read permission false है।
-   इसलिए यहां get() नहीं किया गया।
-
-   पहले existing document update होगा।
-   अगर document मौजूद नहीं है तो create होगा।
+   MSG91 OTP IS NOT USED HERE.
+   OTP = MSG91 ONLY.
    ===================================================== */
 
-async function saveCustomerToFirebase(mobile){
+async function saveCustomerToFirebase(mobile) {
 
-    if(
-        !firebaseDB
-    ){
+    if (!firebaseDB) {
 
-        throw new Error(
-            "Firebase Firestore not connected"
+        console.error(
+            "Firebase DB not connected"
         );
 
+        return false;
     }
 
 
     const cleanMobile =
         String(mobile)
-            .replace(/\D/g,"");
+            .replace(/\D/g, "");
 
 
-    if(
+    if (
         !/^91[6-9]\d{9}$/.test(
             cleanMobile
         )
-    ){
+    ) {
 
-        throw new Error(
-            "Invalid Indian mobile number"
+        console.error(
+            "Invalid mobile:",
+            cleanMobile
         );
 
+        return false;
     }
 
 
@@ -891,58 +707,53 @@ async function saveCustomerToFirebase(mobile){
 
 
     const now =
-        firebase.firestore.FieldValue
+        firebase.firestore
+            .FieldValue
             .serverTimestamp();
 
 
-    /*
-    =====================================================
-    EXISTING USER UPDATE
+    try {
 
-    सिर्फ allowed fields:
-    lastLoginAt
-    status
-    =====================================================
-    */
+        /*
+         * FIRST:
+         * Existing customer ko update
+         *
+         * Firebase Rules:
+         * update me sirf status + lastLoginAt allowed hain.
+         */
 
-    try{
+        try {
 
-        await userRef.update({
+            await userRef.update({
 
-            lastLoginAt:
-                now,
+                status:
+                    "active",
 
-            status:
-                "active"
+                lastLoginAt:
+                    now
 
-        });
-
-
-        console.log(
-            "Existing customer updated:",
-            cleanMobile
-        );
-
-    }
+            });
 
 
-    /*
-    =====================================================
-    NEW USER CREATE
+            console.log(
+                "EXISTING CUSTOMER UPDATED:",
+                cleanMobile
+            );
 
-    अगर document मौजूद नहीं है।
-    =====================================================
-    */
 
-    catch(error){
+        } catch(updateError) {
 
-        if(
-            error &&
-            (
-                error.code === "not-found" ||
-                error.code === "NOT_FOUND"
-            )
-        ){
+            /*
+             * Agar document exist nahi karta,
+             * update fail hoga.
+             *
+             * Tab new customer create karenge.
+             */
+
+            console.log(
+                "Customer not found, creating new customer..."
+            );
+
 
             await userRef.set({
 
@@ -965,34 +776,36 @@ async function saveCustomerToFirebase(mobile){
 
 
             console.log(
-                "New customer created:",
+                "NEW CUSTOMER CREATED:",
                 cleanMobile
             );
 
         }
 
-        else{
 
-            console.error(
-                "Firebase update error:",
-                error
-            );
+        localStorage.setItem(
+            "rdxFirebaseUserId",
+            cleanMobile
+        );
 
-            throw error;
 
-        }
+        console.log(
+            "Firebase customer save successful"
+        );
 
+
+        return true;
+
+
+    } catch(error) {
+
+        console.error(
+            "FIREBASE CUSTOMER SAVE ERROR:",
+            error
+        );
+
+        return false;
     }
-
-
-    localStorage.setItem(
-        "rdxFirebaseUserId",
-        cleanMobile
-    );
-
-
-    return true;
-
 }
 
 </script>
@@ -1084,6 +897,7 @@ async function saveCustomerToFirebase(mobile){
 
 
     <div class="mobile-wrap">
+
 
         <div class="country-code">
             🇮🇳 +91
@@ -1231,18 +1045,17 @@ async function saveCustomerToFirebase(mobile){
 
 <!-- =====================================================
      MSG91 CONFIGURATION
-
-     MSG91 ONLY
+     OTP SERVICE = MSG91 ONLY
      ===================================================== -->
 
 <script type="text/javascript">
 
 var MSG91_WIDGET_ID =
-"366870704943343439343834";
+    "366870704943343439343834";
 
 
 var MSG91_TOKEN =
-"561244TCn8oI4OX6a82246aP1";
+    "561244TCn8oI4OX6a82246aP1";
 
 
 var configuration = {
@@ -1302,53 +1115,92 @@ var configuration = {
 
 
 const mobileInput =
-    document.getElementById("mobile");
+    document.getElementById(
+        "mobile"
+    );
+
 
 const continueBtn =
-    document.getElementById("continueBtn");
+    document.getElementById(
+        "continueBtn"
+    );
+
 
 const otpSection =
-    document.getElementById("otpSection");
+    document.getElementById(
+        "otpSection"
+    );
+
 
 const otpInput =
-    document.getElementById("otp");
+    document.getElementById(
+        "otp"
+    );
+
 
 const verifyBtn =
-    document.getElementById("verifyBtn");
+    document.getElementById(
+        "verifyBtn"
+    );
+
 
 const resendBtn =
-    document.getElementById("resendBtn");
+    document.getElementById(
+        "resendBtn"
+    );
+
 
 const mobileGroup =
-    document.getElementById("mobileGroup");
+    document.getElementById(
+        "mobileGroup"
+    );
+
 
 const stepLabel =
-    document.getElementById("stepLabel");
+    document.getElementById(
+        "stepLabel"
+    );
+
 
 const titleText =
-    document.getElementById("titleText");
+    document.getElementById(
+        "titleText"
+    );
+
 
 const subtitleText =
-    document.getElementById("subtitleText");
+    document.getElementById(
+        "subtitleText"
+    );
+
 
 const otpHint =
-    document.getElementById("otpHint");
+    document.getElementById(
+        "otpHint"
+    );
+
 
 const toast =
-    document.getElementById("toast");
+    document.getElementById(
+        "toast"
+    );
 
 
 let currentIdentifier =
     "";
 
+
 let currentReqId =
     "";
+
 
 let resendSeconds =
     30;
 
+
 let resendTimer =
     null;
+
 
 let msg91Ready =
     false;
@@ -1403,11 +1255,9 @@ function checkMSG91Ready(){
         );
 
         return true;
-
     }
 
     return false;
-
 }
 
 
@@ -1433,7 +1283,6 @@ function waitForMSG91(){
                     );
 
                     return;
-
                 }
 
 
@@ -1461,13 +1310,11 @@ function waitForMSG91(){
                     console.error(
                         "MSG91 methods not available"
                     );
-
                 }
 
             },
             100
         );
-
 }
 
 
@@ -1492,7 +1339,6 @@ function getMobile(){
             0,
             10
         );
-
 }
 
 
@@ -1515,7 +1361,6 @@ function startLogin(){
         mobileInput.focus();
 
         return;
-
     }
 
 
@@ -1530,7 +1375,6 @@ function startLogin(){
         );
 
         return;
-
     }
 
 
@@ -1546,7 +1390,6 @@ function startLogin(){
         waitForMSG91();
 
         return;
-
     }
 
 
@@ -1562,6 +1405,7 @@ function startLogin(){
 
     mobileGroup.style.display =
         "none";
+
 
     continueBtn.style.display =
         "none";
@@ -1600,7 +1444,6 @@ function startLogin(){
 
 
     sendOTPNow();
-
 }
 
 
@@ -1616,12 +1459,12 @@ function sendOTPNow(){
         );
 
         return;
-
     }
 
 
     verifyBtn.disabled =
         true;
+
 
     resendBtn.disabled =
         true;
@@ -1632,16 +1475,9 @@ function sendOTPNow(){
     );
 
 
-    /*
-    =====================================================
-    MSG91 ONLY
-    =====================================================
-    */
-
     window.sendOtp(
 
         currentIdentifier,
-
 
         function(data){
 
@@ -1668,7 +1504,6 @@ function sendOTPNow(){
 
                 currentReqId =
                     data.requestId;
-
             }
 
 
@@ -1723,9 +1558,12 @@ function sendOTPNow(){
         }
 
     );
-
 }
 
+
+/* =====================================================
+   VERIFY OTP
+   ===================================================== */
 
 async function verifyOTP(){
 
@@ -1754,7 +1592,6 @@ async function verifyOTP(){
         otpInput.focus();
 
         return;
-
     }
 
 
@@ -1768,27 +1605,20 @@ async function verifyOTP(){
         );
 
         return;
-
     }
 
 
     verifyBtn.disabled =
         true;
 
+
     verifyBtn.textContent =
         "Verifying...";
 
 
-    /*
-    =====================================================
-    MSG91 OTP VERIFY
-    =====================================================
-    */
-
     window.verifyOtp(
 
         otp,
-
 
         async function(data){
 
@@ -1799,62 +1629,84 @@ async function verifyOTP(){
 
 
             /*
-            =================================================
-            LOGIN SUCCESS
-            =================================================
-            */
+             * MSG91 OTP SUCCESS
+             */
 
-            localStorage.setItem(
-                "rdxLoggedIn",
-                "true"
-            );
+            try {
+
+                /*
+                 * Firebase customer save
+                 * OTP verify होने के बाद.
+                 */
+
+                const saved =
+                    await saveCustomerToFirebase(
+                        currentIdentifier
+                    );
 
 
-            localStorage.setItem(
-                "rdxVerifiedMobile",
-                currentIdentifier
-            );
+                if(!saved){
+
+                    throw new Error(
+                        "Firebase customer save failed"
+                    );
+                }
 
 
-            if(
-                data &&
-                data.accessToken
-            ){
+                /*
+                 * Login success
+                 */
 
                 localStorage.setItem(
-                    "rdxAccessToken",
-                    data.accessToken
-                );
-
-            }
-
-
-            /*
-            =================================================
-            FIREBASE CUSTOMER SAVE
-            =================================================
-            */
-
-            try{
-
-                showMessage(
-                    "Login verified. Firebase में data save हो रहा है..."
+                    "rdxLoggedIn",
+                    "true"
                 );
 
 
-                await saveCustomerToFirebase(
+                localStorage.setItem(
+                    "rdxVerifiedMobile",
                     currentIdentifier
                 );
 
 
-                console.log(
-                    "Firebase customer save successful"
+                if(
+                    data &&
+                    data.accessToken
+                ){
+
+                    localStorage.setItem(
+                        "rdxAccessToken",
+                        data.accessToken
+                    );
+                }
+
+
+                clearInterval(
+                    resendTimer
                 );
 
 
-            }
+                showMessage(
+                    "Login successful!"
+                );
 
-            catch(error){
+
+                /*
+                 * Dashboard
+                 */
+
+                setTimeout(
+                    function(){
+
+                        window.location.href =
+                            "./dashboard.html";
+
+                    },
+                    700
+                );
+
+
+            } catch(error){
 
                 console.error(
                     "FIREBASE CUSTOMER SAVE ERROR:",
@@ -1865,6 +1717,7 @@ async function verifyOTP(){
                 verifyBtn.disabled =
                     false;
 
+
                 verifyBtn.textContent =
                     "Verify OTP";
 
@@ -1872,38 +1725,7 @@ async function verifyOTP(){
                 showMessage(
                     "OTP verify हो गया, लेकिन Firebase में data save नहीं हुआ।"
                 );
-
-
-                return;
-
             }
-
-
-            clearInterval(
-                resendTimer
-            );
-
-
-            showMessage(
-                "Login successful!"
-            );
-
-
-            /*
-            =================================================
-            DASHBOARD
-            =================================================
-            */
-
-            setTimeout(
-                function(){
-
-                    window.location.href =
-                        "./dashboard.html";
-
-                },
-                700
-            );
 
         },
 
@@ -1918,6 +1740,7 @@ async function verifyOTP(){
 
             verifyBtn.disabled =
                 false;
+
 
             verifyBtn.textContent =
                 "Verify OTP";
@@ -1937,9 +1760,12 @@ async function verifyOTP(){
         undefined
 
     );
-
 }
 
+
+/* =====================================================
+   RESEND OTP
+   ===================================================== */
 
 function resendOTP(){
 
@@ -1948,7 +1774,6 @@ function resendOTP(){
     ){
 
         return;
-
     }
 
 
@@ -1962,7 +1787,6 @@ function resendOTP(){
         );
 
         return;
-
     }
 
 
@@ -1975,7 +1799,6 @@ function resendOTP(){
         );
 
         return;
-
     }
 
 
@@ -1988,16 +1811,9 @@ function resendOTP(){
     );
 
 
-    /*
-    =====================================================
-    MSG91 RETRY
-    =====================================================
-    */
-
     window.retryOtp(
 
         "11",
-
 
         function(data){
 
@@ -2024,12 +1840,12 @@ function resendOTP(){
 
                 currentReqId =
                     data.requestId;
-
             }
 
 
             otpInput.value =
                 "";
+
 
             otpInput.focus();
 
@@ -2070,9 +1886,12 @@ function resendOTP(){
         currentReqId
 
     );
-
 }
 
+
+/* =====================================================
+   RESEND TIMER
+   ===================================================== */
 
 function startResendTimer(){
 
@@ -2118,7 +1937,6 @@ function startResendTimer(){
 
 
                     return;
-
                 }
 
 
@@ -2130,9 +1948,12 @@ function startResendTimer(){
             },
             1000
         );
-
 }
 
+
+/* =====================================================
+   MOBILE INPUT
+   ===================================================== */
 
 mobileInput.addEventListener(
     "input",
@@ -2152,6 +1973,10 @@ mobileInput.addEventListener(
     }
 );
 
+
+/* =====================================================
+   OTP INPUT
+   ===================================================== */
 
 otpInput.addEventListener(
     "input",
@@ -2191,6 +2016,10 @@ otpInput.addEventListener(
 );
 
 
+/* =====================================================
+   SEND OTP BUTTON
+   ===================================================== */
+
 continueBtn.addEventListener(
     "click",
     function(){
@@ -2200,6 +2029,10 @@ continueBtn.addEventListener(
     }
 );
 
+
+/* =====================================================
+   VERIFY BUTTON
+   ===================================================== */
 
 verifyBtn.addEventListener(
     "click",
@@ -2211,6 +2044,10 @@ verifyBtn.addEventListener(
 );
 
 
+/* =====================================================
+   RESEND BUTTON
+   ===================================================== */
+
 resendBtn.addEventListener(
     "click",
     function(){
@@ -2220,6 +2057,10 @@ resendBtn.addEventListener(
     }
 );
 
+
+/* =====================================================
+   ENTER KEY
+   ===================================================== */
 
 document.addEventListener(
     "keydown",
@@ -2231,7 +2072,6 @@ document.addEventListener(
         ){
 
             return;
-
         }
 
 
@@ -2269,6 +2109,10 @@ document.addEventListener(
     }
 );
 
+
+/* =====================================================
+   BACK BUTTON
+   ===================================================== */
 
 function goBack(){
 
