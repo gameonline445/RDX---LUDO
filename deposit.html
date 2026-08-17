@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0,
+      viewport-fit=cover">
+
+<title>RDX LUDO - Deposit</title>
+
+<style>
+
+/* =========================
+   RESET
+========================= */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,
+body{
+    width:100%;
+    min-height:100%;
+    overflow-x:hidden;
+}
+
+body{
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
+    background:
+    linear-gradient(
+        180deg,
+        #f3f7ff 0%,
+        #ffffff 55%,
+        #f5f8ff 100%
+    );
+
+    color:#101a38;
+
+    padding-bottom:100px;
+}
+
+button,
+input{
+    font:inherit;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.top-header{
+
+    height:76px;
+
+    width:100%;
+
+    background:
+    linear-gradient(
+        110deg,
+        #edf4ff,
+        #ffffff
+    );
+
+    border-bottom:1px solid #cbd8f0;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 18px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    box-shadow:
+    0 5px 18px rgba(36,75,150,.10);
+}
+
+
+.header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+}
+
+
+.menu-btn{
+
+    width:48px;
+    height:48px;
+
+    border:0;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ff7165,
+        #ff8a70
+    );
+
+    color:white;
+
+    font-size:27px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 7px 17px rgba(255,93,80,.25);
+}
+
+
+.logo{
+
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #e7efff
+    );
+
+    border:3px solid #d3e1ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#1762df;
+
+    font-size:13px;
+
+    font-weight:900;
+
+    box-shadow:
+    0 5px 14px rgba(36,93,190,.16);
+}
+
+
+/* =========================
+   HEADER RIGHT
+========================= */
+
+.header-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+}
+
+
+.header-icon{
+
+    height:47px;
+
+    min-width:47px;
+
+    border:0;
+
+    border-radius:17px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 6px 15px rgba(0,0,0,.12);
+}
+
+
+.notification{
+
+    background:
+    linear-gradient(
+        145deg,
+        #716df5,
+        #817eff
+    );
+
+    font-size:21px;
+}
+
+
+.wallet-top{
+
+    background:
+    linear-gradient(
+        145deg,
+        #18b965,
+        #43d77e
+    );
+
+    padding:0 13px;
+
+    font-size:18px;
+
+    font-weight:800;
+}
+
+
+.redeem-top{
+
+    background:
+    linear-gradient(
+        145deg,
+        #ff8a35,
+        #ffad45
+    );
+
+    padding:0 13px;
+
+    font-size:20px;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+
+    width:100%;
+
+    max-width:850px;
+
+    margin:auto;
+
+    padding:
+    28px 20px 120px;
+}
+
+
+/* =========================
+   PAGE TITLE
+========================= */
+
+.page-label{
+
+    color:#3168dc;
+
+    font-size:15px;
+
+    font-weight:850;
+
+    letter-spacing:2px;
+
+    margin-bottom:8px;
+}
+
+
+.page-title{
+
+    font-size:42px;
+
+    line-height:1.1;
+
+    font-weight:900;
+
+    color:#111a35;
+
+    letter-spacing:-1.5px;
+}
+
+
+.page-subtitle{
+
+    margin-top:7px;
+
+    color:#6c7891;
+
+    font-size:20px;
+}
+
+
+/* =========================
+   AMOUNT CARD
+========================= */
+
+.amount-card{
+
+    margin-top:30px;
+
+    padding:22px;
+
+    border:1.5px solid #b9ccef;
+
+    border-radius:28px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #f1f5ff,
+        #ffffff
+    );
+
+    box-shadow:
+    0 14px 35px rgba(44,91,180,.08);
+}
+
+
+.amount-label{
+
+    color:#68758d;
+
+    font-size:17px;
+
+    font-weight:850;
+
+    letter-spacing:1px;
+
+    margin-bottom:14px;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+.amount-input-wrap{
+
+    height:76px;
+
+    border:1.5px solid #b8c9e8;
+
+    border-radius:24px;
+
+    background:
+    rgba(255,255,255,.65);
+
+    display:flex;
+
+    align-items:center;
+
+    padding:8px 18px;
+
+    box-shadow:
+    inset 0 1px 3px rgba(30,60,120,.03);
+}
+
+
+.rupee-circle{
+
+    width:54px;
+    height:54px;
+
+    flex:0 0 54px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #306be5,
+        #4b82f2
+    );
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:27px;
+
+    font-weight:850;
+
+    box-shadow:
+    0 8px 18px rgba(44,104,226,.25);
+}
+
+
+.amount-input{
+
+    width:100%;
+
+    height:100%;
+
+    border:0;
+
+    outline:none;
+
+    background:transparent;
+
+    padding-left:16px;
+
+    color:#111a35;
+
+    font-size:30px;
+
+    font-weight:800;
+}
+
+
+.amount-input::placeholder{
+
+    color:#17213a;
+
+    opacity:1;
+}
+
+
+/* =========================
+   MIN / COIN
+========================= */
+
+.amount-info{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-top:17px;
+
+    font-size:17px;
+
+    font-weight:650;
+}
+
+
+.min-amount{
+
+    color:#d53b3b;
+}
+
+
+.coin-rate{
+
+    color:#4e81db;
+}
+
+
+/* =========================
+   QUICK AMOUNTS
+========================= */
+
+.quick-grid{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(3,1fr);
+
+    gap:14px;
+
+    margin-top:22px;
+}
+
+
+.quick-btn{
+
+    height:68px;
+
+    border-radius:21px;
+
+    border:1.5px solid #bccbe7;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #f8faff
+    );
+
+    color:#111a35;
+
+    font-size:20px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    transition:.18s;
+
+    box-shadow:
+    0 4px 12px rgba(30,60,120,.03);
+}
+
+
+.quick-btn:active{
+
+    transform:scale(.97);
+}
+
+
+.quick-btn.active{
+
+    border-color:#306ce6;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        110deg,
+        #2865e7,
+        #4a7ff0
+    );
+
+    box-shadow:
+    0 10px 22px rgba(44,105,231,.25);
+}
+
+
+/* =========================
+   SECURE TEXT
+========================= */
+
+.secure-text{
+
+    text-align:center;
+
+    color:#71809a;
+
+    font-size:18px;
+
+    margin-top:24px;
+}
+
+
+/* =========================
+   PAY BUTTON
+========================= */
+
+.pay-btn{
+
+    width:100%;
+
+    height:72px;
+
+    margin-top:22px;
+
+    border:0;
+
+    border-radius:38px;
+
+    color:white;
+
+    background:
+    linear-gradient(
+        110deg,
+        #2d68e9,
+        #4a7ff0
+    );
+
+    font-size:24px;
+
+    font-weight:850;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 13px 28px rgba(44,104,231,.30);
+
+    transition:.18s;
+}
+
+
+.pay-btn:active{
+
+    transform:scale(.985);
+}
+
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+
+    position:fixed;
+
+    bottom:0;
+
+    left:0;
+
+    width:100%;
+
+    height:82px;
+
+    background:
+    rgba(255,255,255,.97);
+
+    border-top:1px solid #d6deee;
+
+    display:flex;
+
+    justify-content:space-around;
+
+    align-items:center;
+
+    z-index:200;
+
+    box-shadow:
+    0 -5px 20px rgba(30,65,130,.08);
+
+    backdrop-filter:blur(15px);
+}
+
+
+.nav-item{
+
+    width:25%;
+
+    height:100%;
+
+    border:0;
+
+    background:transparent;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:4px;
+
+    color:#66738d;
+
+    font-size:14px;
+
+    cursor:pointer;
+}
+
+
+.nav-icon{
+
+    width:45px;
+
+    height:45px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+}
+
+
+.nav-item.active{
+
+    color:#17213a;
+
+    font-weight:800;
+}
+
+
+.nav-item.active .nav-icon{
+
+    background:
+    linear-gradient(
+        145deg,
+        #536df5,
+        #5d70f3
+    );
+
+    color:white;
+
+    box-shadow:
+    0 8px 18px rgba(83,109,245,.30);
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+
+    position:fixed;
+
+    left:50%;
+
+    top:95px;
+
+    transform:
+    translateX(-50%)
+    translateY(-15px);
+
+    background:#182440;
+
+    color:white;
+
+    padding:13px 18px;
+
+    border-radius:14px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:500;
+
+    font-size:14px;
+
+    text-align:center;
+
+    white-space:nowrap;
+}
+
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    .top-header{
+
+        height:70px;
+
+        padding:0 12px;
+    }
+
+    .menu-btn{
+
+        width:46px;
+        height:46px;
+
+        font-size:25px;
+    }
+
+    .logo{
+
+        width:45px;
+        height:45px;
+    }
+
+    .header-right{
+
+        gap:6px;
+    }
+
+    .header-icon{
+
+        width:44px;
+        min-width:44px;
+
+        height:44px;
+
+        border-radius:16px;
+    }
+
+    .wallet-top{
+
+        font-size:0;
+
+        padding:0;
+    }
+
+    .wallet-top::before{
+
+        content:"💰";
+
+        font-size:20px;
+    }
+
+    .redeem-top{
+
+        font-size:0;
+
+        padding:0;
+    }
+
+    .redeem-top::before{
+
+        content:"🎁";
+
+        font-size:20px;
+    }
+
+
+    .container{
+
+        padding:
+        25px 20px 115px;
+    }
+
+
+    .page-label{
+
+        font-size:14px;
+    }
+
+
+    .page-title{
+
+        font-size:39px;
+    }
+
+
+    .page-subtitle{
+
+        font-size:18px;
+    }
+
+
+    .amount-card{
+
+        margin-top:25px;
+
+        padding:20px;
+
+        border-radius:25px;
+    }
+
+
+    .amount-input-wrap{
+
+        height:72px;
+
+        border-radius:22px;
+
+        padding:7px 15px;
+    }
+
+
+    .rupee-circle{
+
+        width:52px;
+
+        height:52px;
+
+        flex-basis:52px;
+
+        font-size:25px;
+    }
+
+
+    .amount-input{
+
+        font-size:28px;
+
+        padding-left:13px;
+    }
+
+
+    .amount-info{
+
+        font-size:16px;
+    }
+
+
+    .quick-grid{
+
+        gap:12px;
+
+        margin-top:20px;
+    }
+
+
+    .quick-btn{
+
+        height:63px;
+
+        border-radius:19px;
+
+        font-size:18px;
+    }
+
+
+    .secure-text{
+
+        font-size:17px;
+
+        margin-top:22px;
+    }
+
+
+    .pay-btn{
+
+        height:68px;
+
+        font-size:22px;
+
+        margin-top:20px;
+    }
+
+}
+
+
+/* =========================
+   SMALL PHONE
+========================= */
+
+@media(max-width:380px){
+
+    .container{
+
+        padding-left:14px;
+
+        padding-right:14px;
+    }
+
+
+    .page-title{
+
+        font-size:35px;
+    }
+
+
+    .page-subtitle{
+
+        font-size:17px;
+    }
+
+
+    .amount-card{
+
+        padding:17px;
+    }
+
+
+    .quick-btn{
+
+        height:58px;
+
+        font-size:16px;
+    }
+
+
+    .amount-input{
+
+        font-size:25px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="top-header">
+
+    <div class="header-left">
+
+        <button
+            class="menu-btn"
+            onclick="goBack()">
+
+            ☰
+
+        </button>
+
+
+        <div class="logo">
+
+            RDX
+
+        </div>
+
+    </div>
+
+
+    <div class="header-right">
+
+        <button
+            class="header-icon notification"
+            onclick="showMessage('No new notifications')">
+
+            🔔
+
+        </button>
+
+
+        <button
+            class="header-icon wallet-top"
+            onclick="goWallet()">
+
+            💰
+
+            <span id="topBalance">
+                0
+            </span>
+
+        </button>
+
+
+        <button
+            class="header-icon redeem-top"
+            onclick="goReferral()">
+
+            🎁
+
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
+<main class="container">
+
+
+    <div class="page-label">
+        WALLET
+    </div>
+
+
+    <h1 class="page-title">
+        Add Money
+    </h1>
+
+
+    <p class="page-subtitle">
+        Choose amount and deposit securely
+    </p>
+
+
+
+    <!-- =========================
+         AMOUNT CARD
+    ========================= -->
+
+    <section class="amount-card">
+
+
+        <div class="amount-label">
+            ENTER AMOUNT
+        </div>
+
+
+        <div class="amount-input-wrap">
+
+
+            <div class="rupee-circle">
+                ₹
+            </div>
+
+
+            <input
+                id="amountInput"
+                class="amount-input"
+                type="number"
+                inputmode="numeric"
+                min="100"
+                placeholder="100"
+                value="100"
+                oninput="checkAmount()">
+
+        </div>
+
+
+        <div class="amount-info">
+
+            <span class="min-amount">
+                Min: ₹100
+            </span>
+
+
+            <span class="coin-rate">
+                1 Coin = ₹1
+            </span>
+
+        </div>
+
+
+        <!-- QUICK AMOUNTS -->
+
+        <div class="quick-grid">
+
+
+            <button
+                class="quick-btn active"
+                onclick="selectAmount(100,this)">
+                ₹100
+            </button>
+
+
+            <button
+                class="quick-btn"
+                onclick="selectAmount(250,this)">
+                ₹250
+            </button>
+
+
+            <button
+                class="quick-btn"
+                onclick="selectAmount(500,this)">
+                ₹500
+            </button>
+
+
+            <button
+                class="quick-btn"
+                onclick="selectAmount(1000,this)">
+                ₹1000
+            </button>
+
+
+            <button
+                class="quick-btn"
+                onclick="selectAmount(2000,this)">
+                ₹2000
+            </button>
+
+
+            <button
+                class="quick-btn"
+                onclick="selectAmount(5000,this)">
+                ₹5000
+            </button>
+
+        </div>
+
+
+        <div class="secure-text">
+            Secure &amp; Instant Deposit
+        </div>
+
+
+        <button
+            class="pay-btn"
+            onclick="proceedPayment()">
+
+            Proceed to Pay
+
+        </button>
+
+
+    </section>
+
+</main>
+
+
+
+<!-- =========================
+     BOTTOM NAV
+========================= -->
+
+<nav class="bottom-nav">
+
+
+    <button
+        class="nav-item"
+        onclick="goHome()">
+
+        <div class="nav-icon">
+            🏠
+        </div>
+
+        <span>
+            Home
+        </span>
+
+    </button>
+
+
+    <button
+        class="nav-item active"
+        onclick="goWallet()">
+
+        <div class="nav-icon">
+            💰
+        </div>
+
+        <span>
+            Wallet
+        </span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="goSupport()">
+
+        <div class="nav-icon">
+            🎧
+        </div>
+
+        <span>
+            Support
+        </span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="goProfile()">
+
+        <div class="nav-icon">
+            👤
+        </div>
+
+        <span>
+            Profile
+        </span>
+
+    </button>
+
+</nav>
+
+
+
+<!-- TOAST -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
+
+
+
+<script>
+
+/* =========================
+   AMOUNT SELECT
+========================= */
+
+function selectAmount(amount, button){
+
+    document
+    .getElementById("amountInput")
+    .value = amount;
+
+
+    document
+    .querySelectorAll(".quick-btn")
+    .forEach(function(btn){
+
+        btn.classList.remove("active");
+
+    });
+
+
+    button.classList.add("active");
+
+}
+
+
+/* =========================
+   INPUT CHECK
+========================= */
+
+function checkAmount(){
+
+    const input =
+        document.getElementById(
+            "amountInput"
+        );
+
+
+    const amount =
+        Number(input.value);
+
+
+    document
+    .querySelectorAll(".quick-btn")
+    .forEach(function(btn){
+
+        btn.classList.remove("active");
+
+    });
+
+
+    const buttons =
+        document.querySelectorAll(
+            ".quick-btn"
+        );
+
+
+    buttons.forEach(function(btn){
+
+        const value =
+            Number(
+                btn.textContent
+                .replace(/[₹,]/g,"")
+                .trim()
+            );
+
+
+        if(value === amount){
+
+            btn.classList.add(
+                "active"
+            );
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   PROCEED
+========================= */
+
+function proceedPayment(){
+
+    const input =
+        document.getElementById(
+            "amountInput"
+        );
+
+
+    const amount =
+        Number(input.value);
+
+
+    if(!amount || amount < 100){
+
+        showMessage(
+            "Minimum deposit ₹100 hai"
+        );
+
+        return;
+    }
+
+
+    /*
+       PAYMENT SYSTEM ABHI CONNECT NAHI HAI.
+
+       Baad mein yahin par
+       payment gateway / UPI flow
+       connect kiya jayega.
+    */
+
+
+    showMessage(
+        "Payment system next step mein add hoga"
+    );
+
+}
+
+
+/* =========================
+   NAVIGATION
+========================= */
+
+function goHome(){
+
+    window.location.href =
+        "./dashboard.html";
+}
+
+
+function goWallet(){
+
+    window.location.href =
+        "./wallet.html";
+}
+
+
+function goSupport(){
+
+    window.location.href =
+        "./support.html";
+}
+
+
+function goProfile(){
+
+    window.location.href =
+        "./profile.html";
+}
+
+
+function goReferral(){
+
+    window.location.href =
+        "./referral.html";
+}
+
+
+function goBack(){
+
+    window.history.back();
+
+}
+
+
+/* =========================
+   TOP BALANCE
+========================= */
+
+window.addEventListener(
+    "load",
+    function(){
+
+        const balance =
+            localStorage.getItem(
+                "rdxWalletBalance"
+            ) || "0";
+
+
+        document.getElementById(
+            "topBalance"
+        ).textContent =
+            balance;
+
+    }
+);
+
+
+/* =========================
+   TOAST
+========================= */
+
+function showMessage(message){
+
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
+
+    toast.textContent =
+        message;
+
+
+    toast.classList.add(
+        "show"
+    );
+
+
+    setTimeout(function(){
+
+        toast.classList.remove(
+            "show"
+        );
+
+    },1800);
+
+}
+
+</script>
+
+
+</body>
+</html>
