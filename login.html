@@ -13,6 +13,10 @@
 
 <style>
 
+/* =====================================================
+   RESET
+   ===================================================== */
+
 *{
     box-sizing:border-box;
     margin:0;
@@ -25,6 +29,7 @@ html{
 
 body{
     min-height:100vh;
+
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -32,7 +37,9 @@ body{
         Roboto,
         Arial,
         sans-serif;
+
     color:#101a38;
+
     overflow-x:hidden;
 
     background:
@@ -41,16 +48,19 @@ body{
             rgba(83,125,255,.28),
             transparent 30%
         ),
+
         radial-gradient(
             circle at 90% 15%,
             rgba(255,116,93,.22),
             transparent 28%
         ),
+
         radial-gradient(
             circle at 50% 100%,
             rgba(91,218,172,.18),
             transparent 35%
         ),
+
         linear-gradient(
             135deg,
             #edf4ff,
@@ -59,28 +69,43 @@ body{
         );
 }
 
+
+/* =====================================================
+   TOP BAR
+   ===================================================== */
+
 .top-bar{
     padding:18px 18px 0;
 }
 
 .back-btn{
     border:1px solid #a8c4f8;
+
     background:
         linear-gradient(
             135deg,
             #ffffff,
             #eaf2ff
         );
+
     color:#172542;
+
     min-height:54px;
+
     padding:7px 18px 7px 8px;
+
     border-radius:30px;
+
     display:flex;
     align-items:center;
+
     gap:11px;
+
     font-size:16px;
     font-weight:800;
+
     cursor:pointer;
+
     box-shadow:
         0 8px 25px rgba(44,93,190,.13);
 }
@@ -88,75 +113,113 @@ body{
 .back-icon{
     width:40px;
     height:40px;
+
     border-radius:50%;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     background:
         linear-gradient(
             145deg,
             #2467e9,
             #4b80f1
         );
+
     color:#ffffff;
+
     font-size:25px;
 }
 
+
+/* =====================================================
+   PAGE
+   ===================================================== */
+
 .page{
     width:100%;
+
     max-width:780px;
+
     margin:auto;
+
     padding:25px 18px 70px;
 }
 
+
+/* =====================================================
+   BRAND
+   ===================================================== */
+
 .brand{
     text-align:center;
+
     margin:12px 0 25px;
 }
 
 .logo{
     width:112px;
     height:112px;
+
     margin:auto;
+
     border-radius:50%;
+
     background:
         linear-gradient(
             145deg,
             #ffffff,
             #e7efff
         );
+
     border:6px solid #b8cff9;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     color:#2565df;
+
     font-size:25px;
     font-weight:950;
+
     box-shadow:
         0 0 0 8px rgba(73,120,232,.08),
         0 18px 40px rgba(44,92,190,.18);
+
     position:relative;
 }
 
 .logo:before{
     content:"";
+
     position:absolute;
+
     inset:9px;
+
     border-radius:50%;
+
     border:3px solid #ef4444;
+
     opacity:.75;
 }
 
 .logo span{
     position:relative;
+
     z-index:2;
 }
 
 .brand h1{
     margin-top:18px;
+
     font-size:38px;
+
     line-height:1;
+
     font-weight:950;
+
     letter-spacing:-1.5px;
 
     background:
@@ -168,16 +231,26 @@ body{
         );
 
     -webkit-background-clip:text;
+
     background-clip:text;
+
     color:transparent;
 }
 
 .brand p{
     margin-top:10px;
+
     color:#6c7c9c;
+
     font-size:18px;
+
     font-weight:600;
 }
+
+
+/* =====================================================
+   LOGIN CARD
+   ===================================================== */
 
 .login-card{
     background:
@@ -186,8 +259,11 @@ body{
             rgba(255,255,255,.98),
             rgba(248,251,255,.98)
         );
+
     border:1px solid #b9cdf5;
+
     border-radius:30px;
+
     padding:34px;
 
     box-shadow:
@@ -195,87 +271,149 @@ body{
         0 5px 20px rgba(38,82,165,.07);
 
     position:relative;
+
     overflow:hidden;
 }
 
 .login-card:before{
     content:"";
+
     position:absolute;
+
     width:190px;
     height:190px;
+
     border-radius:50%;
+
     background:rgba(70,115,240,.1);
+
     top:-90px;
     right:-70px;
 }
 
 .login-card:after{
     content:"";
+
     position:absolute;
+
     width:150px;
     height:150px;
+
     border-radius:50%;
+
     background:rgba(255,105,125,.07);
+
     bottom:-80px;
     left:-60px;
 }
 
+
+/* =====================================================
+   STEP
+   ===================================================== */
+
 .step{
     display:inline-flex;
+
     align-items:center;
+
     gap:7px;
+
     padding:9px 15px;
+
     border-radius:22px;
+
     border:1px solid #a9c5f8;
+
     background:#edf4ff;
+
     color:#2865d6;
+
     font-size:12px;
+
     font-weight:900;
+
     letter-spacing:1px;
+
     position:relative;
+
     z-index:2;
 }
 
+
+/* =====================================================
+   TITLE
+   ===================================================== */
+
 .login-card h2{
     margin-top:22px;
+
     font-size:32px;
+
     line-height:1.15;
+
     position:relative;
+
     z-index:2;
 }
 
 .subtitle{
     margin-top:10px;
+
     color:#71809d;
+
     font-size:16px;
+
     line-height:1.5;
+
     position:relative;
+
     z-index:2;
 }
 
+
+/* =====================================================
+   FORM
+   ===================================================== */
+
 .form-group{
     margin-top:24px;
+
     position:relative;
+
     z-index:2;
 }
 
 .form-group label{
     display:block;
+
     margin-bottom:9px;
+
     color:#34415e;
+
     font-size:15px;
+
     font-weight:850;
 }
 
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
 .mobile-wrap{
     display:grid;
+
     grid-template-columns:94px 1fr;
+
     gap:10px;
 }
 
 .country-code{
     height:62px;
+
     border-radius:18px;
+
     border:1px solid #aac5f6;
 
     background:
@@ -286,19 +424,26 @@ body{
         );
 
     display:flex;
+
     align-items:center;
     justify-content:center;
 
     color:#2865d6;
+
     font-size:17px;
+
     font-weight:900;
 }
 
 .mobile-input{
     width:100%;
+
     height:62px;
+
     border-radius:18px;
+
     border:1px solid #c5d3eb;
+
     outline:none;
 
     background:
@@ -309,22 +454,35 @@ body{
         );
 
     color:#17213a;
+
     font-size:17px;
+
     font-weight:600;
+
     padding:0 17px;
 }
 
 .mobile-input:focus{
     border-color:#4c7fe8;
+
     box-shadow:
         0 0 0 4px rgba(54,111,230,.1);
 }
 
+
+/* =====================================================
+   BUTTONS
+   ===================================================== */
+
 .continue-btn,
 .verify-btn{
+
     width:100%;
+
     min-height:62px;
+
     border:0;
+
     border-radius:20px;
 
     background:
@@ -336,8 +494,11 @@ body{
         );
 
     color:#ffffff;
+
     font-size:18px;
+
     font-weight:900;
+
     cursor:pointer;
 
     box-shadow:
@@ -348,7 +509,9 @@ body{
 
 .continue-btn{
     margin-top:28px;
+
     position:relative;
+
     z-index:2;
 }
 
@@ -360,50 +523,79 @@ body{
 .continue-btn:disabled,
 .verify-btn:disabled{
     opacity:.6;
+
     cursor:not-allowed;
 }
 
+
+/* =====================================================
+   OTP SECTION
+   ===================================================== */
+
 #otpSection{
     display:none;
+
     position:relative;
+
     z-index:5;
+
     margin-top:24px;
 }
 
 .otp-label{
     display:block;
+
     margin-bottom:9px;
+
     color:#34415e;
+
     font-size:15px;
+
     font-weight:850;
 }
 
 .otp-input{
     width:100%;
+
     height:64px;
+
     border-radius:18px;
+
     border:2px solid #b9cdf5;
+
     background:#ffffff;
+
     color:#17213a;
+
     font-size:28px;
+
     font-weight:900;
+
     letter-spacing:10px;
+
     text-align:center;
+
     padding:0 15px;
+
     outline:none;
 }
 
 .otp-input:focus{
     border-color:#4c7fe8;
+
     box-shadow:
         0 0 0 4px rgba(54,111,230,.1);
 }
 
 .otp-hint{
     margin-top:9px;
+
     color:#71809d;
+
     font-size:13px;
+
     line-height:1.5;
+
     text-align:center;
 }
 
@@ -413,58 +605,100 @@ body{
 
 .resend-btn{
     display:block;
+
     margin:14px auto 0;
+
     border:0;
+
     background:transparent;
+
     color:#2865d6;
+
     font-size:14px;
+
     font-weight:800;
+
     cursor:pointer;
 }
 
 .resend-btn:disabled{
     opacity:.5;
+
     cursor:not-allowed;
 }
 
+
+/* =====================================================
+   FEATURES
+   ===================================================== */
+
 .features{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+
+    grid-template-columns:
+        repeat(3,1fr);
+
     gap:10px;
+
     margin-top:25px;
+
     padding-top:22px;
+
     border-top:1px solid #e2e8f3;
+
     position:relative;
+
     z-index:2;
 }
 
 .feature{
     text-align:center;
+
     color:#667590;
+
     font-size:12px;
+
     font-weight:700;
 }
 
 .feature-icon{
     width:42px;
     height:42px;
+
     margin:auto;
+
     border-radius:14px;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
+
     background:#edf4ff;
+
     border:1px solid #c1d3f5;
+
     font-size:19px;
+
     margin-bottom:7px;
 }
 
+
+/* =====================================================
+   INFO
+   ===================================================== */
+
 .info-text{
     text-align:center;
+
     margin-top:25px;
+
     color:#7a879e;
+
     font-size:13px;
+
     line-height:1.6;
+
     padding:0 8px;
 }
 
@@ -472,9 +706,16 @@ body{
     color:#2865d6;
 }
 
+
+/* =====================================================
+   TOAST
+   ===================================================== */
+
 .toast{
     position:fixed;
+
     left:50%;
+
     bottom:35px;
 
     transform:
@@ -482,16 +723,27 @@ body{
         translateY(20px);
 
     background:#17213a;
+
     color:#ffffff;
+
     padding:13px 18px;
+
     border-radius:14px;
+
     font-size:14px;
+
     font-weight:650;
+
     opacity:0;
+
     pointer-events:none;
+
     transition:.25s;
+
     z-index:9999;
+
     max-width:90%;
+
     text-align:center;
 }
 
@@ -502,6 +754,11 @@ body{
         translateX(-50%)
         translateY(0);
 }
+
+
+/* =====================================================
+   MOBILE RESPONSIVE
+   ===================================================== */
 
 @media(max-width:600px){
 
@@ -516,6 +773,7 @@ body{
     .logo{
         width:94px;
         height:94px;
+
         font-size:21px;
     }
 
@@ -529,6 +787,7 @@ body{
 
     .login-card{
         padding:24px 18px;
+
         border-radius:25px;
     }
 
@@ -543,11 +802,13 @@ body{
     .mobile-input,
     .country-code{
         height:58px;
+
         border-radius:16px;
     }
 
     .mobile-wrap{
         grid-template-columns:82px 1fr;
+
         gap:8px;
     }
 
@@ -558,7 +819,9 @@ body{
 
     .otp-input{
         height:60px;
+
         font-size:25px;
+
         letter-spacing:7px;
     }
 
@@ -573,9 +836,16 @@ body{
     .feature-icon{
         width:38px;
         height:38px;
+
         font-size:17px;
     }
+
 }
+
+
+/* =====================================================
+   VERY SMALL DEVICES
+   ===================================================== */
 
 @media(max-width:360px){
 
@@ -594,6 +864,7 @@ body{
     .mobile-input{
         font-size:15px;
     }
+
 }
 
 </style>
@@ -601,6 +872,7 @@ body{
 
 <!-- =====================================================
      FIREBASE
+     MSG91 IS NOT CHANGED
      ===================================================== -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -612,7 +884,7 @@ body{
 const firebaseConfig = {
 
     apiKey:
-        "AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
+        "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
 
     authDomain:
         "rdx-ludo.firebaseapp.com",
@@ -628,15 +900,14 @@ const firebaseConfig = {
 
     appId:
         "1:928340814840:web:6eca42a8b76138b268440d"
-};
 
+};
 
 let firebaseDB = null;
 
-
 try {
 
-    if (!firebase.apps.length) {
+    if(!firebase.apps.length){
 
         firebase.initializeApp(
             firebaseConfig
@@ -648,13 +919,13 @@ try {
         firebase.firestore();
 
     console.log(
-        "Firebase Firestore connected"
+        "FIREBASE FIRESTORE CONNECTED"
     );
 
-} catch(error) {
+} catch(error){
 
     console.error(
-        "Firebase initialization error:",
+        "FIREBASE INITIALIZATION ERROR:",
         error
     );
 
@@ -662,34 +933,34 @@ try {
 
 
 /* =====================================================
-   FIREBASE CUSTOMER SAVE
-   IMPORTANT:
-   MSG91 OTP IS NOT USED HERE.
-   OTP = MSG91 ONLY.
+   FINAL FIREBASE CUSTOMER SAVE FUNCTION
    ===================================================== */
 
-async function saveCustomerToFirebase(mobile) {
+async function saveCustomerToFirebase(mobile){
 
-    if (!firebaseDB) {
+    console.log(
+        "Firebase save started:",
+        mobile
+    );
+
+
+    if(!firebaseDB){
 
         console.error(
             "Firebase DB not connected"
         );
 
         return false;
+
     }
 
 
     const cleanMobile =
         String(mobile)
-            .replace(/\D/g, "");
+        .replace(/\D/g,"");
 
 
-    if (
-        !/^91[6-9]\d{9}$/.test(
-            cleanMobile
-        )
-    ) {
+    if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
 
         console.error(
             "Invalid mobile:",
@@ -697,34 +968,40 @@ async function saveCustomerToFirebase(mobile) {
         );
 
         return false;
+
     }
 
 
     const userRef =
         firebaseDB
-            .collection("customers")
-            .doc(cleanMobile);
+        .collection("customers")
+        .doc(cleanMobile);
 
 
     const now =
         firebase.firestore
-            .FieldValue
-            .serverTimestamp();
+        .FieldValue
+        .serverTimestamp();
 
 
-    try {
+    /*
+     * =================================================
+     * STEP 1
+     *
+     * Existing customer ke liye sirf allowed
+     * fields update karenge.
+     *
+     * Agar document exist nahi karta,
+     * ye write rules se reject hogi.
+     * Tab STEP 2 me new customer create karenge.
+     * =================================================
+     */
 
-        /*
-         * FIRST:
-         * Existing customer ko update
-         *
-         * Firebase Rules:
-         * update me sirf status + lastLoginAt allowed hain.
-         */
+    try{
 
-        try {
+        await userRef.set(
 
-            await userRef.update({
+            {
 
                 status:
                     "active",
@@ -732,30 +1009,60 @@ async function saveCustomerToFirebase(mobile) {
                 lastLoginAt:
                     now
 
-            });
+            },
+
+            {
+
+                merge:true
+
+            }
+
+        );
 
 
-            console.log(
-                "EXISTING CUSTOMER UPDATED:",
-                cleanMobile
-            );
+        /*
+         * Agar yahan success hua,
+         * customer already exist karta hai.
+         */
+
+        console.log(
+            "EXISTING CUSTOMER UPDATED:",
+            cleanMobile
+        );
 
 
-        } catch(updateError) {
-
-            /*
-             * Agar document exist nahi karta,
-             * update fail hoga.
-             *
-             * Tab new customer create karenge.
-             */
-
-            console.log(
-                "Customer not found, creating new customer..."
-            );
+        localStorage.setItem(
+            "rdxFirebaseUserId",
+            cleanMobile
+        );
 
 
-            await userRef.set({
+        return true;
+
+
+    }catch(updateError){
+
+        console.warn(
+            "Existing customer update failed. Trying new customer create...",
+            updateError
+        );
+
+    }
+
+
+    /*
+     * =================================================
+     * STEP 2
+     *
+     * New customer create.
+     * =================================================
+     */
+
+    try{
+
+        await userRef.set(
+
+            {
 
                 mobile:
                     "+" + cleanMobile,
@@ -772,15 +1079,15 @@ async function saveCustomerToFirebase(mobile) {
                 lastLoginAt:
                     now
 
-            });
+            }
+
+        );
 
 
-            console.log(
-                "NEW CUSTOMER CREATED:",
-                cleanMobile
-            );
-
-        }
+        console.log(
+            "NEW CUSTOMER CREATED:",
+            cleanMobile
+        );
 
 
         localStorage.setItem(
@@ -789,23 +1096,35 @@ async function saveCustomerToFirebase(mobile) {
         );
 
 
-        console.log(
-            "Firebase customer save successful"
-        );
-
-
         return true;
 
 
-    } catch(error) {
+    }catch(createError){
 
         console.error(
-            "FIREBASE CUSTOMER SAVE ERROR:",
-            error
+            "FIREBASE CUSTOMER CREATE ERROR:",
+            createError
         );
 
+
+        /*
+         * Exact error screen par bhi dikhega
+         * taaki agar kuch fail ho to pata chale.
+         */
+
+        showMessage(
+            "Firebase Error: " +
+            (
+                createError.code ||
+                "write-failed"
+            )
+        );
+
+
         return false;
+
     }
+
 }
 
 </script>
@@ -815,6 +1134,10 @@ async function saveCustomerToFirebase(mobile) {
 
 <body>
 
+
+<!-- =====================================================
+     BACK BUTTON
+     ===================================================== -->
 
 <div class="top-bar">
 
@@ -837,205 +1160,239 @@ async function saveCustomerToFirebase(mobile) {
 </div>
 
 
+<!-- =====================================================
+     PAGE
+     ===================================================== -->
+
 <main class="page">
 
 
-<section class="brand">
+    <!-- BRAND -->
 
-    <div class="logo">
+    <section class="brand">
 
-        <span>
-            RDX
+        <div class="logo">
+
+            <span>
+                RDX
+            </span>
+
+        </div>
+
+        <h1>
+            RDX LUDO
+        </h1>
+
+        <p>
+            Play · Compete · Enjoy
+        </p>
+
+    </section>
+
+
+    <!-- LOGIN CARD -->
+
+    <section class="login-card">
+
+
+        <!-- STEP -->
+
+        <span
+            class="step"
+            id="stepLabel"
+        >
+            ✨ STEP 1
         </span>
 
-    </div>
 
-    <h1>
-        RDX LUDO
-    </h1>
+        <!-- TITLE -->
 
-    <p>
-        Play · Compete · Enjoy
-    </p>
-
-</section>
+        <h2 id="titleText">
+            Mobile Login
+        </h2>
 
 
-<section class="login-card">
+        <p
+            class="subtitle"
+            id="subtitleText"
+        >
+            Enter your registered mobile number.
+            We will send you an OTP for secure login.
+        </p>
 
 
-<span
-    class="step"
-    id="stepLabel"
->
-    ✨ STEP 1
-</span>
+        <!-- MOBILE -->
 
-
-<h2 id="titleText">
-    Mobile Login
-</h2>
-
-
-<p
-    class="subtitle"
-    id="subtitleText"
->
-    Enter your registered mobile number.
-    We will send you an OTP for secure login.
-</p>
-
-
-<div
-    class="form-group"
-    id="mobileGroup"
->
-
-    <label>
-        Mobile Number
-    </label>
-
-
-    <div class="mobile-wrap">
-
-
-        <div class="country-code">
-            🇮🇳 +91
-        </div>
-
-
-        <input
-            class="mobile-input"
-            type="tel"
-            id="mobile"
-            placeholder="10-digit mobile number"
-            inputmode="numeric"
-            maxlength="10"
-            autocomplete="tel"
+        <div
+            class="form-group"
+            id="mobileGroup"
         >
 
-    </div>
-
-</div>
-
-
-<button
-    type="button"
-    class="continue-btn"
-    id="continueBtn"
-    disabled
->
-    Loading OTP Service...
-</button>
+            <label>
+                Mobile Number
+            </label>
 
 
-<div id="otpSection">
+            <div class="mobile-wrap">
 
 
-    <label class="otp-label">
-        Enter OTP
-    </label>
+                <div class="country-code">
+
+                    🇮🇳 +91
+
+                </div>
 
 
-    <input
-        class="otp-input"
-        type="tel"
-        id="otp"
-        placeholder="------"
-        inputmode="numeric"
-        autocomplete="one-time-code"
-        maxlength="6"
-    >
+                <input
+                    class="mobile-input"
+                    type="tel"
+                    id="mobile"
+                    placeholder="10-digit mobile number"
+                    inputmode="numeric"
+                    maxlength="10"
+                    autocomplete="tel"
+                >
+
+            </div>
+
+        </div>
 
 
-    <p
-        class="otp-hint"
-        id="otpHint"
-    >
-        OTP will be sent to your registered mobile number.
+        <!-- SEND OTP -->
+
+        <button
+            type="button"
+            class="continue-btn"
+            id="continueBtn"
+            disabled
+        >
+            Loading OTP Service...
+        </button>
+
+
+        <!-- OTP -->
+
+        <div id="otpSection">
+
+
+            <label class="otp-label">
+
+                Enter OTP
+
+            </label>
+
+
+            <input
+                class="otp-input"
+                type="tel"
+                id="otp"
+                placeholder="------"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                maxlength="6"
+            >
+
+
+            <p
+                class="otp-hint"
+                id="otpHint"
+            >
+                OTP will be sent to your mobile number.
+            </p>
+
+
+            <!-- VERIFY -->
+
+            <button
+                type="button"
+                class="verify-btn"
+                id="verifyBtn"
+                disabled
+            >
+                Verify OTP
+            </button>
+
+
+            <!-- RESEND -->
+
+            <button
+                type="button"
+                class="resend-btn"
+                id="resendBtn"
+                disabled
+            >
+                Resend OTP
+            </button>
+
+
+        </div>
+
+
+        <!-- FEATURES -->
+
+        <div class="features">
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    🛡️
+                </div>
+
+                Secure Login
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    ⚡
+                </div>
+
+                Quick Access
+
+            </div>
+
+
+            <div class="feature">
+
+                <div class="feature-icon">
+                    🎧
+                </div>
+
+                Support
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- INFO -->
+
+    <p class="info-text">
+
+        Your mobile number is verified using secure OTP verification.
+
+        <br>
+
+        <strong>
+            Use your registered mobile number to login.
+        </strong>
+
     </p>
-
-
-    <button
-        type="button"
-        class="verify-btn"
-        id="verifyBtn"
-        disabled
-    >
-        Verify OTP
-    </button>
-
-
-    <button
-        type="button"
-        class="resend-btn"
-        id="resendBtn"
-        disabled
-    >
-        Resend OTP
-    </button>
-
-
-</div>
-
-
-<div class="features">
-
-
-    <div class="feature">
-
-        <div class="feature-icon">
-            🛡️
-        </div>
-
-        Secure Login
-
-    </div>
-
-
-    <div class="feature">
-
-        <div class="feature-icon">
-            ⚡
-        </div>
-
-        Quick Access
-
-    </div>
-
-
-    <div class="feature">
-
-        <div class="feature-icon">
-            🎧
-        </div>
-
-        Support
-
-    </div>
-
-
-</div>
-
-
-</section>
-
-
-<p class="info-text">
-
-    Your mobile number is verified using secure OTP verification.
-
-    <br>
-
-    <strong>
-        Use your registered mobile number to login.
-    </strong>
-
-</p>
 
 
 </main>
 
+
+<!-- =====================================================
+     TOAST
+     ===================================================== -->
 
 <div
     class="toast"
@@ -1045,17 +1402,16 @@ async function saveCustomerToFirebase(mobile) {
 
 <!-- =====================================================
      MSG91 CONFIGURATION
-     OTP SERVICE = MSG91 ONLY
      ===================================================== -->
 
 <script type="text/javascript">
 
 var MSG91_WIDGET_ID =
-    "366870704943343439343834";
+"366870704943343439343834";
 
 
 var MSG91_TOKEN =
-    "561244TCn8oI4OX6a82246aP1";
+"561244TCn8oI4OX6a82246aP1";
 
 
 var configuration = {
@@ -1113,72 +1469,64 @@ var configuration = {
 
 <script>
 
+/* =====================================================
+   ELEMENTS
+   ===================================================== */
 
 const mobileInput =
     document.getElementById(
         "mobile"
     );
 
-
 const continueBtn =
     document.getElementById(
         "continueBtn"
     );
-
 
 const otpSection =
     document.getElementById(
         "otpSection"
     );
 
-
 const otpInput =
     document.getElementById(
         "otp"
     );
-
 
 const verifyBtn =
     document.getElementById(
         "verifyBtn"
     );
 
-
 const resendBtn =
     document.getElementById(
         "resendBtn"
     );
-
 
 const mobileGroup =
     document.getElementById(
         "mobileGroup"
     );
 
-
 const stepLabel =
     document.getElementById(
         "stepLabel"
     );
-
 
 const titleText =
     document.getElementById(
         "titleText"
     );
 
-
 const subtitleText =
     document.getElementById(
         "subtitleText"
     );
 
-
 const otpHint =
     document.getElementById(
         "otpHint"
     );
-
 
 const toast =
     document.getElementById(
@@ -1186,25 +1534,29 @@ const toast =
     );
 
 
+/* =====================================================
+   VARIABLES
+   ===================================================== */
+
 let currentIdentifier =
     "";
-
 
 let currentReqId =
     "";
 
-
 let resendSeconds =
     30;
-
 
 let resendTimer =
     null;
 
-
 let msg91Ready =
     false;
 
+
+/* =====================================================
+   TOAST
+   ===================================================== */
 
 function showMessage(message){
 
@@ -1221,6 +1573,7 @@ function showMessage(message){
 
     showMessage.timer =
         setTimeout(
+
             function(){
 
                 toast.classList.remove(
@@ -1228,11 +1581,17 @@ function showMessage(message){
                 );
 
             },
-            3000
+
+            4000
+
         );
 
 }
 
+
+/* =====================================================
+   MSG91 READY CHECK
+   ===================================================== */
 
 function checkMSG91Ready(){
 
@@ -1251,15 +1610,21 @@ function checkMSG91Ready(){
             "Send OTP";
 
         console.log(
-            "MSG91 OTP methods ready"
+            "MSG91 OTP METHODS READY"
         );
 
         return true;
+
     }
 
     return false;
+
 }
 
+
+/* =====================================================
+   WAIT FOR MSG91
+   ===================================================== */
 
 function waitForMSG91(){
 
@@ -1269,6 +1634,7 @@ function waitForMSG91(){
 
     const timer =
         setInterval(
+
             function(){
 
                 attempts++;
@@ -1283,6 +1649,7 @@ function waitForMSG91(){
                     );
 
                     return;
+
                 }
 
 
@@ -1308,39 +1675,53 @@ function waitForMSG91(){
                     );
 
                     console.error(
-                        "MSG91 methods not available"
+                        "MSG91 METHODS NOT AVAILABLE"
                     );
+
                 }
 
             },
+
             100
+
         );
+
 }
 
 
+/* =====================================================
+   PAGE LOAD
+   ===================================================== */
+
 window.addEventListener(
+
     "load",
+
     function(){
 
         waitForMSG91();
 
     }
+
 );
 
+
+/* =====================================================
+   GET MOBILE
+   ===================================================== */
 
 function getMobile(){
 
     return mobileInput.value
-        .replace(
-            /\D/g,
-            ""
-        )
-        .slice(
-            0,
-            10
-        );
+        .replace(/\D/g,"")
+        .slice(0,10);
+
 }
 
+
+/* =====================================================
+   START LOGIN
+   ===================================================== */
 
 function startLogin(){
 
@@ -1361,6 +1742,7 @@ function startLogin(){
         mobileInput.focus();
 
         return;
+
     }
 
 
@@ -1371,10 +1753,11 @@ function startLogin(){
     ){
 
         showMessage(
-            "MSG91 Widget Token डालना बाकी है।"
+            "MSG91 Widget Token missing."
         );
 
         return;
+
     }
 
 
@@ -1390,6 +1773,7 @@ function startLogin(){
         waitForMSG91();
 
         return;
+
     }
 
 
@@ -1405,7 +1789,6 @@ function startLogin(){
 
     mobileGroup.style.display =
         "none";
-
 
     continueBtn.style.display =
         "none";
@@ -1430,10 +1813,8 @@ function startLogin(){
     otpInput.value =
         "";
 
-
     verifyBtn.disabled =
         true;
-
 
     resendBtn.disabled =
         true;
@@ -1444,8 +1825,13 @@ function startLogin(){
 
 
     sendOTPNow();
+
 }
 
+
+/* =====================================================
+   SEND OTP
+   ===================================================== */
 
 function sendOTPNow(){
 
@@ -1459,12 +1845,12 @@ function sendOTPNow(){
         );
 
         return;
+
     }
 
 
     verifyBtn.disabled =
         true;
-
 
     resendBtn.disabled =
         true;
@@ -1479,10 +1865,11 @@ function sendOTPNow(){
 
         currentIdentifier,
 
+
         function(data){
 
             console.log(
-                "OTP SENT:",
+                "MSG91 OTP SENT:",
                 data
             );
 
@@ -1504,6 +1891,7 @@ function sendOTPNow(){
 
                 currentReqId =
                     data.requestId;
+
             }
 
 
@@ -1524,12 +1912,15 @@ function sendOTPNow(){
 
 
             setTimeout(
+
                 function(){
 
                     otpInput.focus();
 
                 },
+
                 300
+
             );
 
         },
@@ -1546,7 +1937,6 @@ function sendOTPNow(){
             verifyBtn.disabled =
                 true;
 
-
             resendBtn.disabled =
                 false;
 
@@ -1558,6 +1948,7 @@ function sendOTPNow(){
         }
 
     );
+
 }
 
 
@@ -1565,18 +1956,12 @@ function sendOTPNow(){
    VERIFY OTP
    ===================================================== */
 
-async function verifyOTP(){
+function verifyOTP(){
 
     const otp =
         otpInput.value
-            .replace(
-                /\D/g,
-                ""
-            )
-            .slice(
-                0,
-                6
-            );
+        .replace(/\D/g,"")
+        .slice(0,6);
 
 
     if(
@@ -1592,6 +1977,7 @@ async function verifyOTP(){
         otpInput.focus();
 
         return;
+
     }
 
 
@@ -1605,118 +1991,99 @@ async function verifyOTP(){
         );
 
         return;
+
     }
 
 
     verifyBtn.disabled =
         true;
 
-
     verifyBtn.textContent =
         "Verifying...";
 
+
+    showMessage(
+        "OTP verify किया जा रहा है..."
+    );
+
+
+    /*
+     * =================================================
+     * MSG91 VERIFY
+     * =================================================
+     */
 
     window.verifyOtp(
 
         otp,
 
+
         async function(data){
 
             console.log(
-                "OTP VERIFIED:",
+                "MSG91 OTP VERIFIED:",
                 data
             );
 
 
             /*
-             * MSG91 OTP SUCCESS
+             * MSG91 verification successful.
              */
 
-            try {
-
-                /*
-                 * Firebase customer save
-                 * OTP verify होने के बाद.
-                 */
-
-                const saved =
-                    await saveCustomerToFirebase(
-                        currentIdentifier
-                    );
+            localStorage.setItem(
+                "rdxLoggedIn",
+                "true"
+            );
 
 
-                if(!saved){
-
-                    throw new Error(
-                        "Firebase customer save failed"
-                    );
-                }
+            localStorage.setItem(
+                "rdxVerifiedMobile",
+                currentIdentifier
+            );
 
 
-                /*
-                 * Login success
-                 */
+            if(
+                data &&
+                data.accessToken
+            ){
 
                 localStorage.setItem(
-                    "rdxLoggedIn",
-                    "true"
+                    "rdxAccessToken",
+                    data.accessToken
                 );
 
+            }
 
-                localStorage.setItem(
-                    "rdxVerifiedMobile",
+
+            /*
+             * =================================================
+             * FIREBASE SAVE
+             *
+             * Dashboard tabhi khulega jab Firebase save
+             * successful hoga.
+             * =================================================
+             */
+
+            showMessage(
+                "Login verified. Firebase में data save हो रहा है..."
+            );
+
+
+            const saved =
+                await saveCustomerToFirebase(
                     currentIdentifier
                 );
 
 
-                if(
-                    data &&
-                    data.accessToken
-                ){
-
-                    localStorage.setItem(
-                        "rdxAccessToken",
-                        data.accessToken
-                    );
-                }
-
-
-                clearInterval(
-                    resendTimer
-                );
-
-
-                showMessage(
-                    "Login successful!"
-                );
-
-
-                /*
-                 * Dashboard
-                 */
-
-                setTimeout(
-                    function(){
-
-                        window.location.href =
-                            "./dashboard.html";
-
-                    },
-                    700
-                );
-
-
-            } catch(error){
+            if(!saved){
 
                 console.error(
-                    "FIREBASE CUSTOMER SAVE ERROR:",
-                    error
+                    "LOGIN STOPPED: FIREBASE SAVE FAILED"
                 );
 
 
                 verifyBtn.disabled =
                     false;
-
 
                 verifyBtn.textContent =
                     "Verify OTP";
@@ -1725,7 +2092,54 @@ async function verifyOTP(){
                 showMessage(
                     "OTP verify हो गया, लेकिन Firebase में data save नहीं हुआ।"
                 );
+
+
+                return;
+
             }
+
+
+            /*
+             * =================================================
+             * FIREBASE SUCCESS
+             * =================================================
+             */
+
+            console.log(
+                "FIREBASE SAVE SUCCESS"
+            );
+
+
+            clearInterval(
+                resendTimer
+            );
+
+
+            verifyBtn.textContent =
+                "Verified ✓";
+
+
+            showMessage(
+                "Login successful!"
+            );
+
+
+            /*
+             * Dashboard ONLY after Firebase success.
+             */
+
+            setTimeout(
+
+                function(){
+
+                    window.location.href =
+                        "./dashboard.html";
+
+                },
+
+                700
+
+            );
 
         },
 
@@ -1740,7 +2154,6 @@ async function verifyOTP(){
 
             verifyBtn.disabled =
                 false;
-
 
             verifyBtn.textContent =
                 "Verify OTP";
@@ -1760,6 +2173,7 @@ async function verifyOTP(){
         undefined
 
     );
+
 }
 
 
@@ -1774,6 +2188,7 @@ function resendOTP(){
     ){
 
         return;
+
     }
 
 
@@ -1783,10 +2198,11 @@ function resendOTP(){
     ){
 
         showMessage(
-            "Resend service ready नहीं है।"
+            "MSG91 resend service ready नहीं है।"
         );
 
         return;
+
     }
 
 
@@ -1799,6 +2215,7 @@ function resendOTP(){
         );
 
         return;
+
     }
 
 
@@ -1815,10 +2232,11 @@ function resendOTP(){
 
         "11",
 
+
         function(data){
 
             console.log(
-                "OTP RESENT:",
+                "MSG91 OTP RESENT:",
                 data
             );
 
@@ -1840,12 +2258,12 @@ function resendOTP(){
 
                 currentReqId =
                     data.requestId;
+
             }
 
 
             otpInput.value =
                 "";
-
 
             otpInput.focus();
 
@@ -1867,7 +2285,7 @@ function resendOTP(){
         function(error){
 
             console.error(
-                "RESEND ERROR:",
+                "MSG91 RESEND ERROR:",
                 error
             );
 
@@ -1886,6 +2304,7 @@ function resendOTP(){
         currentReqId
 
     );
+
 }
 
 
@@ -1914,6 +2333,7 @@ function startResendTimer(){
 
     resendTimer =
         setInterval(
+
             function(){
 
                 resendSeconds--;
@@ -1937,6 +2357,7 @@ function startResendTimer(){
 
 
                     return;
+
                 }
 
 
@@ -1946,8 +2367,11 @@ function startResendTimer(){
                     "s)";
 
             },
+
             1000
+
         );
+
 }
 
 
@@ -1956,21 +2380,18 @@ function startResendTimer(){
    ===================================================== */
 
 mobileInput.addEventListener(
+
     "input",
+
     function(){
 
         mobileInput.value =
             mobileInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    10
-                );
+            .replace(/\D/g,"")
+            .slice(0,10);
 
     }
+
 );
 
 
@@ -1979,19 +2400,15 @@ mobileInput.addEventListener(
    ===================================================== */
 
 otpInput.addEventListener(
+
     "input",
+
     function(){
 
         otpInput.value =
             otpInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    6
-                );
+            .replace(/\D/g,"")
+            .slice(0,6);
 
 
         if(
@@ -2013,6 +2430,7 @@ otpInput.addEventListener(
         }
 
     }
+
 );
 
 
@@ -2021,12 +2439,15 @@ otpInput.addEventListener(
    ===================================================== */
 
 continueBtn.addEventListener(
+
     "click",
+
     function(){
 
         startLogin();
 
     }
+
 );
 
 
@@ -2035,12 +2456,15 @@ continueBtn.addEventListener(
    ===================================================== */
 
 verifyBtn.addEventListener(
+
     "click",
+
     function(){
 
         verifyOTP();
 
     }
+
 );
 
 
@@ -2049,12 +2473,15 @@ verifyBtn.addEventListener(
    ===================================================== */
 
 resendBtn.addEventListener(
+
     "click",
+
     function(){
 
         resendOTP();
 
     }
+
 );
 
 
@@ -2063,7 +2490,9 @@ resendBtn.addEventListener(
    ===================================================== */
 
 document.addEventListener(
+
     "keydown",
+
     function(event){
 
         if(
@@ -2072,6 +2501,7 @@ document.addEventListener(
         ){
 
             return;
+
         }
 
 
@@ -2107,6 +2537,7 @@ document.addEventListener(
         }
 
     }
+
 );
 
 
