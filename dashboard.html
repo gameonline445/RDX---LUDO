@@ -1,26 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-      viewport-fit=cover">
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
 <title>RDX LUDO - Dashboard</title>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-<!-- =====================================================
-     FIREBASE
-     MSG91 OTP IS NOT REMOVED.
-     Firebase is ONLY for customer data.
-===================================================== -->
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+  authDomain: "rdx-ludo.firebaseapp.com",
+  projectId: "rdx-ludo",
+  storageBucket: "rdx-ludo.firebasestorage.app",
+  messagingSenderId: "928340814840",
+  appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
 
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+let firebaseDB = null;
 
+try {
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    firebaseDB = firebase.firestore();
+
+    console.log("Firebase connected");
+} catch (error) {
+    console.error("Firebase initialization error:", error);
+}
+</script>
 
 <style>
 
@@ -52,7 +68,6 @@ button{
 /* ================= HEADER ================= */
 
 .top-header{
-
     height:76px;
 
     background:
@@ -76,15 +91,12 @@ button{
 }
 
 .header-left{
-
     display:flex;
     align-items:center;
     gap:12px;
 }
 
-
 .menu-btn{
-
     width:48px;
     height:48px;
 
@@ -106,13 +118,9 @@ button{
     0 6px 15px rgba(255,93,80,.25);
 
     cursor:pointer;
-
-    -webkit-tap-highlight-color:transparent;
 }
 
-
 .logo{
-
     width:48px;
     height:48px;
 
@@ -136,16 +144,13 @@ button{
     0 5px 12px rgba(36,93,190,.15);
 }
 
-
 .header-right{
-
     display:flex;
     align-items:center;
     gap:9px;
 }
 
 .header-icon{
-
     width:48px;
     height:48px;
 
@@ -165,20 +170,14 @@ button{
 
     box-shadow:
     0 6px 15px rgba(0,0,0,.12);
-
-    -webkit-tap-highlight-color:transparent;
 }
 
-
 .notification{
-
     background:
     linear-gradient(145deg,#746df4,#817eff);
 }
 
-
 .wallet-top{
-
     background:
     linear-gradient(145deg,#20c36b,#43d77e);
 
@@ -191,9 +190,7 @@ button{
     font-weight:800;
 }
 
-
 .redeem-top{
-
     background:
     linear-gradient(145deg,#ff8a35,#ffad45);
 
@@ -210,41 +207,31 @@ button{
 /* ================= MAIN ================= */
 
 .container{
-
     width:100%;
 
     max-width:850px;
 
     margin:auto;
 
-    padding:
-    0 18px
-    125px;
+    padding:0 18px 125px;
 }
 
 
 /* ================= WELCOME ================= */
 
 .welcome{
-
     padding-top:35px;
 }
 
 .welcome h1{
-
     font-size:29px;
-
     font-weight:850;
-
     letter-spacing:-.7px;
 }
 
 .welcome p{
-
     margin-top:8px;
-
     color:#71809d;
-
     font-size:17px;
 }
 
@@ -252,7 +239,6 @@ button{
 /* ================= REFERRAL ================= */
 
 .referral{
-
     margin-top:30px;
 
     min-height:140px;
@@ -276,26 +262,20 @@ button{
     );
 
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
 
     box-shadow:
     0 15px 35px rgba(40,88,175,.10);
 
     cursor:pointer;
-
-    -webkit-tap-highlight-color:transparent;
 }
 
 .referral:active{
-
     transform:scale(.99);
 }
 
 .referral small{
-
     display:block;
 
     color:#61708c;
@@ -308,7 +288,6 @@ button{
 }
 
 .referral strong{
-
     display:block;
 
     margin-top:8px;
@@ -319,7 +298,6 @@ button{
 }
 
 .referral-text{
-
     color:#52627f;
 
     font-size:15px;
@@ -328,7 +306,6 @@ button{
 }
 
 .referral-arrow{
-
     width:56px;
     height:56px;
 
@@ -353,14 +330,11 @@ button{
 /* ================= SECTION ================= */
 
 .section-head{
-
     margin-top:38px;
-
     margin-bottom:16px;
 }
 
 .section-head small{
-
     color:#2564da;
 
     font-size:14px;
@@ -371,7 +345,6 @@ button{
 }
 
 .section-head h2{
-
     margin-top:6px;
 
     font-size:25px;
@@ -381,7 +354,6 @@ button{
 /* ================= GAME ================= */
 
 .game-card{
-
     height:290px;
 
     border-radius:26px;
@@ -397,7 +369,6 @@ button{
 }
 
 .game-card img{
-
     width:100%;
     height:100%;
 
@@ -405,7 +376,6 @@ button{
 }
 
 .game-overlay{
-
     position:absolute;
 
     inset:0;
@@ -429,7 +399,6 @@ button{
 }
 
 .live{
-
     width:max-content;
 
     padding:7px 13px;
@@ -446,14 +415,12 @@ button{
 }
 
 .game-overlay h3{
-
     margin-top:12px;
 
     font-size:29px;
 }
 
 .game-overlay p{
-
     margin-top:5px;
 
     font-size:14px;
@@ -461,9 +428,7 @@ button{
     color:#e8edf7;
 }
 
-
 .play-btn{
-
     margin-top:16px;
 
     width:max-content;
@@ -486,20 +451,12 @@ button{
 
     box-shadow:
     0 8px 20px rgba(39,112,238,.30);
-
-    -webkit-tap-highlight-color:transparent;
-}
-
-.play-btn:active{
-
-    transform:scale(.96);
 }
 
 
 /* ================= COMING SOON ================= */
 
 .soon-card{
-
     margin-top:16px;
 
     min-height:120px;
@@ -523,7 +480,6 @@ button{
 }
 
 .soon-card img{
-
     width:82px;
     height:82px;
 
@@ -533,17 +489,14 @@ button{
 }
 
 .soon-info{
-
     flex:1;
 }
 
 .soon-info h3{
-
     font-size:19px;
 }
 
 .soon-info p{
-
     margin-top:5px;
 
     color:#75819a;
@@ -552,7 +505,6 @@ button{
 }
 
 .soon-badge{
-
     background:#f3f5f9;
 
     border:1px solid #dce1e9;
@@ -572,7 +524,6 @@ button{
 /* ================= SIDE MENU ================= */
 
 .menu-panel{
-
     position:fixed;
 
     top:0;
@@ -604,13 +555,10 @@ button{
 }
 
 .menu-panel.open{
-
     left:0;
 }
 
-
 .menu-title{
-
     display:flex;
 
     align-items:center;
@@ -619,13 +567,10 @@ button{
 
     padding:5px 2px 24px;
 
-    margin-bottom:2px;
-
     border-bottom:1px solid #e1e6f0;
 }
 
 .menu-brand{
-
     display:flex;
 
     align-items:center;
@@ -634,7 +579,6 @@ button{
 }
 
 .menu-logo{
-
     width:58px;
     height:58px;
 
@@ -656,22 +600,14 @@ button{
     font-size:16px;
 
     font-weight:900;
-
-    box-shadow:
-    0 6px 15px rgba(36,93,190,.15);
 }
 
 .menu-user h2{
-
     font-size:22px;
-
     font-weight:850;
-
-    color:#101a38;
 }
 
 .menu-user p{
-
     margin-top:4px;
 
     color:#71809d;
@@ -680,7 +616,6 @@ button{
 }
 
 .close-menu{
-
     border:0;
 
     background:#f6f7fb;
@@ -694,21 +629,16 @@ button{
 
     font-size:30px;
 
-    line-height:1;
-
     color:#64718a;
 
     cursor:pointer;
 }
 
-
 .menu-list{
-
     margin-top:22px;
 }
 
 .menu-item{
-
     width:100%;
 
     min-height:76px;
@@ -738,17 +668,9 @@ button{
 
     box-shadow:
     0 4px 12px rgba(30,55,100,.04);
-
-    transition:.18s;
-}
-
-.menu-item:active{
-
-    transform:scale(.98);
 }
 
 .menu-item-icon{
-
     width:52px;
     height:52px;
 
@@ -765,9 +687,6 @@ button{
     color:white;
 
     font-size:24px;
-
-    box-shadow:
-    0 7px 16px rgba(30,60,120,.16);
 }
 
 .menu-home{
@@ -799,26 +718,19 @@ button{
 }
 
 .menu-item-text{
-
     flex:1;
 
     font-size:18px;
-
     font-weight:750;
 }
 
 .menu-arrow{
-
     color:#69768e;
 
     font-size:28px;
-
-    font-weight:300;
 }
 
-
 .menu-overlay{
-
     position:fixed;
 
     inset:0;
@@ -833,7 +745,6 @@ button{
 }
 
 .menu-overlay.show{
-
     display:block;
 }
 
@@ -841,7 +752,6 @@ button{
 /* ================= BOTTOM NAV ================= */
 
 .bottom-nav{
-
     position:fixed;
 
     bottom:0;
@@ -871,7 +781,6 @@ button{
 }
 
 .nav-item{
-
     width:25%;
 
     height:100%;
@@ -898,7 +807,6 @@ button{
 }
 
 .nav-icon{
-
     width:44px;
     height:44px;
 
@@ -913,14 +821,12 @@ button{
 }
 
 .nav-item.active{
-
     color:#202d49;
 
     font-weight:700;
 }
 
 .nav-item.active .nav-icon{
-
     background:#536df5;
 
     color:white;
@@ -933,7 +839,6 @@ button{
 /* ================= TOAST ================= */
 
 .toast{
-
     position:fixed;
 
     left:50%;
@@ -961,11 +866,10 @@ button{
 
     font-size:14px;
 
-    white-space:nowrap;
+    text-align:center;
 }
 
 .toast.show{
-
     opacity:1;
 
     transform:
@@ -979,213 +883,153 @@ button{
 @media(max-width:700px){
 
     .top-header{
-
         height:70px;
-
         padding:0 12px;
     }
 
     .menu-btn{
-
         width:46px;
         height:46px;
-
         font-size:25px;
     }
 
     .logo{
-
         width:45px;
         height:45px;
-
         font-size:12px;
     }
 
     .header-right{
-
         gap:6px;
     }
 
     .header-icon{
-
         width:44px;
         height:44px;
-
         border-radius:16px;
     }
 
     .wallet-top,
     .redeem-top{
-
         min-width:48px;
-
         padding:0;
-
         font-size:0;
     }
 
     .wallet-top::before{
-
         content:"💰";
-
         font-size:20px;
     }
 
     .redeem-top::before{
-
         content:"🎁";
-
         font-size:20px;
     }
 
     .container{
-
-        padding:
-        0 12px
-        105px;
+        padding:0 12px 105px;
     }
 
     .welcome{
-
         padding-top:30px;
     }
 
     .welcome h1{
-
         font-size:27px;
     }
 
     .welcome p{
-
         font-size:15px;
     }
 
     .referral{
-
         min-height:130px;
-
         padding:22px;
-
         border-radius:23px;
     }
 
     .referral strong{
-
         font-size:34px;
     }
 
     .referral-arrow{
-
         width:50px;
         height:50px;
     }
 
     .game-card{
-
         height:235px;
-
         border-radius:23px;
     }
 
     .game-overlay{
-
         padding:20px;
     }
 
     .game-overlay h3{
-
         font-size:25px;
     }
 
     .soon-card{
-
         min-height:105px;
     }
 
     .soon-card img{
-
         width:70px;
         height:70px;
     }
 
     .soon-badge{
-
         padding:7px 9px;
-
         font-size:10px;
     }
 
     .bottom-nav{
-
         height:78px;
     }
 
-
     .menu-panel{
-
         width:78%;
-
         max-width:390px;
-
-        padding:
-        20px 16px 105px;
+        padding:20px 16px 105px;
     }
 
     .menu-logo{
-
         width:54px;
         height:54px;
     }
 
     .menu-user h2{
-
         font-size:20px;
     }
 
     .menu-user p{
-
         font-size:13px;
     }
 
     .close-menu{
-
         width:48px;
         height:48px;
-
         font-size:27px;
     }
 
     .menu-item{
-
         min-height:72px;
-
         border-radius:20px;
-
         padding:10px 14px;
-
         gap:14px;
     }
 
     .menu-item-icon{
-
         width:48px;
         height:48px;
-
         flex-basis:48px;
-
         border-radius:16px;
-
         font-size:22px;
     }
 
     .menu-item-text{
-
         font-size:17px;
-    }
-
-    .menu-arrow{
-
-        font-size:25px;
     }
 
 }
@@ -1193,7 +1037,6 @@ button{
 </style>
 
 </head>
-
 
 <body>
 
@@ -1212,11 +1055,8 @@ button{
 
         </button>
 
-
         <div class="logo">
-
             RDX
-
         </div>
 
     </div>
@@ -1255,7 +1095,6 @@ button{
 </header>
 
 
-
 <!-- ================= SIDE MENU ================= -->
 
 <div
@@ -1269,15 +1108,12 @@ button{
     class="menu-panel"
     id="menuPanel">
 
-
     <div class="menu-title">
 
         <div class="menu-brand">
 
             <div class="menu-logo">
-
                 RDX
-
             </div>
 
             <div class="menu-user">
@@ -1294,7 +1130,6 @@ button{
 
         </div>
 
-
         <button
             class="close-menu"
             onclick="closeMenu()">
@@ -1307,7 +1142,6 @@ button{
 
 
     <div class="menu-list">
-
 
         <button
             class="menu-item"
@@ -1441,125 +1275,87 @@ button{
 
         </button>
 
-
     </div>
 
 </div>
-
 
 
 <!-- ================= MAIN ================= -->
 
 <main class="container">
 
-
     <section class="welcome">
 
         <h1 id="username">
-
-            Hey, BossUser4981
-
+            Hey, User
         </h1>
 
         <p>
-
             Welcome to RDX LUDO
-
         </p>
 
     </section>
-
 
 
     <section
         class="referral"
         onclick="goRedeem()">
 
-
         <div>
 
             <small>
-
                 REFER & EARN
-
             </small>
 
-
             <strong>
-
                 2% Refer
-
             </strong>
 
-
             <div class="referral-text">
-
                 Invite friends and earn rewards
-
             </div>
 
         </div>
 
-
         <div class="referral-arrow">
-
             ↗
-
         </div>
 
     </section>
 
 
-
     <div class="section-head">
 
         <small>
-
             GAMES
-
         </small>
 
         <h2>
-
             Play Your Game
-
         </h2>
 
     </div>
 
 
-
     <article class="game-card">
-
 
         <img
             src="ludo-classic.jpg"
             alt="Ludo Classic">
 
-
         <div class="game-overlay">
 
-
             <span class="live">
-
                 ● LIVE
-
             </span>
 
-
             <h3>
-
                 Ludo Classic
-
             </h3>
 
-
             <p>
-
                 Ludo game
-
             </p>
-
 
             <button
                 class="play-btn"
@@ -1569,56 +1365,41 @@ button{
 
             </button>
 
-
         </div>
 
     </article>
 
 
-
     <section class="soon-card">
-
 
         <img
             src="ludo-1-goti.jpg"
             alt="1 Goti Ludo">
 
-
         <div class="soon-info">
 
             <h3>
-
                 1 Goti Ludo
-
             </h3>
 
             <p>
-
                 Coming soon
-
             </p>
 
         </div>
 
-
         <span class="soon-badge">
-
             🔒 SOON
-
         </span>
-
 
     </section>
 
-
 </main>
-
 
 
 <!-- ================= BOTTOM NAV ================= -->
 
 <nav class="bottom-nav">
-
 
     <button
         class="nav-item active"
@@ -1679,9 +1460,7 @@ button{
 
     </button>
 
-
 </nav>
-
 
 
 <!-- ================= TOAST ================= -->
@@ -1692,439 +1471,218 @@ button{
 </div>
 
 
-
 <script>
 
-
 /* =====================================================
-   FIREBASE CONFIG
-   =====================================================
-
-   IMPORTANT:
-   YAHAN APNE FIREBASE PROJECT KA WAHI CONFIG
-   PASTE KARNA HAI JO AAPKE LOGIN PAGE ME HAI.
-
+   FIREBASE USER DATA
 ===================================================== */
 
-const firebaseConfig = {
-
-    apiKey: "PASTE_YOUR_FIREBASE_API_KEY",
-
-    authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
-
-    projectId: "PASTE_YOUR_PROJECT_ID",
-
-    storageBucket: "PASTE_YOUR_PROJECT.firebasestorage.app",
-
-    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
-
-    appId: "PASTE_YOUR_FIREBASE_APP_ID"
-
-};
-
-
-
-/* =====================================================
-   FIREBASE INITIALIZATION
-===================================================== */
-
-let firebaseDB = null;
-
-
-try {
-
-    if (!firebase.apps.length) {
-
-        firebase.initializeApp(firebaseConfig);
-
-    }
-
-    firebaseDB =
-        firebase.firestore();
-
-    console.log(
-        "Firebase Firestore connected"
-    );
-
-} catch(error) {
-
-    console.error(
-        "Firebase initialization error:",
-        error
-    );
-
-}
-
-
-
-/* =====================================================
-   SAVE / UPDATE CUSTOMER
-===================================================== */
-
-async function saveCustomerToFirebase(mobile) {
-
-    if (!firebaseDB) {
-
-        console.error(
-            "Firebase DB not connected"
-        );
-
-        return false;
-    }
-
-
-    const cleanMobile =
-        String(mobile)
-        .replace(/\D/g, "");
-
-
-    if (!/^91[6-9]\d{9}$/.test(cleanMobile)) {
-
-        console.error(
-            "Invalid mobile:",
-            cleanMobile
-        );
-
-        return false;
-    }
-
-
-    const userRef =
-        firebaseDB
-        .collection("customers")
-        .doc(cleanMobile);
-
-
-    const now =
-        firebase.firestore
-        .FieldValue
-        .serverTimestamp();
-
+async function loadFirebaseCustomer(){
 
     try {
 
+        if(!firebaseDB){
 
-        /*
-         * NEW USER
-         */
+            console.error("Firebase DB not connected");
 
-        try {
+            showMessage("Firebase connect नहीं है");
 
-            await userRef.create({
-
-                mobile:
-                    "+" + cleanMobile,
-
-                balance: 0,
-
-                status:
-                    "active",
-
-                createdAt:
-                    now,
-
-                lastLoginAt:
-                    now
-
-            });
-
-
-            console.log(
-                "NEW CUSTOMER CREATED:",
-                cleanMobile
-            );
-
-
-        } catch(createError) {
-
-
-            /*
-             * EXISTING USER
-             *
-             * IMPORTANT:
-             * Balance ko touch nahi karna.
-             */
-
-            await userRef.update({
-
-                status:
-                    "active",
-
-                lastLoginAt:
-                    now
-
-            });
-
-
-            console.log(
-                "EXISTING CUSTOMER UPDATED:",
-                cleanMobile
-            );
-
+            return;
         }
 
 
-        localStorage.setItem(
-            "rdxFirebaseUserId",
+        /*
+         * Login page ने यह value save की थी:
+         *
+         * rdxFirebaseUserId = 91XXXXXXXXXX
+         */
+
+        let mobile =
+            localStorage.getItem("rdxFirebaseUserId");
+
+
+        /*
+         * अगर यह नहीं मिली तो verified mobile check करें
+         */
+
+        if(!mobile){
+
+            mobile =
+                localStorage.getItem("rdxVerifiedMobile");
+        }
+
+
+        if(!mobile){
+
+            console.error("Firebase user ID नहीं मिली");
+
+            showMessage("User login information नहीं मिली");
+
+            return;
+        }
+
+
+        /*
+         * केवल digits रखें
+         */
+
+        const cleanMobile =
+            String(mobile).replace(/\D/g,"");
+
+
+        if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
+
+            console.error(
+                "Invalid Firebase user ID:",
+                cleanMobile
+            );
+
+            return;
+        }
+
+
+        console.log(
+            "Loading Firebase customer:",
             cleanMobile
         );
 
 
-        return true;
+        const userRef =
+            firebaseDB
+                .collection("customers")
+                .doc(cleanMobile);
 
 
-    } catch(error) {
-
-        console.error(
-            "FIREBASE CUSTOMER SAVE ERROR:",
-            error
-        );
-
-        return false;
-
-    }
-
-}
+        const snapshot =
+            await userRef.get();
 
 
+        if(!snapshot.exists){
 
-/* =====================================================
-   GET LOGGED-IN MOBILE
-===================================================== */
-
-function getLoggedInMobile() {
-
-
-    /*
-     * Login page se save hua mobile
-     */
-
-    let mobile =
-        localStorage.getItem(
-            "rdxFirebaseUserId"
-        );
-
-
-    /*
-     * Backup keys
-     */
-
-    if(!mobile){
-
-        mobile =
-            localStorage.getItem(
-                "rdxMobile"
+            console.error(
+                "Customer document नहीं मिला:",
+                cleanMobile
             );
 
-    }
+            showMessage("Customer data नहीं मिला");
 
-
-    if(!mobile){
-
-        mobile =
-            localStorage.getItem(
-                "mobile"
-            );
-
-    }
-
-
-    return mobile;
-
-}
-
-
-
-/* =====================================================
-   LOGIN KE BAAD FIREBASE UPDATE
-===================================================== */
-
-async function syncLoggedInCustomer() {
-
-
-    const mobile =
-        getLoggedInMobile();
-
-
-    if(!mobile){
-
-        console.warn(
-            "Logged-in mobile not found in localStorage"
-        );
-
-        return;
-
-    }
-
-
-    console.log(
-        "Syncing customer:",
-        mobile
-    );
-
-
-    const saved =
-        await saveCustomerToFirebase(
-            mobile
-        );
-
-
-    if(saved){
-
-        console.log(
-            "Customer Firebase sync successful"
-        );
-
-    }else{
-
-        console.error(
-            "Customer Firebase sync failed"
-        );
-
-    }
-
-}
-
-
-
-/* =====================================================
-   LOAD BALANCE
-   ===================================================== */
-
-async function loadCustomerBalance() {
-
-
-    if(!firebaseDB){
-
-        return;
-
-    }
-
-
-    const mobile =
-        getLoggedInMobile();
-
-
-    if(!mobile){
-
-        return;
-
-    }
-
-
-    const cleanMobile =
-        String(mobile)
-        .replace(/\D/g,"");
-
-
-    if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
-
-        return;
-
-    }
-
-
-    try{
-
-
-        /*
-         * NOTE:
-         * Iske liye Firestore read permission
-         * required hai.
-         */
-
-        const doc =
-            await firebaseDB
-            .collection("customers")
-            .doc(cleanMobile)
-            .get();
-
-
-        if(doc.exists){
-
-            const data =
-                doc.data();
-
-
-            const balance =
-                Number(
-                    data.balance || 0
-                );
-
-
-            document
-            .getElementById("topBalance")
-            .textContent =
-                balance;
-
-
-            console.log(
-                "Customer balance:",
-                balance
-            );
-
+            return;
         }
 
 
-    }catch(error){
+        const data =
+            snapshot.data();
+
+
+        console.log(
+            "Firebase customer data:",
+            data
+        );
+
+
+        /*
+         * BALANCE
+         */
+
+        let balance =
+            Number(data.balance || 0);
+
+
+        document.getElementById(
+            "topBalance"
+        ).textContent =
+            balance;
+
+
+        /*
+         * MOBILE
+         */
+
+        const firebaseMobile =
+            data.mobile || ("+" + cleanMobile);
+
+
+        /*
+         * USERNAME
+         *
+         * अभी mobile के last 4 digits दिखेंगे.
+         */
+
+        const lastFour =
+            cleanMobile.slice(-4);
+
+
+        const username =
+            "User" + lastFour;
+
+
+        document.getElementById(
+            "username"
+        ).textContent =
+            "Hey, " + username;
+
+
+        document.getElementById(
+            "menuUsername"
+        ).textContent =
+            username;
+
+
+        /*
+         * LocalStorage में भी रख दें
+         */
+
+        localStorage.setItem(
+            "rdxUsername",
+            username
+        );
+
+        localStorage.setItem(
+            "rdxUserMobile",
+            firebaseMobile
+        );
+
+
+        /*
+         * Balance भी local cache में
+         */
+
+        localStorage.setItem(
+            "rdxBalance",
+            String(balance)
+        );
+
+
+        console.log(
+            "Dashboard Firebase data loaded successfully"
+        );
+
+    } catch(error){
 
         console.error(
-            "BALANCE LOAD ERROR:",
+            "FIREBASE DASHBOARD ERROR:",
             error
         );
 
+        showMessage(
+            "Firebase data load नहीं हो पाया"
+        );
     }
-
 }
 
 
-
 /* =====================================================
-   USERNAME
+   LOAD USER WHEN PAGE OPENS
 ===================================================== */
 
-const savedUsername =
-    localStorage.getItem(
-        "rdxUsername"
-    );
+window.addEventListener(
+    "load",
+    function(){
 
-
-if(savedUsername){
-
-    document
-    .getElementById("username")
-    .textContent =
-        "Hey, " + savedUsername;
-
-
-    document
-    .getElementById("menuUsername")
-    .textContent =
-        savedUsername;
-
-}
-
-
-
-/* =====================================================
-   START FIREBASE SYNC
-===================================================== */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function(){
-
-        await syncLoggedInCustomer();
-
-        /*
-         * Balance load
-         */
-
-        await loadCustomerBalance();
+        loadFirebaseCustomer();
 
     }
 );
-
 
 
 /* =====================================================
@@ -2136,7 +1694,6 @@ function openMenu(){
     document
     .getElementById("menuPanel")
     .classList.add("open");
-
 
     document
     .getElementById("menuOverlay")
@@ -2151,7 +1708,6 @@ function closeMenu(){
     .getElementById("menuPanel")
     .classList.remove("open");
 
-
     document
     .getElementById("menuOverlay")
     .classList.remove("show");
@@ -2159,9 +1715,8 @@ function closeMenu(){
 }
 
 
-
 /* =====================================================
-   NAVIGATION
+   HOME
 ===================================================== */
 
 function goHome(){
@@ -2170,9 +1725,12 @@ function goHome(){
 
     window.location.href =
         "./dashboard.html";
-
 }
 
+
+/* =====================================================
+   BATTLES
+===================================================== */
 
 function goBattles(){
 
@@ -2180,9 +1738,12 @@ function goBattles(){
 
     window.location.href =
         "./battles.html";
-
 }
 
+
+/* =====================================================
+   WALLET
+===================================================== */
 
 function goWallet(){
 
@@ -2190,9 +1751,12 @@ function goWallet(){
 
     window.location.href =
         "./wallet.html";
-
 }
 
+
+/* =====================================================
+   SUPPORT
+===================================================== */
 
 function goSupport(){
 
@@ -2200,9 +1764,12 @@ function goSupport(){
 
     window.location.href =
         "./support.html";
-
 }
 
+
+/* =====================================================
+   PROFILE
+===================================================== */
 
 function goProfile(){
 
@@ -2210,9 +1777,12 @@ function goProfile(){
 
     window.location.href =
         "./profile.html";
-
 }
 
+
+/* =====================================================
+   REFER
+===================================================== */
 
 function goRedeem(){
 
@@ -2220,9 +1790,7 @@ function goRedeem(){
 
     window.location.href =
         "./referral.html";
-
 }
-
 
 
 /* =====================================================
@@ -2232,26 +1800,17 @@ function goRedeem(){
 function showMessage(message){
 
     const toast =
-        document.getElementById(
-            "toast"
-        );
-
+        document.getElementById("toast");
 
     toast.textContent =
         message;
 
-
-    toast.classList.add(
-        "show"
-    );
-
+    toast.classList.add("show");
 
     setTimeout(
         function(){
 
-            toast.classList.remove(
-                "show"
-            );
+            toast.classList.remove("show");
 
         },
         1800
@@ -2261,7 +1820,5 @@ function showMessage(message){
 
 </script>
 
-
 </body>
-
 </html>
