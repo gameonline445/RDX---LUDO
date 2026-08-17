@@ -19,7 +19,7 @@ body{
     color:#111b3a;
 }
 
-button,input,select{
+button,input,select,textarea{
     font:inherit;
 }
 
@@ -86,7 +86,8 @@ button{
 }
 
 .field input,
-.field select{
+.field select,
+.field textarea{
     width:100%;
     padding:14px 16px;
     border:1px solid #ccd6ea;
@@ -95,8 +96,14 @@ button{
     background:#fafcff;
 }
 
+.field textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
 .field input:focus,
-.field select:focus{
+.field select:focus,
+.field textarea:focus{
     border-color:#3775ef;
 }
 
@@ -261,13 +268,14 @@ button{
 table{
     width:100%;
     border-collapse:collapse;
-    min-width:700px;
+    min-width:1050px;
 }
 
 th,td{
     padding:13px 10px;
     border-bottom:1px solid #edf0f6;
     text-align:left;
+    vertical-align:middle;
     white-space:nowrap;
 }
 
@@ -278,7 +286,7 @@ th{
 
 .badge{
     display:inline-block;
-    padding:5px 9px;
+    padding:6px 10px;
     border-radius:20px;
     font-size:12px;
     font-weight:800;
@@ -294,47 +302,52 @@ th{
     color:#13834d;
 }
 
-.cancelled{
+.rejected{
     background:#ffe3e7;
     color:#c72e43;
 }
 
-.win{
-    background:#ddf8e8;
-    color:#12854d;
+.failed{
+    background:#ffe3e7;
+    color:#c72e43;
 }
 
-.loss{
-    background:#ffe4e7;
-    color:#ca3146;
+.active{
+    background:#dcf8e9;
+    color:#13834d;
 }
 
 .action{
-    padding:7px 10px;
+    padding:8px 11px;
     border-radius:9px;
     font-size:12px;
     font-weight:800;
     margin:2px;
 }
 
-.add{
+.approve{
     background:#ddf8e8;
     color:#12854d;
+}
+
+.reject{
+    background:#ffe4e7;
+    color:#ca3146;
+}
+
+.fail{
+    background:#fff0d7;
+    color:#a96600;
+}
+
+.add{
+    background:#e1edff;
+    color:#2869e8;
 }
 
 .deduct{
     background:#ffe4e7;
     color:#ca3146;
-}
-
-.approve{
-    background:#e1edff;
-    color:#2869e8;
-}
-
-.cancel{
-    background:#fff0d7;
-    color:#a96600;
 }
 
 .delete{
@@ -375,7 +388,37 @@ th{
     color:#8590a7;
 }
 
+.comment{
+    white-space:normal;
+    max-width:250px;
+    color:#59657d;
+}
+
+.details-box{
+    background:#f7f9ff;
+    border:1px solid #dbe3f4;
+    border-radius:15px;
+    padding:15px;
+    margin-top:10px;
+}
+
+.details-box div{
+    margin:6px 0;
+}
+
+.qr-preview{
+    width:180px;
+    height:180px;
+    object-fit:contain;
+    border:1px solid #d5deef;
+    border-radius:15px;
+    background:white;
+    padding:8px;
+    margin-bottom:10px;
+}
+
 @media(max-width:900px){
+
     .stats{
         grid-template-columns:repeat(2,1fr);
     }
@@ -386,8 +429,13 @@ th{
 }
 
 @media(max-width:650px){
+
     .topbar{
         padding:0 12px;
+    }
+
+    .brand{
+        font-size:16px;
     }
 
     .layout{
@@ -444,7 +492,8 @@ th{
 <div class="logo">RDX</div>
 
 <h1>RDX LUDO</h1>
-<p>Virtual Coin Admin Panel</p>
+
+<p>Admin Panel</p>
 
 <div class="field">
 <label>Admin Username</label>
@@ -456,7 +505,9 @@ th{
 <input id="password" type="password" placeholder="Enter password">
 </div>
 
-<button class="primary" onclick="login()">Login</button>
+<button class="primary" onclick="login()">
+Login
+</button>
 
 <div class="error" id="loginError">
 Wrong username or password
@@ -476,7 +527,9 @@ Wrong username or password
 RDX <span>LUDO</span> — ADMIN
 </div>
 
-<button class="logout" onclick="logout()">Logout</button>
+<button class="logout" onclick="logout()">
+Logout
+</button>
 
 </header>
 
@@ -485,32 +538,34 @@ RDX <span>LUDO</span> — ADMIN
 
 <aside class="sidebar">
 
-<button class="menu-btn active" onclick="showPage('dashboard',this)">
+<button class="menu-btn active"
+onclick="showPage('dashboard',this)">
 📊 Dashboard
 </button>
 
-<button class="menu-btn" onclick="showPage('users',this)">
+<button class="menu-btn"
+onclick="showPage('deposits',this)">
+💳 Deposits
+</button>
+
+<button class="menu-btn"
+onclick="showPage('users',this)">
 👥 Users
 </button>
 
-<button class="menu-btn" onclick="showPage('coins',this)">
-🪙 Coin Requests
+<button class="menu-btn"
+onclick="showPage('history',this)">
+📜 Deposit History
 </button>
 
-<button class="menu-btn" onclick="showPage('history',this)">
-📜 Coin History
-</button>
-
-<button class="menu-btn" onclick="showPage('referral',this)">
-🎁 Referral
-</button>
-
-<button class="menu-btn" onclick="showPage('games',this)">
+<button class="menu-btn"
+onclick="showPage('games',this)">
 🎮 Game History
 </button>
 
-<button class="menu-btn" onclick="showPage('settings',this)">
-⚙️ Settings
+<button class="menu-btn"
+onclick="showPage('settings',this)">
+⚙️ Payment Settings
 </button>
 
 </aside>
@@ -523,7 +578,9 @@ RDX <span>LUDO</span> — ADMIN
 
 <section class="page active" id="dashboard">
 
-<div class="title">Dashboard</div>
+<div class="title">
+Dashboard
+</div>
 
 <div class="stats">
 
@@ -538,34 +595,72 @@ RDX <span>LUDO</span> — ADMIN
 </div>
 
 <div class="stat">
-<small>Pending Requests</small>
+<small>Pending Deposits</small>
 <h2 class="orange" id="statPending">0</h2>
 </div>
 
 <div class="stat">
-<small>Transactions</small>
-<h2 class="red" id="statTransactions">0</h2>
+<small>Total Deposits</small>
+<h2 class="red" id="statDeposits">0</h2>
 </div>
 
 </div>
-
 
 <div class="card">
 
-<h3>System Information</h3>
+<h3>Payment System</h3>
 
 <div class="notice">
-यह panel केवल virtual/demo coins के लिए है। Coins का कोई real-money value नहीं है।
+Admin deposited payment requests ko UTR, amount aur payment details check karke manually approve, reject ya failed kar sakta hai.
 </div>
 
-<div class="row">
-<strong>Admin Status</strong>
-<span class="badge approved">ACTIVE</span>
 </div>
 
-<div class="row">
-<strong>Coin System</strong>
-<span class="badge approved">VIRTUAL COIN</span>
+</section>
+
+
+<!-- DEPOSITS -->
+
+<section class="page" id="deposits">
+
+<div class="title">
+Deposit Requests
+</div>
+
+<div class="card">
+
+<input
+class="search"
+id="depositSearch"
+placeholder="Search User ID / UTR / UPI..."
+oninput="renderDeposits()"
+>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Request ID</th>
+<th>User</th>
+<th>Amount</th>
+<th>UTR</th>
+<th>UPI ID</th>
+<th>Bank A/C</th>
+<th>IFSC</th>
+<th>Status</th>
+<th>Comment</th>
+<th>Action</th>
+</tr>
+
+</thead>
+
+<tbody id="depositsTable"></tbody>
+
+</table>
+
 </div>
 
 </div>
@@ -577,7 +672,9 @@ RDX <span>LUDO</span> — ADMIN
 
 <section class="page" id="users">
 
-<div class="title">Users</div>
+<div class="title">
+Users
+</div>
 
 <div class="card">
 
@@ -593,6 +690,7 @@ oninput="renderUsers()"
 <table>
 
 <thead>
+
 <tr>
 <th>User ID</th>
 <th>Name</th>
@@ -601,47 +699,10 @@ oninput="renderUsers()"
 <th>Status</th>
 <th>Actions</th>
 </tr>
+
 </thead>
 
 <tbody id="usersTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- COIN REQUESTS -->
-
-<section class="page" id="coins">
-
-<div class="title">Coin Requests</div>
-
-<div class="card">
-
-<div class="notice">
-Pending coin requests को यहां approve या cancel कर सकते हैं।
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-<tr>
-<th>ID</th>
-<th>User</th>
-<th>Amount</th>
-<th>Type</th>
-<th>Status</th>
-<th>Action</th>
-</tr>
-</thead>
-
-<tbody id="requestsTable"></tbody>
 
 </table>
 
@@ -656,7 +717,9 @@ Pending coin requests को यहां approve या cancel कर सकत
 
 <section class="page" id="history">
 
-<div class="title">Coin History</div>
+<div class="title">
+Deposit History
+</div>
 
 <div class="card">
 
@@ -665,13 +728,17 @@ Pending coin requests को यहां approve या cancel कर सकत
 <table>
 
 <thead>
+
 <tr>
 <th>Date</th>
+<th>Request ID</th>
 <th>User</th>
-<th>Type</th>
-<th>Coins</th>
+<th>Amount</th>
+<th>UTR</th>
 <th>Status</th>
+<th>Comment</th>
 </tr>
+
 </thead>
 
 <tbody id="historyTable"></tbody>
@@ -685,69 +752,13 @@ Pending coin requests को यहां approve या cancel कर सकत
 </section>
 
 
-<!-- REFERRAL -->
-
-<section class="page" id="referral">
-
-<div class="title">Referral Commission</div>
-
-<div class="card">
-
-<div class="form-grid">
-
-<div class="field">
-<label>Commission Percentage</label>
-<input id="refPercent" type="number" min="0" max="100">
-</div>
-
-<div class="field">
-<label>Commission Coins</label>
-<input id="refCoins" type="number" min="0">
-</div>
-
-<div class="full">
-<button class="save" onclick="saveReferral()">
-Save Referral Settings
-</button>
-</div>
-
-</div>
-
-</div>
-
-<div class="card">
-
-<h3>Referral History</h3>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-<tr>
-<th>Date</th>
-<th>User</th>
-<th>Referred User</th>
-<th>Commission</th>
-</tr>
-</thead>
-
-<tbody id="refTable"></tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- GAME HISTORY -->
+<!-- GAMES -->
 
 <section class="page" id="games">
 
-<div class="title">Game History</div>
+<div class="title">
+Game History
+</div>
 
 <div class="card">
 
@@ -756,6 +767,7 @@ Save Referral Settings
 <table>
 
 <thead>
+
 <tr>
 <th>Date</th>
 <th>User</th>
@@ -763,6 +775,7 @@ Save Referral Settings
 <th>Result</th>
 <th>Coins</th>
 </tr>
+
 </thead>
 
 <tbody id="gamesTable"></tbody>
@@ -780,61 +793,146 @@ Save Referral Settings
 
 <section class="page" id="settings">
 
-<div class="title">Settings</div>
+<div class="title">
+Payment Settings
+</div>
+
 
 <div class="card">
 
-<div class="notice">
-यह settings केवल virtual coin system के display/configuration के लिए हैं।
-</div>
+<h3>UPI Payment Details</h3>
 
 <div class="form-grid">
 
 <div class="field">
-<label>Site Name</label>
-<input id="siteName">
+
+<label>UPI ID</label>
+
+<input
+id="upiId"
+placeholder="example@upi"
+>
+
 </div>
 
-<div class="field">
-<label>Coin Name</label>
-<input id="coinName">
-</div>
 
 <div class="field">
-<label>Coins Per ₹ Display</label>
-<input id="coinRate" type="number">
+
+<label>Account Holder Name</label>
+
+<input
+id="accountName"
+placeholder="Account Holder Name"
+>
+
 </div>
 
+
 <div class="field">
-<label>Minimum Coin Request</label>
-<input id="minCoin" type="number">
+
+<label>Bank Account Number</label>
+
+<input
+id="accountNumber"
+placeholder="Bank Account Number"
+>
+
 </div>
+
+
+<div class="field">
+
+<label>IFSC Code</label>
+
+<input
+id="ifsc"
+placeholder="IFSC Code"
+>
+
+</div>
+
+
+<div class="field full">
+
+<label>QR Code Image URL</label>
+
+<input
+id="qrUrl"
+placeholder="Paste QR image URL"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Coin Rate</label>
+
+<input
+id="coinRate"
+type="number"
+min="1"
+value="1"
+>
+
+</div>
+
+
+<div class="field">
+
+<label>Minimum Deposit</label>
+
+<input
+id="minDeposit"
+type="number"
+min="1"
+value="100"
+>
+
+</div>
+
 
 <div class="full">
-<button class="save" onclick="saveSettings()">
-Save Settings
+
+<button class="save"
+onclick="savePaymentSettings()">
+
+Save Payment Settings
+
 </button>
-</div>
 
 </div>
 
 </div>
+
+</div>
+
 
 <div class="card">
 
-<h3>Demo Data</h3>
+<h3>Current QR</h3>
 
-<p style="color:#75819b;margin-bottom:15px">
-Testing के लिए sample users और transactions बनाए जा सकते हैं।
-</p>
+<img
+id="qrPreview"
+class="qr-preview"
+src=""
+alt="QR Code"
+>
 
-<button class="save" onclick="createDemoData()">
-Create Demo Data
-</button>
+<div>
+<strong>UPI:</strong>
+<span id="previewUPI">—</span>
+</div>
 
-<button class="action delete" onclick="clearAllData()">
-Delete All Data
-</button>
+<div>
+<strong>Account:</strong>
+<span id="previewAccount">—</span>
+</div>
+
+<div>
+<strong>IFSC:</strong>
+<span id="previewIFSC">—</span>
+</div>
 
 </div>
 
@@ -842,27 +940,36 @@ Delete All Data
 
 
 </main>
+
 </div>
+
 </section>
 
 
 <script>
 
 /* =========================
-   DATABASE
+   DATABASE KEYS
 ========================= */
 
 const DB = {
 
 users:"rdx_users",
-requests:"rdx_requests",
-history:"rdx_coin_history",
+
+deposits:"rdx_deposits",
+
+history:"rdx_deposit_history",
+
 games:"rdx_games",
-referrals:"rdx_referrals",
-settings:"rdx_settings"
+
+settings:"rdx_payment_settings"
 
 };
 
+
+/* =========================
+   STORAGE
+========================= */
 
 function get(key){
 
@@ -886,24 +993,29 @@ JSON.stringify(data)
 function getSettings(){
 
 return JSON.parse(
+
 localStorage.getItem(DB.settings)
+
 ||
+
 JSON.stringify({
-siteName:"RDX LUDO",
-coinName:"RDX Coin",
+
+upiId:"yourupi@upi",
+
+accountName:"RDX LUDO",
+
+accountNumber:"",
+
+ifsc:"",
+
+qrUrl:"",
+
 coinRate:1,
-minCoin:100
+
+minDeposit:100
+
 })
-);
 
-}
-
-
-function saveSettingsData(data){
-
-localStorage.setItem(
-DB.settings,
-JSON.stringify(data)
 );
 
 }
@@ -915,21 +1027,36 @@ JSON.stringify(data)
 
 function login(){
 
-let u=document.getElementById("username").value.trim();
-let p=document.getElementById("password").value;
+let u=
+document.getElementById("username")
+.value.trim();
+
+let p=
+document.getElementById("password")
+.value;
 
 if(u==="admin" && p==="admin123"){
 
-sessionStorage.setItem("rdx_admin","1");
+sessionStorage.setItem(
+"rdx_admin",
+"1"
+);
 
-document.getElementById("loginScreen").style.display="none";
-document.getElementById("adminPanel").style.display="block";
+document.getElementById(
+"loginScreen"
+).style.display="none";
+
+document.getElementById(
+"adminPanel"
+).style.display="block";
 
 loadAll();
 
 }else{
 
-document.getElementById("loginError").style.display="block";
+document.getElementById(
+"loginError"
+).style.display="block";
 
 }
 
@@ -938,35 +1065,51 @@ document.getElementById("loginError").style.display="block";
 
 function logout(){
 
-sessionStorage.removeItem("rdx_admin");
+sessionStorage.removeItem(
+"rdx_admin"
+);
 
 location.reload();
 
 }
 
 
-if(sessionStorage.getItem("rdx_admin")==="1"){
+if(
+sessionStorage.getItem("rdx_admin")==="1"
+){
 
-document.getElementById("loginScreen").style.display="none";
-document.getElementById("adminPanel").style.display="block";
+document.getElementById(
+"loginScreen"
+).style.display="none";
+
+document.getElementById(
+"adminPanel"
+).style.display="block";
 
 }
 
 
 /* =========================
-   PAGE NAVIGATION
+   NAVIGATION
 ========================= */
 
 function showPage(id,btn){
 
-document.querySelectorAll(".page")
-.forEach(x=>x.classList.remove("active"));
+document
+.querySelectorAll(".page")
+.forEach(x=>
+x.classList.remove("active")
+);
 
-document.getElementById(id)
+document
+.getElementById(id)
 .classList.add("active");
 
-document.querySelectorAll(".menu-btn")
-.forEach(x=>x.classList.remove("active"));
+document
+.querySelectorAll(".menu-btn")
+.forEach(x=>
+x.classList.remove("active")
+);
 
 btn.classList.add("active");
 
@@ -982,294 +1125,208 @@ loadAll();
 function updateDashboard(){
 
 let users=get(DB.users);
-let history=get(DB.history);
 
-let pending=get(DB.requests)
-.filter(x=>x.status==="pending");
+let deposits=get(DB.deposits);
 
-let totalCoins=users.reduce(
-(sum,u)=>sum+Number(u.coins||0),0
+let pending=
+deposits.filter(
+x=>x.status==="pending"
 );
 
-document.getElementById("statUsers")
-.innerText=users.length;
+let coins=
+users.reduce(
+(sum,u)=>
+sum+Number(u.coins||0),
+0
+);
 
-document.getElementById("statCoins")
-.innerText=totalCoins;
+document.getElementById(
+"statUsers"
+).innerText=users.length;
 
-document.getElementById("statPending")
-.innerText=pending.length;
+document.getElementById(
+"statCoins"
+).innerText=coins;
 
-document.getElementById("statTransactions")
-.innerText=history.length;
+document.getElementById(
+"statPending"
+).innerText=pending.length;
+
+document.getElementById(
+"statDeposits"
+).innerText=deposits.length;
 
 }
 
 
 /* =========================
-   USERS
+   DEPOSIT TABLE
 ========================= */
 
-function renderUsers(){
+function renderDeposits(){
 
-let users=get(DB.users);
+let deposits=get(DB.deposits);
 
 let q=
-(document.getElementById("userSearch")?.value || "")
-.toLowerCase();
+(
+document.getElementById(
+"depositSearch"
+)?.value || ""
+).toLowerCase();
 
-users=users.filter(u=>
-(u.id||"").toLowerCase().includes(q) ||
-(u.name||"").toLowerCase().includes(q) ||
-(u.mobile||"").includes(q)
+deposits=
+deposits.filter(d=>
+
+String(d.userId||"")
+.toLowerCase()
+.includes(q)
+
+||
+
+String(d.utr||"")
+.toLowerCase()
+.includes(q)
+
+||
+
+String(d.upiId||"")
+.toLowerCase()
+.includes(q)
+
 );
 
 let html="";
 
-if(!users.length){
+if(!deposits.length){
 
 html=`
+
 <tr>
-<td colspan="6" class="empty">
-No users found
+
+<td colspan="10"
+class="empty">
+
+No deposit requests
+
 </td>
+
 </tr>
+
 `;
 
 }else{
 
-users.forEach(u=>{
-
-html+=`
-
-<tr>
-
-<td>${escapeHTML(u.id)}</td>
-
-<td>${escapeHTML(u.name)}</td>
-
-<td>${escapeHTML(u.mobile)}</td>
-
-<td>
-<strong class="blue">${Number(u.coins||0)}</strong>
-</td>
-
-<td>
-<span class="badge approved">
-${u.status || "Active"}
-</span>
-</td>
-
-<td>
-
-<button
-class="action add"
-onclick="addCoins('${u.id}')">
-+ Coin
-</button>
-
-<button
-class="action deduct"
-onclick="deductCoins('${u.id}')">
-- Coin
-</button>
-
-<button
-class="action delete"
-onclick="deleteUser('${u.id}')">
-Delete
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-}
-
-document.getElementById("usersTable").innerHTML=html;
-
-}
-
-
-/* =========================
-   ADD COINS
-========================= */
-
-function addCoins(id){
-
-let amount=prompt(
-"कितने virtual coins add करने हैं?"
-);
-
-amount=Number(amount);
-
-if(!amount || amount<=0)return;
-
-let users=get(DB.users);
-
-let user=users.find(u=>u.id===id);
-
-if(!user)return;
-
-user.coins=
-Number(user.coins||0)+amount;
-
-set(DB.users,users);
-
-addHistory(
-id,
-"ADMIN ADD",
-amount,
-"approved"
-);
-
-alert(
-amount+" virtual coins successfully added."
-);
-
-loadAll();
-
-}
-
-
-/* =========================
-   DEDUCT COINS
-========================= */
-
-function deductCoins(id){
-
-let amount=prompt(
-"कितने virtual coins deduct करने हैं?"
-);
-
-amount=Number(amount);
-
-if(!amount || amount<=0)return;
-
-let users=get(DB.users);
-
-let user=users.find(u=>u.id===id);
-
-if(!user)return;
-
-if(Number(user.coins||0)<amount){
-
-alert("User के पास इतने coins नहीं हैं।");
-return;
-
-}
-
-user.coins-=amount;
-
-set(DB.users,users);
-
-addHistory(
-id,
-"ADMIN DEDUCT",
--amount,
-"approved"
-);
-
-loadAll();
-
-}
-
-
-/* =========================
-   DELETE USER
-========================= */
-
-function deleteUser(id){
-
-if(!confirm(
-"क्या आप इस user को delete करना चाहते हैं?"
-))return;
-
-let users=get(DB.users)
-.filter(u=>u.id!==id);
-
-set(DB.users,users);
-
-loadAll();
-
-}
-
-
-/* =========================
-   COIN REQUESTS
-========================= */
-
-function renderRequests(){
-
-let requests=get(DB.requests);
-
-let html="";
-
-if(!requests.length){
-
-html=`
-<tr>
-<td colspan="6" class="empty">
-No coin requests
-</td>
-</tr>
-`;
-
-}else{
-
-requests.forEach(r=>{
-
-let badge=
-r.status==="approved"
-?"approved":
-r.status==="cancelled"
-?"cancelled":
+deposits.forEach(d=>{
+
+let cls=
+d.status==="approved"
+?"approved"
+:
+d.status==="rejected"
+?"rejected"
+:
+d.status==="failed"
+?"failed"
+:
 "pending";
 
 html+=`
 
 <tr>
 
-<td>${escapeHTML(r.id)}</td>
-
-<td>${escapeHTML(r.userName || r.userId)}</td>
-
 <td>
-<strong>${Number(r.amount)}</strong>
+${escapeHTML(d.id)}
 </td>
 
-<td>${escapeHTML(r.type || "COIN")}</td>
+<td>
+
+<strong>
+${escapeHTML(d.userName||d.userId)}
+</strong>
+
+<br>
+
+<small>
+${escapeHTML(d.userId)}
+</small>
+
+</td>
 
 <td>
-<span class="badge ${badge}">
-${escapeHTML(r.status)}
+<strong class="blue">
+₹${Number(d.amount||0)}
+</strong>
+</td>
+
+<td>
+${escapeHTML(d.utr||"—")}
+</td>
+
+<td>
+${escapeHTML(d.upiId||"—")}
+</td>
+
+<td>
+${escapeHTML(d.accountNumber||"—")}
+</td>
+
+<td>
+${escapeHTML(d.ifsc||"—")}
+</td>
+
+<td>
+
+<span class="badge ${cls}">
+${escapeHTML(d.status)}
 </span>
+
+</td>
+
+<td class="comment">
+
+${escapeHTML(d.comment||"—")}
+
 </td>
 
 <td>
 
 ${
-r.status==="pending"
+d.status==="pending"
+
 ?
+
 `
+
 <button
 class="action approve"
-onclick="approveRequest('${r.id}')">
+onclick="approveDeposit('${d.id}')">
+
 Approve
+
 </button>
 
 <button
-class="action cancel"
-onclick="cancelRequest('${r.id}')">
-Cancel
+class="action reject"
+onclick="rejectDeposit('${d.id}')">
+
+Reject
+
 </button>
+
+<button
+class="action fail"
+onclick="failDeposit('${d.id}')">
+
+Failed
+
+</button>
+
 `
+
 :
+
 "—"
+
 }
 
 </td>
@@ -1282,49 +1339,98 @@ Cancel
 
 }
 
-document.getElementById("requestsTable").innerHTML=html;
+document.getElementById(
+"depositsTable"
+).innerHTML=html;
 
 }
 
 
 /* =========================
-   APPROVE REQUEST
+   APPROVE DEPOSIT
 ========================= */
 
-function approveRequest(id){
+function approveDeposit(id){
 
-let requests=get(DB.requests);
+let deposits=get(DB.deposits);
 
-let req=requests.find(x=>x.id===id);
+let d=
+deposits.find(
+x=>x.id===id
+);
 
-if(!req || req.status!=="pending")return;
+if(
+!d ||
+d.status!=="pending"
+)return;
+
+let comment=
+prompt(
+"Approval comment:",
+"Payment verified"
+);
+
+if(comment===null)
+return;
 
 let users=get(DB.users);
 
-let user=users.find(
-u=>u.id===req.userId
+let user=
+users.find(
+u=>u.id===d.userId
 );
 
 if(!user){
 
-alert("User नहीं मिला।");
+alert("User not found.");
+
 return;
 
 }
 
-user.coins=
-Number(user.coins||0)+Number(req.amount);
 
-req.status="approved";
+/*
+   COINS CALCULATION
+
+   Example:
+   ₹100 = 100 coins
+*/
+
+let settings=getSettings();
+
+let coins=
+Number(d.amount||0)
+*
+Number(settings.coinRate||1);
+
+
+/*
+   IMPORTANT:
+   Deposit request is approved only once.
+*/
+
+user.coins=
+Number(user.coins||0)
++
+coins;
+
+d.status="approved";
+
+d.comment=comment;
+
+d.approvedAt=
+new Date().toLocaleString("en-IN");
 
 set(DB.users,users);
-set(DB.requests,requests);
 
-addHistory(
-req.userId,
-"REQUEST APPROVED",
-Number(req.amount),
-"approved"
+set(DB.deposits,deposits);
+
+addHistory(d);
+
+alert(
+"Deposit approved.\n"+
+coins+
+" coins user wallet me add ho gaye."
 );
 
 loadAll();
@@ -1333,27 +1439,107 @@ loadAll();
 
 
 /* =========================
-   CANCEL REQUEST
+   REJECT
 ========================= */
 
-function cancelRequest(id){
+function rejectDeposit(id){
 
-let requests=get(DB.requests);
+let deposits=get(DB.deposits);
 
-let req=requests.find(x=>x.id===id);
-
-if(!req || req.status!=="pending")return;
-
-req.status="cancelled";
-
-set(DB.requests,requests);
-
-addHistory(
-req.userId,
-"REQUEST CANCELLED",
-0,
-"cancelled"
+let d=
+deposits.find(
+x=>x.id===id
 );
+
+if(
+!d ||
+d.status!=="pending"
+)
+return;
+
+let comment=
+prompt(
+"Reject reason/comment:"
+);
+
+if(
+!comment ||
+!comment.trim()
+){
+
+alert(
+"Reject karne ke liye comment/reason zaroori hai."
+);
+
+return;
+
+}
+
+d.status="rejected";
+
+d.comment=
+comment.trim();
+
+d.rejectedAt=
+new Date().toLocaleString("en-IN");
+
+set(DB.deposits,deposits);
+
+addHistory(d);
+
+loadAll();
+
+}
+
+
+/* =========================
+   FAILED
+========================= */
+
+function failDeposit(id){
+
+let deposits=get(DB.deposits);
+
+let d=
+deposits.find(
+x=>x.id===id
+);
+
+if(
+!d ||
+d.status!=="pending"
+)
+return;
+
+let comment=
+prompt(
+"Failed payment reason:"
+);
+
+if(
+!comment ||
+!comment.trim()
+){
+
+alert(
+"Failed status ke liye reason zaroori hai."
+);
+
+return;
+
+}
+
+d.status="failed";
+
+d.comment=
+comment.trim();
+
+d.failedAt=
+new Date().toLocaleString("en-IN");
+
+set(DB.deposits,deposits);
+
+addHistory(d);
 
 loadAll();
 
@@ -1364,34 +1550,28 @@ loadAll();
    HISTORY
 ========================= */
 
-function addHistory(
-userId,
-type,
-coins,
-status
-){
+function addHistory(d){
 
 let history=get(DB.history);
 
-let users=get(DB.users);
-
-let user=users.find(
-u=>u.id===userId
-);
-
 history.unshift({
 
-date:new Date().toLocaleString("en-IN"),
+date:new Date()
+.toLocaleString("en-IN"),
 
-userId:userId,
+requestId:d.id,
 
-userName:user ? user.name : "",
+userId:d.userId,
 
-type:type,
+userName:d.userName,
 
-coins:coins,
+amount:d.amount,
 
-status:status
+utr:d.utr,
+
+status:d.status,
+
+comment:d.comment||""
 
 });
 
@@ -1409,40 +1589,72 @@ let html="";
 if(!history.length){
 
 html=`
+
 <tr>
-<td colspan="5" class="empty">
-No history
+
+<td colspan="7"
+class="empty">
+
+No deposit history
+
 </td>
+
 </tr>
+
 `;
 
 }else{
 
 history.forEach(h=>{
 
-let badge=
+let cls=
 h.status==="approved"
-?"approved":
-h.status==="cancelled"
-?"cancelled":
+?"approved"
+:
+h.status==="rejected"
+?"rejected"
+:
+h.status==="failed"
+?"failed"
+:
 "pending";
 
 html+=`
 
 <tr>
 
-<td>${escapeHTML(h.date)}</td>
-
-<td>${escapeHTML(h.userName || h.userId)}</td>
-
-<td>${escapeHTML(h.type)}</td>
-
-<td>${Number(h.coins)}</td>
+<td>
+${escapeHTML(h.date)}
+</td>
 
 <td>
-<span class="badge ${badge}">
+${escapeHTML(h.requestId)}
+</td>
+
+<td>
+${escapeHTML(
+h.userName||h.userId
+)}
+</td>
+
+<td>
+₹${Number(h.amount||0)}
+</td>
+
+<td>
+${escapeHTML(h.utr||"—")}
+</td>
+
+<td>
+
+<span class="badge ${cls}">
 ${escapeHTML(h.status)}
 </span>
+
+</td>
+
+<td class="comment">
+${escapeHTML(h.comment||"—")}
 </td>
 
 </tr>
@@ -1453,77 +1665,132 @@ ${escapeHTML(h.status)}
 
 }
 
-document.getElementById("historyTable")
-.innerHTML=html;
+document.getElementById(
+"historyTable"
+).innerHTML=html;
 
 }
 
 
 /* =========================
-   REFERRAL
+   USERS
 ========================= */
 
-function loadReferral(){
+function renderUsers(){
 
-let data=
-JSON.parse(
-localStorage.getItem("rdx_ref_settings")
+let users=get(DB.users);
+
+let q=
+(
+document.getElementById(
+"userSearch"
+)?.value || ""
+).toLowerCase();
+
+users=
+users.filter(u=>
+
+String(u.id||"")
+.toLowerCase()
+.includes(q)
+
 ||
-'{"percent":5,"coins":0}'
+
+String(u.name||"")
+.toLowerCase()
+.includes(q)
+
+||
+
+String(u.mobile||"")
+.includes(q)
+
 );
-
-document.getElementById("refPercent")
-.value=data.percent;
-
-document.getElementById("refCoins")
-.value=data.coins;
-
-}
-
-
-function saveReferral(){
-
-let data={
-
-percent:Number(
-document.getElementById("refPercent").value
-),
-
-coins:Number(
-document.getElementById("refCoins").value
-)
-
-};
-
-localStorage.setItem(
-"rdx_ref_settings",
-JSON.stringify(data)
-);
-
-alert("Referral settings saved.");
-
-}
-
-
-function renderReferrals(){
-
-let refs=get(DB.referrals);
 
 let html="";
 
-refs.forEach(r=>{
+if(!users.length){
+
+html=`
+
+<tr>
+
+<td colspan="6"
+class="empty">
+
+No users found
+
+</td>
+
+</tr>
+
+`;
+
+}else{
+
+users.forEach(u=>{
 
 html+=`
 
 <tr>
 
-<td>${escapeHTML(r.date)}</td>
+<td>
+${escapeHTML(u.id)}
+</td>
 
-<td>${escapeHTML(r.user)}</td>
+<td>
+${escapeHTML(u.name)}
+</td>
 
-<td>${escapeHTML(r.referred)}</td>
+<td>
+${escapeHTML(u.mobile)}
+</td>
 
-<td>${Number(r.commission)}</td>
+<td>
+
+<strong class="blue">
+${Number(u.coins||0)}
+</strong>
+
+</td>
+
+<td>
+
+<span class="badge active">
+${escapeHTML(
+u.status||"Active"
+)}
+</span>
+
+</td>
+
+<td>
+
+<button
+class="action add"
+onclick="addCoins('${u.id}')">
+
++ Coin
+
+</button>
+
+<button
+class="action deduct"
+onclick="deductCoins('${u.id}')">
+
+- Coin
+
+</button>
+
+<button
+class="action delete"
+onclick="deleteUser('${u.id}')">
+
+Delete
+
+</button>
+
+</td>
 
 </tr>
 
@@ -1531,19 +1798,257 @@ html+=`
 
 });
 
-if(!html){
+}
 
-html=`
-<tr>
-<td colspan="4" class="empty">
-No referral history
-</td>
-</tr>
-`;
+document.getElementById(
+"usersTable"
+).innerHTML=html;
 
 }
 
-document.getElementById("refTable").innerHTML=html;
+
+/* =========================
+   MANUAL COINS
+========================= */
+
+function addCoins(id){
+
+let amount=
+Number(
+prompt("Coins add karein:")
+);
+
+if(
+!amount ||
+amount<=0
+)
+return;
+
+let users=get(DB.users);
+
+let user=
+users.find(
+u=>u.id===id
+);
+
+if(!user)
+return;
+
+user.coins=
+Number(user.coins||0)
++
+amount;
+
+set(DB.users,users);
+
+loadAll();
+
+}
+
+
+function deductCoins(id){
+
+let amount=
+Number(
+prompt("Coins deduct karein:")
+);
+
+if(
+!amount ||
+amount<=0
+)
+return;
+
+let users=get(DB.users);
+
+let user=
+users.find(
+u=>u.id===id
+);
+
+if(!user)
+return;
+
+if(
+Number(user.coins||0)
+<
+amount
+){
+
+alert(
+"User ke paas enough coins nahi hain."
+);
+
+return;
+
+}
+
+user.coins-=amount;
+
+set(DB.users,users);
+
+loadAll();
+
+}
+
+
+/* =========================
+   DELETE USER
+========================= */
+
+function deleteUser(id){
+
+if(
+!confirm(
+"Is user ko delete karna hai?"
+)
+)
+return;
+
+let users=
+get(DB.users)
+.filter(
+u=>u.id!==id
+);
+
+set(DB.users,users);
+
+loadAll();
+
+}
+
+
+/* =========================
+   PAYMENT SETTINGS
+========================= */
+
+function loadPaymentSettings(){
+
+let s=getSettings();
+
+document.getElementById(
+"upiId"
+).value=s.upiId||"";
+
+document.getElementById(
+"accountName"
+).value=s.accountName||"";
+
+document.getElementById(
+"accountNumber"
+).value=s.accountNumber||"";
+
+document.getElementById(
+"ifsc"
+).value=s.ifsc||"";
+
+document.getElementById(
+"qrUrl"
+).value=s.qrUrl||"";
+
+document.getElementById(
+"coinRate"
+).value=s.coinRate||1;
+
+document.getElementById(
+"minDeposit"
+).value=s.minDeposit||100;
+
+updatePaymentPreview(s);
+
+}
+
+
+function savePaymentSettings(){
+
+let data={
+
+upiId:
+document.getElementById(
+"upiId"
+).value.trim(),
+
+accountName:
+document.getElementById(
+"accountName"
+).value.trim(),
+
+accountNumber:
+document.getElementById(
+"accountNumber"
+).value.trim(),
+
+ifsc:
+document.getElementById(
+"ifsc"
+).value.trim(),
+
+qrUrl:
+document.getElementById(
+"qrUrl"
+).value.trim(),
+
+coinRate:
+Number(
+document.getElementById(
+"coinRate"
+).value
+)||1,
+
+minDeposit:
+Number(
+document.getElementById(
+"minDeposit"
+).value
+)||100
+
+};
+
+localStorage.setItem(
+DB.settings,
+JSON.stringify(data)
+);
+
+updatePaymentPreview(data);
+
+alert(
+"Payment settings saved."
+);
+
+}
+
+
+function updatePaymentPreview(s){
+
+let img=
+document.getElementById(
+"qrPreview"
+);
+
+if(s.qrUrl){
+
+img.src=s.qrUrl;
+
+}else{
+
+img.removeAttribute("src");
+
+}
+
+document.getElementById(
+"previewUPI"
+).innerText=
+s.upiId||"—";
+
+document.getElementById(
+"previewAccount"
+).innerText=
+s.accountNumber||"—";
+
+document.getElementById(
+"previewIFSC"
+).innerText=
+s.ifsc||"—";
 
 }
 
@@ -1560,30 +2065,42 @@ let html="";
 
 games.forEach(g=>{
 
-let resultClass=
+let cls=
 g.result==="WIN"
-?"win":
+?"approved"
+:
 g.result==="LOSS"
-?"loss":
+?"rejected"
+:
 "pending";
 
 html+=`
 
 <tr>
 
-<td>${escapeHTML(g.date)}</td>
-
-<td>${escapeHTML(g.user)}</td>
-
-<td>${escapeHTML(g.match)}</td>
-
 <td>
-<span class="badge ${resultClass}">
-${escapeHTML(g.result)}
-</span>
+${escapeHTML(g.date)}
 </td>
 
-<td>${Number(g.coins||0)}</td>
+<td>
+${escapeHTML(g.user)}
+</td>
+
+<td>
+${escapeHTML(g.match)}
+</td>
+
+<td>
+
+<span class="badge ${cls}">
+${escapeHTML(g.result)}
+</span>
+
+</td>
+
+<td>
+${Number(g.coins||0)}
+</td>
 
 </tr>
 
@@ -1594,205 +2111,37 @@ ${escapeHTML(g.result)}
 if(!html){
 
 html=`
+
 <tr>
-<td colspan="5" class="empty">
+
+<td colspan="5"
+class="empty">
+
 No game history
+
 </td>
+
 </tr>
+
 `;
 
 }
 
-document.getElementById("gamesTable").innerHTML=html;
+document.getElementById(
+"gamesTable"
+).innerHTML=html;
 
 }
 
 
 /* =========================
-   SETTINGS
-========================= */
-
-function loadSettings(){
-
-let s=getSettings();
-
-document.getElementById("siteName")
-.value=s.siteName;
-
-document.getElementById("coinName")
-.value=s.coinName;
-
-document.getElementById("coinRate")
-.value=s.coinRate;
-
-document.getElementById("minCoin")
-.value=s.minCoin;
-
-}
-
-
-function saveSettings(){
-
-let data={
-
-siteName:
-document.getElementById("siteName").value,
-
-coinName:
-document.getElementById("coinName").value,
-
-coinRate:
-Number(document.getElementById("coinRate").value),
-
-minCoin:
-Number(document.getElementById("minCoin").value)
-
-};
-
-saveSettingsData(data);
-
-alert("Settings saved.");
-
-}
-
-
-/* =========================
-   DEMO DATA
-========================= */
-
-function createDemoData(){
-
-let users=get(DB.users);
-
-if(users.length){
-
-alert("Demo users already exist.");
-return;
-
-}
-
-let demoUsers=[
-
-{
-id:"RDX1001",
-name:"Rahul",
-mobile:"9876543210",
-coins:500,
-status:"Active"
-},
-
-{
-id:"RDX1002",
-name:"Amit",
-mobile:"9876501234",
-coins:1250,
-status:"Active"
-},
-
-{
-id:"RDX1003",
-name:"Vikas",
-mobile:"9988776655",
-coins:300,
-status:"Active"
-}
-
-];
-
-set(DB.users,demoUsers);
-
-set(DB.requests,[
-
-{
-id:"REQ1001",
-userId:"RDX1001",
-userName:"Rahul",
-amount:100,
-type:"COIN",
-status:"pending"
-},
-
-{
-id:"REQ1002",
-userId:"RDX1002",
-userName:"Amit",
-amount:250,
-type:"COIN",
-status:"pending"
-}
-
-]);
-
-set(DB.history,[
-
-{
-date:new Date().toLocaleString("en-IN"),
-userId:"RDX1003",
-userName:"Vikas",
-type:"ADMIN ADD",
-coins:300,
-status:"approved"
-}
-
-]);
-
-set(DB.games,[
-
-{
-date:new Date().toLocaleString("en-IN"),
-user:"Rahul",
-match:"MATCH-1001",
-result:"WIN",
-coins:50
-},
-
-{
-date:new Date().toLocaleString("en-IN"),
-user:"Amit",
-match:"MATCH-1002",
-result:"LOSS",
-coins:-30
-}
-
-]);
-
-set(DB.referrals,[]);
-
-alert("Demo data created.");
-
-loadAll();
-
-}
-
-
-/* =========================
-   CLEAR DATA
-========================= */
-
-function clearAllData(){
-
-if(!confirm(
-"सारा demo data delete हो जाएगा। Continue?"
-))return;
-
-Object.values(DB).forEach(k=>{
-localStorage.removeItem(k);
-});
-
-localStorage.removeItem("rdx_ref_settings");
-
-loadAll();
-
-}
-
-
-/* =========================
-   SECURITY HELPER
+   HTML SECURITY
 ========================= */
 
 function escapeHTML(value){
 
 return String(value ?? "")
+
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
@@ -1810,27 +2159,31 @@ function loadAll(){
 
 updateDashboard();
 
-renderUsers();
+renderDeposits();
 
-renderRequests();
+renderUsers();
 
 renderHistory();
 
-renderReferrals();
-
 renderGames();
 
-loadReferral();
-
-loadSettings();
+loadPaymentSettings();
 
 }
 
 
-/* START */
+/* =========================
+   START
+========================= */
 
-if(sessionStorage.getItem("rdx_admin")==="1"){
+if(
+sessionStorage.getItem(
+"rdx_admin"
+)==="1"
+){
+
 loadAll();
+
 }
 
 </script>
