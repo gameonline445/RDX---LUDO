@@ -11,6 +11,17 @@
 
 <title>RDX LUDO - Dashboard</title>
 
+
+<!-- =====================================================
+     FIREBASE
+     MSG91 OTP IS NOT REMOVED.
+     Firebase is ONLY for customer data.
+===================================================== -->
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+
+
 <style>
 
 *{
@@ -72,8 +83,6 @@ button{
 }
 
 
-/* MENU BUTTON */
-
 .menu-btn{
 
     width:48px;
@@ -102,8 +111,6 @@ button{
 }
 
 
-/* LOGO */
-
 .logo{
 
     width:48px;
@@ -129,8 +136,6 @@ button{
     0 5px 12px rgba(36,93,190,.15);
 }
 
-
-/* HEADER RIGHT */
 
 .header-right{
 
@@ -165,16 +170,12 @@ button{
 }
 
 
-/* NOTIFICATION */
-
 .notification{
 
     background:
     linear-gradient(145deg,#746df4,#817eff);
 }
 
-
-/* WALLET */
 
 .wallet-top{
 
@@ -190,8 +191,6 @@ button{
     font-weight:800;
 }
 
-
-/* REFER */
 
 .redeem-top{
 
@@ -463,8 +462,6 @@ button{
 }
 
 
-/* PLAY BUTTON */
-
 .play-btn{
 
     margin-top:16px;
@@ -612,8 +609,6 @@ button{
 }
 
 
-/* MENU HEADER */
-
 .menu-title{
 
     display:flex;
@@ -706,8 +701,6 @@ button{
     cursor:pointer;
 }
 
-
-/* MENU ITEMS */
 
 .menu-list{
 
@@ -823,8 +816,6 @@ button{
     font-weight:300;
 }
 
-
-/* MENU OVERLAY */
 
 .menu-overlay{
 
@@ -969,6 +960,8 @@ button{
     z-index:500;
 
     font-size:14px;
+
+    white-space:nowrap;
 }
 
 .toast.show{
@@ -1128,8 +1121,6 @@ button{
     }
 
 
-    /* MOBILE MENU */
-
     .menu-panel{
 
         width:78%;
@@ -1233,9 +1224,6 @@ button{
 
     <div class="header-right">
 
-
-        <!-- NOTIFICATION -->
-
         <button
             class="header-icon notification"
             onclick="showMessage('No new notifications')">
@@ -1245,8 +1233,6 @@ button{
         </button>
 
 
-        <!-- WALLET -->
-
         <button
             class="header-icon wallet-top"
             onclick="goWallet()">
@@ -1255,8 +1241,6 @@ button{
 
         </button>
 
-
-        <!-- REFER -->
 
         <button
             class="header-icon redeem-top"
@@ -1285,8 +1269,6 @@ button{
     class="menu-panel"
     id="menuPanel">
 
-
-    <!-- MENU HEADER -->
 
     <div class="menu-title">
 
@@ -1327,8 +1309,6 @@ button{
     <div class="menu-list">
 
 
-        <!-- HOME -->
-
         <button
             class="menu-item"
             onclick="goHome()">
@@ -1347,8 +1327,6 @@ button{
 
         </button>
 
-
-        <!-- PROFILE -->
 
         <button
             class="menu-item"
@@ -1369,8 +1347,6 @@ button{
         </button>
 
 
-        <!-- WALLET -->
-
         <button
             class="menu-item"
             onclick="goWallet()">
@@ -1389,8 +1365,6 @@ button{
 
         </button>
 
-
-        <!-- REFER & EARN -->
 
         <button
             class="menu-item"
@@ -1411,8 +1385,6 @@ button{
         </button>
 
 
-        <!-- HISTORY -->
-
         <button
             class="menu-item"
             onclick="showMessage('History page coming soon')">
@@ -1432,8 +1404,6 @@ button{
         </button>
 
 
-        <!-- NOTIFICATIONS -->
-
         <button
             class="menu-item"
             onclick="showMessage('No new notifications')">
@@ -1452,8 +1422,6 @@ button{
 
         </button>
 
-
-        <!-- SUPPORT -->
 
         <button
             class="menu-item"
@@ -1485,8 +1453,6 @@ button{
 <main class="container">
 
 
-    <!-- WELCOME -->
-
     <section class="welcome">
 
         <h1 id="username">
@@ -1504,8 +1470,6 @@ button{
     </section>
 
 
-
-    <!-- ================= REFER & EARN ================= -->
 
     <section
         class="referral"
@@ -1547,8 +1511,6 @@ button{
 
 
 
-    <!-- ================= GAMES ================= -->
-
     <div class="section-head">
 
         <small>
@@ -1566,8 +1528,6 @@ button{
     </div>
 
 
-
-    <!-- ================= LUDO CLASSIC ================= -->
 
     <article class="game-card">
 
@@ -1601,8 +1561,6 @@ button{
             </p>
 
 
-            <!-- PLAY NOW -->
-
             <button
                 class="play-btn"
                 onclick="goBattles()">
@@ -1617,8 +1575,6 @@ button{
     </article>
 
 
-
-    <!-- ================= 1 GOTI ================= -->
 
     <section class="soon-card">
 
@@ -1664,88 +1620,61 @@ button{
 <nav class="bottom-nav">
 
 
-    <!-- HOME -->
-
     <button
         class="nav-item active"
         onclick="goHome()">
 
         <div class="nav-icon">
-
             🏠
-
         </div>
 
         <span>
-
             Home
-
         </span>
 
     </button>
 
-
-
-    <!-- WALLET -->
 
     <button
         class="nav-item"
         onclick="goWallet()">
 
         <div class="nav-icon">
-
             💰
-
         </div>
 
         <span>
-
             Wallet
-
         </span>
 
     </button>
 
-
-
-    <!-- SUPPORT -->
 
     <button
         class="nav-item"
         onclick="goSupport()">
 
         <div class="nav-icon">
-
             🎧
-
         </div>
 
         <span>
-
             Support
-
         </span>
 
     </button>
 
-
-
-    <!-- PROFILE -->
 
     <button
         class="nav-item"
         onclick="goProfile()">
 
         <div class="nav-icon">
-
             👤
-
         </div>
 
         <span>
-
             Profile
-
         </span>
 
     </button>
@@ -1768,23 +1697,433 @@ button{
 
 
 /* =====================================================
+   FIREBASE CONFIG
+   =====================================================
+
+   IMPORTANT:
+   YAHAN APNE FIREBASE PROJECT KA WAHI CONFIG
+   PASTE KARNA HAI JO AAPKE LOGIN PAGE ME HAI.
+
+===================================================== */
+
+const firebaseConfig = {
+
+    apiKey: "PASTE_YOUR_FIREBASE_API_KEY",
+
+    authDomain: "PASTE_YOUR_PROJECT.firebaseapp.com",
+
+    projectId: "PASTE_YOUR_PROJECT_ID",
+
+    storageBucket: "PASTE_YOUR_PROJECT.firebasestorage.app",
+
+    messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+
+    appId: "PASTE_YOUR_FIREBASE_APP_ID"
+
+};
+
+
+
+/* =====================================================
+   FIREBASE INITIALIZATION
+===================================================== */
+
+let firebaseDB = null;
+
+
+try {
+
+    if (!firebase.apps.length) {
+
+        firebase.initializeApp(firebaseConfig);
+
+    }
+
+    firebaseDB =
+        firebase.firestore();
+
+    console.log(
+        "Firebase Firestore connected"
+    );
+
+} catch(error) {
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
+}
+
+
+
+/* =====================================================
+   SAVE / UPDATE CUSTOMER
+===================================================== */
+
+async function saveCustomerToFirebase(mobile) {
+
+    if (!firebaseDB) {
+
+        console.error(
+            "Firebase DB not connected"
+        );
+
+        return false;
+    }
+
+
+    const cleanMobile =
+        String(mobile)
+        .replace(/\D/g, "");
+
+
+    if (!/^91[6-9]\d{9}$/.test(cleanMobile)) {
+
+        console.error(
+            "Invalid mobile:",
+            cleanMobile
+        );
+
+        return false;
+    }
+
+
+    const userRef =
+        firebaseDB
+        .collection("customers")
+        .doc(cleanMobile);
+
+
+    const now =
+        firebase.firestore
+        .FieldValue
+        .serverTimestamp();
+
+
+    try {
+
+
+        /*
+         * NEW USER
+         */
+
+        try {
+
+            await userRef.create({
+
+                mobile:
+                    "+" + cleanMobile,
+
+                balance: 0,
+
+                status:
+                    "active",
+
+                createdAt:
+                    now,
+
+                lastLoginAt:
+                    now
+
+            });
+
+
+            console.log(
+                "NEW CUSTOMER CREATED:",
+                cleanMobile
+            );
+
+
+        } catch(createError) {
+
+
+            /*
+             * EXISTING USER
+             *
+             * IMPORTANT:
+             * Balance ko touch nahi karna.
+             */
+
+            await userRef.update({
+
+                status:
+                    "active",
+
+                lastLoginAt:
+                    now
+
+            });
+
+
+            console.log(
+                "EXISTING CUSTOMER UPDATED:",
+                cleanMobile
+            );
+
+        }
+
+
+        localStorage.setItem(
+            "rdxFirebaseUserId",
+            cleanMobile
+        );
+
+
+        return true;
+
+
+    } catch(error) {
+
+        console.error(
+            "FIREBASE CUSTOMER SAVE ERROR:",
+            error
+        );
+
+        return false;
+
+    }
+
+}
+
+
+
+/* =====================================================
+   GET LOGGED-IN MOBILE
+===================================================== */
+
+function getLoggedInMobile() {
+
+
+    /*
+     * Login page se save hua mobile
+     */
+
+    let mobile =
+        localStorage.getItem(
+            "rdxFirebaseUserId"
+        );
+
+
+    /*
+     * Backup keys
+     */
+
+    if(!mobile){
+
+        mobile =
+            localStorage.getItem(
+                "rdxMobile"
+            );
+
+    }
+
+
+    if(!mobile){
+
+        mobile =
+            localStorage.getItem(
+                "mobile"
+            );
+
+    }
+
+
+    return mobile;
+
+}
+
+
+
+/* =====================================================
+   LOGIN KE BAAD FIREBASE UPDATE
+===================================================== */
+
+async function syncLoggedInCustomer() {
+
+
+    const mobile =
+        getLoggedInMobile();
+
+
+    if(!mobile){
+
+        console.warn(
+            "Logged-in mobile not found in localStorage"
+        );
+
+        return;
+
+    }
+
+
+    console.log(
+        "Syncing customer:",
+        mobile
+    );
+
+
+    const saved =
+        await saveCustomerToFirebase(
+            mobile
+        );
+
+
+    if(saved){
+
+        console.log(
+            "Customer Firebase sync successful"
+        );
+
+    }else{
+
+        console.error(
+            "Customer Firebase sync failed"
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
+   LOAD BALANCE
+   ===================================================== */
+
+async function loadCustomerBalance() {
+
+
+    if(!firebaseDB){
+
+        return;
+
+    }
+
+
+    const mobile =
+        getLoggedInMobile();
+
+
+    if(!mobile){
+
+        return;
+
+    }
+
+
+    const cleanMobile =
+        String(mobile)
+        .replace(/\D/g,"");
+
+
+    if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
+
+        return;
+
+    }
+
+
+    try{
+
+
+        /*
+         * NOTE:
+         * Iske liye Firestore read permission
+         * required hai.
+         */
+
+        const doc =
+            await firebaseDB
+            .collection("customers")
+            .doc(cleanMobile)
+            .get();
+
+
+        if(doc.exists){
+
+            const data =
+                doc.data();
+
+
+            const balance =
+                Number(
+                    data.balance || 0
+                );
+
+
+            document
+            .getElementById("topBalance")
+            .textContent =
+                balance;
+
+
+            console.log(
+                "Customer balance:",
+                balance
+            );
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "BALANCE LOAD ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+
+/* =====================================================
    USERNAME
 ===================================================== */
 
 const savedUsername =
-    localStorage.getItem("rdxUsername");
+    localStorage.getItem(
+        "rdxUsername"
+    );
 
 
 if(savedUsername){
 
-    document.getElementById("username").textContent =
+    document
+    .getElementById("username")
+    .textContent =
         "Hey, " + savedUsername;
 
 
-    document.getElementById("menuUsername").textContent =
+    document
+    .getElementById("menuUsername")
+    .textContent =
         savedUsername;
 
 }
+
+
+
+/* =====================================================
+   START FIREBASE SYNC
+===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function(){
+
+        await syncLoggedInCustomer();
+
+        /*
+         * Balance load
+         */
+
+        await loadCustomerBalance();
+
+    }
+);
 
 
 
@@ -1822,7 +2161,7 @@ function closeMenu(){
 
 
 /* =====================================================
-   HOME
+   NAVIGATION
 ===================================================== */
 
 function goHome(){
@@ -1835,16 +2174,6 @@ function goHome(){
 }
 
 
-
-/* =====================================================
-   BATTLES
-===================================================== */
-
-/*
-   Ludo Classic ke Play Now par click karne par
-   battles.html open hoga.
-*/
-
 function goBattles(){
 
     closeMenu();
@@ -1854,11 +2183,6 @@ function goBattles(){
 
 }
 
-
-
-/* =====================================================
-   WALLET
-===================================================== */
 
 function goWallet(){
 
@@ -1870,11 +2194,6 @@ function goWallet(){
 }
 
 
-
-/* =====================================================
-   SUPPORT
-===================================================== */
-
 function goSupport(){
 
     closeMenu();
@@ -1885,11 +2204,6 @@ function goSupport(){
 }
 
 
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
 function goProfile(){
 
     closeMenu();
@@ -1899,11 +2213,6 @@ function goProfile(){
 
 }
 
-
-
-/* =====================================================
-   REFER & EARN
-===================================================== */
 
 function goRedeem(){
 
@@ -1923,21 +2232,30 @@ function goRedeem(){
 function showMessage(message){
 
     const toast =
-        document.getElementById("toast");
+        document.getElementById(
+            "toast"
+        );
 
 
     toast.textContent =
         message;
 
 
-    toast.classList.add("show");
+    toast.classList.add(
+        "show"
+    );
 
 
-    setTimeout(function(){
+    setTimeout(
+        function(){
 
-        toast.classList.remove("show");
+            toast.classList.remove(
+                "show"
+            );
 
-    },1800);
+        },
+        1800
+    );
 
 }
 
