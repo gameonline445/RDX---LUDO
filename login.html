@@ -869,6 +869,46 @@ body{
 
 </style>
 
+
+<!-- FIREBASE FIRESTORE (MSG91 OTP IS NOT CHANGED) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+  authDomain: "rdx-ludo.firebaseapp.com",
+  projectId: "rdx-ludo",
+  storageBucket: "rdx-ludo.firebasestorage.app",
+  messagingSenderId: "928340814840",
+  appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+
+let firebaseDB = null;
+try {
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  firebaseDB = firebase.firestore();
+  console.log("Firebase Firestore connected");
+} catch (error) {
+  console.error("Firebase initialization error:", error);
+}
+
+async function saveCustomerToFirebase(mobile) {
+  if (!firebaseDB) return false;
+  const cleanMobile = String(mobile).replace(/\D/g, "");
+  if (!/^91[6-9]\d{9}$/.test(cleanMobile)) return false;
+  const userRef = firebaseDB.collection("customers").doc(cleanMobile);
+  const snapshot = await userRef.get();
+  const now = firebase.firestore.FieldValue.serverTimestamp();
+  if (snapshot.exists) {
+    await userRef.set({ mobile: "+" + cleanMobile, lastLoginAt: now, status: "active" }, { merge: true });
+  } else {
+    await userRef.set({ mobile: "+" + cleanMobile, balance: 0, status: "active", createdAt: now, lastLoginAt: now }, { merge: true });
+  }
+  localStorage.setItem("rdxFirebaseUserId", cleanMobile);
+  return true;
+}
+</script>
+
 </head>
 
 
@@ -1789,6 +1829,17 @@ function verifyOTP(){
                 );
 
             }
+
+
+            /* SAVE / UPDATE CUSTOMER IN FIRESTORE */
+
+            saveCustomerToFirebase(currentIdentifier)
+                .then(function(saved){
+                    console.log("Firebase customer save:", saved);
+                })
+                .catch(function(error){
+                    console.error("FIREBASE CUSTOMER SAVE ERROR:", error);
+                });
 
 
             /* STOP TIMER */
