@@ -1012,15 +1012,62 @@ button{
 
 <script>
 
-/* ALL LOGIN BUTTONS GO TO login.html */
+/*
+=========================================
+RDX LUDO REFERRAL SYSTEM
+=========================================
+
+अगर कोई User इस तरह आए:
+
+index.html?ref=NR0041
+
+तो Referral Code आगे Login तक जाएगा।
+
+अगर कोई सामान्य User आए:
+
+index.html
+
+तो सामान्य login.html खुलेगा।
+*/
+
 function goToLogin(){
 
-    window.location.href = "./login.html";
+    /* URL से referral code पढ़ना */
+    const params = new URLSearchParams(window.location.search);
 
+    const ref = params.get("ref");
+
+    /* Referral मौजूद है */
+    if(ref){
+
+        /*
+        Referral Code को sessionStorage में भी रख रहे हैं।
+        इससे अगले page पर भी code सुरक्षित रहेगा।
+        */
+        sessionStorage.setItem(
+            "rdx_referral_code",
+            ref.toUpperCase()
+        );
+
+        /*
+        Referral Code के साथ Login Page खोलना
+        */
+        window.location.href =
+            "./login.html?ref=" +
+            encodeURIComponent(ref);
+
+        return;
+    }
+
+    /*
+    Referral नहीं है तो सामान्य Login
+    */
+    window.location.href =
+        "./login.html";
 }
 
 
-/* Existing toast function kept */
+/* Existing toast function */
 function showMessage(message){
 
     const toast =
