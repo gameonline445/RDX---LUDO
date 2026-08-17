@@ -13,10 +13,6 @@
 
 <style>
 
-/* =====================================================
-   RESET
-   ===================================================== */
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -29,7 +25,6 @@ html{
 
 body{
     min-height:100vh;
-
     font-family:
         -apple-system,
         BlinkMacSystemFont,
@@ -37,9 +32,7 @@ body{
         Roboto,
         Arial,
         sans-serif;
-
     color:#101a38;
-
     overflow-x:hidden;
 
     background:
@@ -48,19 +41,16 @@ body{
             rgba(83,125,255,.28),
             transparent 30%
         ),
-
         radial-gradient(
             circle at 90% 15%,
             rgba(255,116,93,.22),
             transparent 28%
         ),
-
         radial-gradient(
             circle at 50% 100%,
             rgba(91,218,172,.18),
             transparent 35%
         ),
-
         linear-gradient(
             135deg,
             #edf4ff,
@@ -68,11 +58,6 @@ body{
             #f4f7ff
         );
 }
-
-
-/* =====================================================
-   TOP BAR
-   ===================================================== */
 
 .top-bar{
     padding:18px 18px 0;
@@ -132,29 +117,15 @@ body{
     font-size:25px;
 }
 
-
-/* =====================================================
-   PAGE
-   ===================================================== */
-
 .page{
     width:100%;
-
     max-width:780px;
-
     margin:auto;
-
     padding:25px 18px 70px;
 }
 
-
-/* =====================================================
-   BRAND
-   ===================================================== */
-
 .brand{
     text-align:center;
-
     margin:12px 0 25px;
 }
 
@@ -207,7 +178,6 @@ body{
 
 .logo span{
     position:relative;
-
     z-index:2;
 }
 
@@ -246,11 +216,6 @@ body{
 
     font-weight:600;
 }
-
-
-/* =====================================================
-   LOGIN CARD
-   ===================================================== */
 
 .login-card{
     background:
@@ -307,11 +272,6 @@ body{
     left:-60px;
 }
 
-
-/* =====================================================
-   STEP
-   ===================================================== */
-
 .step{
     display:inline-flex;
 
@@ -340,11 +300,6 @@ body{
     z-index:2;
 }
 
-
-/* =====================================================
-   TITLE
-   ===================================================== */
-
 .login-card h2{
     margin-top:22px;
 
@@ -371,11 +326,6 @@ body{
     z-index:2;
 }
 
-
-/* =====================================================
-   FORM
-   ===================================================== */
-
 .form-group{
     margin-top:24px;
 
@@ -395,11 +345,6 @@ body{
 
     font-weight:850;
 }
-
-
-/* =====================================================
-   MOBILE
-   ===================================================== */
 
 .mobile-wrap{
     display:grid;
@@ -469,11 +414,6 @@ body{
         0 0 0 4px rgba(54,111,230,.1);
 }
 
-
-/* =====================================================
-   BUTTONS
-   ===================================================== */
-
 .continue-btn,
 .verify-btn{
 
@@ -526,11 +466,6 @@ body{
 
     cursor:not-allowed;
 }
-
-
-/* =====================================================
-   OTP SECTION
-   ===================================================== */
 
 #otpSection{
     display:none;
@@ -627,11 +562,6 @@ body{
     cursor:not-allowed;
 }
 
-
-/* =====================================================
-   FEATURES
-   ===================================================== */
-
 .features{
     display:grid;
 
@@ -683,11 +613,6 @@ body{
     margin-bottom:7px;
 }
 
-
-/* =====================================================
-   INFO
-   ===================================================== */
-
 .info-text{
     text-align:center;
 
@@ -705,11 +630,6 @@ body{
 .info-text strong{
     color:#2865d6;
 }
-
-
-/* =====================================================
-   TOAST
-   ===================================================== */
 
 .toast{
     position:fixed;
@@ -754,11 +674,6 @@ body{
         translateX(-50%)
         translateY(0);
 }
-
-
-/* =====================================================
-   MOBILE RESPONSIVE
-   ===================================================== */
 
 @media(max-width:600px){
 
@@ -839,13 +754,7 @@ body{
 
         font-size:17px;
     }
-
 }
-
-
-/* =====================================================
-   VERY SMALL DEVICES
-   ===================================================== */
 
 @media(max-width:360px){
 
@@ -864,7 +773,6 @@ body{
     .mobile-input{
         font-size:15px;
     }
-
 }
 
 </style>
@@ -872,12 +780,12 @@ body{
 
 <!-- =====================================================
      FIREBASE
-     MSG91 IS NOT CHANGED
      ===================================================== -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
 
 <script>
 
@@ -903,11 +811,13 @@ const firebaseConfig = {
 
 };
 
+
 let firebaseDB = null;
+
 
 try {
 
-    if(!firebase.apps.length){
+    if (!firebase.apps.length) {
 
         firebase.initializeApp(
             firebaseConfig
@@ -922,208 +832,12 @@ try {
         "FIREBASE FIRESTORE CONNECTED"
     );
 
-} catch(error){
+} catch(error) {
 
     console.error(
         "FIREBASE INITIALIZATION ERROR:",
         error
     );
-
-}
-
-
-/* =====================================================
-   FINAL FIREBASE CUSTOMER SAVE FUNCTION
-   ===================================================== */
-
-async function saveCustomerToFirebase(mobile){
-
-    console.log(
-        "Firebase save started:",
-        mobile
-    );
-
-
-    if(!firebaseDB){
-
-        console.error(
-            "Firebase DB not connected"
-        );
-
-        return false;
-
-    }
-
-
-    const cleanMobile =
-        String(mobile)
-        .replace(/\D/g,"");
-
-
-    if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
-
-        console.error(
-            "Invalid mobile:",
-            cleanMobile
-        );
-
-        return false;
-
-    }
-
-
-    const userRef =
-        firebaseDB
-        .collection("customers")
-        .doc(cleanMobile);
-
-
-    const now =
-        firebase.firestore
-        .FieldValue
-        .serverTimestamp();
-
-
-    /*
-     * =================================================
-     * STEP 1
-     *
-     * Existing customer ke liye sirf allowed
-     * fields update karenge.
-     *
-     * Agar document exist nahi karta,
-     * ye write rules se reject hogi.
-     * Tab STEP 2 me new customer create karenge.
-     * =================================================
-     */
-
-    try{
-
-        await userRef.set(
-
-            {
-
-                status:
-                    "active",
-
-                lastLoginAt:
-                    now
-
-            },
-
-            {
-
-                merge:true
-
-            }
-
-        );
-
-
-        /*
-         * Agar yahan success hua,
-         * customer already exist karta hai.
-         */
-
-        console.log(
-            "EXISTING CUSTOMER UPDATED:",
-            cleanMobile
-        );
-
-
-        localStorage.setItem(
-            "rdxFirebaseUserId",
-            cleanMobile
-        );
-
-
-        return true;
-
-
-    }catch(updateError){
-
-        console.warn(
-            "Existing customer update failed. Trying new customer create...",
-            updateError
-        );
-
-    }
-
-
-    /*
-     * =================================================
-     * STEP 2
-     *
-     * New customer create.
-     * =================================================
-     */
-
-    try{
-
-        await userRef.set(
-
-            {
-
-                mobile:
-                    "+" + cleanMobile,
-
-                balance:
-                    0,
-
-                status:
-                    "active",
-
-                createdAt:
-                    now,
-
-                lastLoginAt:
-                    now
-
-            }
-
-        );
-
-
-        console.log(
-            "NEW CUSTOMER CREATED:",
-            cleanMobile
-        );
-
-
-        localStorage.setItem(
-            "rdxFirebaseUserId",
-            cleanMobile
-        );
-
-
-        return true;
-
-
-    }catch(createError){
-
-        console.error(
-            "FIREBASE CUSTOMER CREATE ERROR:",
-            createError
-        );
-
-
-        /*
-         * Exact error screen par bhi dikhega
-         * taaki agar kuch fail ho to pata chale.
-         */
-
-        showMessage(
-            "Firebase Error: " +
-            (
-                createError.code ||
-                "write-failed"
-            )
-        );
-
-
-        return false;
-
-    }
 
 }
 
@@ -1134,10 +848,6 @@ async function saveCustomerToFirebase(mobile){
 
 <body>
 
-
-<!-- =====================================================
-     BACK BUTTON
-     ===================================================== -->
 
 <div class="top-bar">
 
@@ -1160,239 +870,205 @@ async function saveCustomerToFirebase(mobile){
 </div>
 
 
-<!-- =====================================================
-     PAGE
-     ===================================================== -->
-
 <main class="page">
 
 
-    <!-- BRAND -->
+<section class="brand">
 
-    <section class="brand">
+    <div class="logo">
 
-        <div class="logo">
-
-            <span>
-                RDX
-            </span>
-
-        </div>
-
-        <h1>
-            RDX LUDO
-        </h1>
-
-        <p>
-            Play · Compete · Enjoy
-        </p>
-
-    </section>
-
-
-    <!-- LOGIN CARD -->
-
-    <section class="login-card">
-
-
-        <!-- STEP -->
-
-        <span
-            class="step"
-            id="stepLabel"
-        >
-            ✨ STEP 1
+        <span>
+            RDX
         </span>
 
+    </div>
 
-        <!-- TITLE -->
+    <h1>
+        RDX LUDO
+    </h1>
 
-        <h2 id="titleText">
-            Mobile Login
-        </h2>
-
-
-        <p
-            class="subtitle"
-            id="subtitleText"
-        >
-            Enter your registered mobile number.
-            We will send you an OTP for secure login.
-        </p>
-
-
-        <!-- MOBILE -->
-
-        <div
-            class="form-group"
-            id="mobileGroup"
-        >
-
-            <label>
-                Mobile Number
-            </label>
-
-
-            <div class="mobile-wrap">
-
-
-                <div class="country-code">
-
-                    🇮🇳 +91
-
-                </div>
-
-
-                <input
-                    class="mobile-input"
-                    type="tel"
-                    id="mobile"
-                    placeholder="10-digit mobile number"
-                    inputmode="numeric"
-                    maxlength="10"
-                    autocomplete="tel"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- SEND OTP -->
-
-        <button
-            type="button"
-            class="continue-btn"
-            id="continueBtn"
-            disabled
-        >
-            Loading OTP Service...
-        </button>
-
-
-        <!-- OTP -->
-
-        <div id="otpSection">
-
-
-            <label class="otp-label">
-
-                Enter OTP
-
-            </label>
-
-
-            <input
-                class="otp-input"
-                type="tel"
-                id="otp"
-                placeholder="------"
-                inputmode="numeric"
-                autocomplete="one-time-code"
-                maxlength="6"
-            >
-
-
-            <p
-                class="otp-hint"
-                id="otpHint"
-            >
-                OTP will be sent to your mobile number.
-            </p>
-
-
-            <!-- VERIFY -->
-
-            <button
-                type="button"
-                class="verify-btn"
-                id="verifyBtn"
-                disabled
-            >
-                Verify OTP
-            </button>
-
-
-            <!-- RESEND -->
-
-            <button
-                type="button"
-                class="resend-btn"
-                id="resendBtn"
-                disabled
-            >
-                Resend OTP
-            </button>
-
-
-        </div>
-
-
-        <!-- FEATURES -->
-
-        <div class="features">
-
-
-            <div class="feature">
-
-                <div class="feature-icon">
-                    🛡️
-                </div>
-
-                Secure Login
-
-            </div>
-
-
-            <div class="feature">
-
-                <div class="feature-icon">
-                    ⚡
-                </div>
-
-                Quick Access
-
-            </div>
-
-
-            <div class="feature">
-
-                <div class="feature-icon">
-                    🎧
-                </div>
-
-                Support
-
-            </div>
-
-
-        </div>
-
-
-    </section>
-
-
-    <!-- INFO -->
-
-    <p class="info-text">
-
-        Your mobile number is verified using secure OTP verification.
-
-        <br>
-
-        <strong>
-            Use your registered mobile number to login.
-        </strong>
-
+    <p>
+        Play · Compete · Enjoy
     </p>
+
+</section>
+
+
+<section class="login-card">
+
+
+<span
+    class="step"
+    id="stepLabel"
+>
+    ✨ STEP 1
+</span>
+
+
+<h2 id="titleText">
+    Mobile Login
+</h2>
+
+
+<p
+    class="subtitle"
+    id="subtitleText"
+>
+    Enter your registered mobile number.
+    We will send you an OTP for secure login.
+</p>
+
+
+<div
+    class="form-group"
+    id="mobileGroup"
+>
+
+    <label>
+        Mobile Number
+    </label>
+
+
+    <div class="mobile-wrap">
+
+
+        <div class="country-code">
+            🇮🇳 +91
+        </div>
+
+
+        <input
+            class="mobile-input"
+            type="tel"
+            id="mobile"
+            placeholder="10-digit mobile number"
+            inputmode="numeric"
+            maxlength="10"
+            autocomplete="tel"
+        >
+
+    </div>
+
+</div>
+
+
+<button
+    type="button"
+    class="continue-btn"
+    id="continueBtn"
+    disabled
+>
+    Loading OTP Service...
+</button>
+
+
+<div id="otpSection">
+
+
+    <label class="otp-label">
+        Enter OTP
+    </label>
+
+
+    <input
+        class="otp-input"
+        type="tel"
+        id="otp"
+        placeholder="------"
+        inputmode="numeric"
+        autocomplete="one-time-code"
+        maxlength="6"
+    >
+
+
+    <p
+        class="otp-hint"
+        id="otpHint"
+    >
+        OTP will be sent to your registered mobile number.
+    </p>
+
+
+    <button
+        type="button"
+        class="verify-btn"
+        id="verifyBtn"
+        disabled
+    >
+        Verify OTP
+    </button>
+
+
+    <button
+        type="button"
+        class="resend-btn"
+        id="resendBtn"
+        disabled
+    >
+        Resend OTP
+    </button>
+
+
+</div>
+
+
+<div class="features">
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            🛡️
+        </div>
+
+        Secure Login
+
+    </div>
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            ⚡
+        </div>
+
+        Quick Access
+
+    </div>
+
+
+    <div class="feature">
+
+        <div class="feature-icon">
+            🎧
+        </div>
+
+        Support
+
+    </div>
+
+
+</div>
+
+
+</section>
+
+
+<p class="info-text">
+
+    Your mobile number is verified using secure OTP verification.
+
+    <br>
+
+    <strong>
+        Use your registered mobile number to login.
+    </strong>
+
+</p>
 
 
 </main>
 
-
-<!-- =====================================================
-     TOAST
-     ===================================================== -->
 
 <div
     class="toast"
@@ -1400,11 +1076,15 @@ async function saveCustomerToFirebase(mobile){
 ></div>
 
 
+
 <!-- =====================================================
      MSG91 CONFIGURATION
+
+     MSG91 KO NAHI HATAYA GAYA HAI.
+     OTP SIRF MSG91 SE HOGA.
      ===================================================== -->
 
-<script type="text/javascript">
+<script>
 
 var MSG91_WIDGET_ID =
 "366870704943343439343834";
@@ -1456,10 +1136,6 @@ var configuration = {
 </script>
 
 
-<!-- =====================================================
-     MSG91 SDK
-     ===================================================== -->
-
 <script
     type="text/javascript"
     src="https://verify.msg91.com/otp-provider.js"
@@ -1467,7 +1143,9 @@ var configuration = {
 ></script>
 
 
+
 <script>
+
 
 /* =====================================================
    ELEMENTS
@@ -1573,7 +1251,6 @@ function showMessage(message){
 
     showMessage.timer =
         setTimeout(
-
             function(){
 
                 toast.classList.remove(
@@ -1581,16 +1258,14 @@ function showMessage(message){
                 );
 
             },
-
             4000
-
         );
 
 }
 
 
 /* =====================================================
-   MSG91 READY CHECK
+   MSG91 READY
    ===================================================== */
 
 function checkMSG91Ready(){
@@ -1623,7 +1298,7 @@ function checkMSG91Ready(){
 
 
 /* =====================================================
-   WAIT FOR MSG91
+   WAIT MSG91
    ===================================================== */
 
 function waitForMSG91(){
@@ -1631,10 +1306,8 @@ function waitForMSG91(){
     let attempts =
         0;
 
-
     const timer =
         setInterval(
-
             function(){
 
                 attempts++;
@@ -1674,16 +1347,10 @@ function waitForMSG91(){
                         "MSG91 OTP service load नहीं हुआ।"
                     );
 
-                    console.error(
-                        "MSG91 METHODS NOT AVAILABLE"
-                    );
-
                 }
 
             },
-
             100
-
         );
 
 }
@@ -1694,27 +1361,30 @@ function waitForMSG91(){
    ===================================================== */
 
 window.addEventListener(
-
     "load",
-
     function(){
 
         waitForMSG91();
 
     }
-
 );
 
 
 /* =====================================================
-   GET MOBILE
+   MOBILE
    ===================================================== */
 
 function getMobile(){
 
     return mobileInput.value
-        .replace(/\D/g,"")
-        .slice(0,10);
+        .replace(
+            /\D/g,
+            ""
+        )
+        .slice(
+            0,
+            10
+        );
 
 }
 
@@ -1747,13 +1417,11 @@ function startLogin(){
 
 
     if(
-        !MSG91_TOKEN ||
-        MSG91_TOKEN ===
-        "YOUR_MSG91_WIDGET_TOKEN"
+        !MSG91_TOKEN
     ){
 
         showMessage(
-            "MSG91 Widget Token missing."
+            "MSG91 configuration missing."
         );
 
         return;
@@ -1793,22 +1461,17 @@ function startLogin(){
     continueBtn.style.display =
         "none";
 
-
     stepLabel.textContent =
         "✨ STEP 2";
-
 
     titleText.textContent =
         "Verify Mobile Number";
 
-
     subtitleText.textContent =
         "Enter the OTP sent to your registered mobile number.";
 
-
     otpSection.style.display =
         "block";
-
 
     otpInput.value =
         "";
@@ -1819,9 +1482,8 @@ function startLogin(){
     resendBtn.disabled =
         true;
 
-
     otpHint.textContent =
-        "OTP will be sent to your mobile number.";
+        "OTP will be sent to your registered mobile number.";
 
 
     sendOTPNow();
@@ -1854,7 +1516,6 @@ function sendOTPNow(){
 
     resendBtn.disabled =
         true;
-
 
     showMessage(
         "OTP भेजा जा रहा है..."
@@ -1900,7 +1561,7 @@ function sendOTPNow(){
 
 
             verifyBtn.disabled =
-                false;
+                true;
 
 
             showMessage(
@@ -1912,15 +1573,12 @@ function sendOTPNow(){
 
 
             setTimeout(
-
                 function(){
 
                     otpInput.focus();
 
                 },
-
                 300
-
             );
 
         },
@@ -1936,6 +1594,7 @@ function sendOTPNow(){
 
             verifyBtn.disabled =
                 true;
+
 
             resendBtn.disabled =
                 false;
@@ -1960,8 +1619,14 @@ function verifyOTP(){
 
     const otp =
         otpInput.value
-        .replace(/\D/g,"")
-        .slice(0,6);
+            .replace(
+                /\D/g,
+                ""
+            )
+            .slice(
+                0,
+                6
+            );
 
 
     if(
@@ -2002,17 +1667,6 @@ function verifyOTP(){
         "Verifying...";
 
 
-    showMessage(
-        "OTP verify किया जा रहा है..."
-    );
-
-
-    /*
-     * =================================================
-     * MSG91 VERIFY
-     * =================================================
-     */
-
     window.verifyOtp(
 
         otp,
@@ -2027,14 +1681,13 @@ function verifyOTP(){
 
 
             /*
-             * MSG91 verification successful.
+             * MSG91 verification successful
              */
 
             localStorage.setItem(
                 "rdxLoggedIn",
                 "true"
             );
-
 
             localStorage.setItem(
                 "rdxVerifiedMobile",
@@ -2056,16 +1709,17 @@ function verifyOTP(){
 
 
             /*
-             * =================================================
+             * =========================================
              * FIREBASE SAVE
+             * =========================================
              *
-             * Dashboard tabhi khulega jab Firebase save
-             * successful hoga.
-             * =================================================
+             * IMPORTANT:
+             * Dashboard par jaane se pehle
+             * Firebase save complete hoga.
              */
 
             showMessage(
-                "Login verified. Firebase में data save हो रहा है..."
+                "OTP verify हो गया। Firebase में data save हो रहा है..."
             );
 
 
@@ -2075,12 +1729,11 @@ function verifyOTP(){
                 );
 
 
+            /*
+             * Firebase save FAIL
+             */
+
             if(!saved){
-
-                console.error(
-                    "LOGIN STOPPED: FIREBASE SAVE FAILED"
-                );
-
 
                 verifyBtn.disabled =
                     false;
@@ -2088,11 +1741,9 @@ function verifyOTP(){
                 verifyBtn.textContent =
                     "Verify OTP";
 
-
                 showMessage(
                     "OTP verify हो गया, लेकिन Firebase में data save नहीं हुआ।"
                 );
-
 
                 return;
 
@@ -2100,45 +1751,27 @@ function verifyOTP(){
 
 
             /*
-             * =================================================
-             * FIREBASE SUCCESS
-             * =================================================
+             * Firebase save SUCCESS
              */
-
-            console.log(
-                "FIREBASE SAVE SUCCESS"
-            );
-
 
             clearInterval(
                 resendTimer
             );
 
 
-            verifyBtn.textContent =
-                "Verified ✓";
-
-
             showMessage(
-                "Login successful!"
+                "Login successful! Data Firebase में save हो गया।"
             );
 
 
-            /*
-             * Dashboard ONLY after Firebase success.
-             */
-
             setTimeout(
-
                 function(){
 
                     window.location.href =
                         "./dashboard.html";
 
                 },
-
-                700
-
+                1000
             );
 
         },
@@ -2178,6 +1811,229 @@ function verifyOTP(){
 
 
 /* =====================================================
+   FIREBASE SAVE / UPDATE
+   ===================================================== */
+
+async function saveCustomerToFirebase(mobile){
+
+    try{
+
+        console.log(
+            "================================"
+        );
+
+        console.log(
+            "FIREBASE SAVE START"
+        );
+
+        console.log(
+            "Mobile:",
+            mobile
+        );
+
+
+        /*
+         * Firebase connection check
+         */
+
+        if(!firebaseDB){
+
+            console.error(
+                "Firebase DB not connected"
+            );
+
+            showMessage(
+                "Firebase database connect नहीं हुआ।"
+            );
+
+            return false;
+
+        }
+
+
+        /*
+         * Clean mobile
+         */
+
+        const cleanMobile =
+            String(mobile)
+            .replace(
+                /\D/g,
+                ""
+            );
+
+
+        /*
+         * Indian mobile validation
+         */
+
+        if(
+            !/^91[6-9]\d{9}$/.test(
+                cleanMobile
+            )
+        ){
+
+            console.error(
+                "Invalid mobile:",
+                cleanMobile
+            );
+
+            showMessage(
+                "Mobile number invalid है।"
+            );
+
+            return false;
+
+        }
+
+
+        /*
+         * customers collection
+         *
+         * Example:
+         *
+         * customers
+         *    └── 91917878852370
+         */
+
+        const userRef =
+            firebaseDB
+            .collection(
+                "customers"
+            )
+            .doc(
+                cleanMobile
+            );
+
+
+        const now =
+            firebase.firestore
+            .FieldValue
+            .serverTimestamp();
+
+
+        /*
+         * IMPORTANT
+         *
+         * get() नहीं किया गया है।
+         *
+         * इसलिए read permission की जरूरत नहीं।
+         *
+         * merge:true:
+         *
+         * NEW USER:
+         * document create होगा।
+         *
+         * EXISTING USER:
+         * status और lastLoginAt update होंगे।
+         *
+         * Existing balance overwrite नहीं होगा।
+         */
+
+        await userRef.set(
+
+            {
+
+                mobile:
+                    "+" +
+                    cleanMobile,
+
+                status:
+                    "active",
+
+                lastLoginAt:
+                    now
+
+            },
+
+            {
+
+                merge:
+                    true
+
+            }
+
+        );
+
+
+        /*
+         * Local user ID
+         */
+
+        localStorage.setItem(
+            "rdxFirebaseUserId",
+            cleanMobile
+        );
+
+
+        console.log(
+            "FIREBASE SAVE SUCCESS:",
+            cleanMobile
+        );
+
+        console.log(
+            "================================"
+        );
+
+
+        return true;
+
+
+    }catch(error){
+
+
+        console.error(
+            "================================"
+        );
+
+        console.error(
+            "FIREBASE CUSTOMER SAVE ERROR"
+        );
+
+        console.error(
+            "ERROR CODE:",
+            error.code
+        );
+
+        console.error(
+            "ERROR MESSAGE:",
+            error.message
+        );
+
+        console.error(
+            "FULL ERROR:",
+            error
+        );
+
+        console.error(
+            "================================"
+        );
+
+
+        /*
+         * User ko exact Firebase error
+         * toast me dikhayenge.
+         */
+
+        let message =
+            error.message ||
+            "Unknown Firebase error";
+
+
+        showMessage(
+            "Firebase Error: " +
+            message
+        );
+
+
+        return false;
+
+    }
+
+}
+
+
+/* =====================================================
    RESEND OTP
    ===================================================== */
 
@@ -2198,7 +2054,7 @@ function resendOTP(){
     ){
 
         showMessage(
-            "MSG91 resend service ready नहीं है।"
+            "MSG91 Resend service ready नहीं है।"
         );
 
         return;
@@ -2333,7 +2189,6 @@ function startResendTimer(){
 
     resendTimer =
         setInterval(
-
             function(){
 
                 resendSeconds--;
@@ -2367,9 +2222,7 @@ function startResendTimer(){
                     "s)";
 
             },
-
             1000
-
         );
 
 }
@@ -2380,18 +2233,21 @@ function startResendTimer(){
    ===================================================== */
 
 mobileInput.addEventListener(
-
     "input",
-
     function(){
 
         mobileInput.value =
             mobileInput.value
-            .replace(/\D/g,"")
-            .slice(0,10);
+                .replace(
+                    /\D/g,
+                    ""
+                )
+                .slice(
+                    0,
+                    10
+                );
 
     }
-
 );
 
 
@@ -2400,15 +2256,19 @@ mobileInput.addEventListener(
    ===================================================== */
 
 otpInput.addEventListener(
-
     "input",
-
     function(){
 
         otpInput.value =
             otpInput.value
-            .replace(/\D/g,"")
-            .slice(0,6);
+                .replace(
+                    /\D/g,
+                    ""
+                )
+                .slice(
+                    0,
+                    6
+                );
 
 
         if(
@@ -2430,7 +2290,6 @@ otpInput.addEventListener(
         }
 
     }
-
 );
 
 
@@ -2439,15 +2298,12 @@ otpInput.addEventListener(
    ===================================================== */
 
 continueBtn.addEventListener(
-
     "click",
-
     function(){
 
         startLogin();
 
     }
-
 );
 
 
@@ -2456,15 +2312,12 @@ continueBtn.addEventListener(
    ===================================================== */
 
 verifyBtn.addEventListener(
-
     "click",
-
     function(){
 
         verifyOTP();
 
     }
-
 );
 
 
@@ -2473,15 +2326,12 @@ verifyBtn.addEventListener(
    ===================================================== */
 
 resendBtn.addEventListener(
-
     "click",
-
     function(){
 
         resendOTP();
 
     }
-
 );
 
 
@@ -2490,9 +2340,7 @@ resendBtn.addEventListener(
    ===================================================== */
 
 document.addEventListener(
-
     "keydown",
-
     function(event){
 
         if(
@@ -2537,7 +2385,6 @@ document.addEventListener(
         }
 
     }
-
 );
 
 
