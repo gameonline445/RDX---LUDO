@@ -1,76 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width,
-               initial-scale=1.0,
-               maximum-scale=1.0,
-               user-scalable=no">
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
 
-<title>RDX LUDO - Deposit</title>
+<title>RDX Ludo - Deposit</title>
 
 <style>
-
-/* =========================
-   RESET
-========================= */
 
 *{
     margin:0;
     padding:0;
     box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,
 body{
-
     width:100%;
     height:100%;
-
     overflow:hidden;
-
-    font-family:
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    Arial,
-    sans-serif;
-
-    background:
-    linear-gradient(
-        180deg,
-        #f2f6ff 0%,
-        #ffffff 55%,
-        #f5f7ff 100%
-    );
-
-    color:#111a38;
 }
 
-button,
-input{
-    font:inherit;
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f7f9ff;
+    color:#101a3d;
 }
 
 
 /* =========================
-   PAGE
+   APP
 ========================= */
 
-.page{
-
+.app{
     width:100%;
     height:100vh;
-
     height:100dvh;
-
     display:flex;
     flex-direction:column;
-
     overflow:hidden;
 }
 
@@ -79,178 +52,106 @@ input{
    HEADER
 ========================= */
 
-.top-header{
-
-    height:76px;
-
-    flex:0 0 76px;
+.header{
+    height:82px;
+    min-height:82px;
 
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
 
-    padding:0 18px;
+    padding:0 16px;
 
     background:
     linear-gradient(
         110deg,
-        #edf4ff,
-        #ffffff
+        #f0f4ff,
+        #ffffff,
+        #eef4ff
     );
 
-    border-bottom:1px solid #cbd8f0;
-
-    box-shadow:
-    0 5px 18px rgba(36,75,150,.10);
-
-    z-index:10;
-}
-
-
-.header-left{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:10px;
+    border-bottom:1px solid #d5def1;
 }
 
 
 .menu-btn{
-
-    width:48px;
-    height:48px;
+    width:54px;
+    height:54px;
 
     border:0;
+    border-radius:19px;
 
-    border-radius:16px;
-
-    background:
-    linear-gradient(
-        145deg,
-        #ff7165,
-        #ff8a70
-    );
+    background:#ff786b;
 
     color:white;
 
-    font-size:27px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
+    font-size:29px;
 
     box-shadow:
-    0 7px 18px rgba(255,93,80,.25);
+    0 7px 18px
+    rgba(255,100,90,.25);
 }
 
 
 .logo{
-
-    width:48px;
-    height:48px;
+    width:56px;
+    height:56px;
 
     border-radius:50%;
 
-    background:
-    linear-gradient(
-        145deg,
-        #ffffff,
-        #e7efff
-    );
+    background:white;
 
-    border:3px solid #d3e1ff;
+    border:5px solid #e0e9ff;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
-    color:#1762df;
+    color:#2d65d6;
 
-    font-size:13px;
-
+    font-size:18px;
     font-weight:900;
 
     box-shadow:
-    0 5px 12px rgba(36,93,190,.15);
+    0 4px 15px
+    rgba(50,90,180,.10);
 }
 
 
 .header-right{
-
     display:flex;
-
-    align-items:center;
-
     gap:8px;
 }
 
 
 .header-icon{
-
-    width:47px;
-    height:47px;
-
-    border:0;
+    width:50px;
+    height:50px;
 
     border-radius:17px;
 
-    color:white;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
-    font-size:21px;
+    font-size:23px;
 
     box-shadow:
-    0 6px 15px rgba(0,0,0,.12);
+    0 6px 15px
+    rgba(50,80,160,.15);
 }
 
 
-.notification{
-
-    background:
-    linear-gradient(
-        145deg,
-        #746df4,
-        #817eff
-    );
+.bell{
+    background:#7065ee;
 }
 
-
-.wallet-top{
-
-    background:
-    linear-gradient(
-        145deg,
-        #20c36b,
-        #43d77e
-    );
-
-    font-weight:800;
+.money{
+    background:#38c875;
 }
 
-
-.redeem-top{
-
-    background:
-    linear-gradient(
-        145deg,
-        #ff8a35,
-        #ffad45
-    );
-
-    font-weight:800;
+.gift{
+    background:#ff9a45;
 }
 
 
@@ -259,339 +160,327 @@ input{
 ========================= */
 
 .main{
-
     flex:1;
 
     min-height:0;
 
-    display:flex;
-
-    align-items:flex-start;
-
-    justify-content:center;
-
-    overflow:hidden;
-
     padding:
-    18px
-    18px
-    12px;
-}
-
-
-.deposit-page{
-
-    width:100%;
-
-    max-width:850px;
-
-    height:100%;
+    14px 20px 8px;
 
     overflow:hidden;
 }
 
 
-/* =========================
-   TITLE
-========================= */
+.section-title{
+    color:#3568d2;
 
-.page-label{
-
-    color:#3168dc;
-
-    font-size:14px;
+    font-size:13px;
 
     font-weight:800;
 
-    letter-spacing:1.5px;
+    letter-spacing:2px;
 
     margin-bottom:4px;
 }
 
 
-.page-title{
+h1{
+    font-size:29px;
 
-    font-size:36px;
-
-    line-height:1.1;
-
-    font-weight:850;
-
-    letter-spacing:-1px;
+    line-height:1.05;
 
     margin-bottom:4px;
 }
 
 
-.page-subtitle{
-
-    color:#71809b;
-
-    font-size:18px;
-
-    margin-bottom:18px;
-}
-
-
-/* =========================
-   AMOUNT CARD
-========================= */
-
-.amount-card{
-
-    border:1.5px solid #b8ccef;
-
-    border-radius:25px;
-
-    padding:17px;
-
-    background:
-    radial-gradient(
-        circle at 0% 0%,
-        #e8f0ff,
-        transparent 45%
-    ),
-
-    linear-gradient(
-        135deg,
-        #f4f7ff,
-        #ffffff
-    );
-
-    box-shadow:
-    0 10px 28px rgba(48,89,170,.08);
-}
-
-
-.amount-label{
-
-    display:block;
-
-    color:#69758d;
+.subtitle{
+    color:#75819a;
 
     font-size:15px;
 
-    font-weight:800;
+    margin-bottom:12px;
+}
 
-    letter-spacing:.6px;
+
+/* =========================
+   TABS
+========================= */
+
+.tabs{
+    width:100%;
+
+    display:flex;
+
+    gap:8px;
 
     margin-bottom:10px;
 }
 
 
-.amount-input-box{
+.tab{
+    flex:1;
 
-    height:64px;
+    height:45px;
 
-    border:1.5px solid #b8c9e8;
+    border-radius:14px;
 
-    border-radius:22px;
+    border:1px solid #d0d9ec;
 
-    background:#ffffff;
+    background:#f1f3f8;
 
-    display:flex;
+    color:#68738a;
 
-    align-items:center;
-
-    padding:0 14px;
-
-    gap:13px;
-}
-
-
-.rupee-icon{
-
-    width:46px;
-    height:46px;
-
-    flex:0 0 46px;
-
-    border-radius:50%;
-
-    background:
-    linear-gradient(
-        145deg,
-        #3674e8,
-        #527ef1
-    );
-
-    color:white;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    font-size:24px;
-
-    font-weight:800;
-
-    box-shadow:
-    0 6px 14px rgba(45,105,232,.25);
-}
-
-
-#amount{
-
-    width:100%;
-
-    border:0;
-
-    outline:0;
-
-    background:transparent;
-
-    color:#111a38;
-
-    font-size:28px;
-
-    font-weight:800;
-}
-
-
-.amount-info{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    margin-top:10px;
-}
-
-
-.minimum{
-
-    color:#d4423c;
-
-    font-size:15px;
+    font-size:14px;
 
     font-weight:700;
 }
 
 
-.coin-rate{
+.tab.active{
+    color:white;
 
-    color:#5280d8;
+    background:
+    linear-gradient(
+        100deg,
+        #2969ed,
+        #4d80ee
+    );
 
-    font-size:15px;
-
-    font-weight:600;
+    border-color:#3470ed;
 }
 
 
 /* =========================
-   QUICK AMOUNTS
+   PAYMENT CARD
 ========================= */
 
-.quick-grid{
+.payment-card{
 
-    display:grid;
+    width:100%;
 
-    grid-template-columns:
-    repeat(3,1fr);
+    border-radius:20px;
 
-    gap:12px;
-
-    margin-top:14px;
-}
-
-
-.quick-btn{
-
-    height:58px;
-
-    border-radius:18px;
-
-    border:1.5px solid #bdcce7;
+    border:1px solid #cbd7ef;
 
     background:
     linear-gradient(
         145deg,
-        #ffffff,
-        #f7f9ff
+        #f6f9ff,
+        #ffffff
     );
 
-    color:#151d35;
+    padding:11px;
 
-    font-size:18px;
-
-    font-weight:800;
-
-    cursor:pointer;
+    box-shadow:
+    0 7px 20px
+    rgba(50,80,160,.07);
 }
 
 
-.quick-btn.active{
+.amount-text{
+    text-align:center;
 
-    border-color:#2e6ce8;
+    color:#7b8498;
+
+    font-size:12px;
+
+    margin-bottom:6px;
+}
+
+
+/* QR */
+
+.qr-container{
+
+    width:165px;
+    height:165px;
+
+    margin:0 auto 7px;
+
+    padding:7px;
+
+    border-radius:14px;
+
+    background:white;
+
+    box-shadow:
+    0 5px 15px
+    rgba(50,70,120,.10);
+}
+
+
+.qr-container img{
+
+    width:100%;
+    height:100%;
+
+    object-fit:contain;
+
+    border-radius:8px;
+}
+
+
+/* UPI */
+
+.upi-id{
+
+    text-align:center;
+
+    font-size:14px;
+
+    font-weight:800;
+
+    margin:
+    5px 0 7px;
+
+    word-break:break-all;
+}
+
+
+.copy-btn{
+
+    display:block;
+
+    margin:auto;
+
+    border:0;
+
+    padding:
+    9px 22px;
+
+    border-radius:24px;
+
+    background:#3470ed;
 
     color:white;
 
-    background:
-    linear-gradient(
-        100deg,
-        #2765e8,
-        #4b7ff0
-    );
+    font-size:13px;
+
+    font-weight:700;
 
     box-shadow:
-    0 8px 20px rgba(42,101,231,.25);
+    0 5px 14px
+    rgba(50,110,240,.25);
 }
 
 
 /* =========================
-   PAY
+   FORM
 ========================= */
 
-.secure-text{
+.form-card{
 
-    text-align:center;
+    margin-top:9px;
 
-    color:#71809a;
+    padding:11px;
 
-    font-size:16px;
+    border-radius:18px;
 
-    margin:
-    16px 0 12px;
+    border:1px solid #cbd7ef;
+
+    background:white;
 }
 
 
-.pay-btn{
+.label{
+
+    display:block;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    color:#6d7890;
+
+    margin-bottom:5px;
+}
+
+
+.input{
 
     width:100%;
 
-    height:68px;
+    height:44px;
+
+    border-radius:12px;
+
+    border:1px solid #d2daeb;
+
+    background:#f8f9fc;
+
+    padding:
+    0 13px;
+
+    font-size:15px;
+
+    outline:none;
+
+    color:#14203f;
+
+    margin-bottom:9px;
+}
+
+
+.input:focus{
+
+    border-color:#3974ed;
+
+    background:white;
+}
+
+
+.deposit-btn{
+
+    width:100%;
+
+    height:46px;
 
     border:0;
 
-    border-radius:35px;
-
-    color:white;
-
-    font-size:21px;
-
-    font-weight:850;
+    border-radius:25px;
 
     background:
     linear-gradient(
         100deg,
-        #2967e9,
-        #4d7ff0
+        #2968ed,
+        #4e82ef
     );
 
-    box-shadow:
-    0 12px 28px rgba(42,101,231,.30);
+    color:white;
 
-    cursor:pointer;
+    font-size:16px;
+
+    font-weight:800;
+
+    box-shadow:
+    0 7px 18px
+    rgba(45,105,235,.27);
 }
 
 
-.pay-btn:active{
+/* =========================
+   STATUS
+========================= */
 
-    transform:scale(.98);
+.status{
+
+    display:none;
+
+    margin-top:8px;
+
+    padding:8px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    background:#fff7df;
+
+    color:#a36b00;
+
+    font-size:12px;
+
+    font-weight:700;
 }
 
 
@@ -601,9 +490,9 @@ input{
 
 .bottom-nav{
 
-    height:78px;
+    height:72px;
 
-    flex:0 0 78px;
+    min-height:72px;
 
     display:flex;
 
@@ -611,15 +500,10 @@ input{
 
     justify-content:space-around;
 
-    background:
-    rgba(255,255,255,.97);
+    background:white;
 
-    border-top:1px solid #d5deef;
-
-    box-shadow:
-    0 -5px 20px rgba(30,65,130,.08);
-
-    z-index:10;
+    border-top:
+    1px solid #dce2ef;
 }
 
 
@@ -627,522 +511,346 @@ input{
 
     width:25%;
 
-    height:100%;
+    text-align:center;
 
-    border:0;
+    color:#68738b;
 
-    background:transparent;
-
-    display:flex;
-
-    flex-direction:column;
-
-    align-items:center;
-
-    justify-content:center;
-
-    gap:4px;
-
-    color:#68758f;
-
-    font-size:13px;
-
-    cursor:pointer;
+    font-size:12px;
 }
 
 
 .nav-icon{
 
-    width:44px;
-    height:44px;
+    width:38px;
+    height:38px;
 
-    border-radius:15px;
+    margin:
+    0 auto 2px;
+
+    border-radius:13px;
 
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
-    font-size:22px;
+    font-size:19px;
 }
 
 
 .nav-item.active{
 
-    color:#202d49;
+    color:#182243;
 
     font-weight:800;
 }
 
 
-.nav-item.active .nav-icon{
+.nav-item.active
+.nav-icon{
 
-    background:#536df5;
+    background:#596ee8;
 
     color:white;
 
     box-shadow:
-    0 7px 17px rgba(83,109,245,.30);
+    0 5px 14px
+    rgba(70,90,220,.25);
 }
 
 
 /* =========================
-   MOBILE
+   SMALL SCREEN
 ========================= */
 
-@media(max-width:700px){
+@media(max-height:720px){
 
-    .top-header{
-
+    .header{
         height:70px;
-
-        flex-basis:70px;
-
-        padding:0 12px;
+        min-height:70px;
     }
 
-
-    .menu-btn{
-
+    .menu-btn,
+    .logo{
         width:46px;
         height:46px;
-
-        font-size:25px;
     }
-
-
-    .logo{
-
-        width:45px;
-        height:45px;
-
-        font-size:12px;
-    }
-
-
-    .header-right{
-
-        gap:6px;
-    }
-
 
     .header-icon{
-
-        width:44px;
-        height:44px;
-
-        border-radius:16px;
+        width:42px;
+        height:42px;
+        border-radius:14px;
+        font-size:19px;
     }
-
-
-    .wallet-top,
-    .redeem-top{
-
-        width:44px;
-
-        min-width:44px;
-
-        font-size:0;
-    }
-
-
-    .wallet-top::before{
-
-        content:"💰";
-
-        font-size:20px;
-    }
-
-
-    .redeem-top::before{
-
-        content:"🎁";
-
-        font-size:20px;
-    }
-
 
     .main{
-
         padding:
-        15px
-        12px
-        8px;
+        9px 16px 5px;
     }
 
-
-    .page-label{
-
-        font-size:13px;
-
-        margin-bottom:3px;
-    }
-
-
-    .page-title{
-
-        font-size:32px;
-    }
-
-
-    .page-subtitle{
-
-        font-size:16px;
-
-        margin-bottom:15px;
-    }
-
-
-    .amount-card{
-
-        padding:15px;
-
-        border-radius:23px;
-    }
-
-
-    .amount-input-box{
-
-        height:60px;
-
-        border-radius:20px;
-    }
-
-
-    .rupee-icon{
-
-        width:43px;
-        height:43px;
-
-        flex-basis:43px;
-    }
-
-
-    #amount{
-
+    h1{
         font-size:25px;
     }
 
-
-    .quick-grid{
-
-        gap:10px;
-
-        margin-top:12px;
+    .subtitle{
+        margin-bottom:7px;
     }
 
-
-    .quick-btn{
-
-        height:54px;
-
-        border-radius:17px;
-
-        font-size:17px;
+    .tabs{
+        margin-bottom:7px;
     }
 
-
-    .secure-text{
-
-        margin:
-        13px 0 10px;
-
-        font-size:15px;
+    .tab{
+        height:40px;
     }
 
-
-    .pay-btn{
-
-        height:62px;
-
-        font-size:19px;
-
-        border-radius:32px;
+    .qr-container{
+        width:135px;
+        height:135px;
     }
 
+    .payment-card{
+        padding:8px;
+    }
+
+    .form-card{
+        margin-top:7px;
+        padding:8px;
+    }
+
+    .input{
+        height:40px;
+        margin-bottom:7px;
+    }
+
+    .deposit-btn{
+        height:43px;
+    }
 
     .bottom-nav{
-
-        height:76px;
-
-        flex-basis:76px;
+        height:62px;
+        min-height:62px;
     }
 
-}
-
-
-/* =========================
-   VERY SMALL SCREEN
-========================= */
-
-@media(max-height:700px){
-
-    .main{
-
-        padding-top:10px;
+    .nav-icon{
+        width:32px;
+        height:32px;
     }
-
-
-    .page-title{
-
-        font-size:29px;
-    }
-
-
-    .page-subtitle{
-
-        margin-bottom:10px;
-    }
-
-
-    .amount-card{
-
-        padding:12px;
-    }
-
-
-    .quick-btn{
-
-        height:48px;
-    }
-
-
-    .secure-text{
-
-        margin:9px 0 7px;
-    }
-
-
-    .pay-btn{
-
-        height:55px;
-    }
-
 }
 
 </style>
-
 </head>
 
 
 <body>
 
-
-<div class="page">
+<div class="app">
 
 
 <!-- =========================
      HEADER
 ========================= -->
 
-<header class="top-header">
+<header class="header">
 
-    <div class="header-left">
-
-        <button
-            class="menu-btn"
-            onclick="goHome()">
-
-            ☰
-
-        </button>
+    <button
+        class="menu-btn"
+        onclick="menuClick()">
+        ☰
+    </button>
 
 
-        <div class="logo">
-
-            RDX
-
-        </div>
-
+    <div class="logo">
+        RDX
     </div>
 
 
     <div class="header-right">
 
-        <button
-            class="header-icon notification">
-
+        <div class="header-icon bell">
             🔔
+        </div>
 
-        </button>
-
-
-        <button
-            class="header-icon wallet-top"
-            onclick="goWallet()">
-
+        <div class="header-icon money">
             💰
+        </div>
 
-        </button>
-
-
-        <button
-            class="header-icon redeem-top">
-
+        <div class="header-icon gift">
             🎁
-
-        </button>
+        </div>
 
     </div>
 
 </header>
 
 
+
 <!-- =========================
-     MAIN DEPOSIT
+     MAIN
 ========================= -->
 
 <main class="main">
 
-<section class="deposit-page">
 
-
-    <div class="page-label">
-        WALLET
+    <div class="section-title">
+        DEPOSIT
     </div>
 
 
-    <h1 class="page-title">
-        Add Money
+    <h1>
+        Complete Payment
     </h1>
 
 
-    <p class="page-subtitle">
-        Choose amount and deposit securely
-    </p>
+    <div class="subtitle">
+        Welcome RDX LUDO
+    </div>
 
 
-    <!-- AMOUNT -->
 
-    <div class="amount-card">
+    <!-- TABS -->
+
+    <div class="tabs">
+
+        <button
+            class="tab active"
+            id="upiTab">
+
+            UPI Details
+
+        </button>
 
 
-        <label
-            class="amount-label"
-            for="amount">
+        <button
+            class="tab"
+            id="accountTab">
+
+            Account Transfer
+
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================
+         PAYMENT CARD
+    ========================= -->
+
+    <section class="payment-card">
+
+
+        <div class="amount-text">
+
+            Selected Amount:
+            ₹<span id="amountDisplay">100</span>
+
+        </div>
+
+
+
+        <!-- QR CODE -->
+
+        <div class="qr-container">
+
+            <img
+                id="qrImage"
+                src="https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=RDX-LUDO-DEMO"
+                alt="Payment QR">
+
+        </div>
+
+
+
+        <!-- UPI ID -->
+
+        <div
+            class="upi-id"
+            id="upiId">
+
+            demo-rdxludo@upi
+
+        </div>
+
+
+
+        <button
+            class="copy-btn"
+            onclick="copyUPI()">
+
+            Copy UPI ID
+
+        </button>
+
+
+    </section>
+
+
+
+    <!-- =========================
+         DEPOSIT FORM
+    ========================= -->
+
+    <section class="form-card">
+
+
+        <label class="label">
 
             ENTER AMOUNT
 
         </label>
 
 
-        <div class="amount-input-box">
+        <input
+            class="input"
+            id="amount"
+            type="number"
+            value="100"
+            readonly
+        >
 
 
-            <div class="rupee-icon">
-                ₹
-            </div>
+
+        <label class="label">
+
+            ENTER UTR NUMBER
+
+        </label>
 
 
-            <input
-                id="amount"
-                type="number"
-                inputmode="decimal"
-                value="100"
-                min="100"
-                placeholder="100"
-                oninput="updateAmount()">
+        <input
+            class="input"
+            id="utr"
+            type="text"
+            inputmode="numeric"
+            placeholder="Enter UTR Number"
+            maxlength="30"
+        >
+
+
+
+        <button
+            class="deposit-btn"
+            onclick="submitDeposit()">
+
+            Deposit
+
+        </button>
+
+
+
+        <div
+            class="status"
+            id="status">
 
         </div>
 
 
-        <div class="amount-info">
+    </section>
 
-            <span class="minimum">
-                Min: ₹100
-            </span>
-
-
-            <span class="coin-rate">
-                1 Coin = ₹1
-            </span>
-
-        </div>
-
-
-    </div>
-
-
-    <!-- QUICK AMOUNTS -->
-
-    <div class="quick-grid">
-
-
-        <button
-            class="quick-btn active"
-            onclick="selectAmount(100,this)">
-
-            ₹100
-
-        </button>
-
-
-        <button
-            class="quick-btn"
-            onclick="selectAmount(250,this)">
-
-            ₹250
-
-        </button>
-
-
-        <button
-            class="quick-btn"
-            onclick="selectAmount(500,this)">
-
-            ₹500
-
-        </button>
-
-
-        <button
-            class="quick-btn"
-            onclick="selectAmount(1000,this)">
-
-            ₹1000
-
-        </button>
-
-
-        <button
-            class="quick-btn"
-            onclick="selectAmount(2000,this)">
-
-            ₹2000
-
-        </button>
-
-
-        <button
-            class="quick-btn"
-            onclick="selectAmount(5000,this)">
-
-            ₹5000
-
-        </button>
-
-
-    </div>
-
-
-    <div class="secure-text">
-        Secure & Instant Deposit
-    </div>
-
-
-    <button
-        class="pay-btn"
-        onclick="proceedPay()">
-
-        Proceed to Pay
-
-    </button>
-
-
-</section>
 
 </main>
+
 
 
 <!-- =========================
@@ -1152,7 +860,7 @@ input{
 <nav class="bottom-nav">
 
 
-    <button
+    <div
         class="nav-item"
         onclick="goHome()">
 
@@ -1160,29 +868,26 @@ input{
             🏠
         </div>
 
-        <span>
-            Home
-        </span>
+        Home
 
-    </button>
+    </div>
 
 
-    <button
-        class="nav-item active"
-        onclick="goWallet()">
+
+    <div
+        class="nav-item active">
 
         <div class="nav-icon">
             💰
         </div>
 
-        <span>
-            Wallet
-        </span>
+        Wallet
 
-    </button>
+    </div>
 
 
-    <button
+
+    <div
         class="nav-item"
         onclick="goSupport()">
 
@@ -1190,14 +895,13 @@ input{
             🎧
         </div>
 
-        <span>
-            Support
-        </span>
+        Support
 
-    </button>
+    </div>
 
 
-    <button
+
+    <div
         class="nav-item"
         onclick="goProfile()">
 
@@ -1205,11 +909,10 @@ input{
             👤
         </div>
 
-        <span>
-            Profile
-        </span>
+        Profile
 
-    </button>
+    </div>
+
 
 </nav>
 
@@ -1217,85 +920,168 @@ input{
 </div>
 
 
+
 <script>
 
-/* =========================
-   AMOUNT
-========================= */
+/* ==========================================
+   DEMO UPI CONFIGURATION
+========================================== */
 
-function selectAmount(amount,button){
-
-    document.getElementById("amount").value = amount;
-
-
-    document
-    .querySelectorAll(".quick-btn")
-    .forEach(function(btn){
-
-        btn.classList.remove("active");
-
-    });
+const UPI_ID =
+"demo-rdxludo@upi";
 
 
-    button.classList.add("active");
+/* ==========================================
+   GET AMOUNT
+========================================== */
 
-}
+function loadAmount(){
 
-
-function updateAmount(){
-
-    const amount =
-        Number(
-            document.getElementById("amount").value
+    const params =
+        new URLSearchParams(
+            window.location.search
         );
 
 
-    document
-    .querySelectorAll(".quick-btn")
-    .forEach(function(btn){
-
-        btn.classList.remove("active");
-
-    });
+    let amount =
+        params.get("amount");
 
 
-    document
-    .querySelectorAll(".quick-btn")
-    .forEach(function(btn){
+    if(!amount){
 
-        const value =
-            Number(
-                btn.textContent
-                .replace("₹","")
-                .trim()
+        amount =
+            localStorage.getItem(
+                "selectedAmount"
             );
 
-        if(value === amount){
+    }
 
-            btn.classList.add("active");
 
-        }
+    if(!amount){
+
+        amount = "100";
+
+    }
+
+
+    amount =
+        Number(amount);
+
+
+    if(
+        !amount ||
+        amount < 1
+    ){
+
+        amount = 100;
+
+    }
+
+
+    document
+        .getElementById("amount")
+        .value = amount;
+
+
+    document
+        .getElementById("amountDisplay")
+        .textContent = amount;
+
+
+    /*
+      Demo QR.
+      Real payment QR/backend intentionally
+      is not implemented here.
+    */
+
+}
+
+
+/* ==========================================
+   COPY UPI
+========================================== */
+
+function copyUPI(){
+
+    navigator
+    .clipboard
+    .writeText(UPI_ID)
+
+    .then(function(){
+
+        const button =
+            document.querySelector(
+                ".copy-btn"
+            );
+
+
+        const oldText =
+            button.innerText;
+
+
+        button.innerText =
+            "Copied ✓";
+
+
+        setTimeout(
+            function(){
+
+                button.innerText =
+                    oldText;
+
+            },
+            1500
+        );
+
+    })
+
+    .catch(function(){
+
+        alert(
+            "UPI ID: " +
+            UPI_ID
+        );
 
     });
 
 }
 
 
-/* =========================
-   PROCEED
-========================= */
+/* ==========================================
+   DEPOSIT / UTR SUBMIT
+========================================== */
 
-function proceedPay(){
+function submitDeposit(){
 
     const amount =
-        Number(
-            document.getElementById("amount").value
+        document
+        .getElementById("amount")
+        .value;
+
+
+    const utr =
+        document
+        .getElementById("utr")
+        .value
+        .trim();
+
+
+    if(!utr){
+
+        alert(
+            "Please enter UTR Number"
         );
 
+        return;
 
-    if(!amount || amount < 100){
+    }
 
-        alert("Minimum deposit amount ₹100 hai.");
+
+    if(utr.length < 6){
+
+        alert(
+            "Please enter a valid UTR Number"
+        );
 
         return;
 
@@ -1303,36 +1089,116 @@ function proceedPay(){
 
 
     /*
-       PAYMENT SYSTEM BAAD ME ADD KIYA JAYEGA.
+      DEMO REQUEST
 
-       Abhi sirf amount select ho raha hai.
+      Local browser storage me save hota hai.
+      Status = Pending.
     */
 
+    const depositRequest = {
+
+        id:
+            "DEP-" +
+            Date.now(),
+
+        amount:
+            Number(amount),
+
+        utr:
+            utr,
+
+        status:
+            "Pending",
+
+        createdAt:
+            new Date()
+            .toISOString()
+
+    };
+
+
+    let deposits =
+        JSON.parse(
+            localStorage.getItem(
+                "demoDeposits"
+            ) || "[]"
+        );
+
+
+    deposits.unshift(
+        depositRequest
+    );
+
+
+    localStorage.setItem(
+        "demoDeposits",
+        JSON.stringify(
+            deposits
+        )
+    );
+
+
+    document
+        .getElementById("utr")
+        .value = "";
+
+
+    const status =
+        document
+        .getElementById("status");
+
+
+    status.style.display =
+        "block";
+
+
+    status.innerHTML =
+        "✓ Deposit submitted<br>" +
+        "Status: Pending";
+
+
+}
+
+
+/* ==========================================
+   ACCOUNT TRANSFER
+========================================== */
+
+document
+.getElementById("accountTab")
+.addEventListener(
+    "click",
+    function(){
+
+        alert(
+            "Account Transfer demo section"
+        );
+
+    }
+);
+
+
+/* ==========================================
+   MENU
+========================================== */
+
+function menuClick(){
+
     alert(
-        "Selected Amount: ₹" +
-        amount +
-        "\n\nPayment system baad me connect kiya jayega."
+        "RDX Ludo Menu"
     );
 
 }
 
 
-/* =========================
+/* ==========================================
    NAVIGATION
-========================= */
+========================================== */
 
 function goHome(){
 
     window.location.href =
-        "./dashboard.html";
-
-}
-
-
-function goWallet(){
-
-    window.location.href =
-        "./wallet.html";
+        "index.html";
 
 }
 
@@ -1340,7 +1206,7 @@ function goWallet(){
 function goSupport(){
 
     window.location.href =
-        "./support.html";
+        "support.html";
 
 }
 
@@ -1348,12 +1214,18 @@ function goSupport(){
 function goProfile(){
 
     window.location.href =
-        "./profile.html";
+        "profile.html";
 
 }
 
-</script>
 
+/* ==========================================
+   START
+========================================== */
+
+loadAmount();
+
+</script>
 
 </body>
 </html>
