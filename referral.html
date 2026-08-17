@@ -5,22 +5,15 @@
 
 <meta charset="UTF-8">
 
-<meta
-    name="viewport"
-    content="width=device-width,initial-scale=1,viewport-fit=cover"
->
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover">
 
 <title>RDX LUDO - Refer & Earn</title>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-
-/* =====================================================
-   RESET
-===================================================== */
 
 *{
     box-sizing:border-box;
@@ -28,41 +21,16 @@
     padding:0;
 }
 
-html{
-    min-height:100%;
-}
-
 body{
-    min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,
+    "Segoe UI",Roboto,Arial,sans-serif;
 
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Roboto,
-        Arial,
-        sans-serif;
-
-    background:
-        linear-gradient(
-            135deg,
-            #f4f7ff,
-            #ffffff,
-            #f4f7ff
-        );
-
+    background:#f7f9ff;
     color:#101a38;
-
-    overflow-x:hidden;
+    min-height:100vh;
 }
-
-
-/* =====================================================
-   HEADER
-===================================================== */
 
 .top-header{
-
     height:70px;
 
     background:
@@ -75,42 +43,30 @@ body{
     border-bottom:1px solid #cbd8f0;
 
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
 
     padding:0 12px;
 
     position:sticky;
-
     top:0;
-
     z-index:100;
 
     box-shadow:
-        0 5px 18px
-        rgba(36,75,150,.08);
+        0 5px 18px rgba(36,75,150,.08);
 }
 
-
 .header-left{
-
     display:flex;
-
     align-items:center;
-
     gap:10px;
 }
 
-
 .menu-btn{
-
     width:46px;
     height:46px;
 
     border:0;
-
     border-radius:16px;
 
     background:
@@ -120,26 +76,20 @@ body{
             #ff8a70
         );
 
-    color:#fff;
-
+    color:white;
     font-size:25px;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
-    cursor:pointer;
-
     box-shadow:
-        0 6px 15px
-        rgba(255,93,80,.25);
+        0 6px 15px rgba(255,93,80,.25);
+
+    cursor:pointer;
 }
 
-
 .logo{
-
     width:45px;
     height:45px;
 
@@ -148,69 +98,51 @@ body{
     background:
         linear-gradient(
             145deg,
-            #fff,
+            #ffffff,
             #e7efff
         );
 
     border:3px solid #d3e1ff;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     color:#1762df;
-
     font-size:12px;
-
     font-weight:900;
 
     box-shadow:
-        0 5px 12px
-        rgba(36,93,190,.15);
+        0 5px 12px rgba(36,93,190,.15);
 }
 
-
 .header-right{
-
     display:flex;
-
     align-items:center;
-
     gap:6px;
 }
 
-
 .header-icon{
-
     width:44px;
     height:44px;
 
     border:0;
-
     border-radius:16px;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     font-size:20px;
-
-    color:#fff;
-
-    cursor:pointer;
+    color:white;
 
     box-shadow:
-        0 6px 15px
-        rgba(0,0,0,.12);
+        0 6px 15px rgba(0,0,0,.12);
+
+    cursor:pointer;
 }
 
-
 .notification{
-
     background:
         linear-gradient(
             145deg,
@@ -219,9 +151,7 @@ body{
         );
 }
 
-
 .wallet-top{
-
     background:
         linear-gradient(
             145deg,
@@ -230,9 +160,7 @@ body{
         );
 }
 
-
 .redeem-top{
-
     background:
         linear-gradient(
             145deg,
@@ -241,32 +169,21 @@ body{
         );
 }
 
-
-/* =====================================================
-   SIDE MENU
-===================================================== */
-
 .menu-overlay{
-
     position:fixed;
-
     inset:0;
 
     background:rgba(0,0,0,.35);
 
     z-index:250;
-
     display:none;
 }
-
 
 .menu-overlay.show{
     display:block;
 }
 
-
 .menu-panel{
-
     position:fixed;
 
     top:0;
@@ -275,55 +192,42 @@ body{
     width:300px;
     height:100vh;
 
-    background:#fff;
+    background:white;
 
     z-index:300;
 
     padding:25px 18px;
 
     box-shadow:
-        10px 0 35px
-        rgba(0,0,0,.15);
+        10px 0 35px rgba(0,0,0,.15);
 
     transition:.3s ease;
 
     overflow-y:auto;
 }
 
-
 .menu-panel.open{
     left:0;
 }
 
-
 .menu-title{
-
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
 
     padding-bottom:22px;
-
     margin-bottom:18px;
 
     border-bottom:1px solid #e3e8f2;
 }
 
-
 .menu-brand{
-
     display:flex;
-
     align-items:center;
-
     gap:12px;
 }
 
-
 .menu-logo{
-
     width:50px;
     height:50px;
 
@@ -332,45 +236,33 @@ body{
     background:
         linear-gradient(
             145deg,
-            #fff,
+            #ffffff,
             #e7efff
         );
 
     border:3px solid #d3e1ff;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     color:#1762df;
-
     font-size:13px;
-
     font-weight:900;
 }
-
 
 .menu-brand h2{
     font-size:20px;
 }
 
-
 .menu-brand p{
-
     color:#71809d;
-
     font-size:12px;
-
     margin-top:3px;
 }
 
-
 .close-menu{
-
     border:0;
-
     background:#eef2fa;
 
     width:42px;
@@ -379,15 +271,12 @@ body{
     border-radius:50%;
 
     font-size:25px;
-
     color:#66738d;
 
     cursor:pointer;
 }
 
-
 .menu-item{
-
     width:100%;
 
     border:1px solid #e0e5ef;
@@ -403,13 +292,11 @@ body{
     text-align:left;
 
     font-size:17px;
-
     color:#182440;
 
     cursor:pointer;
 
     display:flex;
-
     align-items:center;
 
     gap:14px;
@@ -417,23 +304,18 @@ body{
     min-height:58px;
 }
 
-
 .menu-item:hover{
     background:#f0f5ff;
 }
 
-
 .menu-icon{
-
     width:40px;
     height:40px;
 
     border-radius:13px;
 
     display:flex;
-
     align-items:center;
-
     justify-content:center;
 
     background:#e8efff;
@@ -441,56 +323,31 @@ body{
     font-size:20px;
 }
 
-
 .menu-item span:nth-child(2){
     flex:1;
 }
 
-
-/* =====================================================
-   MAIN
-===================================================== */
-
 .main{
-
-    width:100%;
-
     max-width:650px;
 
-    margin:0 auto;
+    margin:auto;
 
     padding:25px 18px 110px;
 }
 
-
 .page-title{
-
     font-size:27px;
-
-    line-height:1.2;
-
     margin-top:10px;
 }
 
-
 .subtitle{
-
     margin-top:7px;
 
     color:#71809d;
-
     font-size:15px;
-
-    line-height:1.5;
 }
 
-
-/* =====================================================
-   STATS
-===================================================== */
-
 .stats{
-
     margin-top:22px;
 
     display:grid;
@@ -500,10 +357,8 @@ body{
     gap:12px;
 }
 
-
 .stat{
-
-    background:#fff;
+    background:white;
 
     border:1px solid #9bbaf3;
 
@@ -514,45 +369,31 @@ body{
     text-align:center;
 
     box-shadow:
-        0 7px 20px
-        rgba(40,88,175,.05);
+        0 7px 20px rgba(40,88,175,.05);
 }
-
 
 .stat-icon{
     font-size:24px;
 }
 
-
 .stat-label{
-
     margin-top:7px;
 
     color:#71809d;
-
     font-size:14px;
 }
 
-
 .stat-value{
-
     margin-top:5px;
 
     font-size:22px;
-
     font-weight:800;
 }
 
-
-/* =====================================================
-   CARD
-===================================================== */
-
 .card{
-
     margin-top:18px;
 
-    background:#fff;
+    background:white;
 
     border:1px solid #9bbaf3;
 
@@ -561,31 +402,19 @@ body{
     padding:20px;
 
     box-shadow:
-        0 8px 22px
-        rgba(40,88,175,.05);
+        0 8px 22px rgba(40,88,175,.05);
 }
 
-
 .card-title{
-
     font-size:18px;
-
     font-weight:800;
-
     text-align:center;
 }
 
-
-/* =====================================================
-   REFERRAL CODE
-===================================================== */
-
 .code-box{
-
     margin-top:15px;
 
     display:flex;
-
     align-items:center;
 
     background:#f1f4fa;
@@ -597,17 +426,12 @@ body{
     overflow:hidden;
 }
 
-
 .code{
-
     flex:1;
-
-    min-width:0;
 
     padding:16px;
 
     font-size:20px;
-
     font-weight:800;
 
     letter-spacing:2px;
@@ -615,16 +439,12 @@ body{
     word-break:break-all;
 }
 
-
 .copy-btn{
-
-    flex:0 0 auto;
-
     border:0;
 
     background:#2869e8;
 
-    color:#fff;
+    color:white;
 
     padding:16px 19px;
 
@@ -633,25 +453,16 @@ body{
     cursor:pointer;
 }
 
-
-/* =====================================================
-   LINK
-===================================================== */
-
 .link-label{
-
     margin-top:18px;
 
     font-size:14px;
-
     font-weight:700;
 
     color:#52627f;
 }
 
-
 .link-box{
-
     margin-top:8px;
 
     padding:14px;
@@ -669,17 +480,9 @@ body{
     word-break:break-all;
 
     line-height:1.5;
-
-    min-height:48px;
 }
 
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
 .buttons{
-
     display:grid;
 
     grid-template-columns:1fr 1fr;
@@ -689,9 +492,7 @@ body{
     margin-top:14px;
 }
 
-
 .action-btn{
-
     border:1px solid;
 
     border-radius:16px;
@@ -699,15 +500,12 @@ body{
     padding:14px 10px;
 
     font-size:15px;
-
     font-weight:800;
 
     cursor:pointer;
 }
 
-
 .copy-link{
-
     background:#eef4ff;
 
     color:#2869e8;
@@ -715,9 +513,7 @@ body{
     border-color:#9bbaf3;
 }
 
-
 .whatsapp{
-
     background:#e7faee;
 
     color:#15944d;
@@ -725,13 +521,7 @@ body{
     border-color:#67d797;
 }
 
-
-/* =====================================================
-   STATUS
-===================================================== */
-
 .status{
-
     margin-top:14px;
 
     text-align:center;
@@ -740,21 +530,13 @@ body{
 
     font-size:13px;
 
-    line-height:1.5;
-
     min-height:20px;
 }
 
-
-/* =====================================================
-   HOW IT WORKS
-===================================================== */
-
 .how{
-
     margin-top:18px;
 
-    background:#fff;
+    background:white;
 
     border:1px solid #9bbaf3;
 
@@ -763,21 +545,15 @@ body{
     padding:20px;
 
     box-shadow:
-        0 8px 22px
-        rgba(40,88,175,.05);
+        0 8px 22px rgba(40,88,175,.05);
 }
 
-
 .how h3{
-
     text-align:center;
-
     margin-bottom:14px;
 }
 
-
 .how p{
-
     color:#71809d;
 
     margin-top:10px;
@@ -787,26 +563,19 @@ body{
     line-height:1.5;
 }
 
-
-/* =====================================================
-   TOAST
-===================================================== */
-
 .toast{
-
     position:fixed;
 
     left:50%;
-
     bottom:100px;
 
     transform:
         translateX(-50%)
-        translateY(15px);
+        translateY(10px);
 
     background:#182440;
 
-    color:#fff;
+    color:white;
 
     padding:13px 18px;
 
@@ -823,13 +592,9 @@ body{
     max-width:90%;
 
     text-align:center;
-
-    font-size:14px;
 }
 
-
 .toast.show{
-
     opacity:1;
 
     transform:
@@ -837,25 +602,20 @@ body{
         translateY(0);
 }
 
-
-/* =====================================================
-   BOTTOM NAV
-===================================================== */
-
 .bottom{
-
     position:fixed;
 
     bottom:0;
-
     left:0;
     right:0;
 
     height:78px;
 
-    background:rgba(255,255,255,.97);
+    background:
+        rgba(255,255,255,.97);
 
-    border-top:1px solid #ccd7eb;
+    border-top:
+        1px solid #ccd7eb;
 
     display:grid;
 
@@ -869,9 +629,7 @@ body{
     backdrop-filter:blur(15px);
 }
 
-
 .bottom a{
-
     text-align:center;
 
     text-decoration:none;
@@ -891,9 +649,7 @@ body{
     gap:3px;
 }
 
-
 .bottom b{
-
     width:40px;
     height:40px;
 
@@ -902,43 +658,29 @@ body{
     display:flex;
 
     align-items:center;
-
     justify-content:center;
 
     font-size:21px;
 }
 
-
 .active{
-
-    color:#2869e8 !important;
-
+    color:#2869e8!important;
     font-weight:700;
 }
 
-
 .active b{
-
     background:#536df5;
 
-    color:#fff;
+    color:white;
 
     box-shadow:
-        0 7px 17px
-        rgba(83,109,245,.3);
+        0 7px 17px rgba(83,109,245,.3);
 }
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
 
 @media(max-width:700px){
 
     .main{
-
-        padding:
-            22px 12px 105px;
+        padding:22px 12px 105px;
     }
 
     .page-title{
@@ -963,48 +705,12 @@ body{
 
 }
 
-
-@media(max-width:380px){
-
-    .header-right{
-        gap:4px;
-    }
-
-    .header-icon{
-
-        width:40px;
-        height:40px;
-
-        border-radius:14px;
-
-        font-size:18px;
-    }
-
-    .menu-btn{
-
-        width:42px;
-        height:42px;
-    }
-
-    .logo{
-
-        width:42px;
-        height:42px;
-    }
-
-}
-
 </style>
 
 </head>
 
-
 <body>
 
-
-<!-- =====================================================
-     HEADER
-===================================================== -->
 
 <header class="top-header">
 
@@ -1013,9 +719,10 @@ body{
         <button
             type="button"
             class="menu-btn"
-            onclick="openMenu()"
-        >
+            onclick="openMenu()">
+
             ☰
+
         </button>
 
         <div class="logo">
@@ -1030,27 +737,30 @@ body{
         <button
             type="button"
             class="header-icon notification"
-            onclick="showMessage('No new notifications')"
-        >
+            onclick="showMessage('No new notifications')">
+
             🔔
+
         </button>
 
 
         <button
             type="button"
             class="header-icon wallet-top"
-            onclick="goWallet()"
-        >
+            onclick="goWallet()">
+
             💰
+
         </button>
 
 
         <button
             type="button"
             class="header-icon redeem-top"
-            onclick="goRedeem()"
-        >
+            onclick="goRedeem()">
+
             🎁
+
         </button>
 
     </div>
@@ -1058,25 +768,17 @@ body{
 </header>
 
 
-<!-- =====================================================
-     MENU OVERLAY
-===================================================== -->
-
 <div
     class="menu-overlay"
     id="menuOverlay"
-    onclick="closeMenu()"
-></div>
+    onclick="closeMenu()">
+</div>
 
-
-<!-- =====================================================
-     SIDE MENU
-===================================================== -->
 
 <div
     class="menu-panel"
-    id="menuPanel"
->
+    id="menuPanel">
+
 
     <div class="menu-title">
 
@@ -1088,13 +790,9 @@ body{
 
             <div>
 
-                <h2>
-                    RDX LUDO
-                </h2>
+                <h2>RDX LUDO</h2>
 
-                <p>
-                    Play · Win · Earn
-                </p>
+                <p>Play · Win · Earn</p>
 
             </div>
 
@@ -1104,9 +802,10 @@ body{
         <button
             type="button"
             class="close-menu"
-            onclick="closeMenu()"
-        >
+            onclick="closeMenu()">
+
             ×
+
         </button>
 
     </div>
@@ -1115,20 +814,13 @@ body{
     <button
         type="button"
         class="menu-item"
-        onclick="goHome()"
-    >
+        onclick="goHome()">
 
-        <div class="menu-icon">
-            🏠
-        </div>
+        <div class="menu-icon">🏠</div>
 
-        <span>
-            Home
-        </span>
+        <span>Home</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
@@ -1136,20 +828,13 @@ body{
     <button
         type="button"
         class="menu-item"
-        onclick="goProfile()"
-    >
+        onclick="goProfile()">
 
-        <div class="menu-icon">
-            👤
-        </div>
+        <div class="menu-icon">👤</div>
 
-        <span>
-            My Profile
-        </span>
+        <span>My Profile</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
@@ -1157,20 +842,13 @@ body{
     <button
         type="button"
         class="menu-item"
-        onclick="goWallet()"
-    >
+        onclick="goWallet()">
 
-        <div class="menu-icon">
-            💰
-        </div>
+        <div class="menu-icon">💰</div>
 
-        <span>
-            My Wallet
-        </span>
+        <span>My Wallet</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
@@ -1178,20 +856,13 @@ body{
     <button
         type="button"
         class="menu-item"
-        onclick="goRedeem()"
-    >
+        onclick="goRedeem()">
 
-        <div class="menu-icon">
-            🎁
-        </div>
+        <div class="menu-icon">🎁</div>
 
-        <span>
-            Refer & Earn
-        </span>
+        <span>Refer & Earn</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
@@ -1199,20 +870,13 @@ body{
     <button
         type="button"
         class="menu-item"
-        onclick="goHistory()"
-    >
+        onclick="goHistory()">
 
-        <div class="menu-icon">
-            🕘
-        </div>
+        <div class="menu-icon">🕘</div>
 
-        <span>
-            History
-        </span>
+        <span>History</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
@@ -1220,31 +884,21 @@ body{
     <button
         type="button"
         class="menu-item"
-        onclick="goSupport()"
-    >
+        onclick="goSupport()">
 
-        <div class="menu-icon">
-            🎧
-        </div>
+        <div class="menu-icon">🎧</div>
 
-        <span>
-            Support
-        </span>
+        <span>Support</span>
 
-        <span>
-            ›
-        </span>
+        <span>›</span>
 
     </button>
 
 </div>
 
 
-<!-- =====================================================
-     MAIN
-===================================================== -->
-
 <main class="main">
+
 
     <h1 class="page-title">
         Refer & Earn 🎁
@@ -1255,10 +909,6 @@ body{
         Invite friends to RDX LUDO and share your referral link.
     </p>
 
-
-    <!-- =================================================
-         STATS
-    ================================================= -->
 
     <section class="stats">
 
@@ -1274,8 +924,7 @@ body{
 
             <div
                 class="stat-value"
-                id="players"
-            >
+                id="players">
                 0
             </div>
 
@@ -1294,8 +943,7 @@ body{
 
             <div
                 class="stat-value"
-                id="earnings"
-            >
+                id="earnings">
                 ₹0
             </div>
 
@@ -1304,11 +952,8 @@ body{
     </section>
 
 
-    <!-- =================================================
-         REFERRAL CARD
-    ================================================= -->
-
     <section class="card">
+
 
         <div class="card-title">
             Your Referral Code
@@ -1319,8 +964,7 @@ body{
 
             <div
                 class="code"
-                id="referralCode"
-            >
+                id="referralCode">
                 Loading...
             </div>
 
@@ -1328,9 +972,10 @@ body{
             <button
                 type="button"
                 class="copy-btn"
-                onclick="copyCode()"
-            >
+                onclick="copyCode()">
+
                 📋
+
             </button>
 
         </div>
@@ -1343,8 +988,7 @@ body{
 
         <div
             class="link-box"
-            id="referralLink"
-        >
+            id="referralLink">
             Loading referral link...
         </div>
 
@@ -1354,18 +998,20 @@ body{
             <button
                 type="button"
                 class="action-btn copy-link"
-                onclick="copyLink()"
-            >
+                onclick="copyLink()">
+
                 📋 Copy Link
+
             </button>
 
 
             <button
                 type="button"
                 class="action-btn whatsapp"
-                onclick="shareWhatsApp()"
-            >
+                onclick="shareWhatsApp()">
+
                 💬 WhatsApp
+
             </button>
 
         </div>
@@ -1373,17 +1019,14 @@ body{
 
         <div
             class="status"
-            id="status"
-        >
+            id="status">
+
             Loading referral information...
+
         </div>
 
     </section>
 
-
-    <!-- =================================================
-         HOW IT WORKS
-    ================================================= -->
 
     <section class="how">
 
@@ -1391,21 +1034,17 @@ body{
             How It Works
         </h3>
 
-
         <p>
             1. Share your referral link with friends.
         </p>
-
 
         <p>
             2. Your friend opens your referral link.
         </p>
 
-
         <p>
             3. Your friend registers using your referral.
         </p>
-
 
         <p>
             4. Your referral and earnings are recorded in your account.
@@ -1413,21 +1052,15 @@ body{
 
     </section>
 
+
 </main>
 
-
-<!-- =====================================================
-     BOTTOM NAV
-===================================================== -->
 
 <nav class="bottom">
 
     <a href="./dashboard.html">
 
-        <b>
-            ⌂
-        </b>
-
+        <b>⌂</b>
         Home
 
     </a>
@@ -1435,10 +1068,7 @@ body{
 
     <a href="./wallet.html">
 
-        <b>
-            ▣
-        </b>
-
+        <b>▣</b>
         Wallet
 
     </a>
@@ -1446,10 +1076,7 @@ body{
 
     <a href="./support.html">
 
-        <b>
-            ◉
-        </b>
-
+        <b>◉</b>
         Support
 
     </a>
@@ -1457,13 +1084,9 @@ body{
 
     <a
         class="active"
-        href="./referral.html"
-    >
+        href="./referral.html">
 
-        <b>
-            🎁
-        </b>
-
+        <b>🎁</b>
         Refer
 
     </a>
@@ -1471,14 +1094,10 @@ body{
 </nav>
 
 
-<!-- =====================================================
-     TOAST
-===================================================== -->
-
 <div
     class="toast"
-    id="toast"
-></div>
+    id="toast">
+</div>
 
 
 <script>
@@ -1511,16 +1130,14 @@ const firebaseConfig = {
 
 
 /* =====================================================
-   FIREBASE INITIALIZE
+   FIREBASE
 ===================================================== */
 
 let db = null;
 
 try{
 
-    if(
-        !firebase.apps.length
-    ){
+    if(!firebase.apps.length){
 
         firebase.initializeApp(
             firebaseConfig
@@ -1528,11 +1145,10 @@ try{
 
     }
 
-    db =
-        firebase.firestore();
+    db = firebase.firestore();
 
     console.log(
-        "Firebase connected"
+        "Firebase Firestore connected"
     );
 
 }catch(error){
@@ -1558,7 +1174,6 @@ const SITE_BASE_URL =
 ===================================================== */
 
 let currentReferralCode = "";
-
 let currentReferralLink = "";
 
 
@@ -1571,9 +1186,7 @@ function getLoggedInMobile(){
     const keys = [
 
         "rdxFirebaseUserId",
-
         "rdxVerifiedMobile",
-
         "rdxLoginMobile"
 
     ];
@@ -1587,49 +1200,30 @@ function getLoggedInMobile(){
             localStorage.getItem(key);
 
 
+        if(!value){
+            continue;
+        }
+
+
+        const clean =
+            String(value)
+            .replace(/\D/g,"");
+
+
         if(
-            value &&
-            value.trim()
+            /^91[6-9]\d{9}$/.test(clean)
         ){
 
-            const clean =
-                value
-                    .replace(
-                        /\D/g,
-                        ""
-                    )
-                    .trim();
+            return clean;
+
+        }
 
 
-            /*
-             * Login page Firebase document
-             * 91XXXXXXXXXX format me save hota hai.
-             */
+        if(
+            /^[6-9]\d{9}$/.test(clean)
+        ){
 
-            if(
-                /^91[6-9]\d{9}$/.test(
-                    clean
-                )
-            ){
-
-                return clean;
-
-            }
-
-
-            /*
-             * Agar sirf 10 digit mobile hai
-             */
-
-            if(
-                /^[6-9]\d{9}$/.test(
-                    clean
-                )
-            ){
-
-                return "91" + clean;
-
-            }
+            return "91" + clean;
 
         }
 
@@ -1642,54 +1236,53 @@ function getLoggedInMobile(){
 
 
 /* =====================================================
-   CREATE REFERRAL CODE
+   CREATE DETERMINISTIC REFERRAL CODE
+   ================================================
+   Same mobile = same referral code.
+   Isse referral page ko code save karne ke liye
+   Firebase UPDATE permission ki zarurat nahi padegi.
 ===================================================== */
 
-function createReferralCode(){
+function createReferralCode(mobile){
 
-    const letters =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const clean =
+        String(mobile)
+        .replace(/\D/g,"");
 
 
-    let randomLetters = "";
+    let hash = 0;
 
 
     for(
         let i = 0;
-        i < 2;
+        i < clean.length;
         i++
     ){
 
-        randomLetters +=
-            letters.charAt(
-                Math.floor(
-                    Math.random() *
-                    letters.length
-                )
-            );
+        hash =
+            (
+                hash * 31 +
+                clean.charCodeAt(i)
+            ) >>> 0;
 
     }
 
 
     const number =
-        Math.floor(
-            1000 +
-            Math.random() *
+        1000 +
+        (
+            hash %
             9000
         );
 
 
-    return (
-        "RDX" +
-        randomLetters +
-        number
-    );
+    return "RDX" + number;
 
 }
 
 
 /* =====================================================
-   LOAD REFERRAL
+   LOAD REFERRAL DATA
 ===================================================== */
 
 async function loadReferralData(){
@@ -1704,11 +1297,6 @@ async function loadReferralData(){
             "referralLink"
         );
 
-    const statusElement =
-        document.getElementById(
-            "status"
-        );
-
     const playersElement =
         document.getElementById(
             "players"
@@ -1719,30 +1307,15 @@ async function loadReferralData(){
             "earnings"
         );
 
-
-    /*
-     * Firebase check
-     */
-
-    if(!db){
-
-        codeElement.textContent =
-            "Firebase Error";
-
-        linkElement.textContent =
-            "Firebase connect नहीं हुआ।";
-
-        statusElement.textContent =
-            "Firebase initialization failed.";
-
-        return;
-
-    }
+    const statusElement =
+        document.getElementById(
+            "status"
+        );
 
 
-    /*
-     * Login mobile
-     */
+    /* ---------------------------------------------
+       LOGIN CHECK
+    --------------------------------------------- */
 
     const mobile =
         getLoggedInMobile();
@@ -1754,7 +1327,7 @@ async function loadReferralData(){
             "Login Required";
 
         linkElement.textContent =
-            "पहले login करें।";
+            "Please login first.";
 
         statusElement.textContent =
             "Logged-in user नहीं मिला।";
@@ -1764,49 +1337,98 @@ async function loadReferralData(){
     }
 
 
-    console.log(
-        "Logged in mobile:",
-        mobile
+    /* ---------------------------------------------
+       CREATE LOCAL REFERRAL CODE
+    --------------------------------------------- */
+
+    currentReferralCode =
+        createReferralCode(
+            mobile
+        );
+
+
+    currentReferralLink =
+        SITE_BASE_URL +
+        "?ref=" +
+        encodeURIComponent(
+            currentReferralCode
+        );
+
+
+    codeElement.textContent =
+        currentReferralCode;
+
+
+    linkElement.textContent =
+        currentReferralLink;
+
+
+    localStorage.setItem(
+        "rdxReferralCode",
+        currentReferralCode
     );
+
+
+    /* ---------------------------------------------
+       DEFAULT VALUES
+    --------------------------------------------- */
+
+    playersElement.textContent =
+        "0";
+
+    earningsElement.textContent =
+        "₹0";
+
+
+    /* ---------------------------------------------
+       FIREBASE CHECK
+    --------------------------------------------- */
+
+    if(!db){
+
+        statusElement.textContent =
+            "Firebase connection failed.";
+
+        return;
+
+    }
 
 
     try{
 
+        console.log(
+            "Loading customer:",
+            mobile
+        );
+
+
         /*
-         * Customer document
+         * IMPORTANT:
+         *
+         * सिर्फ current customer document read होगा.
+         *
+         * पूरी customers collection query नहीं होगी.
+         *
+         * referralCode को Firebase में update भी
+         * नहीं किया जाएगा.
          */
-
-        const customerRef =
-            db
-                .collection(
-                    "customers"
-                )
-                .doc(
-                    mobile
-                );
-
 
         const snapshot =
-            await customerRef.get();
+            await db
+                .collection("customers")
+                .doc(mobile)
+                .get();
 
 
-        /*
-         * Document नहीं मिला
-         */
+        if(!snapshot.exists){
 
-        if(
-            !snapshot.exists
-        ){
-
-            codeElement.textContent =
-                "User Not Found";
-
-            linkElement.textContent =
-                "आपका Firebase customer account नहीं मिला।";
+            /*
+             * Referral code फिर भी दिखेगा,
+             * क्योंकि code mobile से locally generate हुआ है.
+             */
 
             statusElement.textContent =
-                "Customer document: " +
-                mobile;
+                "Referral link ready.";
 
             return;
 
@@ -1817,95 +1439,9 @@ async function loadReferralData(){
             snapshot.data() || {};
 
 
-        /*
-         * Referral code
-         */
-
-        let referralCode =
-            userData.referralCode;
-
-
-        /*
-         * Existing code नहीं है
-         */
-
-        if(
-            typeof referralCode !==
-                "string" ||
-            !referralCode.trim()
-        ){
-
-            referralCode =
-                createReferralCode();
-
-
-            /*
-             * Referral code save
-             */
-
-            await customerRef.set(
-
-                {
-
-                    referralCode:
-                        referralCode
-
-                },
-
-                {
-
-                    merge:true
-
-                }
-
-            );
-
-        }
-
-
-        currentReferralCode =
-            referralCode
-                .trim()
-                .toUpperCase();
-
-
-        /*
-         * Referral link
-         */
-
-        currentReferralLink =
-            SITE_BASE_URL +
-            "?ref=" +
-            encodeURIComponent(
-                currentReferralCode
-            );
-
-
-        /*
-         * Display
-         */
-
-        codeElement.textContent =
-            currentReferralCode;
-
-
-        linkElement.textContent =
-            currentReferralLink;
-
-
-        /*
-         * Local save
-         */
-
-        localStorage.setItem(
-            "rdxReferralCode",
-            currentReferralCode
-        );
-
-
-        /*
-         * Earnings
-         */
+        /* -----------------------------------------
+           EARNINGS
+        ----------------------------------------- */
 
         let earnings = 0;
 
@@ -1939,88 +1475,80 @@ async function loadReferralData(){
             );
 
 
-        /*
-         * Referral players
-         */
+        /* -----------------------------------------
+           PLAYERS
+           
+           Collection query हटाई गई है.
+           
+           अगर customer document में
+           referralCount है तो वही दिखेगा.
+        ----------------------------------------- */
 
-        try{
-
-            const playersSnapshot =
-                await db
-                    .collection(
-                        "customers"
-                    )
-                    .where(
-                        "referredBy",
-                        "==",
-                        currentReferralCode
-                    )
-                    .get();
+        let playerCount = 0;
 
 
-            playersElement.textContent =
-                playersSnapshot.size;
+        if(
+            typeof userData.referralCount ===
+            "number"
+        ){
+
+            playerCount =
+                userData.referralCount;
 
         }
-        catch(playerError){
+        else if(
+            typeof userData.referredPlayers ===
+            "number"
+        ){
 
-            console.error(
-                "Players query error:",
-                playerError
+            playerCount =
+                userData.referredPlayers;
+
+        }
+
+
+        playersElement.textContent =
+            Number(
+                playerCount
+            ).toLocaleString(
+                "en-IN"
             );
 
-            playersElement.textContent =
-                "0";
-
-        }
-
-
-        /*
-         * SUCCESS
-         */
 
         statusElement.textContent =
             "Referral information loaded.";
 
-    }
-    catch(error){
+        console.log(
+            "Referral data loaded successfully."
+        );
+
+
+    }catch(error){
 
         console.error(
-            "Referral error:",
+            "Referral Firebase error:",
             error
         );
 
 
-        codeElement.textContent =
-            "Error";
-
-
-        linkElement.textContent =
-            "Referral information load नहीं हो सकी।";
-
-
         /*
-         * Permission error ko clear message
+         * Referral code/link फिर भी काम करेंगे.
          */
 
         if(
+            error &&
             error.code ===
             "permission-denied"
         ){
 
             statusElement.textContent =
-                "Firebase permission denied. Firestore Rules check करें.";
-
-            showMessage(
-                "Firebase permission denied"
-            );
+                "Referral link ready. Firebase read permission अभी allow नहीं है.";
 
         }
         else{
 
             statusElement.textContent =
-                error.message ||
-                "Something went wrong.";
+                "Referral link ready.";
 
         }
 
@@ -2035,9 +1563,7 @@ async function loadReferralData(){
 
 function copyCode(){
 
-    if(
-        !currentReferralCode
-    ){
+    if(!currentReferralCode){
 
         showMessage(
             "Referral code available नहीं है."
@@ -2062,9 +1588,7 @@ function copyCode(){
 
 function copyLink(){
 
-    if(
-        !currentReferralLink
-    ){
+    if(!currentReferralLink){
 
         showMessage(
             "Referral link available नहीं है."
@@ -2121,15 +1645,15 @@ function copyText(
                 }
             );
 
-    }
-    else{
-
-        fallbackCopy(
-            text,
-            successMessage
-        );
+        return;
 
     }
+
+
+    fallbackCopy(
+        text,
+        successMessage
+    );
 
 }
 
@@ -2166,25 +1690,41 @@ function fallbackCopy(
 
 
     textarea.focus();
-
     textarea.select();
 
 
     try{
 
-        document.execCommand(
-            "copy"
+        const successful =
+            document.execCommand(
+                "copy"
+            );
+
+
+        if(successful){
+
+            showMessage(
+                successMessage
+            );
+
+        }
+        else{
+
+            showMessage(
+                "Copy failed."
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Copy error:",
+            error
         );
 
         showMessage(
-            successMessage
-        );
-
-    }
-    catch(error){
-
-        showMessage(
-            "Copy failed. Manually copy करें."
+            "Copy failed. Please copy manually."
         );
 
     }
@@ -2203,9 +1743,7 @@ function fallbackCopy(
 
 function shareWhatsApp(){
 
-    if(
-        !currentReferralLink
-    ){
+    if(!currentReferralLink){
 
         showMessage(
             "Referral link available नहीं है."
@@ -2224,17 +1762,15 @@ function shareWhatsApp(){
         currentReferralCode;
 
 
-    const url =
+    const whatsappURL =
         "https://wa.me/?text=" +
         encodeURIComponent(
             message
         );
 
 
-    window.open(
-        url,
-        "_blank"
-    );
+    window.location.href =
+        whatsappURL;
 
 }
 
@@ -2358,9 +1894,7 @@ function goHistory(){
 let toastTimer = null;
 
 
-function showMessage(
-    message
-){
+function showMessage(message){
 
     const toast =
         document.getElementById(
