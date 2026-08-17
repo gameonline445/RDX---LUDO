@@ -32,6 +32,7 @@ body{
         Roboto,
         Arial,
         sans-serif;
+
     color:#101a38;
     overflow-x:hidden;
 
@@ -780,7 +781,7 @@ body{
 
 <!-- =====================================================
      FIREBASE
-     ===================================================== -->
+===================================================== -->
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 
@@ -815,9 +816,9 @@ const firebaseConfig = {
 let firebaseDB = null;
 
 
-try {
+try{
 
-    if (!firebase.apps.length) {
+    if(!firebase.apps.length){
 
         firebase.initializeApp(
             firebaseConfig
@@ -832,7 +833,7 @@ try {
         "FIREBASE FIRESTORE CONNECTED"
     );
 
-} catch(error) {
+}catch(error){
 
     console.error(
         "FIREBASE INITIALIZATION ERROR:",
@@ -1076,13 +1077,9 @@ try {
 ></div>
 
 
-
 <!-- =====================================================
      MSG91 CONFIGURATION
-
-     MSG91 KO NAHI HATAYA GAYA HAI.
-     OTP SIRF MSG91 SE HOGA.
-     ===================================================== -->
+===================================================== -->
 
 <script>
 
@@ -1143,13 +1140,12 @@ var configuration = {
 ></script>
 
 
-
 <script>
 
 
 /* =====================================================
    ELEMENTS
-   ===================================================== */
+===================================================== */
 
 const mobileInput =
     document.getElementById(
@@ -1214,7 +1210,7 @@ const toast =
 
 /* =====================================================
    VARIABLES
-   ===================================================== */
+===================================================== */
 
 let currentIdentifier =
     "";
@@ -1234,7 +1230,7 @@ let msg91Ready =
 
 /* =====================================================
    TOAST
-   ===================================================== */
+===================================================== */
 
 function showMessage(message){
 
@@ -1266,7 +1262,7 @@ function showMessage(message){
 
 /* =====================================================
    MSG91 READY
-   ===================================================== */
+===================================================== */
 
 function checkMSG91Ready(){
 
@@ -1299,7 +1295,7 @@ function checkMSG91Ready(){
 
 /* =====================================================
    WAIT MSG91
-   ===================================================== */
+===================================================== */
 
 function waitForMSG91(){
 
@@ -1358,7 +1354,7 @@ function waitForMSG91(){
 
 /* =====================================================
    PAGE LOAD
-   ===================================================== */
+===================================================== */
 
 window.addEventListener(
     "load",
@@ -1372,7 +1368,7 @@ window.addEventListener(
 
 /* =====================================================
    MOBILE
-   ===================================================== */
+===================================================== */
 
 function getMobile(){
 
@@ -1391,7 +1387,7 @@ function getMobile(){
 
 /* =====================================================
    START LOGIN
-   ===================================================== */
+===================================================== */
 
 function startLogin(){
 
@@ -1449,6 +1445,20 @@ function startLogin(){
         "91" + mobile;
 
 
+    /*
+    =========================================
+    MOBILE LOGIN INFORMATION
+    =========================================
+
+    Mobile number browser में temporary
+    store रहेगा ताकि profile.html उसे
+    Firebase customer document से जोड़ सके।
+
+    असली user identity Firebase में:
+    customers / 91XXXXXXXXXX
+    =========================================
+    */
+
     localStorage.setItem(
         "rdxLoginMobile",
         currentIdentifier
@@ -1493,7 +1503,7 @@ function startLogin(){
 
 /* =====================================================
    SEND OTP
-   ===================================================== */
+===================================================== */
 
 function sendOTPNow(){
 
@@ -1595,7 +1605,6 @@ function sendOTPNow(){
             verifyBtn.disabled =
                 true;
 
-
             resendBtn.disabled =
                 false;
 
@@ -1613,7 +1622,7 @@ function sendOTPNow(){
 
 /* =====================================================
    VERIFY OTP
-   ===================================================== */
+===================================================== */
 
 function verifyOTP(){
 
@@ -1681,8 +1690,10 @@ function verifyOTP(){
 
 
             /*
-             * MSG91 verification successful
-             */
+            =====================================
+            OTP VERIFIED
+            =====================================
+            */
 
             localStorage.setItem(
                 "rdxLoggedIn",
@@ -1709,17 +1720,28 @@ function verifyOTP(){
 
 
             /*
-             * =========================================
-             * FIREBASE SAVE
-             * =========================================
-             *
-             * IMPORTANT:
-             * Dashboard par jaane se pehle
-             * Firebase save complete hoga.
-             */
+            =====================================
+            FIREBASE SAVE
+            =====================================
+
+            यहाँ सिर्फ mobile/status/login time
+            update होगा।
+
+            IMPORTANT:
+            Existing "name" को overwrite नहीं किया
+            जाएगा।
+
+            इसलिए अगर profile में:
+
+            name = Neeraj Meena
+
+            save है तो login के समय वह नाम
+            delete/replace नहीं होगा।
+            =====================================
+            */
 
             showMessage(
-                "OTP verify हो गया। Firebase में data save हो रहा है..."
+                "OTP verify हो गया। Firebase में login save हो रहा है..."
             );
 
 
@@ -1728,10 +1750,6 @@ function verifyOTP(){
                     currentIdentifier
                 );
 
-
-            /*
-             * Firebase save FAIL
-             */
 
             if(!saved){
 
@@ -1742,7 +1760,7 @@ function verifyOTP(){
                     "Verify OTP";
 
                 showMessage(
-                    "OTP verify हो गया, लेकिन Firebase में data save नहीं हुआ।"
+                    "OTP verify हो गया, लेकिन Firebase में login save नहीं हुआ।"
                 );
 
                 return;
@@ -1750,17 +1768,13 @@ function verifyOTP(){
             }
 
 
-            /*
-             * Firebase save SUCCESS
-             */
-
             clearInterval(
                 resendTimer
             );
 
 
             showMessage(
-                "Login successful! Data Firebase में save हो गया।"
+                "Login successful!"
             );
 
 
@@ -1811,8 +1825,8 @@ function verifyOTP(){
 
 
 /* =====================================================
-   FIREBASE SAVE / UPDATE
-   ===================================================== */
+   FIREBASE SAVE CUSTOMER
+===================================================== */
 
 async function saveCustomerToFirebase(mobile){
 
@@ -1823,7 +1837,7 @@ async function saveCustomerToFirebase(mobile){
         );
 
         console.log(
-            "FIREBASE SAVE START"
+            "FIREBASE CUSTOMER LOGIN SAVE START"
         );
 
         console.log(
@@ -1833,8 +1847,10 @@ async function saveCustomerToFirebase(mobile){
 
 
         /*
-         * Firebase connection check
-         */
+        =========================================
+        FIREBASE CONNECTION CHECK
+        =========================================
+        */
 
         if(!firebaseDB){
 
@@ -1852,8 +1868,10 @@ async function saveCustomerToFirebase(mobile){
 
 
         /*
-         * Clean mobile
-         */
+        =========================================
+        CLEAN MOBILE
+        =========================================
+        */
 
         const cleanMobile =
             String(mobile)
@@ -1864,8 +1882,10 @@ async function saveCustomerToFirebase(mobile){
 
 
         /*
-         * Indian mobile validation
-         */
+        =========================================
+        INDIAN MOBILE VALIDATION
+        =========================================
+        */
 
         if(
             !/^91[6-9]\d{9}$/.test(
@@ -1888,13 +1908,16 @@ async function saveCustomerToFirebase(mobile){
 
 
         /*
-         * customers collection
-         *
-         * Example:
-         *
-         * customers
-         *    └── 91917878852370
-         */
+        =========================================
+        CUSTOMER DOCUMENT
+
+        Example:
+
+        customers
+           |
+           └── 91917878852370
+        =========================================
+        */
 
         const userRef =
             firebaseDB
@@ -1906,6 +1929,12 @@ async function saveCustomerToFirebase(mobile){
             );
 
 
+        /*
+        =========================================
+        SERVER TIME
+        =========================================
+        */
+
         const now =
             firebase.firestore
             .FieldValue
@@ -1913,22 +1942,30 @@ async function saveCustomerToFirebase(mobile){
 
 
         /*
-         * IMPORTANT
-         *
-         * get() नहीं किया गया है।
-         *
-         * इसलिए read permission की जरूरत नहीं।
-         *
-         * merge:true:
-         *
-         * NEW USER:
-         * document create होगा।
-         *
-         * EXISTING USER:
-         * status और lastLoginAt update होंगे।
-         *
-         * Existing balance overwrite नहीं होगा।
-         */
+        =========================================
+        IMPORTANT
+
+        यहाँ NAME field नहीं भेज रहे हैं।
+
+        इसका मतलब:
+
+        अगर Firebase में पहले से:
+
+        name:
+        "Neeraj Meena"
+
+        है तो यह code उसे touch नहीं करेगा।
+
+        सिर्फ नीचे के fields update होंगे:
+
+        mobile
+        status
+        lastLoginAt
+
+        merge:true होने की वजह से बाकी
+        fields सुरक्षित रहेंगे।
+        =========================================
+        */
 
         await userRef.set(
 
@@ -1957,8 +1994,10 @@ async function saveCustomerToFirebase(mobile){
 
 
         /*
-         * Local user ID
-         */
+        =========================================
+        FIREBASE USER ID
+        =========================================
+        */
 
         localStorage.setItem(
             "rdxFirebaseUserId",
@@ -1966,8 +2005,18 @@ async function saveCustomerToFirebase(mobile){
         );
 
 
+        localStorage.setItem(
+            "rdxVerifiedMobile",
+            cleanMobile
+        );
+
+
         console.log(
-            "FIREBASE SAVE SUCCESS:",
+            "FIREBASE CUSTOMER LOGIN SAVE SUCCESS"
+        );
+
+        console.log(
+            "Customer ID:",
             cleanMobile
         );
 
@@ -1980,7 +2029,6 @@ async function saveCustomerToFirebase(mobile){
 
 
     }catch(error){
-
 
         console.error(
             "================================"
@@ -2010,11 +2058,6 @@ async function saveCustomerToFirebase(mobile){
         );
 
 
-        /*
-         * User ko exact Firebase error
-         * toast me dikhayenge.
-         */
-
         let message =
             error.message ||
             "Unknown Firebase error";
@@ -2035,7 +2078,7 @@ async function saveCustomerToFirebase(mobile){
 
 /* =====================================================
    RESEND OTP
-   ===================================================== */
+===================================================== */
 
 function resendOTP(){
 
@@ -2166,7 +2209,7 @@ function resendOTP(){
 
 /* =====================================================
    RESEND TIMER
-   ===================================================== */
+===================================================== */
 
 function startResendTimer(){
 
@@ -2230,7 +2273,7 @@ function startResendTimer(){
 
 /* =====================================================
    MOBILE INPUT
-   ===================================================== */
+===================================================== */
 
 mobileInput.addEventListener(
     "input",
@@ -2253,7 +2296,7 @@ mobileInput.addEventListener(
 
 /* =====================================================
    OTP INPUT
-   ===================================================== */
+===================================================== */
 
 otpInput.addEventListener(
     "input",
@@ -2295,7 +2338,7 @@ otpInput.addEventListener(
 
 /* =====================================================
    SEND OTP BUTTON
-   ===================================================== */
+===================================================== */
 
 continueBtn.addEventListener(
     "click",
@@ -2309,7 +2352,7 @@ continueBtn.addEventListener(
 
 /* =====================================================
    VERIFY BUTTON
-   ===================================================== */
+===================================================== */
 
 verifyBtn.addEventListener(
     "click",
@@ -2323,7 +2366,7 @@ verifyBtn.addEventListener(
 
 /* =====================================================
    RESEND BUTTON
-   ===================================================== */
+===================================================== */
 
 resendBtn.addEventListener(
     "click",
@@ -2337,7 +2380,7 @@ resendBtn.addEventListener(
 
 /* =====================================================
    ENTER KEY
-   ===================================================== */
+===================================================== */
 
 document.addEventListener(
     "keydown",
@@ -2390,7 +2433,7 @@ document.addEventListener(
 
 /* =====================================================
    BACK BUTTON
-   ===================================================== */
+===================================================== */
 
 function goBack(){
 
