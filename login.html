@@ -4,8 +4,10 @@
 
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
 
 <title>RDX LUDO - Login</title>
 
@@ -24,10 +26,30 @@ color:#101a38;
 overflow-x:hidden;
 
 background:
-radial-gradient(circle at 10% 10%,rgba(83,125,255,.28),transparent 30%),
-radial-gradient(circle at 90% 15%,rgba(255,116,93,.22),transparent 28%),
-radial-gradient(circle at 50% 100%,rgba(91,218,172,.18),transparent 35%),
-linear-gradient(135deg,#edf4ff,#fff 50%,#f4f7ff);
+radial-gradient(
+circle at 10% 10%,
+rgba(83,125,255,.28),
+transparent 30%
+),
+
+radial-gradient(
+circle at 90% 15%,
+rgba(255,116,93,.22),
+transparent 28%
+),
+
+radial-gradient(
+circle at 50% 100%,
+rgba(91,218,172,.18),
+transparent 35%
+),
+
+linear-gradient(
+135deg,
+#edf4ff,
+#fff 50%,
+#f4f7ff
+);
 }
 
 
@@ -39,29 +61,55 @@ padding:18px 18px 0;
 
 .back-btn{
 border:1px solid #a8c4f8;
-background:linear-gradient(135deg,#fff,#eaf2ff);
+
+background:
+linear-gradient(
+135deg,
+#fff,
+#eaf2ff
+);
+
 color:#172542;
+
 min-height:54px;
+
 padding:7px 18px 7px 8px;
+
 border-radius:30px;
+
 display:flex;
 align-items:center;
+
 gap:11px;
+
 font-size:16px;
 font-weight:800;
+
 cursor:pointer;
-box-shadow:0 8px 25px rgba(44,93,190,.13);
+
+box-shadow:
+0 8px 25px rgba(44,93,190,.13);
 }
 
 .back-icon{
 width:40px;
 height:40px;
+
 border-radius:50%;
+
 display:flex;
 align-items:center;
 justify-content:center;
-background:linear-gradient(145deg,#2467e9,#4b80f1);
+
+background:
+linear-gradient(
+145deg,
+#2467e9,
+#4b80f1
+);
+
 color:#fff;
+
 font-size:25px;
 }
 
@@ -86,10 +134,17 @@ margin:12px 0 25px;
 .logo{
 width:112px;
 height:112px;
+
 margin:auto;
+
 border-radius:50%;
 
-background:linear-gradient(145deg,#fff,#e7efff);
+background:
+linear-gradient(
+145deg,
+#fff,
+#e7efff
+);
 
 border:6px solid #b8cff9;
 
@@ -98,6 +153,7 @@ align-items:center;
 justify-content:center;
 
 color:#2565df;
+
 font-size:25px;
 font-weight:950;
 
@@ -110,10 +166,15 @@ position:relative;
 
 .logo:before{
 content:"";
+
 position:absolute;
+
 inset:9px;
+
 border-radius:50%;
+
 border:3px solid #ef4444;
+
 opacity:.75;
 }
 
@@ -124,23 +185,35 @@ z-index:2;
 
 .brand h1{
 margin-top:18px;
+
 font-size:38px;
 line-height:1;
+
 font-weight:950;
+
 letter-spacing:-1.5px;
 
 background:
-linear-gradient(90deg,#195fe2,#6b5df4,#e84c74);
+linear-gradient(
+90deg,
+#195fe2,
+#6b5df4,
+#e84c74
+);
 
 -webkit-background-clip:text;
 background-clip:text;
+
 color:transparent;
 }
 
 .brand p{
 margin-top:10px;
+
 color:#6c7c9c;
+
 font-size:18px;
+
 font-weight:600;
 }
 
@@ -166,11 +239,13 @@ box-shadow:
 0 5px 20px rgba(38,82,165,.07);
 
 position:relative;
+
 overflow:hidden;
 }
 
 .login-card:before{
 content:"";
+
 position:absolute;
 
 width:190px;
@@ -186,6 +261,7 @@ right:-70px;
 
 .login-card:after{
 content:"";
+
 position:absolute;
 
 width:150px;
@@ -204,7 +280,9 @@ left:-60px;
 
 .step{
 display:inline-flex;
+
 align-items:center;
+
 gap:7px;
 
 padding:9px 15px;
@@ -218,10 +296,13 @@ background:#edf4ff;
 color:#2865d6;
 
 font-size:12px;
+
 font-weight:900;
+
 letter-spacing:1px;
 
 position:relative;
+
 z-index:2;
 }
 
@@ -230,20 +311,27 @@ z-index:2;
 
 .login-card h2{
 margin-top:22px;
+
 font-size:32px;
+
 line-height:1.15;
 
 position:relative;
+
 z-index:2;
 }
 
 .subtitle{
 margin-top:10px;
+
 color:#71809d;
+
 font-size:16px;
+
 line-height:1.5;
 
 position:relative;
+
 z-index:2;
 }
 
@@ -252,62 +340,22 @@ z-index:2;
 
 .form-group{
 margin-top:24px;
+
 position:relative;
+
 z-index:2;
 }
 
 .form-group label{
 display:block;
+
 margin-bottom:9px;
 
 color:#34415e;
+
 font-size:15px;
+
 font-weight:850;
-}
-
-.input-wrap{
-position:relative;
-}
-
-.input-icon{
-position:absolute;
-
-left:17px;
-top:50%;
-
-transform:translateY(-50%);
-
-font-size:20px;
-
-z-index:3;
-}
-
-input{
-width:100%;
-height:62px;
-
-border-radius:18px;
-
-border:1px solid #c5d3eb;
-
-outline:none;
-
-background:
-linear-gradient(145deg,#fff,#f5f8ff);
-
-color:#17213a;
-
-font-size:17px;
-font-weight:600;
-
-padding:0 17px 0 52px;
-}
-
-input:focus{
-border-color:#4c7fe8;
-
-box-shadow:
-0 0 0 4px rgba(54,111,230,.1);
 }
 
 
@@ -315,7 +363,9 @@ box-shadow:
 
 .mobile-wrap{
 display:grid;
+
 grid-template-columns:94px 1fr;
+
 gap:10px;
 }
 
@@ -327,24 +377,60 @@ border-radius:18px;
 border:1px solid #aac5f6;
 
 background:
-linear-gradient(145deg,#edf4ff,#e2ecff);
+linear-gradient(
+145deg,
+#edf4ff,
+#e2ecff
+);
 
 display:flex;
+
 align-items:center;
 justify-content:center;
 
 color:#2865d6;
 
 font-size:17px;
+
 font-weight:900;
 }
 
-.mobile-wrap input{
-padding-left:18px;
+.mobile-input{
+width:100%;
+
+height:62px;
+
+border-radius:18px;
+
+border:1px solid #c5d3eb;
+
+outline:none;
+
+background:
+linear-gradient(
+145deg,
+#fff,
+#f5f8ff
+);
+
+color:#17213a;
+
+font-size:17px;
+
+font-weight:600;
+
+padding:0 17px;
+}
+
+.mobile-input:focus{
+border-color:#4c7fe8;
+
+box-shadow:
+0 0 0 4px rgba(54,111,230,.1);
 }
 
 
-/* BUTTONS */
+/* BUTTON */
 
 .continue-btn,
 .verify-btn{
@@ -358,11 +444,17 @@ border:0;
 border-radius:20px;
 
 background:
-linear-gradient(100deg,#1762e9,#477bed,#705cf0);
+linear-gradient(
+100deg,
+#1762e9,
+#477bed,
+#705cf0
+);
 
 color:#fff;
 
 font-size:18px;
+
 font-weight:900;
 
 cursor:pointer;
@@ -375,12 +467,14 @@ box-shadow:
 margin-top:28px;
 
 position:relative;
+
 z-index:2;
 }
 
 .continue-btn:disabled,
 .verify-btn:disabled{
 opacity:.6;
+
 cursor:not-allowed;
 }
 
@@ -391,6 +485,7 @@ cursor:not-allowed;
 display:none;
 
 position:relative;
+
 z-index:5;
 
 margin-top:24px;
@@ -404,11 +499,13 @@ margin-bottom:9px;
 color:#34415e;
 
 font-size:15px;
+
 font-weight:850;
 }
 
 .otp-input{
 width:100%;
+
 height:64px;
 
 border-radius:18px;
@@ -420,6 +517,7 @@ background:#fff;
 color:#17213a;
 
 font-size:28px;
+
 font-weight:900;
 
 letter-spacing:10px;
@@ -427,6 +525,15 @@ letter-spacing:10px;
 text-align:center;
 
 padding:0 15px;
+
+outline:none;
+}
+
+.otp-input:focus{
+border-color:#4c7fe8;
+
+box-shadow:
+0 0 0 4px rgba(54,111,230,.1);
 }
 
 .otp-hint{
@@ -457,6 +564,7 @@ background:transparent;
 color:#2865d6;
 
 font-size:14px;
+
 font-weight:800;
 
 cursor:pointer;
@@ -464,6 +572,7 @@ cursor:pointer;
 
 .resend-btn:disabled{
 opacity:.5;
+
 cursor:not-allowed;
 }
 
@@ -484,6 +593,7 @@ padding-top:22px;
 border-top:1px solid #e2e8f3;
 
 position:relative;
+
 z-index:2;
 }
 
@@ -493,6 +603,7 @@ text-align:center;
 color:#667590;
 
 font-size:12px;
+
 font-weight:700;
 }
 
@@ -505,6 +616,7 @@ margin:auto;
 border-radius:14px;
 
 display:flex;
+
 align-items:center;
 justify-content:center;
 
@@ -545,6 +657,7 @@ color:#2865d6;
 position:fixed;
 
 left:50%;
+
 bottom:35px;
 
 transform:
@@ -560,6 +673,7 @@ padding:13px 18px;
 border-radius:14px;
 
 font-size:14px;
+
 font-weight:650;
 
 opacity:0;
@@ -599,6 +713,7 @@ padding:20px 12px 55px;
 .logo{
 width:94px;
 height:94px;
+
 font-size:21px;
 }
 
@@ -612,6 +727,7 @@ font-size:16px;
 
 .login-card{
 padding:24px 18px;
+
 border-radius:25px;
 }
 
@@ -623,14 +739,16 @@ font-size:27px;
 font-size:14px;
 }
 
-input,
+.mobile-input,
 .country-code{
 height:58px;
+
 border-radius:16px;
 }
 
 .mobile-wrap{
 grid-template-columns:82px 1fr;
+
 gap:8px;
 }
 
@@ -641,7 +759,9 @@ min-height:60px;
 
 .otp-input{
 height:60px;
+
 font-size:25px;
+
 letter-spacing:7px;
 }
 
@@ -656,6 +776,7 @@ font-size:10px;
 .feature-icon{
 width:38px;
 height:38px;
+
 font-size:17px;
 }
 
@@ -756,6 +877,7 @@ Mobile Number
 
 
 <input
+class="mobile-input"
 type="tel"
 id="mobile"
 placeholder="10-digit mobile number"
@@ -811,8 +933,6 @@ OTP will be sent to your mobile number.
 </p>
 
 
-<!-- VERIFY -->
-
 <button
 type="button"
 class="verify-btn"
@@ -823,8 +943,6 @@ Verify OTP
 
 </button>
 
-
-<!-- RESEND -->
 
 <button
 type="button"
@@ -900,8 +1018,6 @@ Use your registered mobile number to login.
 </main>
 
 
-<!-- TOAST -->
-
 <div
 class="toast"
 id="toast">
@@ -910,36 +1026,25 @@ id="toast">
 
 
 <!-- =====================================================
-     MSG91 SETTINGS
+     MSG91 CONFIGURATION
      ===================================================== -->
 
-<script type="text/javascript">
-
-
-/*
-=========================================================
-MSG91 WIDGET SETTINGS
-
-यहाँ अपना MSG91 Widget ID और Widget Token रखें।
-
-Authkey यहाँ नहीं लगानी है।
-=========================================================
-*/
-
+<script>
 
 const MSG91_WIDGET_ID =
 "366870704943343439343834";
 
 
-const MSG91_TOKEN =
-"561244TCn8oI4OX6a82246aP1";
-
-
 /*
-=========================================================
-MSG91 CONFIGURATION
-=========================================================
+IMPORTANT:
+यहाँ MSG91 से नया Widget Token डालें।
+
+पुराना exposed token इस्तेमाल न करें।
 */
+
+const MSG91_TOKEN =
+"PASTE_NEW_MSG91_WIDGET_TOKEN_HERE";
+
 
 var configuration = {
 
@@ -954,6 +1059,9 @@ identifier:
 
 exposeMethods:
 true,
+
+captchaRenderId:
+"",
 
 success:
 function(data){
@@ -983,19 +1091,22 @@ error
 
 <!-- =====================================================
      MSG91 SDK
+
+     IMPORTANT:
+     initSendOTP(configuration) सीधे onload में चलेगा.
      ===================================================== -->
 
 <script
 type="text/javascript"
 src="https://verify.msg91.com/otp-provider.js"
-onload="msg91Loaded()">
+onload="initSendOTP(configuration); msg91Loaded();"
+onerror="msg91LoadFailed();">
 
 </script>
 
 
 
 <script>
-
 
 /* =====================================================
    ELEMENTS
@@ -1088,72 +1199,36 @@ toast.classList.remove("show");
 function msg91Loaded(){
 
 console.log(
-"MSG91 SDK loaded"
+"MSG91 SDK loaded and initialized"
 );
 
-initializeMSG91();
+checkMSG91Methods();
 
 }
 
 
 /* =====================================================
-   INITIALIZE MSG91
+   MSG91 LOAD FAILED
    ===================================================== */
 
-function initializeMSG91(){
-
-if(
-typeof window.initSendOTP !==
-"function"
-){
+function msg91LoadFailed(){
 
 console.error(
-"MSG91 initSendOTP not available"
+"MSG91 SDK failed to load"
 );
 
 showMessage(
-"MSG91 service load नहीं हुआ।"
+"MSG91 service load नहीं हुआ। Internet check करें।"
 );
-
-return;
-
-}
-
-try{
-
-window.initSendOTP(
-configuration
-);
-
-console.log(
-"MSG91 initialization started"
-);
-
-waitForMSG91Methods();
-
-}
-
-catch(error){
-
-console.error(
-"MSG91 INITIALIZATION ERROR:",
-error
-);
-
-showMessage(
-"MSG91 initialization failed."
-);
-
-}
 
 }
 
 
 /* =====================================================
-   WAIT FOR MSG91 METHODS
+   CHECK METHODS
    ===================================================== */
 
-function waitForMSG91Methods(){
+function checkMSG91Methods(){
 
 let attempts = 0;
 
@@ -1205,7 +1280,7 @@ msg91Ready =
 false;
 
 console.error(
-"MSG91 methods not exposed"
+"MSG91 methods not available"
 );
 
 showMessage(
@@ -1252,7 +1327,7 @@ const mobile =
 getMobile();
 
 
-/* MOBILE CHECK */
+/* VALIDATE MOBILE */
 
 if(
 ! /^[6-9]\d{9}$/.test(
@@ -1271,21 +1346,34 @@ return;
 }
 
 
-/* IDENTIFIER */
+/* CHECK MSG91 */
 
-currentIdentifier =
-"91" + mobile;
+if(
+! msg91Ready
+||
+typeof window.sendOtp !==
+"function"
+){
+
+showMessage(
+"MSG91 अभी ready नहीं है। थोड़ी देर बाद फिर try करें।"
+);
+
+checkMSG91Methods();
+
+return;
+
+}
 
 
 /*
 =========================================================
-IMPORTANT
-
-यहाँ कोई नया नाम/account create नहीं हो रहा।
-
-Mobile number ही login identifier है।
+MOBILE IS THE ONLY LOGIN IDENTIFIER
 =========================================================
 */
+
+currentIdentifier =
+"91" + mobile;
 
 
 /* STEP 2 */
@@ -1314,86 +1402,13 @@ otpInput.value =
 verifyBtn.disabled =
 true;
 
-otpInput.focus();
+verifyBtn.textContent =
+"Verify OTP";
 
 
 /* SEND OTP */
 
-if(
-
-msg91Ready
-
-&&
-
-typeof window.sendOtp ===
-"function"
-
-){
-
 sendOTPNow();
-
-}
-
-else{
-
-showMessage(
-"MSG91 अभी load हो रहा है..."
-);
-
-waitAndSendOTP();
-
-}
-
-}
-
-
-/* =====================================================
-   WAIT AND SEND
-   ===================================================== */
-
-function waitAndSendOTP(){
-
-let attempts = 0;
-
-const timer =
-setInterval(
-function(){
-
-attempts++;
-
-
-if(
-typeof window.sendOtp ===
-"function"
-){
-
-clearInterval(timer);
-
-msg91Ready =
-true;
-
-sendOTPNow();
-
-return;
-
-}
-
-
-if(
-attempts >= 100
-){
-
-clearInterval(timer);
-
-showMessage(
-"MSG91 Send OTP method ready नहीं हुआ।"
-);
-
-}
-
-},
-100
-);
 
 }
 
@@ -1588,8 +1603,6 @@ data
 /*
 =========================================================
 LOGIN SUCCESS
-
-केवल verified mobile save होगा।
 =========================================================
 */
 
@@ -1852,7 +1865,7 @@ resendSeconds +
 
 
 /* =====================================================
-   INPUT CONTROLS
+   INPUT
    ===================================================== */
 
 mobileInput.addEventListener(
@@ -1893,8 +1906,6 @@ otpInput.value
 6
 );
 
-
-/* ENABLE VERIFY */
 
 if(
 otpInput.value.length >= 4
@@ -2022,7 +2033,6 @@ window.location.href =
 }
 
 }
-
 
 </script>
 
