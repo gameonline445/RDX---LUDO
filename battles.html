@@ -1,12 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
+
 <meta name="viewport"
       content="width=device-width, initial-scale=1.0,
       viewport-fit=cover">
 
 <title>RDX LUDO - Battles</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
 
@@ -23,25 +28,18 @@ body{
     background:#f7f9ff;
     color:#101a38;
     min-height:100vh;
-
     padding-bottom:95px;
 }
 
-button,
-input{
+button,input{
     font:inherit;
 }
 
-/* HEADER */
-
 .header{
-
     height:70px;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
-
     padding:0 14px;
 
     background:
@@ -51,7 +49,6 @@ input{
 
     position:sticky;
     top:0;
-
     z-index:100;
 
     box-shadow:
@@ -65,27 +62,19 @@ input{
 }
 
 .back-btn{
-
     width:45px;
     height:45px;
-
     border:0;
     border-radius:15px;
-
     background:#eef3ff;
-
     color:#2564da;
-
     font-size:26px;
-
     cursor:pointer;
 }
 
 .logo{
-
     width:44px;
     height:44px;
-
     border-radius:50%;
 
     display:flex;
@@ -93,9 +82,7 @@ input{
     justify-content:center;
 
     background:#fff;
-
     border:3px solid #d3e1ff;
-
     color:#1762df;
 
     font-weight:900;
@@ -108,29 +95,21 @@ input{
 }
 
 .container{
-
     width:100%;
     max-width:850px;
-
     margin:auto;
-
     padding:20px 14px 110px;
 }
 
-/* BALANCE */
-
 .balance-card{
-
     background:
     linear-gradient(135deg,#edf4ff,#ffffff);
 
     border:1.5px solid #b9cdf5;
-
     border-radius:22px;
 
     padding:17px;
-
-    margin-bottom:20px;
+    margin-bottom:18px;
 
     display:flex;
     align-items:center;
@@ -153,19 +132,22 @@ input{
     font-weight:850;
 }
 
-/* JOIN ROOM */
+.user-mobile{
+    margin-top:5px;
+    color:#71809d;
+    font-size:12px;
+}
 
-.join-card{
-
+.create-card,
+.join-card,
+.room-card{
     background:#fff;
 
     border:1.5px solid #b9cdf5;
-
     border-radius:23px;
 
     padding:18px;
-
-    margin-bottom:28px;
+    margin-bottom:18px;
 
     box-shadow:
     0 10px 25px rgba(30,60,120,.06);
@@ -177,32 +159,75 @@ input{
     margin-bottom:13px;
 }
 
+.entry-row{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+}
+
+.entry-box{
+    border:1px solid #d8dfec;
+    border-radius:15px;
+    padding:12px;
+    background:#f8faff;
+}
+
+.entry-box small{
+    display:block;
+    color:#77839a;
+    font-size:11px;
+}
+
+.entry-box strong{
+    display:block;
+    margin-top:3px;
+    font-size:17px;
+}
+
+.primary-btn,
+.join-btn,
+.ludo-btn{
+    width:100%;
+    height:48px;
+
+    border:0;
+    border-radius:15px;
+
+    background:
+    linear-gradient(145deg,#2868e8,#4c7ff0);
+
+    color:#fff;
+    font-weight:850;
+
+    cursor:pointer;
+}
+
+.create-btn{
+    margin-top:12px;
+}
+
 .join-row{
     display:flex;
     gap:9px;
 }
 
 .room-input{
-
     flex:1;
-
     min-width:0;
 
     height:48px;
 
     border:1px solid #d8dfec;
-
     border-radius:15px;
 
     padding:0 15px;
 
     outline:none;
-
     background:#f8faff;
-
     color:#17213a;
 
     text-transform:uppercase;
+    font-weight:750;
 }
 
 .room-input:focus{
@@ -210,34 +235,16 @@ input{
 }
 
 .join-btn{
-
-    height:48px;
-
-    border:0;
-
-    border-radius:15px;
-
+    width:auto;
     padding:0 19px;
-
-    background:
-    linear-gradient(145deg,#2868e8,#4c7ff0);
-
-    color:#fff;
-
-    font-weight:800;
-
-    cursor:pointer;
 }
 
-/* SECTION */
-
 .section-title{
-
     display:flex;
     align-items:center;
     gap:8px;
 
-    margin-bottom:12px;
+    margin:22px 0 12px;
 
     font-size:20px;
     font-weight:850;
@@ -247,18 +254,13 @@ input{
     color:#2564da;
 }
 
-/* BATTLE */
-
 .battle{
-
     background:#fff;
 
     border:1px solid #d5ddec;
-
     border-radius:20px;
 
     padding:13px;
-
     margin-bottom:12px;
 
     box-shadow:
@@ -266,70 +268,52 @@ input{
 }
 
 .battle-top{
-
     display:flex;
-
     align-items:center;
     justify-content:space-between;
-
     margin-bottom:10px;
 }
 
 .status{
-
     padding:5px 9px;
-
     border-radius:12px;
 
     background:#e7f8ee;
-
     color:#17934d;
 
     font-size:10px;
-
     font-weight:850;
 }
 
 .battle-id{
-
     color:#77839a;
-
     font-size:10px;
 }
 
 .battle-middle{
-
     display:flex;
-
     align-items:center;
     justify-content:space-between;
 
     background:#f7f9ff;
-
     border:1px solid #e0e6f2;
-
     border-radius:13px;
 
     padding:10px;
 }
 
-.info small{
-
+.info small,
+.prize small{
     display:block;
-
     color:#78849a;
-
     font-size:9px;
-
     text-transform:uppercase;
 }
 
-.info strong{
-
+.info strong,
+.prize strong{
     display:block;
-
     margin-top:2px;
-
     font-size:16px;
 }
 
@@ -342,235 +326,194 @@ input{
 }
 
 .play-small{
-
     width:100%;
-
     height:40px;
 
     margin-top:9px;
 
     border:0;
-
     border-radius:13px;
 
     background:#2868e8;
 
     color:white;
-
     font-weight:800;
 
     cursor:pointer;
 }
 
-/* GAME PANEL */
-
-.game-panel{
-
+.room-card{
     display:none;
-
-    background:#fff;
-
-    border:1.5px solid #b9cdf5;
-
-    border-radius:23px;
-
-    padding:18px;
-
-    margin-top:20px;
-
-    box-shadow:
-    0 12px 28px rgba(30,60,120,.08);
 }
 
-.game-panel.show{
+.room-card.show{
     display:block;
 }
 
+.room-status{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:12px;
+
+    border-radius:15px;
+
+    background:#f7f9ff;
+    border:1px solid #e0e6f2;
+
+    margin-top:12px;
+}
+
+.room-status small{
+    color:#71809d;
+    display:block;
+    font-size:10px;
+}
+
+.room-status strong{
+    display:block;
+    margin-top:3px;
+}
+
 .room-code{
-
     background:#eef4ff;
-
     border:1px dashed #7ea5ee;
-
     border-radius:17px;
 
     padding:15px;
-
     text-align:center;
 
     margin:14px 0;
 }
 
 .room-code small{
-
     color:#71809d;
-
     display:block;
-
     font-size:11px;
 }
 
 .room-code strong{
-
     display:block;
-
     margin-top:4px;
 
     font-size:27px;
-
     letter-spacing:3px;
 
     color:#2868e8;
 }
 
-.ludo-btn{
-
-    width:100%;
-
-    height:48px;
-
-    border:0;
-
-    border-radius:15px;
-
-    background:#15944d;
-
-    color:#fff;
-
-    font-weight:850;
-
-    cursor:pointer;
-}
-
-/* RESULT */
-
-.result-box{
-
-    margin-top:18px;
-
-    padding-top:18px;
-
-    border-top:1px solid #e1e6ef;
-}
-
-.result-title{
-    font-weight:850;
-    margin-bottom:10px;
-}
-
-.result-buttons{
-
+.players{
     display:grid;
-
-    grid-template-columns:
-    repeat(3,1fr);
-
-    gap:8px;
-}
-
-.result-btn{
-
-    height:44px;
-
-    border-radius:13px;
-
-    border:1px solid #d7deea;
-
-    background:#fff;
-
-    cursor:pointer;
-
-    font-weight:800;
-}
-
-.win{
-    color:#15944d;
-}
-
-.loss{
-    color:#dc3e48;
-}
-
-.cancel{
-    color:#69768e;
-}
-
-/* SCREENSHOT */
-
-.upload{
-
-    margin-top:15px;
-
-    padding:14px;
-
-    border-radius:16px;
-
-    background:#f7f9ff;
-
-    border:1px dashed #b7c6df;
-}
-
-.upload label{
-
-    display:block;
-
-    color:#2868e8;
-
-    font-weight:800;
-
-    margin-bottom:8px;
-}
-
-#preview{
-
-    display:none;
-
-    width:100%;
-
-    max-height:300px;
-
-    object-fit:contain;
-
-    margin-top:10px;
-
-    border-radius:13px;
-}
-
-.submit-result{
-
-    width:100%;
-
-    height:46px;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
 
     margin-top:12px;
+}
 
-    border:0;
+.player{
+    padding:12px;
+
+    border:1px solid #dce3ef;
+    border-radius:15px;
+
+    background:#fafbff;
+}
+
+.player small{
+    color:#78849a;
+    font-size:10px;
+}
+
+.player strong{
+    display:block;
+    margin-top:5px;
+    font-size:14px;
+}
+
+.player.online{
+    border-color:#8fd6ae;
+    background:#f0fff6;
+}
+
+.waiting{
+    margin-top:14px;
+    padding:12px;
 
     border-radius:14px;
 
-    background:#2868e8;
+    background:#fff8e7;
+    border:1px solid #f1d38b;
 
-    color:white;
+    color:#8a6412;
 
-    font-weight:850;
+    font-size:13px;
+    font-weight:700;
+
+    text-align:center;
+}
+
+.ready{
+    margin-top:14px;
+    padding:12px;
+
+    border-radius:14px;
+
+    background:#e8fff1;
+    border:1px solid #94d8af;
+
+    color:#168346;
+
+    font-size:13px;
+    font-weight:800;
+
+    text-align:center;
+}
+
+.leave-btn{
+    width:100%;
+    height:44px;
+
+    margin-top:10px;
+
+    border:1px solid #e0d0d0;
+    border-radius:14px;
+
+    background:#fff5f5;
+    color:#d53d48;
+
+    font-weight:800;
 
     cursor:pointer;
 }
 
-/* TOAST */
+.ludo-btn{
+    margin-top:12px;
+    background:#15944d;
+}
+
+.empty{
+    text-align:center;
+    padding:25px;
+
+    color:#7a879e;
+    font-size:14px;
+
+    background:#fff;
+
+    border:1px dashed #cbd5e7;
+    border-radius:18px;
+}
 
 .toast{
-
     position:fixed;
 
     left:50%;
     bottom:105px;
 
-    transform:
-    translate(-50%,20px);
+    transform:translate(-50%,20px);
 
     background:#182440;
-
     color:#fff;
 
     padding:12px 17px;
@@ -578,7 +521,6 @@ input{
     border-radius:13px;
 
     opacity:0;
-
     pointer-events:none;
 
     transition:.25s;
@@ -589,24 +531,17 @@ input{
 }
 
 .toast.show{
-
     opacity:1;
-
-    transform:
-    translate(-50%,0);
+    transform:translate(-50%,0);
 }
 
-/* BOTTOM */
-
 .bottom{
-
     position:fixed;
 
     left:0;
     bottom:0;
 
     width:100%;
-
     height:78px;
 
     background:rgba(255,255,255,.97);
@@ -614,9 +549,7 @@ input{
     border-top:1px solid #d6deee;
 
     display:flex;
-
     justify-content:space-around;
-
     align-items:center;
 
     z-index:200;
@@ -625,12 +558,10 @@ input{
 }
 
 .bottom button{
-
     width:25%;
     height:100%;
 
     border:0;
-
     background:transparent;
 
     color:#66738d;
@@ -638,18 +569,14 @@ input{
     cursor:pointer;
 
     display:flex;
-
     flex-direction:column;
-
     align-items:center;
-
     justify-content:center;
 
     gap:4px;
 }
 
 .bottom-icon{
-
     width:43px;
     height:43px;
 
@@ -668,9 +595,7 @@ input{
 }
 
 .bottom .active .bottom-icon{
-
     background:#536df5;
-
     color:white;
 
     box-shadow:
@@ -684,6 +609,10 @@ input{
         padding-right:12px;
     }
 
+    .entry-row{
+        grid-template-columns:1fr;
+    }
+
     .join-row{
         flex-direction:column;
     }
@@ -692,7 +621,7 @@ input{
         width:100%;
     }
 
-    .result-buttons{
+    .players{
         grid-template-columns:1fr;
     }
 }
@@ -717,7 +646,7 @@ input{
         </div>
 
         <div class="title">
-            Open Battles
+            Battles
         </div>
 
     </div>
@@ -727,332 +656,238 @@ input{
 
 <main class="container">
 
-    <!-- VIRTUAL COINS -->
 
-    <div class="balance-card">
+<!-- BALANCE -->
 
-        <div>
-            <div class="balance-label">
-                VIRTUAL COINS
-            </div>
+<div class="balance-card">
 
-            <div class="balance">
-                🪙 <span id="balance">0</span>
-            </div>
+    <div>
+
+        <div class="balance-label">
+            VIRTUAL COINS
         </div>
 
-        <div>
-            🎮
+        <div class="balance">
+            🪙 <span id="balance">0</span>
         </div>
 
-    </div>
-
-
-    <!-- JOIN ROOM -->
-
-    <div class="join-card">
-
-        <div class="card-title">
-            Join With Room Code
-        </div>
-
-        <div class="join-row">
-
-            <input
-                id="roomInput"
-                class="room-input"
-                type="text"
-                maxlength="8"
-                placeholder="Enter room code">
-
-            <button
-                class="join-btn"
-                onclick="joinRoom()">
-
-                JOIN
-
-            </button>
-
+        <div
+            class="user-mobile"
+            id="userMobile">
+            Loading user...
         </div>
 
     </div>
 
-
-    <!-- OPEN BATTLES -->
-
-    <div class="section-title">
-        ⚔️ <span>Open Battles</span>
+    <div>
+        🎮
     </div>
 
-
-    <div id="battleList">
-
-
-        <div class="battle">
-
-            <div class="battle-top">
-
-                <span class="status">
-                    ● OPEN
-                </span>
-
-                <span class="battle-id">
-                    #RDX1001
-                </span>
-
-            </div>
-
-            <div class="battle-middle">
-
-                <div class="info">
-
-                    <small>
-                        Entry
-                    </small>
-
-                    <strong>
-                        100 Coins
-                    </strong>
-
-                </div>
-
-                <div class="prize">
-
-                    <small>
-                        Reward
-                    </small>
-
-                    <strong>
-                        190 Coins
-                    </strong>
-
-                </div>
-
-            </div>
-
-            <button
-                class="play-small"
-                onclick="joinBattle('RDX1001')">
-
-                Join Battle
-
-            </button>
-
-        </div>
+</div>
 
 
-        <div class="battle">
+<!-- CREATE ROOM -->
 
-            <div class="battle-top">
+<div class="create-card">
 
-                <span class="status">
-                    ● OPEN
-                </span>
-
-                <span class="battle-id">
-                    #RDX1002
-                </span>
-
-            </div>
-
-            <div class="battle-middle">
-
-                <div class="info">
-
-                    <small>
-                        Entry
-                    </small>
-
-                    <strong>
-                        250 Coins
-                    </strong>
-
-                </div>
-
-                <div class="prize">
-
-                    <small>
-                        Reward
-                    </small>
-
-                    <strong>
-                        475 Coins
-                    </strong>
-
-                </div>
-
-            </div>
-
-            <button
-                class="play-small"
-                onclick="joinBattle('RDX1002')">
-
-                Join Battle
-
-            </button>
-
-        </div>
-
-
-        <div class="battle">
-
-            <div class="battle-top">
-
-                <span class="status">
-                    ● OPEN
-                </span>
-
-                <span class="battle-id">
-                    #RDX1003
-                </span>
-
-            </div>
-
-            <div class="battle-middle">
-
-                <div class="info">
-
-                    <small>
-                        Entry
-                    </small>
-
-                    <strong>
-                        500 Coins
-                    </strong>
-
-                </div>
-
-                <div class="prize">
-
-                    <small>
-                        Reward
-                    </small>
-
-                    <strong>
-                        950 Coins
-                    </strong>
-
-                </div>
-
-            </div>
-
-            <button
-                class="play-small"
-                onclick="joinBattle('RDX1003')">
-
-                Join Battle
-
-            </button>
-
-        </div>
-
+    <div class="card-title">
+        ⚔️ Create 2 Player Room
     </div>
 
+    <div class="entry-row">
 
-    <!-- GAME PANEL -->
-
-    <div
-        class="game-panel"
-        id="gamePanel">
-
-        <h3>
-            🎮 Battle Ready
-        </h3>
-
-        <p style="margin-top:6px;color:#71809d;font-size:14px;">
-            Open your Ludo game and use the room code below.
-        </p>
-
-
-        <div class="room-code">
+        <div class="entry-box">
 
             <small>
-                ROOM CODE
+                ROOM TYPE
             </small>
 
-            <strong id="activeRoom">
-                ------
+            <strong>
+                2 Players
+            </strong>
+
+        </div>
+
+        <div class="entry-box">
+
+            <small>
+                COINS
+            </small>
+
+            <strong>
+                Virtual
+            </strong>
+
+        </div>
+
+    </div>
+
+    <button
+        class="primary-btn create-btn"
+        onclick="createRoom()">
+
+        + CREATE ROOM
+
+    </button>
+
+</div>
+
+
+<!-- JOIN ROOM -->
+
+<div class="join-card">
+
+    <div class="card-title">
+        🔑 Join With Room Code
+    </div>
+
+    <div class="join-row">
+
+        <input
+            id="roomInput"
+            class="room-input"
+            type="text"
+            maxlength="8"
+            placeholder="ENTER ROOM CODE">
+
+        <button
+            class="join-btn"
+            onclick="joinRoom()">
+
+            JOIN
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- OPEN ROOMS -->
+
+<div class="section-title">
+    🟢 <span>Open Rooms</span>
+</div>
+
+<div id="battleList">
+
+    <div class="empty">
+        Firebase से rooms load हो रहे हैं...
+    </div>
+
+</div>
+
+
+<!-- ACTIVE ROOM -->
+
+<div
+    class="room-card"
+    id="roomCard">
+
+    <div class="card-title">
+        🎮 Your Room
+    </div>
+
+    <div class="room-code">
+
+        <small>
+            ROOM CODE
+        </small>
+
+        <strong id="activeRoom">
+            ------
+        </strong>
+
+    </div>
+
+
+    <div class="room-status">
+
+        <div>
+
+            <small>
+                ROOM STATUS
+            </small>
+
+            <strong id="roomStatus">
+                WAITING
+            </strong>
+
+        </div>
+
+        <div>
+            👥
+            <span id="playerCount">
+                1/2
+            </span>
+        </div>
+
+    </div>
+
+
+    <div class="players">
+
+        <div
+            class="player online"
+            id="player1Box">
+
+            <small>
+                PLAYER 1
+            </small>
+
+            <strong id="player1Name">
+                You
             </strong>
 
         </div>
 
 
-        <button
-            class="ludo-btn"
-            onclick="openLudo()">
+        <div
+            class="player"
+            id="player2Box">
 
-            🎲 Open Ludo Game
+            <small>
+                PLAYER 2
+            </small>
 
-        </button>
-
-
-        <!-- RESULT -->
-
-        <div class="result-box">
-
-            <div class="result-title">
-                Game Result
-            </div>
-
-            <div class="result-buttons">
-
-                <button
-                    class="result-btn win"
-                    onclick="selectResult('WIN')">
-
-                    🏆 WIN
-
-                </button>
-
-                <button
-                    class="result-btn loss"
-                    onclick="selectResult('LOSS')">
-
-                    ❌ LOSS
-
-                </button>
-
-                <button
-                    class="result-btn cancel"
-                    onclick="selectResult('CANCEL')">
-
-                    ↩ CANCEL
-
-                </button>
-
-            </div>
-
-
-            <div class="upload">
-
-                <label>
-                    Game Screenshot
-                </label>
-
-                <input
-                    type="file"
-                    id="screenshot"
-                    accept="image/*"
-                    onchange="previewImage(event)">
-
-                <img
-                    id="preview"
-                    alt="Screenshot preview">
-
-            </div>
-
-
-            <button
-                class="submit-result"
-                onclick="submitResult()">
-
-                Submit Result
-
-            </button>
+            <strong id="player2Name">
+                Waiting...
+            </strong>
 
         </div>
 
     </div>
+
+
+    <div
+        id="waitingBox"
+        class="waiting">
+
+        ⏳ दूसरे खिलाड़ी का इंतज़ार है...
+
+    </div>
+
+
+    <button
+        id="ludoBtn"
+        class="ludo-btn"
+        onclick="openLudo()"
+        style="display:none;">
+
+        🎲 START 2 PLAYER LUDO
+
+    </button>
+
+
+    <button
+        class="leave-btn"
+        onclick="leaveRoom()">
+
+        🚪 Leave Room
+
+    </button>
+
+</div>
 
 </main>
 
@@ -1125,21 +960,1443 @@ input{
 
 <script>
 
-/* ================= BALANCE ================= */
+/* =====================================================
+   FIREBASE CONFIG
+   ===================================================== */
 
-const savedBalance =
-    localStorage.getItem("rdxCoins");
+const firebaseConfig = {
 
-document.getElementById("balance").textContent =
-    savedBalance || "0";
+    apiKey:
+        "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+
+    authDomain:
+        "rdx-ludo.firebaseapp.com",
+
+    projectId:
+        "rdx-ludo",
+
+    storageBucket:
+        "rdx-ludo.firebasestorage.app",
+
+    messagingSenderId:
+        "928340814840",
+
+    appId:
+        "1:928340814840:web:6eca42a8b76138b268440d"
+
+};
 
 
-/* ================= NAVIGATION ================= */
+let db = null;
+
+
+try{
+
+    if(!firebase.apps.length){
+
+        firebase.initializeApp(
+            firebaseConfig
+        );
+
+    }
+
+    db =
+        firebase.firestore();
+
+    console.log(
+        "RDX FIREBASE CONNECTED"
+    );
+
+}catch(error){
+
+    console.error(
+        "FIREBASE ERROR",
+        error
+    );
+
+}
+
+
+/* =====================================================
+   USER
+   ===================================================== */
+
+let currentUserId = "";
+
+let currentRoomId = "";
+
+let roomUnsubscribe = null;
+
+
+/*
+ * Login HTML में यही value save होती है:
+ *
+ * rdxFirebaseUserId
+ */
+
+function getLoggedUser(){
+
+    let mobile =
+        localStorage.getItem(
+            "rdxFirebaseUserId"
+        );
+
+
+    if(!mobile){
+
+        mobile =
+            localStorage.getItem(
+                "rdxVerifiedMobile"
+            );
+
+    }
+
+
+    if(!mobile){
+
+        return null;
+
+    }
+
+
+    mobile =
+        String(mobile)
+        .replace(
+            /\D/g,
+            ""
+        );
+
+
+    if(
+        mobile.length === 10
+    ){
+
+        mobile =
+            "91" + mobile;
+
+    }
+
+
+    if(
+        !/^91[6-9]\d{9}$/.test(
+            mobile
+        )
+    ){
+
+        return null;
+
+    }
+
+
+    return mobile;
+
+}
+
+
+/* =====================================================
+   PAGE START
+   ===================================================== */
+
+window.addEventListener(
+    "load",
+    async function(){
+
+        currentUserId =
+            getLoggedUser();
+
+
+        if(!currentUserId){
+
+            showMessage(
+                "पहले Login करें।"
+            );
+
+
+            setTimeout(
+                function(){
+
+                    window.location.href =
+                        "./index.html";
+
+                },
+                1200
+            );
+
+            return;
+
+        }
+
+
+        document.getElementById(
+            "userMobile"
+        ).textContent =
+            "+" + currentUserId;
+
+
+        await loadCustomer();
+
+
+        loadOpenRooms();
+
+
+        checkExistingRoom();
+
+    }
+);
+
+
+/* =====================================================
+   LOAD CUSTOMER
+   ===================================================== */
+
+async function loadCustomer(){
+
+    try{
+
+        if(!db){
+
+            throw new Error(
+                "Firebase database connected नहीं है।"
+            );
+
+        }
+
+
+        const ref =
+            db.collection(
+                "customers"
+            ).doc(
+                currentUserId
+            );
+
+
+        const snap =
+            await ref.get();
+
+
+        if(!snap.exists){
+
+            showMessage(
+                "Firebase में customer account नहीं मिला।"
+            );
+
+            return;
+
+        }
+
+
+        const data =
+            snap.data();
+
+
+        const balance =
+            Number(
+                data.balance || 0
+            );
+
+
+        document.getElementById(
+            "balance"
+        ).textContent =
+            balance;
+
+
+        console.log(
+            "CUSTOMER:",
+            data
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "CUSTOMER LOAD ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "Balance load नहीं हुआ: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   CREATE ROOM
+   ===================================================== */
+
+async function createRoom(){
+
+    try{
+
+        if(!currentUserId){
+
+            showMessage(
+                "पहले login करें।"
+            );
+
+            return;
+
+        }
+
+
+        if(!db){
+
+            showMessage(
+                "Firebase connected नहीं है।"
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * पहले check:
+         * क्या user पहले से room में है?
+         */
+
+        const existing =
+            await db.collection(
+                "rooms"
+            )
+            .where(
+                "player1.id",
+                "==",
+                currentUserId
+            )
+            .where(
+                "status",
+                "in",
+                ["WAITING","READY"]
+            )
+            .limit(1)
+            .get();
+
+
+        if(!existing.empty){
+
+            const room =
+                existing.docs[0];
+
+
+            openActiveRoom(
+                room.id
+            );
+
+
+            showMessage(
+                "आपका पहले से एक active room है।"
+            );
+
+
+            return;
+
+        }
+
+
+        const roomCode =
+            generateRoomCode();
+
+
+        const roomRef =
+            db.collection(
+                "rooms"
+            ).doc(
+                roomCode
+            );
+
+
+        await roomRef.set({
+
+            roomCode:
+                roomCode,
+
+            maxPlayers:
+                2,
+
+            playerCount:
+                1,
+
+            status:
+                "WAITING",
+
+            createdAt:
+                firebase.firestore
+                .FieldValue
+                .serverTimestamp(),
+
+            updatedAt:
+                firebase.firestore
+                .FieldValue
+                .serverTimestamp(),
+
+            player1:{
+
+                id:
+                    currentUserId,
+
+                mobile:
+                    "+" + currentUserId,
+
+                joinedAt:
+                    firebase.firestore
+                    .FieldValue
+                    .serverTimestamp()
+
+            },
+
+            player2:
+                null
+
+        });
+
+
+        openActiveRoom(
+            roomCode
+        );
+
+
+        showMessage(
+            "Room created: " +
+            roomCode
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "CREATE ROOM ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "Room create error: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   GENERATE ROOM CODE
+   ===================================================== */
+
+function generateRoomCode(){
+
+    const chars =
+        "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+    let code =
+        "RDX";
+
+
+    for(
+        let i=0;
+        i<5;
+        i++
+    ){
+
+        code +=
+            chars[
+                Math.floor(
+                    Math.random() *
+                    chars.length
+                )
+            ];
+
+    }
+
+
+    return code;
+
+}
+
+
+/* =====================================================
+   JOIN ROOM
+   ===================================================== */
+
+async function joinRoom(){
+
+    const input =
+        document.getElementById(
+            "roomInput"
+        );
+
+
+    const roomCode =
+        input.value
+        .trim()
+        .toUpperCase();
+
+
+    if(!roomCode){
+
+        showMessage(
+            "Room code डालें।"
+        );
+
+        return;
+
+    }
+
+
+    if(roomCode.length < 4){
+
+        showMessage(
+            "Invalid room code।"
+        );
+
+        return;
+
+    }
+
+
+    try{
+
+        const roomRef =
+            db.collection(
+                "rooms"
+            ).doc(
+                roomCode
+            );
+
+
+        await db.runTransaction(
+            async function(transaction){
+
+                const snap =
+                    await transaction.get(
+                        roomRef
+                    );
+
+
+                if(!snap.exists){
+
+                    throw new Error(
+                        "ROOM_NOT_FOUND"
+                    );
+
+                }
+
+
+                const data =
+                    snap.data();
+
+
+                /*
+                 * Already player 1?
+                 */
+
+                if(
+                    data.player1 &&
+                    data.player1.id ===
+                    currentUserId
+                ){
+
+                    return;
+
+                }
+
+
+                /*
+                 * Already player 2?
+                 */
+
+                if(
+                    data.player2 &&
+                    data.player2.id ===
+                    currentUserId
+                ){
+
+                    return;
+
+                }
+
+
+                /*
+                 * Room full
+                 */
+
+                if(
+                    Number(
+                        data.playerCount || 0
+                    ) >= 2 ||
+                    data.player2
+                ){
+
+                    throw new Error(
+                        "ROOM_FULL"
+                    );
+
+                }
+
+
+                /*
+                 * Add player 2
+                 */
+
+                transaction.update(
+                    roomRef,
+                    {
+
+                        player2:{
+
+                            id:
+                                currentUserId,
+
+                            mobile:
+                                "+" +
+                                currentUserId,
+
+                            joinedAt:
+                                firebase.firestore
+                                .FieldValue
+                                .serverTimestamp()
+
+                        },
+
+                        playerCount:
+                            2,
+
+                        status:
+                            "READY",
+
+                        updatedAt:
+                            firebase.firestore
+                            .FieldValue
+                            .serverTimestamp()
+
+                    }
+                );
+
+            }
+        );
+
+
+        input.value =
+            "";
+
+
+        openActiveRoom(
+            roomCode
+        );
+
+
+        showMessage(
+            "Room join हो गया।"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "JOIN ROOM ERROR:",
+            error
+        );
+
+
+        if(
+            error.message ===
+            "ROOM_NOT_FOUND"
+        ){
+
+            showMessage(
+                "यह Room नहीं मिला।"
+            );
+
+        }
+
+        else if(
+            error.message ===
+            "ROOM_FULL"
+        ){
+
+            showMessage(
+                "यह Room पहले से full है।"
+            );
+
+        }
+
+        else{
+
+            showMessage(
+                "Join error: " +
+                error.message
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   OPEN ACTIVE ROOM
+   ===================================================== */
+
+function openActiveRoom(roomCode){
+
+    currentRoomId =
+        roomCode;
+
+
+    localStorage.setItem(
+        "rdxActiveRoom",
+        roomCode
+    );
+
+
+    document.getElementById(
+        "activeRoom"
+    ).textContent =
+        roomCode;
+
+
+    document.getElementById(
+        "roomCard"
+    ).classList.add(
+        "show"
+    );
+
+
+    document.getElementById(
+        "roomCard"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+
+    listenToRoom(
+        roomCode
+    );
+
+}
+
+
+/* =====================================================
+   LISTEN ROOM REALTIME
+   ===================================================== */
+
+function listenToRoom(roomCode){
+
+    if(roomUnsubscribe){
+
+        roomUnsubscribe();
+
+        roomUnsubscribe =
+            null;
+
+    }
+
+
+    roomUnsubscribe =
+        db.collection(
+            "rooms"
+        )
+        .doc(
+            roomCode
+        )
+        .onSnapshot(
+
+            function(snapshot){
+
+                if(
+                    !snapshot.exists
+                ){
+
+                    showMessage(
+                        "Room delete हो गया।"
+                    );
+
+
+                    document.getElementById(
+                        "roomCard"
+                    ).classList.remove(
+                        "show"
+                    );
+
+
+                    return;
+
+                }
+
+
+                const data =
+                    snapshot.data();
+
+
+                updateRoomUI(
+                    data
+                );
+
+            },
+
+
+            function(error){
+
+                console.error(
+                    "ROOM LISTENER ERROR:",
+                    error
+                );
+
+
+                showMessage(
+                    "Room data load error।"
+                );
+
+            }
+
+        );
+
+}
+
+
+/* =====================================================
+   ROOM UI
+   ===================================================== */
+
+function updateRoomUI(data){
+
+    const player1 =
+        data.player1;
+
+
+    const player2 =
+        data.player2;
+
+
+    const count =
+        Number(
+            data.playerCount ||
+            0
+        );
+
+
+    document.getElementById(
+        "playerCount"
+    ).textContent =
+        count + "/2";
+
+
+    document.getElementById(
+        "roomStatus"
+    ).textContent =
+        data.status ||
+        "WAITING";
+
+
+    if(player1){
+
+        document.getElementById(
+            "player1Name"
+        ).textContent =
+            formatMobile(
+                player1.mobile
+            );
+
+    }
+
+
+    if(player2){
+
+        document.getElementById(
+            "player2Name"
+        ).textContent =
+            formatMobile(
+                player2.mobile
+            );
+
+
+        document.getElementById(
+            "player2Box"
+        ).classList.add(
+            "online"
+        );
+
+    }
+
+    else{
+
+        document.getElementById(
+            "player2Name"
+        ).textContent =
+            "Waiting...";
+
+
+        document.getElementById(
+            "player2Box"
+        ).classList.remove(
+            "online"
+        );
+
+    }
+
+
+    const waitingBox =
+        document.getElementById(
+            "waitingBox"
+        );
+
+
+    const ludoBtn =
+        document.getElementById(
+            "ludoBtn"
+        );
+
+
+    if(
+        count >= 2 &&
+        data.status === "READY"
+    ){
+
+        waitingBox.className =
+            "ready";
+
+        waitingBox.textContent =
+            "✅ दोनों खिलाड़ी जुड़ गए। Ludo शुरू कर सकते हैं।";
+
+
+        ludoBtn.style.display =
+            "block";
+
+    }
+
+    else{
+
+        waitingBox.className =
+            "waiting";
+
+        waitingBox.textContent =
+            "⏳ दूसरे खिलाड़ी का इंतज़ार है...";
+
+
+        ludoBtn.style.display =
+            "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   FORMAT MOBILE
+   ===================================================== */
+
+function formatMobile(number){
+
+    if(!number){
+
+        return "Player";
+
+    }
+
+
+    const text =
+        String(number);
+
+
+    if(text.length >= 10){
+
+        return (
+            text.slice(0,3) +
+            "******" +
+            text.slice(-2)
+        );
+
+    }
+
+
+    return text;
+
+}
+
+
+/* =====================================================
+   LOAD OPEN ROOMS
+   ===================================================== */
+
+function loadOpenRooms(){
+
+    db.collection(
+        "rooms"
+    )
+    .where(
+        "status",
+        "==",
+        "WAITING"
+    )
+    .limit(20)
+    .onSnapshot(
+
+        function(snapshot){
+
+            const list =
+                document.getElementById(
+                    "battleList"
+                );
+
+
+            if(snapshot.empty){
+
+                list.innerHTML = `
+                    <div class="empty">
+                        अभी कोई Open Room नहीं है।<br>
+                        पहला Room आप बना सकते हैं।
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            list.innerHTML =
+                "";
+
+
+            snapshot.forEach(
+                function(doc){
+
+                    const data =
+                        doc.data();
+
+
+                    const room =
+                        data.roomCode ||
+                        doc.id;
+
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "battle";
+
+
+                    card.innerHTML = `
+
+                        <div class="battle-top">
+
+                            <span class="status">
+                                ● OPEN
+                            </span>
+
+                            <span class="battle-id">
+                                #${escapeHTML(room)}
+                            </span>
+
+                        </div>
+
+                        <div class="battle-middle">
+
+                            <div class="info">
+
+                                <small>
+                                    PLAYERS
+                                </small>
+
+                                <strong>
+                                    1 / 2
+                                </strong>
+
+                            </div>
+
+                            <div class="prize">
+
+                                <small>
+                                    TYPE
+                                </small>
+
+                                <strong>
+                                    2 PLAYER
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            class="play-small"
+                            onclick="joinBattleFromList('${escapeAttribute(room)}')">
+
+                            JOIN ROOM
+
+                        </button>
+                    `;
+
+
+                    list.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+        },
+
+
+        function(error){
+
+            console.error(
+                "OPEN ROOMS ERROR:",
+                error
+            );
+
+
+            document.getElementById(
+                "battleList"
+            ).innerHTML = `
+
+                <div class="empty">
+
+                    Firebase rooms load नहीं हुए।<br><br>
+
+                    ${escapeHTML(
+                        error.message
+                    )}
+
+                </div>
+
+            `;
+
+        }
+
+    );
+
+}
+
+
+/* =====================================================
+   JOIN FROM LIST
+   ===================================================== */
+
+function joinBattleFromList(room){
+
+    document.getElementById(
+        "roomInput"
+    ).value =
+        room;
+
+
+    joinRoom();
+
+}
+
+
+/* =====================================================
+   EXISTING ROOM CHECK
+   ===================================================== */
+
+async function checkExistingRoom(){
+
+    const savedRoom =
+        localStorage.getItem(
+            "rdxActiveRoom"
+        );
+
+
+    if(!savedRoom){
+
+        return;
+
+    }
+
+
+    try{
+
+        const snap =
+            await db.collection(
+                "rooms"
+            )
+            .doc(
+                savedRoom
+            )
+            .get();
+
+
+        if(
+            snap.exists
+        ){
+
+            const data =
+                snap.data();
+
+
+            const isPlayer =
+
+                (
+                    data.player1 &&
+                    data.player1.id ===
+                    currentUserId
+                )
+
+                ||
+
+                (
+                    data.player2 &&
+                    data.player2.id ===
+                    currentUserId
+                );
+
+
+            if(isPlayer){
+
+                openActiveRoom(
+                    savedRoom
+                );
+
+            }
+
+        }
+
+        else{
+
+            localStorage.removeItem(
+                "rdxActiveRoom"
+            );
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "EXISTING ROOM ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   LEAVE ROOM
+   ===================================================== */
+
+async function leaveRoom(){
+
+    if(!currentRoomId){
+
+        return;
+
+    }
+
+
+    try{
+
+        const roomRef =
+            db.collection(
+                "rooms"
+            )
+            .doc(
+                currentRoomId
+            );
+
+
+        await db.runTransaction(
+            async function(transaction){
+
+                const snap =
+                    await transaction.get(
+                        roomRef
+                    );
+
+
+                if(!snap.exists){
+
+                    return;
+
+                }
+
+
+                const data =
+                    snap.data();
+
+
+                const updates = {
+
+                    updatedAt:
+                        firebase.firestore
+                        .FieldValue
+                        .serverTimestamp()
+
+                };
+
+
+                /*
+                 * Player 1 leaves
+                 */
+
+                if(
+                    data.player1 &&
+                    data.player1.id ===
+                    currentUserId
+                ){
+
+                    if(data.player2){
+
+                        updates.player1 =
+                            data.player2;
+
+                        updates.player2 =
+                            null;
+
+                        updates.playerCount =
+                            1;
+
+                        updates.status =
+                            "WAITING";
+
+                    }
+
+                    else{
+
+                        updates.status =
+                            "CANCELLED";
+
+                        updates.playerCount =
+                            0;
+
+                    }
+
+                }
+
+
+                /*
+                 * Player 2 leaves
+                 */
+
+                else if(
+                    data.player2 &&
+                    data.player2.id ===
+                    currentUserId
+                ){
+
+                    updates.player2 =
+                        null;
+
+                    updates.playerCount =
+                        1;
+
+                    updates.status =
+                        "WAITING";
+
+                }
+
+
+                transaction.update(
+                    roomRef,
+                    updates
+                );
+
+            }
+        );
+
+
+        if(roomUnsubscribe){
+
+            roomUnsubscribe();
+
+            roomUnsubscribe =
+                null;
+
+        }
+
+
+        localStorage.removeItem(
+            "rdxActiveRoom"
+        );
+
+
+        currentRoomId =
+            "";
+
+
+        document.getElementById(
+            "roomCard"
+        ).classList.remove(
+            "show"
+        );
+
+
+        showMessage(
+            "आप Room से बाहर आ गए।"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "LEAVE ROOM ERROR:",
+            error
+        );
+
+
+        showMessage(
+            "Room leave error: " +
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   OPEN LUDO
+   ===================================================== */
+
+function openLudo(){
+
+    if(!currentRoomId){
+
+        showMessage(
+            "Room available नहीं है।"
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "rdxLudoRoom",
+        currentRoomId
+    );
+
+
+    window.location.href =
+        "./ludo.html?room=" +
+        encodeURIComponent(
+            currentRoomId
+        );
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+   ===================================================== */
 
 function goHome(){
 
     window.location.href =
         "./dashboard.html";
+
 }
 
 
@@ -1147,6 +2404,7 @@ function goWallet(){
 
     window.location.href =
         "./wallet.html";
+
 }
 
 
@@ -1154,6 +2412,7 @@ function goSupport(){
 
     window.location.href =
         "./support.html";
+
 }
 
 
@@ -1161,218 +2420,97 @@ function goProfile(){
 
     window.location.href =
         "./profile.html";
-}
-
-
-/* ================= JOIN BATTLE ================= */
-
-let selectedBattle = "";
-
-let selectedResult = "";
-
-
-function joinBattle(room){
-
-    selectedBattle = room;
-
-    document.getElementById("activeRoom")
-        .textContent = room;
-
-    document.getElementById("gamePanel")
-        .classList.add("show");
-
-    document.getElementById("gamePanel")
-        .scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
-
-    showMessage(
-        "Battle joined: " + room
-    );
-}
-
-
-/* ================= JOIN ROOM ================= */
-
-function joinRoom(){
-
-    const input =
-        document.getElementById("roomInput");
-
-    const room =
-        input.value.trim().toUpperCase();
-
-    if(!room){
-
-        showMessage(
-            "Please enter room code"
-        );
-
-        return;
-    }
-
-    if(room.length < 4){
-
-        showMessage(
-            "Invalid room code"
-        );
-
-        return;
-    }
-
-    selectedBattle = room;
-
-    document.getElementById("activeRoom")
-        .textContent = room;
-
-    document.getElementById("gamePanel")
-        .classList.add("show");
-
-    document.getElementById("gamePanel")
-        .scrollIntoView({
-            behavior:"smooth"
-        });
-
-    showMessage(
-        "Room joined successfully"
-    );
-}
-
-
-/* ================= OPEN LUDO ================= */
-
-function openLudo(){
-
-    /*
-      यहाँ अपनी authorised Ludo game URL डालें।
-      उदाहरण:
-      window.location.href = "YOUR_LUDO_GAME_URL";
-    */
-
-    showMessage(
-        "Open your Ludo game and enter the room code"
-    );
-}
-
-
-/* ================= RESULT ================= */
-
-function selectResult(result){
-
-    selectedResult = result;
-
-    document.querySelectorAll(
-        ".result-btn"
-    ).forEach(function(btn){
-
-        btn.style.outline = "none";
-
-    });
-
-    showMessage(
-        "Selected: " + result
-    );
-}
-
-
-/* ================= SCREENSHOT ================= */
-
-function previewImage(event){
-
-    const file =
-        event.target.files[0];
-
-    if(!file){
-        return;
-    }
-
-    const preview =
-        document.getElementById("preview");
-
-    preview.src =
-        URL.createObjectURL(file);
-
-    preview.style.display =
-        "block";
-}
-
-
-/* ================= SUBMIT ================= */
-
-function submitResult(){
-
-    if(!selectedResult){
-
-        showMessage(
-            "Select WIN, LOSS or CANCEL"
-        );
-
-        return;
-    }
-
-    const file =
-        document.getElementById(
-            "screenshot"
-        ).files[0];
-
-    if(!file){
-
-        showMessage(
-            "Please upload game screenshot"
-        );
-
-        return;
-    }
-
-    /*
-      Demo/local version:
-      Result localStorage में save होगा.
-      Real admin verification के लिए backend/database
-      लगाना होगा.
-    */
-
-    const resultData = {
-
-        room:selectedBattle,
-
-        result:selectedResult,
-
-        screenshotName:file.name,
-
-        time:new Date().toISOString()
-
-    };
-
-    localStorage.setItem(
-        "rdxLastResult",
-        JSON.stringify(resultData)
-    );
-
-    showMessage(
-        "Result submitted successfully"
-    );
 
 }
 
 
-/* ================= TOAST ================= */
+/* =====================================================
+   TOAST
+   ===================================================== */
 
 function showMessage(message){
 
     const toast =
-        document.getElementById("toast");
+        document.getElementById(
+            "toast"
+        );
+
 
     toast.textContent =
         message;
 
-    toast.classList.add("show");
 
-    setTimeout(function(){
+    toast.classList.add(
+        "show"
+    );
 
-        toast.classList.remove("show");
 
-    },2000);
+    clearTimeout(
+        showMessage.timer
+    );
+
+
+    showMessage.timer =
+        setTimeout(
+            function(){
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            3000
+        );
+
+}
+
+
+/* =====================================================
+   SECURITY DISPLAY HELPERS
+   ===================================================== */
+
+function escapeHTML(value){
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+function escapeAttribute(value){
+
+    return String(value)
+        .replace(
+            /\\/g,
+            "\\\\"
+        )
+        .replace(
+            /'/g,
+            "\\'"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        );
 
 }
 
