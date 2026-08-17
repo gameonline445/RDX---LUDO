@@ -5,8 +5,10 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-      content="width=device-width, initial-scale=1.0,
-      viewport-fit=cover">
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
 
 <title>RDX LUDO - Deposit</title>
 
@@ -17,19 +19,18 @@
 ========================= */
 
 *{
-    box-sizing:border-box;
     margin:0;
     padding:0;
+    box-sizing:border-box;
 }
 
 html,
 body{
-    width:100%;
-    min-height:100%;
-    overflow-x:hidden;
-}
 
-body{
+    width:100%;
+    height:100%;
+
+    overflow:hidden;
 
     font-family:
     -apple-system,
@@ -42,19 +43,35 @@ body{
     background:
     linear-gradient(
         180deg,
-        #f3f7ff 0%,
+        #f2f6ff 0%,
         #ffffff 55%,
-        #f5f8ff 100%
+        #f5f7ff 100%
     );
 
-    color:#101a38;
-
-    padding-bottom:100px;
+    color:#111a38;
 }
 
 button,
 input{
     font:inherit;
+}
+
+
+/* =========================
+   PAGE
+========================= */
+
+.page{
+
+    width:100%;
+    height:100vh;
+
+    height:100dvh;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
 }
 
 
@@ -66,7 +83,15 @@ input{
 
     height:76px;
 
-    width:100%;
+    flex:0 0 76px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:0 18px;
 
     background:
     linear-gradient(
@@ -77,22 +102,10 @@ input{
 
     border-bottom:1px solid #cbd8f0;
 
-    display:flex;
-
-    align-items:center;
-
-    justify-content:space-between;
-
-    padding:0 18px;
-
-    position:sticky;
-
-    top:0;
-
-    z-index:100;
-
     box-shadow:
     0 5px 18px rgba(36,75,150,.10);
+
+    z-index:10;
 }
 
 
@@ -132,10 +145,8 @@ input{
 
     justify-content:center;
 
-    cursor:pointer;
-
     box-shadow:
-    0 7px 17px rgba(255,93,80,.25);
+    0 7px 18px rgba(255,93,80,.25);
 }
 
 
@@ -168,13 +179,9 @@ input{
     font-weight:900;
 
     box-shadow:
-    0 5px 14px rgba(36,93,190,.16);
+    0 5px 12px rgba(36,93,190,.15);
 }
 
-
-/* =========================
-   HEADER RIGHT
-========================= */
 
 .header-right{
 
@@ -188,13 +195,14 @@ input{
 
 .header-icon{
 
+    width:47px;
     height:47px;
-
-    min-width:47px;
 
     border:0;
 
     border-radius:17px;
+
+    color:white;
 
     display:flex;
 
@@ -202,9 +210,7 @@ input{
 
     justify-content:center;
 
-    color:white;
-
-    cursor:pointer;
+    font-size:21px;
 
     box-shadow:
     0 6px 15px rgba(0,0,0,.12);
@@ -216,11 +222,9 @@ input{
     background:
     linear-gradient(
         145deg,
-        #716df5,
+        #746df4,
         #817eff
     );
-
-    font-size:21px;
 }
 
 
@@ -229,13 +233,9 @@ input{
     background:
     linear-gradient(
         145deg,
-        #18b965,
+        #20c36b,
         #43d77e
     );
-
-    padding:0 13px;
-
-    font-size:18px;
 
     font-weight:800;
 }
@@ -250,9 +250,7 @@ input{
         #ffad45
     );
 
-    padding:0 13px;
-
-    font-size:20px;
+    font-weight:800;
 }
 
 
@@ -260,58 +258,78 @@ input{
    MAIN
 ========================= */
 
-.container{
+.main{
+
+    flex:1;
+
+    min-height:0;
+
+    display:flex;
+
+    align-items:flex-start;
+
+    justify-content:center;
+
+    overflow:hidden;
+
+    padding:
+    18px
+    18px
+    12px;
+}
+
+
+.deposit-page{
 
     width:100%;
 
     max-width:850px;
 
-    margin:auto;
+    height:100%;
 
-    padding:
-    28px 20px 120px;
+    overflow:hidden;
 }
 
 
 /* =========================
-   PAGE TITLE
+   TITLE
 ========================= */
 
 .page-label{
 
     color:#3168dc;
 
-    font-size:15px;
+    font-size:14px;
 
-    font-weight:850;
+    font-weight:800;
 
-    letter-spacing:2px;
+    letter-spacing:1.5px;
 
-    margin-bottom:8px;
+    margin-bottom:4px;
 }
 
 
 .page-title{
 
-    font-size:42px;
+    font-size:36px;
 
     line-height:1.1;
 
-    font-weight:900;
+    font-weight:850;
 
-    color:#111a35;
+    letter-spacing:-1px;
 
-    letter-spacing:-1.5px;
+    margin-bottom:4px;
 }
 
 
 .page-subtitle{
 
-    margin-top:7px;
+    color:#71809b;
 
-    color:#6c7891;
+    font-size:18px;
 
-    font-size:20px;
+    margin-bottom:18px;
 }
 
 
@@ -321,80 +339,80 @@ input{
 
 .amount-card{
 
-    margin-top:30px;
+    border:1.5px solid #b8ccef;
 
-    padding:22px;
+    border-radius:25px;
 
-    border:1.5px solid #b9ccef;
-
-    border-radius:28px;
+    padding:17px;
 
     background:
+    radial-gradient(
+        circle at 0% 0%,
+        #e8f0ff,
+        transparent 45%
+    ),
+
     linear-gradient(
-        145deg,
-        #f1f5ff,
+        135deg,
+        #f4f7ff,
         #ffffff
     );
 
     box-shadow:
-    0 14px 35px rgba(44,91,180,.08);
+    0 10px 28px rgba(48,89,170,.08);
 }
 
 
 .amount-label{
 
-    color:#68758d;
+    display:block;
 
-    font-size:17px;
+    color:#69758d;
 
-    font-weight:850;
+    font-size:15px;
 
-    letter-spacing:1px;
+    font-weight:800;
 
-    margin-bottom:14px;
+    letter-spacing:.6px;
+
+    margin-bottom:10px;
 }
 
 
-/* =========================
-   INPUT
-========================= */
+.amount-input-box{
 
-.amount-input-wrap{
-
-    height:76px;
+    height:64px;
 
     border:1.5px solid #b8c9e8;
 
-    border-radius:24px;
+    border-radius:22px;
 
-    background:
-    rgba(255,255,255,.65);
+    background:#ffffff;
 
     display:flex;
 
     align-items:center;
 
-    padding:8px 18px;
+    padding:0 14px;
 
-    box-shadow:
-    inset 0 1px 3px rgba(30,60,120,.03);
+    gap:13px;
 }
 
 
-.rupee-circle{
+.rupee-icon{
 
-    width:54px;
-    height:54px;
+    width:46px;
+    height:46px;
 
-    flex:0 0 54px;
+    flex:0 0 46px;
 
     border-radius:50%;
 
     background:
     linear-gradient(
         145deg,
-        #306be5,
-        #4b82f2
+        #3674e8,
+        #527ef1
     );
 
     color:white;
@@ -405,48 +423,32 @@ input{
 
     justify-content:center;
 
-    font-size:27px;
+    font-size:24px;
 
-    font-weight:850;
+    font-weight:800;
 
     box-shadow:
-    0 8px 18px rgba(44,104,226,.25);
+    0 6px 14px rgba(45,105,232,.25);
 }
 
 
-.amount-input{
+#amount{
 
     width:100%;
 
-    height:100%;
-
     border:0;
 
-    outline:none;
+    outline:0;
 
     background:transparent;
 
-    padding-left:16px;
+    color:#111a38;
 
-    color:#111a35;
-
-    font-size:30px;
+    font-size:28px;
 
     font-weight:800;
 }
 
-
-.amount-input::placeholder{
-
-    color:#17213a;
-
-    opacity:1;
-}
-
-
-/* =========================
-   MIN / COIN
-========================= */
 
 .amount-info{
 
@@ -456,23 +458,27 @@ input{
 
     align-items:center;
 
-    margin-top:17px;
-
-    font-size:17px;
-
-    font-weight:650;
+    margin-top:10px;
 }
 
 
-.min-amount{
+.minimum{
 
-    color:#d53b3b;
+    color:#d4423c;
+
+    font-size:15px;
+
+    font-weight:700;
 }
 
 
 .coin-rate{
 
-    color:#4e81db;
+    color:#5280d8;
+
+    font-size:15px;
+
+    font-weight:600;
 }
 
 
@@ -487,68 +493,57 @@ input{
     grid-template-columns:
     repeat(3,1fr);
 
-    gap:14px;
+    gap:12px;
 
-    margin-top:22px;
+    margin-top:14px;
 }
 
 
 .quick-btn{
 
-    height:68px;
+    height:58px;
 
-    border-radius:21px;
+    border-radius:18px;
 
-    border:1.5px solid #bccbe7;
+    border:1.5px solid #bdcce7;
 
     background:
     linear-gradient(
         145deg,
         #ffffff,
-        #f8faff
+        #f7f9ff
     );
 
-    color:#111a35;
+    color:#151d35;
 
-    font-size:20px;
+    font-size:18px;
 
     font-weight:800;
 
     cursor:pointer;
-
-    transition:.18s;
-
-    box-shadow:
-    0 4px 12px rgba(30,60,120,.03);
-}
-
-
-.quick-btn:active{
-
-    transform:scale(.97);
 }
 
 
 .quick-btn.active{
 
-    border-color:#306ce6;
+    border-color:#2e6ce8;
 
     color:white;
 
     background:
     linear-gradient(
-        110deg,
-        #2865e7,
-        #4a7ff0
+        100deg,
+        #2765e8,
+        #4b7ff0
     );
 
     box-shadow:
-    0 10px 22px rgba(44,105,231,.25);
+    0 8px 20px rgba(42,101,231,.25);
 }
 
 
 /* =========================
-   SECURE TEXT
+   PAY
 ========================= */
 
 .secure-text{
@@ -557,53 +552,46 @@ input{
 
     color:#71809a;
 
-    font-size:18px;
+    font-size:16px;
 
-    margin-top:24px;
+    margin:
+    16px 0 12px;
 }
 
-
-/* =========================
-   PAY BUTTON
-========================= */
 
 .pay-btn{
 
     width:100%;
 
-    height:72px;
-
-    margin-top:22px;
+    height:68px;
 
     border:0;
 
-    border-radius:38px;
+    border-radius:35px;
 
     color:white;
 
-    background:
-    linear-gradient(
-        110deg,
-        #2d68e9,
-        #4a7ff0
-    );
-
-    font-size:24px;
+    font-size:21px;
 
     font-weight:850;
 
-    cursor:pointer;
+    background:
+    linear-gradient(
+        100deg,
+        #2967e9,
+        #4d7ff0
+    );
 
     box-shadow:
-    0 13px 28px rgba(44,104,231,.30);
+    0 12px 28px rgba(42,101,231,.30);
 
-    transition:.18s;
+    cursor:pointer;
 }
 
 
 .pay-btn:active{
 
-    transform:scale(.985);
+    transform:scale(.98);
 }
 
 
@@ -613,33 +601,25 @@ input{
 
 .bottom-nav{
 
-    position:fixed;
+    height:78px;
 
-    bottom:0;
+    flex:0 0 78px;
 
-    left:0;
+    display:flex;
 
-    width:100%;
+    align-items:center;
 
-    height:82px;
+    justify-content:space-around;
 
     background:
     rgba(255,255,255,.97);
 
-    border-top:1px solid #d6deee;
-
-    display:flex;
-
-    justify-content:space-around;
-
-    align-items:center;
-
-    z-index:200;
+    border-top:1px solid #d5deef;
 
     box-shadow:
     0 -5px 20px rgba(30,65,130,.08);
 
-    backdrop-filter:blur(15px);
+    z-index:10;
 }
 
 
@@ -663,9 +643,9 @@ input{
 
     gap:4px;
 
-    color:#66738d;
+    color:#68758f;
 
-    font-size:14px;
+    font-size:13px;
 
     cursor:pointer;
 }
@@ -673,9 +653,8 @@ input{
 
 .nav-icon{
 
-    width:45px;
-
-    height:45px;
+    width:44px;
+    height:44px;
 
     border-radius:15px;
 
@@ -691,7 +670,7 @@ input{
 
 .nav-item.active{
 
-    color:#17213a;
+    color:#202d49;
 
     font-weight:800;
 }
@@ -699,67 +678,12 @@ input{
 
 .nav-item.active .nav-icon{
 
-    background:
-    linear-gradient(
-        145deg,
-        #536df5,
-        #5d70f3
-    );
+    background:#536df5;
 
     color:white;
 
     box-shadow:
-    0 8px 18px rgba(83,109,245,.30);
-}
-
-
-/* =========================
-   TOAST
-========================= */
-
-.toast{
-
-    position:fixed;
-
-    left:50%;
-
-    top:95px;
-
-    transform:
-    translateX(-50%)
-    translateY(-15px);
-
-    background:#182440;
-
-    color:white;
-
-    padding:13px 18px;
-
-    border-radius:14px;
-
-    opacity:0;
-
-    pointer-events:none;
-
-    transition:.25s;
-
-    z-index:500;
-
-    font-size:14px;
-
-    text-align:center;
-
-    white-space:nowrap;
-}
-
-
-.toast.show{
-
-    opacity:1;
-
-    transform:
-    translateX(-50%)
-    translateY(0);
+    0 7px 17px rgba(83,109,245,.30);
 }
 
 
@@ -773,8 +697,11 @@ input{
 
         height:70px;
 
+        flex-basis:70px;
+
         padding:0 12px;
     }
+
 
     .menu-btn{
 
@@ -784,33 +711,41 @@ input{
         font-size:25px;
     }
 
+
     .logo{
 
         width:45px;
         height:45px;
+
+        font-size:12px;
     }
+
 
     .header-right{
 
         gap:6px;
     }
 
+
     .header-icon{
 
         width:44px;
-        min-width:44px;
-
         height:44px;
 
         border-radius:16px;
     }
 
-    .wallet-top{
+
+    .wallet-top,
+    .redeem-top{
+
+        width:44px;
+
+        min-width:44px;
 
         font-size:0;
-
-        padding:0;
     }
+
 
     .wallet-top::before{
 
@@ -819,12 +754,6 @@ input{
         font-size:20px;
     }
 
-    .redeem-top{
-
-        font-size:0;
-
-        padding:0;
-    }
 
     .redeem-top::before{
 
@@ -834,158 +763,160 @@ input{
     }
 
 
-    .container{
+    .main{
 
         padding:
-        25px 20px 115px;
+        15px
+        12px
+        8px;
     }
 
 
     .page-label{
 
-        font-size:14px;
+        font-size:13px;
+
+        margin-bottom:3px;
     }
 
 
     .page-title{
 
-        font-size:39px;
+        font-size:32px;
     }
 
 
     .page-subtitle{
 
-        font-size:18px;
+        font-size:16px;
+
+        margin-bottom:15px;
     }
 
 
     .amount-card{
 
-        margin-top:25px;
+        padding:15px;
 
-        padding:20px;
-
-        border-radius:25px;
+        border-radius:23px;
     }
 
 
-    .amount-input-wrap{
+    .amount-input-box{
 
-        height:72px;
+        height:60px;
 
-        border-radius:22px;
-
-        padding:7px 15px;
+        border-radius:20px;
     }
 
 
-    .rupee-circle{
+    .rupee-icon{
 
-        width:52px;
+        width:43px;
+        height:43px;
 
-        height:52px;
+        flex-basis:43px;
+    }
 
-        flex-basis:52px;
+
+    #amount{
 
         font-size:25px;
     }
 
 
-    .amount-input{
-
-        font-size:28px;
-
-        padding-left:13px;
-    }
-
-
-    .amount-info{
-
-        font-size:16px;
-    }
-
-
     .quick-grid{
 
-        gap:12px;
+        gap:10px;
 
-        margin-top:20px;
+        margin-top:12px;
     }
 
 
     .quick-btn{
 
-        height:63px;
+        height:54px;
 
-        border-radius:19px;
+        border-radius:17px;
 
-        font-size:18px;
+        font-size:17px;
     }
 
 
     .secure-text{
 
-        font-size:17px;
+        margin:
+        13px 0 10px;
 
-        margin-top:22px;
+        font-size:15px;
     }
 
 
     .pay-btn{
 
-        height:68px;
+        height:62px;
 
-        font-size:22px;
+        font-size:19px;
 
-        margin-top:20px;
+        border-radius:32px;
+    }
+
+
+    .bottom-nav{
+
+        height:76px;
+
+        flex-basis:76px;
     }
 
 }
 
 
 /* =========================
-   SMALL PHONE
+   VERY SMALL SCREEN
 ========================= */
 
-@media(max-width:380px){
+@media(max-height:700px){
 
-    .container{
+    .main{
 
-        padding-left:14px;
-
-        padding-right:14px;
+        padding-top:10px;
     }
 
 
     .page-title{
 
-        font-size:35px;
+        font-size:29px;
     }
 
 
     .page-subtitle{
 
-        font-size:17px;
+        margin-bottom:10px;
     }
 
 
     .amount-card{
 
-        padding:17px;
+        padding:12px;
     }
 
 
     .quick-btn{
 
-        height:58px;
-
-        font-size:16px;
+        height:48px;
     }
 
 
-    .amount-input{
+    .secure-text{
 
-        font-size:25px;
+        margin:9px 0 7px;
+    }
+
+
+    .pay-btn{
+
+        height:55px;
     }
 
 }
@@ -998,6 +929,9 @@ input{
 <body>
 
 
+<div class="page">
+
+
 <!-- =========================
      HEADER
 ========================= -->
@@ -1008,7 +942,7 @@ input{
 
         <button
             class="menu-btn"
-            onclick="goBack()">
+            onclick="goHome()">
 
             ☰
 
@@ -1027,8 +961,7 @@ input{
     <div class="header-right">
 
         <button
-            class="header-icon notification"
-            onclick="showMessage('No new notifications')">
+            class="header-icon notification">
 
             🔔
 
@@ -1041,16 +974,11 @@ input{
 
             💰
 
-            <span id="topBalance">
-                0
-            </span>
-
         </button>
 
 
         <button
-            class="header-icon redeem-top"
-            onclick="goReferral()">
+            class="header-icon redeem-top">
 
             🎁
 
@@ -1061,12 +989,13 @@ input{
 </header>
 
 
-
 <!-- =========================
-     MAIN
+     MAIN DEPOSIT
 ========================= -->
 
-<main class="container">
+<main class="main">
+
+<section class="deposit-page">
 
 
     <div class="page-label">
@@ -1084,43 +1013,43 @@ input{
     </p>
 
 
+    <!-- AMOUNT -->
 
-    <!-- =========================
-         AMOUNT CARD
-    ========================= -->
-
-    <section class="amount-card">
+    <div class="amount-card">
 
 
-        <div class="amount-label">
+        <label
+            class="amount-label"
+            for="amount">
+
             ENTER AMOUNT
-        </div>
+
+        </label>
 
 
-        <div class="amount-input-wrap">
+        <div class="amount-input-box">
 
 
-            <div class="rupee-circle">
+            <div class="rupee-icon">
                 ₹
             </div>
 
 
             <input
-                id="amountInput"
-                class="amount-input"
+                id="amount"
                 type="number"
-                inputmode="numeric"
+                inputmode="decimal"
+                value="100"
                 min="100"
                 placeholder="100"
-                value="100"
-                oninput="checkAmount()">
+                oninput="updateAmount()">
 
         </div>
 
 
         <div class="amount-info">
 
-            <span class="min-amount">
+            <span class="minimum">
                 Min: ₹100
             </span>
 
@@ -1132,73 +1061,88 @@ input{
         </div>
 
 
-        <!-- QUICK AMOUNTS -->
-
-        <div class="quick-grid">
+    </div>
 
 
-            <button
-                class="quick-btn active"
-                onclick="selectAmount(100,this)">
-                ₹100
-            </button>
+    <!-- QUICK AMOUNTS -->
 
-
-            <button
-                class="quick-btn"
-                onclick="selectAmount(250,this)">
-                ₹250
-            </button>
-
-
-            <button
-                class="quick-btn"
-                onclick="selectAmount(500,this)">
-                ₹500
-            </button>
-
-
-            <button
-                class="quick-btn"
-                onclick="selectAmount(1000,this)">
-                ₹1000
-            </button>
-
-
-            <button
-                class="quick-btn"
-                onclick="selectAmount(2000,this)">
-                ₹2000
-            </button>
-
-
-            <button
-                class="quick-btn"
-                onclick="selectAmount(5000,this)">
-                ₹5000
-            </button>
-
-        </div>
-
-
-        <div class="secure-text">
-            Secure &amp; Instant Deposit
-        </div>
+    <div class="quick-grid">
 
 
         <button
-            class="pay-btn"
-            onclick="proceedPayment()">
+            class="quick-btn active"
+            onclick="selectAmount(100,this)">
 
-            Proceed to Pay
+            ₹100
 
         </button>
 
 
-    </section>
+        <button
+            class="quick-btn"
+            onclick="selectAmount(250,this)">
+
+            ₹250
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="selectAmount(500,this)">
+
+            ₹500
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="selectAmount(1000,this)">
+
+            ₹1000
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="selectAmount(2000,this)">
+
+            ₹2000
+
+        </button>
+
+
+        <button
+            class="quick-btn"
+            onclick="selectAmount(5000,this)">
+
+            ₹5000
+
+        </button>
+
+
+    </div>
+
+
+    <div class="secure-text">
+        Secure & Instant Deposit
+    </div>
+
+
+    <button
+        class="pay-btn"
+        onclick="proceedPay()">
+
+        Proceed to Pay
+
+    </button>
+
+
+</section>
 
 </main>
-
 
 
 <!-- =========================
@@ -1270,27 +1214,18 @@ input{
 </nav>
 
 
-
-<!-- TOAST -->
-
-<div
-    class="toast"
-    id="toast">
 </div>
-
 
 
 <script>
 
 /* =========================
-   AMOUNT SELECT
+   AMOUNT
 ========================= */
 
-function selectAmount(amount, button){
+function selectAmount(amount,button){
 
-    document
-    .getElementById("amountInput")
-    .value = amount;
+    document.getElementById("amount").value = amount;
 
 
     document
@@ -1307,20 +1242,12 @@ function selectAmount(amount, button){
 }
 
 
-/* =========================
-   INPUT CHECK
-========================= */
-
-function checkAmount(){
-
-    const input =
-        document.getElementById(
-            "amountInput"
-        );
-
+function updateAmount(){
 
     const amount =
-        Number(input.value);
+        Number(
+            document.getElementById("amount").value
+        );
 
 
     document
@@ -1332,27 +1259,20 @@ function checkAmount(){
     });
 
 
-    const buttons =
-        document.querySelectorAll(
-            ".quick-btn"
-        );
-
-
-    buttons.forEach(function(btn){
+    document
+    .querySelectorAll(".quick-btn")
+    .forEach(function(btn){
 
         const value =
             Number(
                 btn.textContent
-                .replace(/[₹,]/g,"")
+                .replace("₹","")
                 .trim()
             );
 
-
         if(value === amount){
 
-            btn.classList.add(
-                "active"
-            );
+            btn.classList.add("active");
 
         }
 
@@ -1365,39 +1285,33 @@ function checkAmount(){
    PROCEED
 ========================= */
 
-function proceedPayment(){
-
-    const input =
-        document.getElementById(
-            "amountInput"
-        );
-
+function proceedPay(){
 
     const amount =
-        Number(input.value);
+        Number(
+            document.getElementById("amount").value
+        );
 
 
     if(!amount || amount < 100){
 
-        showMessage(
-            "Minimum deposit ₹100 hai"
-        );
+        alert("Minimum deposit amount ₹100 hai.");
 
         return;
+
     }
 
 
     /*
-       PAYMENT SYSTEM ABHI CONNECT NAHI HAI.
+       PAYMENT SYSTEM BAAD ME ADD KIYA JAYEGA.
 
-       Baad mein yahin par
-       payment gateway / UPI flow
-       connect kiya jayega.
+       Abhi sirf amount select ho raha hai.
     */
 
-
-    showMessage(
-        "Payment system next step mein add hoga"
+    alert(
+        "Selected Amount: ₹" +
+        amount +
+        "\n\nPayment system baad me connect kiya jayega."
     );
 
 }
@@ -1411,6 +1325,7 @@ function goHome(){
 
     window.location.href =
         "./dashboard.html";
+
 }
 
 
@@ -1418,6 +1333,7 @@ function goWallet(){
 
     window.location.href =
         "./wallet.html";
+
 }
 
 
@@ -1425,6 +1341,7 @@ function goSupport(){
 
     window.location.href =
         "./support.html";
+
 }
 
 
@@ -1432,74 +1349,6 @@ function goProfile(){
 
     window.location.href =
         "./profile.html";
-}
-
-
-function goReferral(){
-
-    window.location.href =
-        "./referral.html";
-}
-
-
-function goBack(){
-
-    window.history.back();
-
-}
-
-
-/* =========================
-   TOP BALANCE
-========================= */
-
-window.addEventListener(
-    "load",
-    function(){
-
-        const balance =
-            localStorage.getItem(
-                "rdxWalletBalance"
-            ) || "0";
-
-
-        document.getElementById(
-            "topBalance"
-        ).textContent =
-            balance;
-
-    }
-);
-
-
-/* =========================
-   TOAST
-========================= */
-
-function showMessage(message){
-
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-
-    toast.textContent =
-        message;
-
-
-    toast.classList.add(
-        "show"
-    );
-
-
-    setTimeout(function(){
-
-        toast.classList.remove(
-            "show"
-        );
-
-    },1800);
 
 }
 
