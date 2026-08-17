@@ -16,7 +16,6 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-
 <style>
 
 /* ================= RESET ================= */
@@ -42,6 +41,7 @@ body{
 /* ================= HEADER ================= */
 
 .top-header{
+
     height:70px;
 
     background:
@@ -74,6 +74,7 @@ body{
 
 
 .header-left{
+
     display:flex;
 
     align-items:center;
@@ -82,9 +83,11 @@ body{
 }
 
 
-.menu-btn{
-    width:46px;
+/* MENU */
 
+.menu-btn{
+
+    width:46px;
     height:46px;
 
     border:0;
@@ -116,9 +119,11 @@ body{
 }
 
 
-.logo{
-    width:45px;
+/* LOGO */
 
+.logo{
+
+    width:45px;
     height:45px;
 
     border-radius:50%;
@@ -150,7 +155,10 @@ body{
 }
 
 
+/* HEADER RIGHT */
+
 .header-right{
+
     display:flex;
 
     align-items:center;
@@ -160,8 +168,8 @@ body{
 
 
 .header-icon{
-    width:44px;
 
+    width:44px;
     height:44px;
 
     border:0;
@@ -187,6 +195,7 @@ body{
 
 
 .notification{
+
     background:
         linear-gradient(
             145deg,
@@ -197,6 +206,7 @@ body{
 
 
 .wallet-top{
+
     background:
         linear-gradient(
             145deg,
@@ -207,6 +217,7 @@ body{
 
 
 .redeem-top{
+
     background:
         linear-gradient(
             145deg,
@@ -219,11 +230,13 @@ body{
 /* ================= SIDE MENU ================= */
 
 .menu-overlay{
+
     position:fixed;
 
     inset:0;
 
-    background:rgba(0,0,0,.35);
+    background:
+        rgba(0,0,0,.35);
 
     z-index:250;
 
@@ -232,11 +245,13 @@ body{
 
 
 .menu-overlay.show{
+
     display:block;
 }
 
 
 .menu-panel{
+
     position:fixed;
 
     top:0;
@@ -264,11 +279,15 @@ body{
 
 
 .menu-panel.open{
+
     left:0;
 }
 
 
+/* MENU HEADER */
+
 .menu-title{
+
     display:flex;
 
     align-items:center;
@@ -279,11 +298,13 @@ body{
 
     margin-bottom:18px;
 
-    border-bottom:1px solid #e3e8f2;
+    border-bottom:
+        1px solid #e3e8f2;
 }
 
 
 .menu-brand{
+
     display:flex;
 
     align-items:center;
@@ -293,8 +314,8 @@ body{
 
 
 .menu-logo{
-    width:50px;
 
+    width:50px;
     height:50px;
 
     border-radius:50%;
@@ -323,11 +344,13 @@ body{
 
 
 .menu-brand h2{
+
     font-size:20px;
 }
 
 
 .menu-brand p{
+
     color:#71809d;
 
     font-size:12px;
@@ -337,12 +360,12 @@ body{
 
 
 .close-menu{
+
     border:0;
 
     background:#eef2fa;
 
     width:42px;
-
     height:42px;
 
     border-radius:50%;
@@ -355,10 +378,14 @@ body{
 }
 
 
+/* MENU ITEMS */
+
 .menu-item{
+
     width:100%;
 
-    border:1px solid #e0e5ef;
+    border:
+        1px solid #e0e5ef;
 
     background:#fafbfe;
 
@@ -387,13 +414,14 @@ body{
 
 
 .menu-item:hover{
+
     background:#f0f5ff;
 }
 
 
 .menu-icon{
-    width:40px;
 
+    width:40px;
     height:40px;
 
     border-radius:13px;
@@ -411,6 +439,7 @@ body{
 
 
 .menu-item span:nth-child(2){
+
     flex:1;
 }
 
@@ -418,6 +447,7 @@ body{
 /* ================= MAIN ================= */
 
 .main{
+
     max-width:650px;
 
     margin:auto;
@@ -427,6 +457,7 @@ body{
 
 
 .page-title{
+
     font-size:27px;
 
     margin-top:10px;
@@ -434,6 +465,7 @@ body{
 
 
 .subtitle{
+
     margin-top:7px;
 
     color:#71809d;
@@ -445,6 +477,7 @@ body{
 /* ================= STATS ================= */
 
 .stats{
+
     margin-top:22px;
 
     display:grid;
@@ -456,9 +489,11 @@ body{
 
 
 .stat{
+
     background:white;
 
-    border:1px solid #9bbaf3;
+    border:
+        1px solid #9bbaf3;
 
     border-radius:20px;
 
@@ -473,11 +508,13 @@ body{
 
 
 .stat-icon{
+
     font-size:24px;
 }
 
 
 .stat-label{
+
     margin-top:7px;
 
     color:#71809d;
@@ -487,6 +524,7 @@ body{
 
 
 .stat-value{
+
     margin-top:5px;
 
     font-size:22px;
@@ -498,11 +536,13 @@ body{
 /* ================= REFERRAL CARD ================= */
 
 .card{
+
     margin-top:18px;
 
     background:white;
 
-    border:1px solid #9bbaf3;
+    border:
+        1px solid #9bbaf3;
 
     border-radius:22px;
 
@@ -515,6 +555,7 @@ body{
 
 
 .card-title{
+
     font-size:18px;
 
     font-weight:800;
@@ -526,6 +567,7 @@ body{
 /* ================= CODE ================= */
 
 .code-box{
+
     margin-top:15px;
 
     display:flex;
@@ -534,7 +576,8 @@ body{
 
     background:#f1f4fa;
 
-    border:1px solid #dce2ed;
+    border:
+        1px solid #dce2ed;
 
     border-radius:15px;
 
@@ -543,6 +586,7 @@ body{
 
 
 .code{
+
     flex:1;
 
     padding:16px;
@@ -552,10 +596,13 @@ body{
     font-weight:800;
 
     letter-spacing:2px;
+
+    word-break:break-all;
 }
 
 
 .copy-btn{
+
     border:0;
 
     background:#2869e8;
@@ -573,6 +620,7 @@ body{
 /* ================= LINK ================= */
 
 .link-label{
+
     margin-top:18px;
 
     font-size:14px;
@@ -584,13 +632,15 @@ body{
 
 
 .link-box{
+
     margin-top:8px;
 
     padding:14px;
 
     background:#f4f6fb;
 
-    border:1px solid #dce2ed;
+    border:
+        1px solid #dce2ed;
 
     border-radius:14px;
 
@@ -601,14 +651,13 @@ body{
     word-break:break-all;
 
     line-height:1.5;
-
-    min-height:45px;
 }
 
 
 /* ================= BUTTONS ================= */
 
 .buttons{
+
     display:grid;
 
     grid-template-columns:1fr 1fr;
@@ -620,6 +669,7 @@ body{
 
 
 .action-btn{
+
     border:1px solid;
 
     border-radius:16px;
@@ -635,6 +685,7 @@ body{
 
 
 .copy-link{
+
     background:#eef4ff;
 
     color:#2869e8;
@@ -644,6 +695,7 @@ body{
 
 
 .whatsapp{
+
     background:#e7faee;
 
     color:#15944d;
@@ -655,24 +707,29 @@ body{
 /* ================= STATUS ================= */
 
 .status{
+
+    margin-top:14px;
+
     text-align:center;
 
-    margin-top:17px;
+    color:#71809d;
 
     font-size:13px;
 
-    color:#71809d;
+    min-height:20px;
 }
 
 
 /* ================= HOW ================= */
 
 .how{
+
     margin-top:18px;
 
     background:white;
 
-    border:1px solid #9bbaf3;
+    border:
+        1px solid #9bbaf3;
 
     border-radius:22px;
 
@@ -685,6 +742,7 @@ body{
 
 
 .how h3{
+
     text-align:center;
 
     margin-bottom:14px;
@@ -692,6 +750,7 @@ body{
 
 
 .how p{
+
     color:#71809d;
 
     margin-top:10px;
@@ -705,6 +764,7 @@ body{
 /* ================= TOAST ================= */
 
 .toast{
+
     position:fixed;
 
     left:50%;
@@ -734,6 +794,7 @@ body{
 
 
 .toast.show{
+
     opacity:1;
 }
 
@@ -741,6 +802,7 @@ body{
 /* ================= BOTTOM ================= */
 
 .bottom{
+
     position:fixed;
 
     bottom:0;
@@ -754,11 +816,13 @@ body{
     background:
         rgba(255,255,255,.97);
 
-    border-top:1px solid #ccd7eb;
+    border-top:
+        1px solid #ccd7eb;
 
     display:grid;
 
-    grid-template-columns:repeat(4,1fr);
+    grid-template-columns:
+        repeat(4,1fr);
 
     padding:8px 5px;
 
@@ -769,6 +833,7 @@ body{
 
 
 .bottom a{
+
     text-align:center;
 
     text-decoration:none;
@@ -790,6 +855,7 @@ body{
 
 
 .bottom b{
+
     width:40px;
 
     height:40px;
@@ -807,6 +873,7 @@ body{
 
 
 .active{
+
     color:#2869e8!important;
 
     font-weight:700;
@@ -814,6 +881,7 @@ body{
 
 
 .active b{
+
     background:#536df5;
 
     color:white;
@@ -829,26 +897,34 @@ body{
 @media(max-width:700px){
 
     .main{
-        padding:22px 12px 105px;
+
+        padding:
+            22px 12px 105px;
     }
 
     .page-title{
+
         font-size:25px;
     }
 
     .stats{
+
         gap:10px;
     }
 
     .stat{
-        padding:17px 10px;
+
+        padding:
+            17px 10px;
     }
 
     .buttons{
+
         gap:9px;
     }
 
     .link-box{
+
         font-size:12px;
     }
 
@@ -862,7 +938,7 @@ body{
 <body>
 
 
-<!-- ================= TOP HEADER ================= -->
+<!-- ================= HEADER ================= -->
 
 <header class="top-header">
 
@@ -878,7 +954,9 @@ body{
 
 
         <div class="logo">
+
             RDX
+
         </div>
 
     </div>
@@ -917,7 +995,7 @@ body{
 </header>
 
 
-<!-- ================= MENU OVERLAY ================= -->
+<!-- ================= OVERLAY ================= -->
 
 <div
     class="menu-overlay"
@@ -938,8 +1016,11 @@ body{
         <div class="menu-brand">
 
             <div class="menu-logo">
+
                 RDX
+
             </div>
+
 
             <div>
 
@@ -1049,12 +1130,16 @@ body{
 
 
     <h1 class="page-title">
+
         Refer & Earn 🎁
+
     </h1>
 
 
     <p class="subtitle">
+
         Invite friends to RDX LUDO and share your referral link.
+
     </p>
 
 
@@ -1066,12 +1151,18 @@ body{
         <div class="stat">
 
             <div class="stat-icon">
+
                 👥
+
             </div>
 
+
             <div class="stat-label">
+
                 Players
+
             </div>
+
 
             <div
                 class="stat-value"
@@ -1087,12 +1178,18 @@ body{
         <div class="stat">
 
             <div class="stat-icon">
+
                 🎁
+
             </div>
 
+
             <div class="stat-label">
+
                 Earnings
+
             </div>
+
 
             <div
                 class="stat-value"
@@ -1104,17 +1201,18 @@ body{
 
         </div>
 
-
     </section>
 
 
-    <!-- ================= REFERRAL ================= -->
+    <!-- ================= REFERRAL CARD ================= -->
 
     <section class="card">
 
 
         <div class="card-title">
+
             Your Referral Code
+
         </div>
 
 
@@ -1142,7 +1240,9 @@ body{
 
 
         <div class="link-label">
+
             Your Referral Link
+
         </div>
 
 
@@ -1177,16 +1277,17 @@ body{
 
         </div>
 
+
+        <div
+            class="status"
+            id="status">
+
+            Loading referral information...
+
+        </div>
+
+
     </section>
-
-
-    <div
-        class="status"
-        id="status">
-
-        Loading referral information...
-
-    </div>
 
 
     <!-- ================= HOW ================= -->
@@ -1195,29 +1296,38 @@ body{
 
 
         <h3>
+
             How It Works
+
         </h3>
 
 
         <p>
+
             1. Share your referral link with friends.
+
         </p>
 
 
         <p>
+
             2. Your friend opens your referral link.
+
         </p>
 
 
         <p>
+
             3. Your friend registers using your referral.
+
         </p>
 
 
         <p>
-            4. Your referral and earnings are recorded in your account.
-        </p>
 
+            4. Your referral and earnings are recorded in your account.
+
+        </p>
 
     </section>
 
@@ -1267,7 +1377,6 @@ body{
 
     </a>
 
-
 </nav>
 
 
@@ -1309,7 +1418,7 @@ const firebaseConfig = {
 
 
 /* =====================================================
-   FIREBASE INITIALIZE
+   FIREBASE START
 ===================================================== */
 
 let db = null;
@@ -1339,81 +1448,52 @@ try{
 
 
 /* =====================================================
-   ELEMENTS
+   IMPORTANT GITHUB PAGES URL
 ===================================================== */
 
-const referralCodeElement =
-    document.getElementById(
-        "referralCode"
-    );
-
-
-const referralLinkElement =
-    document.getElementById(
-        "referralLink"
-    );
-
-
-const playersElement =
-    document.getElementById(
-        "players"
-    );
-
-
-const earningsElement =
-    document.getElementById(
-        "earnings"
-    );
-
-
-const statusElement =
-    document.getElementById(
-        "status"
-    );
+const SITE_BASE_URL =
+    "https://gameonline445.github.io/RDX---LUDO/";
 
 
 /* =====================================================
-   CURRENT USER MOBILE
+   VARIABLES
 ===================================================== */
 
-/*
-   Register page ne ye values save ki thi.
-*/
+let currentReferralCode = "";
 
-function getCurrentMobile(){
+let currentReferralLink = "";
 
-    const possibleValues = [
 
-        localStorage.getItem(
-            "rdxLoginMobile"
-        ),
+/* =====================================================
+   GET LOGGED-IN MOBILE
+===================================================== */
 
-        localStorage.getItem(
-            "rdxFirebaseUserId"
-        ),
+function getLoggedInMobile(){
 
-        localStorage.getItem(
-            "rdxVerifiedMobile"
-        )
+    const possibleKeys = [
+
+        "rdxLoginMobile",
+
+        "rdxFirebaseUserId",
+
+        "rdxVerifiedMobile"
 
     ];
 
 
     for(
-        const value of possibleValues
+        const key of possibleKeys
     ){
 
-        if(
-            value &&
-            value.trim()
-        ){
+        const value =
+            localStorage.getItem(key);
+
+
+        if(value){
 
             return value
-                .trim()
-                .replace(
-                    /^\+/,
-                    ""
-                );
+                .replace(/\D/g,"")
+                .trim();
 
         }
 
@@ -1426,29 +1506,46 @@ function getCurrentMobile(){
 
 
 /* =====================================================
-   GITHUB PAGES REFERRAL LINK
+   GENERATE REFERRAL CODE
 ===================================================== */
 
-/*
-   IMPORTANT:
+function createReferralCode(){
 
-   Aapki GitHub Pages site:
+    const letters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-   https://gameonline445.github.io/RDX---LUDO/
 
-   Referral link:
+    const first =
+        letters.charAt(
+            Math.floor(
+                Math.random() *
+                letters.length
+            )
+        );
 
-   https://gameonline445.github.io/RDX---LUDO/register.html?ref=CODE
-*/
 
-function createReferralLink(
-    code
-){
+    const second =
+        letters.charAt(
+            Math.floor(
+                Math.random() *
+                letters.length
+            )
+        );
+
+
+    const number =
+        Math.floor(
+            1000 +
+            Math.random() *
+            9000
+        );
+
 
     return (
-        "https://gameonline445.github.io" +
-        "/RDX---LUDO/register.html?ref=" +
-        encodeURIComponent(code)
+        "NR" +
+        first +
+        second +
+        number
     );
 
 }
@@ -1460,30 +1557,66 @@ function createReferralLink(
 
 async function loadReferralData(){
 
-    const mobile =
-        getCurrentMobile();
+    const status =
+        document.getElementById(
+            "status"
+        );
 
 
-    if(!mobile){
+    const codeElement =
+        document.getElementById(
+            "referralCode"
+        );
 
-        referralCodeElement.textContent =
-            "Not Available";
 
-        referralLinkElement.textContent =
-            "Please login first.";
+    const linkElement =
+        document.getElementById(
+            "referralLink"
+        );
 
-        statusElement.textContent =
-            "Login required to load referral information.";
+
+    const playersElement =
+        document.getElementById(
+            "players"
+        );
+
+
+    const earningsElement =
+        document.getElementById(
+            "earnings"
+        );
+
+
+    if(!db){
+
+        codeElement.textContent =
+            "Firebase Error";
+
+        linkElement.textContent =
+            "Firebase database connect नहीं हुआ।";
+
+        status.textContent =
+            "Firebase connection failed.";
 
         return;
 
     }
 
 
-    if(!db){
+    const mobile =
+        getLoggedInMobile();
 
-        statusElement.textContent =
-            "Firebase database is not connected.";
+
+    if(!mobile){
+
+        codeElement.textContent =
+            "Login Required";
+
+        linkElement.textContent =
+            "पहले अपने account में login करें।";
+
+        status.textContent =
+            "Logged-in user नहीं मिला।";
 
         return;
 
@@ -1492,12 +1625,11 @@ async function loadReferralData(){
 
     try{
 
+        /* -----------------------------------------
+           CUSTOMER DOCUMENT
+        ----------------------------------------- */
 
-        /* =============================================
-           FIND CURRENT USER
-        ============================================= */
-
-        let customerRef =
+        const customerRef =
             db
                 .collection("customers")
                 .doc(mobile);
@@ -1508,25 +1640,27 @@ async function loadReferralData(){
 
 
         /*
-           Agar mobile localStorage me
-           10 digit format me ho.
+           अगर localStorage में सिर्फ +91 वाला
+           format मौजूद हो तो दूसरा प्रयास
         */
 
         if(
             !customerSnapshot.exists &&
-            mobile.length === 10
+            mobile.startsWith("91")
         ){
 
-            customerRef =
-                db
-                    .collection("customers")
-                    .doc(
-                        "91" + mobile
-                    );
+            const indianMobile =
+                mobile.substring(2);
 
 
             customerSnapshot =
-                await customerRef.get();
+                await db
+                    .collection("customers")
+                    .doc(
+                        "91" +
+                        indianMobile
+                    )
+                    .get();
 
         }
 
@@ -1535,14 +1669,14 @@ async function loadReferralData(){
             !customerSnapshot.exists
         ){
 
-            referralCodeElement.textContent =
-                "Not Available";
+            codeElement.textContent =
+                "User Not Found";
 
-            referralLinkElement.textContent =
-                "Account not found.";
+            linkElement.textContent =
+                "Firebase में आपका account नहीं मिला।";
 
-            statusElement.textContent =
-                "Your account was not found in Firebase.";
+            status.textContent =
+                "Customer account not found.";
 
             return;
 
@@ -1553,80 +1687,93 @@ async function loadReferralData(){
             customerSnapshot.data();
 
 
-        /* =============================================
-           USER'S OWN REFERRAL CODE
-        ============================================= */
+        /* -----------------------------------------
+           REFERRAL CODE
+        ----------------------------------------- */
 
-        const myReferralCode =
-            userData.referralCode ||
-            "";
+        let referralCode =
+            userData.referralCode;
 
 
-        if(!myReferralCode){
+        /*
+           पुराने user के account में referralCode
+           missing हो तो automatically नया code
+           बनाया जाएगा.
+        */
 
-            referralCodeElement.textContent =
-                "Not Available";
+        if(
+            !referralCode ||
+            typeof referralCode !== "string"
+        ){
 
-            referralLinkElement.textContent =
-                "Referral code is not available.";
+            referralCode =
+                createReferralCode();
 
-            statusElement.textContent =
-                "Referral code is missing from your Firebase account.";
 
-            return;
+            await customerSnapshot.ref
+                .update({
+
+                    referralCode:
+                        referralCode
+
+                });
+
+
+            console.log(
+                "New referral code created:",
+                referralCode
+            );
 
         }
 
 
-        referralCodeElement.textContent =
-            myReferralCode;
+        currentReferralCode =
+            referralCode
+                .trim()
+                .toUpperCase();
 
 
-        /* =============================================
-           CREATE CORRECT GITHUB PAGES LINK
-        ============================================= */
+        /* -----------------------------------------
+           REFERRAL LINK
+        ----------------------------------------- */
 
-        const myReferralLink =
-            createReferralLink(
-                myReferralCode
+        currentReferralLink =
+            SITE_BASE_URL +
+            "?ref=" +
+            encodeURIComponent(
+                currentReferralCode
             );
 
 
-        referralLinkElement.textContent =
-            myReferralLink;
+        /* -----------------------------------------
+           SHOW CODE
+        ----------------------------------------- */
+
+        codeElement.textContent =
+            currentReferralCode;
 
 
-        /* =============================================
-           PLAYERS
+        /* -----------------------------------------
+           SHOW LINK
+        ----------------------------------------- */
 
-           customers me referredBy == current
-           user's referralCode
-        ============================================= */
-
-        const referredSnapshot =
-            await db
-                .collection("customers")
-                .where(
-                    "referredBy",
-                    "==",
-                    myReferralCode
-                )
-                .get();
+        linkElement.textContent =
+            currentReferralLink;
 
 
-        playersElement.textContent =
-            referredSnapshot.size;
+        /* -----------------------------------------
+           SAVE LOCALLY
+        ----------------------------------------- */
+
+        localStorage.setItem(
+            "rdxReferralCode",
+            currentReferralCode
+        );
 
 
-        /* =============================================
-           EARNINGS
-
-           Pehle user document me referralEarnings
-           check hoga.
-
-           Agar available nahi hai to earnings
-           0 rahegi.
-        ============================================= */
+        /* -----------------------------------------
+           USER EARNINGS
+        ----------------------------------------- */
 
         let earnings = 0;
 
@@ -1647,29 +1794,55 @@ async function loadReferralData(){
             earnings =
                 userData.earnings;
 
-        }else if(
-            typeof userData.referralBalance ===
-            "number"
-        ){
-
-            earnings =
-                userData.referralBalance;
-
         }
 
 
         earningsElement.textContent =
             "₹" +
             Number(
-                earnings || 0
-            ).toLocaleString(
-                "en-IN"
+                earnings
+            ).toLocaleString("en-IN");
+
+
+        /* -----------------------------------------
+           GET REFERRAL PLAYERS
+        ----------------------------------------- */
+
+        try{
+
+            const playersSnapshot =
+                await db
+                    .collection("customers")
+                    .where(
+                        "referredBy",
+                        "==",
+                        currentReferralCode
+                    )
+                    .get();
+
+
+            playersElement.textContent =
+                playersSnapshot.size;
+
+        }catch(playerError){
+
+            console.error(
+                "Players query error:",
+                playerError
             );
 
+            playersElement.textContent =
+                "0";
 
-        statusElement.textContent =
+        }
+
+
+        /* -----------------------------------------
+           SUCCESS
+        ----------------------------------------- */
+
+        status.textContent =
             "Referral information loaded.";
-
 
     }catch(error){
 
@@ -1679,17 +1852,17 @@ async function loadReferralData(){
         );
 
 
-        referralCodeElement.textContent =
-            "Not Available";
+        codeElement.textContent =
+            "Error";
 
 
-        referralLinkElement.textContent =
-            "Unable to load referral link.";
+        linkElement.textContent =
+            "Referral information load नहीं हो सकी।";
 
 
-        statusElement.textContent =
-            "Firebase error: " +
-            error.message;
+        status.textContent =
+            error.message ||
+            "Something went wrong.";
 
     }
 
@@ -1702,18 +1875,10 @@ async function loadReferralData(){
 
 function copyCode(){
 
-    const code =
-        referralCodeElement.textContent;
-
-
-    if(
-        !code ||
-        code === "Not Available" ||
-        code === "Loading..."
-    ){
+    if(!currentReferralCode){
 
         showMessage(
-            "Referral code is not available."
+            "Referral code अभी available नहीं है."
         );
 
         return;
@@ -1722,7 +1887,7 @@ function copyCode(){
 
 
     copyText(
-        code,
+        currentReferralCode,
         "Referral code copied"
     );
 
@@ -1735,19 +1900,10 @@ function copyCode(){
 
 function copyLink(){
 
-    const link =
-        referralLinkElement.textContent;
-
-
-    if(
-        !link ||
-        link.includes("not available") ||
-        link.includes("Please login") ||
-        link.includes("Unable")
-    ){
+    if(!currentReferralLink){
 
         showMessage(
-            "Referral link is not available."
+            "Referral link अभी available नहीं है."
         );
 
         return;
@@ -1756,7 +1912,7 @@ function copyLink(){
 
 
     copyText(
-        link,
+        currentReferralLink,
         "Referral link copied"
     );
 
@@ -1778,22 +1934,22 @@ function copyText(
     ){
 
         navigator.clipboard
-        .writeText(text)
-        .then(function(){
+            .writeText(text)
+            .then(function(){
 
-            showMessage(
-                successMessage
-            );
+                showMessage(
+                    successMessage
+                );
 
-        })
-        .catch(function(){
+            })
+            .catch(function(){
 
-            fallbackCopy(
-                text,
-                successMessage
-            );
+                fallbackCopy(
+                    text,
+                    successMessage
+                );
 
-        });
+            });
 
     }else{
 
@@ -1850,6 +2006,7 @@ function fallbackCopy(
             "copy"
         );
 
+
         showMessage(
             successMessage
         );
@@ -1876,23 +2033,10 @@ function fallbackCopy(
 
 function shareWhatsApp(){
 
-    const link =
-        referralLinkElement.textContent;
-
-
-    const code =
-        referralCodeElement.textContent;
-
-
-    if(
-        !link ||
-        link.includes("not available") ||
-        link.includes("Please login") ||
-        link.includes("Unable")
-    ){
+    if(!currentReferralLink){
 
         showMessage(
-            "Referral link is not available."
+            "Referral link अभी available नहीं है."
         );
 
         return;
@@ -1902,10 +2046,10 @@ function shareWhatsApp(){
 
     const message =
         "Join RDX LUDO using my referral link:\n\n" +
-        link +
+        currentReferralLink +
         "\n\n" +
         "Referral Code: " +
-        code;
+        currentReferralCode;
 
 
     const whatsappURL =
@@ -1931,18 +2075,14 @@ function openMenu(){
         .getElementById(
             "menuPanel"
         )
-        .classList.add(
-            "open"
-        );
+        .classList.add("open");
 
 
     document
         .getElementById(
             "menuOverlay"
         )
-        .classList.add(
-            "show"
-        );
+        .classList.add("show");
 
 }
 
@@ -1953,18 +2093,14 @@ function closeMenu(){
         .getElementById(
             "menuPanel"
         )
-        .classList.remove(
-            "open"
-        );
+        .classList.remove("open");
 
 
     document
         .getElementById(
             "menuOverlay"
         )
-        .classList.remove(
-            "show"
-        );
+        .classList.remove("show");
 
 }
 
@@ -2071,13 +2207,19 @@ function showMessage(
 
 
 /* =====================================================
-   LOAD DATA
+   START
 ===================================================== */
 
-loadReferralData();
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadReferralData();
+
+    }
+);
 
 </script>
-
 
 </body>
 
