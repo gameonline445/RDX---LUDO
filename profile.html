@@ -1,40 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Profile</title>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html{
-    scroll-behavior:smooth;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
 
 body{
-    font-family:-apple-system,BlinkMacSystemFont,
-    "Segoe UI",Roboto,Arial,sans-serif;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     background:#f7f9ff;
     color:#101a38;
     min-height:100vh;
 }
 
-/* ================= TOP HEADER ================= */
-
 .top-header{
     height:70px;
-    background:linear-gradient(110deg,#eef4ff,#ffffff);
+    background:linear-gradient(110deg,#eef4ff,#fff);
     border-bottom:1px solid #cbd8f0;
     display:flex;
     align-items:center;
@@ -46,60 +30,55 @@ body{
     box-shadow:0 5px 18px rgba(36,75,150,.08);
 }
 
-.header-left{
+.header-left,.header-right{
     display:flex;
     align-items:center;
-    gap:10px;
+}
+
+.header-left{gap:10px}
+.header-right{gap:6px}
+
+.menu-btn,.header-icon{
+    border:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 6px 15px rgba(0,0,0,.12);
 }
 
 .menu-btn{
     width:46px;
     height:46px;
-    border:0;
     border-radius:16px;
     background:linear-gradient(145deg,#ff7165,#ff8a70);
-    color:white;
     font-size:25px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 6px 15px rgba(255,93,80,.25);
-    cursor:pointer;
 }
 
-.logo{
-    width:45px;
-    height:45px;
+.logo,.menu-logo{
     border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#e7efff);
+    background:linear-gradient(145deg,#fff,#e7efff);
     border:3px solid #d3e1ff;
     display:flex;
     align-items:center;
     justify-content:center;
     color:#1762df;
-    font-size:12px;
     font-weight:900;
     box-shadow:0 5px 12px rgba(36,93,190,.15);
 }
 
-.header-right{
-    display:flex;
-    align-items:center;
-    gap:6px;
+.logo{
+    width:45px;
+    height:45px;
+    font-size:12px;
 }
 
 .header-icon{
     width:44px;
     height:44px;
-    border:0;
     border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     font-size:20px;
-    color:white;
-    box-shadow:0 6px 15px rgba(0,0,0,.12);
-    cursor:pointer;
 }
 
 .notification{
@@ -113,8 +92,6 @@ body{
 .redeem-top{
     background:linear-gradient(145deg,#ff8a35,#ffad45);
 }
-
-/* ================= SIDE MENU ================= */
 
 .menu-overlay{
     position:fixed;
@@ -134,7 +111,7 @@ body{
     left:-310px;
     width:300px;
     height:100vh;
-    background:white;
+    background:#fff;
     z-index:300;
     padding:25px 18px;
     box-shadow:10px 0 35px rgba(0,0,0,.15);
@@ -164,15 +141,7 @@ body{
 .menu-logo{
     width:50px;
     height:50px;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#e7efff);
-    border:3px solid #d3e1ff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#1762df;
     font-size:13px;
-    font-weight:900;
 }
 
 .menu-brand h2{
@@ -233,8 +202,6 @@ body{
     flex:1;
 }
 
-/* ================= MAIN ================= */
-
 .main{
     width:100%;
     max-width:650px;
@@ -242,15 +209,13 @@ body{
     padding:22px 12px 115px;
 }
 
-/* ================= PROFILE CARD ================= */
-
 .profile-card{
     border:1px solid #b9cdfc;
     border-radius:25px;
     padding:20px;
     background:
     radial-gradient(circle at 100% 0%,#dce8ff,transparent 42%),
-    linear-gradient(135deg,#eef4ff,#ffffff);
+    linear-gradient(135deg,#eef4ff,#fff);
     box-shadow:0 12px 30px rgba(40,88,175,.08);
 }
 
@@ -298,7 +263,7 @@ body{
     flex-shrink:0;
     border-radius:50%;
     background:linear-gradient(145deg,#1762df,#4385ee);
-    color:white;
+    color:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -331,21 +296,19 @@ body{
     border-radius:22px;
     padding:9px 15px;
     background:linear-gradient(90deg,#2162e9,#3976ed);
-    color:white;
+    color:#fff;
     font-size:13px;
     font-weight:800;
     cursor:pointer;
     box-shadow:0 7px 16px rgba(34,99,233,.22);
 }
 
-/* ================= REFERRAL ================= */
-
 .referral-applied{
     margin-top:18px;
     padding:18px;
     border:1px solid #c4d2eb;
     border-radius:22px;
-    background:linear-gradient(135deg,#ffffff,#f5f8ff);
+    background:linear-gradient(135deg,#fff,#f5f8ff);
     box-shadow:0 8px 22px rgba(30,60,120,.05);
 }
 
@@ -382,7 +345,7 @@ body{
     margin-top:14px;
     min-height:58px;
     border-radius:17px;
-    background:#ffffff;
+    background:#fff;
     border:1px solid #e1e6ef;
     display:flex;
     align-items:center;
@@ -401,14 +364,12 @@ body{
     height:45px;
     border-radius:14px;
     background:#a8c6fa;
-    color:white;
+    color:#fff;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:20px;
 }
-
-/* ================= SECTION ================= */
 
 .section-label{
     margin-top:22px;
@@ -418,8 +379,6 @@ body{
     font-weight:850;
     letter-spacing:1.8px;
 }
-
-/* ================= STATS ================= */
 
 .stats{
     display:grid;
@@ -432,7 +391,7 @@ body{
     padding:14px 7px;
     border:1px solid #cbd7eb;
     border-radius:20px;
-    background:linear-gradient(145deg,#f9fbff,#ffffff);
+    background:linear-gradient(145deg,#f9fbff,#fff);
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -440,9 +399,7 @@ body{
     text-align:center;
 }
 
-.stat-icon{
-    width:39px;
-    height:39px;
+.stat-icon,.quick-icon{
     border-radius:12px;
     background:#e5edff;
     border:1px solid #b9cbed;
@@ -450,6 +407,11 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
+}
+
+.stat-icon{
+    width:39px;
+    height:39px;
     font-size:18px;
 }
 
@@ -467,8 +429,6 @@ body{
     color:#101a38;
 }
 
-/* ================= QUICK ================= */
-
 .quick-grid{
     display:grid;
     grid-template-columns:repeat(2,1fr);
@@ -482,7 +442,7 @@ body{
     padding:16px;
     background:
     radial-gradient(circle at 100% 0%,#e3edff,transparent 55%),
-    #ffffff;
+    #fff;
     cursor:pointer;
     display:flex;
     flex-direction:column;
@@ -500,12 +460,6 @@ body{
     width:42px;
     height:42px;
     border-radius:13px;
-    background:#e3edff;
-    border:1px solid #b8cbed;
-    color:#3470da;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     font-size:20px;
 }
 
@@ -513,7 +467,7 @@ body{
     width:30px;
     height:30px;
     border-radius:50%;
-    background:#ffffff;
+    background:#fff;
     border:1px solid #e2e6ee;
     display:flex;
     align-items:center;
@@ -539,7 +493,7 @@ body{
     border:1px solid #b9ccef;
     border-radius:21px;
     padding:14px 16px;
-    background:linear-gradient(110deg,#eaf1ff,#ffffff);
+    background:linear-gradient(110deg,#eaf1ff,#fff);
     display:flex;
     align-items:center;
     gap:13px;
@@ -564,8 +518,6 @@ body{
     font-size:12px;
 }
 
-/* ================= LOGOUT ================= */
-
 .logout{
     width:100%;
     min-height:62px;
@@ -578,8 +530,6 @@ body{
     font-weight:800;
     cursor:pointer;
 }
-
-/* ================= BOTTOM NAV ================= */
 
 .bottom{
     position:fixed;
@@ -620,17 +570,15 @@ body{
 }
 
 .bottom .active{
-    color:#2869e8 !important;
+    color:#2869e8!important;
     font-weight:700;
 }
 
 .bottom .active b{
     background:#536df5;
-    color:white;
+    color:#fff;
     box-shadow:0 7px 17px rgba(83,109,245,.3);
 }
-
-/* ================= TOAST ================= */
 
 .toast{
     position:fixed;
@@ -638,13 +586,13 @@ body{
     top:85px;
     transform:translateX(-50%) translateY(-15px);
     background:#182440;
-    color:white;
+    color:#fff;
     padding:12px 17px;
     border-radius:14px;
     opacity:0;
     pointer-events:none;
     transition:.25s;
-    z-index:500;
+    z-index:700;
     font-size:14px;
     white-space:nowrap;
 }
@@ -653,8 +601,6 @@ body{
     opacity:1;
     transform:translateX(-50%) translateY(0);
 }
-
-/* ================= MODALS ================= */
 
 .modal-overlay{
     position:fixed;
@@ -672,11 +618,10 @@ body{
     display:flex;
 }
 
-.edit-modal,
-.kyc-modal{
+.edit-modal,.kyc-modal{
     width:100%;
     max-width:430px;
-    background:white;
+    background:#fff;
     border-radius:25px;
     padding:22px;
     box-shadow:0 20px 60px rgba(0,0,0,.25);
@@ -689,7 +634,7 @@ body{
     margin-bottom:20px;
 }
 
-.modal-header h2{
+.modal-header h2,.kyc-modal h2{
     font-size:21px;
 }
 
@@ -728,17 +673,21 @@ body{
     box-shadow:0 0 0 3px rgba(57,118,237,.12);
 }
 
-.modal-save{
+.modal-save,.kyc-ok{
     width:100%;
     height:52px;
     margin-top:15px;
     border:0;
     border-radius:16px;
     background:linear-gradient(90deg,#2162e9,#3976ed);
-    color:white;
+    color:#fff;
     font-size:16px;
     font-weight:800;
     cursor:pointer;
+}
+
+.kyc-modal{
+    padding:24px;
 }
 
 .kyc-icon{
@@ -753,10 +702,6 @@ body{
     margin-bottom:15px;
 }
 
-.kyc-modal h2{
-    font-size:22px;
-}
-
 .kyc-modal p{
     margin-top:10px;
     color:#687690;
@@ -765,277 +710,76 @@ body{
 }
 
 .kyc-ok{
-    width:100%;
-    height:50px;
     margin-top:18px;
-    border:0;
-    border-radius:15px;
-    background:#2162e9;
-    color:white;
-    font-size:15px;
-    font-weight:800;
+    height:50px;
 }
 
-/* ================= MOBILE ================= */
-
 @media(max-width:700px){
-
-    .top-header{
-        height:70px;
-        padding:0 10px;
-    }
-
-    .header-right{
-        gap:5px;
-    }
-
-    .header-icon{
-        width:43px;
-        height:43px;
-        border-radius:15px;
-        font-size:19px;
-    }
-
-    .main{
-        padding:18px 12px 105px;
-    }
-
-    .profile-card{
-        padding:18px;
-        border-radius:23px;
-    }
-
-    .profile-details{
-        gap:11px;
-    }
-
-    .avatar{
-        width:68px;
-        height:68px;
-        font-size:24px;
-    }
-
-    .profile-info h2{
-        font-size:20px;
-    }
-
-    .mobile-number{
-        font-size:13px;
-    }
-
-    .kyc-btn{
-        padding:8px 13px;
-        font-size:12px;
-    }
-
-    .stats{
-        gap:7px;
-    }
-
-    .stat-card{
-        min-height:115px;
-        padding:10px 4px;
-    }
-
-    .stat-icon{
-        width:37px;
-        height:37px;
-    }
-
-    .quick-card{
-        min-height:132px;
-        padding:14px;
-    }
-
-    .bottom{
-        height:78px;
-    }
+    .top-header{height:70px;padding:0 10px}
+    .header-right{gap:5px}
+    .header-icon{width:43px;height:43px;border-radius:15px;font-size:19px}
+    .main{padding:18px 12px 105px}
+    .profile-card{padding:18px;border-radius:23px}
+    .profile-details{gap:11px}
+    .avatar{width:68px;height:68px;font-size:24px}
+    .profile-info h2{font-size:20px}
+    .mobile-number{font-size:13px}
+    .kyc-btn{padding:8px 13px;font-size:12px}
+    .stats{gap:7px}
+    .stat-card{min-height:115px;padding:10px 4px}
+    .stat-icon{width:37px;height:37px}
+    .quick-card{min-height:132px;padding:14px}
+    .bottom{height:78px}
 }
 
 @media(max-width:360px){
-
-    .header-icon{
-        width:39px;
-        height:39px;
-    }
-
-    .menu-btn{
-        width:42px;
-        height:42px;
-    }
-
-    .logo{
-        width:42px;
-        height:42px;
-    }
-
-    .profile-details{
-        align-items:flex-start;
-    }
-
-    .stats{
-        gap:5px;
-    }
-
-    .stat-card small{
-        font-size:9px;
-    }
+    .header-icon{width:39px;height:39px}
+    .menu-btn{width:42px;height:42px}
+    .logo{width:42px;height:42px}
+    .profile-details{align-items:flex-start}
+    .stats{gap:5px}
+    .stat-card small{font-size:9px}
 }
-
 </style>
-
-
-<!-- =====================================================
-     FIREBASE
-===================================================== -->
-
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
-<script>
-
-const firebaseConfig = {
-
-    apiKey:
-        "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-
-    authDomain:
-        "rdx-ludo.firebaseapp.com",
-
-    projectId:
-        "rdx-ludo",
-
-    storageBucket:
-        "rdx-ludo.firebasestorage.app",
-
-    messagingSenderId:
-        "928340814840",
-
-    appId:
-        "1:928340814840:web:6eca42a8b76138b268440d"
-
-};
-
-if(!firebase.apps.length){
-
-    firebase.initializeApp(
-        firebaseConfig
-    );
-
-}
-
-const firebaseDB =
-    firebase.firestore();
-
-</script>
-
 </head>
 
-
 <body>
-
-
-<!-- ================= TOP HEADER ================= -->
 
 <header class="top-header">
 
     <div class="header-left">
-
-        <button
-            class="menu-btn"
-            onclick="openMenu()"
-            aria-label="Open menu">
-
-            ☰
-
-        </button>
-
-        <div class="logo">
-            RDX
-        </div>
-
+        <button class="menu-btn" onclick="openMenu()" aria-label="Open menu">☰</button>
+        <div class="logo">RDX</div>
     </div>
 
-
     <div class="header-right">
-
-        <button
-            class="header-icon notification"
-            onclick="showMessage('No new notifications')">
-
-            🔔
-
-        </button>
-
-        <button
-            class="header-icon wallet-top"
-            onclick="goWallet()">
-
-            💰
-
-        </button>
-
-        <button
-            class="header-icon redeem-top"
-            onclick="goRedeem()">
-
-            🎁
-
-        </button>
-
+        <button class="header-icon notification" onclick="showMessage('No new notifications')">🔔</button>
+        <button class="header-icon wallet-top" onclick="goWallet()">💰</button>
+        <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
     </div>
 
 </header>
 
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
-<!-- ================= MENU OVERLAY ================= -->
-
-<div
-    class="menu-overlay"
-    id="menuOverlay"
-    onclick="closeMenu()">
-</div>
-
-
-<!-- ================= SIDE MENU ================= -->
-
-<div
-    class="menu-panel"
-    id="menuPanel">
+<div class="menu-panel" id="menuPanel">
 
     <div class="menu-title">
 
         <div class="menu-brand">
 
-            <div class="menu-logo">
-                RDX
-            </div>
+            <div class="menu-logo">RDX</div>
 
             <div>
-
-                <h2>
-                    RDX LUDO
-                </h2>
-
-                <p>
-                    Play · Win · Earn
-                </p>
-
+                <h2>RDX LUDO</h2>
+                <p>Play · Win · Earn</p>
             </div>
 
         </div>
 
-        <button
-            class="close-menu"
-            onclick="closeMenu()">
-
-            ×
-
-        </button>
+        <button class="close-menu" onclick="closeMenu()">×</button>
 
     </div>
-
 
     <button class="menu-item" onclick="goHome()">
         <div class="menu-icon">🏠</div>
@@ -1043,13 +787,11 @@ const firebaseDB =
         <span>›</span>
     </button>
 
-
     <button class="menu-item" onclick="goProfile()">
         <div class="menu-icon">👤</div>
         <span>My Profile</span>
         <span>›</span>
     </button>
-
 
     <button class="menu-item" onclick="goWallet()">
         <div class="menu-icon">💰</div>
@@ -1057,13 +799,11 @@ const firebaseDB =
         <span>›</span>
     </button>
 
-
     <button class="menu-item" onclick="goRedeem()">
         <div class="menu-icon">🎁</div>
         <span>Refer & Earn</span>
         <span>›</span>
     </button>
-
 
     <button class="menu-item" onclick="goHistory()">
         <div class="menu-icon">🕘</div>
@@ -1071,20 +811,17 @@ const firebaseDB =
         <span>›</span>
     </button>
 
-
     <button class="menu-item" onclick="goNotifications()">
         <div class="menu-icon">🔔</div>
         <span>Notifications</span>
         <span>›</span>
     </button>
 
-
     <button class="menu-item" onclick="goSupport()">
         <div class="menu-icon">🎧</div>
         <span>Support</span>
         <span>›</span>
     </button>
-
 
     <button class="menu-item" onclick="logout()">
         <div class="menu-icon">🚪</div>
@@ -1094,358 +831,205 @@ const firebaseDB =
 
 </div>
 
-
-<!-- ================= MAIN ================= -->
-
 <main class="main">
 
+    <section class="profile-card">
 
-<section class="profile-card">
+        <div class="profile-top">
 
-    <div class="profile-top">
+            <span class="profile-badge">
+                MY PROFILE
+            </span>
 
-        <span class="profile-badge">
-            MY PROFILE
-        </span>
-
-        <button
-            class="edit-btn"
-            onclick="editProfile()">
-
-            ✎ Edit
-
-        </button>
-
-    </div>
-
-
-    <div class="profile-details">
-
-        <div
-            class="avatar"
-            id="avatar">
-
-            R
-
-        </div>
-
-
-        <div class="profile-info">
-
-            <h2 id="profileName">
-                Loading...
-            </h2>
-
-
-            <p
-                class="mobile-number"
-                id="mobileNumber">
-
-                ☎ Loading...
-
-            </p>
-
-
-            <button
-                class="kyc-btn"
-                onclick="completeKYC()">
-
-                Complete KYC
-
+            <button class="edit-btn" onclick="editProfile()">
+                ✎ Edit
             </button>
 
         </div>
 
-    </div>
+        <div class="profile-details">
 
-</section>
-
-
-<!-- ================= REFERRAL ================= -->
-
-<section
-    class="referral-applied"
-    id="referral">
-
-    <div class="referral-head">
-
-        <div class="referral-icon">
-            🎟
-        </div>
-
-        <div>
-
-            <h3>
-                Referral Applied
-            </h3>
-
-            <p>
-                This code is locked to your account
-            </p>
-
-        </div>
-
-    </div>
-
-
-    <div class="referral-code">
-
-        <strong id="referralCode">
-            —
-        </strong>
-
-        <div class="code-check">
-            ✓
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- ================= STATS ================= -->
-
-<div class="section-label">
-    YOUR STATS
-</div>
-
-
-<section class="stats">
-
-    <div class="stat-card">
-
-        <div class="stat-icon">
-            ▣
-        </div>
-
-        <small>
-            COIN WON
-        </small>
-
-        <strong id="coinWon">
-            ₹0
-        </strong>
-
-    </div>
-
-
-    <div class="stat-card">
-
-        <div class="stat-icon">
-            🎮
-        </div>
-
-        <small>
-            GAME PLAYED
-        </small>
-
-        <strong id="gamePlayed">
-            0
-        </strong>
-
-    </div>
-
-
-    <div class="stat-card">
-
-        <div class="stat-icon">
-            🏆
-        </div>
-
-        <small>
-            REFERRAL
-        </small>
-
-        <strong id="referralCount">
-            0
-        </strong>
-
-    </div>
-
-</section>
-
-
-<!-- ================= QUICK ACTIONS ================= -->
-
-<div class="section-label">
-    QUICK ACTIONS
-</div>
-
-
-<section class="quick-grid">
-
-    <div
-        class="quick-card"
-        onclick="goHistory()">
-
-        <div class="quick-top">
-
-            <div class="quick-icon">
-                🕘
+            <div class="avatar" id="avatar">
+                R
             </div>
 
-            <div class="quick-arrow">
-                ↗
+            <div class="profile-info">
+
+                <h2 id="profileName">
+                    RDX User
+                </h2>
+
+                <p class="mobile-number" id="mobileNumber">
+                    ☎ +91 XXXXX XXXXX
+                </p>
+
+                <button class="kyc-btn" onclick="completeKYC()">
+                    Complete KYC
+                </button>
+
             </div>
 
         </div>
 
-        <div>
+    </section>
 
-            <h3>
-                History
-            </h3>
+    <section class="referral-applied" id="referral">
 
-            <p>
-                Battles & payments
-            </p>
+        <div class="referral-head">
 
-        </div>
-
-    </div>
-
-
-    <div
-        class="quick-card"
-        onclick="goSupport()">
-
-        <div class="quick-top">
-
-            <div class="quick-icon">
-                🎧
+            <div class="referral-icon">
+                🎟
             </div>
 
-            <div class="quick-arrow">
-                ↗
+            <div>
+                <h3>Referral Applied</h3>
+                <p>This code is locked to your account</p>
             </div>
 
         </div>
 
-        <div>
+        <div class="referral-code">
 
-            <h3>
-                Support
-            </h3>
+            <strong id="referralCode">
+                —
+            </strong>
 
-            <p>
-                Chat & help
-            </p>
+            <div class="code-check">
+                ✓
+            </div>
 
         </div>
 
+    </section>
+
+    <div class="section-label">
+        YOUR STATS
     </div>
 
-</section>
+    <section class="stats">
 
+        <div class="stat-card">
+            <div class="stat-icon">▣</div>
+            <small>COIN WON</small>
+            <strong id="coinWon">₹0</strong>
+        </div>
 
-<!-- ================= REDEEM ================= -->
+        <div class="stat-card">
+            <div class="stat-icon">🎮</div>
+            <small>GAME PLAYED</small>
+            <strong id="gamePlayed">0</strong>
+        </div>
 
-<section
-    class="redeem-card"
-    onclick="goRedeem()">
+        <div class="stat-card">
+            <div class="stat-icon">🏆</div>
+            <small>REFERRAL</small>
+            <strong id="referralCount">0</strong>
+        </div>
 
-    <div class="quick-icon">
-        🎁
+    </section>
+
+    <div class="section-label">
+        QUICK ACTIONS
     </div>
 
-    <div class="redeem-content">
+    <section class="quick-grid">
 
-        <h3>
-            Referral Redeem
-        </h3>
+        <div class="quick-card" onclick="goHistory()">
 
-        <p>
-            Move referral earnings to wallet
-        </p>
+            <div class="quick-top">
+                <div class="quick-icon">🕘</div>
+                <div class="quick-arrow">↗</div>
+            </div>
 
-    </div>
+            <div>
+                <h3>History</h3>
+                <p>Battles & payments</p>
+            </div>
 
-    <div class="quick-arrow">
-        ↗
-    </div>
+        </div>
 
-</section>
+        <div class="quick-card" onclick="goSupport()">
 
+            <div class="quick-top">
+                <div class="quick-icon">🎧</div>
+                <div class="quick-arrow">↗</div>
+            </div>
 
-<!-- ================= LOGOUT ================= -->
+            <div>
+                <h3>Support</h3>
+                <p>Chat & help</p>
+            </div>
 
-<button
-    class="logout"
-    onclick="logout()">
+        </div>
 
-    ⇥ &nbsp; Logout
+    </section>
 
-</button>
+    <section class="redeem-card" onclick="goRedeem()">
+
+        <div class="quick-icon">
+            🎁
+        </div>
+
+        <div class="redeem-content">
+            <h3>Referral Redeem</h3>
+            <p>Move referral earnings to wallet</p>
+        </div>
+
+        <div class="quick-arrow">
+            ↗
+        </div>
+
+    </section>
+
+    <button class="logout" onclick="logout()">
+        ⇥ &nbsp; Logout
+    </button>
 
 </main>
 
-
-<!-- ================= BOTTOM NAV ================= -->
-
 <nav class="bottom">
 
-    <a href="dashboard.html">
+    <a href="./dashboard.html">
         <b>🏠</b>
         Home
     </a>
 
-    <a href="wallet.html">
+    <a href="./wallet.html">
         <b>💰</b>
         Wallet
     </a>
 
-    <a href="support.html">
+    <a href="./support.html">
         <b>🎧</b>
         Support
     </a>
 
-    <a
-        class="active"
-        href="profile.html">
+    <a class="active" href="./profile.html">
         <b>👤</b>
         Profile
     </a>
 
 </nav>
 
+<div class="toast" id="toast"></div>
 
-<!-- ================= TOAST ================= -->
-
-<div
-    class="toast"
-    id="toast">
-</div>
-
-
-<!-- ================= EDIT NAME MODAL ================= -->
-
-<div
-    class="modal-overlay"
-    id="editModal">
+<div class="modal-overlay" id="editModal">
 
     <div class="edit-modal">
 
         <div class="modal-header">
 
-            <h2>
-                Edit Profile
-            </h2>
+            <h2>Edit Profile</h2>
 
-            <button
-                class="modal-close"
-                onclick="closeEditModal()">
-
+            <button class="modal-close" onclick="closeEditModal()">
                 ×
-
             </button>
 
         </div>
 
-
-        <label class="input-label">
+        <label class="input-label" for="realNameInput">
             Real Name
         </label>
-
 
         <input
             type="text"
@@ -1455,26 +1039,15 @@ const firebaseDB =
             maxlength="60"
             autocomplete="name">
 
-
-        <button
-            class="modal-save"
-            id="saveNameBtn"
-            onclick="saveRealName()">
-
+        <button class="modal-save" onclick="saveRealName()">
             Save Name
-
         </button>
 
     </div>
 
 </div>
 
-
-<!-- ================= KYC MODAL ================= -->
-
-<div
-    class="modal-overlay"
-    id="kycModal">
+<div class="modal-overlay" id="kycModal">
 
     <div class="kyc-modal">
 
@@ -1487,447 +1060,141 @@ const firebaseDB =
         </h2>
 
         <p>
-            Aadhaar OTP verification को production में
-            authorised KYC service और secure backend के
-            माध्यम से connect करना होगा।
+            Aadhaar OTP verification को production में authorised KYC service और secure backend के माध्यम से connect करना होगा.
         </p>
 
         <p>
-            Aadhaar number या OTP को इस HTML page में
-            save या सीधे handle नहीं किया जाएगा।
+            Aadhaar number या OTP को इस HTML page में save या सीधे handle नहीं किया जाएगा.
         </p>
 
-        <button
-            class="kyc-ok"
-            onclick="closeKYC()">
-
+        <button class="kyc-ok" onclick="closeKYC()">
             OK
-
         </button>
 
     </div>
 
 </div>
 
-
 <script>
 
-/* =====================================================
-   FIREBASE USER PROFILE
-===================================================== */
+"use strict";
 
 /*
-   Login page द्वारा save किया गया Firebase User ID
-   localStorage में रखा गया है.
+=====================================================
+PROFILE DATA
+=====================================================
+
+इस page में Firebase / Firestore नहीं है।
+
+Name localStorage में save होगा।
+
+इसलिए:
+Missing or insufficient permissions
+वाली Firestore error यहाँ नहीं आएगी।
 */
 
-let firebaseUserId =
-    localStorage.getItem("rdxFirebaseUserId");
+function getItem(key){
 
+    try{
 
-/*
-   अगर पुराना login code rdxVerifiedMobile रखता है,
-   तो उससे भी user ID निकाल सकते हैं.
-*/
+        return localStorage.getItem(key);
 
-if(!firebaseUserId){
-
-    const verifiedMobile =
-        localStorage.getItem("rdxVerifiedMobile");
-
-    if(verifiedMobile){
-
-        firebaseUserId =
-            String(verifiedMobile)
-            .replace(/\D/g,"");
-
-    }
-
-}
-
-
-/* =====================================================
-   GET USER DOCUMENT
-===================================================== */
-
-function getUserDocument(){
-
-    if(!firebaseUserId){
+    }catch(error){
 
         return null;
 
     }
 
-    return firebaseDB
-        .collection("customers")
-        .doc(firebaseUserId);
+}
+
+
+function setItem(key,value){
+
+    try{
+
+        localStorage.setItem(key,value);
+
+        return true;
+
+    }catch(error){
+
+        return false;
+
+    }
 
 }
 
 
-/* =====================================================
-   LOAD PROFILE FROM FIREBASE
-===================================================== */
+/* ================= LOAD PROFILE ================= */
 
-async function loadProfile(){
+function loadProfile(){
 
-    try{
+    const username =
+        getItem("rdxUsername");
 
-        if(!firebaseUserId){
+    const mobile =
+        getItem("rdxMobile");
 
-            document
-                .getElementById("profileName")
-                .textContent =
-                "RDX User";
-
-            document
-                .getElementById("mobileNumber")
-                .textContent =
-                "☎ Mobile not found";
-
-            showMessage(
-                "Login information नहीं मिली।"
-            );
-
-            return;
-
-        }
+    const referral =
+        getItem("rdxReferral");
 
 
-        const userRef =
-            getUserDocument();
+    const nameElement =
+        document.getElementById("profileName");
+
+    const avatarElement =
+        document.getElementById("avatar");
+
+    const mobileElement =
+        document.getElementById("mobileNumber");
+
+    const referralElement =
+        document.getElementById("referralCode");
 
 
-        if(!userRef){
-
-            return;
-
-        }
-
-
-        const snapshot =
-            await userRef.get();
-
-
-        /*
-         * Document doesn't exist
-         */
-
-        if(!snapshot.exists){
-
-            document
-                .getElementById("profileName")
-                .textContent =
-                "RDX User";
-
-            document
-                .getElementById("mobileNumber")
-                .textContent =
-                "☎ +" + firebaseUserId;
-
-            return;
-
-        }
-
-
-        const user =
-            snapshot.data();
-
-
-        /* ================= NAME ================= */
+    if(username && username.trim()){
 
         const name =
-            user.name ||
-            user.username ||
-            "RDX User";
+            username.trim();
 
-
-        document
-            .getElementById("profileName")
-            .textContent =
+        nameElement.textContent =
             name;
 
+        avatarElement.textContent =
+            name.charAt(0).toUpperCase();
 
-        document
-            .getElementById("avatar")
-            .textContent =
-            name
-                .trim()
-                .charAt(0)
-                .toUpperCase();
+    }
 
 
-        /*
-         * Local cache भी रख रहे हैं.
-         */
+    if(mobile && mobile.trim()){
 
-        localStorage.setItem(
-            "rdxUsername",
-            name
-        );
+        mobileElement.textContent =
+            "☎ " + mobile.trim();
+
+    }
 
 
-        /* ================= MOBILE ================= */
+    if(referral && referral.trim()){
 
-        const mobile =
-            user.mobile ||
-            ("+" + firebaseUserId);
-
-
-        document
-            .getElementById("mobileNumber")
-            .textContent =
-            "☎ " + mobile;
-
-
-        localStorage.setItem(
-            "rdxMobile",
-            mobile
-        );
-
-
-        /* ================= REFERRAL ================= */
-
-        const referral =
-            user.referralCode ||
-            user.referral ||
-            localStorage.getItem("rdxReferral");
-
-
-        if(referral){
-
-            document
-                .getElementById("referralCode")
-                .textContent =
-                referral;
-
-            localStorage.setItem(
-                "rdxReferral",
-                referral
-            );
-
-        }
-
-
-        /* ================= STATS ================= */
-
-        const coinWon =
-            Number(user.coinWon || 0);
-
-        const gamePlayed =
-            Number(user.gamePlayed || 0);
-
-        const referralCount =
-            Number(user.referralCount || 0);
-
-
-        document
-            .getElementById("coinWon")
-            .textContent =
-            "₹" + coinWon;
-
-
-        document
-            .getElementById("gamePlayed")
-            .textContent =
-            gamePlayed;
-
-
-        document
-            .getElementById("referralCount")
-            .textContent =
-            referralCount;
-
-
-    }catch(error){
-
-        console.error(
-            "PROFILE LOAD ERROR:",
-            error
-        );
-
-        showMessage(
-            "Profile Firebase से load नहीं हुआ।"
-        );
+        referralElement.textContent =
+            referral.trim();
 
     }
 
 }
 
 
-/* =====================================================
-   SAVE NAME TO FIREBASE
-===================================================== */
-
-async function saveRealName(){
-
-    const input =
-        document.getElementById(
-            "realNameInput"
-        );
-
-
-    const saveBtn =
-        document.getElementById(
-            "saveNameBtn"
-        );
-
-
-    const name =
-        input.value.trim();
-
-
-    if(name.length < 2){
-
-        showMessage(
-            "Please enter your real name"
-        );
-
-        input.focus();
-
-        return;
-
-    }
-
-
-    if(name.length > 60){
-
-        showMessage(
-            "Name बहुत लंबा है।"
-        );
-
-        return;
-
-    }
-
-
-    if(!firebaseUserId){
-
-        showMessage(
-            "User login information नहीं मिली।"
-        );
-
-        return;
-
-    }
-
-
-    try{
-
-        saveBtn.disabled =
-            true;
-
-        saveBtn.textContent =
-            "Saving...";
-
-
-        const userRef =
-            getUserDocument();
-
-
-        await userRef.set(
-
-            {
-
-                name:
-                    name,
-
-                username:
-                    name,
-
-                updatedAt:
-                    firebase.firestore
-                    .FieldValue
-                    .serverTimestamp()
-
-            },
-
-            {
-
-                merge:
-                    true
-
-            }
-
-        );
-
-
-        /*
-         * Local cache
-         */
-
-        localStorage.setItem(
-            "rdxUsername",
-            name
-        );
-
-
-        /*
-         * Screen update
-         */
-
-        document
-            .getElementById("profileName")
-            .textContent =
-            name;
-
-
-        document
-            .getElementById("avatar")
-            .textContent =
-            name
-                .trim()
-                .charAt(0)
-                .toUpperCase();
-
-
-        closeEditModal();
-
-
-        showMessage(
-            "Name Firebase में save हो गया।"
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "NAME SAVE ERROR:",
-            error
-        );
-
-        showMessage(
-            "Name save नहीं हुआ: " +
-            error.message
-        );
-
-
-    }finally{
-
-        saveBtn.disabled =
-            false;
-
-        saveBtn.textContent =
-            "Save Name";
-
-    }
-
-}
-
-
-/* =====================================================
-   SIDE MENU
-===================================================== */
+/* ================= MENU ================= */
 
 function openMenu(){
 
     document
-        .getElementById("menuPanel")
-        .classList.add("open");
+    .getElementById("menuPanel")
+    .classList.add("open");
 
     document
-        .getElementById("menuOverlay")
-        .classList.add("show");
+    .getElementById("menuOverlay")
+    .classList.add("show");
 
 }
 
@@ -1935,56 +1202,66 @@ function openMenu(){
 function closeMenu(){
 
     document
-        .getElementById("menuPanel")
-        .classList.remove("open");
+    .getElementById("menuPanel")
+    .classList.remove("open");
 
     document
-        .getElementById("menuOverlay")
-        .classList.remove("show");
+    .getElementById("menuOverlay")
+    .classList.remove("show");
 
 }
 
 
-/* =====================================================
-   NAVIGATION
-===================================================== */
+/* ================= NAVIGATION ================= */
 
-function goHome(){
+function goTo(page){
 
     closeMenu();
 
     window.location.href =
-        "./dashboard.html";
+        "./" + page;
+
+}
+
+
+function goHome(){
+
+    goTo("dashboard.html");
 
 }
 
 
 function goProfile(){
 
-    closeMenu();
-
-    window.location.href =
-        "./profile.html";
+    goTo("profile.html");
 
 }
 
 
 function goWallet(){
 
-    closeMenu();
-
-    window.location.href =
-        "./wallet.html";
+    goTo("wallet.html");
 
 }
 
 
 function goSupport(){
 
-    closeMenu();
+    goTo("support.html");
 
-    window.location.href =
-        "./support.html";
+}
+
+
+function goHistory(){
+
+    goTo("history.html");
+
+}
+
+
+function goNotifications(){
+
+    goTo("notifications.html");
 
 }
 
@@ -1999,58 +1276,18 @@ function goRedeem(){
 }
 
 
-function goHistory(){
-
-    closeMenu();
-
-    window.location.href =
-        "./history.html";
-
-}
-
-
-function goNotifications(){
-
-    closeMenu();
-
-    window.location.href =
-        "./notifications.html";
-
-}
-
-
-/* =====================================================
-   EDIT PROFILE
-===================================================== */
+/* ================= EDIT PROFILE ================= */
 
 function editProfile(){
 
-    const modal =
-        document.getElementById(
-            "editModal"
-        );
-
-
     const input =
-        document.getElementById(
-            "realNameInput"
-        );
-
+        document.getElementById("realNameInput");
 
     const currentName =
-        document
-            .getElementById(
-                "profileName"
-            )
-            .textContent
-            .trim();
+        getItem("rdxUsername");
 
 
-    if(
-        currentName &&
-        currentName !== "Loading..." &&
-        currentName !== "RDX User"
-    ){
+    if(currentName){
 
         input.value =
             currentName;
@@ -2063,17 +1300,16 @@ function editProfile(){
     }
 
 
-    modal.classList.add("show");
+    document
+    .getElementById("editModal")
+    .classList.add("show");
 
 
-    setTimeout(
-        function(){
+    setTimeout(function(){
 
-            input.focus();
+        input.focus();
 
-        },
-        100
-    );
+    },100);
 
 }
 
@@ -2081,21 +1317,101 @@ function editProfile(){
 function closeEditModal(){
 
     document
-        .getElementById("editModal")
-        .classList.remove("show");
+    .getElementById("editModal")
+    .classList.remove("show");
 
 }
 
 
-/* =====================================================
-   KYC
-===================================================== */
+/* ================= SAVE NAME ================= */
+
+function saveRealName(){
+
+    const input =
+        document.getElementById("realNameInput");
+
+
+    const name =
+        input.value.trim();
+
+
+    if(name.length < 2){
+
+        showMessage(
+            "Please enter your real name"
+        );
+
+        return;
+
+    }
+
+
+    /*
+    ============================================
+    IMPORTANT
+
+    Name ONLY localStorage में save हो रहा है।
+
+    Firebase:
+    updateDoc()
+    setDoc()
+    addDoc()
+
+    यहाँ नहीं है।
+
+    इसलिए Firestore permission error नहीं आएगी।
+    ============================================
+    */
+
+    const saved =
+        setItem(
+            "rdxUsername",
+            name
+        );
+
+
+    if(!saved){
+
+        showMessage(
+            "Name save नहीं हुआ"
+        );
+
+        return;
+
+    }
+
+
+    document
+    .getElementById("profileName")
+    .textContent =
+        name;
+
+
+    document
+    .getElementById("avatar")
+    .textContent =
+        name
+        .charAt(0)
+        .toUpperCase();
+
+
+    closeEditModal();
+
+
+    showMessage(
+        "Name updated successfully"
+    );
+
+}
+
+
+/* ================= KYC ================= */
 
 function completeKYC(){
 
     document
-        .getElementById("kycModal")
-        .classList.add("show");
+    .getElementById("kycModal")
+    .classList.add("show");
 
 }
 
@@ -2103,61 +1419,25 @@ function completeKYC(){
 function closeKYC(){
 
     document
-        .getElementById("kycModal")
-        .classList.remove("show");
+    .getElementById("kycModal")
+    .classList.remove("show");
 
 }
 
 
-/* =====================================================
-   LOGOUT
-===================================================== */
+/* ================= LOGOUT ================= */
 
 function logout(){
 
-    /*
-     * Firebase में saved account delete नहीं होगा.
-     *
-     * केवल इस phone/browser की login session
-     * हटेगी.
-     */
+    try{
 
-    localStorage.removeItem(
-        "rdxLoggedIn"
-    );
+        localStorage.clear();
 
-    localStorage.removeItem(
-        "rdxVerifiedMobile"
-    );
+    }catch(error){
 
-    localStorage.removeItem(
-        "rdxFirebaseUserId"
-    );
+        /* ignore */
 
-    localStorage.removeItem(
-        "rdxAccessToken"
-    );
-
-    localStorage.removeItem(
-        "rdxLoginMobile"
-    );
-
-    /*
-     * Name/mobile cache भी हटाते हैं.
-     * Firebase का permanent data नहीं हटेगा.
-     */
-
-    localStorage.removeItem(
-        "rdxUsername"
-    );
-
-    localStorage.removeItem(
-        "rdxMobile"
-    );
-
-    localStorage.removeItem(
-        "rdxReferral"
-    );
+    }
 
 
     window.location.href =
@@ -2166,81 +1446,57 @@ function logout(){
 }
 
 
-/* =====================================================
-   TOAST
-===================================================== */
+/* ================= TOAST ================= */
 
 function showMessage(message){
 
     const toast =
-        document.getElementById(
-            "toast"
-        );
+        document.getElementById("toast");
 
 
     toast.textContent =
         message;
 
 
-    toast.classList.add(
-        "show"
-    );
+    toast.classList.add("show");
 
 
     clearTimeout(
-        showMessage.timer
+        window.rdxToastTimer
     );
 
 
-    showMessage.timer =
-        setTimeout(
-            function(){
+    window.rdxToastTimer =
+        setTimeout(function(){
 
-                toast.classList.remove(
-                    "show"
-                );
+            toast.classList.remove("show");
 
-            },
-            2500
-        );
+        },1800);
 
 }
 
 
-/* =====================================================
-   CLOSE MODALS
-===================================================== */
+/* ================= OUTSIDE CLICK ================= */
 
 document.addEventListener(
     "click",
     function(event){
 
         const editModal =
-            document.getElementById(
-                "editModal"
-            );
-
+            document.getElementById("editModal");
 
         const kycModal =
-            document.getElementById(
-                "kycModal"
-            );
+            document.getElementById("kycModal");
 
 
-        if(
-            event.target ===
-            editModal
-        ){
+        if(event.target === editModal){
 
             closeEditModal();
 
         }
 
 
-        if(
-            event.target ===
-            kycModal
-        ){
+        if(event.target === kycModal){
 
             closeKYC();
 
@@ -2250,18 +1506,13 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   ESC KEY
-===================================================== */
+/* ================= ESC KEY ================= */
 
 document.addEventListener(
     "keydown",
     function(event){
 
-        if(
-            event.key ===
-            "Escape"
-        ){
+        if(event.key === "Escape"){
 
             closeMenu();
 
@@ -2275,22 +1526,11 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   PAGE LOAD
-===================================================== */
+/* ================= START ================= */
 
-window.addEventListener(
-    "load",
-    function(){
-
-        loadProfile();
-
-    }
-);
+loadProfile();
 
 </script>
 
-
 </body>
-
 </html>
