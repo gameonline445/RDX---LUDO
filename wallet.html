@@ -1,1006 +1,2140 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 
-<title>RDX LUDO - Wallet Demo</title>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>RDX LUDO - Wallet</title>
+
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+
+let firebaseDB = null;
+
+try {
+
+    if(!firebase.apps.length){
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    firebaseDB = firebase.firestore();
+
+    console.log("Firebase connected");
+
+} catch(error){
+
+    console.error(
+        "Firebase initialization error:",
+        error
+    );
+
+}
+
+</script>
+
 
 <style>
+
+/* =========================
+   RESET
+========================= */
+
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
 }
 
+html{
+    scroll-behavior:smooth;
+}
+
 body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+    font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Arial,
+    sans-serif;
+
     background:
-        radial-gradient(circle at 10% 10%,#dce9ff,transparent 35%),
-        linear-gradient(135deg,#f7f9ff,#eef4ff);
+    linear-gradient(
+        180deg,
+        #f5f8ff 0%,
+        #ffffff 65%,
+        #f6f8ff 100%
+    );
+
     color:#101a38;
+
     min-height:100vh;
+
+    padding-bottom:90px;
 }
 
-.main{
-    max-width:650px;
-    margin:auto;
-    padding:18px 14px 110px;
+button{
+    font:inherit;
 }
 
-/* HEADER */
 
-.header{
+/* =========================
+   HEADER
+========================= */
+
+.top-header{
+
+    height:76px;
+
+    background:
+    linear-gradient(
+        110deg,
+        #edf4ff,
+        #ffffff
+    );
+
+    border-bottom:1px solid #cbd8f0;
+
     display:flex;
+
     align-items:center;
+
     justify-content:space-between;
-    margin-bottom:18px;
+
+    padding:0 18px;
+
+    position:sticky;
+
+    top:0;
+
+    z-index:100;
+
+    box-shadow:
+    0 5px 18px rgba(36,75,150,.08);
 }
 
-.back{
-    border:1px solid #b8caf0;
-    background:#fff;
-    color:#2869e8;
-    padding:11px 16px;
-    border-radius:18px;
-    text-decoration:none;
-    font-weight:800;
-    box-shadow:0 6px 18px rgba(40,90,180,.08);
+
+.header-left{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
 }
 
-.title{
+
+.menu-btn{
+
+    width:48px;
+    height:48px;
+
+    border:0;
+
+    border-radius:16px;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ff7165,
+        #ff8a70
+    );
+
+    color:white;
+
     font-size:26px;
-    font-weight:900;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 6px 15px rgba(255,93,80,.25);
 }
+
+
+.logo{
+
+    width:48px;
+    height:48px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #e7efff
+    );
+
+    border:3px solid #d3e1ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#1762df;
+
+    font-size:13px;
+
+    font-weight:900;
+
+    box-shadow:
+    0 5px 12px rgba(36,93,190,.15);
+}
+
+
+.header-right{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+}
+
+
+.header-icon{
+
+    width:47px;
+    height:47px;
+
+    border:0;
+
+    border-radius:17px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:21px;
+
+    cursor:pointer;
+
+    box-shadow:
+    0 6px 15px rgba(0,0,0,.12);
+}
+
+
+.notification{
+
+    background:
+    linear-gradient(
+        145deg,
+        #746df4,
+        #817eff
+    );
+}
+
+
+.wallet-top{
+
+    background:
+    linear-gradient(
+        145deg,
+        #20c36b,
+        #43d77e
+    );
+
+    min-width:58px;
+
+    font-weight:800;
+}
+
+
+.redeem-top{
+
+    background:
+    linear-gradient(
+        145deg,
+        #ff8a35,
+        #ffad45
+    );
+
+    min-width:58px;
+
+    font-weight:800;
+}
+
+
+/* =========================
+   MAIN
+========================= */
+
+.container{
+
+    width:100%;
+
+    max-width:850px;
+
+    margin:auto;
+
+    padding:
+    28px 18px 110px;
+}
+
+
+/* =========================
+   WALLET MAIN CARD
+========================= */
+
+.wallet-card{
+
+    border:1.5px solid #afc4ef;
+
+    border-radius:28px;
+
+    padding:27px;
+
+    background:
+
+    radial-gradient(
+        circle at 5% 0%,
+        #e5edff,
+        transparent 38%
+    ),
+
+    radial-gradient(
+        circle at 100% 15%,
+        #dbe8ff,
+        transparent 42%
+    ),
+
+    linear-gradient(
+        135deg,
+        #f0f5ff,
+        #ffffff
+    );
+
+    box-shadow:
+    0 15px 40px rgba(40,88,175,.10);
+}
+
+
+/* TOP ROW */
+
+.wallet-top-row{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:28px;
+}
+
+
+.wallet-title{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    color:#2e64d5;
+
+    border:1px solid #9db9ef;
+
+    background:#edf4ff;
+
+    padding:10px 16px;
+
+    border-radius:25px;
+
+    font-size:14px;
+
+    font-weight:800;
+
+    letter-spacing:.5px;
+}
+
+
+.history-btn{
+
+    border:1px solid #d3dbea;
+
+    background:
+    rgba(255,255,255,.75);
+
+    color:#17213a;
+
+    padding:10px 17px;
+
+    border-radius:25px;
+
+    font-weight:700;
+
+    cursor:pointer;
+}
+
 
 /* BALANCE */
 
-.balance{
-    background:
-        radial-gradient(circle at 90% 10%,#79a9ff,transparent 35%),
-        linear-gradient(135deg,#2464e8,#4b82ef);
-    color:white;
-    border-radius:26px;
-    padding:24px;
-    box-shadow:0 15px 35px rgba(38,100,230,.25);
-}
+.balance-label{
 
-.balance small{
-    font-size:13px;
-    letter-spacing:1.4px;
-    font-weight:800;
-    opacity:.9;
-}
+    color:#697895;
 
-.balance h1{
-    font-size:44px;
-    margin-top:8px;
-}
-
-.balance p{
-    margin-top:5px;
-    opacity:.85;
-}
-
-/* ACTIONS */
-
-.actions{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:12px;
-    margin-top:14px;
-}
-
-.action{
-    border:1px solid #c3d2ee;
-    background:#fff;
-    border-radius:20px;
-    padding:16px;
-    font-size:16px;
-    font-weight:800;
-    color:#1c2b4c;
-    cursor:pointer;
-}
-
-.action.add{
-    background:linear-gradient(135deg,#2468ed,#4384f2);
-    color:white;
-    border:0;
-}
-
-/* CARD */
-
-.card{
-    background:rgba(255,255,255,.95);
-    border:1px solid #c6d4ed;
-    border-radius:24px;
-    padding:20px;
-    margin-top:15px;
-    box-shadow:0 8px 25px rgba(30,70,130,.06);
-}
-
-.card h2{
-    font-size:21px;
-}
-
-.card p{
-    color:#71809d;
-    margin-top:5px;
-}
-
-/* AMOUNTS */
-
-.amount-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:9px;
-    margin-top:16px;
-}
-
-.amount{
-    border:1px solid #bfd0ed;
-    background:#f8faff;
-    border-radius:15px;
-    padding:14px 5px;
-    font-size:16px;
-    font-weight:800;
-    color:#17233f;
-    cursor:pointer;
-}
-
-.amount:active{
-    transform:scale(.97);
-}
-
-.amount.selected{
-    background:#2869e8;
-    color:white;
-    border-color:#2869e8;
-}
-
-/* CUSTOM */
-
-.custom{
-    width:100%;
-    margin-top:12px;
-    padding:15px;
-    border-radius:16px;
-    border:1px solid #bfd0ed;
-    font-size:16px;
-    outline:none;
-    background:#f9fbff;
-}
-
-.generate{
-    width:100%;
-    margin-top:12px;
-    padding:16px;
-    border:0;
-    border-radius:18px;
-    background:linear-gradient(135deg,#2468ed,#4384f2);
-    color:white;
     font-size:17px;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow:0 10px 25px rgba(40,105,235,.25);
+
+    margin-bottom:3px;
 }
 
-/* PAYMENT DEMO */
 
-.payment{
-    display:none;
+.balance{
+
+    font-size:50px;
+
+    line-height:1.1;
+
+    font-weight:850;
+
+    letter-spacing:-2px;
+
+    color:#111a35;
 }
 
-.payment.show{
-    display:block;
-}
 
-.merchant{
-    text-align:center;
-    margin-top:15px;
-}
+/* ACTION BUTTONS */
 
-.merchant h3{
-    font-size:21px;
-}
+.wallet-actions{
 
-.demo-label{
-    display:inline-block;
-    margin-top:8px;
-    padding:7px 12px;
-    border-radius:20px;
-    background:#fff1d9;
-    color:#a96a15;
-    font-size:12px;
-    font-weight:900;
-}
-
-.pay-amount{
-    text-align:center;
-    font-size:36px;
-    color:#2869e8;
-    font-weight:900;
-    margin-top:12px;
-}
-
-/* QR */
-
-.qr-box{
-    width:250px;
-    height:250px;
-    margin:18px auto;
-    background:white;
-    border:8px solid white;
-    border-radius:18px;
-    box-shadow:0 8px 25px rgba(0,0,0,.12);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-}
-
-#qr{
-    width:230px;
-    height:230px;
-}
-
-.timer{
-    text-align:center;
-    background:#fff5e8;
-    color:#9b611c;
-    border:1px dashed #e2b777;
-    border-radius:15px;
-    padding:12px;
-    font-weight:900;
-}
-
-.upi-note{
-    margin-top:12px;
-    padding:13px;
-    background:#eef5ff;
-    border-radius:15px;
-    color:#5e7090;
-    font-size:13px;
-    text-align:center;
-}
-
-/* APP BUTTONS */
-
-.app-grid{
     display:grid;
+
     grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-top:15px;
+
+    gap:16px;
+
+    margin-top:28px;
 }
 
-.app-btn{
-    padding:15px 8px;
-    border:1px solid #c7d4e9;
-    background:white;
-    border-radius:16px;
+
+.action-btn{
+
+    height:64px;
+
+    border-radius:34px;
+
+    border:1px solid #b9c9e8;
+
+    font-size:19px;
+
     font-weight:800;
-    color:#263553;
+
     cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:8px;
 }
 
-.download{
-    width:100%;
-    margin-top:10px;
-    padding:15px;
-    border-radius:16px;
-    border:1px dashed #55a978;
-    background:#f0fff6;
-    color:#25834f;
-    font-weight:900;
-    cursor:pointer;
-}
 
-/* WITHDRAW */
+.add-btn{
 
-.withdraw-box{
-    display:none;
-}
+    color:white;
 
-.withdraw-box.show{
-    display:block;
-}
-
-.field{
-    margin-top:12px;
-}
-
-.field label{
-    display:block;
-    margin-bottom:6px;
-    font-weight:800;
-}
-
-.field input,
-.field select{
-    width:100%;
-    padding:14px;
-    border:1px solid #bfd0ed;
-    border-radius:15px;
-    background:#f9fbff;
-    font-size:15px;
-    outline:none;
-}
-
-.save{
-    width:100%;
-    margin-top:13px;
-    padding:15px;
     border:0;
-    border-radius:17px;
-    background:#20b86a;
-    color:white;
-    font-size:16px;
-    font-weight:900;
+
+    background:
+    linear-gradient(
+        100deg,
+        #2162e9,
+        #3979f1
+    );
+
+    box-shadow:
+    0 10px 24px rgba(34,99,233,.25);
 }
 
-/* HISTORY */
 
-.history-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:14px 0;
-    border-bottom:1px solid #e4e8ef;
+.withdraw-btn{
+
+    color:#68758d;
+
+    background:
+    rgba(255,255,255,.55);
 }
 
-.history-row:last-child{
-    border-bottom:0;
+
+.withdraw-btn:active,
+.add-btn:active{
+
+    transform:scale(.98);
 }
 
-.history-row small{
-    display:block;
-    color:#75829a;
-    margin-top:3px;
-}
 
-.demo{
-    color:#2869e8;
-    font-weight:800;
-}
+/* =========================
+   BALANCE BOXES
+========================= */
 
-/* BOTTOM */
+.balance-grid{
 
-.bottom{
-    position:fixed;
-    bottom:0;
-    left:0;
-    right:0;
-    height:78px;
-    background:rgba(255,255,255,.97);
-    border-top:1px solid #ccd7eb;
     display:grid;
-    grid-template-columns:repeat(4,1fr);
-    padding:8px 5px;
-    z-index:100;
-    backdrop-filter:blur(15px);
+
+    grid-template-columns:1fr 1fr;
+
+    gap:18px;
+
+    margin-top:27px;
 }
 
-.bottom a{
-    text-align:center;
-    text-decoration:none;
+
+.balance-box{
+
+    min-height:190px;
+
+    border:1.5px solid #c3d2ee;
+
+    border-radius:25px;
+
+    background:
+    linear-gradient(
+        145deg,
+        rgba(255,255,255,.92),
+        rgba(248,250,255,.92)
+    );
+
+    padding:23px;
+
+    box-shadow:
+    0 8px 20px rgba(30,60,120,.04);
+}
+
+
+.balance-icon{
+
+    width:52px;
+
+    height:52px;
+
+    border-radius:17px;
+
+    background:#e4efff;
+
+    border:1px solid #abc6ef;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:25px;
+
+    color:#2871df;
+}
+
+
+.balance-box h3{
+
+    margin-top:19px;
+
+    font-size:16px;
+
     color:#65728d;
-    font-size:13px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:3px;
+
+    font-weight:750;
+
+    letter-spacing:.3px;
 }
 
-.bottom b{
-    width:40px;
-    height:40px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:21px;
+
+.balance-value{
+
+    margin-top:8px;
+
+    font-size:25px;
+
+    font-weight:850;
+
+    color:#101a38;
 }
 
-.bottom .active{
-    color:#2869e8;
-    font-weight:800;
-}
 
-.bottom .active b{
-    background:#536df5;
-    color:white;
-}
+.balance-note{
 
-/* TOAST */
+    display:block;
 
-.toast{
-    position:fixed;
-    left:50%;
-    bottom:95px;
-    transform:translateX(-50%) translateY(15px);
-    background:#17233e;
-    color:white;
-    padding:12px 18px;
-    border-radius:14px;
-    opacity:0;
-    pointer-events:none;
-    transition:.25s;
-    z-index:500;
-    white-space:nowrap;
+    margin-top:7px;
+
+    color:#a0aabd;
+
     font-size:14px;
 }
 
-.toast.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
+
+/* =========================
+   INFO
+========================= */
+
+.info-box{
+
+    margin-top:25px;
+
+    border:1px solid #d9deea;
+
+    border-radius:22px;
+
+    background:
+    rgba(255,255,255,.72);
+
+    padding:21px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    color:#738099;
+
+    font-size:16px;
+
+    line-height:1.5;
 }
+
+
+.info-icon{
+
+    width:27px;
+    height:27px;
+
+    flex:0 0 27px;
+
+    border:2px solid #4e7ed9;
+
+    border-radius:50%;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#3d71d3;
+
+    font-size:16px;
+
+    font-weight:800;
+}
+
+
+/* =========================
+   SIDE MENU
+========================= */
+
+.menu-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:
+    rgba(17,29,55,.30);
+
+    backdrop-filter:blur(3px);
+
+    z-index:250;
+
+    display:none;
+}
+
+
+.menu-overlay.show{
+
+    display:block;
+}
+
+
+.menu-panel{
+
+    position:fixed;
+
+    top:0;
+
+    left:-100%;
+
+    width:78%;
+
+    max-width:390px;
+
+    height:100vh;
+
+    background:#ffffff;
+
+    z-index:300;
+
+    padding:20px 16px 105px;
+
+    overflow-y:auto;
+
+    box-shadow:
+    10px 0 35px rgba(0,0,0,.16);
+
+    transition:left .3s ease;
+}
+
+
+.menu-panel.open{
+
+    left:0;
+}
+
+
+.menu-title{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    padding:
+    5px 2px 24px;
+
+    border-bottom:1px solid #e1e6f0;
+}
+
+
+.menu-brand{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+}
+
+
+.menu-logo{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:50%;
+
+    background:
+    linear-gradient(
+        145deg,
+        #ffffff,
+        #e7efff
+    );
+
+    border:3px solid #d3e1ff;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#1762df;
+
+    font-weight:900;
+}
+
+
+.menu-user h2{
+
+    font-size:20px;
+
+    font-weight:850;
+}
+
+
+.menu-user p{
+
+    margin-top:4px;
+
+    color:#71809d;
+
+    font-size:13px;
+}
+
+
+.close-menu{
+
+    border:1px solid #e0e5ee;
+
+    background:#f6f7fb;
+
+    width:48px;
+
+    height:48px;
+
+    border-radius:50%;
+
+    font-size:27px;
+
+    color:#64718a;
+
+    cursor:pointer;
+}
+
+
+.menu-list{
+
+    margin-top:22px;
+}
+
+
+.menu-item{
+
+    width:100%;
+
+    min-height:72px;
+
+    border:1px solid #e1e5ed;
+
+    background:#ffffff;
+
+    padding:10px 14px;
+
+    border-radius:20px;
+
+    margin-bottom:12px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:14px;
+
+    text-align:left;
+
+    color:#17213a;
+
+    cursor:pointer;
+}
+
+
+.menu-item-icon{
+
+    width:48px;
+
+    height:48px;
+
+    flex:0 0 48px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:white;
+
+    font-size:22px;
+}
+
+
+.menu-home{
+    background:linear-gradient(145deg,#716df5,#817eff);
+}
+
+
+.menu-profile{
+    background:linear-gradient(145deg,#ff743e,#ff9c39);
+}
+
+
+.menu-wallet{
+    background:linear-gradient(145deg,#18b965,#43d77e);
+}
+
+
+.menu-refer{
+    background:linear-gradient(145deg,#ff8a35,#ffb044);
+}
+
+
+.menu-history{
+    background:linear-gradient(145deg,#7259df,#9868f3);
+}
+
+
+.menu-support{
+    background:linear-gradient(145deg,#12b8e0,#27c9ef);
+}
+
+
+.menu-item-text{
+
+    flex:1;
+
+    font-size:17px;
+
+    font-weight:750;
+}
+
+
+.menu-arrow{
+
+    color:#69768e;
+
+    font-size:28px;
+}
+
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
+
+    position:fixed;
+
+    bottom:0;
+
+    left:0;
+
+    width:100%;
+
+    height:78px;
+
+    background:
+    rgba(255,255,255,.97);
+
+    border-top:1px solid #d6deee;
+
+    display:flex;
+
+    justify-content:space-around;
+
+    align-items:center;
+
+    z-index:200;
+
+    box-shadow:
+    0 -5px 20px rgba(30,65,130,.08);
+
+    backdrop-filter:blur(15px);
+}
+
+
+.nav-item{
+
+    width:25%;
+
+    height:100%;
+
+    border:0;
+
+    background:transparent;
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    gap:4px;
+
+    color:#66738d;
+
+    font-size:13px;
+
+    cursor:pointer;
+}
+
+
+.nav-icon{
+
+    width:44px;
+
+    height:44px;
+
+    border-radius:15px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:22px;
+}
+
+
+.nav-item.active{
+
+    color:#202d49;
+
+    font-weight:700;
+}
+
+
+.nav-item.active .nav-icon{
+
+    background:#536df5;
+
+    color:white;
+
+    box-shadow:
+    0 7px 17px rgba(83,109,245,.3);
+}
+
+
+/* =========================
+   TOAST
+========================= */
+
+.toast{
+
+    position:fixed;
+
+    left:50%;
+
+    top:90px;
+
+    transform:
+    translateX(-50%)
+    translateY(-20px);
+
+    background:#182440;
+
+    color:white;
+
+    padding:13px 18px;
+
+    border-radius:14px;
+
+    opacity:0;
+
+    pointer-events:none;
+
+    transition:.25s;
+
+    z-index:500;
+
+    font-size:14px;
+
+    text-align:center;
+}
+
+
+.toast.show{
+
+    opacity:1;
+
+    transform:
+    translateX(-50%)
+    translateY(0);
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+    .top-header{
+
+        height:70px;
+
+        padding:0 12px;
+    }
+
+    .menu-btn{
+
+        width:46px;
+        height:46px;
+
+        font-size:25px;
+    }
+
+    .logo{
+
+        width:45px;
+        height:45px;
+
+        font-size:12px;
+    }
+
+    .header-right{
+
+        gap:6px;
+    }
+
+    .header-icon{
+
+        width:44px;
+        height:44px;
+
+        border-radius:16px;
+    }
+
+    .wallet-top,
+    .redeem-top{
+
+        min-width:44px;
+
+        font-size:0;
+    }
+
+    .wallet-top::before{
+
+        content:"💰";
+
+        font-size:20px;
+    }
+
+    .redeem-top::before{
+
+        content:"🎁";
+
+        font-size:20px;
+    }
+
+
+    .container{
+
+        padding:
+        18px 12px 100px;
+    }
+
+
+    .wallet-card{
+
+        padding:22px;
+
+        border-radius:25px;
+    }
+
+
+    .wallet-top-row{
+
+        margin-bottom:24px;
+    }
+
+
+    .wallet-title{
+
+        padding:9px 14px;
+
+        font-size:13px;
+    }
+
+
+    .history-btn{
+
+        padding:9px 14px;
+
+        font-size:14px;
+    }
+
+
+    .balance-label{
+
+        font-size:16px;
+    }
+
+
+    .balance{
+
+        font-size:45px;
+    }
+
+
+    .wallet-actions{
+
+        gap:12px;
+
+        margin-top:24px;
+    }
+
+
+    .action-btn{
+
+        height:58px;
+
+        font-size:16px;
+
+        border-radius:30px;
+    }
+
+
+    .balance-grid{
+
+        gap:12px;
+
+        margin-top:20px;
+    }
+
+
+    .balance-box{
+
+        min-height:175px;
+
+        padding:18px;
+
+        border-radius:22px;
+    }
+
+
+    .balance-icon{
+
+        width:46px;
+
+        height:46px;
+
+        border-radius:15px;
+
+        font-size:22px;
+    }
+
+
+    .balance-box h3{
+
+        margin-top:16px;
+
+        font-size:14px;
+    }
+
+
+    .balance-value{
+
+        font-size:22px;
+    }
+
+
+    .balance-note{
+
+        font-size:12px;
+    }
+
+
+    .info-box{
+
+        margin-top:18px;
+
+        padding:17px;
+
+        font-size:14px;
+
+        border-radius:20px;
+    }
+
+}
+
+
+/* SMALL PHONES */
 
 @media(max-width:380px){
 
-    .amount-grid{
-        grid-template-columns:repeat(2,1fr);
+    .wallet-card{
+
+        padding:18px;
     }
 
-    .qr-box{
-        width:220px;
-        height:220px;
+    .balance{
+
+        font-size:40px;
     }
 
-    #qr{
-        width:200px;
-        height:200px;
+    .wallet-actions{
+
+        grid-template-columns:1fr;
+
     }
+
+    .action-btn{
+
+        width:100%;
+    }
+
+    .balance-grid{
+
+        grid-template-columns:1fr;
+    }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
-<main class="main">
 
-    <div class="header">
-        <a class="back" href="dashboard.html">← Home</a>
-        <div class="title">Wallet</div>
-    </div>
+<!-- =========================
+     HEADER
+========================= -->
 
-    <!-- BALANCE -->
+<header class="top-header">
 
-    <section class="balance">
+    <div class="header-left">
 
-        <small>WALLET BALANCE</small>
+        <button
+            class="menu-btn"
+            onclick="openMenu()">
 
-        <h1 id="balance">₹0</h1>
+            ☰
 
-        <p>Demo wallet balance</p>
-
-    </section>
-
-    <!-- ACTIONS -->
-
-    <div class="actions">
-
-        <button class="action add" onclick="showDeposit()">
-            ＋ Add Coins
         </button>
 
-        <button class="action" onclick="showWithdraw()">
-            ⇩ Withdraw
-        </button>
 
-    </div>
+        <div class="logo">
 
-
-    <!-- DEPOSIT -->
-
-    <section class="card" id="depositCard">
-
-        <h2>Demo Add Coins</h2>
-
-        <p>Select an amount to generate a demo QR.</p>
-
-        <div class="amount-grid">
-
-            <button class="amount" onclick="selectAmount(100,this)">₹100</button>
-            <button class="amount" onclick="selectAmount(250,this)">₹250</button>
-            <button class="amount" onclick="selectAmount(500,this)">₹500</button>
-
-            <button class="amount" onclick="selectAmount(1000,this)">₹1,000</button>
-            <button class="amount" onclick="selectAmount(2000,this)">₹2,000</button>
-            <button class="amount" onclick="selectAmount(5000,this)">₹5,000</button>
-
-            <button class="amount" onclick="selectAmount(10000,this)">₹10,000</button>
+            RDX
 
         </div>
 
-        <input
-            class="custom"
-            id="customAmount"
-            type="number"
-            min="1"
-            placeholder="Enter custom demo amount">
+    </div>
 
-        <button class="generate" onclick="generateQR()">
-            Generate Demo QR
+
+    <div class="header-right">
+
+        <button
+            class="header-icon notification"
+            onclick="showMessage('No new notifications')">
+
+            🔔
+
         </button>
 
-    </section>
 
+        <button
+            class="header-icon wallet-top"
+            onclick="goWallet()">
 
-    <!-- PAYMENT DEMO -->
+            💰
 
-    <section class="card payment" id="paymentCard">
-
-        <div class="merchant">
-
-            <h3>RDX LUDO</h3>
-
-            <span class="demo-label">
-                DEMO PAYMENT
+            <span id="topBalance">
+                0
             </span>
 
-        </div>
-
-        <div class="pay-amount" id="payAmount">
-            ₹100
-        </div>
-
-        <div class="qr-box">
-
-            <img id="qr" alt="Demo QR">
-
-        </div>
-
-        <div class="timer">
-            QR validity:
-            <span id="timer">05:00</span>
-        </div>
-
-        <div class="upi-note">
-            यह QR केवल DEMO है। कोई वास्तविक payment या
-            coin credit नहीं होगा।
-        </div>
-
-        <div class="app-grid">
-
-            <button class="app-btn" onclick="demoApp('Google Pay')">
-                Google Pay
-            </button>
-
-            <button class="app-btn" onclick="demoApp('PhonePe')">
-                PhonePe
-            </button>
-
-            <button class="app-btn" onclick="demoApp('Paytm')">
-                Paytm
-            </button>
-
-            <button class="app-btn" onclick="demoApp('Other UPI')">
-                Other UPI
-            </button>
-
-        </div>
-
-        <button class="download" onclick="downloadQR()">
-            ↓ Download Demo QR
         </button>
 
-    </section>
 
+        <button
+            class="header-icon redeem-top"
+            onclick="goRedeem()">
 
-    <!-- WITHDRAW -->
+            🎁
 
-    <section class="card withdraw-box" id="withdrawCard">
-
-        <h2>Withdraw</h2>
-
-        <p>Demo withdrawal form</p>
-
-        <div class="field">
-
-            <label>Withdrawal Method</label>
-
-            <select id="withdrawMethod">
-                <option value="upi">UPI</option>
-                <option value="bank">Bank Account</option>
-            </select>
-
-        </div>
-
-        <div class="field">
-
-            <label>Amount</label>
-
-            <input
-                id="withdrawAmount"
-                type="number"
-                placeholder="Enter demo amount">
-
-        </div>
-
-        <div class="field">
-
-            <label>UPI ID / Bank Details</label>
-
-            <input
-                id="withdrawDetails"
-                type="text"
-                placeholder="Enter demo details">
-
-        </div>
-
-        <button class="save" onclick="saveWithdraw()">
-            Save Demo Withdrawal
         </button>
 
-    </section>
+    </div>
+
+</header>
 
 
-    <!-- HISTORY -->
+<!-- =========================
+     SIDE MENU
+========================= -->
 
-    <section class="card">
+<div
+    class="menu-overlay"
+    id="menuOverlay"
+    onclick="closeMenu()">
+</div>
 
-        <h2>Transaction History</h2>
 
-        <div id="history">
+<div
+    class="menu-panel"
+    id="menuPanel">
 
-            <div class="history-row">
 
-                <div>
-                    <b>No transactions</b>
-                    <small>Your demo history will appear here.</small>
-                </div>
+    <div class="menu-title">
 
-                <span class="demo">Demo</span>
+        <div class="menu-brand">
+
+            <div class="menu-logo">
+                RDX
+            </div>
+
+            <div class="menu-user">
+
+                <h2 id="menuUsername">
+                    RDX LUDO
+                </h2>
+
+                <p>
+                    Play · Win · Earn
+                </p>
 
             </div>
 
         </div>
 
+
+        <button
+            class="close-menu"
+            onclick="closeMenu()">
+
+            ×
+
+        </button>
+
+    </div>
+
+
+    <div class="menu-list">
+
+
+        <button
+            class="menu-item"
+            onclick="goHome()">
+
+            <div class="menu-item-icon menu-home">
+                🏠
+            </div>
+
+            <div class="menu-item-text">
+                Home
+            </div>
+
+            <div class="menu-arrow">
+                ›
+            </div>
+
+        </button>
+
+
+        <button
+            class="menu-item"
+            onclick="goProfile()">
+
+            <div class="menu-item-icon menu-profile">
+                👤
+            </div>
+
+            <div class="menu-item-text">
+                My Profile
+            </div>
+
+            <div class="menu-arrow">
+                ›
+            </div>
+
+        </button>
+
+
+        <button
+            class="menu-item"
+            onclick="goWallet()">
+
+            <div class="menu-item-icon menu-wallet">
+                💰
+            </div>
+
+            <div class="menu-item-text">
+                My Wallet
+            </div>
+
+            <div class="menu-arrow">
+                ›
+            </div>
+
+        </button>
+
+
+        <button
+            class="menu-item"
+            onclick="goRedeem()">
+
+            <div class="menu-item-icon menu-refer">
+                🎁
+            </div>
+
+            <div class="menu-item-text">
+                Refer & Earn
+            </div>
+
+            <div class="menu-arrow">
+                ›
+            </div>
+
+        </button>
+
+
+        <button
+            class="menu-item"
+            onclick="goHistory()">
+
+            <div class="menu-item-icon menu-history">
+                ↻
+            </div>
+
+            <div class="menu-item-text">
+                History
+            </div>
+
+            <div class="menu-arrow">
+                ›
+            </div>
+
+        </button>
+
+
+        <button
+            class="menu-item"
+            onclick="goSupport()">
+
+            <div class="menu-item-icon menu-support">
+                🎧
+            </div>
+
+            <div class="menu-item-text">
+                Support
+            </div>
+
+            <div class="menu-arrow">
+                ›
+            </div>
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     MAIN WALLET
+========================= -->
+
+<main class="container">
+
+
+    <section class="wallet-card">
+
+
+        <!-- TOP -->
+
+        <div class="wallet-top-row">
+
+
+            <div class="wallet-title">
+
+                ▣
+
+                MY WALLET
+
+            </div>
+
+
+            <button
+                class="history-btn"
+                onclick="goHistory()">
+
+                ◷ &nbsp; History
+
+            </button>
+
+        </div>
+
+
+        <!-- BALANCE -->
+
+        <div class="balance-label">
+
+            Total Balance
+
+        </div>
+
+
+        <div class="balance">
+
+            ₹<span id="mainBalance">0</span>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="wallet-actions">
+
+
+            <button
+                class="action-btn add-btn"
+                onclick="goDeposit()">
+
+                ＋ Add Cash
+
+            </button>
+
+
+            <button
+                class="action-btn withdraw-btn"
+                onclick="goWithdraw()">
+
+                ▣ Withdraw
+
+            </button>
+
+        </div>
+
     </section>
+
+
+    <!-- =========================
+         DEPOSIT / WINNINGS
+    ========================= -->
+
+    <section class="balance-grid">
+
+
+        <div class="balance-box">
+
+
+            <div class="balance-icon">
+
+                ▣
+
+            </div>
+
+
+            <h3>
+                DEPOSIT
+            </h3>
+
+
+            <div
+                class="balance-value">
+
+                ₹<span id="depositBalance">
+                    0
+                </span>
+
+            </div>
+
+
+            <span class="balance-note">
+
+                For battles only
+
+            </span>
+
+        </div>
+
+
+        <div class="balance-box">
+
+
+            <div class="balance-icon">
+
+                🏆
+
+            </div>
+
+
+            <h3>
+                WINNINGS
+            </h3>
+
+
+            <div
+                class="balance-value">
+
+                ₹<span id="winningBalance">
+                    0
+                </span>
+
+            </div>
+
+
+            <span class="balance-note">
+
+                Can withdraw
+
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         INFO
+    ========================= -->
+
+    <div class="info-box">
+
+
+        <div class="info-icon">
+            i
+        </div>
+
+
+        <div>
+
+            Deposit balance is for playing only.
+            Winnings can be withdrawn to bank or UPI.
+
+        </div>
+
+    </div>
 
 </main>
 
 
-<!-- BOTTOM NAV -->
+<!-- =========================
+     BOTTOM NAV
+========================= -->
 
-<nav class="bottom">
+<nav class="bottom-nav">
 
-    <a href="dashboard.html">
-        <b>🏠</b>
-        Home
-    </a>
 
-    <a class="active" href="wallet.html">
-        <b>💰</b>
-        Wallet
-    </a>
+    <button
+        class="nav-item"
+        onclick="goHome()">
 
-    <a href="support.html">
-        <b>🎧</b>
-        Support
-    </a>
+        <div class="nav-icon">
+            🏠
+        </div>
 
-    <a href="profile.html">
-        <b>👤</b>
-        Profile
-    </a>
+        <span>
+            Home
+        </span>
+
+    </button>
+
+
+    <button
+        class="nav-item active"
+        onclick="goWallet()">
+
+        <div class="nav-icon">
+            💰
+        </div>
+
+        <span>
+            Wallet
+        </span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="goSupport()">
+
+        <div class="nav-icon">
+            🎧
+        </div>
+
+        <span>
+            Support
+        </span>
+
+    </button>
+
+
+    <button
+        class="nav-item"
+        onclick="goProfile()">
+
+        <div class="nav-icon">
+            👤
+        </div>
+
+        <span>
+            Profile
+        </span>
+
+    </button>
 
 </nav>
 
 
-<div class="toast" id="toast"></div>
+<!-- =========================
+     TOAST
+========================= -->
+
+<div
+    class="toast"
+    id="toast">
+</div>
 
 
 <script>
 
-/* ================================
-   DEMO WALLET
-================================ */
+/* =====================================================
+   FIREBASE USER DATA
+===================================================== */
 
-let selectedAmount = 100;
-let timerSeconds = 300;
-let timerInterval = null;
+async function loadFirebaseCustomer(){
 
+    try{
 
-/* ================================
-   LOAD BALANCE
-================================ */
+        if(!firebaseDB){
 
-let balance =
-    Number(localStorage.getItem("rdxDemoBalance") || 0);
+            showMessage(
+                "Firebase connect नहीं है"
+            );
 
-document.getElementById("balance").textContent =
-    "₹" + balance;
+            return;
+        }
 
 
-/* ================================
-   SELECT AMOUNT
-================================ */
+        let mobile =
+            localStorage.getItem(
+                "rdxFirebaseUserId"
+            );
 
-function selectAmount(amount, button){
 
-    selectedAmount = amount;
+        if(!mobile){
 
-    document
-        .querySelectorAll(".amount")
-        .forEach(function(btn){
+            mobile =
+                localStorage.getItem(
+                    "rdxVerifiedMobile"
+                );
 
-            btn.classList.remove("selected");
+        }
 
-        });
 
-    button.classList.add("selected");
+        if(!mobile){
 
-    document.getElementById("customAmount").value = "";
+            showMessage(
+                "User login information नहीं मिली"
+            );
+
+            return;
+        }
+
+
+        const cleanMobile =
+            String(mobile)
+            .replace(/\D/g,"");
+
+
+        if(
+            !/^91[6-9]\d{9}$/.test(
+                cleanMobile
+            )
+        ){
+
+            console.error(
+                "Invalid mobile:",
+                cleanMobile
+            );
+
+            return;
+        }
+
+
+        const userRef =
+            firebaseDB
+            .collection("customers")
+            .doc(cleanMobile);
+
+
+        const snapshot =
+            await userRef.get();
+
+
+        if(!snapshot.exists){
+
+            console.log(
+                "Customer document not found"
+            );
+
+            return;
+        }
+
+
+        const data =
+            snapshot.data();
+
+
+        /* TOTAL BALANCE */
+
+        const balance =
+            Number(
+                data.balance || 0
+            );
+
+
+        document.getElementById(
+            "mainBalance"
+        ).textContent =
+            balance;
+
+
+        document.getElementById(
+            "topBalance"
+        ).textContent =
+            balance;
+
+
+        /* DEPOSIT BALANCE */
+
+        const deposit =
+            Number(
+                data.depositBalance ||
+                data.deposit ||
+                0
+            );
+
+
+        document.getElementById(
+            "depositBalance"
+        ).textContent =
+            deposit;
+
+
+        /* WINNINGS */
+
+        const winnings =
+            Number(
+                data.winnings ||
+                data.winningBalance ||
+                0
+            );
+
+
+        document.getElementById(
+            "winningBalance"
+        ).textContent =
+            winnings;
+
+
+        /* USERNAME */
+
+        const username =
+            localStorage.getItem(
+                "rdxUsername"
+            ) ||
+            "User" +
+            cleanMobile.slice(-4);
+
+
+        document.getElementById(
+            "menuUsername"
+        ).textContent =
+            username;
+
+
+        console.log(
+            "Wallet data loaded:",
+            data
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Wallet Firebase error:",
+            error
+        );
+
+        showMessage(
+            "Wallet data load नहीं हो पाया"
+        );
+
+    }
 
 }
 
 
-/* ================================
-   GENERATE DEMO QR
-================================ */
+/* LOAD */
 
-function generateQR(){
+window.addEventListener(
+    "load",
+    function(){
 
-    let custom =
-        Number(document.getElementById("customAmount").value);
-
-    let amount =
-        custom > 0 ? custom : selectedAmount;
-
-    if(amount <= 0){
-
-        showMessage("Enter a valid amount");
-        return;
+        loadFirebaseCustomer();
 
     }
+);
 
-    selectedAmount = amount;
 
-    document.getElementById("payAmount").textContent =
-        "₹" + amount.toLocaleString("en-IN");
+/* =====================================================
+   MENU
+===================================================== */
+
+function openMenu(){
+
+    document
+    .getElementById("menuPanel")
+    .classList.add("open");
+
+    document
+    .getElementById("menuOverlay")
+    .classList.add("show");
+
+}
+
+
+function closeMenu(){
+
+    document
+    .getElementById("menuPanel")
+    .classList.remove("open");
+
+    document
+    .getElementById("menuOverlay")
+    .classList.remove("show");
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function goHome(){
+
+    closeMenu();
+
+    window.location.href =
+        "./dashboard.html";
+}
+
+
+function goWallet(){
+
+    closeMenu();
+
+    window.location.href =
+        "./wallet.html";
+}
+
+
+function goDeposit(){
+
+    closeMenu();
 
     /*
-       यह REAL UPI QR नहीं है।
-       केवल demo information encode होती है।
+       Deposit page अभी बनाया नहीं है।
+       अगले step में deposit.html बनाया जाएगा।
     */
 
-    let demoData =
-        "RDX LUDO DEMO | AMOUNT=" +
-        amount +
-        " | PAYMENT=DEMO";
-
-    let qrURL =
-        "https://api.qrserver.com/v1/create-qr-code/?size=500x500&data=" +
-        encodeURIComponent(demoData);
-
-    document.getElementById("qr").src = qrURL;
-
-    document
-        .getElementById("paymentCard")
-        .classList.add("show");
-
-    document
-        .getElementById("paymentCard")
-        .scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
-
-    startTimer();
-
+    window.location.href =
+        "./deposit.html";
 }
 
 
-/* ================================
-   5 MINUTE TIMER
-================================ */
+function goWithdraw(){
 
-function startTimer(){
+    closeMenu();
 
-    clearInterval(timerInterval);
+    /*
+       Withdrawal page अगले step में बनाया जाएगा।
+    */
 
-    timerSeconds = 300;
-
-    updateTimer();
-
-    timerInterval =
-        setInterval(function(){
-
-            timerSeconds--;
-
-            updateTimer();
-
-            if(timerSeconds <= 0){
-
-                clearInterval(timerInterval);
-
-                showMessage("Demo QR expired");
-
-            }
-
-        },1000);
-
+    window.location.href =
+        "./withdrawal.html";
 }
 
 
-function updateTimer(){
+function goProfile(){
 
-    let minutes =
-        Math.floor(timerSeconds / 60);
+    closeMenu();
 
-    let seconds =
-        timerSeconds % 60;
-
-    document.getElementById("timer").textContent =
-        String(minutes).padStart(2,"0") +
-        ":" +
-        String(seconds).padStart(2,"0");
-
+    window.location.href =
+        "./profile.html";
 }
 
 
-/* ================================
-   DEMO UPI BUTTONS
-================================ */
+function goSupport(){
 
-function demoApp(app){
+    closeMenu();
 
-    showMessage(
-        app +
-        " demo button clicked — real payment disabled"
-    );
-
+    window.location.href =
+        "./support.html";
 }
 
 
-/* ================================
-   DOWNLOAD QR
-================================ */
+function goRedeem(){
 
-function downloadQR(){
+    closeMenu();
 
-    let img =
-        document.getElementById("qr");
-
-    let link =
-        document.createElement("a");
-
-    link.href = img.src;
-
-    link.download =
-        "RDX-LUDO-DEMO-QR.png";
-
-    link.target = "_blank";
-
-    link.click();
-
+    window.location.href =
+        "./referral.html";
 }
 
 
-/* ================================
-   DEPOSIT SECTION
-================================ */
+function goHistory(){
 
-function showDeposit(){
+    closeMenu();
 
-    document
-        .getElementById("depositCard")
-        .scrollIntoView({
-            behavior:"smooth"
-        });
+    /*
+       History page अगले step में
+       transaction history के लिए बनाया जाएगा।
+    */
 
+    window.location.href =
+        "./history.html";
 }
 
 
-/* ================================
-   WITHDRAW
-================================ */
-
-function showWithdraw(){
-
-    document
-        .getElementById("withdrawCard")
-        .classList.add("show");
-
-    document
-        .getElementById("withdrawCard")
-        .scrollIntoView({
-            behavior:"smooth"
-        });
-
-}
-
-
-function saveWithdraw(){
-
-    let amount =
-        document.getElementById("withdrawAmount").value;
-
-    let details =
-        document.getElementById("withdrawDetails").value;
-
-    if(!amount){
-
-        showMessage("Enter demo amount");
-        return;
-
-    }
-
-    if(!details){
-
-        showMessage("Enter demo UPI or bank details");
-        return;
-
-    }
-
-    addHistory(
-        "Demo withdrawal request",
-        "₹" + amount
-    );
-
-    showMessage(
-        "Demo withdrawal request saved"
-    );
-
-}
-
-
-/* ================================
-   HISTORY
-================================ */
-
-function addHistory(title,amount){
-
-    let history =
-        document.getElementById("history");
-
-    let row =
-        document.createElement("div");
-
-    row.className =
-        "history-row";
-
-    row.innerHTML =
-        "<div>" +
-        "<b>" + title + "</b>" +
-        "<small>" +
-        new Date().toLocaleString() +
-        "</small>" +
-        "</div>" +
-        "<span class='demo'>" +
-        amount +
-        "</span>";
-
-    history.prepend(row);
-
-}
-
-
-/* ================================
+/* =====================================================
    TOAST
-================================ */
+===================================================== */
 
 function showMessage(message){
 
-    let toast =
-        document.getElementById("toast");
+    const toast =
+        document.getElementById(
+            "toast"
+        );
+
 
     toast.textContent =
         message;
 
-    toast.classList.add("show");
 
-    setTimeout(function(){
+    toast.classList.add(
+        "show"
+    );
 
-        toast.classList.remove("show");
 
-    },2200);
+    setTimeout(
+        function(){
+
+            toast.classList.remove(
+                "show"
+            );
+
+        },
+        1800
+    );
 
 }
 
 </script>
+
 
 </body>
 </html>
