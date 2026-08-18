@@ -3,19 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-
 <title>RDX LUDO - Complete Payment</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 html,body{
-    height:100%;
-    overflow:hidden;
+    min-height:100%;
 }
 
 body{
@@ -33,14 +27,13 @@ button{
 }
 
 .app{
-    height:100dvh;
+    min-height:100dvh;
     display:flex;
     flex-direction:column;
 }
 
 .top{
     height:72px;
-    flex:none;
     display:flex;
     align-items:center;
     gap:10px;
@@ -85,28 +78,13 @@ button{
     font-size:20px;
 }
 
-.bell{
-    background:#7368ef;
-    color:#fff;
-}
-
-.cash{
-    background:#35bf71;
-    color:#fff;
-}
-
-.gift{
-    background:#ff933c;
-    color:#fff;
-}
+.bell{background:#7368ef;color:#fff}
+.cash{background:#35bf71;color:#fff}
+.gift{background:#ff933c;color:#fff}
 
 main{
     flex:1;
-    min-height:0;
-    padding:10px 12px 6px;
-    overflow:auto;
-    display:flex;
-    align-items:flex-start;
+    padding:12px;
 }
 
 .wrap{
@@ -125,21 +103,21 @@ main{
 
 h1{
     font-size:28px;
-    line-height:1.02;
+    line-height:1.05;
     margin-bottom:3px;
 }
 
 .welcome{
     font-size:13px;
     color:#7a879f;
-    margin-bottom:8px;
+    margin-bottom:10px;
 }
 
 .tabs{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:7px;
-    margin-bottom:7px;
+    margin-bottom:8px;
 }
 
 .tab{
@@ -160,7 +138,7 @@ h1{
 .paybox{
     border:1.5px solid #bdd0f0;
     border-radius:20px;
-    padding:9px 11px 11px;
+    padding:10px 11px 12px;
     background:linear-gradient(135deg,#f0f5ff,#fff);
     box-shadow:0 10px 25px #4275d31a;
 }
@@ -169,7 +147,7 @@ h1{
     text-align:center;
     color:#818ba0;
     font-size:12px;
-    margin-bottom:6px;
+    margin-bottom:7px;
 }
 
 .qr{
@@ -191,7 +169,7 @@ h1{
     text-align:center;
     font-size:16px;
     font-weight:850;
-    margin:6px 0;
+    margin:7px 0;
     word-break:break-all;
 }
 
@@ -204,74 +182,39 @@ h1{
     background:linear-gradient(100deg,#2864e6,#3e7bf0);
     color:#fff;
     font-weight:850;
-    box-shadow:0 7px 16px #326fe533;
 }
 
-.account-box{
-    margin-top:8px;
-    border:1px solid #d1ddef;
-    border-radius:16px;
-    padding:10px;
+.bank{
+    margin-top:10px;
     background:#fff;
+    border:1px solid #d9e2f1;
+    border-radius:15px;
+    padding:10px;
 }
 
-.account-row{
+.bank-row{
     display:flex;
     justify-content:space-between;
-    gap:12px;
-    padding:7px 0;
-    border-bottom:1px solid #edf0f6;
+    gap:10px;
+    padding:5px 0;
     font-size:13px;
 }
 
-.account-row:last-child{
-    border-bottom:0;
+.bank-row span:first-child{
+    color:#75819a;
 }
 
-.account-label{
-    color:#748097;
-    font-weight:700;
-}
-
-.account-value{
+.bank-row span:last-child{
+    font-weight:800;
     text-align:right;
-    font-weight:850;
     word-break:break-all;
 }
 
-.coin-info{
-    margin-top:8px;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:7px;
-}
-
-.info-box{
-    background:#eef5ff;
-    border:1px solid #d0def7;
-    border-radius:13px;
-    padding:8px;
-    text-align:center;
-}
-
-.info-box small{
-    display:block;
-    color:#748097;
-    font-size:11px;
-}
-
-.info-box strong{
-    display:block;
-    color:#2864e6;
-    margin-top:3px;
-    font-size:14px;
-}
-
 .form{
-    margin-top:7px;
+    margin-top:8px;
     border:1.5px solid #c3d2ec;
     border-radius:18px;
-    padding:9px;
+    padding:10px;
     background:linear-gradient(135deg,#f4f7ff,#fff);
 }
 
@@ -301,14 +244,6 @@ input:focus{
     background:#fff;
 }
 
-.form input{
-    margin-bottom:7px;
-}
-
-.amount-readonly{
-    color:#68758c;
-}
-
 .deposit{
     width:100%;
     height:48px;
@@ -322,12 +257,13 @@ input:focus{
 
 .deposit:disabled{
     opacity:.6;
+    cursor:not-allowed;
 }
 
 .status{
     display:none;
     margin-top:9px;
-    padding:10px;
+    padding:11px;
     border-radius:12px;
     text-align:center;
     font-weight:800;
@@ -336,38 +272,28 @@ input:focus{
 
 .status.show{
     display:block;
-    background:#fff4d9;
-    color:#9a6a00;
-    border:1px solid #efd795;
 }
 
-.firebase-status{
-    margin-bottom:8px;
-    padding:8px 10px;
-    border-radius:11px;
-    font-size:11px;
-    text-align:center;
-    font-weight:700;
-}
-
-.firebase-loading{
-    background:#eef5ff;
-    color:#3566c8;
-}
-
-.firebase-ok{
+.status.success{
     background:#dcf8e9;
     color:#13834d;
+    border:1px solid #b8e9cf;
 }
 
-.firebase-error{
+.status.error{
     background:#ffe3e7;
     color:#c72e43;
+    border:1px solid #f4bbc5;
+}
+
+.loading{
+    text-align:center;
+    padding:20px;
+    color:#66728c;
 }
 
 .bottom{
     height:64px;
-    flex:none;
     display:grid;
     grid-template-columns:repeat(4,1fr);
     background:#fff;
@@ -419,10 +345,9 @@ input:focus{
 }
 
 @media(max-width:380px){
-
     .qr img{
-        width:145px;
-        height:145px;
+        width:140px;
+        height:140px;
     }
 
     h1{
@@ -432,18 +357,9 @@ input:focus{
     .tab{
         height:41px;
     }
-
-    .form{
-        padding:8px;
-    }
-
-    .deposit{
-        height:46px;
-    }
 }
 
 @media(max-height:720px){
-
     .top{
         height:58px;
     }
@@ -452,42 +368,22 @@ input:focus{
         height:58px;
     }
 
-    main{
-        padding-top:6px;
-    }
-
-    .kicker{
-        font-size:11px;
-    }
-
-    .welcome{
-        margin-bottom:5px;
-    }
-
-    .tabs{
-        margin-bottom:5px;
+    .qr img{
+        width:120px;
+        height:120px;
     }
 
     .paybox{
-        padding:6px 9px 8px;
+        padding:7px 9px 9px;
     }
 
-    .qr img{
-        width:125px;
-        height:125px;
-    }
-
-    .upi{
-        font-size:14px;
-        margin:4px 0;
-    }
-
-    .copy{
-        padding:6px 18px;
+    .bank{
+        margin-top:6px;
+        padding:7px;
     }
 
     .form{
-        margin-top:5px;
+        margin-top:6px;
         padding:7px;
     }
 
@@ -497,30 +393,6 @@ input:focus{
 
     .deposit{
         height:42px;
-    }
-}
-
-@media(min-height:721px) and (max-height:850px){
-
-    .qr img{
-        width:145px;
-        height:145px;
-    }
-
-    .paybox{
-        padding:8px 10px 10px;
-    }
-
-    .form{
-        padding:8px;
-    }
-
-    input{
-        height:44px;
-    }
-
-    .deposit{
-        height:46px;
     }
 }
 </style>
@@ -566,14 +438,6 @@ Welcome RDX LUDO
 </div>
 
 
-<div
-id="firebaseStatus"
-class="firebase-status firebase-loading"
->
-Firebase से payment details load हो रही हैं...
-</div>
-
-
 <div class="tabs">
 
 <button class="tab active">
@@ -582,7 +446,7 @@ UPI Details
 
 <button
 class="tab"
-onclick="showAccountTransfer()"
+onclick="showBankInfo()"
 >
 Account Transfer
 </button>
@@ -593,7 +457,8 @@ Account Transfer
 <section class="paybox">
 
 <div class="range">
-Selected Amount · ₹<span id="selectedAmount">100</span>
+Selected Amount · ₹
+<span id="selectedAmount">100</span>
 </div>
 
 
@@ -624,83 +489,31 @@ Copy UPI ID
 </button>
 
 
-<div class="account-box">
+<div class="bank">
 
-<div class="account-row">
-
-<span class="account-label">
-Account Holder
-</span>
-
-<span
-class="account-value"
-id="accountHolder"
->
-—
-</span>
-
+<div class="bank-row">
+<span>Account Holder</span>
+<span id="accountHolder">—</span>
 </div>
 
-
-<div class="account-row">
-
-<span class="account-label">
-Account Number
-</span>
-
-<span
-class="account-value"
-id="accountNumber"
->
-—
-</span>
-
+<div class="bank-row">
+<span>Account Number</span>
+<span id="accountNumber">—</span>
 </div>
 
-
-<div class="account-row">
-
-<span class="account-label">
-IFSC
-</span>
-
-<span
-class="account-value"
-id="ifsc"
->
-—
-</span>
-
+<div class="bank-row">
+<span>IFSC</span>
+<span id="ifsc">—</span>
 </div>
 
+<div class="bank-row">
+<span>Coin Rate</span>
+<span id="coinRate">—</span>
 </div>
 
-
-<div class="coin-info">
-
-<div class="info-box">
-
-<small>
-Coin Rate
-</small>
-
-<strong id="coinRate">
-—
-</strong>
-
-</div>
-
-
-<div class="info-box">
-
-<small>
-Minimum Deposit
-</small>
-
-<strong>
-₹<span id="minimumDeposit">—</span>
-</strong>
-
+<div class="bank-row">
+<span>Minimum Deposit</span>
+<span>₹<span id="minimumDeposit">—</span></span>
 </div>
 
 </div>
@@ -717,7 +530,8 @@ ENTER AMOUNT
 <input
 id="amount"
 class="amount-readonly"
-type="text"
+type="number"
+min="1"
 readonly
 value="100"
 >
@@ -733,6 +547,7 @@ type="text"
 inputmode="numeric"
 maxlength="30"
 placeholder="Enter UTR Number"
+autocomplete="off"
 >
 
 
@@ -749,7 +564,6 @@ Deposit
 class="status"
 id="status"
 >
-Deposit submitted · Pending
 </div>
 
 </section>
@@ -798,7 +612,8 @@ Profile
 <div
 class="toast"
 id="toast"
-></div>
+>
+</div>
 
 
 <script type="module">
@@ -809,17 +624,25 @@ id="toast"
 
 import {
     initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
 
 import {
     getFirestore,
     doc,
-    getDoc
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+    getDoc,
+    collection,
+    addDoc,
+    serverTimestamp
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 /* =====================================================
-   YOUR FIREBASE CONFIG
+   FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
@@ -841,7 +664,6 @@ const firebaseConfig = {
 
     appId:
     "1:928340814840:web:6eca42a8b76138b268440d"
-
 };
 
 
@@ -857,10 +679,7 @@ getFirestore(app);
 
 
 /* =====================================================
-   FIRESTORE PATH
-
-   paymentSettings
-        └── config
+   PAYMENT SETTINGS PATH
 ===================================================== */
 
 const paymentSettingsRef =
@@ -869,6 +688,27 @@ doc(
     "paymentSettings",
     "config"
 );
+
+
+/* =====================================================
+   URL / LOCAL AMOUNT
+===================================================== */
+
+const params =
+new URLSearchParams(
+    location.search
+);
+
+const savedAmount =
+localStorage.getItem(
+    "rdxSelectedDepositAmount"
+) || "100";
+
+const selectedAmount =
+Number(
+    params.get("amount") ||
+    savedAmount
+) || 100;
 
 
 /* =====================================================
@@ -889,54 +729,20 @@ let paymentSettings = {
 
 
 /* =====================================================
-   URL / LOCAL AMOUNT
+   HELPERS
 ===================================================== */
 
-const params =
-new URLSearchParams(
-    location.search
-);
+function $(id){
 
-const savedAmount =
-localStorage.getItem(
-    "rdxSelectedDepositAmount"
-) || "100";
+    return document.getElementById(id);
 
-let amount =
-params.get("amount") ||
-savedAmount ||
-"100";
+}
 
-
-amount =
-Number(amount) || 100;
-
-
-/* =====================================================
-   SET AMOUNT
-===================================================== */
-
-document.getElementById(
-    "selectedAmount"
-).textContent =
-amount;
-
-document.getElementById(
-    "amount"
-).value =
-amount;
-
-
-/* =====================================================
-   TOAST
-===================================================== */
 
 function toast(message){
 
     const box =
-    document.getElementById(
-        "toast"
-    );
+    $("toast");
 
     box.textContent =
     message;
@@ -956,82 +762,44 @@ function toast(message){
 }
 
 
-/* =====================================================
-   FIREBASE STATUS
-===================================================== */
-
-function firebaseStatus(
+function showStatus(
     message,
     type
 ){
 
     const box =
-    document.getElementById(
-        "firebaseStatus"
-    );
+    $("status");
 
     box.textContent =
     message;
 
     box.className =
-    "firebase-status " +
-    (
-        type === "error"
-        ? "firebase-error"
-        :
-        type === "ok"
-        ? "firebase-ok"
-        :
-        "firebase-loading"
-    );
+    "status show " +
+    type;
 
 }
 
 
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
-
-function escapeHTML(value){
+function safeText(value){
 
     return String(
         value ?? ""
-    )
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-    .replace(
-        /</g,
-        "&lt;"
-    )
-    .replace(
-        />/g,
-        "&gt;"
-    )
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-    .replace(
-        /'/g,
-        "&#039;"
     );
 
 }
 
 
 /* =====================================================
-   LOAD PAYMENT SETTINGS FROM FIREBASE
+   LOAD PAYMENT SETTINGS
 ===================================================== */
 
 async function loadPaymentSettings(){
 
     try{
 
-        firebaseStatus(
-            "Firebase से latest payment details load हो रही हैं...",
-            "loading"
+        showStatus(
+            "Loading payment details...",
+            "success"
         );
 
 
@@ -1045,15 +813,13 @@ async function loadPaymentSettings(){
             !snapshot.exists()
         ){
 
-            firebaseStatus(
-                "paymentSettings/config Firebase में नहीं मिला.",
+            showStatus(
+                "Payment settings अभी उपलब्ध नहीं हैं.",
                 "error"
             );
 
-            document.getElementById(
-                "upiText"
-            ).textContent =
-            "UPI details unavailable";
+            $("depositButton").disabled =
+            true;
 
             return;
 
@@ -1067,28 +833,28 @@ async function loadPaymentSettings(){
         paymentSettings = {
 
             upiId:
-            String(
-                data.upiId || ""
+            safeText(
+                data.upiId
             ),
 
             accountHolderName:
-            String(
-                data.accountHolderName || ""
+            safeText(
+                data.accountHolderName
             ),
 
             accountNumber:
-            String(
-                data.accountNumber || ""
+            safeText(
+                data.accountNumber
             ),
 
             ifsc:
-            String(
-                data.ifsc || ""
+            safeText(
+                data.ifsc
             ),
 
             qrCodeUrl:
-            String(
-                data.qrCodeUrl || ""
+            safeText(
+                data.qrCodeUrl
             ),
 
             coinRate:
@@ -1104,122 +870,119 @@ async function loadPaymentSettings(){
         };
 
 
-        /* UPI */
-
-        document.getElementById(
-            "upiText"
-        ).textContent =
-        paymentSettings.upiId ||
-        "UPI not configured";
+        renderPaymentSettings();
 
 
-        /* Account Holder */
-
-        document.getElementById(
-            "accountHolder"
-        ).textContent =
-        paymentSettings.accountHolderName ||
-        "—";
-
-
-        /* Account Number */
-
-        document.getElementById(
-            "accountNumber"
-        ).textContent =
-        paymentSettings.accountNumber ||
-        "—";
-
-
-        /* IFSC */
-
-        document.getElementById(
-            "ifsc"
-        ).textContent =
-        paymentSettings.ifsc ||
-        "—";
-
-
-        /* Coin Rate */
-
-        document.getElementById(
-            "coinRate"
-        ).textContent =
-        paymentSettings.coinRate;
-
-
-        /* Minimum Deposit */
-
-        document.getElementById(
-            "minimumDeposit"
-        ).textContent =
-        paymentSettings.minimumDeposit;
-
-
-        /* QR CODE */
-
-        const qr =
-        document.getElementById(
-            "qrImage"
-        );
+        const currentAmount =
+        Number(
+            $("amount").value
+        ) || selectedAmount;
 
 
         if(
-            paymentSettings.qrCodeUrl
-        ){
-
-            qr.src =
-            paymentSettings.qrCodeUrl;
-
-        }else{
-
-            qr.removeAttribute(
-                "src"
-            );
-
-            qr.alt =
-            "QR Code not configured";
-
-        }
-
-
-        /* Minimum deposit check */
-
-        if(
-            amount <
+            currentAmount <
             paymentSettings.minimumDeposit
         ){
 
-            firebaseStatus(
-                "Minimum deposit ₹" +
-                paymentSettings.minimumDeposit +
-                " है.",
-                "loading"
-            );
+            $("amount").value =
+            paymentSettings.minimumDeposit;
 
-        }else{
-
-            firebaseStatus(
-                "✅ Latest payment details loaded.",
-                "ok"
-            );
+            $("selectedAmount").textContent =
+            paymentSettings.minimumDeposit;
 
         }
+
+
+        $("depositButton").disabled =
+        false;
+
+
+        /*
+          Hide loading message after
+          successful Firebase read.
+        */
+
+        $("status").className =
+        "status";
 
 
     }catch(error){
 
         console.error(
-            "Firebase error:",
+            "Payment settings error:",
             error
         );
 
 
-        firebaseStatus(
-            "❌ Firebase error: " +
-            error.message,
+        showStatus(
+            "Firebase से payment details load नहीं हो सकीं.",
             "error"
         );
+
+
+        $("depositButton").disabled =
+        true;
+
+    }
+
+}
+
+
+/* =====================================================
+   RENDER PAYMENT SETTINGS
+===================================================== */
+
+function renderPaymentSettings(){
+
+    $("upiText").textContent =
+    paymentSettings.upiId ||
+    "UPI उपलब्ध नहीं";
+
+
+    $("accountHolder").textContent =
+    paymentSettings.accountHolderName ||
+    "—";
+
+
+    $("accountNumber").textContent =
+    paymentSettings.accountNumber ||
+    "—";
+
+
+    $("ifsc").textContent =
+    paymentSettings.ifsc ||
+    "—";
+
+
+    $("coinRate").textContent =
+    paymentSettings.coinRate ||
+    "—";
+
+
+    $("minimumDeposit").textContent =
+    paymentSettings.minimumDeposit ||
+    "—";
+
+
+    const qr =
+    $("qrImage");
+
+
+    if(
+        paymentSettings.qrCodeUrl
+    ){
+
+        qr.src =
+        paymentSettings.qrCodeUrl;
+
+    }else{
+
+        qr.removeAttribute(
+            "src"
+        );
+
+        qr.alt =
+        "QR Code unavailable";
 
     }
 
@@ -1231,7 +994,7 @@ async function loadPaymentSettings(){
 ===================================================== */
 
 window.copyUPI =
-function(){
+async function(){
 
     const upi =
     paymentSettings.upiId;
@@ -1248,27 +1011,17 @@ function(){
     }
 
 
-    if(
-        navigator.clipboard &&
-        navigator.clipboard.writeText
-    ){
+    try{
 
-        navigator.clipboard
-        .writeText(upi)
-        .then(
-            () =>
-            toast(
-                "UPI ID copied"
-            )
-        )
-        .catch(
-            () =>
-            toast(
-                "UPI ID: " + upi
-            )
+        await navigator.clipboard.writeText(
+            upi
         );
 
-    }else{
+        toast(
+            "UPI ID copied"
+        );
+
+    }catch{
 
         toast(
             "UPI ID: " + upi
@@ -1283,7 +1036,7 @@ function(){
    ACCOUNT TRANSFER
 ===================================================== */
 
-window.showAccountTransfer =
+window.showBankInfo =
 function(){
 
     if(
@@ -1291,7 +1044,7 @@ function(){
     ){
 
         toast(
-            "Bank details अभी उपलब्ध नहीं हैं"
+            "Bank details उपलब्ध नहीं हैं"
         );
 
         return;
@@ -1302,11 +1055,13 @@ function(){
     alert(
         "Account Holder: " +
         paymentSettings.accountHolderName +
+        "\n\n" +
 
-        "\n\nAccount Number: " +
+        "Account Number: " +
         paymentSettings.accountNumber +
+        "\n\n" +
 
-        "\n\nIFSC: " +
+        "IFSC: " +
         paymentSettings.ifsc
     );
 
@@ -1318,12 +1073,51 @@ function(){
 ===================================================== */
 
 window.submitDeposit =
-function(){
+async function(){
+
+    const button =
+    $("depositButton");
+
+
+    const amount =
+    Number(
+        $("amount").value
+    );
+
 
     const utr =
-    document.getElementById(
-        "utr"
-    ).value.trim();
+    $("utr").value.trim();
+
+
+    /* ---------------------------------------------
+       BASIC VALIDATION
+    --------------------------------------------- */
+
+    if(
+        !paymentSettings.upiId
+    ){
+
+        toast(
+            "Payment settings उपलब्ध नहीं हैं"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        !amount ||
+        amount <= 0
+    ){
+
+        toast(
+            "Valid amount enter करें"
+        );
+
+        return;
+
+    }
 
 
     if(
@@ -1347,65 +1141,218 @@ function(){
     ){
 
         toast(
-            "Please enter a valid UTR number"
+            "Valid UTR number enter करें"
         );
+
+        $("utr").focus();
 
         return;
 
     }
 
 
-    const data = {
+    /* ---------------------------------------------
+       PREVENT DOUBLE CLICK
+    --------------------------------------------- */
 
-        amount:
-        Number(amount),
+    button.disabled =
+    true;
 
-        utr:
-        utr,
-
-        status:
-        "Pending",
-
-        createdAt:
-        new Date().toISOString(),
-
-        upiId:
-        paymentSettings.upiId
-
-    };
+    button.textContent =
+    "Submitting...";
 
 
-    /*
-      यह अभी उसी पुराने frontend flow की तरह
-      localStorage में request रखता है।
-      Admin approval के लिए deposit को Firestore
-      में डालने वाला backend/user-auth flow
-      अलग से जोड़ना होगा।
-    */
+    try{
 
-    localStorage.setItem(
-        "rdxLastDeposit",
-        JSON.stringify(data)
-    );
+        /*
+          User ID:
+          अभी existing localStorage values से
+          available identifier लेने की कोशिश.
+        */
+
+        const userId =
+        localStorage.getItem(
+            "rdxUserId"
+        ) ||
+
+        localStorage.getItem(
+            "userId"
+        ) ||
+
+        localStorage.getItem(
+            "rdx_userId"
+        ) ||
+
+        "";
 
 
-    document.getElementById(
-        "status"
-    ).classList.add(
-        "show"
-    );
+        const userName =
+        localStorage.getItem(
+            "rdxUserName"
+        ) ||
+
+        localStorage.getItem(
+            "userName"
+        ) ||
+
+        "";
 
 
-    toast(
-        "Deposit submitted"
-    );
+        /*
+          Deposit request Firestore में बनेगी.
+
+          Collection:
+          deposits
+
+          Document:
+          automatically generated ID
+        */
+
+        const depositData = {
+
+            userId:
+            userId,
+
+            userName:
+            userName,
+
+            amount:
+            amount,
+
+            utr:
+            utr,
+
+            upiId:
+            paymentSettings.upiId,
+
+            accountHolderName:
+            paymentSettings.accountHolderName,
+
+            accountNumber:
+            paymentSettings.accountNumber,
+
+            ifsc:
+            paymentSettings.ifsc,
+
+            coinRate:
+            paymentSettings.coinRate,
+
+            status:
+            "pending",
+
+            comment:
+            "",
+
+            createdAt:
+            serverTimestamp()
+
+        };
+
+
+        const depositRef =
+        await addDoc(
+            collection(
+                db,
+                "deposits"
+            ),
+            depositData
+        );
+
+
+        /*
+          Local backup/reference
+        */
+
+        localStorage.setItem(
+            "rdxLastDeposit",
+            JSON.stringify({
+
+                requestId:
+                depositRef.id,
+
+                amount:
+                amount,
+
+                utr:
+                utr,
+
+                status:
+                "pending",
+
+                createdAt:
+                new Date().toISOString()
+
+            })
+        );
+
+
+        showStatus(
+            "Deposit submitted successfully. Admin approval pending.",
+            "success"
+        );
+
+
+        toast(
+            "Deposit request submitted"
+        );
+
+
+        $("utr").value =
+        "";
+
+
+        button.textContent =
+        "Submitted";
+
+
+    }catch(error){
+
+        console.error(
+            "Deposit creation error:",
+            error
+        );
+
+
+        showStatus(
+            "Deposit submit नहीं हुआ: " +
+            error.message,
+            "error"
+        );
+
+
+        toast(
+            "Deposit submit failed"
+        );
+
+
+        button.disabled =
+        false;
+
+        button.textContent =
+        "Deposit";
+
+    }
 
 };
 
 
 /* =====================================================
-   START
+   INITIAL AMOUNT
 ===================================================== */
+
+$("amount").value =
+selectedAmount;
+
+$("selectedAmount").textContent =
+selectedAmount;
+
+
+/* =====================================================
+   LOAD FIREBASE DATA
+===================================================== */
+
+$("depositButton").disabled =
+true;
 
 loadPaymentSettings();
 
