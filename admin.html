@@ -308,14 +308,10 @@ padding:30px;
 color:#7c879e
 }
 
-.user-found{
-background:#eaf7ef;
-border:1px solid #b9e5c9;
-color:#147a48;
-padding:8px 10px;
-border-radius:8px;
-font-size:12px;
-font-weight:bold
+.uid-box{
+font-size:13px;
+word-break:break-all;
+color:#555
 }
 
 @media(max-width:800px){
@@ -369,9 +365,9 @@ grid-column:auto
 
 <body>
 
-<!-- =====================================================
+<!-- =========================
      LOGIN
-===================================================== -->
+========================= -->
 
 <section id="login">
 
@@ -381,13 +377,9 @@ grid-column:auto
 
 <h1>RDX LUDO</h1>
 
-<div class="sub">
-Admin Panel
-</div>
+<div class="sub">Admin Panel</div>
 
-<label>
-Admin Email
-</label>
+<label>Admin Email</label>
 
 <input
 id="email"
@@ -396,9 +388,7 @@ value="nmbaar78@gmail.com"
 autocomplete="username"
 >
 
-<label>
-Password
-</label>
+<label>Password</label>
 
 <input
 id="password"
@@ -421,9 +411,9 @@ Login
 </section>
 
 
-<!-- =====================================================
+<!-- =========================
      ADMIN
-===================================================== -->
+========================= -->
 
 <section id="admin">
 
@@ -445,11 +435,6 @@ Logout
 
 <div class="layout">
 
-
-<!-- =====================================================
-     SIDEBAR
-===================================================== -->
-
 <aside class="sidebar">
 
 <button
@@ -470,7 +455,7 @@ data-page="deposits"
 class="nav"
 data-page="users"
 >
-👥 Users
+👥 Customers
 </button>
 
 <button
@@ -486,9 +471,9 @@ data-page="settings"
 <main>
 
 
-<!-- =====================================================
+<!-- =========================
      DASHBOARD
-===================================================== -->
+========================= -->
 
 <section
 id="dashboard"
@@ -502,7 +487,7 @@ Dashboard
 <div class="stats">
 
 <div class="stat">
-<small>Total Users</small>
+<small>Total Customers</small>
 <h2
 class="blue"
 id="totalUsers"
@@ -512,7 +497,7 @@ id="totalUsers"
 </div>
 
 <div class="stat">
-<small>Total Coins</small>
+<small>Total Balance</small>
 <h2
 class="green"
 id="totalCoins"
@@ -546,9 +531,7 @@ id="totalDeposits"
 
 <div class="card">
 
-<h3>
-Firebase Status
-</h3>
+<h3>Firebase Status</h3>
 
 <div
 id="dashStatus"
@@ -562,11 +545,18 @@ Admin login Firebase Authentication से होगा।
 </p>
 
 <p>
-Deposits: <b>deposits</b>
+Deposits collection:
+<b>deposits</b>
 </p>
 
 <p>
-Users: <b>users</b>
+Customer collection:
+<b>customers</b>
+</p>
+
+<p>
+Wallet field:
+<b>balance</b>
 </p>
 
 </div>
@@ -574,9 +564,9 @@ Users: <b>users</b>
 </section>
 
 
-<!-- =====================================================
+<!-- =========================
      DEPOSITS
-===================================================== -->
+========================= -->
 
 <section
 id="deposits"
@@ -618,7 +608,7 @@ placeholder="UID / UTR / Request ID search"
 <tr>
 
 <th>Request ID</th>
-<th>User UID</th>
+<th>Customer UID</th>
 <th>Amount</th>
 <th>Coins</th>
 <th>UTR</th>
@@ -634,14 +624,12 @@ placeholder="UID / UTR / Request ID search"
 <tbody id="depositTable">
 
 <tr>
-
 <td
 colspan="9"
 class="empty"
 >
 Loading...
 </td>
-
 </tr>
 
 </tbody>
@@ -655,9 +643,9 @@ Loading...
 </section>
 
 
-<!-- =====================================================
-     USERS
-===================================================== -->
+<!-- =========================
+     CUSTOMERS
+========================= -->
 
 <section
 id="users"
@@ -665,7 +653,7 @@ class="page"
 >
 
 <div class="title">
-Users
+Customers
 </div>
 
 <div class="card">
@@ -694,7 +682,7 @@ placeholder="UID / Name / Mobile"
 <th>UID</th>
 <th>Name</th>
 <th>Mobile</th>
-<th>Coins</th>
+<th>Balance</th>
 <th>Status</th>
 
 </tr>
@@ -704,14 +692,12 @@ placeholder="UID / Name / Mobile"
 <tbody id="userTable">
 
 <tr>
-
 <td
 colspan="5"
 class="empty"
 >
 Loading...
 </td>
-
 </tr>
 
 </tbody>
@@ -725,9 +711,9 @@ Loading...
 </section>
 
 
-<!-- =====================================================
+<!-- =========================
      SETTINGS
-===================================================== -->
+========================= -->
 
 <section
 id="settings"
@@ -747,17 +733,13 @@ Loading...
 
 <div class="card">
 
-<h3>
-UPI / Bank Details
-</h3>
+<h3>UPI / Bank Details</h3>
 
 <div class="form">
 
 <div>
 
-<label>
-UPI ID
-</label>
+<label>UPI ID</label>
 
 <input id="upi">
 
@@ -766,9 +748,7 @@ UPI ID
 
 <div>
 
-<label>
-Account Holder
-</label>
+<label>Account Holder</label>
 
 <input id="holder">
 
@@ -777,9 +757,7 @@ Account Holder
 
 <div>
 
-<label>
-Account Number
-</label>
+<label>Account Number</label>
 
 <input id="account">
 
@@ -788,9 +766,7 @@ Account Number
 
 <div>
 
-<label>
-IFSC
-</label>
+<label>IFSC</label>
 
 <input id="ifsc">
 
@@ -799,9 +775,7 @@ IFSC
 
 <div class="full">
 
-<label>
-QR Image URL
-</label>
+<label>QR Image URL</label>
 
 <input id="qr">
 
@@ -810,9 +784,7 @@ QR Image URL
 
 <div>
 
-<label>
-Coin Rate
-</label>
+<label>Coin Rate</label>
 
 <input
 id="rate"
@@ -825,9 +797,7 @@ value="1"
 
 <div>
 
-<label>
-Minimum Deposit
-</label>
+<label>Minimum Deposit</label>
 
 <input
 id="minimum"
@@ -894,10 +864,7 @@ getDoc,
 getDocs,
 setDoc,
 runTransaction,
-serverTimestamp,
-query,
-where,
-limit
+serverTimestamp
 }
 from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -939,7 +906,18 @@ const ADMIN_EMAIL =
 
 
 /* =====================================================
-   INIT
+   COLLECTION NAMES
+===================================================== */
+
+const CUSTOMERS_COLLECTION =
+"customers";
+
+const DEPOSITS_COLLECTION =
+"deposits";
+
+
+/* =====================================================
+   INIT FIREBASE
 ===================================================== */
 
 const app =
@@ -952,6 +930,10 @@ const db =
 getFirestore(app);
 
 
+/* =====================================================
+   PAYMENT SETTINGS
+===================================================== */
+
 const paymentRef =
 doc(
 db,
@@ -960,13 +942,16 @@ db,
 );
 
 
+/* =====================================================
+   LOCAL DATA
+===================================================== */
+
 let deposits = [];
 
 let users = [];
 
 let settings = {
-coinRate:1,
-minimumDeposit:100
+coinRate:1
 };
 
 
@@ -990,6 +975,10 @@ return String(value ?? "")
 }
 
 
+/* =====================================================
+   STATUS
+===================================================== */
+
 function status(
 id,
 text,
@@ -1002,8 +991,29 @@ text;
 $(id).className =
 "status " +
 (
-good ? "ok" : "bad"
+good
+?
+"ok"
+:
+"bad"
 );
+
+}
+
+
+/* =====================================================
+   GET CUSTOMER UID FROM DEPOSIT
+===================================================== */
+
+function getDepositUID(deposit){
+
+const uid =
+deposit.userId ??
+deposit.uid ??
+deposit.customerId ??
+"";
+
+return String(uid).trim();
 
 }
 
@@ -1024,13 +1034,12 @@ const password =
 $("password")
 .value;
 
+
 $("error").style.display =
 "none";
 
 
-if(
-email !== ADMIN_EMAIL
-){
+if(email !== ADMIN_EMAIL){
 
 $("error").textContent =
 "Admin email गलत है.";
@@ -1075,8 +1084,8 @@ password
 
 if(
 !result.user.email ||
-result.user.email.toLowerCase() !==
-ADMIN_EMAIL
+result.user.email.toLowerCase()
+!== ADMIN_EMAIL
 ){
 
 await signOut(auth);
@@ -1086,6 +1095,7 @@ throw new Error(
 );
 
 }
+
 
 }catch(error){
 
@@ -1135,6 +1145,7 @@ msg;
 $("error").style.display =
 "block";
 
+
 $("loginBtn").disabled =
 false;
 
@@ -1158,11 +1169,11 @@ $("password")
 "keydown",
 e => {
 
-if(e.key === "Enter"){
+if(e.key === "Enter")
 login();
-}
 
-});
+}
+);
 
 
 /* =====================================================
@@ -1176,8 +1187,8 @@ async user => {
 if(
 user &&
 user.email &&
-user.email.toLowerCase() ===
-ADMIN_EMAIL
+user.email.toLowerCase()
+=== ADMIN_EMAIL
 ){
 
 $("login").style.display =
@@ -1185,6 +1196,7 @@ $("login").style.display =
 
 $("admin").style.display =
 "block";
+
 
 await loadAll();
 
@@ -1229,12 +1241,14 @@ btn.addEventListener(
 "click",
 async () => {
 
+
 document
 .querySelectorAll(".nav")
 .forEach(
 x =>
 x.classList.remove("active")
 );
+
 
 document
 .querySelectorAll(".page")
@@ -1289,7 +1303,7 @@ await loadSettings();
 
 
 /* =====================================================
-   SETTINGS
+   PAYMENT SETTINGS
 ===================================================== */
 
 async function loadSettings(){
@@ -1297,9 +1311,7 @@ async function loadSettings(){
 try{
 
 const snap =
-await getDoc(
-paymentRef
-);
+await getDoc(paymentRef);
 
 
 if(!snap.exists()){
@@ -1350,7 +1362,10 @@ status(
 true
 );
 
+
 }catch(e){
+
+console.error(e);
 
 status(
 "settingsStatus",
@@ -1363,10 +1378,15 @@ false
 }
 
 
+/* =====================================================
+   SAVE PAYMENT SETTINGS
+===================================================== */
+
 $("saveSettings")
 .addEventListener(
 "click",
 async () => {
+
 
 const button =
 $("saveSettings");
@@ -1382,29 +1402,19 @@ paymentRef,
 {
 
 upiId:
-$("upi")
-.value
-.trim(),
+$("upi").value.trim(),
 
 accountHolderName:
-$("holder")
-.value
-.trim(),
+$("holder").value.trim(),
 
 accountNumber:
-$("account")
-.value
-.trim(),
+$("account").value.trim(),
 
 ifsc:
-$("ifsc")
-.value
-.trim(),
+$("ifsc").value.trim(),
 
 qrCodeUrl:
-$("qr")
-.value
-.trim(),
+$("qr").value.trim(),
 
 coinRate:
 Number(
@@ -1435,6 +1445,8 @@ alert(
 
 
 }catch(e){
+
+console.error(e);
 
 alert(
 "❌ Save failed:\n" +
@@ -1473,7 +1485,7 @@ const snap =
 await getDocs(
 collection(
 db,
-"deposits"
+DEPOSITS_COLLECTION
 )
 );
 
@@ -1544,12 +1556,20 @@ function renderDeposits(){
 const q =
 $("depositSearch")
 .value
+.trim()
 .toLowerCase();
 
 
 const list =
 deposits.filter(
-d =>
+d => {
+
+
+const uid =
+getDepositUID(d);
+
+
+return (
 
 String(d.id || "")
 .toLowerCase()
@@ -1557,7 +1577,7 @@ String(d.id || "")
 
 ||
 
-String(d.userId || "")
+uid
 .toLowerCase()
 .includes(q)
 
@@ -1567,6 +1587,9 @@ String(d.utr || "")
 .toLowerCase()
 .includes(q)
 
+);
+
+}
 );
 
 
@@ -1590,6 +1613,7 @@ $("depositTable").innerHTML =
 list.map(
 d => {
 
+
 const s =
 String(
 d.status ||
@@ -1606,8 +1630,8 @@ d.amount || 0
 
 const rate =
 Number(
-d.coinRate ||
-settings.coinRate ||
+d.coinRate ??
+settings.coinRate ??
 1
 );
 
@@ -1619,13 +1643,18 @@ amount * rate
 );
 
 
+const uid =
+getDepositUID(d);
+
+
 let date =
 "—";
 
 
 if(
 d.createdAt &&
-typeof d.createdAt.toDate ===
+typeof d.createdAt.toDate
+===
 "function"
 ){
 
@@ -1647,8 +1676,8 @@ return `
 ${safe(d.id)}
 </td>
 
-<td>
-${safe(d.userId || "—")}
+<td class="uid-box">
+${safe(uid || "UID नहीं है")}
 </td>
 
 <td>
@@ -1732,45 +1761,59 @@ data-reject="${safe(d.id)}"
 ).join("");
 
 
+/* APPROVE BUTTONS */
+
 document
 .querySelectorAll(
 "[data-approve]"
 )
 .forEach(
-b => {
+button => {
 
-b.addEventListener(
+button.addEventListener(
 "click",
-() =>
+() => {
+
 approve(
-b.dataset.approve
-)
+button.dataset.approve
 );
 
 }
 );
 
+}
+);
+
+
+/* REJECT BUTTONS */
 
 document
 .querySelectorAll(
 "[data-reject]"
 )
 .forEach(
-b => {
+button => {
 
-b.addEventListener(
+button.addEventListener(
 "click",
-() =>
+() => {
+
 reject(
-b.dataset.reject
-)
+button.dataset.reject
 );
 
 }
 );
 
 }
+);
 
+}
+
+
+/* =====================================================
+   DEPOSIT SEARCH
+===================================================== */
 
 $("depositSearch")
 .addEventListener(
@@ -1778,6 +1821,10 @@ $("depositSearch")
 renderDeposits
 );
 
+
+/* =====================================================
+   REFRESH DEPOSITS
+===================================================== */
 
 $("refreshDeposits")
 .addEventListener(
@@ -1787,275 +1834,21 @@ loadDeposits
 
 
 /* =====================================================
-   FIND USER DOCUMENT
-   IMPORTANT FIX
-===================================================== */
-
-async function findUserDocument(uid){
-
-const cleanUid =
-String(uid || "")
-.trim();
-
-
-if(!cleanUid){
-
-return null;
-
-}
-
-
-/* ---------------------------------------------
-   1. पहले document ID से try
---------------------------------------------- */
-
-const directRef =
-doc(
-db,
-"users",
-cleanUid
-);
-
-
-const directSnap =
-await getDoc(
-directRef
-);
-
-
-if(
-directSnap.exists()
-){
-
-return {
-
-ref:directRef,
-
-data:directSnap.data(),
-
-method:"document ID"
-
-};
-
-}
-
-
-/* ---------------------------------------------
-   2. users.uid
---------------------------------------------- */
-
-const uidQuery =
-query(
-collection(db,"users"),
-where("uid","==",cleanUid),
-limit(1)
-);
-
-
-const uidSnap =
-await getDocs(
-uidQuery
-);
-
-
-if(
-!uidSnap.empty
-){
-
-const d =
-uidSnap.docs[0];
-
-return {
-
-ref:d.ref,
-
-data:d.data(),
-
-method:"uid field"
-
-};
-
-}
-
-
-/* ---------------------------------------------
-   3. users.userId
---------------------------------------------- */
-
-const userIdQuery =
-query(
-collection(db,"users"),
-where("userId","==",cleanUid),
-limit(1)
-);
-
-
-const userIdSnap =
-await getDocs(
-userIdQuery
-);
-
-
-if(
-!userIdSnap.empty
-){
-
-const d =
-userIdSnap.docs[0];
-
-return {
-
-ref:d.ref,
-
-data:d.data(),
-
-method:"userId field"
-
-};
-
-}
-
-
-/* ---------------------------------------------
-   4. users.mobile
---------------------------------------------- */
-
-const mobileQuery =
-query(
-collection(db,"users"),
-where("mobile","==",cleanUid),
-limit(1)
-);
-
-
-const mobileSnap =
-await getDocs(
-mobileQuery
-);
-
-
-if(
-!mobileSnap.empty
-){
-
-const d =
-mobileSnap.docs[0];
-
-return {
-
-ref:d.ref,
-
-data:d.data(),
-
-method:"mobile field"
-
-};
-
-}
-
-
-/* ---------------------------------------------
-   5. users.phone
---------------------------------------------- */
-
-const phoneQuery =
-query(
-collection(db,"users"),
-where("phone","==",cleanUid),
-limit(1)
-);
-
-
-const phoneSnap =
-await getDocs(
-phoneQuery
-);
-
-
-if(
-!phoneSnap.empty
-){
-
-const d =
-phoneSnap.docs[0];
-
-return {
-
-ref:d.ref,
-
-data:d.data(),
-
-method:"phone field"
-
-};
-
-}
-
-
-/* ---------------------------------------------
-   6. users.phoneNumber
---------------------------------------------- */
-
-const phoneNumberQuery =
-query(
-collection(db,"users"),
-where("phoneNumber","==",cleanUid),
-limit(1)
-);
-
-
-const phoneNumberSnap =
-await getDocs(
-phoneNumberQuery
-);
-
-
-if(
-!phoneNumberSnap.empty
-){
-
-const d =
-phoneNumberSnap.docs[0];
-
-return {
-
-ref:d.ref,
-
-data:d.data(),
-
-method:"phoneNumber field"
-
-};
-
-}
-
-
-/* ---------------------------------------------
-   USER NOT FOUND
---------------------------------------------- */
-
-return null;
-
-}
-
-
-/* =====================================================
-   APPROVE
+   APPROVE DEPOSIT
 ===================================================== */
 
 async function approve(id){
 
 const deposit =
 deposits.find(
-d =>
-d.id === id
+d => d.id === id
 );
 
 
 if(!deposit){
 
 alert(
-"Deposit नहीं मिली."
+"❌ Deposit नहीं मिली."
 );
 
 return;
@@ -2064,10 +1857,9 @@ return;
 
 
 const uid =
-String(
-deposit.userId || ""
-)
-.trim();
+getDepositUID(
+deposit
+);
 
 
 const amount =
@@ -2078,66 +1870,24 @@ deposit.amount || 0
 
 const rate =
 Number(
-deposit.coinRate ||
-settings.coinRate ||
+deposit.coinRate ??
+settings.coinRate ??
 1
 );
 
 
 const coins =
-amount * rate;
+Number(
+deposit.approvedCoins ??
+amount * rate
+);
 
 
 if(!uid){
 
 alert(
-"Deposit में user UID नहीं है."
-);
-
-return;
-
-}
-
-
-/* =====================================================
-   FIND USER
-===================================================== */
-
-let foundUser;
-
-
-try{
-
-foundUser =
-await findUserDocument(
-uid
-);
-
-}catch(e){
-
-console.error(
-"User search error:",
-e
-);
-
-alert(
-"❌ User search failed:\n" +
-e.message
-);
-
-return;
-
-}
-
-
-if(!foundUser){
-
-alert(
-"❌ User document नहीं मिला.\n\n" +
-"Deposit UID:\n" +
-uid +
-"\n\n" +
-"users collection में इस UID का matching user नहीं मिला."
+"❌ Deposit में customer UID नहीं है.\n\n" +
+"Deposit में userId / uid / customerId field चाहिए."
 );
 
 return;
@@ -2149,32 +1899,25 @@ return;
    CONFIRM
 ===================================================== */
 
-const userName =
-foundUser.data.name ||
-foundUser.data.userName ||
-"User";
-
-
-if(
-!confirm(
+const confirmed =
+confirm(
 `Deposit approve करें?
-
-User: ${userName}
 
 Amount: ₹${amount}
 
 Coins: ${coins}
 
-UID:
+Customer UID:
 ${uid}
 
-User Document:
-${foundUser.ref.id}
+Customer collection:
+customers
 
-Match:
-${foundUser.method}`
-)
-){
+Balance में coins add होंगे.`
+);
+
+
+if(!confirmed){
 
 return;
 
@@ -2191,17 +1934,28 @@ await runTransaction(
 db,
 async transaction => {
 
+
+/* DEPOSIT DOCUMENT */
+
 const depositRef =
 doc(
 db,
-"deposits",
+DEPOSITS_COLLECTION,
 id
 );
 
 
-/* ---------------------------------------------
-   Get deposit
---------------------------------------------- */
+/* CUSTOMER DOCUMENT */
+
+const customerRef =
+doc(
+db,
+CUSTOMERS_COLLECTION,
+uid
+);
+
+
+/* GET DEPOSIT */
 
 const dep =
 await transaction.get(
@@ -2212,7 +1966,7 @@ depositRef
 if(!dep.exists()){
 
 throw new Error(
-"Deposit नहीं मिला."
+"Deposit document नहीं मिला."
 );
 
 }
@@ -2222,16 +1976,18 @@ const data =
 dep.data();
 
 
-/* ---------------------------------------------
-   Already processed?
---------------------------------------------- */
+/* CHECK STATUS */
 
-if(
+const currentStatus =
 String(
 data.status ||
 "pending"
 )
-.toLowerCase() !==
+.toLowerCase();
+
+
+if(
+currentStatus !==
 "pending"
 ){
 
@@ -2242,53 +1998,59 @@ throw new Error(
 }
 
 
-/* ---------------------------------------------
-   Get user
---------------------------------------------- */
+/* =====================================================
+   GET CUSTOMER
+===================================================== */
 
-const user =
+const customer =
 await transaction.get(
-foundUser.ref
+customerRef
 );
 
 
-if(!user.exists()){
+if(!customer.exists()){
 
 throw new Error(
-"User document transaction में नहीं मिला."
+"Customer document नहीं मिला.\n\n" +
+"Collection: customers\n" +
+"UID: " + uid
 );
 
 }
 
 
-/* ---------------------------------------------
-   Existing coins
---------------------------------------------- */
+/* =====================================================
+   CURRENT BALANCE
+===================================================== */
 
-const oldCoins =
+const customerData =
+customer.data();
+
+
+const oldBalance =
 Number(
-user.data().coins || 0
+customerData.balance || 0
 );
 
 
-/* ---------------------------------------------
-   New coins
---------------------------------------------- */
+/* =====================================================
+   NEW BALANCE
+===================================================== */
 
-const newCoins =
-oldCoins + coins;
+const newBalance =
+oldBalance + coins;
 
 
-/* ---------------------------------------------
-   UPDATE USER
---------------------------------------------- */
+/* =====================================================
+   UPDATE CUSTOMER
+===================================================== */
 
 transaction.update(
-foundUser.ref,
+customerRef,
 {
 
-coins:
-newCoins,
+balance:
+newBalance,
 
 updatedAt:
 serverTimestamp()
@@ -2297,9 +2059,9 @@ serverTimestamp()
 );
 
 
-/* ---------------------------------------------
+/* =====================================================
    UPDATE DEPOSIT
---------------------------------------------- */
+===================================================== */
 
 transaction.update(
 depositRef,
@@ -2318,10 +2080,7 @@ approvedAt:
 serverTimestamp(),
 
 comment:
-"Payment approved",
-
-userDocumentId:
-foundUser.ref.id
+"Payment approved"
 
 }
 );
@@ -2337,25 +2096,32 @@ foundUser.ref.id
 alert(
 `✅ Deposit Approved
 
-Amount: ₹${amount}
+Customer UID:
+${uid}
 
-Coins Added: ${coins}
+Old Balance:
+${"—"}
 
-User: ${userName}
+Added Coins:
+${coins}
 
-User Document:
-${foundUser.ref.id}`
+Customer balance update हो गया.`
 );
 
+
+/* REFRESH */
 
 await loadDeposits();
 
 await loadUsers();
 
+updateDashboard();
+
+
 }catch(e){
 
 console.error(
-"Approve error:",
+"APPROVE ERROR:",
 e
 );
 
@@ -2371,7 +2137,7 @@ e.message
 
 
 /* =====================================================
-   REJECT
+   REJECT DEPOSIT
 ===================================================== */
 
 async function reject(id){
@@ -2394,14 +2160,16 @@ return;
 
 try{
 
+
 await runTransaction(
 db,
 async transaction => {
 
+
 const ref =
 doc(
 db,
-"deposits",
+DEPOSITS_COLLECTION,
 id
 );
 
@@ -2425,12 +2193,16 @@ const data =
 snap.data();
 
 
-if(
+const currentStatus =
 String(
 data.status ||
 "pending"
 )
-.toLowerCase() !==
+.toLowerCase();
+
+
+if(
+currentStatus !==
 "pending"
 ){
 
@@ -2471,7 +2243,11 @@ alert(
 
 await loadDeposits();
 
+
 }catch(e){
+
+console.error(e);
+
 
 alert(
 "❌ Reject failed:\n" +
@@ -2484,7 +2260,7 @@ e.message
 
 
 /* =====================================================
-   USERS
+   LOAD CUSTOMERS
 ===================================================== */
 
 async function loadUsers(){
@@ -2493,7 +2269,7 @@ $("userTable").innerHTML =
 `
 <tr>
 <td colspan="5" class="empty">
-Loading...
+Loading customers...
 </td>
 </tr>
 `;
@@ -2505,7 +2281,7 @@ const snap =
 await getDocs(
 collection(
 db,
-"users"
+CUSTOMERS_COLLECTION
 )
 );
 
@@ -2530,10 +2306,14 @@ id:d.id,
 
 renderUsers();
 
+
 updateDashboard();
 
 
 }catch(e){
+
+console.error(e);
+
 
 $("userTable").innerHTML =
 `
@@ -2550,7 +2330,7 @@ ${safe(e.message)}
 
 
 /* =====================================================
-   RENDER USERS
+   RENDER CUSTOMERS
 ===================================================== */
 
 function renderUsers(){
@@ -2558,26 +2338,18 @@ function renderUsers(){
 const q =
 $("userSearch")
 .value
+.trim()
 .toLowerCase();
 
 
 const list =
 users.filter(
-u =>
+u => {
+
+
+return (
 
 String(u.id || "")
-.toLowerCase()
-.includes(q)
-
-||
-
-String(u.uid || "")
-.toLowerCase()
-.includes(q)
-
-||
-
-String(u.userId || "")
 .toLowerCase()
 .includes(q)
 
@@ -2595,6 +2367,9 @@ String(u.mobile || "")
 
 );
 
+}
+);
+
 
 if(!list.length){
 
@@ -2602,7 +2377,7 @@ $("userTable").innerHTML =
 `
 <tr>
 <td colspan="5" class="empty">
-No users found.
+No customers found.
 </td>
 </tr>
 `;
@@ -2614,65 +2389,61 @@ return;
 
 $("userTable").innerHTML =
 list.map(
-u => `
+u => {
+
+
+const balance =
+Number(
+u.balance || 0
+);
+
+
+return `
 
 <tr>
 
-<td>
-${safe(
-u.uid ||
-u.userId ||
-u.id
-)}
+<td class="uid-box">
+${safe(u.id)}
 </td>
 
 <td>
-${safe(
-u.name ||
-u.userName ||
-"—"
-)}
+${safe(u.name || "—")}
 </td>
 
 <td>
-${safe(
-u.mobile ||
-u.phone ||
-u.phoneNumber ||
-"—"
-)}
+${safe(u.mobile || "—")}
 </td>
 
 <td>
-
 <b class="blue">
-${Number(
-u.coins || 0
-)}
+${balance}
 </b>
-
 </td>
 
 <td>
 
 <span class="badge approved">
-
 ${safe(
 u.status ||
 "Active"
 )}
-
 </span>
 
 </td>
 
 </tr>
 
-`
+`;
+
+}
 ).join("");
 
 }
 
+
+/* =====================================================
+   CUSTOMER SEARCH
+===================================================== */
 
 $("userSearch")
 .addEventListener(
@@ -2680,6 +2451,10 @@ $("userSearch")
 renderUsers
 );
 
+
+/* =====================================================
+   REFRESH CUSTOMERS
+===================================================== */
 
 $("refreshUsers")
 .addEventListener(
@@ -2694,34 +2469,39 @@ loadUsers
 
 function updateDashboard(){
 
-$("totalUsers").textContent =
+$("totalUsers")
+.textContent =
 users.length;
 
 
-$("totalCoins").textContent =
+$("totalCoins")
+.textContent =
 users.reduce(
-(a,u) =>
-a +
+(sum,user) =>
+sum +
 Number(
-u.coins || 0
+user.balance || 0
 ),
 0
 );
 
 
-$("pendingDeposits").textContent =
+$("pendingDeposits")
+.textContent =
 deposits.filter(
 d =>
 String(
 d.status ||
 "pending"
 )
-.toLowerCase() ===
+.toLowerCase()
+===
 "pending"
 ).length;
 
 
-$("totalDeposits").textContent =
+$("totalDeposits")
+.textContent =
 deposits.length;
 
 
@@ -2742,15 +2522,18 @@ async function loadAll(){
 
 try{
 
+
 await loadSettings();
 
 await loadDeposits();
 
 await loadUsers();
 
+
 }catch(e){
 
 console.error(e);
+
 
 status(
 "dashStatus",
