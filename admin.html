@@ -3,199 +3,327 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RDX LUDO - Admin Panel</title>
+<title>RDX LUDO Admin</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{box-sizing:border-box}
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-background:#f3f6ff;color:#111b3a
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f7ff;
+color:#17213c
 }
 button,input{font:inherit}
 button{cursor:pointer;border:0}
 
-.login{
-min-height:100vh;display:flex;justify-content:center;align-items:center;
+#login{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
 padding:20px;
-background:linear-gradient(135deg,#eef4ff,#fff1f5)
+background:linear-gradient(135deg,#eaf2ff,#fff0f5)
 }
+
 .login-box{
-width:100%;max-width:430px;background:#fff;border:1px solid #d7e0f3;
-border-radius:28px;padding:35px 25px;
-box-shadow:0 20px 60px rgba(40,80,180,.15)
+width:100%;
+max-width:400px;
+background:white;
+padding:30px;
+border-radius:25px;
+box-shadow:0 20px 60px #0002
 }
+
 .logo{
-width:80px;height:80px;margin:auto;border-radius:50%;
-display:flex;align-items:center;justify-content:center;
-background:linear-gradient(135deg,#2875ff,#713cff);
-color:#fff;font-weight:900;font-size:20px
-}
-.login-box h1{text-align:center;margin-top:15px}
-.login-box p{text-align:center;color:#75819b;margin:8px 0 25px}
-
-.field{margin-bottom:15px}
-.field label{display:block;font-weight:700;margin-bottom:7px}
-.field input{
-width:100%;padding:14px 16px;border:1px solid #ccd6ea;
-border-radius:14px;outline:none;background:#fafcff
-}
-.field input:focus{
-border-color:#2869ed;
-box-shadow:0 0 0 3px rgba(40,105,237,.1)
+width:75px;
+height:75px;
+margin:auto;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+background:linear-gradient(135deg,#2869ed,#713cff);
+color:white;
+font-size:22px;
+font-weight:900
 }
 
-.primary{
-width:100%;padding:15px;border-radius:15px;
-background:linear-gradient(135deg,#2869ed,#5b4df5);
-color:#fff;font-weight:800
-}
-.primary:disabled{opacity:.6}
-.error{
-color:#e53935;text-align:center;margin-top:12px;display:none
+h1{text-align:center}
+.sub{
+text-align:center;
+color:#78839b;
+margin-bottom:25px
 }
 
-.admin{display:none;min-height:100vh}
-
-.topbar{
-height:70px;background:#fff;border-bottom:1px solid #dce3f2;
-display:flex;align-items:center;justify-content:space-between;
-padding:0 20px;position:sticky;top:0;z-index:20
+label{
+display:block;
+font-weight:bold;
+margin:12px 0 7px
 }
-.brand{font-weight:900;font-size:20px}
-.brand span{color:#326be8}
+
+input{
+width:100%;
+padding:14px;
+border:1px solid #ccd6e8;
+border-radius:12px;
+outline:none
+}
+
+input:focus{
+border-color:#2869ed
+}
+
+.login-btn{
+width:100%;
+margin-top:20px;
+padding:15px;
+border-radius:13px;
+background:linear-gradient(135deg,#2869ed,#613df3);
+color:white;
+font-weight:bold
+}
+
+#error{
+color:#d82e45;
+text-align:center;
+margin-top:15px;
+display:none
+}
+
+#admin{display:none}
+
+header{
+height:65px;
+background:white;
+border-bottom:1px solid #ddd;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+position:sticky;
+top:0;
+z-index:10
+}
+
+.brand{
+font-weight:900;
+font-size:20px
+}
+
+.brand span{color:#2869ed}
+
 .logout{
-background:#ffe9ed;color:#d62839;padding:10px 15px;
-border-radius:12px;font-weight:700
+padding:10px 15px;
+border-radius:10px;
+background:#ffe7eb;
+color:#d32d42;
+font-weight:bold
 }
 
 .layout{display:flex}
 
 .sidebar{
-width:240px;min-height:calc(100vh - 70px);
-background:#fff;border-right:1px solid #dce3f2;
-padding:18px 12px;position:sticky;top:70px;align-self:flex-start
+width:220px;
+min-height:calc(100vh - 65px);
+background:white;
+border-right:1px solid #ddd;
+padding:15px
 }
 
-.menu-btn{
-width:100%;text-align:left;padding:13px 15px;border-radius:13px;
-background:transparent;color:#63708a;margin-bottom:5px;font-weight:700
-}
-.menu-btn:hover,.menu-btn.active{
-background:#eaf1ff;color:#2869e8
+.nav{
+width:100%;
+padding:13px;
+margin-bottom:6px;
+border-radius:12px;
+background:white;
+text-align:left;
+font-weight:bold;
+color:#68738b
 }
 
-.content{flex:1;padding:25px;min-width:0}
+.nav.active,
+.nav:hover{
+background:#eaf1ff;
+color:#2869ed
+}
+
+main{
+flex:1;
+padding:25px
+}
+
 .page{display:none}
 .page.active{display:block}
 
-.title{font-size:28px;font-weight:900;margin-bottom:20px}
+.title{
+font-size:28px;
+font-weight:900;
+margin-bottom:20px
+}
 
 .stats{
-display:grid;grid-template-columns:repeat(4,1fr);gap:15px
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px
 }
-.stat{
-background:#fff;border:1px solid #d8e1f2;
-border-radius:20px;padding:20px
-}
-.stat small{color:#75819a;font-weight:700}
-.stat h2{margin-top:8px;font-size:30px}
 
-.blue{color:#2869e8}
-.green{color:#16a765}
-.orange{color:#ef8b22}
-.red{color:#e23a4a}
+.stat{
+background:white;
+border:1px solid #dce3f2;
+border-radius:18px;
+padding:20px
+}
+
+.stat small{color:#78839b}
+.stat h2{
+margin:8px 0 0;
+font-size:28px
+}
+
+.blue{color:#2869ed}
+.green{color:#10a663}
+.orange{color:#ed8b20}
+.red{color:#dc3545}
 
 .card{
-background:#fff;border:1px solid #d8e1f2;
-border-radius:20px;padding:20px;margin-top:20px
-}
-.card h3{margin-bottom:15px}
-
-.notice{
-background:#eef5ff;border:1px solid #cbdcff;
-color:#38578c;padding:15px;border-radius:15px;margin-bottom:18px
+background:white;
+border:1px solid #dce3f2;
+border-radius:18px;
+padding:20px;
+margin-top:20px
 }
 
-.firebase-status{
-padding:12px 15px;border-radius:12px;
-margin-bottom:15px;font-weight:700
+.status{
+padding:13px;
+border-radius:12px;
+margin-bottom:15px;
+font-weight:bold
 }
-.firebase-ok{background:#dcf8e9;color:#13834d}
-.firebase-error{background:#ffe3e7;color:#c72e43}
+
+.ok{
+background:#dcf8e9;
+color:#12804b
+}
+
+.bad{
+background:#ffe3e8;
+color:#c72e43
+}
 
 .search{
-width:100%;padding:13px 15px;border:1px solid #d3dced;
-border-radius:13px;margin-bottom:15px;outline:none
+margin:15px 0;
+width:100%
 }
 
-.table-wrap{overflow:auto}
+.table{
+overflow:auto
+}
 
 table{
-width:100%;border-collapse:collapse;min-width:1100px
+width:100%;
+border-collapse:collapse;
+min-width:850px
 }
+
 th,td{
-padding:13px 10px;border-bottom:1px solid #edf0f6;
-text-align:left;vertical-align:middle;white-space:nowrap
+padding:12px;
+border-bottom:1px solid #edf0f5;
+text-align:left
 }
-th{color:#6e7991;font-size:13px}
+
+th{
+font-size:13px;
+color:#69758e
+}
 
 .badge{
-display:inline-block;padding:6px 10px;border-radius:20px;
-font-size:12px;font-weight:800
+padding:6px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:bold
 }
-.pending{background:#fff2d9;color:#bd7100}
-.approved{background:#dcf8e9;color:#13834d}
-.rejected{background:#ffe3e7;color:#c72e43}
+
+.pending{
+background:#fff0d2;
+color:#b76c00
+}
+
+.approved{
+background:#dcf8e9;
+color:#12804b
+}
+
+.rejected{
+background:#ffe3e8;
+color:#c72e43
+}
 
 .action{
-padding:8px 11px;border-radius:9px;
-font-size:12px;font-weight:800;margin:2px
+padding:8px 10px;
+border-radius:8px;
+font-size:12px;
+font-weight:bold;
+margin:2px
 }
-.approve{background:#ddf8e8;color:#12854d}
-.reject{background:#ffe4e7;color:#ca3146}
-.refresh{background:#e1edff;color:#2869e8}
+
+.approve{
+background:#dcf8e9;
+color:#12804b
+}
+
+.reject{
+background:#ffe3e8;
+color:#c72e43
+}
+
+.refresh{
+background:#e2edff;
+color:#2869ed
+}
 
 .save{
-background:#2869e8;color:#fff;padding:13px 20px;
-border-radius:12px;font-weight:800
+padding:13px 20px;
+border-radius:11px;
+background:#2869ed;
+color:white;
+font-weight:bold;
+margin-top:10px
 }
-.save:disabled{opacity:.6}
 
-.form-grid{
-display:grid;grid-template-columns:repeat(2,1fr);gap:15px
+.form{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:15px
 }
+
 .full{grid-column:1/-1}
 
-.qr-preview{
-width:180px;height:180px;object-fit:contain;
-border:1px solid #d5deef;border-radius:15px;
-background:#fff;padding:8px
+.empty{
+text-align:center;
+padding:30px;
+color:#7c879e
 }
 
-.empty{text-align:center;padding:30px;color:#8590a7}
-.loading{text-align:center;padding:30px;color:#66728c}
-.comment{white-space:normal;max-width:250px;color:#59657d}
-
-@media(max-width:900px){
-.stats{grid-template-columns:repeat(2,1fr)}
-.sidebar{width:190px}
+@media(max-width:800px){
+.stats{grid-template-columns:1fr 1fr}
+.sidebar{width:180px}
 }
 
-@media(max-width:650px){
-.topbar{padding:0 12px}
-.brand{font-size:16px}
+@media(max-width:600px){
 .layout{display:block}
 .sidebar{
-width:100%;min-height:auto;position:static;
-display:flex;overflow:auto;padding:8px;
-border-right:0;border-bottom:1px solid #dce3f2
+width:100%;
+min-height:auto;
+display:flex;
+overflow:auto
 }
-.menu-btn{min-width:max-content;margin:0 3px}
-.content{padding:15px}
+.nav{
+min-width:max-content
+}
+main{padding:15px}
 .stats{grid-template-columns:1fr 1fr}
-.form-grid{grid-template-columns:1fr}
+.form{grid-template-columns:1fr}
 .full{grid-column:auto}
-.title{font-size:24px}
 }
 </style>
 </head>
@@ -204,7 +332,7 @@ border-right:0;border-bottom:1px solid #dce3f2
 
 <!-- LOGIN -->
 
-<section class="login" id="loginScreen">
+<section id="login">
 
 <div class="login-box">
 
@@ -212,22 +340,16 @@ border-right:0;border-bottom:1px solid #dce3f2
 
 <h1>RDX LUDO</h1>
 
-<p>Firebase Admin Panel</p>
-
-<div class="field">
+<div class="sub">Admin Panel</div>
 
 <label>Admin Email</label>
 
 <input
-id="username"
+id="email"
 type="email"
 value="nmbaar78@gmail.com"
 autocomplete="username"
 >
-
-</div>
-
-<div class="field">
 
 <label>Password</label>
 
@@ -238,19 +360,14 @@ placeholder="Admin password"
 autocomplete="current-password"
 >
 
-</div>
-
 <button
-class="primary"
-id="loginButton"
+id="loginBtn"
+class="login-btn"
 >
 Login
 </button>
 
-<div
-class="error"
-id="loginError"
-></div>
+<div id="error"></div>
 
 </div>
 
@@ -259,17 +376,17 @@ id="loginError"
 
 <!-- ADMIN -->
 
-<section class="admin" id="adminPanel">
+<section id="admin">
 
-<header class="topbar">
+<header>
 
 <div class="brand">
-RDX <span>LUDO</span> — ADMIN
+RDX <span>LUDO</span> ADMIN
 </div>
 
 <button
+id="logout"
 class="logout"
-id="logoutButton"
 >
 Logout
 </button>
@@ -279,49 +396,32 @@ Logout
 
 <div class="layout">
 
-
 <aside class="sidebar">
 
-<button
-class="menu-btn active"
-data-page="dashboard"
->
+<button class="nav active" data-page="dashboard">
 📊 Dashboard
 </button>
 
-<button
-class="menu-btn"
-data-page="deposits"
->
+<button class="nav" data-page="deposits">
 💳 Deposits
 </button>
 
-<button
-class="menu-btn"
-data-page="users"
->
+<button class="nav" data-page="users">
 👥 Users
 </button>
 
-<button
-class="menu-btn"
-data-page="settings"
->
+<button class="nav" data-page="settings">
 ⚙️ Payment Settings
 </button>
 
 </aside>
 
 
-<main class="content">
-
+<main>
 
 <!-- DASHBOARD -->
 
-<section
-class="page active"
-id="dashboard"
->
+<section id="dashboard" class="page active">
 
 <div class="title">
 Dashboard
@@ -331,59 +431,45 @@ Dashboard
 
 <div class="stat">
 <small>Total Users</small>
-<h2 class="blue" id="statUsers">0</h2>
+<h2 class="blue" id="totalUsers">0</h2>
 </div>
 
 <div class="stat">
-<small>Total Wallet Coins</small>
-<h2 class="green" id="statCoins">0</h2>
+<small>Total Coins</small>
+<h2 class="green" id="totalCoins">0</h2>
 </div>
 
 <div class="stat">
 <small>Pending Deposits</small>
-<h2 class="orange" id="statPending">0</h2>
+<h2 class="orange" id="pendingDeposits">0</h2>
 </div>
 
 <div class="stat">
 <small>Total Deposits</small>
-<h2 class="red" id="statDeposits">0</h2>
+<h2 class="red" id="totalDeposits">0</h2>
 </div>
 
 </div>
-
 
 <div class="card">
 
-<h3>
-Firebase Wallet / Deposit System
-</h3>
+<h3>Firebase Status</h3>
 
-<div class="notice">
-
-<strong>User:</strong>
-Firebase Auth UID
-
-<br><br>
-
-<strong>Deposit:</strong>
-deposits/{depositId}
-
-<br><br>
-
-<strong>User Wallet:</strong>
-users/{Firebase Auth UID}
-
-<br><br>
-
-<strong>Approve:</strong>
-Pending → Approve → Coins Add
-
-<br><br>
-
-<strong>Reject:</strong>
-Pending → Reject
-
+<div id="dashStatus" class="status bad">
+Connecting...
 </div>
+
+<p>
+Admin login Firebase Authentication से होगा।
+</p>
+
+<p>
+Deposits: <b>deposits</b>
+</p>
+
+<p>
+Users: <b>users</b>
+</p>
 
 </div>
 
@@ -392,48 +478,32 @@ Pending → Reject
 
 <!-- DEPOSITS -->
 
-<section
-class="page"
-id="deposits"
->
+<section id="deposits" class="page">
 
 <div class="title">
 Deposit Requests
 </div>
 
-<div
-id="firebaseStatus"
-class="firebase-status firebase-error"
->
-Firebase connecting...
+<div id="depositStatus" class="status bad">
+Loading...
 </div>
 
 <div class="card">
 
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px">
-
-<h3 style="margin:0">
-Deposits
-</h3>
-
 <button
-class="action refresh"
 id="refreshDeposits"
+class="action refresh"
 >
 🔄 Refresh
 </button>
 
-</div>
-
-
 <input
-class="search"
 id="depositSearch"
-placeholder="Search UID / UTR / Request ID"
+class="search"
+placeholder="UID / UTR / Request ID search"
 >
 
-
-<div class="table-wrap">
+<div class="table">
 
 <table>
 
@@ -448,16 +518,15 @@ placeholder="Search UID / UTR / Request ID"
 <th>UPI</th>
 <th>Status</th>
 <th>Date</th>
-<th>Comment</th>
 <th>Action</th>
 </tr>
 
 </thead>
 
-<tbody id="depositsTable">
+<tbody id="depositTable">
 
 <tr>
-<td colspan="10" class="loading">
+<td colspan="9" class="empty">
 Loading...
 </td>
 </tr>
@@ -475,10 +544,7 @@ Loading...
 
 <!-- USERS -->
 
-<section
-class="page"
-id="users"
->
+<section id="users" class="page">
 
 <div class="title">
 Users
@@ -486,47 +552,39 @@ Users
 
 <div class="card">
 
-<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px">
-
-<h3 style="margin:0">
-Firebase Users
-</h3>
-
 <button
-class="action refresh"
 id="refreshUsers"
+class="action refresh"
 >
 🔄 Refresh
 </button>
 
-</div>
-
 <input
-class="search"
 id="userSearch"
-placeholder="Search UID / Name / Mobile"
+class="search"
+placeholder="UID / Name / Mobile"
 >
 
-<div class="table-wrap">
+<div class="table">
 
 <table>
 
 <thead>
 
 <tr>
-<th>User UID</th>
+<th>UID</th>
 <th>Name</th>
 <th>Mobile</th>
-<th>Wallet Coins</th>
+<th>Coins</th>
 <th>Status</th>
 </tr>
 
 </thead>
 
-<tbody id="usersTable">
+<tbody id="userTable">
 
 <tr>
-<td colspan="5" class="loading">
+<td colspan="5" class="empty">
 Loading...
 </td>
 </tr>
@@ -544,131 +602,62 @@ Loading...
 
 <!-- SETTINGS -->
 
-<section
-class="page"
-id="settings"
->
+<section id="settings" class="page">
 
 <div class="title">
 Payment Settings
 </div>
 
-<div
-id="settingsStatus"
-class="firebase-status firebase-error"
->
+<div id="settingsStatus" class="status bad">
 Loading...
 </div>
 
 <div class="card">
 
-<h3>
-UPI / Bank Details
-</h3>
+<h3>UPI / Bank Details</h3>
 
-<div class="notice">
+<div class="form">
 
-Firebase document:
-
-<strong>
-paymentSettings/config
-</strong>
-
-<br><br>
-
-Payment page इसी document से latest details पढ़ेगा।
-
-</div>
-
-
-<div class="form-grid">
-
-<div class="field">
-
+<div>
 <label>UPI ID</label>
-
-<input
-id="upiId"
-placeholder="example@upi"
->
-
+<input id="upi">
 </div>
 
-<div class="field">
-
-<label>Account Holder Name</label>
-
-<input
-id="accountName"
-placeholder="Account Holder Name"
->
-
+<div>
+<label>Account Holder</label>
+<input id="holder">
 </div>
 
-<div class="field">
-
-<label>Bank Account Number</label>
-
-<input
-id="accountNumber"
-placeholder="Account Number"
->
-
+<div>
+<label>Account Number</label>
+<input id="account">
 </div>
 
-<div class="field">
-
+<div>
 <label>IFSC</label>
-
-<input
-id="ifsc"
-placeholder="IFSC0000000"
->
-
+<input id="ifsc">
 </div>
 
-<div class="field full">
-
-<label>QR Code Image URL</label>
-
-<input
-id="qrUrl"
-placeholder="QR image URL"
->
-
+<div class="full">
+<label>QR Image URL</label>
+<input id="qr">
 </div>
 
-<div class="field">
-
+<div>
 <label>Coin Rate</label>
-
-<input
-id="coinRate"
-type="number"
-min="1"
-value="1"
->
-
+<input id="rate" type="number" value="1">
 </div>
 
-<div class="field">
-
+<div>
 <label>Minimum Deposit</label>
-
-<input
-id="minDeposit"
-type="number"
-min="1"
-value="100"
->
-
+<input id="minimum" type="number" value="100">
 </div>
 
 <div class="full">
 
 <button
+id="saveSettings"
 class="save"
-id="savePaymentButton"
 >
 Save Payment Settings
 </button>
@@ -676,21 +665,6 @@ Save Payment Settings
 </div>
 
 </div>
-
-</div>
-
-
-<div class="card">
-
-<h3>
-Current QR
-</h3>
-
-<img
-id="qrPreview"
-class="qr-preview"
-alt="QR Code"
->
 
 </div>
 
@@ -705,7 +679,9 @@ alt="QR Code"
 
 <script type="module">
 
-/* FIREBASE */
+/* =========================
+   FIREBASE IMPORTS
+========================= */
 
 import {
 initializeApp
@@ -713,6 +689,14 @@ initializeApp
 from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
+import {
+getAuth,
+signInWithEmailAndPassword,
+onAuthStateChanged,
+signOut
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
 getFirestore,
@@ -728,22 +712,14 @@ from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-import {
-getAuth,
-signInWithEmailAndPassword,
-onAuthStateChanged,
-signOut
-}
-from
-"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-
-/* FIREBASE CONFIG */
+/* =========================
+   FIREBASE CONFIG
+========================= */
 
 const firebaseConfig = {
 
 apiKey:
-"AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
+"AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
 
 authDomain:
 "rdx-ludo.firebaseapp.com",
@@ -763,25 +739,29 @@ appId:
 };
 
 
-/* ADMIN EMAIL */
+/* =========================
+   ADMIN EMAIL
+========================= */
 
 const ADMIN_EMAIL =
 "nmbaar78@gmail.com";
 
 
-/* INIT */
+/* =========================
+   INIT
+========================= */
 
 const app =
 initializeApp(firebaseConfig);
 
-const db =
-getFirestore(app);
-
 const auth =
 getAuth(app);
 
+const db =
+getFirestore(app);
 
-const paymentSettingsRef =
+
+const paymentRef =
 doc(
 db,
 "paymentSettings",
@@ -790,33 +770,23 @@ db,
 
 
 let deposits = [];
-
 let users = [];
-
-let paymentSettings = {
-
-upiId:"",
-accountHolderName:"",
-accountNumber:"",
-ifsc:"",
-qrCodeUrl:"",
-coinRate:1,
-minimumDeposit:100
-
+let settings = {
+coinRate:1
 };
 
 
-/* HELPERS */
+/* =========================
+   HELPERS
+========================= */
 
-const $ =
-id =>
+const $ = id =>
 document.getElementById(id);
 
 
-function escapeHTML(value){
+function safe(value){
 
 return String(value ?? "")
-
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
@@ -826,108 +796,62 @@ return String(value ?? "")
 }
 
 
-/* LOGIN SCREEN */
+function status(id,text,good){
 
-function showLogin(){
+$(id).textContent = text;
 
-$("loginScreen").style.display =
-"flex";
-
-$("adminPanel").style.display =
-"none";
-
-$("loginButton").disabled =
-false;
-
-$("loginButton").innerText =
-"Login";
+$(id).className =
+"status " +
+(
+good ? "ok" : "bad"
+);
 
 }
 
 
-function showAdmin(){
-
-$("loginScreen").style.display =
-"none";
-
-$("adminPanel").style.display =
-"block";
-
-}
-
-
-/* LOGIN */
+/* =========================
+   LOGIN
+========================= */
 
 async function login(){
 
 const email =
-$("username")
-.value
-.trim()
-.toLowerCase();
+$("email").value.trim().toLowerCase();
 
 const password =
-$("password")
-.value;
+$("password").value;
 
-const errorBox =
-$("loginError");
-
-const button =
-$("loginButton");
-
-
-errorBox.style.display =
+$("error").style.display =
 "none";
 
+if(email !== ADMIN_EMAIL){
 
-if(!email){
+$("error").textContent =
+"Admin email गलत है.";
 
-errorBox.innerText =
-"Email डालें.";
-
-errorBox.style.display =
+$("error").style.display =
 "block";
 
 return;
 
 }
-
 
 if(!password){
 
-errorBox.innerText =
+$("error").textContent =
 "Password डालें.";
 
-errorBox.style.display =
+$("error").style.display =
 "block";
 
 return;
 
 }
 
+$("loginBtn").disabled = true;
 
-if(
-email !==
-ADMIN_EMAIL.toLowerCase()
-){
-
-errorBox.innerText =
-"यह admin email नहीं है.";
-
-errorBox.style.display =
-"block";
-
-return;
-
-}
-
-
-button.disabled =
-true;
-
-button.innerText =
-"Logging in...";
+$("loginBtn").textContent =
+"Login हो रहा है...";
 
 
 try{
@@ -939,15 +863,10 @@ email,
 password
 );
 
-
-const user =
-result.user;
-
-
 if(
-!user.email ||
-user.email.toLowerCase() !==
-ADMIN_EMAIL.toLowerCase()
+!result.user.email ||
+result.user.email.toLowerCase() !==
+ADMIN_EMAIL
 ){
 
 await signOut(auth);
@@ -958,80 +877,52 @@ throw new Error(
 
 }
 
-
-showAdmin();
-
-await loadEverything();
-
-
 }catch(error){
 
-console.error(
-"Login error:",
-error
-);
+console.error(error);
 
-
-let message =
+let msg =
+"Login failed: " +
 error.message;
-
 
 if(
 error.code ===
 "auth/invalid-credential"
 ){
 
-message =
+msg =
 "Email या password गलत है.";
 
 }
-
-
-if(
-error.code ===
-"auth/invalid-email"
-){
-
-message =
-"Email गलत है.";
-
-}
-
-
-if(
-error.code ===
-"auth/too-many-requests"
-){
-
-message =
-"बहुत ज्यादा कोशिश हुई है. थोड़ी देर बाद try करें.";
-
-}
-
 
 if(
 error.code ===
 "auth/api-key-not-valid"
 ){
 
-message =
-"Firebase API key invalid है. Firebase Console की API key/restriction check करें.";
+msg =
+"Firebase API Key invalid है. Firebase Console में Web API Key ठीक करें.";
 
 }
 
+if(
+error.code ===
+"auth/operation-not-allowed"
+){
 
-errorBox.innerText =
-"Login failed: " +
-message;
+msg =
+"Firebase Authentication में Email/Password enable करें.";
 
-errorBox.style.display =
+}
+
+$("error").textContent = msg;
+
+$("error").style.display =
 "block";
 
+$("loginBtn").disabled = false;
 
-button.disabled =
-false;
-
-button.innerText =
+$("loginBtn").textContent =
 "Login";
 
 }
@@ -1039,7 +930,7 @@ button.innerText =
 }
 
 
-$("loginButton")
+$("loginBtn")
 .addEventListener(
 "click",
 login
@@ -1049,22 +940,17 @@ login
 $("password")
 .addEventListener(
 "keydown",
-event => {
+e => {
 
-if(
-event.key ===
-"Enter"
-){
-
+if(e.key === "Enter")
 login();
 
-}
-
-}
-);
+});
 
 
-/* AUTH STATE */
+/* =========================
+   AUTH STATE
+========================= */
 
 onAuthStateChanged(
 auth,
@@ -1074,20 +960,24 @@ if(
 user &&
 user.email &&
 user.email.toLowerCase() ===
-ADMIN_EMAIL.toLowerCase()
+ADMIN_EMAIL
 ){
 
-showAdmin();
+$("login").style.display =
+"none";
 
-await loadEverything();
+$("admin").style.display =
+"block";
 
-}else if(user){
-
-await signOut(auth);
+await loadAll();
 
 }else{
 
-showLogin();
+$("login").style.display =
+"flex";
+
+$("admin").style.display =
+"none";
 
 }
 
@@ -1095,9 +985,11 @@ showLogin();
 );
 
 
-/* LOGOUT */
+/* =========================
+   LOGOUT
+========================= */
 
-$("logoutButton")
+$("logout")
 .addEventListener(
 "click",
 async () => {
@@ -1108,139 +1000,66 @@ await signOut(auth);
 );
 
 
-/* PAGE SWITCH */
+/* =========================
+   NAVIGATION
+========================= */
 
 document
-.querySelectorAll(".menu-btn")
-.forEach(
-button => {
+.querySelectorAll(".nav")
+.forEach(btn => {
 
-button.addEventListener(
+btn.addEventListener(
 "click",
 async () => {
 
-const pageId =
-button.dataset.page;
-
+document
+.querySelectorAll(".nav")
+.forEach(
+x => x.classList.remove("active")
+);
 
 document
 .querySelectorAll(".page")
 .forEach(
-page =>
-page.classList.remove(
-"active"
-)
+x => x.classList.remove("active")
 );
 
+btn.classList.add("active");
 
-document
-.querySelectorAll(".menu-btn")
-.forEach(
-btn =>
-btn.classList.remove(
-"active"
-)
-);
+const page =
+$(btn.dataset.page);
 
+page.classList.add("active");
 
-button.classList.add(
-"active"
-);
-
-
-$(pageId)
-.classList.add(
-"active"
-);
-
-
-if(
-pageId ===
-"deposits"
-){
-
+if(btn.dataset.page === "deposits")
 await loadDeposits();
 
-}
-
-
-if(
-pageId ===
-"users"
-){
-
+if(btn.dataset.page === "users")
 await loadUsers();
 
-}
-
-
-if(
-pageId ===
-"settings"
-){
-
-await loadPaymentSettings();
-
-}
+if(btn.dataset.page === "settings")
+await loadSettings();
 
 }
 );
 
-}
-);
+});
 
 
-/* STATUS */
+/* =========================
+   SETTINGS
+========================= */
 
-function setStatus(
-id,
-message,
-success
-){
-
-const box =
-$(id);
-
-box.innerText =
-message;
-
-box.className =
-"firebase-status " +
-(
-success
-?
-"firebase-ok"
-:
-"firebase-error"
-);
-
-}
-
-
-/* PAYMENT SETTINGS */
-
-async function loadPaymentSettings(){
+async function loadSettings(){
 
 try{
 
-setStatus(
-"settingsStatus",
-"Loading Firebase payment settings...",
-true
-);
+const snap =
+await getDoc(paymentRef);
 
+if(!snap.exists()){
 
-const snapshot =
-await getDoc(
-paymentSettingsRef
-);
-
-
-if(
-!snapshot.exists()
-){
-
-setStatus(
+status(
 "settingsStatus",
 "paymentSettings/config नहीं मिला.",
 false
@@ -1250,92 +1069,43 @@ return;
 
 }
 
+const d =
+snap.data();
 
-const data =
-snapshot.data();
+settings = d;
 
+$("upi").value =
+d.upiId || "";
 
-paymentSettings = {
+$("holder").value =
+d.accountHolderName || "";
 
-upiId:
-data.upiId || "",
-
-accountHolderName:
-data.accountHolderName || "",
-
-accountNumber:
-data.accountNumber || "",
-
-ifsc:
-data.ifsc || "",
-
-qrCodeUrl:
-data.qrCodeUrl || "",
-
-coinRate:
-Number(
-data.coinRate ?? 1
-),
-
-minimumDeposit:
-Number(
-data.minimumDeposit ?? 100
-)
-
-};
-
-
-$("upiId").value =
-paymentSettings.upiId;
-
-$("accountName").value =
-paymentSettings.accountHolderName;
-
-$("accountNumber").value =
-paymentSettings.accountNumber;
+$("account").value =
+d.accountNumber || "";
 
 $("ifsc").value =
-paymentSettings.ifsc;
+d.ifsc || "";
 
-$("qrUrl").value =
-paymentSettings.qrCodeUrl;
+$("qr").value =
+d.qrCodeUrl || "";
 
-$("coinRate").value =
-paymentSettings.coinRate;
+$("rate").value =
+d.coinRate ?? 1;
 
-$("minDeposit").value =
-paymentSettings.minimumDeposit;
+$("minimum").value =
+d.minimumDeposit ?? 100;
 
-
-if(
-paymentSettings.qrCodeUrl
-){
-
-$("qrPreview").src =
-paymentSettings.qrCodeUrl;
-
-}else{
-
-$("qrPreview")
-.removeAttribute("src");
-
-}
-
-
-setStatus(
+status(
 "settingsStatus",
 "✅ Payment Settings loaded.",
 true
 );
 
+}catch(e){
 
-}catch(error){
-
-console.error(error);
-
-setStatus(
+status(
 "settingsStatus",
-"❌ " + error.message,
+"❌ " + e.message,
 false
 );
 
@@ -1344,353 +1114,200 @@ false
 }
 
 
-/* SAVE SETTINGS */
-
-$("savePaymentButton")
+$("saveSettings")
 .addEventListener(
 "click",
 async () => {
 
 const button =
-$("savePaymentButton");
+$("saveSettings");
 
-button.disabled =
-true;
-
-button.innerText =
-"Saving...";
-
+button.disabled = true;
 
 try{
 
-const upiId =
-$("upiId")
-.value
-.trim();
-
-const accountHolderName =
-$("accountName")
-.value
-.trim();
-
-const accountNumber =
-$("accountNumber")
-.value
-.trim();
-
-const ifsc =
-$("ifsc")
-.value
-.trim();
-
-const qrCodeUrl =
-$("qrUrl")
-.value
-.trim();
-
-const coinRate =
-Number(
-$("coinRate").value
-);
-
-const minimumDeposit =
-Number(
-$("minDeposit").value
-);
-
-
-if(!upiId){
-
-throw new Error(
-"UPI ID डालें."
-);
-
-}
-
-
-if(
-!coinRate ||
-coinRate <= 0
-){
-
-throw new Error(
-"Coin Rate invalid है."
-);
-
-}
-
-
-if(
-!minimumDeposit ||
-minimumDeposit <= 0
-){
-
-throw new Error(
-"Minimum Deposit invalid है."
-);
-
-}
-
-
 await setDoc(
-paymentSettingsRef,
+paymentRef,
 {
 
-upiId,
+upiId:
+$("upi").value.trim(),
 
-accountHolderName,
+accountHolderName:
+$("holder").value.trim(),
 
-accountNumber,
+accountNumber:
+$("account").value.trim(),
 
-ifsc,
+ifsc:
+$("ifsc").value.trim(),
 
-qrCodeUrl,
+qrCodeUrl:
+$("qr").value.trim(),
 
-coinRate,
+coinRate:
+Number($("rate").value),
 
-minimumDeposit,
+minimumDeposit:
+Number($("minimum").value),
 
 updatedAt:
 serverTimestamp()
 
 },
-{
-merge:true
-}
+{merge:true}
 );
 
-
-await loadPaymentSettings();
-
+await loadSettings();
 
 alert(
-"✅ Payment Settings saved."
+"✅ Payment Settings save हो गई."
 );
 
-
-}catch(error){
-
-console.error(error);
+}catch(e){
 
 alert(
-"Save failed:\n\n" +
-error.message
+"❌ Save failed:\n" +
+e.message
 );
 
-}finally{
-
-button.disabled =
-false;
-
-button.innerText =
-"Save Payment Settings";
-
 }
+
+button.disabled = false;
 
 }
 );
 
 
-/* DEPOSITS */
+/* =========================
+   DEPOSITS
+========================= */
 
 async function loadDeposits(){
 
-$("depositsTable").innerHTML = `
-
+$("depositTable").innerHTML =
+`
 <tr>
-<td colspan="10" class="loading">
-Loading deposits...
+<td colspan="9" class="empty">
+Loading...
 </td>
 </tr>
-
 `;
-
 
 try{
 
-const snapshot =
+const snap =
 await getDocs(
-collection(
-db,
-"deposits"
-)
+collection(db,"deposits")
 );
-
 
 deposits = [];
 
-
-snapshot.forEach(
-item => {
+snap.forEach(
+d => {
 
 deposits.push({
-
-id:item.id,
-
-...item.data()
-
+id:d.id,
+...d.data()
 });
 
 }
 );
 
+renderDeposits();
 
-deposits.sort(
-(a,b) =>
-(
-b.createdAt?.toMillis?.() || 0
-)
--
-(
-a.createdAt?.toMillis?.() || 0
-)
-);
-
-
-setStatus(
-"firebaseStatus",
+status(
+"depositStatus",
 "✅ Deposits loaded.",
 true
 );
 
-
-renderDeposits();
-
 updateDashboard();
 
+}catch(e){
 
-}catch(error){
-
-console.error(error);
-
-
-$("depositsTable").innerHTML = `
-
-<tr>
-<td colspan="10" class="empty">
-
-Firebase error:
-
-${escapeHTML(error.message)}
-
-</td>
-</tr>
-
-`;
-
-
-setStatus(
-"firebaseStatus",
-"❌ " + error.message,
+status(
+"depositStatus",
+"❌ " + e.message,
 false
 );
 
-}
+$("depositTable").innerHTML =
+`
+<tr>
+<td colspan="9" class="empty">
+${safe(e.message)}
+</td>
+</tr>
+`;
 
 }
 
+}
 
-/* RENDER DEPOSITS */
 
 function renderDeposits(){
 
-const search =
+const q =
 $("depositSearch")
 .value
 .toLowerCase();
 
-
-const filtered =
+const list =
 deposits.filter(
 d =>
-
 String(d.id || "")
 .toLowerCase()
-.includes(search)
-
-||
+.includes(q) ||
 
 String(d.userId || "")
 .toLowerCase()
-.includes(search)
-
-||
+.includes(q) ||
 
 String(d.utr || "")
 .toLowerCase()
-.includes(search)
+.includes(q)
 );
 
+if(!list.length){
 
-if(!filtered.length){
-
-$("depositsTable").innerHTML = `
-
+$("depositTable").innerHTML =
+`
 <tr>
-<td colspan="10" class="empty">
+<td colspan="9" class="empty">
 No deposits found.
 </td>
 </tr>
-
 `;
 
 return;
 
 }
 
+$("depositTable").innerHTML =
+list.map(d => {
 
-let html = "";
-
-
-filtered.forEach(
-d => {
-
-const status =
-String(
-d.status ||
-"pending"
-)
+const s =
+String(d.status || "pending")
 .toLowerCase();
 
-
-const statusClass =
-status === "approved"
-?
-"approved"
-:
-status === "rejected"
-?
-"rejected"
-:
-"pending";
-
-
 const amount =
-Number(
-d.amount || 0
-);
-
+Number(d.amount || 0);
 
 const rate =
 Number(
 d.coinRate ||
-paymentSettings.coinRate ||
+settings.coinRate ||
 1
 );
-
 
 const coins =
 Number(
 d.approvedCoins ??
-(
 amount * rate
-)
 );
 
-
-let date =
-"—";
-
+let date = "—";
 
 if(
 d.createdAt &&
@@ -1701,256 +1318,175 @@ typeof d.createdAt.toDate ===
 date =
 d.createdAt
 .toDate()
-.toLocaleString(
-"en-IN"
-);
+.toLocaleString("en-IN");
 
 }
 
-
-html += `
-
+return `
 <tr>
 
-<td>
-<small>
-${escapeHTML(d.id)}
-</small>
-</td>
+<td>${safe(d.id)}</td>
+
+<td>${safe(d.userId)}</td>
+
+<td>₹${amount}</td>
+
+<td>${coins}</td>
+
+<td>${safe(d.utr || "—")}</td>
+
+<td>${safe(d.upiId || "—")}</td>
 
 <td>
-<strong>
-${escapeHTML(
-d.userId || "—"
-)}
-</strong>
-</td>
-
-<td>
-<strong class="blue">
-₹${amount}
-</strong>
-</td>
-
-<td>
-<strong class="green">
-${coins}
-</strong>
-</td>
-
-<td>
-${escapeHTML(
-d.utr || "—"
-)}
-</td>
-
-<td>
-${escapeHTML(
-d.upiId || "—"
-)}
-</td>
-
-<td>
-
-<span class="badge ${statusClass}">
-${escapeHTML(status)}
+<span class="badge ${
+s==="approved"
+?"approved"
+:s==="rejected"
+?"rejected"
+:"pending"
+}">
+${safe(s)}
 </span>
-
 </td>
 
-<td>
-${escapeHTML(date)}
-</td>
-
-<td class="comment">
-${escapeHTML(
-d.comment || "—"
-)}
-</td>
+<td>${safe(date)}</td>
 
 <td>
 
 ${
-status === "pending"
+s === "pending"
 
 ?
 
 `
-
 <button
 class="action approve"
-data-approve="${escapeHTML(d.id)}"
+data-approve="${safe(d.id)}"
 >
 ✅ Approve
 </button>
 
 <button
 class="action reject"
-data-reject="${escapeHTML(d.id)}"
+data-reject="${safe(d.id)}"
 >
 ❌ Reject
 </button>
-
 `
 
 :
 
 "Completed"
-
 }
 
 </td>
 
 </tr>
-
 `;
 
-});
-
-
-$("depositsTable").innerHTML =
-html;
+}).join("");
 
 
 document
 .querySelectorAll("[data-approve]")
 .forEach(
-button => {
-
-button.addEventListener(
+b =>
+b.addEventListener(
 "click",
 () =>
-approveDeposit(
-button.dataset.approve
+approve(b.dataset.approve)
 )
-);
-
-}
 );
 
 
 document
 .querySelectorAll("[data-reject]")
 .forEach(
-button => {
-
-button.addEventListener(
+b =>
+b.addEventListener(
 "click",
 () =>
-rejectDeposit(
-button.dataset.reject
+reject(b.dataset.reject)
 )
 );
 
 }
+
+
+$("depositSearch")
+.addEventListener(
+"input",
+renderDeposits
 );
 
-}
 
-
-/* APPROVE */
-
-async function approveDeposit(
-depositId
-){
-
-if(!auth.currentUser){
-
-alert(
-"Admin login required."
+$("refreshDeposits")
+.addEventListener(
+"click",
+loadDeposits
 );
 
-return;
 
-}
+/* =========================
+   APPROVE
+========================= */
 
+async function approve(id){
 
 const deposit =
 deposits.find(
-d =>
-d.id ===
-depositId
+d => d.id === id
 );
-
 
 if(!deposit){
 
-alert(
-"Deposit नहीं मिली."
-);
-
+alert("Deposit नहीं मिली.");
 return;
 
 }
 
-
-const userId =
-String(
-deposit.userId || ""
-)
+const uid =
+String(deposit.userId || "")
 .trim();
 
-
-if(!userId){
-
-alert(
-"इस deposit में Firebase Auth UID नहीं है."
-);
-
-return;
-
-}
-
-
 const amount =
-Number(
-deposit.amount || 0
-);
+Number(deposit.amount || 0);
 
-
-const coinRate =
+const rate =
 Number(
 deposit.coinRate ||
-paymentSettings.coinRate ||
+settings.coinRate ||
 1
 );
 
+const coins =
+amount * rate;
 
-const coinsToAdd =
-amount *
-coinRate;
-
-
-if(
-amount <= 0 ||
-coinsToAdd <= 0
-){
+if(!uid){
 
 alert(
-"Amount/Coin Rate invalid."
+"Deposit में user UID नहीं है."
 );
 
 return;
 
 }
 
-
 if(
 !confirm(
-"Deposit approve करें?\n\n" +
-"Amount: ₹" +
-amount +
-"\nCoins: " +
-coinsToAdd +
-"\n\nUser UID:\n" +
-userId
+`Deposit approve करें?
+
+Amount: ₹${amount}
+Coins: ${coins}
+
+UID:
+${uid}`
 )
 ){
 
 return;
 
 }
-
 
 try{
 
@@ -1959,90 +1495,58 @@ db,
 async transaction => {
 
 const depositRef =
-doc(
-db,
-"deposits",
-depositId
-);
-
+doc(db,"deposits",id);
 
 const userRef =
-doc(
-db,
-"users",
-userId
-);
+doc(db,"users",uid);
 
-
-const depositSnap =
+const dep =
 await transaction.get(
 depositRef
 );
 
-
-if(
-!depositSnap.exists()
-){
-
+if(!dep.exists())
 throw new Error(
-"Deposit document नहीं मिला."
+"Deposit नहीं मिला."
 );
 
-}
-
-
-const currentDeposit =
-depositSnap.data();
-
+const data =
+dep.data();
 
 if(
 String(
-currentDeposit.status ||
-"pending"
-)
-.toLowerCase()
-!==
+data.status || "pending"
+).toLowerCase() !==
 "pending"
 ){
 
 throw new Error(
-"Deposit already processed."
+"यह deposit पहले process हो चुका है."
 );
 
 }
 
-
-const userSnap =
+const user =
 await transaction.get(
 userRef
 );
 
-
-if(
-!userSnap.exists()
-){
-
+if(!user.exists())
 throw new Error(
-"User document नहीं मिला: " +
-userId
+"User document नहीं मिला."
 );
-
-}
-
 
 const oldCoins =
 Number(
-userSnap.data().coins || 0
+user.data().coins || 0
 );
-
 
 transaction.update(
 userRef,
 {
 
 coins:
-oldCoins +
-coinsToAdd,
+oldCoins + coins,
 
 updatedAt:
 serverTimestamp()
@@ -2050,16 +1554,13 @@ serverTimestamp()
 }
 );
 
-
 transaction.update(
 depositRef,
 {
 
-status:
-"approved",
+status:"approved",
 
-approvedCoins:
-coinsToAdd,
+approvedCoins:coins,
 
 approvedBy:
 auth.currentUser.uid,
@@ -2071,32 +1572,25 @@ comment:
 "Payment approved"
 
 }
-
 );
 
 }
 );
 
-
 alert(
-"✅ Approved\n\n" +
-coinsToAdd +
-" coins wallet में add हो गए."
-);
+`✅ Approved
 
+${coins} coins wallet में add हो गए.`
+);
 
 await loadDeposits();
-
 await loadUsers();
 
-
-}catch(error){
-
-console.error(error);
+}catch(e){
 
 alert(
-"❌ Approve failed:\n\n" +
-error.message
+"❌ Approve failed:\n" +
+e.message
 );
 
 }
@@ -2104,38 +1598,20 @@ error.message
 }
 
 
-/* REJECT */
+/* =========================
+   REJECT
+========================= */
 
-async function rejectDeposit(
-depositId
-){
-
-if(!auth.currentUser){
-
-alert(
-"Admin login required."
-);
-
-return;
-
-}
-
+async function reject(id){
 
 const reason =
-prompt(
-"Reject reason:"
-);
-
+prompt("Reject reason:");
 
 if(
 reason === null ||
 !reason.trim()
-){
-
+)
 return;
-
-}
-
 
 try{
 
@@ -2143,58 +1619,38 @@ await runTransaction(
 db,
 async transaction => {
 
-const depositRef =
-doc(
-db,
-"deposits",
-depositId
-);
+const ref =
+doc(db,"deposits",id);
 
+const snap =
+await transaction.get(ref);
 
-const snapshot =
-await transaction.get(
-depositRef
-);
-
-
-if(
-!snapshot.exists()
-){
-
+if(!snap.exists())
 throw new Error(
-"Deposit document नहीं मिला."
+"Deposit नहीं मिली."
 );
-
-}
-
 
 const data =
-snapshot.data();
-
+snap.data();
 
 if(
 String(
-data.status ||
-"pending"
-)
-.toLowerCase()
-!==
+data.status || "pending"
+).toLowerCase() !==
 "pending"
 ){
 
 throw new Error(
-"Deposit already processed."
+"Deposit पहले process हो चुकी है."
 );
 
 }
 
-
 transaction.update(
-depositRef,
+ref,
 {
 
-status:
-"rejected",
+status:"rejected",
 
 comment:
 reason.trim(),
@@ -2206,28 +1662,20 @@ rejectedAt:
 serverTimestamp()
 
 }
-
 );
 
 }
 );
 
-
-alert(
-"Deposit rejected."
-);
-
+alert("✅ Deposit rejected.");
 
 await loadDeposits();
 
-
-}catch(error){
-
-console.error(error);
+}catch(e){
 
 alert(
-"❌ Reject failed:\n\n" +
-error.message
+"❌ Reject failed:\n" +
+e.message
 );
 
 }
@@ -2235,72 +1683,54 @@ error.message
 }
 
 
-/* USERS */
+/* =========================
+   USERS
+========================= */
 
 async function loadUsers(){
 
-$("usersTable").innerHTML = `
-
+$("userTable").innerHTML =
+`
 <tr>
-<td colspan="5" class="loading">
-Loading users...
+<td colspan="5" class="empty">
+Loading...
 </td>
 </tr>
-
 `;
-
 
 try{
 
-const snapshot =
+const snap =
 await getDocs(
-collection(
-db,
-"users"
-)
+collection(db,"users")
 );
-
 
 users = [];
 
-
-snapshot.forEach(
-item => {
+snap.forEach(
+d => {
 
 users.push({
-
-id:item.id,
-
-...item.data()
-
+id:d.id,
+...d.data()
 });
 
 }
 );
 
-
 renderUsers();
 
 updateDashboard();
 
+}catch(e){
 
-}catch(error){
-
-console.error(error);
-
-
-$("usersTable").innerHTML = `
-
+$("userTable").innerHTML =
+`
 <tr>
 <td colspan="5" class="empty">
-
-Firebase error:
-
-${escapeHTML(error.message)}
-
+${safe(e.message)}
 </td>
 </tr>
-
 `;
 
 }
@@ -2308,171 +1738,78 @@ ${escapeHTML(error.message)}
 }
 
 
-/* RENDER USERS */
-
 function renderUsers(){
 
-const search =
+const q =
 $("userSearch")
 .value
 .toLowerCase();
 
-
-const filtered =
+const list =
 users.filter(
 u =>
-
 String(u.id || "")
 .toLowerCase()
-.includes(search)
-
-||
+.includes(q) ||
 
 String(u.name || "")
 .toLowerCase()
-.includes(search)
-
-||
+.includes(q) ||
 
 String(u.mobile || "")
 .toLowerCase()
-.includes(search)
+.includes(q)
 );
 
+if(!list.length){
 
-if(!filtered.length){
-
-$("usersTable").innerHTML = `
-
+$("userTable").innerHTML =
+`
 <tr>
 <td colspan="5" class="empty">
 No users found.
 </td>
 </tr>
-
 `;
 
 return;
 
 }
 
-
-$("usersTable").innerHTML =
-filtered
-.map(
+$("userTable").innerHTML =
+list.map(
 u => `
-
 <tr>
 
+<td>${safe(u.id)}</td>
+
+<td>${safe(u.name || "—")}</td>
+
+<td>${safe(u.mobile || "—")}</td>
+
 <td>
-<small>
-${escapeHTML(u.id)}
-</small>
+<b class="blue">
+${Number(u.coins || 0)}
+</b>
 </td>
 
 <td>
-${escapeHTML(
-u.name || "—"
-)}
-</td>
-
-<td>
-${escapeHTML(
-u.mobile || "—"
-)}
-</td>
-
-<td>
-
-<strong class="blue">
-${Number(
-u.coins || 0
-)}
-</strong>
-
-</td>
-
-<td>
-
 <span class="badge approved">
-${escapeHTML(
-u.status || "Active"
-)}
+${safe(u.status || "Active")}
 </span>
-
 </td>
 
 </tr>
-
 `
-)
-.join("");
+).join("");
 
 }
 
 
-/* DASHBOARD */
-
-function updateDashboard(){
-
-$("statUsers")
-.innerText =
-users.length;
-
-
-$("statCoins")
-.innerText =
-users.reduce(
-(sum,user) =>
-sum +
-Number(
-user.coins || 0
-),
-0
-);
-
-
-$("statPending")
-.innerText =
-deposits.filter(
-d =>
-String(
-d.status ||
-"pending"
-)
-.toLowerCase()
-===
-"pending"
-)
-.length;
-
-
-$("statDeposits")
-.innerText =
-deposits.length;
-
-}
-
-
-/* LOAD EVERYTHING */
-
-async function loadEverything(){
-
-await loadPaymentSettings();
-
-await loadDeposits();
-
-await loadUsers();
-
-}
-
-
-/* EVENTS */
-
-$("refreshDeposits")
+$("userSearch")
 .addEventListener(
-"click",
-loadDeposits
+"input",
+renderUsers
 );
 
 
@@ -2483,18 +1820,66 @@ loadUsers
 );
 
 
-$("depositSearch")
-.addEventListener(
-"input",
-renderDeposits
+/* =========================
+   DASHBOARD
+========================= */
+
+function updateDashboard(){
+
+$("totalUsers").textContent =
+users.length;
+
+$("totalCoins").textContent =
+users.reduce(
+(a,u) =>
+a + Number(u.coins || 0),
+0
 );
 
+$("pendingDeposits").textContent =
+deposits.filter(
+d =>
+String(
+d.status || "pending"
+).toLowerCase() ===
+"pending"
+).length;
 
-$("userSearch")
-.addEventListener(
-"input",
-renderUsers
+$("totalDeposits").textContent =
+deposits.length;
+
+status(
+"dashStatus",
+"✅ Firebase connected.",
+true
 );
+
+}
+
+
+/* =========================
+   LOAD ALL
+========================= */
+
+async function loadAll(){
+
+try{
+
+await loadSettings();
+await loadDeposits();
+await loadUsers();
+
+}catch(e){
+
+status(
+"dashStatus",
+"❌ " + e.message,
+false
+);
+
+}
+
+}
 
 </script>
 
