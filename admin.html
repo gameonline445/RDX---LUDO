@@ -3,1534 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>RDX LUDO - Admin Panel</title>
+<title>RDX LUDO - Firebase Admin Panel</title>
 
 <style>
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
-    background:#f3f6ff;
-    color:#111b3a;
-}
-
-button,input,select,textarea{
-    font:inherit;
-}
-
-button{
-    cursor:pointer;
-    border:0;
-}
-
-/* LOGIN */
-
-.login{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:20px;
-    background:
-    radial-gradient(circle at top left,#cfe0ff,transparent 40%),
-    radial-gradient(circle at bottom right,#ffd8e8,transparent 40%),
-    #f5f7ff;
-}
-
-.login-box{
-    width:100%;
-    max-width:430px;
-    background:white;
-    border:1px solid #d7e0f3;
-    border-radius:30px;
-    padding:35px 25px;
-    box-shadow:0 20px 60px rgba(40,80,180,.15);
-}
-
-.logo{
-    width:80px;
-    height:80px;
-    margin:auto;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:linear-gradient(135deg,#2875ff,#713cff);
-    color:white;
-    font-weight:900;
-    font-size:20px;
-}
-
-.login-box h1{
-    text-align:center;
-    margin-top:15px;
-}
-
-.login-box p{
-    text-align:center;
-    color:#75819b;
-    margin:8px 0 25px;
-}
-
-.field{
-    margin-bottom:15px;
-}
-
-.field label{
-    display:block;
-    font-weight:700;
-    margin-bottom:7px;
-}
-
-.field input,
-.field select,
-.field textarea{
-    width:100%;
-    padding:14px 16px;
-    border:1px solid #ccd6ea;
-    border-radius:14px;
-    outline:none;
-    background:#fafcff;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
-    border-color:#3775ef;
-}
-
-.primary{
-    width:100%;
-    padding:15px;
-    border-radius:15px;
-    background:linear-gradient(135deg,#2869ed,#5b4df5);
-    color:white;
-    font-weight:800;
-    box-shadow:0 10px 25px rgba(42,102,235,.25);
-}
-
-.error{
-    color:#e53935;
-    text-align:center;
-    margin-top:12px;
-    display:none;
-}
-
-/* ADMIN */
-
-.admin{
-    display:none;
-    min-height:100vh;
-}
-
-.topbar{
-    height:70px;
-    background:white;
-    border-bottom:1px solid #dce3f2;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 20px;
-    position:sticky;
-    top:0;
-    z-index:20;
-}
-
-.brand{
-    font-weight:900;
-    font-size:20px;
-}
-
-.brand span{
-    color:#326be8;
-}
-
-.logout{
-    background:#ffe9ed;
-    color:#d62839;
-    padding:10px 15px;
-    border-radius:12px;
-    font-weight:700;
-}
-
-.layout{
-    display:flex;
-}
-
-.sidebar{
-    width:240px;
-    min-height:calc(100vh - 70px);
-    background:white;
-    border-right:1px solid #dce3f2;
-    padding:18px 12px;
-    position:sticky;
-    top:70px;
-    align-self:flex-start;
-}
-
-.menu-btn{
-    width:100%;
-    text-align:left;
-    padding:13px 15px;
-    border-radius:13px;
-    background:transparent;
-    color:#63708a;
-    margin-bottom:5px;
-    font-weight:700;
-}
-
-.menu-btn:hover,
-.menu-btn.active{
-    background:#eaf1ff;
-    color:#2869e8;
-}
-
-.content{
-    flex:1;
-    padding:25px;
-    min-width:0;
-}
-
-.page{
-    display:none;
-}
-
-.page.active{
-    display:block;
-}
-
-.title{
-    font-size:28px;
-    font-weight:900;
-    margin-bottom:20px;
-}
-
-/* STATS */
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:15px;
-}
-
-.stat{
-    background:white;
-    border:1px solid #d8e1f2;
-    border-radius:20px;
-    padding:20px;
-}
-
-.stat small{
-    color:#75819a;
-    font-weight:700;
-}
-
-.stat h2{
-    margin-top:8px;
-    font-size:30px;
-}
-
-.blue{
-    color:#2869e8;
-}
-
-.green{
-    color:#16a765;
-}
-
-.orange{
-    color:#ef8b22;
-}
-
-.red{
-    color:#e23a4a;
-}
-
-/* CARD */
-
-.card{
-    background:white;
-    border:1px solid #d8e1f2;
-    border-radius:20px;
-    padding:20px;
-    margin-top:20px;
-}
-
-.card h3{
-    margin-bottom:15px;
-}
-
-.search{
-    width:100%;
-    padding:13px 15px;
-    border:1px solid #d3dced;
-    border-radius:13px;
-    margin-bottom:15px;
-}
-
-/* TABLE */
-
-.table-wrap{
-    overflow:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-    min-width:1050px;
-}
-
-th,
-td{
-    padding:13px 10px;
-    border-bottom:1px solid #edf0f6;
-    text-align:left;
-    vertical-align:middle;
-    white-space:nowrap;
-}
-
-th{
-    color:#6e7991;
-    font-size:13px;
-}
-
-.badge{
-    display:inline-block;
-    padding:6px 10px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:800;
-}
-
-.pending{
-    background:#fff2d9;
-    color:#bd7100;
-}
-
-.approved{
-    background:#dcf8e9;
-    color:#13834d;
-}
-
-.rejected{
-    background:#ffe3e7;
-    color:#c72e43;
-}
-
-.failed{
-    background:#ffe3e7;
-    color:#c72e43;
-}
-
-.active{
-    background:#dcf8e9;
-    color:#13834d;
-}
-
-/* ACTION BUTTONS */
-
-.action{
-    padding:8px 11px;
-    border-radius:9px;
-    font-size:12px;
-    font-weight:800;
-    margin:2px;
-}
-
-.approve{
-    background:#ddf8e8;
-    color:#12854d;
-}
-
-.reject{
-    background:#ffe4e7;
-    color:#ca3146;
-}
-
-.fail{
-    background:#fff0d7;
-    color:#a96600;
-}
-
-.add{
-    background:#e1edff;
-    color:#2869e8;
-}
-
-.deduct{
-    background:#ffe4e7;
-    color:#ca3146;
-}
-
-.delete{
-    background:#ffe3e7;
-    color:#c72e43;
-}
-
-/* FORM */
-
-.form-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:15px;
-}
-
-.full{
-    grid-column:1/-1;
-}
-
-.save{
-    background:#2869e8;
-    color:white;
-    padding:13px 20px;
-    border-radius:12px;
-    font-weight:800;
-}
-
-.save:disabled{
-    opacity:.6;
-    cursor:not-allowed;
-}
-
-.notice{
-    background:#eef5ff;
-    border:1px solid #cbdcff;
-    color:#38578c;
-    padding:15px;
-    border-radius:15px;
-    margin-bottom:18px;
-}
-
-.firebase-status{
-    padding:12px 15px;
-    border-radius:12px;
-    margin-bottom:15px;
-    font-weight:700;
-}
-
-.firebase-ok{
-    background:#dcf8e9;
-    color:#13834d;
-}
-
-.firebase-error{
-    background:#ffe3e7;
-    color:#c72e43;
-}
-
-.empty{
-    text-align:center;
-    padding:30px;
-    color:#8590a7;
-}
-
-.comment{
-    white-space:normal;
-    max-width:250px;
-    color:#59657d;
-}
-
-.qr-preview{
-    width:180px;
-    height:180px;
-    object-fit:contain;
-    border:1px solid #d5deef;
-    border-radius:15px;
-    background:white;
-    padding:8px;
-    margin-bottom:10px;
-}
-
-.loading{
-    text-align:center;
-    padding:20px;
-    color:#66728c;
-}
-
-/* MOBILE */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;background:#f3f6ff;color:#111b3a}
+button,input{font:inherit}
+button{cursor:pointer;border:0}
+
+.login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#eaf2ff,#fff1f5)}
+.login-box{width:100%;max-width:420px;background:#fff;padding:30px 24px;border-radius:25px;box-shadow:0 20px 60px #315db526}
+.logo{width:75px;height:75px;margin:auto;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#2869ed,#673cf2);color:#fff;font-size:20px;font-weight:900}
+.login-box h1{text-align:center;margin-top:14px}
+.login-box p{text-align:center;color:#78849b;margin:8px 0 25px}
+.field{margin-bottom:15px}
+.field label{display:block;font-weight:800;font-size:13px;margin-bottom:7px}
+.field input{width:100%;height:46px;padding:0 14px;border:1px solid #ccd6ea;border-radius:13px;outline:none;background:#fafcff}
+.primary{width:100%;height:48px;border-radius:14px;background:linear-gradient(135deg,#2869ed,#5b4df5);color:#fff;font-weight:900}
+.error{display:none;color:#d83246;text-align:center;margin-top:12px;font-weight:700}
+
+.admin{display:none;min-height:100vh}
+.topbar{height:68px;background:#fff;border-bottom:1px solid #dce3f2;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:10}
+.brand{font-size:20px;font-weight:900}.brand span{color:#2869ed}
+.logout{background:#ffe7eb;color:#c92f45;padding:10px 15px;border-radius:12px;font-weight:800}
+.layout{display:flex}
+.sidebar{width:235px;min-height:calc(100vh - 68px);background:#fff;border-right:1px solid #dce3f2;padding:15px 10px;position:sticky;top:68px;align-self:flex-start}
+.menu-btn{width:100%;padding:13px 14px;border-radius:12px;background:transparent;text-align:left;color:#63708a;font-weight:800;margin-bottom:5px}
+.menu-btn.active,.menu-btn:hover{background:#eaf1ff;color:#2869ed}
+.content{flex:1;padding:24px;min-width:0}
+.page{display:none}.page.active{display:block}
+.title{font-size:28px;font-weight:900;margin-bottom:20px}
+
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
+.stat,.card{background:#fff;border:1px solid #d8e1f2;border-radius:20px;padding:20px}
+.stat small{color:#78849b;font-weight:700}.stat h2{font-size:30px;margin-top:7px}
+.blue{color:#2869ed}.green{color:#13a564}.orange{color:#ed8a1e}.red{color:#df354b}
+
+.card{margin-top:20px}.card h3{margin-bottom:15px}
+.notice{background:#eef5ff;border:1px solid #cbdcff;color:#38578c;padding:14px;border-radius:14px;margin-bottom:15px}
+.status{padding:12px 15px;border-radius:12px;margin-bottom:15px;font-weight:800}
+.ok{background:#dcf8e9;color:#13834d}.bad{background:#ffe3e7;color:#c72e43}
+
+.search{width:100%;height:44px;padding:0 14px;border:1px solid #d3dced;border-radius:12px;margin-bottom:15px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:900px}
+th,td{padding:12px 9px;border-bottom:1px solid #edf0f6;text-align:left;white-space:nowrap}
+th{font-size:12px;color:#6e7991}
+.empty{text-align:center;padding:30px;color:#8590a7}
+
+.badge{display:inline-block;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:800}
+.pending{background:#fff2d9;color:#bd7100}
+.approved{background:#dcf8e9;color:#13834d}
+.rejected{background:#ffe3e7;color:#c72e43}
+
+.action{padding:8px 10px;border-radius:9px;font-size:12px;font-weight:800;margin:2px}
+.approve{background:#ddf8e8;color:#12854d}
+.reject{background:#ffe4e7;color:#ca3146}
+.add{background:#e1edff;color:#2869e8}
+.deduct{background:#ffe4e7;color:#ca3146}
+.delete{background:#ffe3e7;color:#c72e43}
+
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:15px}
+.full{grid-column:1/-1}
+.save{background:#2869e8;color:#fff;padding:13px 20px;border-radius:12px;font-weight:900}
+.save:disabled{opacity:.6}
+.preview{width:170px;height:170px;object-fit:contain;border:1px solid #d5deef;border-radius:15px;padding:7px;margin-bottom:12px}
 
 @media(max-width:900px){
-
-    .stats{
-        grid-template-columns:repeat(2,1fr);
-    }
-
-    .sidebar{
-        width:190px;
-    }
+.stats{grid-template-columns:repeat(2,1fr)}
+.sidebar{width:190px}
 }
-
 @media(max-width:650px){
-
-    .topbar{
-        padding:0 12px;
-    }
-
-    .brand{
-        font-size:16px;
-    }
-
-    .layout{
-        display:block;
-    }
-
-    .sidebar{
-        width:100%;
-        min-height:auto;
-        position:static;
-        display:flex;
-        overflow:auto;
-        padding:8px;
-        border-right:0;
-        border-bottom:1px solid #dce3f2;
-    }
-
-    .menu-btn{
-        min-width:max-content;
-        margin:0 3px;
-    }
-
-    .content{
-        padding:15px;
-    }
-
-    .stats{
-        grid-template-columns:1fr 1fr;
-    }
-
-    .form-grid{
-        grid-template-columns:1fr;
-    }
-
-    .full{
-        grid-column:auto;
-    }
-
-    .title{
-        font-size:24px;
-    }
+.layout{display:block}
+.sidebar{width:100%;min-height:auto;position:static;display:flex;overflow:auto;border-right:0;border-bottom:1px solid #dce3f2;padding:8px}
+.menu-btn{min-width:max-content;width:auto;margin:0 3px}
+.content{padding:15px}
+.form-grid{grid-template-columns:1fr}
+.full{grid-column:auto}
+.stats{grid-template-columns:1fr 1fr}
+.title{font-size:24px}
 }
-
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     LOGIN
-========================= -->
-
+<!-- LOGIN -->
 <section class="login" id="loginScreen">
-
 <div class="login-box">
-
-<div class="logo">
-RDX
-</div>
-
+<div class="logo">RDX</div>
 <h1>RDX LUDO</h1>
-
-<p>Admin Panel</p>
+<p>Firebase Admin Panel</p>
 
 <div class="field">
-
 <label>Admin Username</label>
-
-<input
-id="username"
-placeholder="Enter username"
-autocomplete="username"
->
-
+<input id="username" placeholder="Enter username">
 </div>
 
 <div class="field">
-
 <label>Password</label>
-
-<input
-id="password"
-type="password"
-placeholder="Enter password"
-autocomplete="current-password"
->
-
+<input id="password" type="password" placeholder="Enter password">
 </div>
 
-<button
-class="primary"
-id="loginButton"
-onclick="login()"
->
-Login
-</button>
-
-<div
-class="error"
-id="loginError"
->
-Wrong username or password
+<button class="primary" onclick="login()">Login</button>
+<div class="error" id="loginError">Wrong username or password</div>
 </div>
-
-</div>
-
 </section>
 
 
-<!-- =========================
-     ADMIN PANEL
-========================= -->
-
-<section
-class="admin"
-id="adminPanel"
->
+<!-- ADMIN -->
+<section class="admin" id="adminPanel">
 
 <header class="topbar">
-
-<div class="brand">
-RDX <span>LUDO</span> — ADMIN
-</div>
-
-<button
-class="logout"
-onclick="logout()"
->
-Logout
-</button>
-
+<div class="brand">RDX <span>LUDO</span> — ADMIN</div>
+<button class="logout" onclick="logout()">Logout</button>
 </header>
-
 
 <div class="layout">
 
-
-<!-- SIDEBAR -->
-
 <aside class="sidebar">
 
-<button
-class="menu-btn active"
-onclick="showPage('dashboard',this)"
->
-📊 Dashboard
-</button>
-
-<button
-class="menu-btn"
-onclick="showPage('deposits',this)"
->
-💳 Deposits
-</button>
-
-<button
-class="menu-btn"
-onclick="showPage('users',this)"
->
-👥 Users
-</button>
-
-<button
-class="menu-btn"
-onclick="showPage('history',this)"
->
-📜 Deposit History
-</button>
-
-<button
-class="menu-btn"
-onclick="showPage('games',this)"
->
-🎮 Game History
-</button>
-
-<button
-class="menu-btn"
-onclick="showPage('settings',this)"
->
-⚙️ Payment Settings
-</button>
+<button class="menu-btn active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+<button class="menu-btn" onclick="showPage('deposits',this)">💳 Deposits</button>
+<button class="menu-btn" onclick="showPage('users',this)">👥 Users</button>
+<button class="menu-btn" onclick="showPage('history',this)">📜 History</button>
+<button class="menu-btn" onclick="showPage('settings',this)">⚙️ Payment Settings</button>
 
 </aside>
 
 
-<!-- CONTENT -->
-
 <main class="content">
 
-
 <!-- DASHBOARD -->
+<section class="page active" id="dashboard">
 
-<section
-class="page active"
-id="dashboard"
->
-
-<div class="title">
-Dashboard
-</div>
+<div class="title">Dashboard</div>
 
 <div class="stats">
 
 <div class="stat">
-
-<small>
-Total Users
-</small>
-
-<h2
-class="blue"
-id="statUsers"
->
-0
-</h2>
-
+<small>Total Users</small>
+<h2 class="blue" id="statUsers">0</h2>
 </div>
-
 
 <div class="stat">
-
-<small>
-Total Coins
-</small>
-
-<h2
-class="green"
-id="statCoins"
->
-0
-</h2>
-
+<small>Total Coins</small>
+<h2 class="green" id="statCoins">0</h2>
 </div>
-
 
 <div class="stat">
-
-<small>
-Pending Deposits
-</small>
-
-<h2
-class="orange"
-id="statPending"
->
-0
-</h2>
-
+<small>Pending Deposits</small>
+<h2 class="orange" id="statPending">0</h2>
 </div>
-
 
 <div class="stat">
-
-<small>
-Total Deposits
-</small>
-
-<h2
-class="red"
-id="statDeposits"
->
-0
-</h2>
-
+<small>Total Deposits</small>
+<h2 class="red" id="statDeposits">0</h2>
 </div>
 
 </div>
-
 
 <div class="card">
-
-<h3>
-Payment System
-</h3>
-
+<h3>Firebase System</h3>
 <div class="notice">
-
-Admin Payment Settings अब Firebase Firestore में save होंगी।
-
-<br><br>
-
-Path:
-
-<strong>
-paymentSettings/config
-</strong>
-
-<br><br>
-
-User Payment Page इसी document से latest UPI, Bank, QR, Coin Rate और Minimum Deposit पढ़ सकता है।
-
+Users → <b>users/{userId}</b><br><br>
+Deposits → <b>deposits/{depositId}</b><br><br>
+Payment Settings → <b>paymentSettings/config</b><br><br>
+Wallet Coins → User document के <b>coins</b> field में।
 </div>
-
 </div>
 
 </section>
 
 
 <!-- DEPOSITS -->
+<section class="page" id="deposits">
 
-<section
-class="page"
-id="deposits"
->
-
-<div class="title">
-Deposit Requests
-</div>
+<div class="title">Deposit Requests</div>
 
 <div class="card">
 
-<input
-class="search"
-id="depositSearch"
-placeholder="Search User ID / UTR / UPI..."
-oninput="renderDeposits()"
->
+<input class="search" id="depositSearch" placeholder="Search User ID / UTR..." oninput="renderDeposits()">
 
 <div class="table-wrap">
-
 <table>
 
 <thead>
-
 <tr>
-
-<th>
-Request ID
-</th>
-
-<th>
-User
-</th>
-
-<th>
-Amount
-</th>
-
-<th>
-UTR
-</th>
-
-<th>
-UPI ID
-</th>
-
-<th>
-Bank A/C
-</th>
-
-<th>
-IFSC
-</th>
-
-<th>
-Status
-</th>
-
-<th>
-Comment
-</th>
-
-<th>
-Action
-</th>
-
+<th>Deposit ID</th>
+<th>User</th>
+<th>Amount</th>
+<th>UTR</th>
+<th>Status</th>
+<th>Date</th>
+<th>Action</th>
 </tr>
-
 </thead>
 
-<tbody
-id="depositsTable"
->
-</tbody>
+<tbody id="depositsTable"></tbody>
 
 </table>
-
 </div>
 
 </div>
-
 </section>
 
 
 <!-- USERS -->
+<section class="page" id="users">
 
-<section
-class="page"
-id="users"
->
-
-<div class="title">
-Users
-</div>
+<div class="title">Users</div>
 
 <div class="card">
 
-<input
-class="search"
-id="userSearch"
-placeholder="Search name / mobile / user ID..."
-oninput="renderUsers()"
->
+<input class="search" id="userSearch" placeholder="Search name / mobile / ID..." oninput="renderUsers()">
 
 <div class="table-wrap">
-
 <table>
 
 <thead>
-
 <tr>
-
-<th>
-User ID
-</th>
-
-<th>
-Name
-</th>
-
-<th>
-Mobile
-</th>
-
-<th>
-Coins
-</th>
-
-<th>
-Status
-</th>
-
-<th>
-Actions
-</th>
-
+<th>User ID</th>
+<th>Name</th>
+<th>Mobile</th>
+<th>Coins</th>
+<th>Status</th>
+<th>Actions</th>
 </tr>
-
 </thead>
 
-<tbody
-id="usersTable"
->
-</tbody>
+<tbody id="usersTable"></tbody>
 
 </table>
-
 </div>
 
 </div>
-
 </section>
 
 
 <!-- HISTORY -->
+<section class="page" id="history">
 
-<section
-class="page"
-id="history"
->
-
-<div class="title">
-Deposit History
-</div>
+<div class="title">Deposit History</div>
 
 <div class="card">
 
 <div class="table-wrap">
-
 <table>
 
 <thead>
-
 <tr>
-
-<th>
-Date
-</th>
-
-<th>
-Request ID
-</th>
-
-<th>
-User
-</th>
-
-<th>
-Amount
-</th>
-
-<th>
-UTR
-</th>
-
-<th>
-Status
-</th>
-
-<th>
-Comment
-</th>
-
+<th>Date</th>
+<th>Deposit ID</th>
+<th>User</th>
+<th>Amount</th>
+<th>UTR</th>
+<th>Status</th>
+<th>Comment</th>
 </tr>
-
 </thead>
 
-<tbody
-id="historyTable"
->
-</tbody>
+<tbody id="historyTable"></tbody>
 
 </table>
-
 </div>
 
 </div>
-
 </section>
 
 
-<!-- GAMES -->
+<!-- SETTINGS -->
+<section class="page" id="settings">
 
-<section
-class="page"
-id="games"
->
+<div class="title">Payment Settings</div>
 
-<div class="title">
-Game History
-</div>
-
-<div class="card">
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>
-Date
-</th>
-
-<th>
-User
-</th>
-
-<th>
-Match
-</th>
-
-<th>
-Result
-</th>
-
-<th>
-Coins
-</th>
-
-</tr>
-
-</thead>
-
-<tbody
-id="gamesTable"
->
-</tbody>
-
-</table>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- PAYMENT SETTINGS -->
-
-<section
-class="page"
-id="settings"
->
-
-<div class="title">
-Payment Settings
-</div>
-
-
-<div
-id="firebaseStatus"
-class="firebase-status firebase-error"
->
+<div id="firebaseStatus" class="status ok">
 Firebase connecting...
 </div>
 
-
 <div class="card">
 
-<h3>
-UPI Payment Details
-</h3>
-
+<h3>Payment Details</h3>
 
 <div class="notice">
-
-यह data Firebase Firestore में save होगा:
-
-<br><br>
-
-<strong>
-paymentSettings → config
-</strong>
-
+Firebase path: <b>paymentSettings/config</b>
 </div>
-
 
 <div class="form-grid">
 
-
 <div class="field">
-
-<label>
-UPI ID
-</label>
-
-<input
-id="upiId"
-placeholder="example@upi"
->
-
+<label>UPI ID</label>
+<input id="upiId" placeholder="example@upi">
 </div>
 
-
 <div class="field">
-
-<label>
-Account Holder Name
-</label>
-
-<input
-id="accountName"
-placeholder="Account Holder Name"
->
-
+<label>Account Holder Name</label>
+<input id="accountName" placeholder="Account Holder Name">
 </div>
 
-
 <div class="field">
-
-<label>
-Bank Account Number
-</label>
-
-<input
-id="accountNumber"
-placeholder="Bank Account Number"
->
-
+<label>Bank Account Number</label>
+<input id="accountNumber" placeholder="Bank Account Number">
 </div>
 
-
 <div class="field">
-
-<label>
-IFSC Code
-</label>
-
-<input
-id="ifsc"
-placeholder="IFSC Code"
->
-
+<label>IFSC</label>
+<input id="ifsc" placeholder="IFSC Code">
 </div>
-
 
 <div class="field full">
-
-<label>
-QR Code Image URL
-</label>
-
-<input
-id="qrUrl"
-placeholder="Paste QR image URL"
->
-
+<label>QR Code Image URL</label>
+<input id="qrUrl" placeholder="Paste QR image URL">
 </div>
-
 
 <div class="field">
-
-<label>
-Coin Rate
-</label>
-
-<input
-id="coinRate"
-type="number"
-min="1"
-value="1"
->
-
+<label>Coin Rate</label>
+<input id="coinRate" type="number" min="1" value="1">
 </div>
-
 
 <div class="field">
-
-<label>
-Minimum Deposit
-</label>
-
-<input
-id="minDeposit"
-type="number"
-min="1"
-value="100"
->
-
+<label>Minimum Deposit</label>
+<input id="minDeposit" type="number" min="1" value="100">
 </div>
-
 
 <div class="full">
-
-<button
-class="save"
-id="savePaymentButton"
-onclick="savePaymentSettings()"
->
-
+<button class="save" id="saveButton" onclick="savePaymentSettings()">
 Save Payment Settings
-
 </button>
-
 </div>
 
 </div>
-
 </div>
-
-
-<!-- CURRENT SETTINGS -->
 
 <div class="card">
 
-<h3>
-Current Firebase Payment Settings
-</h3>
+<h3>Current Settings</h3>
 
+<img id="qrPreview" class="preview" alt="QR">
 
-<img
-id="qrPreview"
-class="qr-preview"
-src=""
-alt="QR Code"
->
-
-
-<div>
-<strong>
-UPI:
-</strong>
-
-<span id="previewUPI">
-—
-</span>
-</div>
-
-
-<div>
-<strong>
-Account Holder:
-</strong>
-
-<span id="previewAccountName">
-—
-</span>
-</div>
-
-
-<div>
-<strong>
-Account Number:
-</strong>
-
-<span id="previewAccount">
-—
-</span>
-</div>
-
-
-<div>
-<strong>
-IFSC:
-</strong>
-
-<span id="previewIFSC">
-—
-</span>
-</div>
-
-
-<div>
-<strong>
-Coin Rate:
-</strong>
-
-<span id="previewCoinRate">
-—
-</span>
-</div>
-
-
-<div>
-<strong>
-Minimum Deposit:
-</strong>
-
-<span id="previewMinimumDeposit">
-—
-</span>
-</div>
+<p><b>UPI:</b> <span id="pUpi">—</span></p>
+<p><b>Account Holder:</b> <span id="pName">—</span></p>
+<p><b>Account Number:</b> <span id="pAccount">—</span></p>
+<p><b>IFSC:</b> <span id="pIfsc">—</span></p>
+<p><b>Coin Rate:</b> <span id="pRate">—</span></p>
+<p><b>Minimum Deposit:</b> ₹<span id="pMin">—</span></p>
 
 </div>
-
 </section>
-
 
 </main>
-
 </div>
-
 </section>
 
-
-<!-- =========================
-     FIREBASE + JAVASCRIPT
-========================= -->
 
 <script type="module">
 
-/* =========================
-   FIREBASE IMPORT
-========================= */
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 import {
-    initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
-import {
-    getFirestore,
-    doc,
-    getDoc,
-    setDoc
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+getFirestore,
+collection,
+doc,
+getDoc,
+getDocs,
+setDoc,
+updateDoc,
+deleteDoc,
+query,
+orderBy,
+serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 /* =========================
-   YOUR FIREBASE CONFIG
+   FIREBASE CONFIG
 ========================= */
 
 const firebaseConfig = {
-
-    apiKey:
-    "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-
-    authDomain:
-    "rdx-ludo.firebaseapp.com",
-
-    projectId:
-    "rdx-ludo",
-
-    storageBucket:
-    "rdx-ludo.firebasestorage.app",
-
-    messagingSenderId:
-    "928340814840",
-
-    appId:
-    "1:928340814840:web:6eca42a8b76138b268440d"
+apiKey:"AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+authDomain:"rdx-ludo.firebaseapp.com",
+projectId:"rdx-ludo",
+storageBucket:"rdx-ludo.firebasestorage.app",
+messagingSenderId:"928340814840",
+appId:"1:928340814840:web:6eca42a8b76138b268440d"
 };
 
 
-/* =========================
-   INITIALIZE FIREBASE
-========================= */
-
-const app =
-initializeApp(firebaseConfig);
-
-const db =
-getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 
 /* =========================
-   FIRESTORE PATH
+   COLLECTIONS
 ========================= */
 
-const paymentSettingsRef =
-doc(
-    db,
-    "paymentSettings",
-    "config"
-);
+const usersRef = collection(db,"users");
+const depositsRef = collection(db,"deposits");
+const paymentSettingsRef = doc(db,"paymentSettings","config");
 
 
-/* =========================
-   LOCAL DATABASE KEYS
-========================= */
-
-const DB = {
-
-    users:"rdx_users",
-
-    deposits:"rdx_deposits",
-
-    history:"rdx_deposit_history",
-
-    games:"rdx_games"
-
+let usersCache = [];
+let depositsCache = [];
+let historyCache = [];
+let paymentSettings = {
+coinRate:1,
+minimumDeposit:100
 };
-
-
-/* =========================
-   LOCAL STORAGE
-========================= */
-
-function get(key){
-
-    try{
-
-        return JSON.parse(
-            localStorage.getItem(key) || "[]"
-        );
-
-    }catch{
-
-        return [];
-
-    }
-
-}
-
-
-function set(key,data){
-
-    localStorage.setItem(
-        key,
-        JSON.stringify(data)
-    );
-
-}
-
-
-/* =========================
-   FIREBASE STATUS
-========================= */
-
-function setFirebaseStatus(
-    message,
-    success
-){
-
-    const box =
-    document.getElementById(
-        "firebaseStatus"
-    );
-
-    if(!box) return;
-
-    box.innerText =
-    message;
-
-    box.className =
-    success
-    ?
-    "firebase-status firebase-ok"
-    :
-    "firebase-status firebase-error";
-
-}
 
 
 /* =========================
    LOGIN
 ========================= */
 
-window.login =
-function(){
+window.login = function(){
 
-    const u =
-    document.getElementById(
-        "username"
-    ).value.trim();
+const username =
+document.getElementById("username").value.trim();
 
-    const p =
-    document.getElementById(
-        "password"
-    ).value;
+const password =
+document.getElementById("password").value;
 
+if(username==="admin" && password==="admin123"){
 
-    /*
-      Current demo admin login.
-      Production में Firebase Authentication
-      इस्तेमाल करना बेहतर रहेगा.
-    */
+sessionStorage.setItem("rdx_admin","1");
 
-    if(
-        u === "admin" &&
-        p === "admin123"
-    ){
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("adminPanel").style.display="block";
 
-        sessionStorage.setItem(
-            "rdx_admin",
-            "1"
-        );
+loadAll();
 
-        document.getElementById(
-            "loginScreen"
-        ).style.display =
-        "none";
+}else{
 
-        document.getElementById(
-            "adminPanel"
-        ).style.display =
-        "block";
+document.getElementById("loginError").style.display="block";
 
-        loadAll();
-
-    }else{
-
-        document.getElementById(
-            "loginError"
-        ).style.display =
-        "block";
-
-    }
+}
 
 };
 
 
-/* =========================
-   LOGOUT
-========================= */
+window.logout=function(){
 
-window.logout =
-function(){
-
-    sessionStorage.removeItem(
-        "rdx_admin"
-    );
-
-    location.reload();
+sessionStorage.removeItem("rdx_admin");
+location.reload();
 
 };
 
@@ -1539,51 +455,292 @@ function(){
    NAVIGATION
 ========================= */
 
-window.showPage =
-function(id,btn){
+window.showPage=function(id,btn){
 
-    document
-    .querySelectorAll(".page")
-    .forEach(
-        x =>
-        x.classList.remove(
-            "active"
-        )
-    );
+document.querySelectorAll(".page")
+.forEach(x=>x.classList.remove("active"));
 
+document.getElementById(id)
+.classList.add("active");
 
-    const page =
-    document.getElementById(id);
+document.querySelectorAll(".menu-btn")
+.forEach(x=>x.classList.remove("active"));
 
-    if(page){
+btn.classList.add("active");
 
-        page.classList.add(
-            "active"
-        );
+loadAll();
 
-    }
+};
 
 
-    document
-    .querySelectorAll(".menu-btn")
-    .forEach(
-        x =>
-        x.classList.remove(
-            "active"
-        )
-    );
+/* =========================
+   STATUS
+========================= */
+
+function firebaseStatus(text,ok=true){
+
+const box=document.getElementById("firebaseStatus");
+
+if(!box)return;
+
+box.textContent=text;
+
+box.className=ok
+?"status ok"
+:"status bad";
+
+}
 
 
-    if(btn){
+/* =========================
+   LOAD USERS
+========================= */
 
-        btn.classList.add(
-            "active"
-        );
+async function loadUsers(){
 
-    }
+try{
+
+const snap=await getDocs(usersRef);
+
+usersCache=[];
+
+snap.forEach(d=>{
+
+usersCache.push({
+id:d.id,
+...d.data()
+});
+
+});
+
+renderUsers();
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
 
 
-    loadAll();
+/* =========================
+   LOAD DEPOSITS
+========================= */
+
+async function loadDeposits(){
+
+try{
+
+const snap=await getDocs(depositsRef);
+
+depositsCache=[];
+
+snap.forEach(d=>{
+
+depositsCache.push({
+id:d.id,
+...d.data()
+});
+
+});
+
+depositsCache.sort((a,b)=>{
+
+const aa=a.createdAt?.seconds||0;
+const bb=b.createdAt?.seconds||0;
+
+return bb-aa;
+
+});
+
+renderDeposits();
+
+renderHistory();
+
+}catch(error){
+
+console.error(error);
+
+}
+
+}
+
+
+/* =========================
+   LOAD PAYMENT SETTINGS
+========================= */
+
+async function loadPaymentSettings(){
+
+try{
+
+const snap=await getDoc(paymentSettingsRef);
+
+if(!snap.exists()){
+
+firebaseStatus(
+"Firebase connected — paymentSettings/config खाली है.",
+true
+);
+
+return;
+
+}
+
+const s=snap.data();
+
+paymentSettings={
+
+upiId:s.upiId||"",
+accountHolderName:s.accountHolderName||"",
+accountNumber:s.accountNumber||"",
+ifsc:s.ifsc||"",
+qrCodeUrl:s.qrCodeUrl||"",
+coinRate:Number(s.coinRate??1),
+minimumDeposit:Number(s.minimumDeposit??100)
+
+};
+
+
+document.getElementById("upiId").value=
+paymentSettings.upiId;
+
+document.getElementById("accountName").value=
+paymentSettings.accountHolderName;
+
+document.getElementById("accountNumber").value=
+paymentSettings.accountNumber;
+
+document.getElementById("ifsc").value=
+paymentSettings.ifsc;
+
+document.getElementById("qrUrl").value=
+paymentSettings.qrCodeUrl;
+
+document.getElementById("coinRate").value=
+paymentSettings.coinRate;
+
+document.getElementById("minDeposit").value=
+paymentSettings.minimumDeposit;
+
+
+document.getElementById("pUpi").textContent=
+paymentSettings.upiId||"—";
+
+document.getElementById("pName").textContent=
+paymentSettings.accountHolderName||"—";
+
+document.getElementById("pAccount").textContent=
+paymentSettings.accountNumber||"—";
+
+document.getElementById("pIfsc").textContent=
+paymentSettings.ifsc||"—";
+
+document.getElementById("pRate").textContent=
+paymentSettings.coinRate;
+
+document.getElementById("pMin").textContent=
+paymentSettings.minimumDeposit;
+
+
+const qr=document.getElementById("qrPreview");
+
+if(paymentSettings.qrCodeUrl){
+
+qr.src=paymentSettings.qrCodeUrl;
+
+}else{
+
+qr.removeAttribute("src");
+
+}
+
+
+firebaseStatus(
+"✅ Firebase connected — latest settings loaded.",
+true
+);
+
+}catch(error){
+
+console.error(error);
+
+firebaseStatus(
+"❌ Firebase error: "+error.message,
+false
+);
+
+}
+
+}
+
+
+/* =========================
+   SAVE PAYMENT SETTINGS
+========================= */
+
+window.savePaymentSettings=async function(){
+
+const button=document.getElementById("saveButton");
+
+button.disabled=true;
+button.textContent="Saving...";
+
+try{
+
+const data={
+
+upiId:
+document.getElementById("upiId").value.trim(),
+
+accountHolderName:
+document.getElementById("accountName").value.trim(),
+
+accountNumber:
+document.getElementById("accountNumber").value.trim(),
+
+ifsc:
+document.getElementById("ifsc").value.trim(),
+
+qrCodeUrl:
+document.getElementById("qrUrl").value.trim(),
+
+coinRate:
+Number(document.getElementById("coinRate").value)||1,
+
+minimumDeposit:
+Number(document.getElementById("minDeposit").value)||100,
+
+updatedAt:serverTimestamp()
+
+};
+
+
+await setDoc(
+paymentSettingsRef,
+data,
+{merge:true}
+);
+
+alert("Payment Settings Firebase में save हो गईं.");
+
+await loadPaymentSettings();
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Firebase save error:\n"+error.message
+);
+
+}finally{
+
+button.disabled=false;
+button.textContent="Save Payment Settings";
+
+}
 
 };
 
@@ -1594,840 +751,123 @@ function(id,btn){
 
 function updateDashboard(){
 
-    const users =
-    get(DB.users);
+let totalCoins=0;
 
-    const deposits =
-    get(DB.deposits);
+usersCache.forEach(u=>{
 
+totalCoins+=Number(u.coins||0);
 
-    const pending =
-    deposits.filter(
-        x =>
-        x.status === "pending"
-    );
+});
 
+const pending=depositsCache.filter(
+d=>String(d.status).toLowerCase()==="pending"
+);
 
-    const coins =
-    users.reduce(
-        (sum,u) =>
-        sum +
-        Number(
-            u.coins || 0
-        ),
-        0
-    );
+document.getElementById("statUsers").textContent=
+usersCache.length;
 
+document.getElementById("statCoins").textContent=
+totalCoins;
 
-    document.getElementById(
-        "statUsers"
-    ).innerText =
-    users.length;
+document.getElementById("statPending").textContent=
+pending.length;
 
-
-    document.getElementById(
-        "statCoins"
-    ).innerText =
-    coins;
-
-
-    document.getElementById(
-        "statPending"
-    ).innerText =
-    pending.length;
-
-
-    document.getElementById(
-        "statDeposits"
-    ).innerText =
-    deposits.length;
+document.getElementById("statDeposits").textContent=
+depositsCache.length;
 
 }
 
 
 /* =========================
-   DEPOSITS
+   RENDER USERS
 ========================= */
 
-window.renderDeposits =
-function(){
+window.renderUsers=function(){
 
-    let deposits =
-    get(DB.deposits);
+const q=
+(document.getElementById("userSearch")?.value||"")
+.toLowerCase();
 
+const users=usersCache.filter(u=>
 
-    const q =
-    (
-        document.getElementById(
-            "depositSearch"
-        )?.value || ""
-    ).toLowerCase();
+String(u.id||"").toLowerCase().includes(q) ||
 
+String(u.name||"").toLowerCase().includes(q) ||
 
-    deposits =
-    deposits.filter(d =>
+String(u.mobile||"").toLowerCase().includes(q)
 
-        String(d.userId || "")
-        .toLowerCase()
-        .includes(q)
+);
 
-        ||
 
-        String(d.utr || "")
-        .toLowerCase()
-        .includes(q)
+let html="";
 
-        ||
+if(!users.length){
 
-        String(d.upiId || "")
-        .toLowerCase()
-        .includes(q)
+html=`
+<tr>
+<td colspan="6" class="empty">
+No users found
+</td>
+</tr>
+`;
 
-    );
+}else{
 
+users.forEach(u=>{
 
-    let html = "";
+html+=`
 
+<tr>
 
-    if(!deposits.length){
+<td>${esc(u.id)}</td>
 
-        html = `
-        <tr>
-            <td colspan="10"
-            class="empty">
-                No deposit requests
-            </td>
-        </tr>
-        `;
+<td>${esc(u.name||"—")}</td>
 
-    }else{
+<td>${esc(u.mobile||"—")}</td>
 
-        deposits.forEach(d => {
+<td>
+<strong class="blue">
+${Number(u.coins||0)}
+</strong>
+</td>
 
-            let cls =
-            d.status === "approved"
-            ? "approved"
-            :
-            d.status === "rejected"
-            ? "rejected"
-            :
-            d.status === "failed"
-            ? "failed"
-            :
-            "pending";
+<td>
+<span class="badge approved">
+${esc(u.status||"Active")}
+</span>
+</td>
 
+<td>
 
-            html += `
+<button
+class="action add"
+onclick="addCoins('${escAttr(u.id)}')">
++ Coin
+</button>
 
-            <tr>
+<button
+class="action deduct"
+onclick="deductCoins('${escAttr(u.id)}')">
+- Coin
+</button>
 
-            <td>
-            ${escapeHTML(d.id)}
-            </td>
+<button
+class="action delete"
+onclick="deleteUser('${escAttr(u.id)}')">
+Delete
+</button>
 
-            <td>
-            <strong>
-            ${escapeHTML(
-                d.userName || d.userId
-            )}
-            </strong>
+</td>
 
-            <br>
+</tr>
 
-            <small>
-            ${escapeHTML(d.userId)}
-            </small>
+`;
 
-            </td>
-
-            <td>
-            <strong class="blue">
-            ₹${Number(d.amount || 0)}
-            </strong>
-            </td>
-
-            <td>
-            ${escapeHTML(d.utr || "—")}
-            </td>
-
-            <td>
-            ${escapeHTML(d.upiId || "—")}
-            </td>
-
-            <td>
-            ${escapeHTML(
-                d.accountNumber || "—"
-            )}
-            </td>
-
-            <td>
-            ${escapeHTML(
-                d.ifsc || "—"
-            )}
-            </td>
-
-            <td>
-            <span class="badge ${cls}">
-            ${escapeHTML(d.status)}
-            </span>
-            </td>
-
-            <td class="comment">
-            ${escapeHTML(
-                d.comment || "—"
-            )}
-            </td>
-
-            <td>
-
-            ${
-                d.status === "pending"
-                ?
-
-                `
-
-                <button
-                class="action approve"
-                onclick="approveDeposit('${escapeHTML(d.id)}')"
-                >
-                Approve
-                </button>
-
-                <button
-                class="action reject"
-                onclick="rejectDeposit('${escapeHTML(d.id)}')"
-                >
-                Reject
-                </button>
-
-                <button
-                class="action fail"
-                onclick="failDeposit('${escapeHTML(d.id)}')"
-                >
-                Failed
-                </button>
-
-                `
-
-                :
-
-                "—"
-            }
-
-            </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    }
-
-
-    document.getElementById(
-        "depositsTable"
-    ).innerHTML =
-    html;
-
-};
-
-
-/* =========================
-   APPROVE DEPOSIT
-========================= */
-
-window.approveDeposit =
-function(id){
-
-    let deposits =
-    get(DB.deposits);
-
-
-    let d =
-    deposits.find(
-        x => x.id === id
-    );
-
-
-    if(
-        !d ||
-        d.status !== "pending"
-    ){
-
-        return;
-
-    }
-
-
-    const comment =
-    prompt(
-        "Approval comment:",
-        "Payment verified"
-    );
-
-
-    if(comment === null){
-
-        return;
-
-    }
-
-
-    let users =
-    get(DB.users);
-
-
-    let user =
-    users.find(
-        u =>
-        u.id === d.userId
-    );
-
-
-    if(!user){
-
-        alert(
-            "User not found."
-        );
-
-        return;
-
-    }
-
-
-    const settings =
-    awaitPaymentSettings();
-
-
-    /*
-      Coin calculation:
-      Amount × Coin Rate
-    */
-
-    const coins =
-    Number(d.amount || 0)
-    *
-    Number(
-        settings.coinRate || 1
-    );
-
-
-    user.coins =
-    Number(user.coins || 0)
-    +
-    coins;
-
-
-    d.status =
-    "approved";
-
-
-    d.comment =
-    comment;
-
-
-    d.approvedAt =
-    new Date()
-    .toLocaleString(
-        "en-IN"
-    );
-
-
-    set(
-        DB.users,
-        users
-    );
-
-
-    set(
-        DB.deposits,
-        deposits
-    );
-
-
-    addHistory(d);
-
-
-    alert(
-        "Deposit approved.\n" +
-        coins +
-        " coins user wallet me add ho gaye."
-    );
-
-
-    loadAll();
-
-};
-
-
-/*
-   Synchronous fallback for coin rate.
-   Latest Firebase setting approval से पहले
-   loadPaymentSettings() द्वारा page में आ जाती है.
-*/
-
-let cachedPaymentSettings = {
-
-    coinRate:1,
-
-    minimumDeposit:100
-
-};
-
-
-function awaitPaymentSettings(){
-
-    return cachedPaymentSettings;
+});
 
 }
 
-
-/* =========================
-   REJECT
-========================= */
-
-window.rejectDeposit =
-function(id){
-
-    let deposits =
-    get(DB.deposits);
-
-
-    let d =
-    deposits.find(
-        x => x.id === id
-    );
-
-
-    if(
-        !d ||
-        d.status !== "pending"
-    ){
-
-        return;
-
-    }
-
-
-    const comment =
-    prompt(
-        "Reject reason/comment:"
-    );
-
-
-    if(
-        !comment ||
-        !comment.trim()
-    ){
-
-        alert(
-            "Reject karne ke liye reason zaroori hai."
-        );
-
-        return;
-
-    }
-
-
-    d.status =
-    "rejected";
-
-
-    d.comment =
-    comment.trim();
-
-
-    d.rejectedAt =
-    new Date()
-    .toLocaleString(
-        "en-IN"
-    );
-
-
-    set(
-        DB.deposits,
-        deposits
-    );
-
-
-    addHistory(d);
-
-
-    loadAll();
-
-};
-
-
-/* =========================
-   FAILED
-========================= */
-
-window.failDeposit =
-function(id){
-
-    let deposits =
-    get(DB.deposits);
-
-
-    let d =
-    deposits.find(
-        x => x.id === id
-    );
-
-
-    if(
-        !d ||
-        d.status !== "pending"
-    ){
-
-        return;
-
-    }
-
-
-    const comment =
-    prompt(
-        "Failed payment reason:"
-    );
-
-
-    if(
-        !comment ||
-        !comment.trim()
-    ){
-
-        alert(
-            "Failed status ke liye reason zaroori hai."
-        );
-
-        return;
-
-    }
-
-
-    d.status =
-    "failed";
-
-
-    d.comment =
-    comment.trim();
-
-
-    d.failedAt =
-    new Date()
-    .toLocaleString(
-        "en-IN"
-    );
-
-
-    set(
-        DB.deposits,
-        deposits
-    );
-
-
-    addHistory(d);
-
-
-    loadAll();
-
-};
-
-
-/* =========================
-   HISTORY
-========================= */
-
-function addHistory(d){
-
-    let history =
-    get(DB.history);
-
-
-    history.unshift({
-
-        date:
-        new Date()
-        .toLocaleString(
-            "en-IN"
-        ),
-
-        requestId:
-        d.id,
-
-        userId:
-        d.userId,
-
-        userName:
-        d.userName,
-
-        amount:
-        d.amount,
-
-        utr:
-        d.utr,
-
-        status:
-        d.status,
-
-        comment:
-        d.comment || ""
-
-    });
-
-
-    set(
-        DB.history,
-        history
-    );
-
-}
-
-
-function renderHistory(){
-
-    let history =
-    get(DB.history);
-
-
-    let html = "";
-
-
-    if(!history.length){
-
-        html = `
-
-        <tr>
-
-        <td
-        colspan="7"
-        class="empty"
-        >
-        No deposit history
-        </td>
-
-        </tr>
-
-        `;
-
-    }else{
-
-        history.forEach(h => {
-
-            let cls =
-            h.status === "approved"
-            ? "approved"
-            :
-            h.status === "rejected"
-            ? "rejected"
-            :
-            h.status === "failed"
-            ? "failed"
-            :
-            "pending";
-
-
-            html += `
-
-            <tr>
-
-            <td>
-            ${escapeHTML(h.date)}
-            </td>
-
-            <td>
-            ${escapeHTML(h.requestId)}
-            </td>
-
-            <td>
-            ${escapeHTML(
-                h.userName ||
-                h.userId
-            )}
-            </td>
-
-            <td>
-            ₹${Number(h.amount || 0)}
-            </td>
-
-            <td>
-            ${escapeHTML(
-                h.utr || "—"
-            )}
-            </td>
-
-            <td>
-
-            <span
-            class="badge ${cls}"
-            >
-            ${escapeHTML(h.status)}
-            </span>
-
-            </td>
-
-            <td class="comment">
-            ${escapeHTML(
-                h.comment || "—"
-            )}
-            </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    }
-
-
-    document.getElementById(
-        "historyTable"
-    ).innerHTML =
-    html;
-
-}
-
-
-/* =========================
-   USERS
-========================= */
-
-window.renderUsers =
-function(){
-
-    let users =
-    get(DB.users);
-
-
-    const q =
-    (
-        document.getElementById(
-            "userSearch"
-        )?.value || ""
-    ).toLowerCase();
-
-
-    users =
-    users.filter(u =>
-
-        String(u.id || "")
-        .toLowerCase()
-        .includes(q)
-
-        ||
-
-        String(u.name || "")
-        .toLowerCase()
-        .includes(q)
-
-        ||
-
-        String(u.mobile || "")
-        .includes(q)
-
-    );
-
-
-    let html = "";
-
-
-    if(!users.length){
-
-        html = `
-
-        <tr>
-
-        <td
-        colspan="6"
-        class="empty"
-        >
-        No users found
-        </td>
-
-        </tr>
-
-        `;
-
-    }else{
-
-        users.forEach(u => {
-
-            html += `
-
-            <tr>
-
-            <td>
-            ${escapeHTML(u.id)}
-            </td>
-
-            <td>
-            ${escapeHTML(u.name)}
-            </td>
-
-            <td>
-            ${escapeHTML(u.mobile)}
-            </td>
-
-            <td>
-
-            <strong class="blue">
-            ${Number(u.coins || 0)}
-            </strong>
-
-            </td>
-
-            <td>
-
-            <span
-            class="badge active"
-            >
-            ${escapeHTML(
-                u.status || "Active"
-            )}
-            </span>
-
-            </td>
-
-            <td>
-
-            <button
-            class="action add"
-            onclick="addCoins('${escapeHTML(u.id)}')"
-            >
-            + Coin
-            </button>
-
-            <button
-            class="action deduct"
-            onclick="deductCoins('${escapeHTML(u.id)}')"
-            >
-            - Coin
-            </button>
-
-            <button
-            class="action delete"
-            onclick="deleteUser('${escapeHTML(u.id)}')"
-            >
-            Delete
-            </button>
-
-            </td>
-
-            </tr>
-
-            `;
-
-        });
-
-    }
-
-
-    document.getElementById(
-        "usersTable"
-    ).innerHTML =
-    html;
+document.getElementById("usersTable").innerHTML=html;
 
 };
 
@@ -2436,57 +876,44 @@ function(){
    ADD COINS
 ========================= */
 
-window.addCoins =
-function(id){
+window.addCoins=async function(id){
 
-    const amount =
-    Number(
-        prompt(
-            "Coins add karein:"
-        )
-    );
+const amount=Number(
+prompt("Kitne coins add karne hain?")
+);
 
+if(!amount||amount<=0)return;
 
-    if(
-        !amount ||
-        amount <= 0
-    ){
+try{
 
-        return;
+const ref=doc(db,"users",id);
+const snap=await getDoc(ref);
 
-    }
+if(!snap.exists()){
 
+alert("User nahi mila.");
+return;
 
-    let users =
-    get(DB.users);
+}
 
+const oldCoins=Number(
+snap.data().coins||0
+);
 
-    let user =
-    users.find(
-        u => u.id === id
-    );
+await updateDoc(ref,{
+coins:oldCoins+amount,
+updatedAt:serverTimestamp()
+});
 
+alert(amount+" coins add ho gaye.");
 
-    if(!user){
+await loadAll();
 
-        return;
+}catch(error){
 
-    }
+alert("Error: "+error.message);
 
-
-    user.coins =
-    Number(user.coins || 0)
-    +
-    amount;
-
-
-    set(
-        DB.users,
-        users
-    );
-
-
-    loadAll();
+}
 
 };
 
@@ -2495,70 +922,51 @@ function(id){
    DEDUCT COINS
 ========================= */
 
-window.deductCoins =
-function(id){
+window.deductCoins=async function(id){
 
-    const amount =
-    Number(
-        prompt(
-            "Coins deduct karein:"
-        )
-    );
+const amount=Number(
+prompt("Kitne coins deduct karne hain?")
+);
 
+if(!amount||amount<=0)return;
 
-    if(
-        !amount ||
-        amount <= 0
-    ){
+try{
 
-        return;
+const ref=doc(db,"users",id);
+const snap=await getDoc(ref);
 
-    }
+if(!snap.exists()){
 
+alert("User nahi mila.");
+return;
 
-    let users =
-    get(DB.users);
+}
 
+const oldCoins=Number(
+snap.data().coins||0
+);
 
-    let user =
-    users.find(
-        u => u.id === id
-    );
+if(oldCoins<amount){
 
+alert("User ke paas enough coins nahi hain.");
+return;
 
-    if(!user){
+}
 
-        return;
+await updateDoc(ref,{
+coins:oldCoins-amount,
+updatedAt:serverTimestamp()
+});
 
-    }
+alert(amount+" coins deduct ho gaye.");
 
+await loadAll();
 
-    if(
-        Number(user.coins || 0)
-        <
-        amount
-    ){
+}catch(error){
 
-        alert(
-            "User ke paas enough coins nahi hain."
-        );
+alert("Error: "+error.message);
 
-        return;
-
-    }
-
-
-    user.coins -=
-    amount;
-
-
-    set(
-        DB.users,
-        users
-    );
-
-
-    loadAll();
+}
 
 };
 
@@ -2567,572 +975,468 @@ function(id){
    DELETE USER
 ========================= */
 
-window.deleteUser =
-function(id){
+window.deleteUser=async function(id){
 
-    if(
-        !confirm(
-            "Is user ko delete karna hai?"
-        )
-    ){
+if(!confirm("User delete karna hai?"))return;
 
-        return;
+try{
 
-    }
+await deleteDoc(
+doc(db,"users",id)
+);
 
+alert("User deleted.");
 
-    let users =
-    get(DB.users)
-    .filter(
-        u => u.id !== id
-    );
+await loadAll();
 
+}catch(error){
 
-    set(
-        DB.users,
-        users
-    );
-
-
-    loadAll();
-
-};
-
-
-/* =================================================
-   FIREBASE PAYMENT SETTINGS
-================================================= */
-
-
-/* =========================
-   LOAD FROM FIREBASE
-========================= */
-
-async function loadPaymentSettings(){
-
-    try{
-
-        setFirebaseStatus(
-            "Firebase से Payment Settings पढ़ रहे हैं...",
-            true
-        );
-
-
-        const snapshot =
-        await getDoc(
-            paymentSettingsRef
-        );
-
-
-        if(!snapshot.exists()){
-
-            setFirebaseStatus(
-                "Firebase connected — paymentSettings/config अभी खाली है.",
-                true
-            );
-
-            return;
-
-        }
-
-
-        const s =
-        snapshot.data();
-
-
-        /*
-          Cache current settings
-        */
-
-        cachedPaymentSettings = {
-
-            upiId:
-            s.upiId || "",
-
-            accountHolderName:
-            s.accountHolderName || "",
-
-            accountNumber:
-            s.accountNumber || "",
-
-            ifsc:
-            s.ifsc || "",
-
-            qrCodeUrl:
-            s.qrCodeUrl || "",
-
-            coinRate:
-            Number(
-                s.coinRate ?? 1
-            ),
-
-            minimumDeposit:
-            Number(
-                s.minimumDeposit ?? 100
-            )
-
-        };
-
-
-        /*
-          Fill form
-        */
-
-        document.getElementById(
-            "upiId"
-        ).value =
-        cachedPaymentSettings.upiId;
-
-
-        document.getElementById(
-            "accountName"
-        ).value =
-        cachedPaymentSettings.accountHolderName;
-
-
-        document.getElementById(
-            "accountNumber"
-        ).value =
-        cachedPaymentSettings.accountNumber;
-
-
-        document.getElementById(
-            "ifsc"
-        ).value =
-        cachedPaymentSettings.ifsc;
-
-
-        document.getElementById(
-            "qrUrl"
-        ).value =
-        cachedPaymentSettings.qrCodeUrl;
-
-
-        document.getElementById(
-            "coinRate"
-        ).value =
-        cachedPaymentSettings.coinRate;
-
-
-        document.getElementById(
-            "minDeposit"
-        ).value =
-        cachedPaymentSettings.minimumDeposit;
-
-
-        updatePaymentPreview(
-            cachedPaymentSettings
-        );
-
-
-        setFirebaseStatus(
-            "✅ Firebase connected — latest Payment Settings loaded.",
-            true
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "Firebase read error:",
-            error
-        );
-
-
-        setFirebaseStatus(
-            "❌ Firebase error: " +
-            error.message,
-            false
-        );
-
-    }
+alert("Delete error: "+error.message);
 
 }
-
-
-/* =========================
-   SAVE TO FIREBASE
-========================= */
-
-window.savePaymentSettings =
-async function(){
-
-    const button =
-    document.getElementById(
-        "savePaymentButton"
-    );
-
-
-    if(button){
-
-        button.disabled =
-        true;
-
-        button.innerText =
-        "Saving...";
-
-    }
-
-
-    try{
-
-        const data = {
-
-            upiId:
-            document.getElementById(
-                "upiId"
-            ).value.trim(),
-
-
-            accountHolderName:
-            document.getElementById(
-                "accountName"
-            ).value.trim(),
-
-
-            accountNumber:
-            document.getElementById(
-                "accountNumber"
-            ).value.trim(),
-
-
-            ifsc:
-            document.getElementById(
-                "ifsc"
-            ).value.trim(),
-
-
-            qrCodeUrl:
-            document.getElementById(
-                "qrUrl"
-            ).value.trim(),
-
-
-            coinRate:
-            Number(
-                document.getElementById(
-                    "coinRate"
-                ).value
-            ) || 1,
-
-
-            minimumDeposit:
-            Number(
-                document.getElementById(
-                    "minDeposit"
-                ).value
-            ) || 100,
-
-
-            updatedAt:
-            new Date().toISOString()
-
-        };
-
-
-        /*
-          IMPORTANT:
-          Firebase path:
-
-          paymentSettings
-              ↓
-          config
-        */
-
-        await setDoc(
-            paymentSettingsRef,
-            data,
-            {
-                merge:true
-            }
-        );
-
-
-        /*
-          Update local cache
-        */
-
-        cachedPaymentSettings =
-        data;
-
-
-        updatePaymentPreview(
-            data
-        );
-
-
-        setFirebaseStatus(
-            "✅ Payment Settings Firebase में successfully save हो गईं.",
-            true
-        );
-
-
-        alert(
-            "✅ Payment Settings Firebase में Save हो गईं."
-        );
-
-
-    }catch(error){
-
-        console.error(
-            "Firebase save error:",
-            error
-        );
-
-
-        setFirebaseStatus(
-            "❌ Firebase save error: " +
-            error.message,
-            false
-        );
-
-
-        alert(
-            "❌ Firebase में Save नहीं हुआ.\n\n" +
-            error.message
-        );
-
-
-    }finally{
-
-        if(button){
-
-            button.disabled =
-            false;
-
-            button.innerText =
-            "Save Payment Settings";
-
-        }
-
-    }
 
 };
 
 
 /* =========================
-   PAYMENT PREVIEW
+   RENDER DEPOSITS
 ========================= */
 
-function updatePaymentPreview(s){
+window.renderDeposits=function(){
 
-    const img =
-    document.getElementById(
-        "qrPreview"
-    );
+const q=
+(document.getElementById("depositSearch")?.value||"")
+.toLowerCase();
 
+const list=depositsCache.filter(d=>
 
-    if(
-        s.qrCodeUrl
-    ){
+String(d.id||"").toLowerCase().includes(q) ||
 
-        img.src =
-        s.qrCodeUrl;
+String(d.userId||"").toLowerCase().includes(q) ||
 
-    }else{
+String(d.utr||"").toLowerCase().includes(q)
 
-        img.removeAttribute(
-            "src"
-        );
-
-    }
+);
 
 
-    document.getElementById(
-        "previewUPI"
-    ).innerText =
-    s.upiId || "—";
+let html="";
+
+if(!list.length){
+
+html=`
+<tr>
+<td colspan="7" class="empty">
+No deposits found
+</td>
+</tr>
+`;
+
+}else{
+
+list.forEach(d=>{
+
+const status=
+String(d.status||"pending").toLowerCase();
+
+const cls=
+status==="approved"
+?"approved"
+:
+status==="rejected"
+?"rejected"
+:"pending";
 
 
-    document.getElementById(
-        "previewAccountName"
-    ).innerText =
-    s.accountHolderName || "—";
+const date=formatDate(d.createdAt);
+
+html+=`
+
+<tr>
+
+<td>${esc(d.id)}</td>
+
+<td>
+${esc(d.userName||d.userId||"—")}
+<br>
+<small>${esc(d.userId||"")}</small>
+</td>
+
+<td>
+<strong class="blue">
+₹${Number(d.amount||0)}
+</strong>
+</td>
+
+<td>${esc(d.utr||"—")}</td>
+
+<td>
+<span class="badge ${cls}">
+${esc(status)}
+</span>
+</td>
+
+<td>${esc(date)}</td>
+
+<td>
+
+${
+status==="pending"
+?
+
+`
+<button
+class="action approve"
+onclick="approveDeposit('${escAttr(d.id)}')">
+Approve
+</button>
+
+<button
+class="action reject"
+onclick="rejectDeposit('${escAttr(d.id)}')">
+Reject
+</button>
+`
+
+:"—"
+}
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("depositsTable").innerHTML=html;
+
+};
 
 
-    document.getElementById(
-        "previewAccount"
-    ).innerText =
-    s.accountNumber || "—";
+/* =========================
+   APPROVE DEPOSIT
+========================= */
+
+window.approveDeposit=async function(id){
+
+const depositRef=doc(db,"deposits",id);
+
+try{
+
+const depositSnap=await getDoc(depositRef);
+
+if(!depositSnap.exists()){
+
+alert("Deposit नहीं मिला.");
+return;
+
+}
+
+const d=depositSnap.data();
+
+if(String(d.status||"pending")!=="pending"){
+
+alert("यह deposit already processed है.");
+return;
+
+}
 
 
-    document.getElementById(
-        "previewIFSC"
-    ).innerText =
-    s.ifsc || "—";
+const userId=d.userId;
+
+if(!userId){
+
+alert("Deposit में userId नहीं है.");
+return;
+
+}
 
 
-    document.getElementById(
-        "previewCoinRate"
-    ).innerText =
-    s.coinRate ?? "—";
+const userRef=doc(db,"users",userId);
+
+const userSnap=await getDoc(userRef);
+
+if(!userSnap.exists()){
+
+alert("User Firebase में नहीं मिला.");
+return;
+
+}
 
 
-    document.getElementById(
-        "previewMinimumDeposit"
-    ).innerText =
-    s.minimumDeposit ?? "—";
+const comment=prompt(
+"Approval comment:",
+"Payment verified"
+);
+
+if(comment===null)return;
+
+
+const amount=Number(d.amount||0);
+
+const rate=Number(
+paymentSettings.coinRate||1
+);
+
+const coins=amount*rate;
+
+const oldCoins=Number(
+userSnap.data().coins||0
+);
+
+
+await updateDoc(userRef,{
+
+coins:oldCoins+coins,
+updatedAt:serverTimestamp()
+
+});
+
+
+await updateDoc(depositRef,{
+
+status:"approved",
+comment:comment.trim(),
+approvedAt:serverTimestamp(),
+coinsAdded:coins
+
+});
+
+
+alert(
+"Deposit approved.\n\n"+
+coins+
+" coins user wallet में add हो गए."
+);
+
+await loadAll();
+
+}catch(error){
+
+console.error(error);
+
+alert(
+"Approve error:\n"+
+error.message
+);
+
+}
+
+};
+
+
+/* =========================
+   REJECT DEPOSIT
+========================= */
+
+window.rejectDeposit=async function(id){
+
+const comment=prompt(
+"Reject reason:"
+);
+
+if(!comment||!comment.trim()){
+
+alert("Reject reason जरूरी है.");
+return;
+
+}
+
+try{
+
+const ref=doc(db,"deposits",id);
+
+const snap=await getDoc(ref);
+
+if(!snap.exists()){
+
+alert("Deposit नहीं मिला.");
+return;
+
+}
+
+if(String(snap.data().status||"pending")!=="pending"){
+
+alert("यह deposit already processed है.");
+return;
+
+}
+
+await updateDoc(ref,{
+
+status:"rejected",
+comment:comment.trim(),
+rejectedAt:serverTimestamp()
+
+});
+
+
+alert("Deposit rejected.");
+
+await loadAll();
+
+}catch(error){
+
+alert("Reject error: "+error.message);
+
+}
+
+};
+
+
+/* =========================
+   HISTORY
+========================= */
+
+function renderHistory(){
+
+const list=[...depositsCache]
+.sort((a,b)=>
+(b.createdAt?.seconds||0)-
+(a.createdAt?.seconds||0)
+);
+
+let html="";
+
+if(!list.length){
+
+html=`
+<tr>
+<td colspan="7" class="empty">
+No deposit history
+</td>
+</tr>
+`;
+
+}else{
+
+list.forEach(d=>{
+
+const status=
+String(d.status||"pending").toLowerCase();
+
+const cls=
+status==="approved"
+?"approved"
+:
+status==="rejected"
+?"rejected"
+:"pending";
+
+
+html+=`
+
+<tr>
+
+<td>${esc(formatDate(d.createdAt))}</td>
+
+<td>${esc(d.id)}</td>
+
+<td>${esc(d.userName||d.userId||"—")}</td>
+
+<td>₹${Number(d.amount||0)}</td>
+
+<td>${esc(d.utr||"—")}</td>
+
+<td>
+<span class="badge ${cls}">
+${esc(status)}
+</span>
+</td>
+
+<td>${esc(d.comment||"—")}</td>
+
+</tr>
+
+`;
+
+});
+
+}
+
+document.getElementById("historyTable").innerHTML=html;
 
 }
 
 
 /* =========================
-   GAME HISTORY
-========================= */
-
-function renderGames(){
-
-    let games =
-    get(DB.games);
-
-
-    let html = "";
-
-
-    games.forEach(g => {
-
-        let cls =
-        g.result === "WIN"
-        ? "approved"
-        :
-        g.result === "LOSS"
-        ? "rejected"
-        :
-        "pending";
-
-
-        html += `
-
-        <tr>
-
-        <td>
-        ${escapeHTML(g.date)}
-        </td>
-
-        <td>
-        ${escapeHTML(g.user)}
-        </td>
-
-        <td>
-        ${escapeHTML(g.match)}
-        </td>
-
-        <td>
-
-        <span
-        class="badge ${cls}"
-        >
-        ${escapeHTML(g.result)}
-        </span>
-
-        </td>
-
-        <td>
-        ${Number(g.coins || 0)}
-        </td>
-
-        </tr>
-
-        `;
-
-    });
-
-
-    if(!html){
-
-        html = `
-
-        <tr>
-
-        <td
-        colspan="5"
-        class="empty"
-        >
-        No game history
-        </td>
-
-        </tr>
-
-        `;
-
-    }
-
-
-    document.getElementById(
-        "gamesTable"
-    ).innerHTML =
-    html;
-
-}
-
-
-/* =========================
-   HTML SECURITY
-========================= */
-
-function escapeHTML(value){
-
-    return String(
-        value ?? ""
-    )
-
-    .replace(
-        /&/g,
-        "&amp;"
-    )
-
-    .replace(
-        /</g,
-        "&lt;"
-    )
-
-    .replace(
-        />/g,
-        "&gt;"
-    )
-
-    .replace(
-        /"/g,
-        "&quot;"
-    )
-
-    .replace(
-        /'/g,
-        "&#039;"
-    );
-
-}
-
-
-/* =========================
-   LOAD EVERYTHING
+   LOAD ALL
 ========================= */
 
 async function loadAll(){
 
-    updateDashboard();
+firebaseStatus(
+"Firebase data loading...",
+true
+);
 
-    renderDeposits();
+await Promise.all([
 
-    renderUsers();
+loadUsers(),
+loadDeposits(),
+loadPaymentSettings()
 
-    renderHistory();
+]);
 
-    renderGames();
+updateDashboard();
 
-    await loadPaymentSettings();
+firebaseStatus(
+"✅ Firebase connected.",
+true
+);
 
 }
 
 
 /* =========================
-   FIREBASE START
+   HELPERS
 ========================= */
 
-setFirebaseStatus(
-    "Firebase connected. Loading...",
-    true
-);
+function esc(value){
+
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function escAttr(value){
+
+return String(value??"")
+.replace(/\\/g,"\\\\")
+.replace(/'/g,"\\'");
+
+}
+
+
+function formatDate(value){
+
+if(!value)return "—";
+
+if(value.seconds){
+
+return new Date(
+value.seconds*1000
+).toLocaleString("en-IN");
+
+}
+
+if(typeof value==="string"){
+
+return new Date(value)
+.toLocaleString("en-IN");
+
+}
+
+return "—";
+
+}
 
 
 /* =========================
@@ -3140,24 +1444,13 @@ setFirebaseStatus(
 ========================= */
 
 if(
-    sessionStorage.getItem(
-        "rdx_admin"
-    ) === "1"
+sessionStorage.getItem("rdx_admin")==="1"
 ){
 
-    document.getElementById(
-        "loginScreen"
-    ).style.display =
-    "none";
+document.getElementById("loginScreen").style.display="none";
+document.getElementById("adminPanel").style.display="block";
 
-
-    document.getElementById(
-        "adminPanel"
-    ).style.display =
-    "block";
-
-
-    loadAll();
+loadAll();
 
 }
 
