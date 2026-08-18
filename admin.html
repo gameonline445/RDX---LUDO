@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -94,6 +94,11 @@ button{
     background:#fafcff;
 }
 
+.field input:focus{
+    border-color:#2869ed;
+    box-shadow:0 0 0 3px rgba(40,105,237,.10);
+}
+
 .primary{
     width:100%;
     padding:15px;
@@ -101,6 +106,11 @@ button{
     background:linear-gradient(135deg,#2869ed,#5b4df5);
     color:white;
     font-weight:800;
+}
+
+.primary:disabled{
+    opacity:.6;
+    cursor:not-allowed;
 }
 
 .error{
@@ -254,6 +264,11 @@ button{
     border:1px solid #d3dced;
     border-radius:13px;
     margin-bottom:15px;
+    outline:none;
+}
+
+.search:focus{
+    border-color:#2869ed;
 }
 
 .table-wrap{
@@ -336,6 +351,7 @@ th{
 
 .save:disabled{
     opacity:.6;
+    cursor:not-allowed;
 }
 
 .form-grid{
@@ -468,7 +484,9 @@ th{
 
 <body>
 
-<!-- LOGIN -->
+<!-- =====================================================
+LOGIN
+===================================================== -->
 
 <section class="login" id="loginScreen">
 
@@ -487,6 +505,7 @@ th{
 <input
 id="username"
 type="email"
+value="nm...@gmail.com"
 placeholder="Admin email"
 autocomplete="username"
 >
@@ -526,7 +545,9 @@ Login failed
 </section>
 
 
-<!-- ADMIN -->
+<!-- =====================================================
+ADMIN PANEL
+===================================================== -->
 
 <section class="admin" id="adminPanel">
 
@@ -544,7 +565,6 @@ Logout
 </button>
 
 </header>
-
 
 <div class="layout">
 
@@ -584,7 +604,9 @@ onclick="showPage('settings',this)"
 <main class="content">
 
 
-<!-- DASHBOARD -->
+<!-- =====================================================
+DASHBOARD
+===================================================== -->
 
 <section
 class="page active"
@@ -662,7 +684,9 @@ Pending → Reject
 </section>
 
 
-<!-- DEPOSITS -->
+<!-- =====================================================
+DEPOSITS
+===================================================== -->
 
 <section
 class="page"
@@ -746,7 +770,9 @@ Loading...
 </section>
 
 
-<!-- USERS -->
+<!-- =====================================================
+USERS
+===================================================== -->
 
 <section
 class="page"
@@ -818,7 +844,9 @@ Loading...
 </section>
 
 
-<!-- SETTINGS -->
+<!-- =====================================================
+SETTINGS
+===================================================== -->
 
 <section
 class="page"
@@ -978,32 +1006,36 @@ alt="QR Code"
 
 <script type="module">
 
+/* =====================================================
+FIREBASE IMPORTS
+===================================================== */
+
 import {
-initializeApp
+    initializeApp
 }
 from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
 
 import {
-getFirestore,
-collection,
-doc,
-getDoc,
-getDocs,
-setDoc,
-runTransaction,
-serverTimestamp
+    getFirestore,
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    setDoc,
+    runTransaction,
+    serverTimestamp
 }
 from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
 import {
-getAuth,
-signInWithEmailAndPassword,
-onAuthStateChanged,
-signOut
+    getAuth,
+    signInWithEmailAndPassword,
+    onAuthStateChanged,
+    signOut
 }
 from
 "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
@@ -1015,48 +1047,57 @@ FIREBASE CONFIG
 
 const firebaseConfig = {
 
-apiKey:
-"AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
+    apiKey:
+    "AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
 
-authDomain:
-"rdx-ludo.firebaseapp.com",
+    authDomain:
+    "rdx-ludo.firebaseapp.com",
 
-projectId:
-"rdx-ludo",
+    projectId:
+    "rdx-ludo",
 
-storageBucket:
-"rdx-ludo.firebasestorage.app",
+    storageBucket:
+    "rdx-ludo.firebasestorage.app",
 
-messagingSenderId:
-"928340814840",
+    messagingSenderId:
+    "928340814840",
 
-appId:
-"1:928340814840:web:6eca42a8b76138b268440d"
-
+    appId:
+    "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
+
+/* =====================================================
+INITIALIZE FIREBASE
+===================================================== */
 
 const app =
 initializeApp(firebaseConfig);
 
-
 const db =
 getFirestore(app);
-
 
 const auth =
 getAuth(app);
 
 
 /* =====================================================
-REFERENCES
+ADMIN EMAIL
+===================================================== */
+
+const ADMIN_EMAIL =
+"nm...@gmail.com";
+
+
+/* =====================================================
+PAYMENT SETTINGS REFERENCE
 ===================================================== */
 
 const paymentSettingsRef =
 doc(
-db,
-"paymentSettings",
-"config"
+    db,
+    "paymentSettings",
+    "config"
 );
 
 
@@ -1070,14 +1111,13 @@ let users = [];
 
 let paymentSettings = {
 
-upiId:"",
-accountHolderName:"",
-accountNumber:"",
-ifsc:"",
-qrCodeUrl:"",
-coinRate:1,
-minimumDeposit:100
-
+    upiId:"",
+    accountHolderName:"",
+    accountNumber:"",
+    ifsc:"",
+    qrCodeUrl:"",
+    coinRate:1,
+    minimumDeposit:100
 };
 
 
@@ -1087,13 +1127,13 @@ ESCAPE HTML
 
 function escapeHTML(value){
 
-return String(value ?? "")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+    return String(value ?? "")
 
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 
@@ -1101,25 +1141,27 @@ return String(value ?? "")
 FIREBASE STATUS
 ===================================================== */
 
-function setFirebaseStatus(message,success){
+function setFirebaseStatus(
+    message,
+    success
+){
 
-const box =
-document.getElementById(
-"firebaseStatus"
-);
+    const box =
+    document.getElementById(
+        "firebaseStatus"
+    );
 
-if(!box)return;
+    if(!box)return;
 
-box.innerText =
-message;
+    box.innerText =
+    message;
 
-box.className =
-success
-?
-"firebase-status firebase-ok"
-:
-"firebase-status firebase-error";
-
+    box.className =
+    success
+    ?
+    "firebase-status firebase-ok"
+    :
+    "firebase-status firebase-error";
 }
 
 
@@ -1127,109 +1169,224 @@ success
 SETTINGS STATUS
 ===================================================== */
 
-function setSettingsStatus(message,success){
+function setSettingsStatus(
+    message,
+    success
+){
 
-const box =
-document.getElementById(
-"settingsStatus"
-);
+    const box =
+    document.getElementById(
+        "settingsStatus"
+    );
 
-if(!box)return;
+    if(!box)return;
 
-box.innerText =
-message;
+    box.innerText =
+    message;
 
-box.className =
-success
-?
-"firebase-status firebase-ok"
-:
-"firebase-status firebase-error";
-
+    box.className =
+    success
+    ?
+    "firebase-status firebase-ok"
+    :
+    "firebase-status firebase-error";
 }
 
 
 /* =====================================================
-ADMIN LOGIN
+LOGIN
 ===================================================== */
 
 window.login =
 async function(){
 
-const email =
-document.getElementById(
-"username"
-).value.trim();
+    const email =
+    document
+    .getElementById("username")
+    .value
+    .trim()
+    .toLowerCase();
 
 
-const password =
-document.getElementById(
-"password"
-).value;
+    const password =
+    document
+    .getElementById("password")
+    .value;
 
 
-const button =
-document.getElementById(
-"loginButton"
-);
+    const button =
+    document.getElementById(
+        "loginButton"
+    );
 
 
-const errorBox =
-document.getElementById(
-"loginError"
-);
+    const errorBox =
+    document.getElementById(
+        "loginError"
+    );
 
 
-errorBox.style.display =
-"none";
+    errorBox.style.display =
+    "none";
 
 
-if(!email || !password){
+    if(!email){
 
-errorBox.innerText =
-"Email और password डालें.";
+        errorBox.innerText =
+        "Email डालें.";
 
-errorBox.style.display =
-"block";
+        errorBox.style.display =
+        "block";
 
-return;
-
-}
-
-
-button.disabled =
-true;
-
-button.innerText =
-"Logging in...";
+        return;
+    }
 
 
-try{
+    if(!password){
 
-await signInWithEmailAndPassword(
-auth,
-email,
-password
-);
+        errorBox.innerText =
+        "Password डालें.";
 
-}catch(error){
+        errorBox.style.display =
+        "block";
 
-console.error(error);
+        return;
+    }
 
-errorBox.innerText =
-"Login failed: " +
-(error.code || error.message);
 
-errorBox.style.display =
-"block";
+    /* ADMIN EMAIL CHECK */
 
-button.disabled =
-false;
+    if(
+        email !==
+        ADMIN_EMAIL.toLowerCase()
+    ){
 
-button.innerText =
-"Login";
+        errorBox.innerText =
+        "यह admin email नहीं है.";
 
-}
+        errorBox.style.display =
+        "block";
+
+        return;
+    }
+
+
+    button.disabled =
+    true;
+
+    button.innerText =
+    "Logging in...";
+
+
+    try{
+
+        const result =
+        await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+
+        const user =
+        result.user;
+
+
+        /* DOUBLE CHECK */
+
+        if(
+            !user.email ||
+            user.email.toLowerCase() !==
+            ADMIN_EMAIL.toLowerCase()
+        ){
+
+            await signOut(auth);
+
+            throw new Error(
+                "Admin access denied."
+            );
+        }
+
+
+        errorBox.style.display =
+        "none";
+
+
+        document.getElementById(
+            "loginScreen"
+        ).style.display =
+        "none";
+
+
+        document.getElementById(
+            "adminPanel"
+        ).style.display =
+        "block";
+
+
+        await loadEverything();
+
+
+    }catch(error){
+
+        console.error(
+            "Login error:",
+            error
+        );
+
+
+        let message =
+        error.message;
+
+
+        if(
+            error.code ===
+            "auth/invalid-credential"
+        ){
+
+            message =
+            "Email या password गलत है.";
+
+        }
+
+
+        if(
+            error.code ===
+            "auth/invalid-email"
+        ){
+
+            message =
+            "Email गलत है.";
+
+        }
+
+
+        if(
+            error.code ===
+            "auth/too-many-requests"
+        ){
+
+            message =
+            "बहुत ज्यादा कोशिश हुई है. थोड़ी देर बाद try करें.";
+
+        }
+
+
+        errorBox.innerText =
+        "Login failed: " +
+        message;
+
+
+        errorBox.style.display =
+        "block";
+
+
+        button.disabled =
+        false;
+
+        button.innerText =
+        "Login";
+    }
 
 };
 
@@ -1239,41 +1396,79 @@ AUTH STATE
 ===================================================== */
 
 onAuthStateChanged(
-auth,
-async user => {
+    auth,
+    async user => {
 
-if(user){
+        if(user){
 
-document.getElementById(
-"loginScreen"
-).style.display =
-"none";
+            if(
+                user.email &&
+                user.email.toLowerCase() ===
+                ADMIN_EMAIL.toLowerCase()
+            ){
 
-
-document.getElementById(
-"adminPanel"
-).style.display =
-"block";
-
-
-await loadEverything();
-
-}else{
-
-document.getElementById(
-"loginScreen"
-).style.display =
-"flex";
+                document.getElementById(
+                    "loginScreen"
+                ).style.display =
+                "none";
 
 
-document.getElementById(
-"adminPanel"
-).style.display =
-"none";
+                document.getElementById(
+                    "adminPanel"
+                ).style.display =
+                "block";
 
-}
 
-});
+                await loadEverything();
+
+            }else{
+
+                await signOut(auth);
+
+                document.getElementById(
+                    "loginScreen"
+                ).style.display =
+                "flex";
+
+
+                document.getElementById(
+                    "adminPanel"
+                ).style.display =
+                "none";
+            }
+
+        }else{
+
+            document.getElementById(
+                "loginScreen"
+            ).style.display =
+            "flex";
+
+
+            document.getElementById(
+                "adminPanel"
+            ).style.display =
+            "none";
+
+
+            const button =
+            document.getElementById(
+                "loginButton"
+            );
+
+
+            if(button){
+
+                button.disabled =
+                false;
+
+                button.innerText =
+                "Login";
+            }
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -1283,353 +1478,405 @@ LOGOUT
 window.logout =
 async function(){
 
-try{
+    try{
 
-await signOut(auth);
+        await signOut(auth);
 
-}catch(error){
+    }catch(error){
 
-console.error(error);
+        console.error(error);
 
-}
+    }
 
 };
 
 
 /* =====================================================
-PAGE
+PAGE SWITCH
 ===================================================== */
 
 window.showPage =
-function(pageId,button){
+function(
+    pageId,
+    button
+){
 
-document
-.querySelectorAll(".page")
-.forEach(
-page =>
-page.classList.remove("active")
-);
-
-
-const page =
-document.getElementById(
-pageId
-);
-
-
-if(page){
-
-page.classList.add("active");
-
-}
+    document
+    .querySelectorAll(".page")
+    .forEach(
+        page =>
+        page.classList.remove(
+            "active"
+        )
+    );
 
 
-document
-.querySelectorAll(".menu-btn")
-.forEach(
-btn =>
-btn.classList.remove("active")
-);
+    const page =
+    document.getElementById(
+        pageId
+    );
 
 
-if(button){
+    if(page){
 
-button.classList.add("active");
-
-}
-
-
-if(pageId === "deposits"){
-
-loadDeposits();
-
-}
+        page.classList.add(
+            "active"
+        );
+    }
 
 
-if(pageId === "users"){
+    document
+    .querySelectorAll(".menu-btn")
+    .forEach(
+        btn =>
+        btn.classList.remove(
+            "active"
+        )
+    );
 
-loadUsers();
 
-}
+    if(button){
+
+        button.classList.add(
+            "active"
+        );
+    }
 
 
-if(pageId === "settings"){
+    if(pageId === "deposits"){
 
-loadPaymentSettings();
+        loadDeposits();
 
-}
+    }
+
+
+    if(pageId === "users"){
+
+        loadUsers();
+
+    }
+
+
+    if(pageId === "settings"){
+
+        loadPaymentSettings();
+
+    }
 
 };
 
 
 /* =====================================================
-LOAD SETTINGS
+LOAD PAYMENT SETTINGS
 ===================================================== */
 
 async function loadPaymentSettings(){
 
-try{
+    try{
 
-setSettingsStatus(
-"Loading Firebase payment settings...",
-true
-);
-
-
-const snapshot =
-await getDoc(
-paymentSettingsRef
-);
+        setSettingsStatus(
+            "Loading Firebase payment settings...",
+            true
+        );
 
 
-if(!snapshot.exists()){
-
-setSettingsStatus(
-"paymentSettings/config नहीं मिला.",
-false
-);
-
-return;
-
-}
+        const snapshot =
+        await getDoc(
+            paymentSettingsRef
+        );
 
 
-const data =
-snapshot.data();
+        if(!snapshot.exists()){
+
+            setSettingsStatus(
+                "paymentSettings/config नहीं मिला.",
+                false
+            );
+
+            return;
+        }
 
 
-paymentSettings = {
-
-upiId:
-data.upiId || "",
-
-accountHolderName:
-data.accountHolderName || "",
-
-accountNumber:
-data.accountNumber || "",
-
-ifsc:
-data.ifsc || "",
-
-qrCodeUrl:
-data.qrCodeUrl || "",
-
-coinRate:
-Number(data.coinRate ?? 1),
-
-minimumDeposit:
-Number(data.minimumDeposit ?? 100)
-
-};
+        const data =
+        snapshot.data();
 
 
-document.getElementById("upiId").value =
-paymentSettings.upiId;
+        paymentSettings = {
 
-document.getElementById("accountName").value =
-paymentSettings.accountHolderName;
+            upiId:
+            data.upiId || "",
 
-document.getElementById("accountNumber").value =
-paymentSettings.accountNumber;
+            accountHolderName:
+            data.accountHolderName || "",
 
-document.getElementById("ifsc").value =
-paymentSettings.ifsc;
+            accountNumber:
+            data.accountNumber || "",
 
-document.getElementById("qrUrl").value =
-paymentSettings.qrCodeUrl;
+            ifsc:
+            data.ifsc || "",
 
-document.getElementById("coinRate").value =
-paymentSettings.coinRate;
+            qrCodeUrl:
+            data.qrCodeUrl || "",
 
-document.getElementById("minDeposit").value =
-paymentSettings.minimumDeposit;
+            coinRate:
+            Number(
+                data.coinRate ?? 1
+            ),
 
-
-const qr =
-document.getElementById("qrPreview");
-
-
-if(paymentSettings.qrCodeUrl){
-
-qr.src =
-paymentSettings.qrCodeUrl;
-
-}else{
-
-qr.removeAttribute("src");
-
-}
+            minimumDeposit:
+            Number(
+                data.minimumDeposit ?? 100
+            )
+        };
 
 
-setSettingsStatus(
-"✅ Payment Settings loaded.",
-true
-);
+        document.getElementById(
+            "upiId"
+        ).value =
+        paymentSettings.upiId;
 
 
-}catch(error){
+        document.getElementById(
+            "accountName"
+        ).value =
+        paymentSettings.accountHolderName;
 
-console.error(error);
 
-setSettingsStatus(
-"❌ " + error.message,
-false
-);
+        document.getElementById(
+            "accountNumber"
+        ).value =
+        paymentSettings.accountNumber;
 
-}
+
+        document.getElementById(
+            "ifsc"
+        ).value =
+        paymentSettings.ifsc;
+
+
+        document.getElementById(
+            "qrUrl"
+        ).value =
+        paymentSettings.qrCodeUrl;
+
+
+        document.getElementById(
+            "coinRate"
+        ).value =
+        paymentSettings.coinRate;
+
+
+        document.getElementById(
+            "minDeposit"
+        ).value =
+        paymentSettings.minimumDeposit;
+
+
+        const qr =
+        document.getElementById(
+            "qrPreview"
+        );
+
+
+        if(
+            paymentSettings.qrCodeUrl
+        ){
+
+            qr.src =
+            paymentSettings.qrCodeUrl;
+
+        }else{
+
+            qr.removeAttribute(
+                "src"
+            );
+        }
+
+
+        setSettingsStatus(
+            "✅ Payment Settings loaded.",
+            true
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        setSettingsStatus(
+            "❌ " + error.message,
+            false
+        );
+    }
 
 }
 
 
 /* =====================================================
-SAVE SETTINGS
+SAVE PAYMENT SETTINGS
 ===================================================== */
 
 window.savePaymentSettings =
 async function(){
 
-const button =
-document.getElementById(
-"savePaymentButton"
-);
+    const button =
+    document.getElementById(
+        "savePaymentButton"
+    );
 
 
-button.disabled =
-true;
+    button.disabled =
+    true;
 
-button.innerText =
-"Saving...";
-
-
-try{
-
-const upiId =
-document.getElementById(
-"upiId"
-).value.trim();
+    button.innerText =
+    "Saving...";
 
 
-const accountHolderName =
-document.getElementById(
-"accountName"
-).value.trim();
+    try{
+
+        const upiId =
+        document
+        .getElementById("upiId")
+        .value
+        .trim();
 
 
-const accountNumber =
-document.getElementById(
-"accountNumber"
-).value.trim();
+        const accountHolderName =
+        document
+        .getElementById("accountName")
+        .value
+        .trim();
 
 
-const ifsc =
-document.getElementById(
-"ifsc"
-).value.trim();
+        const accountNumber =
+        document
+        .getElementById("accountNumber")
+        .value
+        .trim();
 
 
-const qrCodeUrl =
-document.getElementById(
-"qrUrl"
-).value.trim();
+        const ifsc =
+        document
+        .getElementById("ifsc")
+        .value
+        .trim();
 
 
-const coinRate =
-Number(
-document.getElementById(
-"coinRate"
-).value
-);
+        const qrCodeUrl =
+        document
+        .getElementById("qrUrl")
+        .value
+        .trim();
 
 
-const minimumDeposit =
-Number(
-document.getElementById(
-"minDeposit"
-).value
-);
+        const coinRate =
+        Number(
+            document.getElementById(
+                "coinRate"
+            ).value
+        );
 
 
-if(!upiId){
-
-throw new Error(
-"UPI ID डालें."
-);
-
-}
-
-
-if(!coinRate || coinRate <= 0){
-
-throw new Error(
-"Coin Rate invalid है."
-);
-
-}
+        const minimumDeposit =
+        Number(
+            document.getElementById(
+                "minDeposit"
+            ).value
+        );
 
 
-if(!minimumDeposit || minimumDeposit <= 0){
+        if(!upiId){
 
-throw new Error(
-"Minimum Deposit invalid है."
-);
-
-}
-
-
-await setDoc(
-paymentSettingsRef,
-{
-
-upiId,
-accountHolderName,
-accountNumber,
-ifsc,
-qrCodeUrl,
-coinRate,
-minimumDeposit,
-updatedAt:
-serverTimestamp()
-
-},
-{
-merge:true
-}
-);
+            throw new Error(
+                "UPI ID डालें."
+            );
+        }
 
 
-await loadPaymentSettings();
+        if(
+            !coinRate ||
+            coinRate <= 0
+        ){
+
+            throw new Error(
+                "Coin Rate invalid है."
+            );
+        }
 
 
-alert(
-"✅ Payment Settings saved."
-);
+        if(
+            !minimumDeposit ||
+            minimumDeposit <= 0
+        ){
+
+            throw new Error(
+                "Minimum Deposit invalid है."
+            );
+        }
 
 
-}catch(error){
+        await setDoc(
+            paymentSettingsRef,
+            {
 
-console.error(error);
+                upiId,
 
-setSettingsStatus(
-"❌ " + error.message,
-false
-);
+                accountHolderName,
+
+                accountNumber,
+
+                ifsc,
+
+                qrCodeUrl,
+
+                coinRate,
+
+                minimumDeposit,
+
+                updatedAt:
+                serverTimestamp()
+
+            },
+            {
+                merge:true
+            }
+        );
 
 
-alert(
-"Save failed:\n\n" +
-error.message
-);
+        await loadPaymentSettings();
 
-}finally{
 
-button.disabled =
-false;
+        alert(
+            "✅ Payment Settings saved."
+        );
 
-button.innerText =
-"Save Payment Settings";
 
-}
+    }catch(error){
+
+        console.error(error);
+
+
+        setSettingsStatus(
+            "❌ " + error.message,
+            false
+        );
+
+
+        alert(
+            "Save failed:\n\n" +
+            error.message
+        );
+
+
+    }finally{
+
+        button.disabled =
+        false;
+
+        button.innerText =
+        "Save Payment Settings";
+    }
 
 };
 
@@ -1641,112 +1888,114 @@ LOAD DEPOSITS
 window.loadDeposits =
 async function(){
 
-const table =
-document.getElementById(
-"depositsTable"
-);
+    const table =
+    document.getElementById(
+        "depositsTable"
+    );
 
 
-table.innerHTML = `
+    table.innerHTML = `
 
-<tr>
-<td colspan="10" class="loading">
-Loading deposits...
-</td>
-</tr>
+    <tr>
+    <td colspan="10" class="loading">
+    Loading deposits...
+    </td>
+    </tr>
 
-`;
-
-
-try{
-
-const snapshot =
-await getDocs(
-collection(
-db,
-"deposits"
-)
-);
+    `;
 
 
-deposits = [];
+    try{
+
+        const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "deposits"
+            )
+        );
 
 
-snapshot.forEach(
-item => {
-
-deposits.push({
-
-id:item.id,
-
-...item.data()
-
-});
-
-});
+        deposits = [];
 
 
-deposits.sort(
-(a,b) => {
+        snapshot.forEach(
+            item => {
 
-const aTime =
-a.createdAt &&
-typeof a.createdAt.toMillis === "function"
-?
-a.createdAt.toMillis()
-:
-0;
+                deposits.push({
 
+                    id:item.id,
 
-const bTime =
-b.createdAt &&
-typeof b.createdAt.toMillis === "function"
-?
-b.createdAt.toMillis()
-:
-0;
+                    ...item.data()
+
+                });
+
+            }
+        );
 
 
-return bTime - aTime;
+        deposits.sort(
+            (a,b) => {
 
-}
-);
-
-
-setFirebaseStatus(
-"✅ Deposits loaded.",
-true
-);
-
-
-renderDeposits();
-
-updateDashboard();
+                const aTime =
+                a.createdAt &&
+                typeof a.createdAt.toMillis ===
+                "function"
+                ?
+                a.createdAt.toMillis()
+                :
+                0;
 
 
-}catch(error){
-
-console.error(error);
-
-
-table.innerHTML = `
-
-<tr>
-<td colspan="10" class="empty">
-Firebase error:
-${escapeHTML(error.message)}
-</td>
-</tr>
-
-`;
+                const bTime =
+                b.createdAt &&
+                typeof b.createdAt.toMillis ===
+                "function"
+                ?
+                b.createdAt.toMillis()
+                :
+                0;
 
 
-setFirebaseStatus(
-"❌ " + error.message,
-false
-);
+                return bTime - aTime;
+            }
+        );
 
-}
+
+        setFirebaseStatus(
+            "✅ Deposits loaded.",
+            true
+        );
+
+
+        renderDeposits();
+
+        updateDashboard();
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        table.innerHTML = `
+
+        <tr>
+        <td colspan="10" class="empty">
+        Firebase error:
+        ${escapeHTML(error.message)}
+        </td>
+        </tr>
+
+        `;
+
+
+        setFirebaseStatus(
+            "❌ " + error.message,
+            false
+        );
+
+    }
 
 };
 
@@ -1758,210 +2007,221 @@ RENDER DEPOSITS
 window.renderDeposits =
 function(){
 
-const table =
-document.getElementById(
-"depositsTable"
-);
+    const table =
+    document.getElementById(
+        "depositsTable"
+    );
 
 
-const search =
-(
-document.getElementById(
-"depositSearch"
-)?.value || ""
-).toLowerCase();
+    const search =
+    (
+        document.getElementById(
+            "depositSearch"
+        )?.value || ""
+    )
+    .toLowerCase();
 
 
-const filtered =
-deposits.filter(
-d =>
+    const filtered =
+    deposits.filter(
+        d =>
 
-String(d.id || "")
-.toLowerCase()
-.includes(search)
+        String(d.id || "")
+        .toLowerCase()
+        .includes(search)
 
-||
+        ||
 
-String(d.userId || "")
-.toLowerCase()
-.includes(search)
+        String(d.userId || "")
+        .toLowerCase()
+        .includes(search)
 
-||
+        ||
 
-String(d.utr || "")
-.toLowerCase()
-.includes(search)
-
-);
-
-
-if(!filtered.length){
-
-table.innerHTML = `
-
-<tr>
-<td colspan="10" class="empty">
-No deposits found.
-</td>
-</tr>
-
-`;
-
-return;
-
-}
+        String(d.utr || "")
+        .toLowerCase()
+        .includes(search)
+    );
 
 
-let html = "";
+    if(!filtered.length){
+
+        table.innerHTML = `
+
+        <tr>
+        <td colspan="10" class="empty">
+        No deposits found.
+        </td>
+        </tr>
+
+        `;
+
+        return;
+    }
 
 
-filtered.forEach(
-d => {
-
-const status =
-String(
-d.status || "pending"
-).toLowerCase();
+    let html = "";
 
 
-const statusClass =
-status === "approved"
-?
-"approved"
-:
-status === "rejected"
-?
-"rejected"
-:
-"pending";
+    filtered.forEach(
+        d => {
+
+            const status =
+            String(
+                d.status ||
+                "pending"
+            ).toLowerCase();
 
 
-const amount =
-Number(d.amount || 0);
+            const statusClass =
+            status === "approved"
+            ?
+            "approved"
+            :
+            status === "rejected"
+            ?
+            "rejected"
+            :
+            "pending";
 
 
-const rate =
-Number(
-d.coinRate ||
-paymentSettings.coinRate ||
-1
-);
+            const amount =
+            Number(
+                d.amount || 0
+            );
 
 
-const coins =
-Number(
-d.approvedCoins ??
-(amount * rate)
-);
+            const rate =
+            Number(
+                d.coinRate ||
+                paymentSettings.coinRate ||
+                1
+            );
 
 
-let date = "—";
+            const coins =
+            Number(
+                d.approvedCoins ??
+                (amount * rate)
+            );
 
 
-if(
-d.createdAt &&
-typeof d.createdAt.toDate === "function"
-){
-
-date =
-d.createdAt
-.toDate()
-.toLocaleString("en-IN");
-
-}
+            let date = "—";
 
 
-html += `
+            if(
+                d.createdAt &&
+                typeof d.createdAt.toDate ===
+                "function"
+            ){
 
-<tr>
-
-<td>
-<small>
-${escapeHTML(d.id)}
-</small>
-</td>
-
-<td>
-<strong>
-${escapeHTML(d.userId || "—")}
-</strong>
-</td>
-
-<td>
-<strong class="blue">
-₹${amount}
-</strong>
-</td>
-
-<td>
-<strong class="green">
-${coins}
-</strong>
-</td>
-
-<td>
-${escapeHTML(d.utr || "—")}
-</td>
-
-<td>
-${escapeHTML(d.upiId || "—")}
-</td>
-
-<td>
-<span class="badge ${statusClass}">
-${escapeHTML(status)}
-</span>
-</td>
-
-<td>
-${escapeHTML(date)}
-</td>
-
-<td class="comment">
-${escapeHTML(d.comment || "—")}
-</td>
-
-<td>
-
-${
-status === "pending"
-?
-
-`
-
-<button
-class="action approve"
-onclick="approveDeposit('${escapeHTML(d.id)}')"
->
-✅ Approve
-</button>
-
-<button
-class="action reject"
-onclick="rejectDeposit('${escapeHTML(d.id)}')"
->
-❌ Reject
-</button>
-
-`
-
-:
-
-"Completed"
-
-}
-
-</td>
-
-</tr>
-
-`;
-
-});
+                date =
+                d.createdAt
+                .toDate()
+                .toLocaleString(
+                    "en-IN"
+                );
+            }
 
 
-table.innerHTML =
-html;
+            html += `
+
+            <tr>
+
+            <td>
+            <small>
+            ${escapeHTML(d.id)}
+            </small>
+            </td>
+
+            <td>
+            <strong>
+            ${escapeHTML(
+                d.userId || "—"
+            )}
+            </strong>
+            </td>
+
+            <td>
+            <strong class="blue">
+            ₹${amount}
+            </strong>
+            </td>
+
+            <td>
+            <strong class="green">
+            ${coins}
+            </strong>
+            </td>
+
+            <td>
+            ${escapeHTML(
+                d.utr || "—"
+            )}
+            </td>
+
+            <td>
+            ${escapeHTML(
+                d.upiId || "—"
+            )}
+            </td>
+
+            <td>
+            <span class="badge ${statusClass}">
+            ${escapeHTML(status)}
+            </span>
+            </td>
+
+            <td>
+            ${escapeHTML(date)}
+            </td>
+
+            <td class="comment">
+            ${escapeHTML(
+                d.comment || "—"
+            )}
+            </td>
+
+            <td>
+
+            ${
+                status === "pending"
+                ?
+
+                `
+
+                <button
+                class="action approve"
+                onclick="approveDeposit('${escapeHTML(d.id)}')"
+                >
+                ✅ Approve
+                </button>
+
+                <button
+                class="action reject"
+                onclick="rejectDeposit('${escapeHTML(d.id)}')"
+                >
+                ❌ Reject
+                </button>
+
+                `
+
+                :
+
+                "Completed"
+            }
+
+            </td>
+
+            </tr>
+
+            `;
+        }
+    );
+
+
+    table.innerHTML =
+    html;
 
 };
 
@@ -1973,280 +2233,265 @@ APPROVE DEPOSIT
 window.approveDeposit =
 async function(depositId){
 
-const currentAdmin =
-auth.currentUser;
+    const currentAdmin =
+    auth.currentUser;
 
 
-if(!currentAdmin){
+    if(!currentAdmin){
 
-alert(
-"Admin login required."
-);
+        alert(
+            "Admin login required."
+        );
 
-return;
+        return;
+    }
 
-}
 
+    const deposit =
+    deposits.find(
+        d => d.id === depositId
+    );
 
-const deposit =
-deposits.find(
-d => d.id === depositId
-);
 
+    if(!deposit){
 
-if(!deposit){
+        alert(
+            "Deposit नहीं मिली."
+        );
 
-alert(
-"Deposit नहीं मिली."
-);
+        return;
+    }
 
-return;
 
-}
+    const userId =
+    String(
+        deposit.userId || ""
+    ).trim();
 
 
-const userId =
-String(
-deposit.userId || ""
-).trim();
+    if(!userId){
 
+        alert(
+            "इस deposit में Firebase Auth UID नहीं है."
+        );
 
-if(!userId){
+        return;
+    }
 
-alert(
-"इस deposit में Firebase Auth UID नहीं है."
-);
 
-return;
+    const amount =
+    Number(
+        deposit.amount || 0
+    );
 
-}
 
+    const coinRate =
+    Number(
+        deposit.coinRate ||
+        paymentSettings.coinRate ||
+        1
+    );
 
-const amount =
-Number(
-deposit.amount || 0
-);
 
+    const coinsToAdd =
+    amount * coinRate;
 
-const coinRate =
-Number(
-deposit.coinRate ||
-paymentSettings.coinRate ||
-1
-);
 
+    if(
+        amount <= 0 ||
+        coinsToAdd <= 0
+    ){
 
-const coinsToAdd =
-amount * coinRate;
+        alert(
+            "Amount/Coin Rate invalid."
+        );
 
+        return;
+    }
 
-if(
-amount <= 0 ||
-coinsToAdd <= 0
-){
 
-alert(
-"Amount/Coin Rate invalid."
-);
+    const confirmed =
+    confirm(
+        "Deposit approve करें?\n\n" +
+        "Amount: ₹" +
+        amount +
+        "\nCoins: " +
+        coinsToAdd +
+        "\n\nUser UID:\n" +
+        userId
+    );
 
-return;
 
-}
+    if(!confirmed)return;
 
 
-const confirmed =
-confirm(
-"Deposit approve करें?\n\n" +
-"Amount: ₹" +
-amount +
-"\nCoins: " +
-coinsToAdd +
-"\n\nUser UID:\n" +
-userId
-);
+    try{
 
+        await runTransaction(
+            db,
+            async transaction => {
 
-if(!confirmed)return;
+                const depositRef =
+                doc(
+                    db,
+                    "deposits",
+                    depositId
+                );
 
 
-try{
+                const userRef =
+                doc(
+                    db,
+                    "users",
+                    userId
+                );
 
-await runTransaction(
-db,
-async transaction => {
 
-const depositRef =
-doc(
-db,
-"deposits",
-depositId
-);
+                const depositSnap =
+                await transaction.get(
+                    depositRef
+                );
 
 
-const userRef =
-doc(
-db,
-"users",
-userId
-);
+                if(!depositSnap.exists()){
 
+                    throw new Error(
+                        "Deposit document नहीं मिला."
+                    );
+                }
 
-const depositSnap =
-await transaction.get(
-depositRef
-);
 
+                const currentDeposit =
+                depositSnap.data();
 
-if(!depositSnap.exists()){
 
-throw new Error(
-"Deposit document नहीं मिला."
-);
+                if(
+                    String(
+                        currentDeposit.status ||
+                        "pending"
+                    ).toLowerCase()
+                    !==
+                    "pending"
+                ){
 
-}
+                    throw new Error(
+                        "Deposit already processed."
+                    );
+                }
 
 
-const currentDeposit =
-depositSnap.data();
+                if(
+                    String(
+                        currentDeposit.userId ||
+                        ""
+                    ).trim()
+                    !==
+                    userId
+                ){
 
+                    throw new Error(
+                        "Deposit UID mismatch."
+                    );
+                }
 
-if(
-String(
-currentDeposit.status || "pending"
-).toLowerCase()
-!==
-"pending"
-){
 
-throw new Error(
-"Deposit already processed."
-);
+                const userSnap =
+                await transaction.get(
+                    userRef
+                );
 
-}
 
+                if(!userSnap.exists()){
 
-if(
-String(
-currentDeposit.userId || ""
-).trim()
-!==
-userId
-){
+                    throw new Error(
+                        "User document नहीं मिला: " +
+                        userId
+                    );
+                }
 
-throw new Error(
-"Deposit UID mismatch."
-);
 
-}
+                const userData =
+                userSnap.data();
 
 
-const userSnap =
-await transaction.get(
-userRef
-);
+                const oldCoins =
+                Number(
+                    userData.coins || 0
+                );
 
 
-if(!userSnap.exists()){
+                const newCoins =
+                oldCoins +
+                coinsToAdd;
 
-throw new Error(
-"User document नहीं मिला: " +
-userId
-);
 
-}
+                transaction.update(
+                    userRef,
+                    {
 
+                        coins:
+                        newCoins,
 
-const userData =
-userSnap.data();
+                        updatedAt:
+                        serverTimestamp()
 
+                    }
+                );
 
-const oldCoins =
-Number(
-userData.coins || 0
-);
 
+                transaction.update(
+                    depositRef,
+                    {
 
-const newCoins =
-oldCoins +
-coinsToAdd;
+                        status:
+                        "approved",
 
+                        approvedCoins:
+                        coinsToAdd,
 
-/*
-USER WALLET UPDATE
-*/
+                        approvedBy:
+                        currentAdmin.uid,
 
-transaction.update(
-userRef,
-{
+                        approvedAt:
+                        serverTimestamp(),
 
-coins:
-newCoins,
+                        comment:
+                        "Payment approved"
 
-updatedAt:
-serverTimestamp()
+                    }
+                );
 
-}
-);
+            }
+        );
 
 
-/*
-DEPOSIT APPROVAL
-*/
+        alert(
+            "✅ Approved\n\n" +
+            coinsToAdd +
+            " coins wallet में add हो गए."
+        );
 
-transaction.update(
-depositRef,
-{
 
-status:
-"approved",
+        await loadDeposits();
 
-approvedCoins:
-coinsToAdd,
+        await loadUsers();
 
-approvedBy:
-currentAdmin.uid,
+        updateDashboard();
 
-approvedAt:
-serverTimestamp(),
 
-comment:
-"Payment approved"
+    }catch(error){
 
-}
-);
+        console.error(
+            "Approve error:",
+            error
+        );
 
-}
-);
 
-
-alert(
-"✅ Approved\n\n" +
-coinsToAdd +
-" coins wallet में add हो गए."
-);
-
-
-await loadDeposits();
-
-await loadUsers();
-
-updateDashboard();
-
-
-}catch(error){
-
-console.error(
-"Approve error:",
-error
-);
-
-
-alert(
-"❌ Approve failed:\n\n" +
-error.message
-);
-
-}
+        alert(
+            "❌ Approve failed:\n\n" +
+            error.message
+        );
+    }
 
 };
 
@@ -2258,159 +2503,154 @@ REJECT DEPOSIT
 window.rejectDeposit =
 async function(depositId){
 
-if(!auth.currentUser){
+    if(!auth.currentUser){
 
-alert(
-"Admin login required."
-);
+        alert(
+            "Admin login required."
+        );
 
-return;
-
-}
-
-
-const deposit =
-deposits.find(
-d => d.id === depositId
-);
+        return;
+    }
 
 
-if(!deposit){
-
-alert(
-"Deposit नहीं मिली."
-);
-
-return;
-
-}
+    const deposit =
+    deposits.find(
+        d => d.id === depositId
+    );
 
 
-if(
-String(
-deposit.status || "pending"
-).toLowerCase()
-!==
-"pending"
-){
+    if(!deposit){
 
-alert(
-"Deposit already processed."
-);
+        alert(
+            "Deposit नहीं मिली."
+        );
 
-return;
-
-}
+        return;
+    }
 
 
-const reason =
-prompt(
-"Reject reason:"
-);
+    if(
+        String(
+            deposit.status ||
+            "pending"
+        ).toLowerCase()
+        !==
+        "pending"
+    ){
+
+        alert(
+            "Deposit already processed."
+        );
+
+        return;
+    }
 
 
-if(
-reason === null ||
-!reason.trim()
-){
-
-return;
-
-}
+    const reason =
+    prompt(
+        "Reject reason:"
+    );
 
 
-try{
+    if(
+        reason === null ||
+        !reason.trim()
+    ){
 
-await runTransaction(
-db,
-async transaction => {
-
-const depositRef =
-doc(
-db,
-"deposits",
-depositId
-);
+        return;
+    }
 
 
-const snapshot =
-await transaction.get(
-depositRef
-);
+    try{
+
+        await runTransaction(
+            db,
+            async transaction => {
+
+                const depositRef =
+                doc(
+                    db,
+                    "deposits",
+                    depositId
+                );
 
 
-if(!snapshot.exists()){
-
-throw new Error(
-"Deposit document नहीं मिला."
-);
-
-}
+                const snapshot =
+                await transaction.get(
+                    depositRef
+                );
 
 
-const data =
-snapshot.data();
+                if(!snapshot.exists()){
+
+                    throw new Error(
+                        "Deposit document नहीं मिला."
+                    );
+                }
 
 
-if(
-String(
-data.status || "pending"
-).toLowerCase()
-!==
-"pending"
-){
-
-throw new Error(
-"Deposit already processed."
-);
-
-}
+                const data =
+                snapshot.data();
 
 
-transaction.update(
-depositRef,
-{
+                if(
+                    String(
+                        data.status ||
+                        "pending"
+                    ).toLowerCase()
+                    !==
+                    "pending"
+                ){
 
-status:
-"rejected",
-
-comment:
-reason.trim(),
-
-rejectedBy:
-auth.currentUser.uid,
-
-rejectedAt:
-serverTimestamp()
-
-}
-);
-
-}
-);
+                    throw new Error(
+                        "Deposit already processed."
+                    );
+                }
 
 
-alert(
-"Deposit rejected."
-);
+                transaction.update(
+                    depositRef,
+                    {
+
+                        status:
+                        "rejected",
+
+                        comment:
+                        reason.trim(),
+
+                        rejectedBy:
+                        auth.currentUser.uid,
+
+                        rejectedAt:
+                        serverTimestamp()
+
+                    }
+                );
+
+            }
+        );
 
 
-await loadDeposits();
-
-updateDashboard();
-
-
-}catch(error){
-
-console.error(error);
+        alert(
+            "Deposit rejected."
+        );
 
 
-alert(
-"❌ Reject failed:\n\n" +
-error.message
-);
+        await loadDeposits();
 
-}
+        updateDashboard();
+
+
+    }catch(error){
+
+        console.error(error);
+
+
+        alert(
+            "❌ Reject failed:\n\n" +
+            error.message
+        );
+    }
 
 };
 
@@ -2422,73 +2662,73 @@ LOAD USERS
 window.loadUsers =
 async function(){
 
-const table =
-document.getElementById(
-"usersTable"
-);
+    const table =
+    document.getElementById(
+        "usersTable"
+    );
 
 
-table.innerHTML = `
+    table.innerHTML = `
 
-<tr>
-<td colspan="5" class="loading">
-Loading users...
-</td>
-</tr>
+    <tr>
+    <td colspan="5" class="loading">
+    Loading users...
+    </td>
+    </tr>
 
-`;
-
-
-try{
-
-const snapshot =
-await getDocs(
-collection(
-db,
-"users"
-)
-);
+    `;
 
 
-users = [];
+    try{
+
+        const snapshot =
+        await getDocs(
+            collection(
+                db,
+                "users"
+            )
+        );
 
 
-snapshot.forEach(
-item => {
-
-users.push({
-
-id:item.id,
-
-...item.data()
-
-});
-
-});
+        users = [];
 
 
-renderUsers();
+        snapshot.forEach(
+            item => {
 
-updateDashboard();
+                users.push({
+
+                    id:item.id,
+
+                    ...item.data()
+
+                });
+
+            }
+        );
 
 
-}catch(error){
+        renderUsers();
 
-console.error(error);
+        updateDashboard();
 
 
-table.innerHTML = `
+    }catch(error){
 
-<tr>
-<td colspan="5" class="empty">
-Firebase error:
-${escapeHTML(error.message)}
-</td>
-</tr>
+        console.error(error);
 
-`;
 
-}
+        table.innerHTML = `
+
+        <tr>
+        <td colspan="5" class="empty">
+        Firebase error:
+        ${escapeHTML(error.message)}
+        </td>
+        </tr>
+
+        `;
+    }
 
 };
 
@@ -2500,159 +2740,166 @@ RENDER USERS
 window.renderUsers =
 function(){
 
-const table =
-document.getElementById(
-"usersTable"
-);
+    const table =
+    document.getElementById(
+        "usersTable"
+    );
 
 
-const search =
-(
-document.getElementById(
-"userSearch"
-)?.value || ""
-).toLowerCase();
+    const search =
+    (
+        document.getElementById(
+            "userSearch"
+        )?.value || ""
+    ).toLowerCase();
 
 
-const filtered =
-users.filter(
-u =>
+    const filtered =
+    users.filter(
+        u =>
 
-String(u.id || "")
-.toLowerCase()
-.includes(search)
+        String(u.id || "")
+        .toLowerCase()
+        .includes(search)
 
-||
+        ||
 
-String(u.name || "")
-.toLowerCase()
-.includes(search)
+        String(u.name || "")
+        .toLowerCase()
+        .includes(search)
 
-||
+        ||
 
-String(u.mobile || "")
-.toLowerCase()
-.includes(search)
-
-);
-
-
-if(!filtered.length){
-
-table.innerHTML = `
-
-<tr>
-<td colspan="5" class="empty">
-No users found.
-</td>
-</tr>
-
-`;
-
-return;
-
-}
+        String(u.mobile || "")
+        .toLowerCase()
+        .includes(search)
+    );
 
 
-let html = "";
+    if(!filtered.length){
+
+        table.innerHTML = `
+
+        <tr>
+        <td colspan="5" class="empty">
+        No users found.
+        </td>
+        </tr>
+
+        `;
+
+        return;
+    }
 
 
-filtered.forEach(
-u => {
-
-html += `
-
-<tr>
-
-<td>
-<small>
-${escapeHTML(u.id)}
-</small>
-</td>
-
-<td>
-${escapeHTML(u.name || "—")}
-</td>
-
-<td>
-${escapeHTML(u.mobile || "—")}
-</td>
-
-<td>
-<strong class="blue">
-${Number(u.coins || 0)}
-</strong>
-</td>
-
-<td>
-<span class="badge approved">
-${escapeHTML(u.status || "Active")}
-</span>
-</td>
-
-</tr>
-
-`;
-
-});
+    let html = "";
 
 
-table.innerHTML =
-html;
+    filtered.forEach(
+        u => {
+
+            html += `
+
+            <tr>
+
+            <td>
+            <small>
+            ${escapeHTML(u.id)}
+            </small>
+            </td>
+
+            <td>
+            ${escapeHTML(
+                u.name || "—"
+            )}
+            </td>
+
+            <td>
+            ${escapeHTML(
+                u.mobile || "—"
+            )}
+            </td>
+
+            <td>
+            <strong class="blue">
+            ${Number(
+                u.coins || 0
+            )}
+            </strong>
+            </td>
+
+            <td>
+            <span class="badge approved">
+            ${escapeHTML(
+                u.status || "Active"
+            )}
+            </span>
+            </td>
+
+            </tr>
+
+            `;
+        }
+    );
+
+
+    table.innerHTML =
+    html;
 
 };
 
 
 /* =====================================================
-DASHBOARD
+UPDATE DASHBOARD
 ===================================================== */
 
 function updateDashboard(){
 
-document.getElementById(
-"statUsers"
-).innerText =
-users.length;
+    document.getElementById(
+        "statUsers"
+    ).innerText =
+    users.length;
 
 
-const totalCoins =
-users.reduce(
-(sum,user) =>
-sum +
-Number(
-user.coins || 0
-),
-0
-);
+    const totalCoins =
+    users.reduce(
+        (sum,user) =>
+        sum +
+        Number(
+            user.coins || 0
+        ),
+        0
+    );
 
 
-document.getElementById(
-"statCoins"
-).innerText =
-totalCoins;
+    document.getElementById(
+        "statCoins"
+    ).innerText =
+    totalCoins;
 
 
-const pending =
-deposits.filter(
-d =>
-String(
-d.status || "pending"
-).toLowerCase()
-===
-"pending"
-);
+    const pending =
+    deposits.filter(
+        d =>
+        String(
+            d.status ||
+            "pending"
+        ).toLowerCase()
+        ===
+        "pending"
+    );
 
 
-document.getElementById(
-"statPending"
-).innerText =
-pending.length;
+    document.getElementById(
+        "statPending"
+    ).innerText =
+    pending.length;
 
 
-document.getElementById(
-"statDeposits"
-).innerText =
-deposits.length;
+    document.getElementById(
+        "statDeposits"
+    ).innerText =
+    deposits.length;
 
 }
 
@@ -2663,11 +2910,11 @@ LOAD EVERYTHING
 
 async function loadEverything(){
 
-await loadPaymentSettings();
+    await loadPaymentSettings();
 
-await loadDeposits();
+    await loadDeposits();
 
-await loadUsers();
+    await loadUsers();
 
 }
 
