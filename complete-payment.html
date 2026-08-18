@@ -8,392 +8,520 @@
 
 <style>
 *{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
 html,body{
-  height:100%;
+    height:100%;
+    overflow:hidden;
 }
 
 body{
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  background:#f8faff;
-  color:#101a38;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:#f8faff;
+    color:#101a38;
 }
 
 button,input{
-  font:inherit;
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
 }
 
 .app{
-  min-height:100dvh;
-  display:flex;
-  flex-direction:column;
+    height:100dvh;
+    display:flex;
+    flex-direction:column;
 }
 
 .top{
-  height:72px;
-  flex:none;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:0 14px;
-  background:linear-gradient(110deg,#edf4ff,#fff);
-  border-bottom:1px solid #ccd8ed;
+    height:72px;
+    flex:none;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:0 14px;
+    background:linear-gradient(110deg,#edf4ff,#fff);
+    border-bottom:1px solid #ccd8ed;
 }
 
 .menu{
-  width:45px;
-  height:45px;
-  border:0;
-  border-radius:15px;
-  background:linear-gradient(145deg,#ff846e,#ff715e);
-  color:#fff;
-  font-size:27px;
+    width:45px;
+    height:45px;
+    border:0;
+    border-radius:15px;
+    background:linear-gradient(145deg,#ff846e,#ff715e);
+    color:#fff;
+    font-size:27px;
 }
 
 .logo{
-  width:44px;
-  height:44px;
-  border-radius:50%;
-  display:grid;
-  place-items:center;
-  background:#fff;
-  border:4px solid #dce6fb;
-  color:#2362d9;
-  font-size:12px;
-  font-weight:900;
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:#fff;
+    border:4px solid #dce6fb;
+    color:#2362d9;
+    font-size:12px;
+    font-weight:900;
 }
 
 .spacer{
-  flex:1;
+    flex:1;
 }
 
 .topicon{
-  width:43px;
-  height:43px;
-  border-radius:15px;
-  display:grid;
-  place-items:center;
-  font-size:20px;
+    width:43px;
+    height:43px;
+    border-radius:15px;
+    display:grid;
+    place-items:center;
+    font-size:20px;
 }
 
 .bell{
-  background:#7368ef;
-  color:#fff;
+    background:#7368ef;
+    color:#fff;
 }
 
 .cash{
-  background:#35bf71;
-  color:#fff;
+    background:#35bf71;
+    color:#fff;
 }
 
 .gift{
-  background:#ff933c;
-  color:#fff;
+    background:#ff933c;
+    color:#fff;
 }
 
 main{
-  flex:1;
-  padding:12px;
-  overflow:auto;
+    flex:1;
+    min-height:0;
+    padding:10px 12px 6px;
+    overflow:auto;
+    display:flex;
+    align-items:flex-start;
 }
 
 .wrap{
-  width:100%;
-  max-width:560px;
-  margin:auto;
+    width:100%;
+    max-width:560px;
+    margin:auto;
 }
 
 .kicker{
-  font-size:13px;
-  font-weight:900;
-  letter-spacing:2px;
-  color:#3566c8;
-  margin-bottom:4px;
+    font-size:13px;
+    font-weight:900;
+    letter-spacing:2px;
+    color:#3566c8;
+    margin-bottom:4px;
 }
 
 h1{
-  font-size:28px;
-  line-height:1.05;
-  margin-bottom:4px;
+    font-size:28px;
+    line-height:1.02;
+    margin-bottom:3px;
 }
 
 .welcome{
-  font-size:13px;
-  color:#7a879f;
-  margin-bottom:10px;
+    font-size:13px;
+    color:#7a879f;
+    margin-bottom:8px;
 }
 
 .tabs{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:7px;
-  margin-bottom:8px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    margin-bottom:7px;
 }
 
 .tab{
-  height:43px;
-  border:1px solid #cbd7e9;
-  border-radius:15px;
-  background:#eef1f6;
-  color:#748097;
-  font-weight:800;
+    height:43px;
+    border:1px solid #cbd7e9;
+    border-radius:15px;
+    background:#eef1f6;
+    color:#748097;
+    font-weight:800;
 }
 
 .tab.active{
-  background:linear-gradient(100deg,#2864e6,#3e7bf0);
-  color:#fff;
-  border-color:#2864e6;
+    background:linear-gradient(100deg,#2864e6,#3e7bf0);
+    color:#fff;
+    border-color:#2864e6;
 }
 
 .paybox{
-  border:1.5px solid #bdd0f0;
-  border-radius:20px;
-  padding:12px;
-  background:linear-gradient(135deg,#f0f5ff,#fff);
-  box-shadow:0 10px 25px #4275d31a;
+    border:1.5px solid #bdd0f0;
+    border-radius:20px;
+    padding:9px 11px 11px;
+    background:linear-gradient(135deg,#f0f5ff,#fff);
+    box-shadow:0 10px 25px #4275d31a;
 }
 
 .range{
-  text-align:center;
-  color:#818ba0;
-  font-size:13px;
-  margin-bottom:8px;
+    text-align:center;
+    color:#818ba0;
+    font-size:12px;
+    margin-bottom:6px;
 }
 
 .qr{
-  display:flex;
-  justify-content:center;
+    display:flex;
+    justify-content:center;
 }
 
 .qr img{
-  width:170px;
-  height:170px;
-  border-radius:16px;
-  object-fit:contain;
-  background:#fff;
-  padding:5px;
-  border:1px solid #d7dff0;
+    width:155px;
+    height:155px;
+    border-radius:16px;
+    object-fit:contain;
+    background:#fff;
+    padding:5px;
+    border:1px solid #d7dff0;
 }
 
 .upi{
-  text-align:center;
-  font-size:17px;
-  font-weight:850;
-  margin:8px 0;
-  word-break:break-all;
+    text-align:center;
+    font-size:16px;
+    font-weight:850;
+    margin:6px 0;
+    word-break:break-all;
 }
 
 .copy{
-  display:block;
-  margin:auto;
-  border:0;
-  border-radius:23px;
-  padding:9px 22px;
-  background:linear-gradient(100deg,#2864e6,#3e7bf0);
-  color:#fff;
-  font-weight:850;
-  box-shadow:0 7px 16px #326fe533;
+    display:block;
+    margin:auto;
+    border:0;
+    border-radius:23px;
+    padding:8px 22px;
+    background:linear-gradient(100deg,#2864e6,#3e7bf0);
+    color:#fff;
+    font-weight:850;
+    box-shadow:0 7px 16px #326fe533;
 }
 
-.details{
-  margin-top:8px;
-  border:1.5px solid #c3d2ec;
-  border-radius:18px;
-  padding:11px;
-  background:linear-gradient(135deg,#f4f7ff,#fff);
+.account-box{
+    margin-top:8px;
+    border:1px solid #d1ddef;
+    border-radius:16px;
+    padding:10px;
+    background:#fff;
 }
 
-.detail{
-  display:flex;
-  justify-content:space-between;
-  gap:10px;
-  padding:8px 3px;
-  border-bottom:1px solid #e1e7f2;
-  font-size:14px;
+.account-row{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:7px 0;
+    border-bottom:1px solid #edf0f6;
+    font-size:13px;
 }
 
-.detail:last-child{
-  border-bottom:0;
+.account-row:last-child{
+    border-bottom:0;
 }
 
-.detail span:first-child{
-  color:#6b7891;
-  font-weight:700;
+.account-label{
+    color:#748097;
+    font-weight:700;
 }
 
-.detail span:last-child{
-  text-align:right;
-  font-weight:800;
-  word-break:break-all;
+.account-value{
+    text-align:right;
+    font-weight:850;
+    word-break:break-all;
 }
 
-.testbox{
-  margin-top:8px;
-  border:1.5px solid #c3d2ec;
-  border-radius:18px;
-  padding:11px;
-  background:#fff;
+.coin-info{
+    margin-top:8px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
 }
 
-.testbox label{
-  display:block;
-  font-size:12px;
-  font-weight:800;
-  color:#6b7891;
-  margin-bottom:7px;
+.info-box{
+    background:#eef5ff;
+    border:1px solid #d0def7;
+    border-radius:13px;
+    padding:8px;
+    text-align:center;
+}
+
+.info-box small{
+    display:block;
+    color:#748097;
+    font-size:11px;
+}
+
+.info-box strong{
+    display:block;
+    color:#2864e6;
+    margin-top:3px;
+    font-size:14px;
+}
+
+.form{
+    margin-top:7px;
+    border:1.5px solid #c3d2ec;
+    border-radius:18px;
+    padding:9px;
+    background:linear-gradient(135deg,#f4f7ff,#fff);
+}
+
+label{
+    display:block;
+    font-size:12px;
+    font-weight:800;
+    color:#6b7891;
+    margin-bottom:7px;
+    letter-spacing:.5px;
 }
 
 input{
-  width:100%;
-  height:46px;
-  border:1px solid #d2dceb;
-  border-radius:15px;
-  background:#f8f9fc;
-  padding:0 14px;
-  font-size:16px;
-  outline:none;
+    width:100%;
+    height:46px;
+    border:1px solid #d2dceb;
+    border-radius:15px;
+    background:#f8f9fc;
+    padding:0 14px;
+    font-size:16px;
+    outline:none;
+    margin-bottom:10px;
 }
 
 input:focus{
-  border-color:#4a7cf0;
-  background:#fff;
+    border-color:#4a7cf0;
+    background:#fff;
 }
 
-.testbutton{
-  width:100%;
-  height:46px;
-  margin-top:8px;
-  border:0;
-  border-radius:25px;
-  background:#e9eef8;
-  color:#40516f;
-  font-weight:800;
+.form input{
+    margin-bottom:7px;
+}
+
+.amount-readonly{
+    color:#68758c;
+}
+
+.deposit{
+    width:100%;
+    height:48px;
+    border:0;
+    border-radius:29px;
+    background:linear-gradient(100deg,#2864e6,#3e7bf0);
+    color:#fff;
+    font-weight:900;
+    font-size:18px;
+}
+
+.deposit:disabled{
+    opacity:.6;
 }
 
 .status{
-  margin-top:8px;
-  padding:10px;
-  border-radius:12px;
-  text-align:center;
-  font-weight:800;
-  font-size:13px;
-  background:#eef5ff;
-  color:#3566c8;
-  border:1px solid #cbdaf4;
+    display:none;
+    margin-top:9px;
+    padding:10px;
+    border-radius:12px;
+    text-align:center;
+    font-weight:800;
+    font-size:13px;
+}
+
+.status.show{
+    display:block;
+    background:#fff4d9;
+    color:#9a6a00;
+    border:1px solid #efd795;
+}
+
+.firebase-status{
+    margin-bottom:8px;
+    padding:8px 10px;
+    border-radius:11px;
+    font-size:11px;
+    text-align:center;
+    font-weight:700;
+}
+
+.firebase-loading{
+    background:#eef5ff;
+    color:#3566c8;
+}
+
+.firebase-ok{
+    background:#dcf8e9;
+    color:#13834d;
+}
+
+.firebase-error{
+    background:#ffe3e7;
+    color:#c72e43;
 }
 
 .bottom{
-  height:64px;
-  flex:none;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  background:#fff;
-  border-top:1px solid #d5deed;
+    height:64px;
+    flex:none;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    background:#fff;
+    border-top:1px solid #d5deed;
 }
 
 .nav{
-  border:0;
-  background:#fff;
-  color:#6d7890;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:3px;
-  font-size:12px;
+    border:0;
+    background:#fff;
+    color:#6d7890;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:3px;
+    font-size:12px;
 }
 
 .nav b{
-  font-size:21px;
+    font-size:21px;
 }
 
 .nav.active{
-  color:#18213a;
-  font-weight:900;
+    color:#18213a;
+    font-weight:900;
 }
 
 .toast{
-  position:fixed;
-  top:82px;
-  left:50%;
-  transform:translate(-50%,-10px);
-  opacity:0;
-  background:#182440;
-  color:#fff;
-  padding:10px 15px;
-  border-radius:12px;
-  font-size:13px;
-  transition:.2s;
-  pointer-events:none;
-  z-index:9999;
+    position:fixed;
+    top:82px;
+    left:50%;
+    transform:translate(-50%,-10px);
+    opacity:0;
+    background:#182440;
+    color:#fff;
+    padding:10px 15px;
+    border-radius:12px;
+    font-size:13px;
+    transition:.2s;
+    pointer-events:none;
+    z-index:100;
+    max-width:90%;
+    text-align:center;
 }
 
 .toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
-}
-
-.loading{
-  text-align:center;
-  padding:12px;
-  color:#66748e;
-  font-size:13px;
-}
-
-.error{
-  display:none;
-  margin-top:8px;
-  padding:10px;
-  border-radius:12px;
-  background:#fff0f0;
-  color:#b42318;
-  border:1px solid #f2c5c5;
-  font-size:13px;
-  text-align:center;
-  font-weight:700;
+    opacity:1;
+    transform:translate(-50%,0);
 }
 
 @media(max-width:380px){
-  .qr img{
-    width:145px;
-    height:145px;
-  }
 
-  h1{
-    font-size:26px;
-  }
+    .qr img{
+        width:145px;
+        height:145px;
+    }
 
-  .tab{
-    height:41px;
-  }
+    h1{
+        font-size:26px;
+    }
+
+    .tab{
+        height:41px;
+    }
+
+    .form{
+        padding:8px;
+    }
+
+    .deposit{
+        height:46px;
+    }
 }
 
 @media(max-height:720px){
-  .top{
-    height:58px;
-  }
 
-  .bottom{
-    height:58px;
-  }
+    .top{
+        height:58px;
+    }
 
-  .qr img{
-    width:125px;
-    height:125px;
-  }
+    .bottom{
+        height:58px;
+    }
 
-  .paybox{
-    padding:8px;
-  }
+    main{
+        padding-top:6px;
+    }
 
-  .details,
-  .testbox{
-    padding:8px;
-  }
+    .kicker{
+        font-size:11px;
+    }
+
+    .welcome{
+        margin-bottom:5px;
+    }
+
+    .tabs{
+        margin-bottom:5px;
+    }
+
+    .paybox{
+        padding:6px 9px 8px;
+    }
+
+    .qr img{
+        width:125px;
+        height:125px;
+    }
+
+    .upi{
+        font-size:14px;
+        margin:4px 0;
+    }
+
+    .copy{
+        padding:6px 18px;
+    }
+
+    .form{
+        margin-top:5px;
+        padding:7px;
+    }
+
+    input{
+        height:40px;
+    }
+
+    .deposit{
+        height:42px;
+    }
+}
+
+@media(min-height:721px) and (max-height:850px){
+
+    .qr img{
+        width:145px;
+        height:145px;
+    }
+
+    .paybox{
+        padding:8px 10px 10px;
+    }
+
+    .form{
+        padding:8px;
+    }
+
+    input{
+        height:44px;
+    }
+
+    .deposit{
+        height:46px;
+    }
 }
 </style>
 </head>
@@ -438,13 +566,24 @@ Welcome RDX LUDO
 </div>
 
 
+<div
+id="firebaseStatus"
+class="firebase-status firebase-loading"
+>
+Firebase से payment details load हो रही हैं...
+</div>
+
+
 <div class="tabs">
 
 <button class="tab active">
 UPI Details
 </button>
 
-<button class="tab" onclick="showAccount()">
+<button
+class="tab"
+onclick="showAccountTransfer()"
+>
 Account Transfer
 </button>
 
@@ -458,93 +597,160 @@ Selected Amount · ₹<span id="selectedAmount">100</span>
 </div>
 
 
-<div class="loading" id="loading">
-Firebase settings load ho rahi hain...
-</div>
-
-
 <div class="qr">
+
 <img
 id="qrImage"
-src="qr-code.png"
+src=""
 alt="UPI QR Code"
 >
+
 </div>
 
 
-<div class="upi" id="upiText">
-Loading...
+<div
+class="upi"
+id="upiText"
+>
+Loading UPI...
 </div>
 
 
-<button class="copy" onclick="copyUPI()">
+<button
+class="copy"
+onclick="copyUPI()"
+>
 Copy UPI ID
 </button>
 
+
+<div class="account-box">
+
+<div class="account-row">
+
+<span class="account-label">
+Account Holder
+</span>
+
+<span
+class="account-value"
+id="accountHolder"
+>
+—
+</span>
+
+</div>
+
+
+<div class="account-row">
+
+<span class="account-label">
+Account Number
+</span>
+
+<span
+class="account-value"
+id="accountNumber"
+>
+—
+</span>
+
+</div>
+
+
+<div class="account-row">
+
+<span class="account-label">
+IFSC
+</span>
+
+<span
+class="account-value"
+id="ifsc"
+>
+—
+</span>
+
+</div>
+
+</div>
+
+
+<div class="coin-info">
+
+<div class="info-box">
+
+<small>
+Coin Rate
+</small>
+
+<strong id="coinRate">
+—
+</strong>
+
+</div>
+
+
+<div class="info-box">
+
+<small>
+Minimum Deposit
+</small>
+
+<strong>
+₹<span id="minimumDeposit">—</span>
+</strong>
+
+</div>
+
+</div>
+
 </section>
 
 
-<section class="details">
-
-<div class="detail">
-<span>Account Holder</span>
-<span id="holderName">—</span>
-</div>
-
-<div class="detail">
-<span>Bank Account</span>
-<span id="accountNumber">—</span>
-</div>
-
-<div class="detail">
-<span>IFSC</span>
-<span id="ifsc">—</span>
-</div>
-
-<div class="detail">
-<span>Coin Rate</span>
-<span id="coinRate">—</span>
-</div>
-
-<div class="detail">
-<span>Minimum Deposit</span>
-<span id="minimumDeposit">—</span>
-</div>
-
-</section>
-
-
-<section class="testbox">
+<section class="form">
 
 <label>
-TEST AMOUNT
+ENTER AMOUNT
 </label>
 
 <input
 id="amount"
-type="number"
+class="amount-readonly"
+type="text"
 readonly
 value="100"
 >
 
-<button
-class="testbutton"
-onclick="testSettings()"
+
+<label>
+ENTER UTR NUMBER
+</label>
+
+<input
+id="utr"
+type="text"
+inputmode="numeric"
+maxlength="30"
+placeholder="Enter UTR Number"
 >
-Test Firebase Settings
+
+
+<button
+class="deposit"
+id="depositButton"
+onclick="submitDeposit()"
+>
+Deposit
 </button>
+
 
 <div
 class="status"
 id="status"
 >
-Firebase settings test ke liye button dabayein.
+Deposit submitted · Pending
 </div>
-
-<div
-class="error"
-id="error"
-></div>
 
 </section>
 
@@ -595,424 +801,611 @@ id="toast"
 ></div>
 
 
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script type="module">
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+    getFirestore,
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 
-<script>
-
-/* =========================================================
-   IMPORTANT:
-   YAHAN APNE admin.html WALA EXACT firebaseConfig PASTE KARO
-   ========================================================= */
+/* =====================================================
+   YOUR FIREBASE CONFIG
+===================================================== */
 
 const firebaseConfig = {
 
-  apiKey: "PASTE_YOUR_API_KEY",
+    apiKey:
+    "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
 
-  authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+    authDomain:
+    "rdx-ludo.firebaseapp.com",
 
-  projectId: "PASTE_YOUR_PROJECT_ID",
+    projectId:
+    "rdx-ludo",
 
-  storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+    storageBucket:
+    "rdx-ludo.firebasestorage.app",
 
-  messagingSenderId: "PASTE_YOUR_MESSAGING_SENDER_ID",
+    messagingSenderId:
+    "928340814840",
 
-  appId: "PASTE_YOUR_APP_ID"
+    appId:
+    "1:928340814840:web:6eca42a8b76138b268440d"
 
 };
 
 
-/* Firebase start */
+/* =====================================================
+   INITIALIZE
+===================================================== */
 
-let db = null;
+const app =
+initializeApp(firebaseConfig);
 
-try {
-
-  firebase.initializeApp(firebaseConfig);
-
-  db = firebase.firestore();
-
-} catch(error) {
-
-  console.error(error);
-
-  showError(
-    "Firebase initialize nahi hua. Firebase Config check karein."
-  );
-
-}
+const db =
+getFirestore(app);
 
 
-/* URL / selected amount */
+/* =====================================================
+   FIRESTORE PATH
+
+   paymentSettings
+        └── config
+===================================================== */
+
+const paymentSettingsRef =
+doc(
+    db,
+    "paymentSettings",
+    "config"
+);
+
+
+/* =====================================================
+   CURRENT PAYMENT SETTINGS
+===================================================== */
+
+let paymentSettings = {
+
+    upiId:"",
+    accountHolderName:"",
+    accountNumber:"",
+    ifsc:"",
+    qrCodeUrl:"",
+    coinRate:1,
+    minimumDeposit:100
+
+};
+
+
+/* =====================================================
+   URL / LOCAL AMOUNT
+===================================================== */
 
 const params =
-new URLSearchParams(location.search);
+new URLSearchParams(
+    location.search
+);
 
 const savedAmount =
 localStorage.getItem(
-  "rdxSelectedDepositAmount"
+    "rdxSelectedDepositAmount"
 ) || "100";
 
-const selectedAmount =
-params.get("amount") || savedAmount;
+let amount =
+params.get("amount") ||
+savedAmount ||
+"100";
 
+
+amount =
+Number(amount) || 100;
+
+
+/* =====================================================
+   SET AMOUNT
+===================================================== */
 
 document.getElementById(
-  "selectedAmount"
-).textContent = selectedAmount;
-
+    "selectedAmount"
+).textContent =
+amount;
 
 document.getElementById(
-  "amount"
-).value = selectedAmount;
+    "amount"
+).value =
+amount;
 
 
-/* Current UPI */
+/* =====================================================
+   TOAST
+===================================================== */
 
-let currentUPI = "";
+function toast(message){
 
+    const box =
+    document.getElementById(
+        "toast"
+    );
 
-/* Toast */
+    box.textContent =
+    message;
 
-function toast(text){
+    box.classList.add(
+        "show"
+    );
 
-  const x =
-  document.getElementById("toast");
-
-  x.textContent = text;
-
-  x.classList.add("show");
-
-  setTimeout(
-    () => x.classList.remove("show"),
-    1800
-  );
-
-}
-
-
-/* Error */
-
-function showError(text){
-
-  const box =
-  document.getElementById("error");
-
-  box.textContent = text;
-
-  box.style.display = "block";
+    setTimeout(
+        () =>
+        box.classList.remove(
+            "show"
+        ),
+        1800
+    );
 
 }
 
 
-/* Hide error */
+/* =====================================================
+   FIREBASE STATUS
+===================================================== */
 
-function hideError(){
+function firebaseStatus(
+    message,
+    type
+){
 
-  document.getElementById(
-    "error"
-  ).style.display = "none";
+    const box =
+    document.getElementById(
+        "firebaseStatus"
+    );
+
+    box.textContent =
+    message;
+
+    box.className =
+    "firebase-status " +
+    (
+        type === "error"
+        ? "firebase-error"
+        :
+        type === "ok"
+        ? "firebase-ok"
+        :
+        "firebase-loading"
+    );
 
 }
 
 
-/* =========================================================
-   FIREBASE PAYMENT SETTINGS
-   Reads:
-   paymentSettings/config
-   ========================================================= */
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHTML(value){
+
+    return String(
+        value ?? ""
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+/* =====================================================
+   LOAD PAYMENT SETTINGS FROM FIREBASE
+===================================================== */
 
 async function loadPaymentSettings(){
 
-  if(!db){
+    try{
 
-    showError(
-      "Firebase database available nahi hai."
-    );
-
-    return;
-  }
+        firebaseStatus(
+            "Firebase से latest payment details load हो रही हैं...",
+            "loading"
+        );
 
 
-  hideError();
+        const snapshot =
+        await getDoc(
+            paymentSettingsRef
+        );
 
 
-  try{
+        if(
+            !snapshot.exists()
+        ){
 
-    const snapshot =
-    await db
-    .collection("paymentSettings")
-    .doc("config")
-    .get();
+            firebaseStatus(
+                "paymentSettings/config Firebase में नहीं मिला.",
+                "error"
+            );
+
+            document.getElementById(
+                "upiText"
+            ).textContent =
+            "UPI details unavailable";
+
+            return;
+
+        }
 
 
-    if(!snapshot.exists){
+        const data =
+        snapshot.data();
 
-      showError(
-        "Firebase me paymentSettings/config document nahi mila."
-      );
 
-      document.getElementById(
-        "loading"
-      ).textContent =
-      "Payment settings nahi mili.";
+        paymentSettings = {
 
-      return;
+            upiId:
+            String(
+                data.upiId || ""
+            ),
+
+            accountHolderName:
+            String(
+                data.accountHolderName || ""
+            ),
+
+            accountNumber:
+            String(
+                data.accountNumber || ""
+            ),
+
+            ifsc:
+            String(
+                data.ifsc || ""
+            ),
+
+            qrCodeUrl:
+            String(
+                data.qrCodeUrl || ""
+            ),
+
+            coinRate:
+            Number(
+                data.coinRate ?? 1
+            ),
+
+            minimumDeposit:
+            Number(
+                data.minimumDeposit ?? 100
+            )
+
+        };
+
+
+        /* UPI */
+
+        document.getElementById(
+            "upiText"
+        ).textContent =
+        paymentSettings.upiId ||
+        "UPI not configured";
+
+
+        /* Account Holder */
+
+        document.getElementById(
+            "accountHolder"
+        ).textContent =
+        paymentSettings.accountHolderName ||
+        "—";
+
+
+        /* Account Number */
+
+        document.getElementById(
+            "accountNumber"
+        ).textContent =
+        paymentSettings.accountNumber ||
+        "—";
+
+
+        /* IFSC */
+
+        document.getElementById(
+            "ifsc"
+        ).textContent =
+        paymentSettings.ifsc ||
+        "—";
+
+
+        /* Coin Rate */
+
+        document.getElementById(
+            "coinRate"
+        ).textContent =
+        paymentSettings.coinRate;
+
+
+        /* Minimum Deposit */
+
+        document.getElementById(
+            "minimumDeposit"
+        ).textContent =
+        paymentSettings.minimumDeposit;
+
+
+        /* QR CODE */
+
+        const qr =
+        document.getElementById(
+            "qrImage"
+        );
+
+
+        if(
+            paymentSettings.qrCodeUrl
+        ){
+
+            qr.src =
+            paymentSettings.qrCodeUrl;
+
+        }else{
+
+            qr.removeAttribute(
+                "src"
+            );
+
+            qr.alt =
+            "QR Code not configured";
+
+        }
+
+
+        /* Minimum deposit check */
+
+        if(
+            amount <
+            paymentSettings.minimumDeposit
+        ){
+
+            firebaseStatus(
+                "Minimum deposit ₹" +
+                paymentSettings.minimumDeposit +
+                " है.",
+                "loading"
+            );
+
+        }else{
+
+            firebaseStatus(
+                "✅ Latest payment details loaded.",
+                "ok"
+            );
+
+        }
+
+
+    }catch(error){
+
+        console.error(
+            "Firebase error:",
+            error
+        );
+
+
+        firebaseStatus(
+            "❌ Firebase error: " +
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   COPY UPI
+===================================================== */
+
+window.copyUPI =
+function(){
+
+    const upi =
+    paymentSettings.upiId;
+
+
+    if(!upi){
+
+        toast(
+            "UPI ID उपलब्ध नहीं है"
+        );
+
+        return;
+
     }
 
 
-    const data =
-    snapshot.data();
-
-
-    console.log(
-      "Firebase Payment Settings:",
-      data
-    );
-
-
-    /* UPI */
-
-    currentUPI =
-    data.upiId ||
-    data.upi ||
-    data.upiID ||
-    "UPI ID not set";
-
-
-    document.getElementById(
-      "upiText"
-    ).textContent = currentUPI;
-
-
-    /* Account Holder */
-
-    document.getElementById(
-      "holderName"
-    ).textContent =
-    data.accountHolderName ||
-    data.holderName ||
-    "—";
-
-
-    /* Account Number */
-
-    document.getElementById(
-      "accountNumber"
-    ).textContent =
-    data.accountNumber ||
-    "—";
-
-
-    /* IFSC */
-
-    document.getElementById(
-      "ifsc"
-    ).textContent =
-    data.ifsc ||
-    "—";
-
-
-    /* Coin Rate */
-
-    document.getElementById(
-      "coinRate"
-    ).textContent =
-    data.coinRate !== undefined
-      ? data.coinRate
-      : "—";
-
-
-    /* Minimum Deposit */
-
-    document.getElementById(
-      "minimumDeposit"
-    ).textContent =
-    data.minimumDeposit !== undefined
-      ? "₹" + data.minimumDeposit
-      : "—";
-
-
-    /* QR Code */
-
-    const qrURL =
-    data.qrCodeUrl ||
-    data.qrURL ||
-    data.qrCode ||
-    "";
-
-
-    if(qrURL){
-
-      document.getElementById(
-        "qrImage"
-      ).src = qrURL;
-
-    }
-
-
-    document.getElementById(
-      "loading"
-    ).style.display = "none";
-
-
-    document.getElementById(
-      "status"
-    ).textContent =
-    "Firebase se latest payment settings load ho gayi.";
-
-
-  }catch(error){
-
-    console.error(
-      "Firebase error:",
-      error
-    );
-
-
-    document.getElementById(
-      "loading"
-    ).textContent =
-    "Firebase data load nahi ho paya.";
-
-
-    showError(
-      "Firebase error: " +
-      error.message
-    );
-
-  }
-
-}
-
-
-/* Copy UPI */
-
-function copyUPI(){
-
-  if(!currentUPI){
-
-    toast("UPI ID available nahi hai");
-
-    return;
-  }
-
-
-  if(
-    navigator.clipboard &&
-    navigator.clipboard.writeText
-  ){
-
-    navigator.clipboard
-    .writeText(currentUPI)
-    .then(
-      () => toast("UPI ID copied")
-    )
-    .catch(
-      () => toast(currentUPI)
-    );
-
-  }else{
-
-    toast(currentUPI);
-
-  }
-
-}
-
-
-/* Account Transfer */
-
-function showAccount(){
-
-  const holder =
-  document.getElementById(
-    "holderName"
-  ).textContent;
-
-  const account =
-  document.getElementById(
-    "accountNumber"
-  ).textContent;
-
-  const ifsc =
-  document.getElementById(
-    "ifsc"
-  ).textContent;
-
-
-  alert(
-    "Account Holder: " +
-    holder +
-    "\n\nAccount Number: " +
-    account +
-    "\n\nIFSC: " +
-    ifsc
-  );
-
-}
-
-
-/* Firebase settings test */
-
-async function testSettings(){
-
-  const status =
-  document.getElementById(
-    "status"
-  );
-
-
-  if(!db){
-
-    status.textContent =
-    "Firebase initialize nahi hua.";
-
-    return;
-  }
-
-
-  try{
-
-    const snap =
-    await db
-    .collection("paymentSettings")
-    .doc("config")
-    .get();
-
-
-    if(snap.exists){
-
-      status.textContent =
-      "✅ Firebase connection OK — paymentSettings/config mil gaya.";
-
-      toast(
-        "Firebase Settings OK"
-      );
+    if(
+        navigator.clipboard &&
+        navigator.clipboard.writeText
+    ){
+
+        navigator.clipboard
+        .writeText(upi)
+        .then(
+            () =>
+            toast(
+                "UPI ID copied"
+            )
+        )
+        .catch(
+            () =>
+            toast(
+                "UPI ID: " + upi
+            )
+        );
 
     }else{
 
-      status.textContent =
-      "❌ paymentSettings/config document nahi mila.";
+        toast(
+            "UPI ID: " + upi
+        );
+
+    }
+
+};
+
+
+/* =====================================================
+   ACCOUNT TRANSFER
+===================================================== */
+
+window.showAccountTransfer =
+function(){
+
+    if(
+        !paymentSettings.accountNumber
+    ){
+
+        toast(
+            "Bank details अभी उपलब्ध नहीं हैं"
+        );
+
+        return;
 
     }
 
 
-  }catch(error){
+    alert(
+        "Account Holder: " +
+        paymentSettings.accountHolderName +
 
-    status.textContent =
-    "❌ Firebase permission/error: " +
-    error.message;
+        "\n\nAccount Number: " +
+        paymentSettings.accountNumber +
 
-  }
+        "\n\nIFSC: " +
+        paymentSettings.ifsc
+    );
 
-}
+};
 
 
-/* Page load */
+/* =====================================================
+   SUBMIT DEPOSIT
+===================================================== */
+
+window.submitDeposit =
+function(){
+
+    const utr =
+    document.getElementById(
+        "utr"
+    ).value.trim();
+
+
+    if(
+        amount <
+        paymentSettings.minimumDeposit
+    ){
+
+        toast(
+            "Minimum deposit ₹" +
+            paymentSettings.minimumDeposit +
+            " है"
+        );
+
+        return;
+
+    }
+
+
+    if(
+        utr.length < 6
+    ){
+
+        toast(
+            "Please enter a valid UTR number"
+        );
+
+        return;
+
+    }
+
+
+    const data = {
+
+        amount:
+        Number(amount),
+
+        utr:
+        utr,
+
+        status:
+        "Pending",
+
+        createdAt:
+        new Date().toISOString(),
+
+        upiId:
+        paymentSettings.upiId
+
+    };
+
+
+    /*
+      यह अभी उसी पुराने frontend flow की तरह
+      localStorage में request रखता है।
+      Admin approval के लिए deposit को Firestore
+      में डालने वाला backend/user-auth flow
+      अलग से जोड़ना होगा।
+    */
+
+    localStorage.setItem(
+        "rdxLastDeposit",
+        JSON.stringify(data)
+    );
+
+
+    document.getElementById(
+        "status"
+    ).classList.add(
+        "show"
+    );
+
+
+    toast(
+        "Deposit submitted"
+    );
+
+};
+
+
+/* =====================================================
+   START
+===================================================== */
 
 loadPaymentSettings();
 
