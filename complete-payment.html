@@ -1,24 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+
+<meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+>
+
 <title>RDX LUDO - Complete Payment</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
 html,body{
     min-height:100%;
 }
 
 body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
     background:#f8faff;
     color:#101a38;
 }
 
-button,input{
+button,
+input{
     font:inherit;
 }
 
@@ -38,16 +57,31 @@ button{
     align-items:center;
     gap:10px;
     padding:0 14px;
-    background:linear-gradient(110deg,#edf4ff,#fff);
+
+    background:
+        linear-gradient(
+            110deg,
+            #edf4ff,
+            #fff
+        );
+
     border-bottom:1px solid #ccd8ed;
 }
 
 .menu{
     width:45px;
     height:45px;
+
     border:0;
     border-radius:15px;
-    background:linear-gradient(145deg,#ff846e,#ff715e);
+
+    background:
+        linear-gradient(
+            145deg,
+            #ff846e,
+            #ff715e
+        );
+
     color:#fff;
     font-size:27px;
 }
@@ -55,12 +89,18 @@ button{
 .logo{
     width:44px;
     height:44px;
+
     border-radius:50%;
+
     display:grid;
     place-items:center;
+
     background:#fff;
+
     border:4px solid #dce6fb;
+
     color:#2362d9;
+
     font-size:12px;
     font-weight:900;
 }
@@ -72,15 +112,29 @@ button{
 .topicon{
     width:43px;
     height:43px;
+
     border-radius:15px;
+
     display:grid;
     place-items:center;
+
     font-size:20px;
 }
 
-.bell{background:#7368ef;color:#fff}
-.cash{background:#35bf71;color:#fff}
-.gift{background:#ff933c;color:#fff}
+.bell{
+    background:#7368ef;
+    color:#fff;
+}
+
+.cash{
+    background:#35bf71;
+    color:#fff;
+}
+
+.gift{
+    background:#ff933c;
+    color:#fff;
+}
 
 main{
     flex:1;
@@ -97,56 +151,85 @@ main{
     font-size:13px;
     font-weight:900;
     letter-spacing:2px;
+
     color:#3566c8;
+
     margin-bottom:4px;
 }
 
 h1{
     font-size:28px;
     line-height:1.05;
+
     margin-bottom:3px;
 }
 
 .welcome{
     font-size:13px;
     color:#7a879f;
+
     margin-bottom:10px;
 }
 
 .tabs{
     display:grid;
     grid-template-columns:1fr 1fr;
+
     gap:7px;
+
     margin-bottom:8px;
 }
 
 .tab{
     height:43px;
+
     border:1px solid #cbd7e9;
     border-radius:15px;
+
     background:#eef1f6;
+
     color:#748097;
+
     font-weight:800;
 }
 
 .tab.active{
-    background:linear-gradient(100deg,#2864e6,#3e7bf0);
+    background:
+        linear-gradient(
+            100deg,
+            #2864e6,
+            #3e7bf0
+        );
+
     color:#fff;
+
     border-color:#2864e6;
 }
 
 .paybox{
     border:1.5px solid #bdd0f0;
     border-radius:20px;
+
     padding:10px 11px 12px;
-    background:linear-gradient(135deg,#f0f5ff,#fff);
-    box-shadow:0 10px 25px #4275d31a;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f0f5ff,
+            #fff
+        );
+
+    box-shadow:
+        0 10px 25px #4275d31a;
 }
 
 .range{
     text-align:center;
+
     color:#818ba0;
+
     font-size:12px;
+
     margin-bottom:7px;
 }
 
@@ -158,45 +241,72 @@ h1{
 .qr img{
     width:155px;
     height:155px;
+
     border-radius:16px;
+
     object-fit:contain;
+
     background:#fff;
+
     padding:5px;
+
     border:1px solid #d7dff0;
 }
 
 .upi{
     text-align:center;
+
     font-size:16px;
     font-weight:850;
+
     margin:7px 0;
+
     word-break:break-all;
 }
 
 .copy{
     display:block;
+
     margin:auto;
+
     border:0;
     border-radius:23px;
+
     padding:8px 22px;
-    background:linear-gradient(100deg,#2864e6,#3e7bf0);
+
+    background:
+        linear-gradient(
+            100deg,
+            #2864e6,
+            #3e7bf0
+        );
+
     color:#fff;
+
     font-weight:850;
 }
 
 .bank{
     margin-top:10px;
+
     background:#fff;
+
     border:1px solid #d9e2f1;
+
     border-radius:15px;
+
     padding:10px;
 }
 
 .bank-row{
     display:flex;
+
     justify-content:space-between;
+
     gap:10px;
+
     padding:5px 0;
+
     font-size:13px;
 }
 
@@ -206,67 +316,111 @@ h1{
 
 .bank-row span:last-child{
     font-weight:800;
+
     text-align:right;
+
     word-break:break-all;
 }
 
 .form{
     margin-top:8px;
+
     border:1.5px solid #c3d2ec;
+
     border-radius:18px;
+
     padding:10px;
-    background:linear-gradient(135deg,#f4f7ff,#fff);
+
+    background:
+        linear-gradient(
+            135deg,
+            #f4f7ff,
+            #fff
+        );
 }
 
 label{
     display:block;
+
     font-size:12px;
+
     font-weight:800;
+
     color:#6b7891;
+
     margin-bottom:7px;
+
     letter-spacing:.5px;
 }
 
 input{
     width:100%;
+
     height:46px;
+
     border:1px solid #d2dceb;
+
     border-radius:15px;
+
     background:#f8f9fc;
+
     padding:0 14px;
+
     font-size:16px;
+
     outline:none;
+
     margin-bottom:10px;
 }
 
 input:focus{
     border-color:#4a7cf0;
+
     background:#fff;
 }
 
 .deposit{
     width:100%;
+
     height:48px;
+
     border:0;
+
     border-radius:29px;
-    background:linear-gradient(100deg,#2864e6,#3e7bf0);
+
+    background:
+        linear-gradient(
+            100deg,
+            #2864e6,
+            #3e7bf0
+        );
+
     color:#fff;
+
     font-weight:900;
+
     font-size:18px;
 }
 
 .deposit:disabled{
     opacity:.6;
+
     cursor:not-allowed;
 }
 
 .status{
     display:none;
+
     margin-top:9px;
+
     padding:11px;
+
     border-radius:12px;
+
     text-align:center;
+
     font-weight:800;
+
     font-size:13px;
 }
 
@@ -288,27 +442,42 @@ input:focus{
 
 .loading{
     text-align:center;
+
     padding:20px;
+
     color:#66728c;
 }
 
 .bottom{
     height:64px;
+
     display:grid;
-    grid-template-columns:repeat(4,1fr);
+
+    grid-template-columns:
+        repeat(4,1fr);
+
     background:#fff;
+
     border-top:1px solid #d5deed;
 }
 
 .nav{
     border:0;
+
     background:#fff;
+
     color:#6d7890;
+
     display:flex;
+
     flex-direction:column;
+
     align-items:center;
+
     justify-content:center;
+
     gap:3px;
+
     font-size:12px;
 }
 
@@ -323,28 +492,45 @@ input:focus{
 
 .toast{
     position:fixed;
+
     top:82px;
     left:50%;
-    transform:translate(-50%,-10px);
+
+    transform:
+        translate(-50%,-10px);
+
     opacity:0;
+
     background:#182440;
+
     color:#fff;
+
     padding:10px 15px;
+
     border-radius:12px;
+
     font-size:13px;
+
     transition:.2s;
+
     pointer-events:none;
+
     z-index:100;
+
     max-width:90%;
+
     text-align:center;
 }
 
 .toast.show{
     opacity:1;
-    transform:translate(-50%,0);
+
+    transform:
+        translate(-50%,0);
 }
 
 @media(max-width:380px){
+
     .qr img{
         width:140px;
         height:140px;
@@ -357,9 +543,11 @@ input:focus{
     .tab{
         height:41px;
     }
+
 }
 
 @media(max-height:720px){
+
     .top{
         height:58px;
     }
@@ -394,29 +582,48 @@ input:focus{
     .deposit{
         height:42px;
     }
+
 }
+
 </style>
+
 </head>
+
 
 <body>
 
 <div class="app">
 
+
 <header class="top">
 
-<button class="menu" onclick="location.href='deposit.html'">
-☰
+<button
+    class="menu"
+    onclick="location.href='deposit.html'"
+>
+    ☰
 </button>
 
+
 <div class="logo">
-RDX
+    RDX
 </div>
+
 
 <div class="spacer"></div>
 
-<div class="topicon bell">🔔</div>
-<div class="topicon cash">💵</div>
-<div class="topicon gift">🎁</div>
+
+<div class="topicon bell">
+    🔔
+</div>
+
+<div class="topicon cash">
+    💵
+</div>
+
+<div class="topicon gift">
+    🎁
+</div>
 
 </header>
 
@@ -425,96 +632,155 @@ RDX
 
 <div class="wrap">
 
+
 <div class="kicker">
-DEPOSIT
+    DEPOSIT
 </div>
 
+
 <h1>
-Complete Payment
+    Complete Payment
 </h1>
 
-<div class="welcome">
-Welcome RDX LUDO
+
+<div
+    class="welcome"
+    id="welcomeText"
+>
+    Welcome RDX LUDO
 </div>
 
 
 <div class="tabs">
 
-<button class="tab active">
-UPI Details
-</button>
 
 <button
-class="tab"
-onclick="showBankInfo()"
+    class="tab active"
 >
-Account Transfer
+    UPI Details
 </button>
+
+
+<button
+    class="tab"
+    onclick="showBankInfo()"
+>
+    Account Transfer
+</button>
+
 
 </div>
 
 
 <section class="paybox">
 
+
 <div class="range">
-Selected Amount · ₹
-<span id="selectedAmount">100</span>
+
+    Selected Amount · ₹
+
+    <span id="selectedAmount">
+        100
+    </span>
+
 </div>
 
 
 <div class="qr">
 
 <img
-id="qrImage"
-src=""
-alt="UPI QR Code"
+    id="qrImage"
+    src=""
+    alt="UPI QR Code"
 >
+
 
 </div>
 
 
 <div
-class="upi"
-id="upiText"
+    class="upi"
+    id="upiText"
 >
-Loading UPI...
+    Loading UPI...
 </div>
 
 
 <button
-class="copy"
-onclick="copyUPI()"
+    class="copy"
+    onclick="copyUPI()"
 >
-Copy UPI ID
+    Copy UPI ID
 </button>
 
 
 <div class="bank">
 
-<div class="bank-row">
-<span>Account Holder</span>
-<span id="accountHolder">—</span>
-</div>
 
 <div class="bank-row">
-<span>Account Number</span>
-<span id="accountNumber">—</span>
+
+<span>
+    Account Holder
+</span>
+
+<span id="accountHolder">
+    —
+</span>
+
 </div>
 
-<div class="bank-row">
-<span>IFSC</span>
-<span id="ifsc">—</span>
-</div>
 
 <div class="bank-row">
-<span>Coin Rate</span>
-<span id="coinRate">—</span>
+
+<span>
+    Account Number
+</span>
+
+<span id="accountNumber">
+    —
+</span>
+
 </div>
 
+
 <div class="bank-row">
-<span>Minimum Deposit</span>
-<span>₹<span id="minimumDeposit">—</span></span>
+
+<span>
+    IFSC
+</span>
+
+<span id="ifsc">
+    —
+</span>
+
 </div>
+
+
+<div class="bank-row">
+
+<span>
+    Coin Rate
+</span>
+
+<span id="coinRate">
+    —
+</span>
+
+</div>
+
+
+<div class="bank-row">
+
+<span>
+    Minimum Deposit
+</span>
+
+<span>
+    ₹<span id="minimumDeposit">—</span>
+</span>
+
+</div>
+
 
 </div>
 
@@ -523,50 +789,55 @@ Copy UPI ID
 
 <section class="form">
 
+
 <label>
-ENTER AMOUNT
+    ENTER AMOUNT
 </label>
 
+
 <input
-id="amount"
-class="amount-readonly"
-type="number"
-min="1"
-readonly
-value="100"
+    id="amount"
+    class="amount-readonly"
+    type="number"
+    min="1"
+    readonly
+    value="100"
 >
 
 
 <label>
-ENTER UTR NUMBER
+    ENTER UTR NUMBER
 </label>
 
+
 <input
-id="utr"
-type="text"
-inputmode="numeric"
-maxlength="30"
-placeholder="Enter UTR Number"
-autocomplete="off"
+    id="utr"
+    type="text"
+    inputmode="numeric"
+    maxlength="30"
+    placeholder="Enter UTR Number"
+    autocomplete="off"
 >
 
 
 <button
-class="deposit"
-id="depositButton"
-onclick="submitDeposit()"
+    class="deposit"
+    id="depositButton"
+    onclick="submitDeposit()"
 >
-Deposit
+    Deposit
 </button>
 
 
 <div
-class="status"
-id="status"
+    class="status"
+    id="status"
 >
 </div>
 
+
 </section>
+
 
 </div>
 
@@ -575,48 +846,55 @@ id="status"
 
 <nav class="bottom">
 
+
 <button
-class="nav"
-onclick="location.href='dashboard.html'"
+    class="nav"
+    onclick="location.href='dashboard.html'"
 >
-<b>🏠</b>
-Home
+    <b>🏠</b>
+    Home
 </button>
+
 
 <button class="nav active">
-<b>💰</b>
-Wallet
+    <b>💰</b>
+    Wallet
 </button>
 
-<button
-class="nav"
-onclick="location.href='support.html'"
->
-<b>🎧</b>
-Support
-</button>
 
 <button
-class="nav"
-onclick="location.href='profile.html'"
+    class="nav"
+    onclick="location.href='support.html'"
 >
-<b>👤</b>
-Profile
+    <b>🎧</b>
+    Support
 </button>
+
+
+<button
+    class="nav"
+    onclick="location.href='profile.html'"
+>
+    <b>👤</b>
+    Profile
+</button>
+
 
 </nav>
+
 
 </div>
 
 
 <div
-class="toast"
-id="toast"
+    class="toast"
+    id="toast"
 >
 </div>
 
 
 <script type="module">
+
 
 /* =====================================================
    FIREBASE
@@ -648,71 +926,79 @@ from
 const firebaseConfig = {
 
     apiKey:
-    "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+        "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
 
     authDomain:
-    "rdx-ludo.firebaseapp.com",
+        "rdx-ludo.firebaseapp.com",
 
     projectId:
-    "rdx-ludo",
+        "rdx-ludo",
 
     storageBucket:
-    "rdx-ludo.firebasestorage.app",
+        "rdx-ludo.firebasestorage.app",
 
     messagingSenderId:
-    "928340814840",
+        "928340814840",
 
     appId:
-    "1:928340814840:web:6eca42a8b76138b268440d"
+        "1:928340814840:web:6eca42a8b76138b268440d"
+
 };
 
 
 /* =====================================================
-   INITIALIZE
+   INITIALIZE FIREBASE
 ===================================================== */
 
 const app =
-initializeApp(firebaseConfig);
+    initializeApp(
+        firebaseConfig
+    );
+
 
 const db =
-getFirestore(app);
+    getFirestore(
+        app
+    );
 
 
 /* =====================================================
-   PAYMENT SETTINGS PATH
+   PAYMENT SETTINGS
 ===================================================== */
 
 const paymentSettingsRef =
-doc(
-    db,
-    "paymentSettings",
-    "config"
-);
+    doc(
+        db,
+        "paymentSettings",
+        "config"
+    );
 
 
 /* =====================================================
-   URL / LOCAL AMOUNT
+   URL / AMOUNT
 ===================================================== */
 
 const params =
-new URLSearchParams(
-    location.search
-);
+    new URLSearchParams(
+        location.search
+    );
+
 
 const savedAmount =
-localStorage.getItem(
-    "rdxSelectedDepositAmount"
-) || "100";
+    localStorage.getItem(
+        "rdxSelectedDepositAmount"
+    ) || "100";
+
 
 const selectedAmount =
-Number(
-    params.get("amount") ||
-    savedAmount
-) || 100;
+    Number(
+        params.get("amount") ||
+        savedAmount
+    ) || 100;
 
 
 /* =====================================================
-   CURRENT PAYMENT SETTINGS
+   PAYMENT SETTINGS DEFAULT
 ===================================================== */
 
 let paymentSettings = {
@@ -734,7 +1020,9 @@ let paymentSettings = {
 
 function $(id){
 
-    return document.getElementById(id);
+    return document.getElementById(
+        id
+    );
 
 }
 
@@ -742,20 +1030,26 @@ function $(id){
 function toast(message){
 
     const box =
-    $("toast");
+        $("toast");
+
 
     box.textContent =
-    message;
+        message;
+
 
     box.classList.add(
         "show"
     );
 
+
     setTimeout(
-        () =>
-        box.classList.remove(
-            "show"
-        ),
+        function(){
+
+            box.classList.remove(
+                "show"
+            );
+
+        },
         1800
     );
 
@@ -768,14 +1062,16 @@ function showStatus(
 ){
 
     const box =
-    $("status");
+        $("status");
+
 
     box.textContent =
-    message;
+        message;
+
 
     box.className =
-    "status show " +
-    type;
+        "status show " +
+        type;
 
 }
 
@@ -790,6 +1086,87 @@ function safeText(value){
 
 
 /* =====================================================
+   GET LOGGED-IN USER ID
+===================================================== */
+
+function getLoggedInUserId(){
+
+    /*
+       Login page में यही ID save होती है:
+
+       rdxFirebaseUserId
+    */
+
+    const firebaseUserId =
+        localStorage.getItem(
+            "rdxFirebaseUserId"
+        );
+
+
+    if(
+        firebaseUserId
+    ){
+
+        return firebaseUserId;
+
+    }
+
+
+    /*
+       Backup
+    */
+
+    const verifiedMobile =
+        localStorage.getItem(
+            "rdxVerifiedMobile"
+        );
+
+
+    if(
+        verifiedMobile
+    ){
+
+        return verifiedMobile;
+
+    }
+
+
+    const oldUserId =
+        localStorage.getItem(
+            "rdxUserId"
+        ) ||
+        localStorage.getItem(
+            "userId"
+        ) ||
+        localStorage.getItem(
+            "rdx_userId"
+        ) ||
+        "";
+
+
+    return oldUserId;
+
+}
+
+
+/* =====================================================
+   NORMALIZE USER ID
+===================================================== */
+
+function normalizeUserId(value){
+
+    return String(
+        value || ""
+    )
+    .replace(
+        /\D/g,
+        ""
+    );
+
+}
+
+
+/* =====================================================
    LOAD PAYMENT SETTINGS
 ===================================================== */
 
@@ -797,16 +1174,10 @@ async function loadPaymentSettings(){
 
     try{
 
-        showStatus(
-            "Loading payment details...",
-            "success"
-        );
-
-
         const snapshot =
-        await getDoc(
-            paymentSettingsRef
-        );
+            await getDoc(
+                paymentSettingsRef
+            );
 
 
         if(
@@ -818,8 +1189,10 @@ async function loadPaymentSettings(){
                 "error"
             );
 
+
             $("depositButton").disabled =
-            true;
+                true;
+
 
             return;
 
@@ -827,45 +1200,45 @@ async function loadPaymentSettings(){
 
 
         const data =
-        snapshot.data();
+            snapshot.data();
 
 
         paymentSettings = {
 
             upiId:
-            safeText(
-                data.upiId
-            ),
+                safeText(
+                    data.upiId
+                ),
 
             accountHolderName:
-            safeText(
-                data.accountHolderName
-            ),
+                safeText(
+                    data.accountHolderName
+                ),
 
             accountNumber:
-            safeText(
-                data.accountNumber
-            ),
+                safeText(
+                    data.accountNumber
+                ),
 
             ifsc:
-            safeText(
-                data.ifsc
-            ),
+                safeText(
+                    data.ifsc
+                ),
 
             qrCodeUrl:
-            safeText(
-                data.qrCodeUrl
-            ),
+                safeText(
+                    data.qrCodeUrl
+                ),
 
             coinRate:
-            Number(
-                data.coinRate ?? 1
-            ),
+                Number(
+                    data.coinRate ?? 1
+                ),
 
             minimumDeposit:
-            Number(
-                data.minimumDeposit ?? 100
-            )
+                Number(
+                    data.minimumDeposit ?? 100
+                )
 
         };
 
@@ -873,10 +1246,10 @@ async function loadPaymentSettings(){
         renderPaymentSettings();
 
 
-        const currentAmount =
-        Number(
-            $("amount").value
-        ) || selectedAmount;
+        let currentAmount =
+            Number(
+                $("amount").value
+            ) || selectedAmount;
 
 
         if(
@@ -884,26 +1257,26 @@ async function loadPaymentSettings(){
             paymentSettings.minimumDeposit
         ){
 
+            currentAmount =
+                paymentSettings.minimumDeposit;
+
+
             $("amount").value =
-            paymentSettings.minimumDeposit;
+                currentAmount;
+
 
             $("selectedAmount").textContent =
-            paymentSettings.minimumDeposit;
+                currentAmount;
 
         }
 
 
         $("depositButton").disabled =
-        false;
+            false;
 
-
-        /*
-          Hide loading message after
-          successful Firebase read.
-        */
 
         $("status").className =
-        "status";
+            "status";
 
 
     }catch(error){
@@ -921,7 +1294,7 @@ async function loadPaymentSettings(){
 
 
         $("depositButton").disabled =
-        true;
+            true;
 
     }
 
@@ -935,37 +1308,37 @@ async function loadPaymentSettings(){
 function renderPaymentSettings(){
 
     $("upiText").textContent =
-    paymentSettings.upiId ||
-    "UPI उपलब्ध नहीं";
+        paymentSettings.upiId ||
+        "UPI उपलब्ध नहीं";
 
 
     $("accountHolder").textContent =
-    paymentSettings.accountHolderName ||
-    "—";
+        paymentSettings.accountHolderName ||
+        "—";
 
 
     $("accountNumber").textContent =
-    paymentSettings.accountNumber ||
-    "—";
+        paymentSettings.accountNumber ||
+        "—";
 
 
     $("ifsc").textContent =
-    paymentSettings.ifsc ||
-    "—";
+        paymentSettings.ifsc ||
+        "—";
 
 
     $("coinRate").textContent =
-    paymentSettings.coinRate ||
-    "—";
+        paymentSettings.coinRate ||
+        "—";
 
 
     $("minimumDeposit").textContent =
-    paymentSettings.minimumDeposit ||
-    "—";
+        paymentSettings.minimumDeposit ||
+        "—";
 
 
     const qr =
-    $("qrImage");
+        $("qrImage");
 
 
     if(
@@ -973,7 +1346,7 @@ function renderPaymentSettings(){
     ){
 
         qr.src =
-        paymentSettings.qrCodeUrl;
+            paymentSettings.qrCodeUrl;
 
     }else{
 
@@ -982,7 +1355,7 @@ function renderPaymentSettings(){
         );
 
         qr.alt =
-        "QR Code unavailable";
+            "QR Code unavailable";
 
     }
 
@@ -997,7 +1370,7 @@ window.copyUPI =
 async function(){
 
     const upi =
-    paymentSettings.upiId;
+        paymentSettings.upiId;
 
 
     if(!upi){
@@ -1017,9 +1390,11 @@ async function(){
             upi
         );
 
+
         toast(
             "UPI ID copied"
         );
+
 
     }catch{
 
@@ -1053,16 +1428,20 @@ function(){
 
 
     alert(
+
         "Account Holder: " +
         paymentSettings.accountHolderName +
+
         "\n\n" +
 
         "Account Number: " +
         paymentSettings.accountNumber +
+
         "\n\n" +
 
         "IFSC: " +
         paymentSettings.ifsc
+
     );
 
 };
@@ -1076,21 +1455,21 @@ window.submitDeposit =
 async function(){
 
     const button =
-    $("depositButton");
+        $("depositButton");
 
 
     const amount =
-    Number(
-        $("amount").value
-    );
+        Number(
+            $("amount").value
+        );
 
 
     const utr =
-    $("utr").value.trim();
+        $("utr").value.trim();
 
 
     /* ---------------------------------------------
-       BASIC VALIDATION
+       PAYMENT SETTINGS CHECK
     --------------------------------------------- */
 
     if(
@@ -1105,6 +1484,10 @@ async function(){
 
     }
 
+
+    /* ---------------------------------------------
+       AMOUNT CHECK
+    --------------------------------------------- */
 
     if(
         !amount ||
@@ -1136,6 +1519,10 @@ async function(){
     }
 
 
+    /* ---------------------------------------------
+       UTR CHECK
+    --------------------------------------------- */
+
     if(
         utr.length < 6
     ){
@@ -1144,7 +1531,59 @@ async function(){
             "Valid UTR number enter करें"
         );
 
+
         $("utr").focus();
+
+
+        return;
+
+    }
+
+
+    /* =================================================
+       IMPORTANT USER ID FIX
+    ================================================= */
+
+    const rawUserId =
+        getLoggedInUserId();
+
+
+    const userId =
+        normalizeUserId(
+            rawUserId
+        );
+
+
+    /*
+       अगर user login नहीं है,
+       तो खाली UID वाला deposit नहीं बनेगा।
+    */
+
+    if(
+        !userId
+    ){
+
+        showStatus(
+            "Login session नहीं मिला. पहले login करें.",
+            "error"
+        );
+
+
+        toast(
+            "Please login first"
+        );
+
+
+        setTimeout(
+            function(){
+
+                location.href =
+                    "login.html";
+
+            },
+            1000
+        );
+
 
         return;
 
@@ -1156,135 +1595,242 @@ async function(){
     --------------------------------------------- */
 
     button.disabled =
-    true;
+        true;
+
 
     button.textContent =
-    "Submitting...";
+        "Submitting...";
 
 
     try{
 
-        /*
-          User ID:
-          अभी existing localStorage values से
-          available identifier लेने की कोशिश.
-        */
+        /* =================================================
+           CUSTOMER DATA LOAD
+        ================================================= */
 
-        const userId =
-        localStorage.getItem(
-            "rdxUserId"
-        ) ||
-
-        localStorage.getItem(
-            "userId"
-        ) ||
-
-        localStorage.getItem(
-            "rdx_userId"
-        ) ||
-
-        "";
+        let userName =
+            localStorage.getItem(
+                "rdxUserName"
+            ) ||
+            localStorage.getItem(
+                "userName"
+            ) ||
+            "";
 
 
-        const userName =
-        localStorage.getItem(
-            "rdxUserName"
-        ) ||
-
-        localStorage.getItem(
-            "userName"
-        ) ||
-
-        "";
+        let customerData =
+            null;
 
 
         /*
-          Deposit request Firestore में बनेगी.
+           Login page customer document:
 
-          Collection:
-          deposits
-
-          Document:
-          automatically generated ID
+           customers
+              |
+              └── 91XXXXXXXXXX
         */
+
+        try{
+
+            const customerRef =
+                doc(
+                    db,
+                    "customers",
+                    userId
+                );
+
+
+            const customerSnapshot =
+                await getDoc(
+                    customerRef
+                );
+
+
+            if(
+                customerSnapshot.exists()
+            ){
+
+                customerData =
+                    customerSnapshot.data();
+
+
+                /*
+                   Existing name को use करेंगे.
+                */
+
+                userName =
+                    safeText(
+                        customerData.name ||
+                        customerData.fullName ||
+                        customerData.username ||
+                        userName
+                    );
+
+
+            }
+
+        }catch(customerError){
+
+            console.warn(
+                "Customer profile read failed:",
+                customerError
+            );
+
+        }
+
+
+        /* =================================================
+           DEPOSIT DATA
+        ================================================= */
 
         const depositData = {
 
+            /*
+             * IMPORTANT:
+             * Admin uid check के लिए.
+             */
+
+            uid:
+                userId,
+
+
+            /*
+             * Existing code compatibility.
+             */
+
             userId:
-            userId,
+                userId,
+
+
+            /*
+             * Mobile भी अलग से save होगा.
+             */
+
+            mobile:
+                "+" + userId,
+
+
+            /*
+             * User name.
+             */
 
             userName:
-            userName,
+                userName,
+
+
+            /*
+             * Payment information.
+             */
 
             amount:
-            amount,
+                amount,
+
 
             utr:
-            utr,
+                utr,
+
 
             upiId:
-            paymentSettings.upiId,
+                paymentSettings.upiId,
+
 
             accountHolderName:
-            paymentSettings.accountHolderName,
+                paymentSettings.accountHolderName,
+
 
             accountNumber:
-            paymentSettings.accountNumber,
+                paymentSettings.accountNumber,
+
 
             ifsc:
-            paymentSettings.ifsc,
+                paymentSettings.ifsc,
+
 
             coinRate:
-            paymentSettings.coinRate,
+                paymentSettings.coinRate,
+
+
+            /*
+             * Deposit status.
+             */
 
             status:
-            "pending",
+                "pending",
+
 
             comment:
-            "",
+                "",
+
+
+            /*
+             * Firebase server time.
+             */
 
             createdAt:
-            serverTimestamp()
+                serverTimestamp()
 
         };
 
 
+        /* =================================================
+           CREATE DEPOSIT
+        ================================================= */
+
         const depositRef =
-        await addDoc(
-            collection(
-                db,
-                "deposits"
-            ),
-            depositData
-        );
+            await addDoc(
+                collection(
+                    db,
+                    "deposits"
+                ),
+                depositData
+            );
 
 
-        /*
-          Local backup/reference
-        */
+        /* =================================================
+           LOCAL BACKUP
+        ================================================= */
 
         localStorage.setItem(
+
             "rdxLastDeposit",
+
             JSON.stringify({
 
                 requestId:
-                depositRef.id,
+                    depositRef.id,
+
+                uid:
+                    userId,
+
+                userId:
+                    userId,
+
+                mobile:
+                    "+" + userId,
+
+                userName:
+                    userName,
 
                 amount:
-                amount,
+                    amount,
 
                 utr:
-                utr,
+                    utr,
 
                 status:
-                "pending",
+                    "pending",
 
                 createdAt:
-                new Date().toISOString()
+                    new Date().toISOString()
 
             })
+
         );
 
+
+        /* =================================================
+           SUCCESS
+        ================================================= */
 
         showStatus(
             "Deposit submitted successfully. Admin approval pending.",
@@ -1298,18 +1844,71 @@ async function(){
 
 
         $("utr").value =
-        "";
+            "";
 
 
         button.textContent =
-        "Submitted";
+            "Submitted";
+
+
+        /*
+           Button intentionally disabled
+           after successful submission.
+        */
+
+        button.disabled =
+            true;
+
+
+        console.log(
+            "================================"
+        );
+
+        console.log(
+            "DEPOSIT CREATED SUCCESSFULLY"
+        );
+
+        console.log(
+            "Deposit ID:",
+            depositRef.id
+        );
+
+        console.log(
+            "UID:",
+            userId
+        );
+
+        console.log(
+            "User Name:",
+            userName
+        );
+
+        console.log(
+            "Amount:",
+            amount
+        );
+
+        console.log(
+            "================================"
+        );
 
 
     }catch(error){
 
         console.error(
-            "Deposit creation error:",
+            "================================"
+        );
+
+        console.error(
+            "DEPOSIT CREATION ERROR"
+        );
+
+        console.error(
             error
+        );
+
+        console.error(
+            "================================"
         );
 
 
@@ -1326,10 +1925,11 @@ async function(){
 
 
         button.disabled =
-        false;
+            false;
+
 
         button.textContent =
-        "Deposit";
+            "Deposit";
 
     }
 
@@ -1341,20 +1941,27 @@ async function(){
 ===================================================== */
 
 $("amount").value =
-selectedAmount;
+    selectedAmount;
+
 
 $("selectedAmount").textContent =
-selectedAmount;
+    selectedAmount;
 
 
 /* =====================================================
-   LOAD FIREBASE DATA
+   INITIAL BUTTON STATE
 ===================================================== */
 
 $("depositButton").disabled =
-true;
+    true;
+
+
+/* =====================================================
+   LOAD PAYMENT DATA
+===================================================== */
 
 loadPaymentSettings();
+
 
 </script>
 
