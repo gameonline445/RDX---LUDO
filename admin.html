@@ -105,7 +105,10 @@ header{
     display:flex;
     align-items:center;
     gap:10px;
+    cursor:pointer;
+    user-select:none;
 }
+.brand:active{transform:scale(0.98);}
 .brand .admin-logo{
     width:38px;
     height:38px;
@@ -163,8 +166,8 @@ main{flex:1;padding:20px 18px;max-width:1200px;}
 .page.active{display:block;}
 .title{font-size:22px;font-weight:900;color:#0c4a6e;margin-bottom:16px;}
 
-/* STATS */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+/* 6 STATS GRID */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .stat{
     background:#ffffff;
     border:1.5px solid #bae6fd;
@@ -173,8 +176,8 @@ main{flex:1;padding:20px 18px;max-width:1200px;}
     box-shadow:0 4px 14px rgba(2,132,199,0.05);
 }
 .stat small{color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase;}
-.stat h2{margin:6px 0 0;font-size:24px;font-weight:900;}
-.blue{color:#0284c7;} .green{color:#15803d;} .orange{color:#d97706;} .red{color:#be123c;}
+.stat h2{margin:6px 0 0;font-size:22px;font-weight:900;}
+.blue{color:#0284c7;} .green{color:#15803d;} .orange{color:#d97706;} .red{color:#be123c;} .purple{color:#7c3aed;}
 
 /* CARDS & TABLES */
 .card{
@@ -213,6 +216,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .action{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;margin:2px;}
 .approve{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
 .reject{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+.edit-status-btn{background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;}
 .delete-btn{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
 .delete-all-btn{background:linear-gradient(100deg,#e11d48,#be123c);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
 .refresh{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
@@ -268,7 +272,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <!-- ADMIN INTERFACE -->
 <section id="admin">
 <header>
-<div class="brand">
+<div class="brand" onclick="refreshAdminDashboard()" title="Click to Refresh Admin Dashboard">
     <div class="admin-logo">RDX</div>
     <div>RDX <span>LUDO</span> ADMIN</div>
 </div>
@@ -292,7 +296,9 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="title">Dashboard</div>
 <div class="stats">
 <div class="stat"><small>Total Customers</small><h2 class="blue" id="totalUsers">0</h2></div>
-<div class="stat"><small>Total Balance</small><h2 class="green" id="totalCoins">0</h2></div>
+<div class="stat"><small>Total Balance</small><h2 class="green" id="totalCoins">₹0</h2></div>
+<div class="stat"><small>Total Deposit Paid</small><h2 class="purple" id="totalApprovedDeposits">₹0</h2></div>
+<div class="stat"><small>Total Withdrawal Paid</small><h2 class="green" id="totalApprovedWithdrawals">₹0</h2></div>
 <div class="stat"><small>Pending Deposits</small><h2 class="orange" id="pendingDeposits">0</h2></div>
 <div class="stat"><small>Pending Withdrawals</small><h2 class="red" id="pendingWithdrawals">0</h2></div>
 </div>
@@ -365,7 +371,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <section id="notifications" class="page">
 <div class="title">Notifications Management</div>
 
-<!-- Send Form -->
 <div class="card">
 <h3 style="font-size:16px; font-weight:850; color:#0c4a6e; margin-bottom:12px;"><i class="fa-solid fa-paper-plane"></i> Send New Notification</h3>
 <div class="form">
@@ -386,7 +391,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </div>
 
-<!-- Sent Notifications History & Delete Options -->
 <div class="card">
 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
     <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-list-check"></i> Sent Notifications History</h3>
@@ -482,6 +486,17 @@ function parseItemTime(ts) {
 
     return { dateObj: d, formatted: formatted };
 }
+
+// LOGO REFRESH ADMIN DASHBOARD
+window.refreshAdminDashboard = async () => {
+    document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+    document.querySelector('.nav[data-page="dashboard"]').classList.add("active");
+    $("dashboard").classList.add("active");
+    $("dashStatus").textContent = "🔄 Refreshing data...";
+    $("dashStatus").className = "status bad";
+    await loadAll();
+};
 
 async function login(){
     const email = $("email").value.trim().toLowerCase();
@@ -593,7 +608,7 @@ function renderWithdrawals(){
             <td><span class="badge ${s}">${s}</span></td>
             <td><i class="fa-regular fa-clock"></i> ${w.formattedDate}</td>
             <td>
-                ${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : `<span style="color:#64748b;font-weight:700;">Done</span>`}
+                ${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : `<button class="action edit-status-btn" data-with-edit="${safe(w.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`}
             </td>
         </tr>`;
     }).join("");
@@ -603,6 +618,9 @@ function renderWithdrawals(){
     });
     document.querySelectorAll("[data-with-rej]").forEach(b => {
         b.addEventListener("click", () => rejectWithdrawal(b.dataset.withRej));
+    });
+    document.querySelectorAll("[data-with-edit]").forEach(b => {
+        b.addEventListener("click", () => editWithdrawalStatus(b.dataset.withEdit));
     });
 }
 
@@ -623,6 +641,27 @@ async function rejectWithdrawal(id) {
         alert("❌ Withdrawal Rejected");
         loadWithdrawals();
     } catch(e) { alert(e.message); }
+}
+
+// EDIT WITHDRAWAL STATUS
+async function editWithdrawalStatus(id) {
+    const w = withdrawals.find(x => x.id === id);
+    if (!w) return;
+    const newStatus = prompt(`Status change karein (Type: pending / approved / rejected):`, w.status);
+    if (!newStatus) return;
+    const clean = newStatus.trim().toLowerCase();
+    if (!["pending", "approved", "rejected"].includes(clean)) {
+        return alert("Galat status! Sirf 'pending', 'approved' ya 'rejected' daalein.");
+    }
+
+    try {
+        await setDoc(doc(db, "withdrawals", id), { 
+            status: clean, 
+            comment: `Status edited by admin to ${clean}` 
+        }, { merge: true });
+        alert(`✅ Status successfully changed to '${clean}'`);
+        loadWithdrawals();
+    } catch(e) { alert("Error: " + e.message); }
 }
 
 $("withdrawalSearch").addEventListener("input", renderWithdrawals);
@@ -695,7 +734,7 @@ function renderDeposits(){
             <td><b>${safe(d.utr || '—')}</b></td>
             <td><span class="badge ${s}">${s}</span></td>
             <td><i class="fa-regular fa-clock"></i> ${d.formattedDate}</td>
-            <td>${s === "pending" ? `<button class="action approve" data-dep-app="${safe(d.id)}">Approve</button><button class="action reject" data-dep-rej="${safe(d.id)}">Reject</button>` : `<span style="color:#64748b;font-weight:700;">Done</span>`}</td>
+            <td>${s === "pending" ? `<button class="action approve" data-dep-app="${safe(d.id)}">Approve</button><button class="action reject" data-dep-rej="${safe(d.id)}">Reject</button>` : `<button class="action edit-status-btn" data-dep-edit="${safe(d.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`}</td>
         </tr>
     `}).join("");
 
@@ -704,6 +743,9 @@ function renderDeposits(){
     });
     document.querySelectorAll("[data-dep-rej]").forEach(b => {
         b.addEventListener("click", () => rejectDeposit(b.dataset.depRej));
+    });
+    document.querySelectorAll("[data-dep-edit]").forEach(b => {
+        b.addEventListener("click", () => editDepositStatus(b.dataset.depEdit));
     });
 }
 
@@ -744,10 +786,56 @@ async function rejectDeposit(id) {
     } catch(e) { alert(e.message); }
 }
 
+// EDIT DEPOSIT STATUS (WITH AUTO-WALLET REVERSAL/ADJUSTMENT)
+async function editDepositStatus(id) {
+    const d = deposits.find(x => x.id === id);
+    if (!d) return;
+    const oldStatus = String(d.status || "").toLowerCase();
+    const newStatus = prompt(`Status change karein (Type: pending / approved / rejected):`, oldStatus);
+    if (!newStatus) return;
+    const clean = newStatus.trim().toLowerCase();
+    if (!["pending", "approved", "rejected"].includes(clean)) {
+        return alert("Galat status! Sirf 'pending', 'approved' ya 'rejected' daalein.");
+    }
+    if (clean === oldStatus) return;
+
+    const uid = String(d.uid || d.userId).replace(/\D/g, "");
+    const amt = Number(d.amount || 0);
+
+    try {
+        await runTransaction(db, async t => {
+            const cRef = doc(db, "customers", uid.length === 10 ? "91" + uid : uid);
+            const cSnap = await t.get(cRef);
+            let currentBal = Number(cSnap.data()?.balance || 0);
+            let currentDep = Number(cSnap.data()?.depositBalance || 0);
+
+            // 1. Agar pehle Approved tha aur ab Pending/Reject ho raha hai -> Wallet se amount minus karein
+            if (oldStatus === "approved" && (clean === "pending" || clean === "rejected")) {
+                currentBal = Math.max(0, currentBal - amt);
+                currentDep = Math.max(0, currentDep - amt);
+                t.update(cRef, { balance: currentBal, depositBalance: currentDep });
+            }
+            // 2. Agar pehle Pending/Reject tha aur ab Approve ho raha hai -> Wallet me add karein
+            else if (oldStatus !== "approved" && clean === "approved") {
+                t.update(cRef, { balance: currentBal + amt, depositBalance: currentDep + amt });
+            }
+
+            t.update(doc(db, "deposits", id), { 
+                status: clean, 
+                comment: `Status edited by admin from ${oldStatus} to ${clean}` 
+            });
+        });
+
+        alert(`✅ Deposit status updated to '${clean}' & Customer balance synced!`);
+        loadDeposits();
+        loadUsers();
+    } catch(e) { alert("Error: " + e.message); }
+}
+
 $("depositSearch").addEventListener("input", renderDeposits);
 $("refreshDeposits").addEventListener("click", loadDeposits);
 
-// ================= CUSTOMERS (CLEAN & SAFE VIEW) =================
+// ================= CUSTOMERS =================
 async function loadUsers(){
     $("userTable").innerHTML = `<tr><td colspan="6" class="empty">Loading...</td></tr>`;
     try {
@@ -805,10 +893,9 @@ function renderUsers(){
 $("userSearch").addEventListener("input", renderUsers);
 $("refreshUsers").addEventListener("click", loadUsers);
 
-// ================= NOTIFICATIONS (MANAGEMENT & DELETE) =================
+// ================= NOTIFICATIONS =================
 $("notifTarget").addEventListener("change", e => $("personalUidBox").style.display = e.target.value === "personal" ? "block" : "none");
 
-// 1. Send Notification
 $("sendNotifBtn").addEventListener("click", async () => {
     const t = $("notifTarget").value;
     const u = $("notifUid").value.replace(/\D/g,"");
@@ -841,7 +928,6 @@ $("sendNotifBtn").addEventListener("click", async () => {
     btn.textContent = "🚀 Send Notification";
 });
 
-// 2. Load Notifications History
 async function loadNotifications(){
     $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Loading notifications...</td></tr>`;
     try {
@@ -858,7 +944,6 @@ async function loadNotifications(){
             });
         });
 
-        // Latest Notifications on Top
         list.sort((a, b) => b.timeObj - a.timeObj);
         notificationsList = list;
         renderNotifications();
@@ -893,7 +978,6 @@ function renderNotifications(){
     });
 }
 
-// 3. Delete Single Notification
 async function deleteSingleNotification(notifId) {
     if (!confirm("Kya aap is notification ko delete karna chahte hain?")) return;
     try {
@@ -905,7 +989,6 @@ async function deleteSingleNotification(notifId) {
     }
 }
 
-// 4. Delete All Notifications
 async function deleteAllNotifications() {
     if (!notificationsList.length) return alert("Delete karne ke liye koi notification nahi hai.");
     if (!confirm(`⚠️ Kya aap sach mein sabhi (${notificationsList.length}) notifications ko permanently delete karna chahte hain?`)) return;
@@ -968,6 +1051,18 @@ $("saveSettings").addEventListener("click", async () => {
 function updateDashboard(){
     $("totalUsers").textContent = users.length;
     $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
+    
+    // Total Approved Payments Calculations
+    const approvedDepSum = deposits
+        .filter(d => String(d.status || "").toLowerCase() === "approved")
+        .reduce((sum, d) => sum + Number(d.amount || 0), 0);
+    $("totalApprovedDeposits").textContent = "₹" + approvedDepSum;
+
+    const approvedWithSum = withdrawals
+        .filter(w => String(w.status || "").toLowerCase() === "approved")
+        .reduce((sum, w) => sum + Number(w.amount || 0), 0);
+    $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
+
     $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
     $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
     
