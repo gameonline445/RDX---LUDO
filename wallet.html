@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width,
-      initial-scale=1.0,
-      maximum-scale=1.0,
-      user-scalable=no,
-      viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
-
 
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
@@ -27,610 +18,118 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-
 let firebaseDB = null;
-
 try {
-    if(!firebase.apps.length){
-        firebase.initializeApp(firebaseConfig);
-    }
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     firebaseDB = firebase.firestore();
-    console.log("Firebase connected");
-}
-catch(error){
-    console.error("Firebase initialization error:", error);
-}
+} catch(error){ console.error(error); }
 </script>
 
 <style>
-/* =====================================================
-   RESET
-===================================================== */
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100dvh;overflow:hidden;position:fixed;inset:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#101a38;background:radial-gradient(circle at 0% 0%,#dfeaff 0%,transparent 35%),radial-gradient(circle at 100% 15%,#e9ddff 0%,transparent 35%),linear-gradient(180deg,#f3f7ff 0%,#ffffff 55%,#f2f6ff 100%);}
+button{font:inherit;}
 
-html{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-}
+/* HEADER */
+.top-header{position:fixed;top:0;left:0;right:0;width:100%;height:70px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#edf4ff,#ffffff,#edf4ff);border-bottom:1px solid #c8d7f3;box-shadow:0 5px 20px rgba(43,82,150,.10);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.menu-btn{width:48px;height:48px;border:0;border-radius:16px;background:linear-gradient(145deg,#ff6e61,#ff9077);color:#ffffff;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(255,96,80,.25);cursor:pointer;}
+.logo{width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e7efff);border:3px solid #d4e2ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-size:14px;font-weight:900;box-shadow:0 6px 15px rgba(36,93,190,.15);cursor:pointer;}
+.header-right{display:flex;align-items:center;gap:7px;}
+.header-icon{width:47px;height:47px;border:0;border-radius:17px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:21px;box-shadow:0 6px 15px rgba(0,0,0,.12);cursor:pointer;}
+.notification{background:linear-gradient(145deg,#756cf3,#817eff);}
+.wallet-top{background:linear-gradient(145deg,#16bf68,#45d980);min-width:55px;font-weight:800;}
+.redeem-top{background:linear-gradient(145deg,#ff8733,#ffb04b);min-width:55px;}
 
-body{
-    width:100%;
-    height:100dvh;
-    min-height:100dvh;
-    overflow:hidden;
-    position:fixed;
-    inset:0;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    color:#101a38;
-    background:
-    radial-gradient(circle at 0% 0%,#dfeaff 0%,transparent 35%),
-    radial-gradient(circle at 100% 15%,#e9ddff 0%,transparent 35%),
-    linear-gradient(180deg,#f3f7ff 0%,#ffffff 55%,#f2f6ff 100%);
-}
+/* CONTAINER */
+.container{position:fixed;top:70px;left:0;right:0;bottom:78px;width:100%;max-width:850px;margin:0 auto;padding:18px 14px 12px;overflow:hidden;display:flex;flex-direction:column;}
+.wallet-card{flex:0 0 auto;width:100%;border:1.5px solid #aec5f1;border-radius:27px;padding:25px 27px 24px;background:radial-gradient(circle at 0% 0%,#dfeaff,transparent 40%),radial-gradient(circle at 100% 10%,#d9e8ff,transparent 42%),linear-gradient(135deg,#f1f6ff,#ffffff);box-shadow:0 14px 35px rgba(45,91,175,.10);}
+.wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+.wallet-title{display:inline-flex;align-items:center;gap:8px;color:#2e64d5;border:1px solid #9db9ef;background:#edf4ff;padding:10px 16px;border-radius:25px;font-size:15px;font-weight:850;letter-spacing:.5px;}
+.history-btn{border:1px solid #d0d9eb;background:rgba(255,255,255,.90);color:#17213a;padding:10px 17px;border-radius:25px;font-weight:750;font-size:15px;cursor:pointer;}
+.balance-label{color:#697895;font-size:18px;margin-bottom:2px;}
+.balance{color:#101a38;font-size:56px;line-height:1;font-weight:900;letter-spacing:-2.5px;}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:27px;}
+.action-btn{height:66px;border-radius:35px;font-size:19px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
+.add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#2162e9,#3979f1);box-shadow:0 10px 25px rgba(34,99,233,.27);}
+.withdraw-btn{color:#17213a;border:1.5px solid #b9c9e8;background:rgba(255,255,255,.90);box-shadow:0 4px 15px rgba(0,0,0,.04);}
 
-button{
-    font:inherit;
-    -webkit-appearance:none;
-    appearance:none;
-}
+.balance-grid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px;}
+.balance-box{min-height:0;height:100%;border:1.5px solid #c1d1ed;border-radius:25px;background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(247,250,255,.96));padding:18px 20px;box-shadow:0 8px 20px rgba(30,60,120,.04);}
+.balance-icon{width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#e5f0ff,#dceaff);border:1px solid #a9c6ef;display:flex;align-items:center;justify-content:center;font-size:23px;color:#2871df;}
+.balance-box h3{margin-top:14px;font-size:17px;color:#65728d;font-weight:800;letter-spacing:.4px;}
+.balance-value{margin-top:6px;font-size:27px;font-weight:900;color:#101a38;}
+.balance-note{display:block;margin-top:6px;color:#a0aabd;font-size:14px;}
 
-/* =====================================================
-   HEADER
-===================================================== */
-.top-header{
-    position:fixed;
-    top:0;
-    left:0;
-    right:0;
-    width:100%;
-    height:70px;
-    z-index:1000;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 14px;
-    padding-top:env(safe-area-inset-top);
-    background:linear-gradient(110deg,#edf4ff,#ffffff,#edf4ff);
-    border-bottom:1px solid #c8d7f3;
-    box-shadow:0 5px 20px rgba(43,82,150,.10);
-}
+.info-box{flex:0 0 auto;min-height:84px;margin-top:13px;border:1px solid #d5ddea;border-radius:22px;background:rgba(255,255,255,.88);padding:16px 18px;display:flex;align-items:center;gap:13px;color:#738099;font-size:15px;line-height:1.45;}
+.info-icon{width:29px;height:29px;flex:0 0 29px;border:2px solid #4e7ed9;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#3d71d3;font-size:17px;font-weight:800;}
 
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+/* BOTTOM NAVIGATION */
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;width:100%;height:78px;z-index:1100;display:flex;align-items:center;justify-content:space-around;background:rgba(255,255,255,.98);border-top:1px solid #d5deef;box-shadow:0 -5px 20px rgba(30,65,130,.09);}
+.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#66738d;font-size:13px;cursor:pointer;}
+.nav-icon{width:45px;height:45px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.nav-item.active{color:#202d49;font-weight:800;}
+.nav-item.active .nav-icon{background:linear-gradient(145deg,#536df5,#596af0);color:#ffffff;box-shadow:0 8px 18px rgba(83,109,245,.30);}
 
-.menu-btn{
-    width:48px;
-    height:48px;
-    border:0;
-    border-radius:16px;
-    background:linear-gradient(145deg,#ff6e61,#ff9077);
-    color:#ffffff;
-    font-size:26px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 8px 18px rgba(255,96,80,.25);
-    cursor:pointer;
-}
+/* SIDE MENU */
+.menu-overlay{position:fixed;inset:0;background:rgba(17,29,55,.30);backdrop-filter:blur(3px);z-index:2000;display:none;}
+.menu-overlay.show{display:block;}
+.menu-panel{position:fixed;top:0;left:-100%;width:78%;max-width:390px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 105px;overflow:hidden;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
+.menu-panel.open{left:0;}
+.menu-title{display:flex;align-items:center;justify-content:space-between;padding:5px 2px 24px;border-bottom:1px solid #e1e6f0;}
+.menu-brand{display:flex;align-items:center;gap:13px;}
+.menu-logo{width:54px;height:54px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e7efff);border:3px solid #d3e1ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-weight:900;cursor:pointer;}
+.menu-user h2{font-size:20px;font-weight:850;}
+.menu-user p{margin-top:4px;color:#71809d;font-size:13px;}
+.close-menu{border:1px solid #e0e5ee;background:#f6f7fb;width:48px;height:48px;border-radius:50%;font-size:27px;color:#64718a;cursor:pointer;}
+.menu-list{margin-top:22px;}
+.menu-item{width:100%;min-height:68px;border:1px solid #e1e5ed;background:#ffffff;padding:10px 14px;border-radius:20px;margin-bottom:12px;display:flex;align-items:center;gap:14px;text-align:left;color:#17213a;cursor:pointer;}
+.menu-item-icon{width:48px;height:48px;flex:0 0 48px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:22px;}
+.menu-home{background:linear-gradient(145deg,#716df5,#817eff);}
+.menu-profile{background:linear-gradient(145deg,#ff743e,#ff9c39);}
+.menu-wallet{background:linear-gradient(145deg,#18b965,#43d77e);}
+.menu-refer{background:linear-gradient(145deg,#ff8a35,#ffb044);}
+.menu-history{background:linear-gradient(145deg,#7259df,#9868f3);}
+.menu-notification{background:linear-gradient(145deg,#6679f5,#7d8cff);}
+.menu-support{background:linear-gradient(145deg,#12b8e0,#27c9ef);}
+.menu-item-text{flex:1;font-size:17px;font-weight:750;}
+.menu-arrow{color:#69768e;font-size:28px;}
 
-.logo{
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#e7efff);
-    border:3px solid #d4e2ff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#1762df;
-    font-size:14px;
-    font-weight:900;
-    box-shadow:0 6px 15px rgba(36,93,190,.15);
-}
-
-.header-right{
-    display:flex;
-    align-items:center;
-    gap:7px;
-}
-
-.header-icon{
-    width:47px;
-    height:47px;
-    border:0;
-    border-radius:17px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#ffffff;
-    font-size:21px;
-    box-shadow:0 6px 15px rgba(0,0,0,.12);
-    cursor:pointer;
-}
-
-.notification{
-    background:linear-gradient(145deg,#756cf3,#817eff);
-}
-
-.wallet-top{
-    background:linear-gradient(145deg,#16bf68,#45d980);
-    min-width:55px;
-    font-weight:800;
-}
-
-.redeem-top{
-    background:linear-gradient(145deg,#ff8733,#ffb04b);
-    min-width:55px;
-}
-
-/* =====================================================
-   MAIN SCREEN
-===================================================== */
-.container{
-    position:fixed;
-    top:70px;
-    left:0;
-    right:0;
-    bottom:78px;
-    width:100%;
-    max-width:850px;
-    margin:0 auto;
-    padding:18px 14px 12px;
-    overflow:hidden;
-    display:flex;
-    flex-direction:column;
-}
-
-/* =====================================================
-   WALLET MAIN CARD
-===================================================== */
-.wallet-card{
-    flex:0 0 auto;
-    width:100%;
-    border:1.5px solid #aec5f1;
-    border-radius:27px;
-    padding:25px 27px 24px;
-    background:
-    radial-gradient(circle at 0% 0%,#dfeaff,transparent 40%),
-    radial-gradient(circle at 100% 10%,#d9e8ff,transparent 42%),
-    linear-gradient(135deg,#f1f6ff,#ffffff);
-    box-shadow:0 14px 35px rgba(45,91,175,.10);
-}
-
-.wallet-top-row{
-    width:100%;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:24px;
-}
-
-.wallet-title{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    color:#2e64d5;
-    border:1px solid #9db9ef;
-    background:#edf4ff;
-    padding:10px 16px;
-    border-radius:25px;
-    font-size:15px;
-    font-weight:850;
-    letter-spacing:.5px;
-}
-
-.history-btn{
-    border:1px solid #d0d9eb;
-    background:rgba(255,255,255,.90);
-    color:#17213a;
-    padding:10px 17px;
-    border-radius:25px;
-    font-weight:750;
-    font-size:15px;
-    cursor:pointer;
-}
-
-.balance-label{
-    color:#697895;
-    font-size:18px;
-    margin-bottom:2px;
-}
-
-.balance{
-    color:#101a38;
-    font-size:56px;
-    line-height:1;
-    font-weight:900;
-    letter-spacing:-2.5px;
-}
-
-.wallet-actions{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:16px;
-    margin-top:27px;
-}
-
-.action-btn{
-    height:66px;
-    border-radius:35px;
-    font-size:19px;
-    font-weight:850;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    cursor:pointer;
-}
-
-.add-btn{
-    color:#ffffff;
-    border:0;
-    background:linear-gradient(100deg,#2162e9,#3979f1);
-    box-shadow:0 10px 25px rgba(34,99,233,.27);
-}
-
-.withdraw-btn{
-    color:#17213a;
-    border:1.5px solid #b9c9e8;
-    background:rgba(255,255,255,.90);
-    box-shadow:0 4px 15px rgba(0,0,0,.04);
-}
-
-/* =====================================================
-   DEPOSIT / WINNINGS
-===================================================== */
-.balance-grid{
-    flex:1 1 auto;
-    min-height:0;
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-top:15px;
-}
-
-.balance-box{
-    min-height:0;
-    height:100%;
-    border:1.5px solid #c1d1ed;
-    border-radius:25px;
-    background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(247,250,255,.96));
-    padding:18px 20px;
-    box-shadow:0 8px 20px rgba(30,60,120,.04);
-}
-
-.balance-icon{
-    width:48px;
-    height:48px;
-    border-radius:16px;
-    background:linear-gradient(145deg,#e5f0ff,#dceaff);
-    border:1px solid #a9c6ef;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:23px;
-    color:#2871df;
-}
-
-.balance-box h3{
-    margin-top:14px;
-    font-size:17px;
-    color:#65728d;
-    font-weight:800;
-    letter-spacing:.4px;
-}
-
-.balance-value{
-    margin-top:6px;
-    font-size:27px;
-    font-weight:900;
-    color:#101a38;
-}
-
-.balance-note{
-    display:block;
-    margin-top:6px;
-    color:#a0aabd;
-    font-size:14px;
-}
-
-/* =====================================================
-   INFO
-===================================================== */
-.info-box{
-    flex:0 0 auto;
-    min-height:84px;
-    margin-top:13px;
-    border:1px solid #d5ddea;
-    border-radius:22px;
-    background:rgba(255,255,255,.88);
-    padding:16px 18px;
-    display:flex;
-    align-items:center;
-    gap:13px;
-    color:#738099;
-    font-size:15px;
-    line-height:1.45;
-}
-
-.info-icon{
-    width:29px;
-    height:29px;
-    flex:0 0 29px;
-    border:2px solid #4e7ed9;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#3d71d3;
-    font-size:17px;
-    font-weight:800;
-}
-
-/* =====================================================
-   BOTTOM NAVIGATION
-===================================================== */
-.bottom-nav{
-    position:fixed;
-    left:0;
-    right:0;
-    bottom:0;
-    width:100%;
-    height:78px;
-    z-index:1100;
-    display:flex;
-    align-items:center;
-    justify-content:space-around;
-    background:rgba(255,255,255,.98);
-    border-top:1px solid #d5deef;
-    box-shadow:0 -5px 20px rgba(30,65,130,.09);
-}
-
-.nav-item{
-    width:25%;
-    height:100%;
-    border:0;
-    background:transparent;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    color:#66738d;
-    font-size:13px;
-    font-weight:500;
-    cursor:pointer;
-}
-
-.nav-icon{
-    width:45px;
-    height:45px;
-    border-radius:15px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-}
-
-.nav-item.active{
-    color:#202d49;
-    font-weight:800;
-}
-
-.nav-item.active .nav-icon{
-    background:linear-gradient(145deg,#536df5,#596af0);
-    color:#ffffff;
-    box-shadow:0 8px 18px rgba(83,109,245,.30);
-}
-
-/* =====================================================
-   SIDE MENU
-===================================================== */
-.menu-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(17,29,55,.30);
-    backdrop-filter:blur(3px);
-    z-index:2000;
-    display:none;
-}
-
-.menu-overlay.show{
-    display:block;
-}
-
-.menu-panel{
-    position:fixed;
-    top:0;
-    left:-100%;
-    width:78%;
-    max-width:390px;
-    height:100dvh;
-    background:#ffffff;
-    z-index:2100;
-    padding:20px 16px 105px;
-    overflow:hidden;
-    transition:left .3s ease;
-    box-shadow:10px 0 35px rgba(0,0,0,.16);
-}
-
-.menu-panel.open{
-    left:0;
-}
-
-.menu-title{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:5px 2px 24px;
-    border-bottom:1px solid #e1e6f0;
-}
-
-.menu-brand{
-    display:flex;
-    align-items:center;
-    gap:13px;
-}
-
-.menu-logo{
-    width:54px;
-    height:54px;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#e7efff);
-    border:3px solid #d3e1ff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#1762df;
-    font-weight:900;
-}
-
-.menu-user h2{
-    font-size:20px;
-    font-weight:850;
-}
-
-.menu-user p{
-    margin-top:4px;
-    color:#71809d;
-    font-size:13px;
-}
-
-.close-menu{
-    border:1px solid #e0e5ee;
-    background:#f6f7fb;
-    width:48px;
-    height:48px;
-    border-radius:50%;
-    font-size:27px;
-    color:#64718a;
-    cursor:pointer;
-}
-
-.menu-list{
-    margin-top:22px;
-}
-
-.menu-item{
-    width:100%;
-    min-height:68px;
-    border:1px solid #e1e5ed;
-    background:#ffffff;
-    padding:10px 14px;
-    border-radius:20px;
-    margin-bottom:12px;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    text-align:left;
-    color:#17213a;
-    cursor:pointer;
-}
-
-.menu-item-icon{
-    width:48px;
-    height:48px;
-    flex:0 0 48px;
-    border-radius:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:#ffffff;
-    font-size:22px;
-}
-
-.menu-home{ background:linear-gradient(145deg,#716df5,#817eff); }
-.menu-profile{ background:linear-gradient(145deg,#ff743e,#ff9c39); }
-.menu-wallet{ background:linear-gradient(145deg,#18b965,#43d77e); }
-.menu-refer{ background:linear-gradient(145deg,#ff8a35,#ffb044); }
-.menu-history{ background:linear-gradient(145deg,#7259df,#9868f3); }
-.menu-notification{ background:linear-gradient(145deg,#6679f5,#7d8cff); }
-.menu-support{ background:linear-gradient(145deg,#12b8e0,#27c9ef); }
-
-.menu-item-text{
-    flex:1;
-    font-size:17px;
-    font-weight:750;
-}
-
-.menu-arrow{
-    color:#69768e;
-    font-size:28px;
-}
-
-/* =====================================================
-   TOAST
-===================================================== */
-.toast{
-    position:fixed;
-    left:50%;
-    top:90px;
-    transform:translateX(-50%) translateY(-20px);
-    background:#182440;
-    color:#ffffff;
-    padding:13px 18px;
-    border-radius:14px;
-    opacity:0;
-    pointer-events:none;
-    transition:.25s;
-    z-index:5000;
-    font-size:14px;
-    text-align:center;
-}
-
-.toast.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-}
-
-/* =====================================================
-   MOBILE & RESPONSIVE
-===================================================== */
 @media(max-width:700px){
-    .top-header{ height:70px; padding-left:12px; padding-right:12px; }
-    .header-icon{ width:44px; height:44px; border-radius:16px; }
-    .wallet-top, .redeem-top{ min-width:44px; font-size:0; }
-    .wallet-top::before{ content:"💰"; font-size:20px; }
-    .redeem-top::before{ content:"🎁"; font-size:20px; }
-    .container{ top:70px; bottom:78px; padding:14px 12px 10px; }
-    .wallet-card{ padding:22px 20px 20px; border-radius:25px; }
-    .wallet-top-row{ margin-bottom:20px; }
-    .wallet-title{ padding:9px 13px; font-size:13px; }
-    .history-btn{ padding:9px 13px; font-size:14px; }
-    .balance-label{ font-size:17px; }
-    .balance{ font-size:52px; letter-spacing:-2px; }
-    .wallet-actions{ gap:12px; margin-top:25px; }
-    .action-btn{ height:62px; font-size:17px; }
-    .balance-grid{ gap:11px; margin-top:13px; }
-    .balance-box{ padding:16px; border-radius:22px; }
-    .balance-icon{ width:45px; height:45px; border-radius:15px; font-size:21px; }
-    .balance-box h3{ margin-top:12px; font-size:14px; }
-    .balance-value{ font-size:24px; }
-    .balance-note{ font-size:12px; }
-    .info-box{ min-height:78px; margin-top:11px; padding:14px; font-size:13px; border-radius:19px; }
+    .top-header{height:70px;padding-left:12px;padding-right:12px;}
+    .header-icon{width:44px;height:44px;border-radius:16px;}
+    .wallet-top,.redeem-top{min-width:44px;font-size:0;}
+    .wallet-top::before{content:"💰";font-size:20px;}
+    .redeem-top::before{content:"🎁";font-size:20px;}
+    .container{top:70px;bottom:78px;padding:14px 12px 10px;}
+    .wallet-card{padding:22px 20px 20px;border-radius:25px;}
+    .wallet-top-row{margin-bottom:20px;}
+    .wallet-title{padding:9px 13px;font-size:13px;}
+    .history-btn{padding:9px 13px;font-size:14px;}
+    .balance-label{font-size:17px;}
+    .balance{font-size:52px;letter-spacing:-2px;}
+    .wallet-actions{gap:12px;margin-top:25px;}
+    .action-btn{height:62px;font-size:17px;}
+    .balance-grid{gap:11px;margin-top:13px;}
+    .balance-box{padding:16px;border-radius:22px;}
+    .balance-icon{width:45px;height:45px;border-radius:15px;font-size:21px;}
+    .balance-box h3{margin-top:12px;font-size:14px;}
+    .balance-value{font-size:24px;}
+    .balance-note{font-size:12px;}
+    .info-box{min-height:78px;margin-top:11px;padding:14px;font-size:13px;border-radius:19px;}
 }
 </style>
-
 </head>
 
 <body>
 
-<!-- ================= HEADER ================= -->
+<!-- HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <div class="logo">RDX</div>
+        <!-- Logo click to Home -->
+        <div class="logo" onclick="goHome()">RDX</div>
     </div>
-
     <div class="header-right">
         <button class="header-icon notification" onclick="goNotifications()">🔔</button>
         <button class="header-icon wallet-top" onclick="goWallet()">💰 <span id="topBalance">0</span></button>
@@ -638,13 +137,13 @@ button{
     </div>
 </header>
 
-<!-- ================= SIDE MENU ================= -->
+<!-- SIDE MENU -->
 <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
 <div class="menu-panel" id="menuPanel">
     <div class="menu-title">
         <div class="menu-brand">
-            <div class="menu-logo">RDX</div>
+            <div class="menu-logo" onclick="goHome()">RDX</div>
             <div class="menu-user">
                 <h2 id="menuUsername">RDX LUDO</h2>
                 <p>Play · Win · Earn</p>
@@ -654,58 +153,23 @@ button{
     </div>
 
     <div class="menu-list">
-        <button class="menu-item" onclick="goHome()">
-            <div class="menu-item-icon menu-home">🏠</div>
-            <div class="menu-item-text">Home</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goProfile()">
-            <div class="menu-item-icon menu-profile">👤</div>
-            <div class="menu-item-text">My Profile</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goWallet()">
-            <div class="menu-item-icon menu-wallet">💰</div>
-            <div class="menu-item-text">My Wallet</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goRedeem()">
-            <div class="menu-item-icon menu-refer">🎁</div>
-            <div class="menu-item-text">Refer & Earn</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goHistory()">
-            <div class="menu-item-icon menu-history">↻</div>
-            <div class="menu-item-text">History</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goNotifications()">
-            <div class="menu-item-icon menu-notification">🔔</div>
-            <div class="menu-item-text">Notifications</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goSupport()">
-            <div class="menu-item-icon menu-support">🎧</div>
-            <div class="menu-item-text">Support</div>
-            <div class="menu-arrow">›</div>
-        </button>
+        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home">🏠</div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile">👤</div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet">💰</div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer">🎁</div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history">↻</div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification">🔔</div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support">🎧</div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
     </div>
 </div>
 
-<!-- ================= MAIN WALLET ================= -->
+<!-- MAIN -->
 <main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title">▣ MY WALLET</div>
             <button class="history-btn" onclick="goHistory()">◷ &nbsp; History</button>
         </div>
-
         <div class="balance-label">Total Balance</div>
         <div class="balance">₹<span id="mainBalance">0</span></div>
 
@@ -732,103 +196,54 @@ button{
         </div>
     </section>
 
-    <!-- INFO -->
     <div class="info-box">
         <div class="info-icon">i</div>
         <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI.</div>
     </div>
 </main>
 
-<!-- ================= BOTTOM NAV ================= -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()">
-        <div class="nav-icon">🏠</div>
-        <span>Home</span>
-    </button>
-
-    <button class="nav-item active" onclick="goWallet()">
-        <div class="nav-icon">💰</div>
-        <span>Wallet</span>
-    </button>
-
-    <button class="nav-item" onclick="goSupport()">
-        <div class="nav-icon">🎧</div>
-        <span>Support</span>
-    </button>
-
-    <button class="nav-item" onclick="goProfile()">
-        <div class="nav-icon">👤</div>
-        <span>Profile</span>
-    </button>
+    <button class="nav-item" onclick="goHome()"><div class="nav-icon">🏠</div><span>Home</span></button>
+    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon">💰</div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goSupport()"><div class="nav-icon">🎧</div><span>Support</span></button>
+    <button class="nav-item" onclick="goProfile()"><div class="nav-icon">👤</div><span>Profile</span></button>
 </nav>
 
-<!-- ================= TOAST ================= -->
-<div class="toast" id="toast"></div>
-
 <script>
-/* =====================================================
-   LOAD FIREBASE CUSTOMER
-===================================================== */
 async function loadFirebaseCustomer(){
     try{
-        if(!firebaseDB){
-            showMessage("Firebase connect नहीं है");
-            return;
-        }
-
-        let mobile = localStorage.getItem("rdxFirebaseUserId") ||
-                     localStorage.getItem("rdxVerifiedMobile") ||
-                     localStorage.getItem("rdxUserMobile");
-
-        if(!mobile){
-            return;
-        }
+        if(!firebaseDB) return;
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserMobile");
+        if(!mobile) return;
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
-        let firebaseDocId = cleanMobile;
-
-        if(/^[6-9]\d{9}$/.test(cleanMobile)){
-            firebaseDocId = "91" + cleanMobile;
-        }
+        let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         const snapshot = await userRef.get();
-
-        if(!snapshot.exists){
-            return;
-        }
+        if(!snapshot.exists) return;
 
         const data = snapshot.data();
-
-        /* TOTAL BALANCE */
         const balance = Number(data.balance || 0);
         document.getElementById("mainBalance").textContent = balance;
         document.getElementById("topBalance").textContent = balance;
 
-        /* DEPOSIT BALANCE */
         const deposit = Number(data.depositBalance || data.deposit || 0);
         document.getElementById("depositBalance").textContent = deposit;
 
-        /* WINNINGS BALANCE */
         const winnings = Number(data.winnings || data.winningBalance || 0);
         document.getElementById("winningBalance").textContent = winnings;
 
-        /* USERNAME */
         const username = localStorage.getItem("rdxUsername") || ("User" + firebaseDocId.slice(-4));
         document.getElementById("menuUsername").textContent = username;
-
     } catch(error){
-        console.error("Wallet Firebase error:", error);
+        console.error(error);
     }
 }
 
-window.addEventListener("load", function(){
-    loadFirebaseCustomer();
-});
+window.addEventListener("load", loadFirebaseCustomer);
 
-/* =====================================================
-   MENU CONTROLS
-===================================================== */
 function openMenu(){
     document.getElementById("menuPanel").classList.add("open");
     document.getElementById("menuOverlay").classList.add("show");
@@ -839,9 +254,6 @@ function closeMenu(){
     document.getElementById("menuOverlay").classList.remove("show");
 }
 
-/* =====================================================
-   NAVIGATION
-===================================================== */
 function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
 function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
 function goDeposit(){ closeMenu(); window.location.href = "./deposit.html"; }
@@ -851,14 +263,6 @@ function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
 function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
 function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
 function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
-
-function showMessage(message){
-    const toast = document.getElementById("toast");
-    toast.textContent = message;
-    toast.classList.add("show");
-    setTimeout(function(){ toast.classList.remove("show"); }, 1800);
-}
 </script>
-
 </body>
 </html>
