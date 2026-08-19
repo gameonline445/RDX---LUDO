@@ -160,7 +160,7 @@ input:focus{
     box-shadow:0 6px 16px rgba(2,132,199,0.3);
 }
 
-/* ================= BOTTOM NAV ================= */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -238,7 +238,7 @@ input:focus{
         <label>AMOUNT (₹)</label>
         <input id="amount" type="number" readonly value="100">
         <label>ENTER 12-DIGIT UTR NUMBER</label>
-        <input id="utr" type="text" placeholder="e.g. 423589124578">
+        <input id="utr" type="text" placeholder="e.g. 423589124578" maxlength="22">
         <button class="deposit" id="depositButton" onclick="submitDeposit()">Deposit</button>
     </section>
 </div>
@@ -254,7 +254,7 @@ input:focus{
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -269,7 +269,7 @@ const db = getFirestore(app);
 
 const userId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
 
-// URL se amount read karna
+// Read amount from URL or LocalStorage
 const urlParams = new URLSearchParams(window.location.search);
 const amt = urlParams.get('amount') || localStorage.getItem("rdxDepositAmount") || 100;
 document.getElementById("amount").value = amt;
@@ -290,15 +290,29 @@ window.copyUPI = () => {
     alert("UPI ID Copied!");
 };
 
+// SUBMIT DEPOSIT WITH DUPLICATE UTR CHECK
 window.submitDeposit = async () => {
     const utr = document.getElementById("utr").value.trim();
-    if(utr.length < 6) return alert("Valid UTR number bharein");
+    if(utr.length < 6) return alert("Kripya valid UTR number bharein");
     
     const btn = document.getElementById("depositButton");
     btn.disabled = true;
-    btn.textContent = "Submitting...";
+    btn.textContent = "Checking UTR...";
 
     try {
+        // 1. CHECK IF UTR ALREADY EXISTS IN DATABASE
+        const q = query(collection(db, "deposits"), where("utr", "==", utr));
+        const duplicateSnap = await getDocs(q);
+
+        if (!duplicateSnap.empty) {
+            btn.disabled = false;
+            btn.textContent = "Deposit";
+            alert("⚠️ Yeh UTR number pehle se submit kiya ja chuka hai! Kripya naya/sahi UTR daalein.");
+            return;
+        }
+
+        // 2. IF UNIQUE, SUBMIT DEPOSIT REQUEST
+        btn.textContent = "Submitting...";
         await addDoc(collection(db, "deposits"), {
             uid: userId,
             userId: userId,
@@ -307,10 +321,11 @@ window.submitDeposit = async () => {
             status: "pending",
             createdAt: serverTimestamp()
         });
-        alert("Deposit Request Submit Ho Gayi!");
+
+        alert("✅ Deposit Request Submit Ho Gayi!");
         location.href = "history.html";
     } catch(err) {
-        alert(err.message);
+        alert("Error: " + err.message);
         btn.disabled = false;
         btn.textContent = "Deposit";
     }
