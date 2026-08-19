@@ -290,7 +290,7 @@ window.copyUPI = () => {
     alert("UPI ID Copied!");
 };
 
-// SUBMIT DEPOSIT WITH DUPLICATE UTR CHECK
+// SUBMIT DEPOSIT WITH DUPLICATE UTR PROTECTION
 window.submitDeposit = async () => {
     const utr = document.getElementById("utr").value.trim();
     if(utr.length < 6) return alert("Kripya valid UTR number bharein");
@@ -300,7 +300,7 @@ window.submitDeposit = async () => {
     btn.textContent = "Checking UTR...";
 
     try {
-        // 1. CHECK IF UTR ALREADY EXISTS IN DATABASE
+        // 1. Database check: Kya yeh UTR pehle se kisi request me hai?
         const q = query(collection(db, "deposits"), where("utr", "==", utr));
         const duplicateSnap = await getDocs(q);
 
@@ -311,7 +311,7 @@ window.submitDeposit = async () => {
             return;
         }
 
-        // 2. IF UNIQUE, SUBMIT DEPOSIT REQUEST
+        // 2. Agar UTR unique hai tabhi request submit hogi
         btn.textContent = "Submitting...";
         await addDoc(collection(db, "deposits"), {
             uid: userId,
