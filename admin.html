@@ -5,68 +5,251 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>RDX LUDO Admin</title>
 
+<!-- FontAwesome for clean icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f4f7ff;color:#17213c}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer;border:0}
-#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,#eaf2ff,#fff0f5)}
-.login-box{width:100%;max-width:400px;background:white;padding:30px;border-radius:25px;box-shadow:0 20px 60px #0002}
-.logo{width:75px;height:75px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#2869ed,#713cff);color:white;font-size:22px;font-weight:900}
-h1{text-align:center}
-.sub{text-align:center;color:#78839b;margin-bottom:25px}
-label{display:block;font-weight:bold;margin:12px 0 7px}
-input,select,textarea{width:100%;padding:14px;border:1px solid #ccd6e8;border-radius:12px;outline:none;background:#fff;}
-input:focus,select:focus,textarea:focus{border-color:#2869ed}
-.login-btn{width:100%;margin-top:20px;padding:15px;border-radius:13px;background:linear-gradient(135deg,#2869ed,#613df3);color:white;font-weight:bold}
-#error{color:#d82e45;text-align:center;margin-top:15px;display:none}
-#admin{display:none}
-header{height:65px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:10}
-.brand{font-weight:900;font-size:20px}
-.brand span{color:#2869ed}
-.logout{padding:10px 15px;border-radius:10px;background:#ffe7eb;color:#d32d42;font-weight:bold}
-.layout{display:flex}
-.sidebar{width:220px;min-height:calc(100vh - 65px);background:white;border-right:1px solid #ddd;padding:15px}
-.nav{width:100%;padding:13px;margin-bottom:6px;border-radius:12px;background:white;text-align:left;font-weight:bold;color:#68738b}
-.nav.active,.nav:hover{background:#eaf1ff;color:#2869ed}
-main{flex:1;padding:25px}
-.page{display:none}
-.page.active{display:block}
-.title{font-size:28px;font-weight:900;margin-bottom:20px}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.stat{background:white;border:1px solid #dce3f2;border-radius:18px;padding:20px}
-.stat small{color:#78839b}
-.stat h2{margin:8px 0 0;font-size:28px}
-.blue{color:#2869ed}.green{color:#10a663}.orange{color:#ed8b20}.red{color:#dc3545}
-.card{background:white;border:1px solid #dce3f2;border-radius:18px;padding:20px;margin-top:20px}
-.status{padding:13px;border-radius:12px;margin-bottom:15px;font-weight:bold}
-.ok{background:#dcf8e9;color:#12804b}
-.bad{background:#ffe3e8;color:#c72e43}
-.search{margin:15px 0;width:100%}
-.table{overflow:auto}
-table{width:100%;border-collapse:collapse;min-width:850px}
-th,td{padding:12px;border-bottom:1px solid #edf0f5;text-align:left}
-th{font-size:13px;color:#69758e}
-.badge{padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold}
-.pending{background:#fff0d2;color:#b76c00}
-.approved{background:#dcf8e9;color:#12804b}
-.rejected{background:#ffe3e8;color:#c72e43}
-.action{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:bold;margin:2px}
-.approve{background:#dcf8e9;color:#12804b}
-.reject{background:#ffe3e8;color:#c72e43}
-.refresh{background:#e2edff;color:#2869ed}
-.save{padding:13px 20px;border-radius:11px;background:#2869ed;color:white;font-weight:bold;margin-top:10px}
-.form{display:grid;grid-template-columns:1fr 1fr;gap:15px}
-.full{grid-column:1/-1}
-.empty{text-align:center;padding:30px;color:#7c879e}
-.uid-box{font-size:13px;word-break:break-all;color:#555}
-@media(max-width:800px){.stats{grid-template-columns:1fr 1fr}.sidebar{width:180px}}
-@media(max-width:600px){.layout{display:block}.sidebar{width:100%;min-height:auto;display:flex;overflow:auto}.nav{min-width:max-content}main{padding:15px}.stats{grid-template-columns:1fr 1fr}.form{grid-template-columns:1fr}.full{grid-column:auto}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    /* Site Matching Deep Sky-Blue Mesh Background */
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+    color:#101a38;
+    min-height:100vh;
+}
+button,input,select,textarea{font:inherit;}
+button{cursor:pointer;border:0;}
+
+/* LOGIN SCREEN */
+#login{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px 14px;
+}
+.login-box{
+    width:100%;
+    max-width:380px;
+    background:#ffffff;
+    padding:26px 20px;
+    border-radius:24px;
+    border:1.5px solid #7dd3fc;
+    box-shadow:0 12px 30px rgba(2,132,199,0.12);
+}
+.logo{
+    width:64px;
+    height:64px;
+    margin:0 auto 12px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:3px solid #93c5fd;
+    color:#0284c7;
+    font-size:18px;
+    font-weight:900;
+    box-shadow:0 6px 16px rgba(2,132,199,0.2);
+}
+h1{text-align:center;font-size:22px;color:#0c4a6e;font-weight:900;}
+.sub{text-align:center;color:#64748b;font-size:13px;margin-top:2px;margin-bottom:20px;font-weight:600;}
+label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin:10px 0 5px;letter-spacing:0.5px;}
+input,select,textarea{
+    width:100%;
+    padding:12px 14px;
+    border:1.5px solid #bae6fd;
+    border-radius:12px;
+    outline:none;
+    background:#f8fafc;
+    color:#0f172a;
+    font-size:14px;
+    font-weight:600;
+}
+input:focus,select:focus,textarea:focus{border-color:#0284c7;background:#ffffff;}
+.login-btn{
+    width:100%;
+    margin-top:18px;
+    padding:13px;
+    border-radius:24px;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    font-size:15px;
+    font-weight:850;
+    box-shadow:0 6px 18px rgba(2,132,199,0.3);
+}
+#error{color:#be123c;text-align:center;margin-top:12px;font-size:13px;font-weight:700;display:none;}
+
+/* ADMIN PANEL LAYOUT */
+#admin{display:none;}
+header{
+    height:66px;
+    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 18px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 4px 18px rgba(2,132,199,0.08);
+}
+.brand{
+    font-weight:900;
+    font-size:18px;
+    color:#0c4a6e;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.brand .admin-logo{
+    width:38px;
+    height:38px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:2px solid #93c5fd;
+    color:#0284c7;
+    font-size:12px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.brand span{color:#0284c7;}
+.logout{
+    padding:8px 16px;
+    border-radius:20px;
+    background:#fff1f2;
+    border:1px solid #fecdd3;
+    color:#be123c;
+    font-weight:800;
+    font-size:13px;
+    cursor:pointer;
+}
+
+.layout{display:flex;}
+.sidebar{
+    width:230px;
+    min-height:calc(100vh - 66px);
+    background:#ffffff;
+    border-right:1.5px solid #bae6fd;
+    padding:14px;
+}
+.nav{
+    width:100%;
+    padding:12px 14px;
+    margin-bottom:6px;
+    border-radius:14px;
+    background:#ffffff;
+    text-align:left;
+    font-weight:800;
+    font-size:13px;
+    color:#64748b;
+    border:1px solid transparent;
+    transition:all 0.2s ease;
+}
+.nav.active, .nav:hover{
+    background:#f0f9ff;
+    color:#0284c7;
+    border-color:#bae6fd;
+}
+
+main{flex:1;padding:20px 18px;max-width:1200px;}
+.page{display:none;}
+.page.active{display:block;}
+.title{font-size:22px;font-weight:900;color:#0c4a6e;margin-bottom:16px;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stat{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:18px;
+    padding:16px;
+    box-shadow:0 4px 14px rgba(2,132,199,0.05);
+}
+.stat small{color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase;}
+.stat h2{margin:6px 0 0;font-size:24px;font-weight:900;}
+.blue{color:#0284c7;} .green{color:#15803d;} .orange{color:#d97706;} .red{color:#be123c;}
+
+/* CARDS & TABLES */
+.card{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    padding:18px;
+    margin-top:16px;
+    box-shadow:0 4px 14px rgba(2,132,199,0.06);
+}
+.status{
+    padding:10px 14px;
+    border-radius:12px;
+    margin-bottom:14px;
+    font-weight:800;
+    font-size:12px;
+}
+.ok{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.bad{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+
+.search{
+    margin:12px 0;
+    width:100%;
+    height:44px;
+}
+.table{overflow:auto;border:1px solid #e2e8f0;border-radius:14px;}
+table{width:100%;border-collapse:collapse;min-width:850px;background:#fff;}
+th,td{padding:10px 12px;border-bottom:1px solid #edf0f5;text-align:left;font-size:13px;}
+th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transform:uppercase;}
+
+.badge{padding:4px 8px;border-radius:12px;font-size:10px;font-weight:850;text-transform:uppercase;}
+.pending{background:#fef3c7;color:#b45309;}
+.approved{background:#dcfce7;color:#15803d;}
+.rejected{background:#fee2e2;color:#be123c;}
+
+.action{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;margin:2px;}
+.approve{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.reject{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+.refresh{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
+
+.save{
+    padding:12px 20px;
+    border-radius:14px;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    font-weight:850;
+    font-size:14px;
+    margin-top:10px;
+    box-shadow:0 4px 14px rgba(2,132,199,0.3);
+}
+
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.full{grid-column:1/-1;}
+.empty{text-align:center;padding:25px;color:#64748b;font-size:13px;font-weight:600;}
+
+@media(max-width:800px){
+    .stats{grid-template-columns:1fr 1fr;}
+    .sidebar{width:180px;}
+}
+@media(max-width:600px){
+    .layout{display:block;}
+    .sidebar{width:100%;min-height:auto;display:flex;overflow:auto;border-right:0;border-bottom:1.5px solid #bae6fd;padding:8px;}
+    .nav{min-width:max-content;padding:8px 12px;margin-bottom:0;margin-right:6px;}
+    main{padding:14px 10px;}
+    .stats{grid-template-columns:1fr 1fr;}
+    .form{grid-template-columns:1fr;}
+    .full{grid-column:auto;}
+}
 </style>
 </head>
 
 <body>
 
+<!-- LOGIN -->
 <section id="login">
 <div class="login-box">
 <div class="logo">RDX</div>
@@ -81,20 +264,24 @@ th{font-size:13px;color:#69758e}
 </div>
 </section>
 
+<!-- ADMIN INTERFACE -->
 <section id="admin">
 <header>
-<div class="brand">RDX <span>LUDO</span> ADMIN</div>
+<div class="brand">
+    <div class="admin-logo">RDX</div>
+    <div>RDX <span>LUDO</span> ADMIN</div>
+</div>
 <button id="logout" class="logout">Logout</button>
 </header>
 
 <div class="layout">
 <aside class="sidebar">
-<button class="nav active" data-page="dashboard">📊 Dashboard</button>
-<button class="nav" data-page="deposits">💳 Deposits</button>
-<button class="nav" data-page="withdrawals">💸 Withdrawals</button>
-<button class="nav" data-page="users">👥 Customers</button>
-<button class="nav" data-page="notifications">🔔 Notifications</button>
-<button class="nav" data-page="settings">⚙️ Payment Settings</button>
+<button class="nav active" data-page="dashboard"><i class="fa-solid fa-chart-pie"></i> &nbsp;Dashboard</button>
+<button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
+<button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
+<button class="nav" data-page="users"><i class="fa-solid fa-users"></i> &nbsp;Customers</button>
+<button class="nav" data-page="notifications"><i class="fa-solid fa-bell"></i> &nbsp;Notifications</button>
+<button class="nav" data-page="settings"><i class="fa-solid fa-gear"></i> &nbsp;Payment Settings</button>
 </aside>
 
 <main>
@@ -110,9 +297,9 @@ th{font-size:13px;color:#69758e}
 </div>
 
 <div class="card">
-<h3>Firebase Status</h3>
+<h3 style="font-size:16px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Firebase Status</h3>
 <div id="dashStatus" class="status bad">Connecting...</div>
-<p>Admin login Firebase Authentication se successful hua.</p>
+<p style="font-size:13px; color:#64748b;">Admin login Firebase Authentication se successful hua.</p>
 </div>
 </section>
 
@@ -121,7 +308,7 @@ th{font-size:13px;color:#69758e}
 <div class="title">Deposit Requests</div>
 <div id="depositStatus" class="status bad">Loading...</div>
 <div class="card">
-<button id="refreshDeposits" class="action refresh">🔄 Refresh</button>
+<button id="refreshDeposits" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="depositSearch" class="search" placeholder="UID / UTR / Request ID search">
 <div class="table">
 <table>
@@ -141,7 +328,7 @@ th{font-size:13px;color:#69758e}
 <div class="title">Withdrawal Requests</div>
 <div id="withdrawalStatus" class="status bad">Loading...</div>
 <div class="card">
-<button id="refreshWithdrawals" class="action refresh">🔄 Refresh</button>
+<button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="UID / UPI / Bank search">
 <div class="table">
 <table>
@@ -160,7 +347,7 @@ th{font-size:13px;color:#69758e}
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
-<button id="refreshUsers" class="action refresh">🔄 Refresh</button>
+<button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="UID / Name / Mobile">
 <div class="table">
 <table>
