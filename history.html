@@ -20,7 +20,6 @@
             padding-bottom: 85px;
         }
 
-        /* Top Header */
         .top-bar {
             height: 70px;
             display: flex;
@@ -54,6 +53,7 @@
             text-decoration: none;
             font-size: 16px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+            cursor: pointer;
         }
 
         .brand-badge {
@@ -86,7 +86,6 @@
         .icon-cash { background: #35bf71; }
         .icon-gift { background: #ff933c; }
 
-        /* Page Heading */
         .page-heading {
             padding: 16px 18px 8px;
         }
@@ -103,7 +102,6 @@
             margin-top: 2px;
         }
 
-        /* Search & Filter Controls */
         .filter-section {
             padding: 10px 18px 14px;
             display: flex;
@@ -137,10 +135,6 @@
             color: #101a38;
             outline: none;
             box-shadow: 0 2px 6px rgba(66, 117, 211, 0.05);
-        }
-
-        .search-input:focus {
-            border-color: #2864e6;
         }
 
         .date-filter-box {
@@ -177,12 +171,10 @@
             gap: 4px;
         }
 
-        /* Content List */
         .content-section {
             padding: 0 18px;
         }
 
-        /* Rounded Cards */
         .card {
             background: #ffffff;
             border-radius: 18px;
@@ -242,7 +234,6 @@
         .credit { color: #13834d; }
         .debit { color: #c72e43; }
 
-        /* Badges */
         .badge {
             font-size: 10px;
             padding: 4px 9px;
@@ -255,7 +246,6 @@
         .badge-rejected { background: #ffe3e7; color: #c72e43; border: 1px solid #f4bbc5; }
         .badge-pending { background: #fff4d6; color: #a37200; border: 1px solid #fae19c; }
 
-        /* Admin Comments Notes */
         .admin-note {
             font-size: 12px;
             padding: 10px 12px;
@@ -266,28 +256,9 @@
             line-height: 1.4;
         }
 
-        .admin-note.approved {
-            background: #f0fdf4;
-            color: #15803d;
-            border: 1px solid #bbf7d0;
-        }
-
-        .admin-note.rejected {
-            background: #fff1f2;
-            color: #be123c;
-            border: 1px solid #fecdd3;
-        }
-
-        .admin-note.pending {
-            background: #fffbeb;
-            color: #b45309;
-            border: 1px solid #fde68a;
-        }
-
-        .admin-note i {
-            font-size: 14px;
-            margin-top: 2px;
-        }
+        .admin-note.approved { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .admin-note.rejected { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+        .admin-note.pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
 
         .status-box {
             text-align: center;
@@ -297,7 +268,6 @@
             font-weight: 600;
         }
 
-        /* Bottom Nav */
         .bottom {
             height: 64px;
             display: grid;
@@ -331,10 +301,9 @@
 </head>
 <body>
 
-    <!-- Top Header -->
     <header class="top-bar">
         <div class="header-left">
-            <a href="profile.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <button class="back-btn" onclick="location.href='wallet.html'"><i class="fa-solid fa-chevron-left"></i></button>
             <span class="brand-badge">RDX LUDO</span>
         </div>
         <div class="header-icons">
@@ -344,27 +313,24 @@
         </div>
     </header>
 
-    <!-- Page Title -->
     <div class="page-heading">
         <h1>Transactions & Logs</h1>
-        <p>Search wallet deposits and payment status</p>
+        <p>Search wallet deposits, withdrawals & payout status</p>
     </div>
 
-    <!-- Search & Date Filter -->
     <div class="filter-section">
         <div class="search-box">
             <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by UTR Number, Amount, Status...">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search by UTR, UPI, Bank, Status...">
         </div>
         <div class="date-filter-box">
-            <input type="date" id="dateInput" class="date-input" title="Select Date">
-            <button class="clear-btn" id="clearBtn" onclick="clearFilters()">
+            <input type="date" id="dateInput" class="date-input">
+            <button class="clear-btn" onclick="clearFilters()">
                 <i class="fa-solid fa-rotate-left"></i> Clear
             </button>
         </div>
     </div>
 
-    <!-- Transactions List Container -->
     <section class="content-section">
         <div id="transactions-list" class="status-box">
             <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #2864e6; margin-bottom: 10px;"></i><br>
@@ -372,36 +338,17 @@
         </div>
     </section>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom">
-        <a class="nav" href="dashboard.html">
-            <b>🏠</b>
-            Home
-        </a>
-        <a class="nav" href="wallet.html">
-            <b>💰</b>
-            Wallet
-        </a>
-        <a class="nav" href="support.html">
-            <b>🎧</b>
-            Support
-        </a>
-        <a class="nav active" href="profile.html">
-            <b>👤</b>
-            Profile
-        </a>
+        <a class="nav" href="dashboard.html"><b>🏠</b>Home</a>
+        <a class="nav" href="wallet.html"><b>💰</b>Wallet</a>
+        <a class="nav" href="support.html"><b>🎧</b>Support</a>
+        <a class="nav active" href="profile.html"><b>👤</b>Profile</a>
     </nav>
 
-    <!-- Firebase v12 Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { 
-            getFirestore, 
-            collection, 
-            getDocs 
-        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
@@ -414,83 +361,93 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // User ID
         function getLoggedInUserId() {
-            const raw = localStorage.getItem("rdxFirebaseUserId") || 
-                        localStorage.getItem("rdxVerifiedMobile") || 
-                        localStorage.getItem("rdxUserId") || 
-                        localStorage.getItem("userId") || 
-                        localStorage.getItem("rdx_userId") || "";
+            const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserId") || "";
             return String(raw).replace(/\D/g, "");
         }
 
         const currentUserId = getLoggedInUserId();
-        let allDeposits = [];
+        let allTransactions = [];
 
-        // Load Transactions from Firestore
         async function loadRealTransactions() {
             const listContainer = document.getElementById("transactions-list");
 
             if (!currentUserId) {
-                listContainer.innerHTML = `
-                    <div class="status-box">
-                        <i class="fa-solid fa-arrow-right-to-bracket fa-2x" style="color: #cbd7e9; margin-bottom: 8px;"></i><br>
-                        History dekhne ke liye pehle <a href="login.html" style="color:#2864e6; font-weight:800;">Login</a> karein.
-                    </div>`;
+                listContainer.innerHTML = `<div class="status-box">Pehle <a href="login.html" style="color:#2864e6;">Login</a> karein.</div>`;
                 return;
             }
 
             try {
-                const snap = await getDocs(collection(db, "deposits"));
-                allDeposits = [];
+                // 1. Deposits fetch
+                const depSnap = await getDocs(collection(db, "deposits"));
+                let items = [];
 
-                snap.forEach(docSnap => {
+                depSnap.forEach(docSnap => {
                     const data = docSnap.data();
                     const docUid = String(data.userId || data.uid || data.customerId || "").replace(/\D/g, "");
-
                     if (docUid === currentUserId || (data.mobile && data.mobile.includes(currentUserId))) {
-                        allDeposits.push({ id: docSnap.id, ...data });
+                        items.push({ id: docSnap.id, type: "deposit", ...data });
                     }
                 });
 
-                // Latest date first
-                allDeposits.sort((a, b) => {
+                // 2. Withdrawals fetch
+                const withSnap = await getDocs(collection(db, "withdrawals"));
+                withSnap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const docUid = String(data.uid || data.userId || "").replace(/\D/g, "");
+                    if (docUid === currentUserId) {
+                        items.push({ id: docSnap.id, type: "withdrawal", ...data });
+                    }
+                });
+
+                if (items.length === 0) {
+                    listContainer.innerHTML = `<div class="status-box"><i class="fa-solid fa-receipt fa-2x" style="color:#cbd7e9; margin-bottom:8px;"></i><br>Koi transaction record nahi mila.</div>`;
+                    return;
+                }
+
+                // Sort Latest First
+                items.sort((a, b) => {
                     const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
                     const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
                     return timeB - timeA;
                 });
 
-                renderList(allDeposits);
+                allTransactions = items;
+                renderList(allTransactions);
 
             } catch (error) {
-                console.error("History loading error:", error);
-                listContainer.innerHTML = `
-                    <div class="status-box" style="color: #c72e43;">
-                        <i class="fa-solid fa-triangle-exclamation fa-2x"></i><br><br>
-                        History load karne me dikkat aayi: ${error.message}
-                    </div>`;
+                console.error("Load error:", error);
+                listContainer.innerHTML = `<div class="status-box" style="color:#c72e43;">Error loading history: ${error.message}</div>`;
             }
         }
 
-        // Render List with Filters
         function renderList(list) {
             const listContainer = document.getElementById("transactions-list");
 
             if (list.length === 0) {
-                listContainer.innerHTML = `
-                    <div class="status-box">
-                        <i class="fa-solid fa-receipt fa-2x" style="color: #cbd7e9; margin-bottom: 8px;"></i><br>
-                        Koi transaction record nahi mila.
-                    </div>`;
+                listContainer.innerHTML = `<div class="status-box">Koi matching record nahi mila.</div>`;
                 return;
             }
 
             let html = "";
-            list.forEach((data) => {
+            list.forEach(data => {
+                const isDeposit = data.type === "deposit";
                 const status = String(data.status || "pending").toLowerCase();
                 const amount = Number(data.amount || 0);
-                const utr = data.utr || "—";
-                
+
+                let title = isDeposit ? "Deposit (UPI QR)" : `Withdrawal (${data.mode || 'UPI'})`;
+                let subTitle = "";
+
+                if (isDeposit) {
+                    subTitle = `UTR: ${data.utr || '—'}`;
+                } else {
+                    if (data.mode === "BANK") {
+                        subTitle = `Bank: ${data.bankName || ''} | A/C: ${data.accountNumber || ''} | IFSC: ${data.ifsc || ''}`;
+                    } else {
+                        subTitle = `UPI: ${data.upiId || ''} (${data.holderName || ''})`;
+                    }
+                }
+
                 let dateString = "Recently";
                 if (data.createdAt && typeof data.createdAt.toDate === "function") {
                     dateString = data.createdAt.toDate().toLocaleString('en-IN', {
@@ -501,38 +458,33 @@
 
                 let badgeClass = "badge-pending";
                 let noteClass = "pending";
-                let icon = "fa-clock";
-                let noteText = "Admin verification chal raha hai. Thodi der me update hoga.";
+                let noteText = "Admin verification chal raha hai. Jald update hoga.";
 
                 if (status === "approved") {
                     badgeClass = "badge-approved";
                     noteClass = "approved";
-                    icon = "fa-circle-check";
-                    noteText = data.comment && data.comment.trim() !== "" 
-                        ? data.comment 
-                        : "Payment approved";
+                    noteText = data.comment && data.comment.trim() !== "" ? data.comment : (isDeposit ? "Payment verify ho gaya. Balance add hua." : "Withdrawal transfer complete ho gaya.");
                 } else if (status === "rejected") {
                     badgeClass = "badge-rejected";
                     noteClass = "rejected";
-                    icon = "fa-triangle-exclamation";
-                    noteText = "<strong>Admin Reason:</strong> " + (data.comment && data.comment.trim() !== "" ? data.comment : "Payment receive nahi hui ya UTR galat tha.");
+                    noteText = "<strong>Admin Reason:</strong> " + (data.comment || "Payment details invalid pai gayi.");
                 }
 
                 html += `
                     <div class="card">
                         <div class="card-top">
                             <div class="card-left">
-                                <span class="card-title">Deposit (UPI QR)</span>
-                                <span class="card-subtitle">UTR: ${utr}</span>
+                                <span class="card-title">${title}</span>
+                                <span class="card-subtitle">${subTitle}</span>
                                 <span class="card-date">${dateString}</span>
                             </div>
                             <div class="card-right">
-                                <span class="amount ${status === 'approved' ? 'credit' : 'debit'}">₹${amount}</span>
+                                <span class="amount ${isDeposit ? 'credit' : 'debit'}">${isDeposit ? '+' : '-'} ₹${amount}</span>
                                 <span class="badge ${badgeClass}">${status}</span>
                             </div>
                         </div>
                         <div class="admin-note ${noteClass}">
-                            <i class="fa-solid ${icon}"></i>
+                            <i class="fa-solid ${status === 'approved' ? 'fa-circle-check' : status === 'rejected' ? 'fa-triangle-exclamation' : 'fa-clock'}"></i>
                             <span>${noteText}</span>
                         </div>
                     </div>
@@ -542,21 +494,23 @@
             listContainer.innerHTML = html;
         }
 
-        // Search Filter Logic
         function applyFilters() {
             const searchText = document.getElementById("searchInput").value.toLowerCase().trim();
-            const selectedDate = document.getElementById("dateInput").value; // Format: YYYY-MM-DD
+            const selectedDate = document.getElementById("dateInput").value;
 
-            const filtered = allDeposits.filter(item => {
+            const filtered = allTransactions.filter(item => {
                 const utr = String(item.utr || "").toLowerCase();
-                const amount = String(item.amount || "").toLowerCase();
+                const upi = String(item.upiId || "").toLowerCase();
+                const bank = String(item.bankName || "").toLowerCase();
+                const acc = String(item.accountNumber || "").toLowerCase();
                 const status = String(item.status || "").toLowerCase();
+                const amount = String(item.amount || "").toLowerCase();
 
-                const matchesSearch = !searchText || utr.includes(searchText) || amount.includes(searchText) || status.includes(searchText);
+                const matchesSearch = !searchText || utr.includes(searchText) || upi.includes(searchText) || bank.includes(searchText) || acc.includes(searchText) || status.includes(searchText) || amount.includes(searchText);
 
                 let matchesDate = true;
                 if (selectedDate && item.createdAt && typeof item.createdAt.toDate === "function") {
-                    const itemDate = item.createdAt.toDate().toISOString().split("T")[0]; // YYYY-MM-DD
+                    const itemDate = item.createdAt.toDate().toISOString().split("T")[0];
                     matchesDate = (itemDate === selectedDate);
                 }
 
@@ -566,18 +520,15 @@
             renderList(filtered);
         }
 
-        // Clear Filters
         window.clearFilters = function() {
             document.getElementById("searchInput").value = "";
             document.getElementById("dateInput").value = "";
-            renderList(allDeposits);
+            renderList(allTransactions);
         };
 
-        // Event Listeners
         document.getElementById("searchInput").addEventListener("input", applyFilters);
         document.getElementById("dateInput").addEventListener("change", applyFilters);
 
-        // Start Loading
         loadRealTransactions();
     </script>
 </body>
