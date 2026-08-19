@@ -1,172 +1,1720 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>RDX LUDO - History</title>
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+>
+
+<title>RDX LUDO HISTORY</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7ff;color:#17213c}
-button,input{font:inherit}button{cursor:pointer;border:0}
-header{height:65px;background:white;border-bottom:1px solid #ddd;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:10}
-.brand{font-weight:900;font-size:20px}.brand span{color:#2869ed}.back{padding:10px 15px;border-radius:10px;background:#eaf1ff;color:#2869ed;font-weight:bold}
-main{max-width:1200px;margin:auto;padding:20px}.title{font-size:28px;font-weight:900;margin-bottom:8px}.sub{color:#71809a;margin-bottom:20px}
-.card{background:white;border:1px solid #dce3f2;border-radius:18px;padding:20px;margin-bottom:18px}
-.search{width:100%;padding:14px;border:1px solid #ccd6e8;border-radius:12px;outline:none}.search:focus{border-color:#2869ed}
-.status{padding:13px;border-radius:12px;margin:15px 0;font-weight:bold}.ok{background:#dcf8e9;color:#12804b}.bad{background:#ffe3e8;color:#c72e43}
-.user-info{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.info{background:#f7f9fd;border-radius:12px;padding:13px}.info small{display:block;color:#78839b;margin-bottom:5px}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin:15px 0}.filter{padding:9px 13px;border-radius:10px;background:#edf2fa;color:#53627d;font-weight:bold}.filter.active{background:#2869ed;color:white}
-.table{overflow:auto}table{width:100%;border-collapse:collapse;min-width:900px}th,td{padding:13px 10px;border-bottom:1px solid #edf0f5;text-align:left}th{font-size:13px;color:#69758e;background:#fafbfe}
-.badge{padding:6px 10px;border-radius:20px;font-size:12px;font-weight:bold;display:inline-block}.deposit{background:#dcf8e9;color:#12804b}.withdrawal{background:#ffe3e8;color:#c72e43}.game{background:#eee5ff;color:#673ab7}
-.add{color:#12804b;font-weight:bold}.cut{color:#c72e43;font-weight:bold}.empty{text-align:center;padding:35px;color:#7c879e}.note{font-size:13px;color:#7b879c;line-height:1.6}
-@media(max-width:700px){main{padding:12px}.user-info{grid-template-columns:1fr 1fr}.title{font-size:24px}}
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f7ff;
+color:#17213c;
+}
+
+button,
+input{
+font:inherit;
+}
+
+button{
+cursor:pointer;
+border:0;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+header{
+background:#fff;
+border-bottom:1px solid #dce2ed;
+padding:22px 5%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.logo{
+font-size:30px;
+font-weight:900;
+}
+
+.logo span{
+color:#2869ed;
+}
+
+.back{
+background:#eaf1ff;
+color:#2869ed;
+padding:13px 22px;
+border-radius:12px;
+font-weight:bold;
+font-size:16px;
+}
+
+/* =========================
+   MAIN
+========================= */
+
+main{
+max-width:1200px;
+margin:auto;
+padding:35px 20px 60px;
+}
+
+.heading{
+font-size:38px;
+font-weight:900;
+margin-bottom:8px;
+}
+
+.heading span{
+color:#2869ed;
+}
+
+.subheading{
+font-size:20px;
+color:#75819b;
+margin-bottom:30px;
+}
+
+/* =========================
+   SEARCH
+========================= */
+
+.search-card{
+background:#fff;
+border:1px solid #dce3f2;
+border-radius:20px;
+padding:22px;
+box-shadow:0 8px 25px #00000008;
+margin-bottom:30px;
+}
+
+.search-title{
+font-size:18px;
+font-weight:800;
+margin-bottom:12px;
+}
+
+.search-row{
+display:flex;
+gap:12px;
+}
+
+.date-input{
+flex:1;
+padding:15px 16px;
+border:1px solid #ccd6e8;
+border-radius:12px;
+outline:none;
+background:#fff;
+color:#17213c;
+}
+
+.date-input:focus{
+border-color:#2869ed;
+}
+
+.search-btn{
+padding:15px 24px;
+border-radius:12px;
+background:#2869ed;
+color:#fff;
+font-weight:bold;
+}
+
+.clear-btn{
+padding:15px 20px;
+border-radius:12px;
+background:#edf1f7;
+color:#536079;
+font-weight:bold;
+}
+
+/* =========================
+   STATUS MESSAGE
+========================= */
+
+.message{
+padding:15px 18px;
+border-radius:12px;
+margin-bottom:20px;
+font-weight:bold;
+display:none;
+}
+
+.message.show{
+display:block;
+}
+
+.message.ok{
+background:#dcf8e9;
+color:#12804b;
+}
+
+.message.error{
+background:#ffe3e8;
+color:#c72e43;
+}
+
+/* =========================
+   RECENT HISTORY
+========================= */
+
+.history-title{
+font-size:28px;
+font-weight:900;
+margin-bottom:20px;
+}
+
+.date-section{
+margin-bottom:28px;
+}
+
+.date-heading{
+font-size:20px;
+font-weight:900;
+background:#176f55;
+color:#fff;
+padding:14px 18px;
+border-radius:12px 12px 0 0;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.table-wrapper{
+background:#fff;
+overflow-x:auto;
+border-radius:0 0 14px 14px;
+border:1px solid #e2e6ee;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:900px;
+}
+
+thead{
+background:#176f55;
+color:white;
+}
+
+th{
+padding:15px 14px;
+text-align:left;
+font-size:14px;
+white-space:nowrap;
+}
+
+td{
+padding:16px 14px;
+border-bottom:1px solid #edf0f4;
+font-size:15px;
+white-space:nowrap;
+}
+
+tbody tr:last-child td{
+border-bottom:0;
+}
+
+tbody tr:hover{
+background:#fafcff;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status{
+display:inline-block;
+padding:7px 12px;
+border-radius:8px;
+font-size:12px;
+font-weight:900;
+border:2px solid;
+}
+
+.status.approved{
+color:#27984b;
+border-color:#35a857;
+background:#f4fff7;
+}
+
+.status.rejected{
+color:#d73545;
+border-color:#dd4050;
+background:#fff7f8;
+}
+
+.status.pending{
+color:#b87800;
+border-color:#e5b340;
+background:#fffaf0;
+}
+
+/* =========================
+   AMOUNT
+========================= */
+
+.amount{
+font-weight:900;
+font-size:17px;
+}
+
+.utr{
+font-weight:bold;
+color:#35415b;
+}
+
+.account{
+font-weight:600;
+}
+
+.reason{
+color:#c83242;
+font-weight:600;
+white-space:normal;
+max-width:220px;
+}
+
+/* =========================
+   EMPTY
+========================= */
+
+.empty{
+background:#fff;
+border:1px solid #dce3f2;
+border-radius:18px;
+padding:40px 20px;
+text-align:center;
+color:#7b879f;
+font-size:17px;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading{
+text-align:center;
+padding:35px;
+color:#66728b;
+font-weight:bold;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:700px){
+
+header{
+padding:18px 15px;
+}
+
+.logo{
+font-size:22px;
+}
+
+.back{
+padding:10px 14px;
+font-size:14px;
+}
+
+main{
+padding:25px 12px 50px;
+}
+
+.heading{
+font-size:30px;
+}
+
+.subheading{
+font-size:17px;
+}
+
+.search-row{
+display:grid;
+grid-template-columns:1fr;
+}
+
+.search-btn,
+.clear-btn{
+width:100%;
+}
+
+.search-card{
+padding:16px;
+}
+
+.history-title{
+font-size:24px;
+}
+
+.date-heading{
+font-size:17px;
+}
+
+table{
+min-width:850px;
+}
+
+}
+
+/* =========================
+   SMALL MOBILE
+========================= */
+
+@media(max-width:400px){
+
+.heading{
+font-size:27px;
+}
+
+.logo{
+font-size:20px;
+}
+
+.back{
+font-size:13px;
+}
+
+}
+
 </style>
+
 </head>
+
 <body>
-<header><div class="brand">RDX <span>LUDO</span> HISTORY</div><button class="back" onclick="history.back()">← वापस</button></header>
+
+<!-- =========================
+     HEADER
+========================= -->
+
+<header>
+
+<div class="logo">
+RDX <span>LUDO</span> HISTORY
+</div>
+
+<button
+class="back"
+id="backBtn"
+>
+← वापस
+</button>
+
+</header>
+
+
+<!-- =========================
+     MAIN
+========================= -->
+
 <main>
-<div class="title">यूज़र History</div>
-<div class="sub">Deposit, Withdrawal, Game और Balance की पूरी हिस्ट्री</div>
-<div class="card">
-<input id="uidSearch" class="search" placeholder="यूज़र UID डालें, जैसे 919352634092">
-<div id="status" class="status bad">यूज़र UID डालकर हिस्ट्री खोजें।</div>
+
+<div class="heading">
+Deposit <span>History</span>
 </div>
-<div id="userCard" class="card" style="display:none">
-<div class="user-info">
-<div class="info"><small>UID</small><b id="userUid">—</b></div>
-<div class="info"><small>नाम</small><b id="userName">—</b></div>
-<div class="info"><small>Mobile</small><b id="userMobile">—</b></div>
-<div class="info"><small>Current Balance</small><b id="userBalance">0</b></div>
+
+<div class="subheading">
+आपकी Deposit की पूरी History
 </div>
+
+
+<!-- =========================
+     SEARCH
+========================= -->
+
+<div class="search-card">
+
+<div class="search-title">
+📅 तारीख से History खोजें
 </div>
-<div id="historyCard" class="card" style="display:none">
-<div class="filters">
-<button class="filter active" data-filter="all">सभी</button>
-<button class="filter" data-filter="deposit">💰 Deposit</button>
-<button class="filter" data-filter="withdrawal">💸 Withdrawal</button>
-<button class="filter" data-filter="game">🎮 Game/Ludo</button>
-<button class="filter" data-filter="add">➕ Coins जुड़े</button>
-<button class="filter" data-filter="cut">➖ Coins कटे</button>
+
+<div class="search-row">
+
+<input
+type="date"
+id="dateSearch"
+class="date-input"
+>
+
+<button
+id="searchBtn"
+class="search-btn"
+>
+🔍 Search
+</button>
+
+<button
+id="clearBtn"
+class="clear-btn"
+>
+↻ Recent
+</button>
+
 </div>
-<div class="table"><table><thead><tr>
-<th>प्रकार</th><th>विवरण</th><th>Coins</th><th>Balance Before</th><th>Balance After</th><th>UTR / ID</th><th>तारीख और समय</th>
-</tr></thead><tbody id="historyTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody></table></div>
+
 </div>
-<div class="card"><div class="note"><b>ध्यान दें:</b> नीचे JavaScript में History की collections के नाम हैं। अगर आपके Firebase में नाम अलग हैं, तो केवल वही नाम बदलने होंगे।</div></div>
+
+
+<!-- =========================
+     MESSAGE
+========================= -->
+
+<div
+id="message"
+class="message"
+></div>
+
+
+<!-- =========================
+     HISTORY
+========================= -->
+
+<div class="history-title">
+Recent History
+</div>
+
+<div id="historyContainer">
+
+<div class="loading">
+History Loading...
+</div>
+
+</div>
+
 </main>
 
+
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import{getFirestore,collection,getDocs,doc,getDoc}from"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-const firebaseConfig={
-apiKey:"AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-authDomain:"rdx-ludo.firebaseapp.com",
-projectId:"rdx-ludo",
-storageBucket:"rdx-ludo.firebasestorage.app",
-messagingSenderId:"928340814840",
-appId:"1:928340814840:web:6eca42a8b76138b268440d"
+/* =====================================================
+   FIREBASE
+===================================================== */
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+getFirestore,
+collection,
+getDocs,
+query,
+where
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =====================================================
+   FIREBASE CONFIG
+===================================================== */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+
+authDomain:
+"rdx-ludo.firebaseapp.com",
+
+projectId:
+"rdx-ludo",
+
+storageBucket:
+"rdx-ludo.firebasestorage.app",
+
+messagingSenderId:
+"928340814840",
+
+appId:
+"1:928340814840:web:6eca42a8b76138b268440d"
+
 };
-const app=initializeApp(firebaseConfig),db=getFirestore(app);
 
-/* आपके Firebase के collection नाम */
-const CUSTOMERS="customers";
-const DEPOSITS="deposits";
-const WITHDRAWALS="withdrawals";
-const GAME_TRANSACTIONS="gameTransactions";
-const WALLET_TRANSACTIONS="walletTransactions";
 
-const $=id=>document.getElementById(id);
-let allHistory=[],currentFilter="all";
+/* =====================================================
+   INIT
+===================================================== */
 
-function safe(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-function uidOf(d){return String(d.userId??d.uid??d.customerId??d.userUid??"").trim()}
-function num(d,keys){for(const k of keys){if(d[k]!==undefined&&d[k]!==null&&d[k]!==""){const n=Number(d[k]);if(!Number.isNaN(n))return n}}return 0}
-function dateOf(d){
-const v=d.createdAt??d.updatedAt??d.timestamp??d.date??d.time;
-if(v&&typeof v.toDate==="function")return v.toDate();
-if(typeof v==="number")return new Date(v);
-if(typeof v==="string"){const x=new Date(v);if(!Number.isNaN(x.getTime()))return x}
-return null
+const app =
+initializeApp(firebaseConfig);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
+
+/* =====================================================
+   COLLECTION
+===================================================== */
+
+const DEPOSITS_COLLECTION =
+"deposits";
+
+
+/* =====================================================
+   DATA
+===================================================== */
+
+let allHistory = [];
+
+let currentUser = null;
+
+
+/* =====================================================
+   ELEMENTS
+===================================================== */
+
+const historyContainer =
+document.getElementById(
+"historyContainer"
+);
+
+const dateSearch =
+document.getElementById(
+"dateSearch"
+);
+
+const searchBtn =
+document.getElementById(
+"searchBtn"
+);
+
+const clearBtn =
+document.getElementById(
+"clearBtn"
+);
+
+const message =
+document.getElementById(
+"message"
+);
+
+
+/* =====================================================
+   SAFE HTML
+===================================================== */
+
+function safe(value){
+
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
 }
-function dateText(d){const x=dateOf(d);return x?x.toLocaleString("en-IN",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit",second:"2-digit"}):"—"}
-function status(t,good=false){$("status").textContent=t;$("status").className="status "+(good?"ok":"bad")}
 
-async function loadCustomer(uid){
-const s=await getDoc(doc(db,CUSTOMERS,uid));
-if(!s.exists())throw new Error("customers collection में UID "+uid+" का User नहीं मिला।");
-const d=s.data();
-$("userUid").textContent=uid;$("userName").textContent=d.name||"—";$("userMobile").textContent=d.mobile||"—";$("userBalance").textContent=Number(d.balance||0);
-$("userCard").style.display="block";
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+function showMessage(
+text,
+type
+){
+
+message.textContent =
+text;
+
+message.className =
+"message show " +
+type;
+
 }
 
-async function loadHistory(uid){
-allHistory=[];
-const sources=[
-{c:DEPOSITS,t:"deposit"},{c:WITHDRAWALS,t:"withdrawal"},
-{c:GAME_TRANSACTIONS,t:"game"},{c:WALLET_TRANSACTIONS,t:"wallet"}
-];
 
-for(const src of sources){
-try{
-const snap=await getDocs(collection(db,src.c));
-snap.forEach(item=>{
-const d=item.data();if(uidOf(d)!==uid)return;
-let amount=num(d,["coins","amount","coinAmount","approvedCoins","withdrawalCoins","gameCoins","balanceChange"]);
-let before=num(d,["balanceBefore","oldBalance","previousBalance","beforeBalance"]);
-let after=num(d,["balanceAfter","newBalance","currentBalance","afterBalance"]);
-let change=num(d,["balanceChange","coinChange","change"]);
+/* =====================================================
+   HIDE MESSAGE
+===================================================== */
 
-if(src.t==="deposit"){change=num(d,["approvedCoins","coins","coinAmount"]);if(!after)after=before+change}
-if(src.t==="withdrawal"){change=-Math.abs(num(d,["coins","amount","withdrawalCoins"]))}
-if(src.t==="game"){
-const typ=String(d.type??d.transactionType??d.action??d.result??"").toLowerCase();
-change=(typ.includes("win")||typ.includes("add")||typ.includes("credit"))?Math.abs(amount):-Math.abs(amount);
+function hideMessage(){
+
+message.className =
+"message";
+
+message.textContent =
+"";
+
 }
-if(src.t==="wallet"&&!change){
-const typ=String(d.type??d.transactionType??d.action??"").toLowerCase();
-change=(typ.includes("add")||typ.includes("credit")||typ.includes("deposit"))?Math.abs(amount):-Math.abs(amount);
+
+
+/* =====================================================
+   GET UID
+===================================================== */
+
+function getDepositUID(
+deposit
+){
+
+return String(
+
+deposit.userId ??
+deposit.uid ??
+deposit.customerId ??
+deposit.userUID ??
+""
+
+).trim();
+
 }
-if(!after&&before)after=before+change;
-allHistory.push({id:item.id,source:src.t,data:d,change,before,after,date:dateOf(d)});
+
+
+/* =====================================================
+   GET UTR
+===================================================== */
+
+function getUTR(
+deposit
+){
+
+return String(
+
+deposit.utr ??
+deposit.utrNumber ??
+deposit.utrNo ??
+deposit.transactionId ??
+deposit.transactionNumber ??
+""
+
+).trim();
+
+}
+
+
+/* =====================================================
+   GET ACCOUNT
+===================================================== */
+
+function getAccount(
+deposit
+){
+
+return String(
+
+deposit.account ??
+deposit.accountName ??
+deposit.accountHolder ??
+deposit.accountHolderName ??
+deposit.upiName ??
+deposit.upiId ??
+""
+
+).trim();
+
+}
+
+
+/* =====================================================
+   GET STATUS
+===================================================== */
+
+function getStatus(
+deposit
+){
+
+return String(
+
+deposit.status ??
+"pending"
+
+)
+.trim()
+.toLowerCase();
+
+}
+
+
+/* =====================================================
+   DATE TO JAVASCRIPT DATE
+===================================================== */
+
+function getDateValue(
+value
+){
+
+if(!value){
+
+return null;
+
+}
+
+
+/* FIREBASE TIMESTAMP */
+
+if(
+typeof value.toDate ===
+"function"
+){
+
+return value.toDate();
+
+}
+
+
+/* JAVASCRIPT DATE */
+
+if(
+value instanceof Date
+){
+
+return value;
+
+}
+
+
+/* NUMBER */
+
+if(
+typeof value ===
+"number"
+){
+
+const d =
+new Date(value);
+
+if(
+!isNaN(d.getTime())
+){
+
+return d;
+
+}
+
+}
+
+
+/* STRING */
+
+if(
+typeof value ===
+"string"
+){
+
+const d =
+new Date(value);
+
+if(
+!isNaN(d.getTime())
+){
+
+return d;
+
+}
+
+}
+
+return null;
+
+}
+
+
+/* =====================================================
+   GET FINAL DATE
+===================================================== */
+
+function getHistoryDate(
+deposit
+){
+
+const status =
+getStatus(deposit);
+
+
+/*
+   Approved होने पर approvedAt
+   Reject होने पर rejectedAt
+   Pending होने पर createdAt
+*/
+
+if(
+status === "approved"
+){
+
+return (
+getDateValue(
+deposit.approvedAt
+)
+||
+getDateValue(
+deposit.updatedAt
+)
+||
+getDateValue(
+deposit.createdAt
+)
+);
+
+}
+
+
+if(
+status === "rejected"
+){
+
+return (
+getDateValue(
+deposit.rejectedAt
+)
+||
+getDateValue(
+deposit.updatedAt
+)
+||
+getDateValue(
+deposit.createdAt
+)
+);
+
+}
+
+
+return (
+getDateValue(
+deposit.createdAt
+)
+||
+getDateValue(
+deposit.updatedAt
+)
+);
+
+}
+
+
+/* =====================================================
+   FORMAT DATE
+===================================================== */
+
+function formatDate(
+date
+){
+
+if(!date){
+
+return "—";
+
+}
+
+return date.toLocaleDateString(
+"en-GB",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+);
+
+}
+
+
+/* =====================================================
+   FORMAT DATE TIME
+===================================================== */
+
+function formatDateTime(
+date
+){
+
+if(!date){
+
+return "—";
+
+}
+
+return date.toLocaleDateString(
+"en-GB",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+)
++
+" "
++
+date.toLocaleTimeString(
+"en-IN",
+{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit",
+hour12:true
+}
+);
+
+}
+
+
+/* =====================================================
+   DATE KEY
+===================================================== */
+
+function dateKey(
+date
+){
+
+if(!date){
+
+return "";
+
+}
+
+const year =
+date.getFullYear();
+
+const month =
+String(
+date.getMonth()+1
+)
+.padStart(2,"0");
+
+const day =
+String(
+date.getDate()
+)
+.padStart(2,"0");
+
+return (
+year +
+"-" +
+month +
+"-" +
+day
+);
+
+}
+
+
+/* =====================================================
+   GET REASON
+===================================================== */
+
+function getReason(
+deposit
+){
+
+const reason =
+
+deposit.rejectReason ??
+deposit.rejectionReason ??
+deposit.reason ??
+deposit.comment ??
+"";
+
+
+return String(
+reason
+).trim();
+
+}
+
+
+/* =====================================================
+   RENDER HISTORY
+===================================================== */
+
+function renderHistory(
+list
+){
+
+if(!list.length){
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+कोई Deposit History नहीं मिली।
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+/* =====================================================
+   SORT NEWEST FIRST
+===================================================== */
+
+list.sort(
+(a,b) => {
+
+const da =
+getHistoryDate(a);
+
+const db =
+getHistoryDate(b);
+
+return (
+(db?.getTime() || 0)
+-
+(da?.getTime() || 0)
+);
+
+}
+);
+
+
+/* =====================================================
+   GROUP BY DATE
+===================================================== */
+
+const groups = {};
+
+
+list.forEach(
+deposit => {
+
+const date =
+getHistoryDate(
+deposit
+);
+
+const key =
+dateKey(date);
+
+if(!groups[key]){
+
+groups[key] = [];
+
+}
+
+groups[key].push(
+deposit
+);
+
+}
+);
+
+
+/* =====================================================
+   SORT DATE GROUPS
+===================================================== */
+
+const dates =
+Object.keys(groups)
+.sort()
+.reverse();
+
+
+/* =====================================================
+   BUILD HTML
+===================================================== */
+
+let html = "";
+
+
+dates.forEach(
+key => {
+
+const date =
+groups[key][0]
+?
+getHistoryDate(
+groups[key][0]
+)
+:
+null;
+
+
+html += `
+
+<div class="date-section">
+
+<div class="date-heading">
+
+📅 ${safe(
+formatDate(date)
+)}
+
+</div>
+
+<div class="table-wrapper">
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>UTR No.</th>
+
+<th>Amount</th>
+
+<th>Status</th>
+
+<th>Account</th>
+
+<th>Date & Time</th>
+
+<th>Reason</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+
+/* =====================================================
+   ROWS
+===================================================== */
+
+groups[key].forEach(
+deposit => {
+
+const status =
+getStatus(
+deposit
+);
+
+const amount =
+Number(
+deposit.amount ??
+deposit.depositAmount ??
+0
+);
+
+
+const utr =
+getUTR(
+deposit
+);
+
+
+const account =
+getAccount(
+deposit
+);
+
+
+const finalDate =
+getHistoryDate(
+deposit
+);
+
+
+const reason =
+getReason(
+deposit
+);
+
+
+let statusHTML = "";
+
+
+if(
+status === "approved"
+){
+
+statusHTML = `
+
+<span class="status approved">
+
+🟢 APPROVED
+
+</span>
+
+`;
+
+}
+else if(
+status === "rejected"
+){
+
+statusHTML = `
+
+<span class="status rejected">
+
+🔴 REJECT
+
+</span>
+
+`;
+
+}
+else{
+
+statusHTML = `
+
+<span class="status pending">
+
+🟡 PENDING
+
+</span>
+
+`;
+
+}
+
+
+/* =====================================================
+   REASON
+===================================================== */
+
+let reasonHTML =
+"—";
+
+
+if(
+status === "rejected" &&
+reason
+){
+
+reasonHTML =
+safe(reason);
+
+}
+
+
+html += `
+
+<tr>
+
+<td class="utr">
+
+${safe(
+utr || "—"
+)}
+
+</td>
+
+<td class="amount">
+
+₹${amount.toLocaleString(
+"en-IN"
+)}
+
+</td>
+
+<td>
+
+${statusHTML}
+
+</td>
+
+<td class="account">
+
+${safe(
+account || "—"
+)}
+
+</td>
+
+<td>
+
+${safe(
+formatDateTime(
+finalDate
+)
+)}
+
+</td>
+
+<td class="reason">
+
+${reasonHTML}
+
+</td>
+
+</tr>
+
+`;
+
 });
-}catch(e){console.warn("Collection नहीं पढ़ी गई:",src.c,e.message)}
-}
-allHistory.sort((a,b)=>(b.date?.getTime()||0)-(a.date?.getTime()||0));
-render();
+
+
+html += `
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+historyContainer.innerHTML =
+html;
+
 }
 
-function render(){
-let list=allHistory;
-if(currentFilter==="deposit")list=list.filter(x=>x.source==="deposit");
-if(currentFilter==="withdrawal")list=list.filter(x=>x.source==="withdrawal");
-if(currentFilter==="game")list=list.filter(x=>x.source==="game");
-if(currentFilter==="add")list=list.filter(x=>x.change>0);
-if(currentFilter==="cut")list=list.filter(x=>x.change<0);
-if(!list.length){$("historyTable").innerHTML='<tr><td colspan="7" class="empty">इस User की History नहीं मिली।</td></tr>';return}
-$("historyTable").innerHTML=list.map(x=>{
-let type="💳 Wallet",cls="deposit",desc="Wallet transaction";
-if(x.source==="deposit"){type="💰 Deposit";cls="deposit";desc=x.data.comment||"Deposit approved"}
-if(x.source==="withdrawal"){type="💸 Withdrawal";cls="withdrawal";desc=x.data.comment||"Withdrawal"}
-if(x.source==="game"){type="🎮 Game/Ludo";cls="game";desc=x.data.gameName||x.data.game||x.data.roomId||x.data.description||"Ludo transaction"}
-if(x.source==="wallet"){type="💳 Wallet";cls=x.change>=0?"deposit":"withdrawal";desc=x.data.description||x.data.reason||x.data.comment||x.data.type||"Balance transaction"}
-const ch=x.change>0?`<span class="add">+${x.change}</span>`:x.change<0?`<span class="cut">${x.change}</span>`:"0";
-const id=x.data.utr||x.data.requestId||x.data.transactionId||x.data.txnId||x.id||"—";
-return `<tr><td><span class="badge ${cls}">${type}</span></td><td>${safe(desc)}</td><td>${ch}</td><td>${x.before||x.before===0?x.before:"—"}</td><td>${x.after||x.after===0?x.after:"—"}</td><td>${safe(id)}</td><td>${safe(dateText(x.data))}</td></tr>`;
-}).join("");
+
+/* =====================================================
+   LOAD USER HISTORY
+===================================================== */
+
+async function loadHistory(){
+
+if(!currentUser){
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+कृपया पहले लॉगिन करें।
+
+</div>
+
+`;
+
+return;
+
 }
 
-async function searchUser(){
-const uid=$("uidSearch").value.trim();
-if(!uid){status("पहले User UID डालें।");return}
-status("History लोड हो रही है...");
-$("historyCard").style.display="block";$("historyTable").innerHTML='<tr><td colspan="7" class="empty">Loading...</td></tr>';
-try{await loadCustomer(uid);await loadHistory(uid);status("✅ User मिला और History लोड हो गई।",true)}
-catch(e){console.error(e);$("userCard").style.display="none";$("historyCard").style.display="none";status("❌ "+e.message)}
+
+historyContainer.innerHTML = `
+
+<div class="loading">
+
+History Loading...
+
+</div>
+
+`;
+
+
+try{
+
+
+/*
+   यूज़र के UID के हिसाब से
+   केवल उसी की deposits पढ़ी जाएंगी।
+*/
+
+const depositsRef =
+collection(
+db,
+DEPOSITS_COLLECTION
+);
+
+
+const q =
+query(
+depositsRef,
+where(
+"userId",
+"==",
+currentUser.uid
+)
+);
+
+
+const snap =
+await getDocs(q);
+
+
+allHistory = [];
+
+
+snap.forEach(
+docSnap => {
+
+allHistory.push({
+
+id:
+docSnap.id,
+
+...docSnap.data()
+
+});
+
+});
+
+
+/*
+   कुछ पुराने deposits में
+   uid field हो सकती है।
+*/
+
+if(
+allHistory.length === 0
+){
+
+const allSnap =
+await getDocs(
+depositsRef
+);
+
+
+allHistory = [];
+
+
+allSnap.forEach(
+docSnap => {
+
+const data =
+docSnap.data();
+
+const uid =
+getDepositUID(
+data
+);
+
+if(
+uid === currentUser.uid
+){
+
+allHistory.push({
+
+id:
+docSnap.id,
+
+...data
+
+});
+
 }
-$("uidSearch").addEventListener("keydown",e=>{if(e.key==="Enter")searchUser()});
-document.querySelectorAll(".filter").forEach(b=>b.addEventListener("click",()=>{
-document.querySelectorAll(".filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");currentFilter=b.dataset.filter;render();
-}));
+
+});
+
+}
+
+
+renderHistory(
+allHistory
+);
+
+
+}
+catch(error){
+
+console.error(
+"History Error:",
+error
+);
+
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+History लोड नहीं हो सकी।
+
+<br><br>
+
+${safe(
+error.message
+)}
+
+</div>
+
+`;
+
+}
+
+}
+
+
+/* =====================================================
+   SEARCH BY DATE
+===================================================== */
+
+function searchByDate(){
+
+const selectedDate =
+dateSearch.value;
+
+
+if(!selectedDate){
+
+renderHistory(
+allHistory
+);
+
+hideMessage();
+
+return;
+
+}
+
+
+const filtered =
+allHistory.filter(
+deposit => {
+
+const date =
+getHistoryDate(
+deposit
+);
+
+return (
+dateKey(date)
+===
+selectedDate
+);
+
+});
+
+
+if(filtered.length){
+
+showMessage(
+selectedDate.split("-").reverse().join("-")
++
+" की History मिली।",
+"ok"
+);
+
+}
+else{
+
+showMessage(
+selectedDate.split("-").reverse().join("-")
++
+" की कोई History नहीं मिली।",
+"error"
+);
+
+}
+
+
+renderHistory(
+filtered
+);
+
+}
+
+
+/* =====================================================
+   SEARCH BUTTON
+===================================================== */
+
+searchBtn.addEventListener(
+"click",
+searchByDate
+);
+
+
+/* =====================================================
+   DATE ENTER
+===================================================== */
+
+dateSearch.addEventListener(
+"change",
+searchByDate
+);
+
+
+/* =====================================================
+   CLEAR / RECENT
+===================================================== */
+
+clearBtn.addEventListener(
+"click",
+() => {
+
+dateSearch.value = "";
+
+hideMessage();
+
+renderHistory(
+allHistory
+);
+
+}
+);
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+document
+.getElementById("backBtn")
+.addEventListener(
+"click",
+() => {
+
+window.history.back();
+
+}
+);
+
+
+/* =====================================================
+   FIREBASE AUTH
+===================================================== */
+
+onAuthStateChanged(
+auth,
+async user => {
+
+if(user){
+
+currentUser =
+user;
+
+await loadHistory();
+
+}
+else{
+
+currentUser =
+null;
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+कृपया अपने खाते में लॉगिन करके
+History देखें।
+
+</div>
+
+`;
+
+}
+
+});
+
 </script>
+
 </body>
 </html>
