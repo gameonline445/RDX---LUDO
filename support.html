@@ -108,6 +108,8 @@ body{
 
     box-shadow:
     0 5px 12px rgba(36,93,190,.15);
+
+    cursor:pointer;
 }
 
 .header-right{
@@ -247,6 +249,8 @@ body{
 
     font-size:13px;
     font-weight:900;
+
+    cursor:pointer;
 }
 
 .menu-brand h2{
@@ -826,7 +830,8 @@ body{
 
         </button>
 
-        <div class="logo">
+        <!-- Logo Click to Home -->
+        <div class="logo" onclick="goHome()">
 
             RDX
 
@@ -888,7 +893,8 @@ body{
 
         <div class="menu-brand">
 
-            <div class="menu-logo">
+            <!-- Side Menu Logo Click to Home -->
+            <div class="menu-logo" onclick="goHome()">
                 RDX
             </div>
 
