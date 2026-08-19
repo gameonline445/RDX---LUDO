@@ -37,423 +37,194 @@ body{
     overflow-x:hidden;
 
     background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(83,125,255,.28),
-            transparent 30%
-        ),
-        radial-gradient(
-            circle at 90% 15%,
-            rgba(255,116,93,.22),
-            transparent 28%
-        ),
-        radial-gradient(
-            circle at 50% 100%,
-            rgba(91,218,172,.18),
-            transparent 35%
-        ),
-        linear-gradient(
-            135deg,
-            #edf4ff,
-            #ffffff 50%,
-            #f4f7ff
-        );
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
 }
 
 .top-bar{
-    padding:18px 18px 0;
+    padding:16px 14px 0;
 }
 
 .back-btn{
-    border:1px solid #a8c4f8;
-
-    background:
-        linear-gradient(
-            135deg,
-            #ffffff,
-            #eaf2ff
-        );
-
-    color:#172542;
-
-    min-height:54px;
-
-    padding:7px 18px 7px 8px;
-
-    border-radius:30px;
-
+    border:1.5px solid #bae6fd;
+    background:linear-gradient(135deg,#ffffff,#f0f9ff);
+    color:#0c4a6e;
+    min-height:46px;
+    padding:6px 16px 6px 6px;
+    border-radius:24px;
     display:flex;
     align-items:center;
-
-    gap:11px;
-
-    font-size:16px;
+    gap:9px;
+    font-size:14px;
     font-weight:800;
-
     cursor:pointer;
-
-    box-shadow:
-        0 8px 25px rgba(44,93,190,.13);
+    box-shadow:0 4px 14px rgba(2,132,199,0.08);
 }
 
 .back-icon{
-    width:40px;
-    height:40px;
-
+    width:34px;
+    height:34px;
     border-radius:50%;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
-    background:
-        linear-gradient(
-            145deg,
-            #2467e9,
-            #4b80f1
-        );
-
+    background:linear-gradient(145deg,#0284c7,#0369a1);
     color:#ffffff;
-
-    font-size:25px;
+    font-size:18px;
 }
 
 .page{
     width:100%;
-    max-width:780px;
+    max-width:440px;
     margin:auto;
-    padding:25px 18px 70px;
+    padding:16px 14px 60px;
 }
 
 .brand{
     text-align:center;
-    margin:12px 0 25px;
+    margin:6px 0 20px;
 }
 
 .logo{
-    width:112px;
-    height:112px;
-
+    width:64px;
+    height:64px;
     margin:auto;
-
     border-radius:50%;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #e7efff
-        );
-
-    border:6px solid #b8cff9;
-
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:3px solid #93c5fd;
     display:flex;
     align-items:center;
     justify-content:center;
-
-    color:#2565df;
-
-    font-size:25px;
+    color:#0284c7;
+    font-size:18px;
     font-weight:950;
-
-    box-shadow:
-        0 0 0 8px rgba(73,120,232,.08),
-        0 18px 40px rgba(44,92,190,.18);
-
-    position:relative;
-}
-
-.logo:before{
-    content:"";
-
-    position:absolute;
-
-    inset:9px;
-
-    border-radius:50%;
-
-    border:3px solid #ef4444;
-
-    opacity:.75;
-}
-
-.logo span{
-    position:relative;
-    z-index:2;
+    box-shadow:0 6px 16px rgba(2,132,199,0.2);
+    cursor:pointer;
 }
 
 .brand h1{
-    margin-top:18px;
-
-    font-size:38px;
-
-    line-height:1;
-
-    font-weight:950;
-
-    letter-spacing:-1.5px;
-
-    background:
-        linear-gradient(
-            90deg,
-            #195fe2,
-            #6b5df4,
-            #e84c74
-        );
-
-    -webkit-background-clip:text;
-
-    background-clip:text;
-
-    color:transparent;
+    margin-top:10px;
+    font-size:24px;
+    line-height:1.1;
+    font-weight:900;
+    letter-spacing:-0.5px;
+    color:#0c4a6e;
 }
 
 .brand p{
-    margin-top:10px;
-
-    color:#6c7c9c;
-
-    font-size:18px;
-
+    margin-top:4px;
+    color:#64748b;
+    font-size:13px;
     font-weight:600;
 }
 
 .login-card{
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.98),
-            rgba(248,251,255,.98)
-        );
-
-    border:1px solid #b9cdf5;
-
-    border-radius:30px;
-
-    padding:34px;
-
-    box-shadow:
-        0 25px 65px rgba(38,82,165,.14),
-        0 5px 20px rgba(38,82,165,.07);
-
+    background:#ffffff;
+    border:1.5px solid #7dd3fc;
+    border-radius:24px;
+    padding:24px 20px;
+    box-shadow:0 12px 30px rgba(2,132,199,0.10);
     position:relative;
-
     overflow:hidden;
-}
-
-.login-card:before{
-    content:"";
-
-    position:absolute;
-
-    width:190px;
-    height:190px;
-
-    border-radius:50%;
-
-    background:rgba(70,115,240,.1);
-
-    top:-90px;
-    right:-70px;
-}
-
-.login-card:after{
-    content:"";
-
-    position:absolute;
-
-    width:150px;
-    height:150px;
-
-    border-radius:50%;
-
-    background:rgba(255,105,125,.07);
-
-    bottom:-80px;
-    left:-60px;
 }
 
 .step{
     display:inline-flex;
-
     align-items:center;
-
-    gap:7px;
-
-    padding:9px 15px;
-
-    border-radius:22px;
-
-    border:1px solid #a9c5f8;
-
-    background:#edf4ff;
-
-    color:#2865d6;
-
-    font-size:12px;
-
+    gap:5px;
+    padding:6px 12px;
+    border-radius:18px;
+    border:1px solid #7dd3fc;
+    background:#f0f9ff;
+    color:#0284c7;
+    font-size:11px;
     font-weight:900;
-
-    letter-spacing:1px;
-
-    position:relative;
-
-    z-index:2;
+    letter-spacing:0.8px;
 }
 
 .login-card h2{
-    margin-top:22px;
-
-    font-size:32px;
-
-    line-height:1.15;
-
-    position:relative;
-
-    z-index:2;
+    margin-top:14px;
+    font-size:22px;
+    line-height:1.2;
+    color:#0f172a;
+    font-weight:900;
 }
 
 .subtitle{
-    margin-top:10px;
-
-    color:#71809d;
-
-    font-size:16px;
-
-    line-height:1.5;
-
-    position:relative;
-
-    z-index:2;
+    margin-top:6px;
+    color:#64748b;
+    font-size:13px;
+    line-height:1.45;
 }
 
 .form-group{
-    margin-top:24px;
-
-    position:relative;
-
-    z-index:2;
+    margin-top:18px;
 }
 
 .form-group label{
     display:block;
-
-    margin-bottom:9px;
-
-    color:#34415e;
-
-    font-size:15px;
-
-    font-weight:850;
+    margin-bottom:6px;
+    color:#0284c7;
+    font-size:12px;
+    font-weight:800;
 }
 
 .mobile-wrap{
     display:grid;
-
-    grid-template-columns:94px 1fr;
-
-    gap:10px;
+    grid-template-columns:74px 1fr;
+    gap:8px;
 }
 
 .country-code{
-    height:62px;
-
-    border-radius:18px;
-
-    border:1px solid #aac5f6;
-
-    background:
-        linear-gradient(
-            145deg,
-            #edf4ff,
-            #e2ecff
-        );
-
+    height:48px;
+    border-radius:14px;
+    border:1.5px solid #bae6fd;
+    background:#f0f9ff;
     display:flex;
-
     align-items:center;
     justify-content:center;
-
-    color:#2865d6;
-
-    font-size:17px;
-
+    color:#0284c7;
+    font-size:14px;
     font-weight:900;
 }
 
 .mobile-input{
     width:100%;
-
-    height:62px;
-
-    border-radius:18px;
-
-    border:1px solid #c5d3eb;
-
+    height:48px;
+    border-radius:14px;
+    border:1.5px solid #bae6fd;
     outline:none;
-
-    background:
-        linear-gradient(
-            145deg,
-            #ffffff,
-            #f5f8ff
-        );
-
-    color:#17213a;
-
-    font-size:17px;
-
-    font-weight:600;
-
-    padding:0 17px;
+    background:#f8fafc;
+    color:#0f172a;
+    font-size:15px;
+    font-weight:700;
+    padding:0 14px;
 }
 
 .mobile-input:focus{
-    border-color:#4c7fe8;
-
-    box-shadow:
-        0 0 0 4px rgba(54,111,230,.1);
+    border-color:#0284c7;
+    background:#ffffff;
 }
 
 .continue-btn,
 .verify-btn{
-
     width:100%;
-
-    min-height:62px;
-
+    min-height:48px;
     border:0;
-
-    border-radius:20px;
-
-    background:
-        linear-gradient(
-            100deg,
-            #1762e9,
-            #477bed,
-            #705cf0
-        );
-
+    border-radius:24px;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
     color:#ffffff;
-
-    font-size:18px;
-
-    font-weight:900;
-
+    font-size:15px;
+    font-weight:850;
     cursor:pointer;
-
-    box-shadow:
-        0 12px 28px rgba(43,100,226,.28);
-
+    box-shadow:0 6px 18px rgba(2,132,199,0.3);
     transition:.2s;
 }
 
 .continue-btn{
-    margin-top:28px;
-
-    position:relative;
-
-    z-index:2;
+    margin-top:20px;
 }
 
 .continue-btn:active,
@@ -464,439 +235,215 @@ body{
 .continue-btn:disabled,
 .verify-btn:disabled{
     opacity:.6;
-
     cursor:not-allowed;
 }
 
 #otpSection{
     display:none;
-
-    position:relative;
-
-    z-index:5;
-
-    margin-top:24px;
+    margin-top:18px;
 }
 
 .otp-label{
     display:block;
-
-    margin-bottom:9px;
-
-    color:#34415e;
-
-    font-size:15px;
-
-    font-weight:850;
+    margin-bottom:6px;
+    color:#0284c7;
+    font-size:12px;
+    font-weight:800;
 }
 
 .otp-input{
     width:100%;
-
-    height:64px;
-
-    border-radius:18px;
-
-    border:2px solid #b9cdf5;
-
-    background:#ffffff;
-
-    color:#17213a;
-
-    font-size:28px;
-
+    height:50px;
+    border-radius:14px;
+    border:1.5px solid #bae6fd;
+    background:#f8fafc;
+    color:#0f172a;
+    font-size:22px;
     font-weight:900;
-
-    letter-spacing:10px;
-
+    letter-spacing:6px;
     text-align:center;
-
-    padding:0 15px;
-
+    padding:0 12px;
     outline:none;
 }
 
 .otp-input:focus{
-    border-color:#4c7fe8;
-
-    box-shadow:
-        0 0 0 4px rgba(54,111,230,.1);
+    border-color:#0284c7;
+    background:#ffffff;
 }
 
 .otp-hint{
-    margin-top:9px;
-
-    color:#71809d;
-
-    font-size:13px;
-
-    line-height:1.5;
-
+    margin-top:8px;
+    color:#64748b;
+    font-size:12px;
+    line-height:1.4;
     text-align:center;
 }
 
 .verify-btn{
-    margin-top:16px;
+    margin-top:14px;
 }
 
 .resend-btn{
     display:block;
-
-    margin:14px auto 0;
-
+    margin:12px auto 0;
     border:0;
-
     background:transparent;
-
-    color:#2865d6;
-
-    font-size:14px;
-
+    color:#0284c7;
+    font-size:13px;
     font-weight:800;
-
     cursor:pointer;
 }
 
 .resend-btn:disabled{
     opacity:.5;
-
     cursor:not-allowed;
 }
 
 .features{
     display:grid;
-
-    grid-template-columns:
-        repeat(3,1fr);
-
-    gap:10px;
-
-    margin-top:25px;
-
-    padding-top:22px;
-
-    border-top:1px solid #e2e8f3;
-
-    position:relative;
-
-    z-index:2;
+    grid-template-columns:repeat(3,1fr);
+    gap:6px;
+    margin-top:18px;
+    padding-top:16px;
+    border-top:1px solid #e2e8f0;
 }
 
 .feature{
     text-align:center;
-
-    color:#667590;
-
-    font-size:12px;
-
+    color:#64748b;
+    font-size:11px;
     font-weight:700;
 }
 
 .feature-icon{
-    width:42px;
-    height:42px;
-
-    margin:auto;
-
-    border-radius:14px;
-
+    width:34px;
+    height:34px;
+    margin:auto auto 4px;
+    border-radius:10px;
     display:flex;
-
     align-items:center;
     justify-content:center;
-
-    background:#edf4ff;
-
-    border:1px solid #c1d3f5;
-
-    font-size:19px;
-
-    margin-bottom:7px;
+    background:#f0f9ff;
+    border:1px solid #bae6fd;
+    font-size:15px;
 }
 
 .info-text{
     text-align:center;
-
-    margin-top:25px;
-
-    color:#7a879e;
-
-    font-size:13px;
-
-    line-height:1.6;
-
+    margin-top:18px;
+    color:#64748b;
+    font-size:12px;
+    line-height:1.5;
     padding:0 8px;
 }
 
 .info-text strong{
-    color:#2865d6;
+    color:#0284c7;
 }
 
 .toast{
     position:fixed;
-
     left:50%;
-
-    bottom:35px;
-
-    transform:
-        translateX(-50%)
-        translateY(20px);
-
-    background:#17213a;
-
+    bottom:30px;
+    transform:translateX(-50%) translateY(20px);
+    background:#182440;
     color:#ffffff;
-
-    padding:13px 18px;
-
-    border-radius:14px;
-
-    font-size:14px;
-
+    padding:10px 16px;
+    border-radius:12px;
+    font-size:13px;
     font-weight:650;
-
     opacity:0;
-
     pointer-events:none;
-
     transition:.25s;
-
     z-index:9999;
-
     max-width:90%;
-
     text-align:center;
 }
 
 .toast.show{
     opacity:1;
-
-    transform:
-        translateX(-50%)
-        translateY(0);
-}
-
-@media(max-width:600px){
-
-    .top-bar{
-        padding:14px 12px 0;
-    }
-
-    .page{
-        padding:20px 12px 55px;
-    }
-
-    .logo{
-        width:94px;
-        height:94px;
-
-        font-size:21px;
-    }
-
-    .brand h1{
-        font-size:31px;
-    }
-
-    .brand p{
-        font-size:16px;
-    }
-
-    .login-card{
-        padding:24px 18px;
-
-        border-radius:25px;
-    }
-
-    .login-card h2{
-        font-size:27px;
-    }
-
-    .subtitle{
-        font-size:14px;
-    }
-
-    .mobile-input,
-    .country-code{
-        height:58px;
-
-        border-radius:16px;
-    }
-
-    .mobile-wrap{
-        grid-template-columns:82px 1fr;
-
-        gap:8px;
-    }
-
-    .continue-btn,
-    .verify-btn{
-        min-height:60px;
-    }
-
-    .otp-input{
-        height:60px;
-
-        font-size:25px;
-
-        letter-spacing:7px;
-    }
-
-    .features{
-        gap:4px;
-    }
-
-    .feature{
-        font-size:10px;
-    }
-
-    .feature-icon{
-        width:38px;
-        height:38px;
-
-        font-size:17px;
-    }
-}
-
-@media(max-width:360px){
-
-    .login-card{
-        padding:20px 14px;
-    }
-
-    .mobile-wrap{
-        grid-template-columns:76px 1fr;
-    }
-
-    .country-code{
-        font-size:15px;
-    }
-
-    .mobile-input{
-        font-size:15px;
-    }
+    transform:translateX(-50%) translateY(0);
 }
 
 </style>
 
-
 <!-- =====================================================
      FIREBASE
 ===================================================== -->
-
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-
 <script>
-
 const firebaseConfig = {
-
     apiKey:
         "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-
     authDomain:
         "rdx-ludo.firebaseapp.com",
-
     projectId:
         "rdx-ludo",
-
     storageBucket:
         "rdx-ludo.firebasestorage.app",
-
     messagingSenderId:
         "928340814840",
-
     appId:
         "1:928340814840:web:6eca42a8b76138b268440d"
-
 };
-
 
 let firebaseDB = null;
 
-
 try{
-
     if(!firebase.apps.length){
-
         firebase.initializeApp(
             firebaseConfig
         );
-
     }
-
     firebaseDB =
         firebase.firestore();
-
     console.log(
         "FIREBASE FIRESTORE CONNECTED"
     );
-
 }catch(error){
-
     console.error(
         "FIREBASE INITIALIZATION ERROR:",
         error
     );
-
 }
-
 </script>
 
 </head>
 
-
 <body>
 
-
 <div class="top-bar">
-
     <button
         type="button"
         class="back-btn"
         onclick="goBack()"
     >
-
         <span class="back-icon">
             ←
         </span>
-
         <span>
             Back
         </span>
-
     </button>
-
 </div>
-
 
 <main class="page">
 
-
 <section class="brand">
-
-    <div class="logo">
-
-        <span>
-            RDX
-        </span>
-
+    <div class="logo" onclick="location.href='dashboard.html'">
+        RDX
     </div>
-
     <h1>
         RDX LUDO
     </h1>
-
     <p>
         Play · Compete · Enjoy
     </p>
-
 </section>
 
-
 <section class="login-card">
-
 
 <span
     class="step"
@@ -905,11 +452,9 @@ try{
     ✨ STEP 1
 </span>
 
-
 <h2 id="titleText">
     Mobile Login
 </h2>
-
 
 <p
     class="subtitle"
@@ -919,25 +464,17 @@ try{
     We will send you an OTP for secure login.
 </p>
 
-
 <div
     class="form-group"
     id="mobileGroup"
 >
-
     <label>
         Mobile Number
     </label>
-
-
     <div class="mobile-wrap">
-
-
         <div class="country-code">
             🇮🇳 +91
         </div>
-
-
         <input
             class="mobile-input"
             type="tel"
@@ -947,11 +484,8 @@ try{
             maxlength="10"
             autocomplete="tel"
         >
-
     </div>
-
 </div>
-
 
 <button
     type="button"
@@ -962,15 +496,10 @@ try{
     Loading OTP Service...
 </button>
 
-
 <div id="otpSection">
-
-
     <label class="otp-label">
         Enter OTP
     </label>
-
-
     <input
         class="otp-input"
         type="tel"
@@ -980,16 +509,12 @@ try{
         autocomplete="one-time-code"
         maxlength="6"
     >
-
-
     <p
         class="otp-hint"
         id="otpHint"
     >
         OTP will be sent to your registered mobile number.
     </p>
-
-
     <button
         type="button"
         class="verify-btn"
@@ -998,8 +523,6 @@ try{
     >
         Verify OTP
     </button>
-
-
     <button
         type="button"
         class="resend-btn"
@@ -1008,130 +531,61 @@ try{
     >
         Resend OTP
     </button>
-
-
 </div>
-
 
 <div class="features">
-
-
     <div class="feature">
-
-        <div class="feature-icon">
-            🛡️
-        </div>
-
+        <div class="feature-icon">🛡️</div>
         Secure Login
-
     </div>
-
-
     <div class="feature">
-
-        <div class="feature-icon">
-            ⚡
-        </div>
-
+        <div class="feature-icon">⚡</div>
         Quick Access
-
     </div>
-
-
     <div class="feature">
-
-        <div class="feature-icon">
-            🎧
-        </div>
-
+        <div class="feature-icon">🎧</div>
         Support
-
     </div>
-
-
 </div>
-
 
 </section>
 
-
 <p class="info-text">
-
     Your mobile number is verified using secure OTP verification.
-
     <br>
-
     <strong>
         Use your registered mobile number to login.
     </strong>
-
 </p>
 
-
 </main>
-
 
 <div
     class="toast"
     id="toast"
 ></div>
 
-
 <!-- =====================================================
-     MSG91 CONFIGURATION
+     MSG91 CONFIGURATION (ORIGINAL CREDENTIALS)
 ===================================================== -->
-
 <script>
-
-var MSG91_WIDGET_ID =
-"366870704943343439343834";
-
-
-var MSG91_TOKEN =
-"561244TCn8oI4OX6a82246aP1";
-
+var MSG91_WIDGET_ID = "366870704943343439343834";
+var MSG91_TOKEN = "561244TCn8oI4OX6a82246aP1";
 
 var configuration = {
-
-    widgetId:
-        MSG91_WIDGET_ID,
-
-    tokenAuth:
-        MSG91_TOKEN,
-
-    identifier:
-        "",
-
-    exposeMethods:
-        true,
-
-    captchaRenderId:
-        "",
-
-    success:
-        function(data){
-
-            console.log(
-                "MSG91 SUCCESS:",
-                data
-            );
-
-        },
-
-    failure:
-        function(error){
-
-            console.error(
-                "MSG91 FAILURE:",
-                error
-            );
-
-        }
-
+    widgetId: MSG91_WIDGET_ID,
+    tokenAuth: MSG91_TOKEN,
+    identifier: "",
+    exposeMethods: true,
+    captchaRenderId: "",
+    success: function(data){
+        console.log("MSG91 SUCCESS:", data);
+    },
+    failure: function(error){
+        console.error("MSG91 FAILURE:", error);
+    }
 };
-
 </script>
-
 
 <script
     type="text/javascript"
@@ -1139,1325 +593,320 @@ var configuration = {
     onload="initSendOTP(configuration)"
 ></script>
 
-
 <script>
-
-
 /* =====================================================
-   ELEMENTS
+   ELEMENTS & VARIABLES (EXACT ORIGINAL LOGIC)
 ===================================================== */
+const mobileInput = document.getElementById("mobile");
+const continueBtn = document.getElementById("continueBtn");
+const otpSection = document.getElementById("otpSection");
+const otpInput = document.getElementById("otp");
+const verifyBtn = document.getElementById("verifyBtn");
+const resendBtn = document.getElementById("resendBtn");
+const mobileGroup = document.getElementById("mobileGroup");
+const stepLabel = document.getElementById("stepLabel");
+const titleText = document.getElementById("titleText");
+const subtitleText = document.getElementById("subtitleText");
+const otpHint = document.getElementById("otpHint");
+const toast = document.getElementById("toast");
 
-const mobileInput =
-    document.getElementById(
-        "mobile"
-    );
-
-const continueBtn =
-    document.getElementById(
-        "continueBtn"
-    );
-
-const otpSection =
-    document.getElementById(
-        "otpSection"
-    );
-
-const otpInput =
-    document.getElementById(
-        "otp"
-    );
-
-const verifyBtn =
-    document.getElementById(
-        "verifyBtn"
-    );
-
-const resendBtn =
-    document.getElementById(
-        "resendBtn"
-    );
-
-const mobileGroup =
-    document.getElementById(
-        "mobileGroup"
-    );
-
-const stepLabel =
-    document.getElementById(
-        "stepLabel"
-    );
-
-const titleText =
-    document.getElementById(
-        "titleText"
-    );
-
-const subtitleText =
-    document.getElementById(
-        "subtitleText"
-    );
-
-const otpHint =
-    document.getElementById(
-        "otpHint"
-    );
-
-const toast =
-    document.getElementById(
-        "toast"
-    );
-
-
-/* =====================================================
-   VARIABLES
-===================================================== */
-
-let currentIdentifier =
-    "";
-
-let currentReqId =
-    "";
-
-let resendSeconds =
-    30;
-
-let resendTimer =
-    null;
-
-let msg91Ready =
-    false;
-
-
-/* =====================================================
-   TOAST
-===================================================== */
+let currentIdentifier = "";
+let currentReqId = "";
+let resendSeconds = 30;
+let resendTimer = null;
+let msg91Ready = false;
 
 function showMessage(message){
-
-    toast.textContent =
-        message;
-
-    toast.classList.add(
-        "show"
-    );
-
-    clearTimeout(
-        showMessage.timer
-    );
-
-    showMessage.timer =
-        setTimeout(
-            function(){
-
-                toast.classList.remove(
-                    "show"
-                );
-
-            },
-            4000
-        );
-
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(showMessage.timer);
+    showMessage.timer = setTimeout(function(){
+        toast.classList.remove("show");
+    }, 4000);
 }
-
-
-/* =====================================================
-   MSG91 READY
-===================================================== */
 
 function checkMSG91Ready(){
-
-    if(
-        typeof window.sendOtp ===
-        "function"
-    ){
-
-        msg91Ready =
-            true;
-
-        continueBtn.disabled =
-            false;
-
-        continueBtn.textContent =
-            "Send OTP";
-
-        console.log(
-            "MSG91 OTP METHODS READY"
-        );
-
+    if(typeof window.sendOtp === "function"){
+        msg91Ready = true;
+        continueBtn.disabled = false;
+        continueBtn.textContent = "Send OTP";
+        console.log("MSG91 OTP METHODS READY");
         return true;
-
     }
-
     return false;
-
 }
-
-
-/* =====================================================
-   WAIT MSG91
-===================================================== */
 
 function waitForMSG91(){
-
-    let attempts =
-        0;
-
-    const timer =
-        setInterval(
-            function(){
-
-                attempts++;
-
-
-                if(
-                    checkMSG91Ready()
-                ){
-
-                    clearInterval(
-                        timer
-                    );
-
-                    return;
-
-                }
-
-
-                if(
-                    attempts >= 100
-                ){
-
-                    clearInterval(
-                        timer
-                    );
-
-                    msg91Ready =
-                        false;
-
-                    continueBtn.disabled =
-                        true;
-
-                    continueBtn.textContent =
-                        "OTP Service Unavailable";
-
-                    showMessage(
-                        "MSG91 OTP service load नहीं हुआ।"
-                    );
-
-                }
-
-            },
-            100
-        );
-
+    let attempts = 0;
+    const timer = setInterval(function(){
+        attempts++;
+        if(checkMSG91Ready()){
+            clearInterval(timer);
+            return;
+        }
+        if(attempts >= 100){
+            clearInterval(timer);
+            msg91Ready = false;
+            continueBtn.disabled = true;
+            continueBtn.textContent = "OTP Service Unavailable";
+            showMessage("MSG91 OTP service load नहीं हुआ।");
+        }
+    }, 100);
 }
 
-
-/* =====================================================
-   PAGE LOAD
-===================================================== */
-
-window.addEventListener(
-    "load",
-    function(){
-
-        waitForMSG91();
-
-    }
-);
-
-
-/* =====================================================
-   MOBILE
-===================================================== */
+window.addEventListener("load", function(){
+    waitForMSG91();
+});
 
 function getMobile(){
-
-    return mobileInput.value
-        .replace(
-            /\D/g,
-            ""
-        )
-        .slice(
-            0,
-            10
-        );
-
+    return mobileInput.value.replace(/\D/g,"").slice(0, 10);
 }
-
-
-/* =====================================================
-   START LOGIN
-===================================================== */
 
 function startLogin(){
-
-    const mobile =
-        getMobile();
-
-
-    if(
-        !/^[6-9]\d{9}$/.test(
-            mobile
-        )
-    ){
-
-        showMessage(
-            "Enter a valid 10-digit mobile number."
-        );
-
+    const mobile = getMobile();
+    if(!/^[6-9]\d{9}$/.test(mobile)){
+        showMessage("Enter a valid 10-digit mobile number.");
         mobileInput.focus();
-
         return;
-
     }
-
-
-    if(
-        !MSG91_TOKEN
-    ){
-
-        showMessage(
-            "MSG91 configuration missing."
-        );
-
+    if(!MSG91_TOKEN){
+        showMessage("MSG91 configuration missing.");
         return;
-
     }
-
-
-    if(
-        typeof window.sendOtp !==
-        "function"
-    ){
-
-        showMessage(
-            "MSG91 अभी ready नहीं हुआ।"
-        );
-
+    if(typeof window.sendOtp !== "function"){
+        showMessage("MSG91 अभी ready नहीं हुआ।");
         waitForMSG91();
-
         return;
-
     }
 
+    currentIdentifier = "91" + mobile;
+    localStorage.setItem("rdxLoginMobile", currentIdentifier);
 
-    currentIdentifier =
-        "91" + mobile;
-
-
-    /*
-    =========================================
-    MOBILE LOGIN INFORMATION
-    =========================================
-
-    Mobile number browser में temporary
-    store रहेगा ताकि profile.html उसे
-    Firebase customer document से जोड़ सके।
-
-    असली user identity Firebase में:
-    customers / 91XXXXXXXXXX
-    =========================================
-    */
-
-    localStorage.setItem(
-        "rdxLoginMobile",
-        currentIdentifier
-    );
-
-
-    mobileGroup.style.display =
-        "none";
-
-    continueBtn.style.display =
-        "none";
-
-    stepLabel.textContent =
-        "✨ STEP 2";
-
-    titleText.textContent =
-        "Verify Mobile Number";
-
-    subtitleText.textContent =
-        "Enter the OTP sent to your registered mobile number.";
-
-    otpSection.style.display =
-        "block";
-
-    otpInput.value =
-        "";
-
-    verifyBtn.disabled =
-        true;
-
-    resendBtn.disabled =
-        true;
-
-    otpHint.textContent =
-        "OTP will be sent to your registered mobile number.";
-
+    mobileGroup.style.display = "none";
+    continueBtn.style.display = "none";
+    stepLabel.textContent = "✨ STEP 2";
+    titleText.textContent = "Verify Mobile Number";
+    subtitleText.textContent = "Enter the OTP sent to your registered mobile number.";
+    otpSection.style.display = "block";
+    otpInput.value = "";
+    verifyBtn.disabled = true;
+    resendBtn.disabled = true;
+    otpHint.textContent = "OTP will be sent to your registered mobile number.";
 
     sendOTPNow();
-
 }
-
-
-/* =====================================================
-   SEND OTP
-===================================================== */
 
 function sendOTPNow(){
-
-    if(
-        typeof window.sendOtp !==
-        "function"
-    ){
-
-        showMessage(
-            "MSG91 Send OTP method ready नहीं है।"
-        );
-
+    if(typeof window.sendOtp !== "function"){
+        showMessage("MSG91 Send OTP method ready नहीं है।");
         return;
-
     }
-
-
-    verifyBtn.disabled =
-        true;
-
-    resendBtn.disabled =
-        true;
-
-    showMessage(
-        "OTP भेजा जा रहा है..."
-    );
-
+    verifyBtn.disabled = true;
+    resendBtn.disabled = true;
+    showMessage("OTP भेजा जा रहा है...");
 
     window.sendOtp(
-
         currentIdentifier,
-
-
         function(data){
-
-            console.log(
-                "MSG91 OTP SENT:",
-                data
-            );
-
-
-            if(
-                data &&
-                data.reqId
-            ){
-
-                currentReqId =
-                    data.reqId;
-
+            console.log("MSG91 OTP SENT:", data);
+            if(data && data.reqId){
+                currentReqId = data.reqId;
+            }else if(data && data.requestId){
+                currentReqId = data.requestId;
             }
-
-            else if(
-                data &&
-                data.requestId
-            ){
-
-                currentReqId =
-                    data.requestId;
-
-            }
-
-
-            otpHint.textContent =
-                "OTP आपके registered mobile number पर भेज दिया गया है।";
-
-
-            verifyBtn.disabled =
-                true;
-
-
-            showMessage(
-                "OTP successfully sent."
-            );
-
-
+            otpHint.textContent = "OTP आपके registered mobile number पर भेज दिया गया है।";
+            verifyBtn.disabled = true;
+            showMessage("OTP successfully sent.");
             startResendTimer();
-
-
-            setTimeout(
-                function(){
-
-                    otpInput.focus();
-
-                },
-                300
-            );
-
+            setTimeout(function(){ otpInput.focus(); }, 300);
         },
-
-
         function(error){
-
-            console.error(
-                "MSG91 SEND OTP ERROR:",
-                error
-            );
-
-
-            verifyBtn.disabled =
-                true;
-
-            resendBtn.disabled =
-                false;
-
-
-            showMessage(
-                "OTP भेजने में समस्या हुई।"
-            );
-
+            console.error("MSG91 SEND OTP ERROR:", error);
+            verifyBtn.disabled = true;
+            resendBtn.disabled = false;
+            showMessage("OTP भेजने में समस्या हुई।");
         }
-
     );
-
 }
-
-
-/* =====================================================
-   VERIFY OTP
-===================================================== */
 
 function verifyOTP(){
-
-    const otp =
-        otpInput.value
-            .replace(
-                /\D/g,
-                ""
-            )
-            .slice(
-                0,
-                6
-            );
-
-
-    if(
-        !/^\d{4,6}$/.test(
-            otp
-        )
-    ){
-
-        showMessage(
-            "कृपया सही OTP डालें।"
-        );
-
+    const otp = otpInput.value.replace(/\D/g,"").slice(0, 6);
+    if(!/^\d{4,6}$/.test(otp)){
+        showMessage("कृपया सही OTP डालें।");
         otpInput.focus();
-
         return;
-
+    }
+    if(typeof window.verifyOtp !== "function"){
+        showMessage("MSG91 verification method ready नहीं है।");
+        return;
     }
 
-
-    if(
-        typeof window.verifyOtp !==
-        "function"
-    ){
-
-        showMessage(
-            "MSG91 verification method ready नहीं है।"
-        );
-
-        return;
-
-    }
-
-
-    verifyBtn.disabled =
-        true;
-
-    verifyBtn.textContent =
-        "Verifying...";
-
+    verifyBtn.disabled = true;
+    verifyBtn.textContent = "Verifying...";
 
     window.verifyOtp(
-
         otp,
-
-
         async function(data){
+            console.log("MSG91 OTP VERIFIED:", data);
+            localStorage.setItem("rdxLoggedIn", "true");
+            localStorage.setItem("rdxVerifiedMobile", currentIdentifier);
 
-            console.log(
-                "MSG91 OTP VERIFIED:",
-                data
-            );
-
-
-            /*
-            =====================================
-            OTP VERIFIED
-            =====================================
-            */
-
-            localStorage.setItem(
-                "rdxLoggedIn",
-                "true"
-            );
-
-            localStorage.setItem(
-                "rdxVerifiedMobile",
-                currentIdentifier
-            );
-
-
-            if(
-                data &&
-                data.accessToken
-            ){
-
-                localStorage.setItem(
-                    "rdxAccessToken",
-                    data.accessToken
-                );
-
+            if(data && data.accessToken){
+                localStorage.setItem("rdxAccessToken", data.accessToken);
             }
 
-
-            /*
-            =====================================
-            FIREBASE SAVE
-            =====================================
-
-            यहाँ सिर्फ mobile/status/login time
-            update होगा।
-
-            IMPORTANT:
-            Existing "name" को overwrite नहीं किया
-            जाएगा।
-
-            इसलिए अगर profile में:
-
-            name = Neeraj Meena
-
-            save है तो login के समय वह नाम
-            delete/replace नहीं होगा।
-            =====================================
-            */
-
-            showMessage(
-                "OTP verify हो गया। Firebase में login save हो रहा है..."
-            );
-
-
-            const saved =
-                await saveCustomerToFirebase(
-                    currentIdentifier
-                );
-
+            showMessage("OTP verify हो गया। Firebase में login save हो रहा है...");
+            const saved = await saveCustomerToFirebase(currentIdentifier);
 
             if(!saved){
-
-                verifyBtn.disabled =
-                    false;
-
-                verifyBtn.textContent =
-                    "Verify OTP";
-
-                showMessage(
-                    "OTP verify हो गया, लेकिन Firebase में login save नहीं हुआ।"
-                );
-
+                verifyBtn.disabled = false;
+                verifyBtn.textContent = "Verify OTP";
+                showMessage("OTP verify हो गया, लेकिन Firebase में login save नहीं हुआ।");
                 return;
-
             }
 
-
-            clearInterval(
-                resendTimer
-            );
-
-
-            showMessage(
-                "Login successful!"
-            );
-
-
-            setTimeout(
-                function(){
-
-                    window.location.href =
-                        "./dashboard.html";
-
-                },
-                1000
-            );
-
+            clearInterval(resendTimer);
+            showMessage("Login successful!");
+            setTimeout(function(){
+                window.location.href = "./dashboard.html";
+            }, 1000);
         },
-
-
         function(error){
-
-            console.error(
-                "MSG91 VERIFY ERROR:",
-                error
-            );
-
-
-            verifyBtn.disabled =
-                false;
-
-            verifyBtn.textContent =
-                "Verify OTP";
-
-
-            showMessage(
-                "OTP गलत है या expire हो गया है।"
-            );
-
-
+            console.error("MSG91 VERIFY ERROR:", error);
+            verifyBtn.disabled = false;
+            verifyBtn.textContent = "Verify OTP";
+            showMessage("OTP गलत है या expire हो गया है।");
             otpInput.focus();
-
         },
-
-
-        currentReqId ||
-        undefined
-
+        currentReqId || undefined
     );
-
 }
-
-
-/* =====================================================
-   FIREBASE SAVE CUSTOMER
-===================================================== */
 
 async function saveCustomerToFirebase(mobile){
-
     try{
-
-        console.log(
-            "================================"
-        );
-
-        console.log(
-            "FIREBASE CUSTOMER LOGIN SAVE START"
-        );
-
-        console.log(
-            "Mobile:",
-            mobile
-        );
-
-
-        /*
-        =========================================
-        FIREBASE CONNECTION CHECK
-        =========================================
-        */
-
         if(!firebaseDB){
-
-            console.error(
-                "Firebase DB not connected"
-            );
-
-            showMessage(
-                "Firebase database connect नहीं हुआ।"
-            );
-
+            console.error("Firebase DB not connected");
+            showMessage("Firebase database connect नहीं हुआ।");
             return false;
-
         }
 
-
-        /*
-        =========================================
-        CLEAN MOBILE
-        =========================================
-        */
-
-        const cleanMobile =
-            String(mobile)
-            .replace(
-                /\D/g,
-                ""
-            );
-
-
-        /*
-        =========================================
-        INDIAN MOBILE VALIDATION
-        =========================================
-        */
-
-        if(
-            !/^91[6-9]\d{9}$/.test(
-                cleanMobile
-            )
-        ){
-
-            console.error(
-                "Invalid mobile:",
-                cleanMobile
-            );
-
-            showMessage(
-                "Mobile number invalid है।"
-            );
-
+        const cleanMobile = String(mobile).replace(/\D/g,"");
+        if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
+            showMessage("Mobile number invalid है।");
             return false;
-
         }
 
-
-        /*
-        =========================================
-        CUSTOMER DOCUMENT
-
-        Example:
-
-        customers
-           |
-           └── 91917878852370
-        =========================================
-        */
-
-        const userRef =
-            firebaseDB
-            .collection(
-                "customers"
-            )
-            .doc(
-                cleanMobile
-            );
-
-
-        /*
-        =========================================
-        SERVER TIME
-        =========================================
-        */
-
-        const now =
-            firebase.firestore
-            .FieldValue
-            .serverTimestamp();
-
-
-        /*
-        =========================================
-        IMPORTANT
-
-        यहाँ NAME field नहीं भेज रहे हैं।
-
-        इसका मतलब:
-
-        अगर Firebase में पहले से:
-
-        name:
-        "Neeraj Meena"
-
-        है तो यह code उसे touch नहीं करेगा।
-
-        सिर्फ नीचे के fields update होंगे:
-
-        mobile
-        status
-        lastLoginAt
-
-        merge:true होने की वजह से बाकी
-        fields सुरक्षित रहेंगे।
-        =========================================
-        */
+        const userRef = firebaseDB.collection("customers").doc(cleanMobile);
+        const now = firebase.firestore.FieldValue.serverTimestamp();
 
         await userRef.set(
-
             {
-
-                mobile:
-                    "+" +
-                    cleanMobile,
-
-                status:
-                    "active",
-
-                lastLoginAt:
-                    now
-
+                mobile: "+" + cleanMobile,
+                status: "active",
+                lastLoginAt: now
             },
-
             {
-
-                merge:
-                    true
-
+                merge: true
             }
-
         );
 
-
-        /*
-        =========================================
-        FIREBASE USER ID
-        =========================================
-        */
-
-        localStorage.setItem(
-            "rdxFirebaseUserId",
-            cleanMobile
-        );
-
-
-        localStorage.setItem(
-            "rdxVerifiedMobile",
-            cleanMobile
-        );
-
-
-        console.log(
-            "FIREBASE CUSTOMER LOGIN SAVE SUCCESS"
-        );
-
-        console.log(
-            "Customer ID:",
-            cleanMobile
-        );
-
-        console.log(
-            "================================"
-        );
-
-
+        localStorage.setItem("rdxFirebaseUserId", cleanMobile);
+        localStorage.setItem("rdxVerifiedMobile", cleanMobile);
         return true;
-
-
     }catch(error){
-
-        console.error(
-            "================================"
-        );
-
-        console.error(
-            "FIREBASE CUSTOMER SAVE ERROR"
-        );
-
-        console.error(
-            "ERROR CODE:",
-            error.code
-        );
-
-        console.error(
-            "ERROR MESSAGE:",
-            error.message
-        );
-
-        console.error(
-            "FULL ERROR:",
-            error
-        );
-
-        console.error(
-            "================================"
-        );
-
-
-        let message =
-            error.message ||
-            "Unknown Firebase error";
-
-
-        showMessage(
-            "Firebase Error: " +
-            message
-        );
-
-
+        console.error("FIREBASE CUSTOMER SAVE ERROR", error);
+        showMessage("Firebase Error: " + (error.message || "Unknown Firebase error"));
         return false;
-
     }
-
 }
-
-
-/* =====================================================
-   RESEND OTP
-===================================================== */
 
 function resendOTP(){
-
-    if(
-        resendSeconds > 0
-    ){
-
+    if(resendSeconds > 0) return;
+    if(typeof window.retryOtp !== "function"){
+        showMessage("MSG91 Resend service ready नहीं है।");
         return;
-
+    }
+    if(!currentReqId){
+        showMessage("पहले OTP भेजें।");
+        return;
     }
 
-
-    if(
-        typeof window.retryOtp !==
-        "function"
-    ){
-
-        showMessage(
-            "MSG91 Resend service ready नहीं है।"
-        );
-
-        return;
-
-    }
-
-
-    if(
-        !currentReqId
-    ){
-
-        showMessage(
-            "पहले OTP भेजें।"
-        );
-
-        return;
-
-    }
-
-
-    resendBtn.disabled =
-        true;
-
-
-    showMessage(
-        "OTP फिर से भेजा जा रहा है..."
-    );
-
+    resendBtn.disabled = true;
+    showMessage("OTP फिर से भेजा जा रहा है...");
 
     window.retryOtp(
-
         "11",
-
-
         function(data){
-
-            console.log(
-                "MSG91 OTP RESENT:",
-                data
-            );
-
-
-            if(
-                data &&
-                data.reqId
-            ){
-
-                currentReqId =
-                    data.reqId;
-
+            if(data && data.reqId){
+                currentReqId = data.reqId;
+            }else if(data && data.requestId){
+                currentReqId = data.requestId;
             }
-
-            else if(
-                data &&
-                data.requestId
-            ){
-
-                currentReqId =
-                    data.requestId;
-
-            }
-
-
-            otpInput.value =
-                "";
-
+            otpInput.value = "";
             otpInput.focus();
-
-
-            verifyBtn.disabled =
-                true;
-
-
+            verifyBtn.disabled = true;
             startResendTimer();
-
-
-            showMessage(
-                "OTP फिर से भेज दिया गया।"
-            );
-
+            showMessage("OTP फिर से भेज दिया गया।");
         },
-
-
         function(error){
-
-            console.error(
-                "MSG91 RESEND ERROR:",
-                error
-            );
-
-
-            resendBtn.disabled =
-                false;
-
-
-            showMessage(
-                "OTP resend नहीं हो पाया।"
-            );
-
+            resendBtn.disabled = false;
+            showMessage("OTP resend नहीं हो पाया।");
         },
-
-
         currentReqId
-
     );
-
 }
-
-
-/* =====================================================
-   RESEND TIMER
-===================================================== */
 
 function startResendTimer(){
-
-    clearInterval(
-        resendTimer
-    );
-
-
-    resendSeconds =
-        30;
-
-
-    resendBtn.disabled =
-        true;
-
-
-    resendBtn.textContent =
-        "Resend OTP (30s)";
-
-
-    resendTimer =
-        setInterval(
-            function(){
-
-                resendSeconds--;
-
-
-                if(
-                    resendSeconds <= 0
-                ){
-
-                    clearInterval(
-                        resendTimer
-                    );
-
-
-                    resendBtn.disabled =
-                        false;
-
-
-                    resendBtn.textContent =
-                        "Resend OTP";
-
-
-                    return;
-
-                }
-
-
-                resendBtn.textContent =
-                    "Resend OTP (" +
-                    resendSeconds +
-                    "s)";
-
-            },
-            1000
-        );
-
+    clearInterval(resendTimer);
+    resendSeconds = 30;
+    resendBtn.disabled = true;
+    resendBtn.textContent = "Resend OTP (30s)";
+    resendTimer = setInterval(function(){
+        resendSeconds--;
+        if(resendSeconds <= 0){
+            clearInterval(resendTimer);
+            resendBtn.disabled = false;
+            resendBtn.textContent = "Resend OTP";
+            return;
+        }
+        resendBtn.textContent = "Resend OTP (" + resendSeconds + "s)";
+    }, 1000);
 }
 
+mobileInput.addEventListener("input", function(){
+    mobileInput.value = mobileInput.value.replace(/\D/g,"").slice(0, 10);
+});
 
-/* =====================================================
-   MOBILE INPUT
-===================================================== */
-
-mobileInput.addEventListener(
-    "input",
-    function(){
-
-        mobileInput.value =
-            mobileInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    10
-                );
-
+otpInput.addEventListener("input", function(){
+    otpInput.value = otpInput.value.replace(/\D/g,"").slice(0, 6);
+    if(/^\d{4,6}$/.test(otpInput.value)){
+        verifyBtn.disabled = false;
+    }else{
+        verifyBtn.disabled = true;
     }
-);
+});
 
+continueBtn.addEventListener("click", function(){ startLogin(); });
+verifyBtn.addEventListener("click", function(){ verifyOTP(); });
+resendBtn.addEventListener("click", function(){ resendOTP(); });
 
-/* =====================================================
-   OTP INPUT
-===================================================== */
-
-otpInput.addEventListener(
-    "input",
-    function(){
-
-        otpInput.value =
-            otpInput.value
-                .replace(
-                    /\D/g,
-                    ""
-                )
-                .slice(
-                    0,
-                    6
-                );
-
-
-        if(
-            /^\d{4,6}$/.test(
-                otpInput.value
-            )
-        ){
-
-            verifyBtn.disabled =
-                false;
-
-        }
-
-        else{
-
-            verifyBtn.disabled =
-                true;
-
-        }
-
+document.addEventListener("keydown", function(event){
+    if(event.key !== "Enter") return;
+    if(otpSection.style.display !== "block"){
+        if(!continueBtn.disabled){ event.preventDefault(); startLogin(); }
+    }else{
+        if(!verifyBtn.disabled){ event.preventDefault(); verifyOTP(); }
     }
-);
-
-
-/* =====================================================
-   SEND OTP BUTTON
-===================================================== */
-
-continueBtn.addEventListener(
-    "click",
-    function(){
-
-        startLogin();
-
-    }
-);
-
-
-/* =====================================================
-   VERIFY BUTTON
-===================================================== */
-
-verifyBtn.addEventListener(
-    "click",
-    function(){
-
-        verifyOTP();
-
-    }
-);
-
-
-/* =====================================================
-   RESEND BUTTON
-===================================================== */
-
-resendBtn.addEventListener(
-    "click",
-    function(){
-
-        resendOTP();
-
-    }
-);
-
-
-/* =====================================================
-   ENTER KEY
-===================================================== */
-
-document.addEventListener(
-    "keydown",
-    function(event){
-
-        if(
-            event.key !==
-            "Enter"
-        ){
-
-            return;
-
-        }
-
-
-        if(
-            otpSection.style.display !==
-            "block"
-        ){
-
-            if(
-                !continueBtn.disabled
-            ){
-
-                event.preventDefault();
-
-                startLogin();
-
-            }
-
-        }
-
-        else{
-
-            if(
-                !verifyBtn.disabled
-            ){
-
-                event.preventDefault();
-
-                verifyOTP();
-
-            }
-
-        }
-
-    }
-);
-
-
-/* =====================================================
-   BACK BUTTON
-===================================================== */
+});
 
 function goBack(){
-
-    if(
-        document.referrer &&
-        document.referrer !==
-        location.href
-    ){
-
+    if(document.referrer && document.referrer !== location.href){
         history.back();
-
+    }else{
+        window.location.href = "./index.html";
     }
-
-    else{
-
-        window.location.href =
-            "./index.html";
-
-    }
-
 }
-
 </script>
-
 
 </body>
 </html>
