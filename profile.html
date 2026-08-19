@@ -978,7 +978,7 @@ try{
 
         <button
             class="header-icon notification"
-            onclick="showMessage('No new notifications')"
+            onclick="goNotifications()"
         >
             🔔
         </button>
@@ -1623,12 +1623,12 @@ try{
 
 
         <p>
-            Aadhaar OTP verification को production में authorised KYC service और secure backend के माध्यम से connect करना होगा.
+            KYC verification ko production me authorised verification service aur secure backend ke madhyam se connect karna hoga.
         </p>
 
 
         <p>
-            Aadhaar number या OTP को इस HTML page में save या सीधे handle नहीं किया जाएगा.
+            Govt ID number ya OTP ko is HTML page me save ya seedhe handle nahi kiya jayega.
         </p>
 
 
@@ -1648,10 +1648,6 @@ try{
 
 "use strict";
 
-
-/* =====================================================
-   LOCAL STORAGE HELPERS
-   ===================================================== */
 
 function getItem(key){
 
@@ -1687,22 +1683,6 @@ function setItem(key,value){
 
 }
 
-
-/* =====================================================
-   MOBILE NUMBER FINDER
-   =====================================================
-
-   Login.html में यह save होता है:
-
-   rdxFirebaseUserId = 91XXXXXXXXXX
-
-   और:
-
-   rdxVerifiedMobile = 91XXXXXXXXXX
-
-   इसलिए profile उसी mobile के customer document
-   को खोलेगा।
-   ===================================================== */
 
 function getCurrentMobile(){
 
@@ -1747,11 +1727,6 @@ function getCurrentMobile(){
         );
 
 
-    /*
-     * अगर सिर्फ 10 digit number मिला
-     * तो 91 जोड़ेंगे।
-     */
-
     if(
         /^[6-9]\d{9}$/.test(
             mobile
@@ -1764,10 +1739,6 @@ function getCurrentMobile(){
 
     }
 
-
-    /*
-     * सिर्फ valid Indian mobile
-     */
 
     if(
         !/^91[6-9]\d{9}$/.test(
@@ -1784,10 +1755,6 @@ function getCurrentMobile(){
 
 }
 
-
-/* =====================================================
-   DISPLAY NAME
-   ===================================================== */
 
 function showProfileName(name){
 
@@ -1829,30 +1796,6 @@ function showProfileName(name){
 }
 
 
-/* =====================================================
-   LOAD PROFILE
-   =====================================================
-
-   सबसे जरूरी function।
-
-   Firebase से:
-
-   customers/{mobile}
-
-   document पढ़ेगा।
-
-   Example:
-
-   customers
-       919178788523
-           mobile: "+919178788523"
-           name: "Neeraj"
-           status: "active"
-
-   इसी कारण Chrome, Safari और दूसरे phone में
-   same mobile से login करने पर same name मिलेगा।
-   ===================================================== */
-
 async function loadProfile(){
 
     const mobile =
@@ -1870,10 +1813,6 @@ async function loadProfile(){
         );
 
 
-    /*
-     * Mobile display
-     */
-
     if(mobile){
 
         mobileElement.textContent =
@@ -1882,10 +1821,6 @@ async function loadProfile(){
 
     }
 
-
-    /*
-     * Referral अभी localStorage से
-     */
 
     const localReferral =
         getItem(
@@ -1904,20 +1839,11 @@ async function loadProfile(){
     }
 
 
-    /*
-     * Firebase connection check
-     */
-
     if(!firebaseDB){
 
         console.error(
             "Firebase DB not connected"
         );
-
-        /*
-         * अगर Firebase load नहीं हुआ तो
-         * localStorage का cached name दिखाएँ।
-         */
 
         const cachedName =
             getItem(
@@ -1937,10 +1863,6 @@ async function loadProfile(){
 
     }
 
-
-    /*
-     * Mobile नहीं मिला
-     */
 
     if(!mobile){
 
@@ -1977,12 +1899,6 @@ async function loadProfile(){
         );
 
 
-        /*
-         * EXACT SAME DOCUMENT
-         *
-         * login.html भी यही ID बनाता है।
-         */
-
         const userRef =
             firebaseDB
             .collection(
@@ -1997,19 +1913,11 @@ async function loadProfile(){
             await userRef.get();
 
 
-        /*
-         * Document मिला
-         */
-
         if(snapshot.exists){
 
             const data =
                 snapshot.data() || {};
 
-
-            /*
-             * Firebase name
-             */
 
             if(
                 data.name &&
@@ -2022,18 +1930,10 @@ async function loadProfile(){
                     ).trim();
 
 
-                /*
-                 * Screen पर दिखाएँ
-                 */
-
                 showProfileName(
                     firebaseName
                 );
 
-
-                /*
-                 * Local cache भी update
-                 */
 
                 setItem(
                     "rdxUsername",
@@ -2043,11 +1943,6 @@ async function loadProfile(){
             }
 
             else{
-
-                /*
-                 * Firebase में name अभी नहीं है।
-                 * Local cached name हो तो दिखाएँ।
-                 */
 
                 const cachedName =
                     getItem(
@@ -2065,10 +1960,6 @@ async function loadProfile(){
 
             }
 
-
-            /*
-             * Firebase referral अगर मौजूद है
-             */
 
             if(
                 data.referralCode &&
@@ -2134,11 +2025,6 @@ async function loadProfile(){
         );
 
 
-        /*
-         * Firebase read fail होने पर
-         * cached name दिखाएँ।
-         */
-
         const cachedName =
             getItem(
                 "rdxUsername"
@@ -2153,10 +2039,6 @@ async function loadProfile(){
 
         }
 
-
-        /*
-         * Permission error को साफ बताना
-         */
 
         if(
             error &&
@@ -2174,10 +2056,6 @@ async function loadProfile(){
 
 }
 
-
-/* =====================================================
-   EDIT PROFILE
-   ===================================================== */
 
 function editProfile(){
 
@@ -2229,10 +2107,6 @@ function editProfile(){
 }
 
 
-/* =====================================================
-   CLOSE EDIT
-   ===================================================== */
-
 function closeEditModal(){
 
     document
@@ -2246,22 +2120,6 @@ function closeEditModal(){
 }
 
 
-/* =====================================================
-   SAVE REAL NAME
-   =====================================================
-
-   यही दूसरा सबसे जरूरी function है।
-
-   Name Firebase में जाएगा:
-
-   customers/{mobile}
-
-   name: "User Name"
-
-   merge:true होने से mobile/status आदि
-   बाकी fields delete/overwrite नहीं होंगी।
-   ===================================================== */
-
 async function saveRealName(){
 
     const input =
@@ -2273,10 +2131,6 @@ async function saveRealName(){
     const name =
         input.value.trim();
 
-
-    /*
-     * Name validation
-     */
 
     if(name.length < 2){
 
@@ -2290,10 +2144,6 @@ async function saveRealName(){
 
     }
 
-
-    /*
-     * Mobile निकालो
-     */
 
     const mobile =
         getCurrentMobile();
@@ -2310,10 +2160,6 @@ async function saveRealName(){
     }
 
 
-    /*
-     * Firebase check
-     */
-
     if(!firebaseDB){
 
         showMessage(
@@ -2324,10 +2170,6 @@ async function saveRealName(){
 
     }
 
-
-    /*
-     * Save button
-     */
 
     const saveButton =
         document.querySelector(
@@ -2355,10 +2197,6 @@ async function saveRealName(){
         );
 
 
-        /*
-         * SAME CUSTOMER DOCUMENT
-         */
-
         const userRef =
             firebaseDB
             .collection(
@@ -2368,14 +2206,6 @@ async function saveRealName(){
                 mobile
             );
 
-
-        /*
-         * Firebase में name save
-         *
-         * merge:true
-         *
-         * Existing fields सुरक्षित रहेंगे।
-         */
 
         await userRef.set(
 
@@ -2408,28 +2238,16 @@ async function saveRealName(){
         );
 
 
-        /*
-         * Local cache भी save
-         */
-
         setItem(
             "rdxUsername",
             name
         );
 
 
-        /*
-         * Screen update
-         */
-
         showProfileName(
             name
         );
 
-
-        /*
-         * Modal close
-         */
 
         closeEditModal();
 
@@ -2452,10 +2270,6 @@ async function saveRealName(){
             error
         );
 
-
-        /*
-         * Permission error
-         */
 
         if(
             error &&
@@ -2484,10 +2298,6 @@ async function saveRealName(){
     }
 
 
-    /*
-     * Button वापस normal
-     */
-
     if(saveButton){
 
         saveButton.disabled =
@@ -2500,10 +2310,6 @@ async function saveRealName(){
 
 }
 
-
-/* =====================================================
-   MENU
-   ===================================================== */
 
 function openMenu(){
 
@@ -2548,10 +2354,6 @@ function closeMenu(){
 
 }
 
-
-/* =====================================================
-   NAVIGATION
-   ===================================================== */
 
 function goTo(page){
 
@@ -2612,7 +2414,7 @@ function goHistory(){
 function goNotifications(){
 
     goTo(
-        "notifications.html"
+        "notification.html"
     );
 
 }
@@ -2620,17 +2422,12 @@ function goNotifications(){
 
 function goRedeem(){
 
-    closeMenu();
-
-    window.location.href =
-        "./profile.html#referral";
+    goTo(
+        "referral.html"
+    );
 
 }
 
-
-/* =====================================================
-   KYC
-   ===================================================== */
 
 function completeKYC(){
 
@@ -2658,20 +2455,7 @@ function closeKYC(){
 }
 
 
-/* =====================================================
-   LOGOUT
-   ===================================================== */
-
 function logout(){
-
-    /*
-     * Important:
-     *
-     * Logout पर पूरा localStorage clear
-     * किया जा रहा है।
-     *
-     * Firebase में saved name delete नहीं होगा।
-     */
 
     try{
 
@@ -2691,10 +2475,6 @@ function logout(){
 
 }
 
-
-/* =====================================================
-   TOAST
-   ===================================================== */
 
 function showMessage(message){
 
@@ -2732,10 +2512,6 @@ function showMessage(message){
 
 }
 
-
-/* =====================================================
-   OUTSIDE CLICK
-   ===================================================== */
 
 document.addEventListener(
     "click",
@@ -2776,10 +2552,6 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   ESC KEY
-   ===================================================== */
-
 document.addEventListener(
     "keydown",
     function(event){
@@ -2801,17 +2573,9 @@ document.addEventListener(
 );
 
 
-/* =====================================================
-   START PROFILE
-   ===================================================== */
-
 window.addEventListener(
     "DOMContentLoaded",
     function(){
-
-        /*
-         * पहले cached name तुरंत दिखाएँ
-         */
 
         const cachedName =
             getItem(
@@ -2827,10 +2591,6 @@ window.addEventListener(
 
         }
 
-
-        /*
-         * फिर Firebase से latest name पढ़ें।
-         */
 
         loadProfile();
 
