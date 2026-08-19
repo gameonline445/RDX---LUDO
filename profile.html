@@ -5,95 +5,103 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Profile</title>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-html{scroll-behavior:smooth;}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f7f9ff;color:#101a38;min-height:100vh;}
-.top-header{height:70px;background:linear-gradient(110deg,#eef4ff,#fff);border-bottom:1px solid #cbd8f0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;position:sticky;top:0;z-index:100;box-shadow:0 5px 18px rgba(36,75,150,.08);}
-.header-left,.header-right{display:flex;align-items:center;}
-.header-left{gap:10px;}
-.header-right{gap:6px;}
-.menu-btn,.header-icon{border:0;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;box-shadow:0 6px 15px rgba(0,0,0,.12);}
-.menu-btn{width:46px;height:46px;border-radius:16px;background:linear-gradient(145deg,#ff7165,#ff8a70);font-size:25px;}
-.logo,.menu-logo{border-radius:50%;background:linear-gradient(145deg,#fff,#e7efff);border:3px solid #d3e1ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-weight:900;box-shadow:0 5px 12px rgba(36,93,190,.15);cursor:pointer;}
-.logo{width:45px;height:45px;font-size:12px;}
-.header-icon{width:44px;height:44px;border-radius:16px;font-size:20px;}
-.notification{background:linear-gradient(145deg,#746df4,#817eff);}
-.wallet-top{background:linear-gradient(145deg,#20c36b,#43d77e);}
-.redeem-top{background:linear-gradient(145deg,#ff8a35,#ffad45);}
-.menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:250;display:none;}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+    color:#101a38;
+    min-height:100vh;
+}
+
+/* HEADER */
+.top-header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:white;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#dbeafe);border:2.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:900;cursor:pointer;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{width:38px;height:38px;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:white;cursor:pointer;}
+.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
+.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);min-width:38px;}
+.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);min-width:38px;}
+
+/* SIDE MENU */
+.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:250;display:none;}
 .menu-overlay.show{display:block;}
-.menu-panel{position:fixed;top:0;left:-310px;width:300px;height:100vh;background:#fff;z-index:300;padding:25px 18px;box-shadow:10px 0 35px rgba(0,0,0,.15);transition:.3s ease;overflow-y:auto;}
+.menu-panel{position:fixed;top:0;left:-310px;width:300px;height:100vh;background:white;z-index:300;padding:20px 16px;box-shadow:10px 0 35px rgba(0,0,0,.15);transition:.3s ease;overflow-y:auto;}
 .menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:22px;margin-bottom:18px;border-bottom:1px solid #e3e8f2;}
-.menu-brand{display:flex;align-items:center;gap:12px;}
-.menu-logo{width:50px;height:50px;font-size:13px;}
-.menu-brand h2{font-size:20px;}
-.menu-brand p{color:#71809d;font-size:12px;margin-top:3px;}
-.close-menu{border:0;background:#eef2fa;width:42px;height:42px;border-radius:50%;font-size:25px;color:#66738d;cursor:pointer;}
-.menu-item{width:100%;border:1px solid #e0e5ef;background:#fafbfe;padding:15px 16px;border-radius:17px;margin-bottom:12px;text-align:left;font-size:17px;color:#182440;cursor:pointer;display:flex;align-items:center;gap:14px;min-height:58px;}
-.menu-icon{width:40px;height:40px;border-radius:13px;display:flex;align-items:center;justify-content:center;background:#e8efff;font-size:20px;flex-shrink:0;}
+.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid #e3e8f2;}
+.menu-brand{display:flex;align-items:center;gap:10px;}
+.menu-logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e0f2fe);border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:900;cursor:pointer;}
+.menu-brand h2{font-size:17px;}
+.menu-brand p{color:#71809d;font-size:11px;margin-top:2px;}
+.close-menu{border:0;background:#eef2fa;width:36px;height:36px;border-radius:50%;font-size:20px;color:#66738d;cursor:pointer;}
+.menu-item{width:100%;border:1px solid #e0e5ef;background:#fafbfe;padding:12px 14px;border-radius:14px;margin-bottom:10px;text-align:left;font-size:15px;color:#182440;cursor:pointer;display:flex;align-items:center;gap:12px;}
+.menu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#e8efff;font-size:17px;}
 .menu-item span:nth-child(2){flex:1;}
-.main{width:100%;max-width:650px;margin:auto;padding:22px 12px 115px;}
-.profile-card{border:1px solid #b9cdfc;border-radius:25px;padding:20px;background:radial-gradient(circle at 100% 0%,#dce8ff,transparent 42%),linear-gradient(135deg,#eef4ff,#fff);box-shadow:0 12px 30px rgba(40,88,175,.08);}
-.profile-top{display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.profile-badge{display:inline-flex;align-items:center;padding:8px 13px;border-radius:20px;border:1px solid #8fb2f5;background:#edf4ff;color:#2865d6;font-size:12px;font-weight:850;letter-spacing:.8px;}
-.edit-btn{border:1px solid #aebfe2;background:rgba(255,255,255,.55);color:#1d2a45;padding:9px 15px;border-radius:20px;font-size:14px;font-weight:750;cursor:pointer;}
-.profile-details{display:flex;align-items:center;gap:14px;margin-top:18px;}
-.avatar{width:76px;height:76px;flex-shrink:0;border-radius:50%;background:linear-gradient(145deg,#1762df,#4385ee);color:#fff;display:flex;align-items:center;justify-content:center;font-size:27px;font-weight:800;box-shadow:0 8px 20px rgba(40,105,232,.25);}
-.profile-info{min-width:0;}
-.profile-info h2{font-size:22px;line-height:1.15;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.mobile-number{margin-top:6px;color:#71809d;font-size:14px;}
-.kyc-btn{margin-top:10px;border:0;border-radius:22px;padding:9px 15px;background:linear-gradient(90deg,#2162e9,#3976ed);color:#fff;font-size:13px;font-weight:800;cursor:pointer;}
-.referral-applied{margin-top:18px;padding:18px;border:1px solid #c4d2eb;border-radius:22px;background:linear-gradient(135deg,#fff,#f5f8ff);box-shadow:0 8px 22px rgba(30,60,120,.05);}
-.referral-head{display:flex;align-items:center;gap:12px;}
-.referral-icon{width:43px;height:43px;border-radius:13px;background:#e4edff;border:1px solid #b8cbee;color:#2865d6;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.referral-head h3{font-size:17px;}
-.referral-head p{margin-top:3px;color:#71809d;font-size:12px;}
-.referral-code{margin-top:14px;min-height:58px;border-radius:17px;background:#fff;border:1px solid #e1e6ef;display:flex;align-items:center;justify-content:space-between;padding:8px 9px 8px 15px;}
-.referral-code strong{font-size:18px;letter-spacing:1.5px;color:#26324b;}
-.code-check{width:45px;height:45px;border-radius:14px;background:#a8c6fa;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;}
-.section-label{margin-top:22px;margin-bottom:10px;color:#2865d6;font-size:13px;font-weight:850;letter-spacing:1.8px;}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.stat-card{min-height:120px;padding:14px 7px;border:1px solid #cbd7eb;border-radius:20px;background:linear-gradient(145deg,#f9fbff,#fff);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
-.stat-icon,.quick-icon{border-radius:12px;background:#e5edff;border:1px solid #b9cbed;color:#3672db;display:flex;align-items:center;justify-content:center;}
-.stat-icon{width:39px;height:39px;font-size:18px;}
-.stat-card small{margin-top:8px;color:#71809d;font-size:10px;font-weight:800;letter-spacing:.7px;}
-.stat-card strong{margin-top:4px;font-size:18px;color:#101a38;}
-.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
-.quick-card{min-height:137px;border:1px solid #b9ccef;border-radius:21px;padding:16px;background:radial-gradient(circle at 100% 0%,#e3edff,transparent 55%),#fff;cursor:pointer;display:flex;flex-direction:column;justify-content:space-between;}
+
+/* MAIN */
+.main{width:100%;max-width:650px;margin:auto;padding:16px 14px 100px;}
+.profile-card{border:1.5px solid #7dd3fc;border-radius:20px;padding:16px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
+.profile-top{display:flex;align-items:center;justify-content:space-between;}
+.profile-badge{display:inline-flex;align-items:center;padding:6px 12px;border-radius:16px;border:1px solid #7dd3fc;background:#ffffff;color:#0284c7;font-size:11px;font-weight:850;}
+.edit-btn{border:1px solid #bae6fd;background:#ffffff;color:#0c4a6e;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:750;cursor:pointer;}
+.profile-details{display:flex;align-items:center;gap:12px;margin-top:14px;}
+.avatar{width:60px;height:60px;flex-shrink:0;border-radius:50%;background:linear-gradient(145deg,#0284c7,#0369a1);color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;}
+.profile-info h2{font-size:18px;}
+.mobile-number{margin-top:3px;color:#64748b;font-size:12px;}
+.kyc-btn{margin-top:6px;border:0;border-radius:16px;padding:6px 12px;background:linear-gradient(90deg,#0284c7,#0369a1);color:#fff;font-size:11px;font-weight:800;cursor:pointer;}
+
+.referral-applied{margin-top:14px;padding:14px;border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;}
+.referral-head{display:flex;align-items:center;gap:10px;}
+.referral-icon{width:36px;height:36px;border-radius:10px;background:#e0f2fe;color:#0284c7;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.referral-head h3{font-size:14px;}
+.referral-head p{margin-top:2px;color:#64748b;font-size:11px;}
+.referral-code{margin-top:10px;height:44px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
+.referral-code strong{font-size:15px;letter-spacing:1px;color:#0f172a;}
+.code-check{color:#16a34a;font-weight:900;}
+
+.section-label{margin-top:18px;margin-bottom:8px;color:#0284c7;font-size:11px;font-weight:850;letter-spacing:1.5px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.stat-card{padding:12px 6px;border:1.5px solid #bae6fd;border-radius:16px;background:#ffffff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.stat-icon{width:32px;height:32px;border-radius:10px;background:#e0f2fe;color:#0284c7;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.stat-card small{margin-top:6px;color:#64748b;font-size:9px;font-weight:800;}
+.stat-card strong{margin-top:2px;font-size:15px;color:#0f172a;}
+
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.quick-card{border:1.5px solid #bae6fd;border-radius:16px;padding:12px;background:#ffffff;cursor:pointer;}
 .quick-top{display:flex;align-items:center;justify-content:space-between;}
-.quick-icon{width:42px;height:42px;border-radius:13px;font-size:20px;}
-.quick-arrow{width:30px;height:30px;border-radius:50%;background:#fff;border:1px solid #e2e6ee;display:flex;align-items:center;justify-content:center;color:#6b7890;font-size:17px;}
-.quick-card h3{margin-top:10px;font-size:17px;}
-.quick-card p{margin-top:4px;color:#75819a;font-size:12px;}
-.redeem-card{margin-top:12px;min-height:82px;border:1px solid #b9ccef;border-radius:21px;padding:14px 16px;background:linear-gradient(110deg,#eaf1ff,#fff);display:flex;align-items:center;gap:13px;cursor:pointer;}
-.redeem-card .quick-icon{flex-shrink:0;}
-.redeem-content{flex:1;}
-.redeem-content h3{font-size:17px;}
-.redeem-content p{margin-top:4px;color:#75819a;font-size:12px;}
-.logout{width:100%;min-height:62px;margin-top:16px;border-radius:22px;border:1px solid #e4b8b8;background:#fff7f7;color:#bf3030;font-size:17px;font-weight:800;cursor:pointer;}
-.bottom{position:fixed;bottom:0;left:0;right:0;height:78px;background:rgba(255,255,255,.97);border-top:1px solid #ccd7eb;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 5px;z-index:200;backdrop-filter:blur(15px);}
-.bottom a{text-align:center;text-decoration:none;color:#65728d;font-size:13px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;}
-.bottom b{width:40px;height:40px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;}
-.bottom .active{color:#2869e8!important;font-weight:700;}
-.bottom .active b{background:#536df5;color:#fff;}
-.toast{position:fixed;left:50%;top:85px;transform:translateX(-50%) translateY(-15px);background:#182440;color:#fff;padding:12px 17px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:700;font-size:14px;white-space:nowrap;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-.modal-overlay{position:fixed;inset:0;background:rgba(10,25,60,.45);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;padding:20px;z-index:600;}
+.quick-icon{width:34px;height:34px;border-radius:10px;background:#e0f2fe;color:#0284c7;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.quick-card h3{margin-top:8px;font-size:14px;}
+.quick-card p{margin-top:2px;color:#64748b;font-size:11px;}
+
+.logout{width:100%;height:48px;margin-top:14px;border-radius:16px;border:1px solid #fecdd3;background:#fff1f2;color:#be123c;font-size:14px;font-weight:800;cursor:pointer;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
+.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
+.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
+.nav-item:active .nav-icon-box{transform:scale(0.92);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.nav-item.active{color:#101a38;font-weight:800;}
+.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#ea580c;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(10,25,60,.45);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:16px;z-index:600;}
 .modal-overlay.show{display:flex;}
-.edit-modal,.kyc-modal{width:100%;max-width:430px;background:#fff;border-radius:25px;padding:22px;}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-.modal-close{width:40px;height:40px;border:0;border-radius:50%;background:#eef2fa;font-size:22px;color:#65728d;cursor:pointer;}
-.input-label{display:block;margin-bottom:7px;color:#53617c;font-size:13px;font-weight:700;}
-.name-input{width:100%;height:52px;border:1px solid #cbd7eb;border-radius:15px;padding:0 15px;font-size:16px;color:#101a38;outline:none;}
-.modal-save,.kyc-ok{width:100%;height:52px;margin-top:15px;border:0;border-radius:16px;background:linear-gradient(90deg,#2162e9,#3976ed);color:#fff;font-size:16px;font-weight:800;cursor:pointer;}
-.kyc-modal{padding:24px;}
-.kyc-icon{width:58px;height:58px;border-radius:18px;background:#e5f8ed;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:15px;}
-.kyc-modal p{margin-top:10px;color:#687690;font-size:14px;line-height:1.55;}
+.edit-modal{width:100%;max-width:380px;background:#fff;border-radius:20px;padding:18px;}
+.name-input{width:100%;height:44px;border:1.5px solid #cbd5e1;border-radius:12px;padding:0 12px;font-size:14px;outline:none;margin-top:6px;}
+.modal-save{width:100%;height:44px;margin-top:12px;border:0;border-radius:12px;background:linear-gradient(90deg,#0284c7,#0369a1);color:#fff;font-size:14px;font-weight:800;cursor:pointer;}
 </style>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script>
@@ -106,10 +114,7 @@ const firebaseConfig = {
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 let firebaseDB = null;
-try{
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    firebaseDB = firebase.firestore();
-}catch(error){ console.error(error); }
+try{ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); firebaseDB = firebase.firestore(); }catch(e){}
 </script>
 </head>
 
@@ -118,7 +123,6 @@ try{
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <!-- Logo click to Home -->
         <div class="logo" onclick="goHome()">RDX</div>
     </div>
     <div class="header-right">
@@ -138,14 +142,13 @@ try{
         </div>
         <button class="close-menu" onclick="closeMenu()">×</button>
     </div>
-
     <button class="menu-item" onclick="goHome()"><div class="menu-icon">🏠</div><span>Home</span><span>›</span></button>
     <button class="menu-item" onclick="goProfile()"><div class="menu-icon">👤</div><span>My Profile</span><span>›</span></button>
-    <button class="menu-item" onclick="goWallet()"><div class="menu-icon">💰</div><span>My Wallet</span><span>›</span></button>
-    <button class="menu-item" onclick="goRedeem()"><div class="menu-icon">🎁</div><span>Refer & Earn</span><span>›</span></button>
-    <button class="menu-item" onclick="goHistory()"><div class="menu-icon">🕘</div><span>History</span><span>›</span></button>
-    <button class="menu-item" onclick="goNotifications()"><div class="menu-icon">🔔</div><span>Notifications</span><span>›</span></button>
-    <button class="menu-item" onclick="goSupport()"><div class="menu-icon">🎧</div><span>Support</span><span>›</span></button>
+    <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet">💰</div><span>My Wallet</span><span>›</span></button>
+    <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer">🎁</div><span>Refer & Earn</span><span>›</span></button>
+    <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history">↻</div><span>History</span><span>›</span></button>
+    <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification">🔔</div><span>Notifications</span><span>›</span></button>
+    <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support">🎧</div><span>Support</span><span>›</span></button>
     <button class="menu-item" onclick="logout()"><div class="menu-icon">🚪</div><span>Logout</span><span>›</span></button>
 </div>
 
@@ -154,68 +157,54 @@ try{
         <div class="profile-top"><span class="profile-badge">MY PROFILE</span><button class="edit-btn" onclick="editProfile()">✎ Edit</button></div>
         <div class="profile-details">
             <div class="avatar" id="avatar">R</div>
-            <div class="profile-info"><h2 id="profileName">RDX User</h2><p class="mobile-number" id="mobileNumber">☎ +91 XXXXX XXXXX</p><button class="kyc-btn" onclick="completeKYC()">Complete KYC</button></div>
+            <div class="profile-info"><h2 id="profileName">RDX User</h2><p class="mobile-number" id="mobileNumber">☎ +91 XXXXX XXXXX</p><button class="kyc-btn" onclick="alert('KYC under process')">Complete KYC</button></div>
         </div>
     </section>
 
-    <section class="referral-applied" id="referral">
-        <div class="referral-head"><div class="referral-icon">🎟</div><div><h3>Referral Applied</h3><p>This code is locked to your account</p></div></div>
-        <div class="referral-code"><strong id="referralCode">—</strong><div class="code-check">✓</div></div>
+    <section class="referral-applied">
+        <div class="referral-head"><div class="referral-icon">🎟</div><div><h3>Referral Applied</h3><p>Locked to your account</p></div></div>
+        <div class="referral-code"><strong id="referralCode">—</strong><span class="code-check">✓</span></div>
     </section>
 
     <div class="section-label">YOUR STATS</div>
     <section class="stats">
         <div class="stat-card"><div class="stat-icon">▣</div><small>COIN WON</small><strong id="coinWon">₹0</strong></div>
-        <div class="stat-card"><div class="stat-icon">🎮</div><small>GAME PLAYED</small><strong id="gamePlayed">0</strong></div>
+        <div class="stat-card"><div class="stat-icon">🎮</div><small>PLAYED</small><strong id="gamePlayed">0</strong></div>
         <div class="stat-card"><div class="stat-icon">🏆</div><small>REFERRAL</small><strong id="referralCount">0</strong></div>
     </section>
 
     <div class="section-label">QUICK ACTIONS</div>
     <section class="quick-grid">
-        <div class="quick-card" onclick="goHistory()"><div class="quick-top"><div class="quick-icon">🕘</div><div class="quick-arrow">↗</div></div><div><h3>History</h3><p>Battles & payments</p></div></div>
-        <div class="quick-card" onclick="goSupport()"><div class="quick-top"><div class="quick-icon">🎧</div><div class="quick-arrow">↗</div></div><div><h3>Support</h3><p>Chat & help</p></div></div>
+        <div class="quick-card" onclick="goHistory()"><div class="quick-top"><div class="quick-icon">🕘</div><span>›</span></div><h3>History</h3><p>Battles & logs</p></div>
+        <div class="quick-card" onclick="goSupport()"><div class="quick-top"><div class="quick-icon">🎧</div><span>›</span></div><h3>Support</h3><p>Chat & help</p></div>
     </section>
 
-    <section class="redeem-card" onclick="goRedeem()"><div class="quick-icon">🎁</div><div class="redeem-content"><h3>Referral Redeem</h3><p>Move referral earnings to wallet</p></div><div class="quick-arrow">↗</div></section>
     <button class="logout" onclick="logout()">⇥ &nbsp; Logout</button>
 </main>
 
-<nav class="bottom">
-    <a href="./dashboard.html"><b>🏠</b>Home</a>
-    <a href="./wallet.html"><b>💰</b>Wallet</a>
-    <a href="./support.html"><b>🎧</b>Support</a>
-    <a class="active" href="./profile.html"><b>👤</b>Profile</a>
+<nav class="bottom-nav">
+    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item active" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
-
-<div class="toast" id="toast"></div>
 
 <div class="modal-overlay" id="editModal">
     <div class="edit-modal">
-        <div class="modal-header"><h2>Edit Profile</h2><button class="modal-close" onclick="closeEditModal()">×</button></div>
-        <label class="input-label" for="realNameInput">Real Name</label>
-        <input type="text" id="realNameInput" class="name-input" placeholder="Enter your real name" maxlength="60">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h3>Edit Profile</h3><button style="border:0;background:none;font-size:18px;cursor:pointer;" onclick="closeEditModal()">✕</button></div>
+        <input type="text" id="realNameInput" class="name-input" placeholder="Enter full name">
         <button class="modal-save" onclick="saveRealName()">Save Name</button>
     </div>
 </div>
 
-<div class="modal-overlay" id="kycModal">
-    <div class="kyc-modal">
-        <div class="kyc-icon">🛡️</div>
-        <h2>Secure KYC</h2>
-        <p>KYC verification ko production me authorised verification service aur secure backend ke madhyam se connect karna hoga.</p>
-        <button class="kyc-ok" onclick="closeKYC()">OK</button>
-    </div>
-</div>
-
 <script>
-function getItem(key){ try{ return localStorage.getItem(key); }catch(e){ return null; } }
-function setItem(key,v){ try{ localStorage.setItem(key,v); return true; }catch(e){ return false; } }
+function getItem(k){ return localStorage.getItem(k); }
+function setItem(k,v){ localStorage.setItem(k,v); }
 
 function getCurrentMobile(){
-    let m = getItem("rdxFirebaseUserId") || getItem("rdxVerifiedMobile") || getItem("rdxLoginMobile");
-    if(!m) return "";
+    let m = getItem("rdxFirebaseUserId") || getItem("rdxVerifiedMobile") || "";
     m = String(m).replace(/\D/g,"");
-    return /^[6-9]\d{9}$/.test(m) ? "91" + m : m;
+    return m.length === 10 ? "91" + m : m;
 }
 
 function showProfileName(name){
@@ -227,8 +216,8 @@ function showProfileName(name){
 async function loadProfile(){
     const m = getCurrentMobile();
     if(m) document.getElementById("mobileNumber").textContent = "☎ +" + m;
-    const ref = getItem("rdxReferral");
-    if(ref) document.getElementById("referralCode").textContent = ref;
+    const ref = getItem("rdxReferral") || "RDX100";
+    document.getElementById("referralCode").textContent = ref;
 
     if(!firebaseDB || !m) return;
     try{
@@ -238,7 +227,7 @@ async function loadProfile(){
             if(d.name){ showProfileName(d.name); setItem("rdxUsername", d.name); }
             if(d.referralCode){ document.getElementById("referralCode").textContent = d.referralCode; }
         }
-    }catch(e){ console.error(e); }
+    }catch(e){}
 }
 
 function editProfile(){
@@ -251,9 +240,9 @@ async function saveRealName(){
     const n = document.getElementById("realNameInput").value.trim();
     if(n.length < 2) return;
     const m = getCurrentMobile();
-    if(!m || !firebaseDB) return;
-
-    await firebaseDB.collection("customers").doc(m).set({ name: n, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    if(m && firebaseDB){
+        await firebaseDB.collection("customers").doc(m).set({ name: n }, { merge: true });
+    }
     setItem("rdxUsername", n);
     showProfileName(n);
     closeEditModal();
@@ -268,8 +257,6 @@ function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
 function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
 function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
 function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
-function completeKYC(){ document.getElementById("kycModal").classList.add("show"); }
-function closeKYC(){ document.getElementById("kycModal").classList.remove("show"); }
 function logout(){ localStorage.clear(); window.location.href = "./login.html"; }
 
 window.addEventListener("DOMContentLoaded", () => {
