@@ -3,8 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - Login / Register</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<title>RDX LUDO - Login / Verify</title>
+
+<!-- MSG91 OTP Widget Script -->
+<script type="text/javascript" src="https://control.msg91.com/app/assets/otp-provider/otp-provider.js"></script>
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
@@ -24,16 +28,18 @@ body{
     justify-content:center;
     padding:20px 14px;
 }
+
 .login-card{
     width:100%;
-    max-width:400px;
+    max-width:380px;
     background:#ffffff;
     border:1.5px solid #7dd3fc;
     border-radius:24px;
-    padding:24px 20px;
+    padding:26px 20px;
     box-shadow:0 12px 30px rgba(2,132,199,0.12);
     text-align:center;
 }
+
 .logo-box{
     width:64px;
     height:64px;
@@ -46,26 +52,32 @@ body{
     color:#0284c7;
     font-size:18px;
     font-weight:900;
-    margin:0 auto 12px;
+    margin:0 auto 14px;
     box-shadow:0 6px 16px rgba(2,132,199,0.2);
 }
+
 h1{font-size:22px;color:#0c4a6e;font-weight:900;}
 p{font-size:13px;color:#64748b;margin-top:4px;margin-bottom:20px;}
+
 .input-group{margin-bottom:14px;text-align:left;}
-label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin-bottom:6px;}
+label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin-bottom:6px;letter-spacing:0.5px;}
+
 input{
     width:100%;
-    height:46px;
+    height:48px;
     border:1.5px solid #bae6fd;
-    border-radius:12px;
+    border-radius:14px;
     padding:0 14px;
-    font-size:15px;
+    font-size:16px;
     font-weight:700;
     outline:none;
     background:#f8fafc;
+    color:#0f172a;
 }
+
 input:focus{border-color:#0284c7;background:#ffffff;}
-.btn-submit{
+
+.btn-action{
     width:100%;
     height:48px;
     border:0;
@@ -76,45 +88,75 @@ input:focus{border-color:#0284c7;background:#ffffff;}
     font-weight:850;
     cursor:pointer;
     box-shadow:0 6px 18px rgba(2,132,199,0.3);
-    margin-top:10px;
+    margin-top:6px;
 }
+
+.btn-action:disabled{opacity:0.6;cursor:not-allowed;}
+
 .ref-notice{
     font-size:11px;
     color:#15803d;
     background:#dcfce7;
     border:1px solid #86efac;
-    padding:6px;
-    border-radius:8px;
-    margin-bottom:12px;
+    padding:8px;
+    border-radius:10px;
+    margin-bottom:14px;
     display:none;
+    font-weight:700;
+}
+
+.resend-box{
+    margin-top:14px;
+    font-size:12px;
+    color:#64748b;
+}
+
+.resend-btn{
+    color:#0284c7;
+    font-weight:800;
+    cursor:pointer;
+    text-decoration:none;
 }
 </style>
 </head>
+
 <body>
 
 <div class="login-card">
     <div class="logo-box">RDX</div>
-    <h1>Welcome to RDX LUDO</h1>
-    <p>Enter your 10-digit mobile number</p>
+    <h1>RDX LUDO</h1>
+    <p id="pageSubtitle">Enter your 10-digit mobile number</p>
 
+    <!-- Referral Applied Badge -->
     <div id="refNotice" class="ref-notice">
-        <i class="fa-solid fa-gift"></i> Referral Code Applied: <b id="displayRefCode"></b>
+        🎁 Referral Code Applied: <span id="displayRefCode"></span>
     </div>
 
-    <div class="input-group">
-        <label>MOBILE NUMBER</label>
-        <input type="tel" id="mobileInput" placeholder="9876543210" maxlength="10">
+    <!-- STEP 1: MOBILE NUMBER FORM -->
+    <div id="mobileSection">
+        <div class="input-group">
+            <label>PHONE NUMBER</label>
+            <input type="tel" id="mobileInput" placeholder="9876543210" maxlength="10" inputmode="numeric">
+        </div>
+        <button class="btn-action" id="btnSendOtp" onclick="sendOtp()">Send OTP</button>
     </div>
 
-    <div class="input-group">
-        <label>YOUR FULL NAME</label>
-        <input type="text" id="nameInput" placeholder="Enter Full Name">
+    <!-- STEP 2: OTP VERIFICATION FORM (HIDDEN BY DEFAULT) -->
+    <div id="otpSection" style="display:none;">
+        <div class="input-group">
+            <label>ENTER 4/6-DIGIT OTP</label>
+            <input type="number" id="otpInput" placeholder="••••" maxlength="6" inputmode="numeric">
+        </div>
+        <button class="btn-action" id="btnVerifyOtp" onclick="verifyOtp()">Verify & Login</button>
+        
+        <div class="resend-box">
+            OTP nahi mila? <span class="resend-btn" onclick="retryOtp()">Resend OTP</span> | <span class="resend-btn" onclick="changeNumber()">Change Number</span>
+        </div>
     </div>
-
-    <button class="btn-submit" id="btnLogin" onclick="handleLogin()">Login / Register</button>
 </div>
 
 <script>
+// ================= FIREBASE INITIALIZATION =================
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -126,7 +168,13 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// 1. URL Se Referral Code Capture Karna
+// MSG91 OTP Configuration
+const MSG91_WIDGET_ID = "346473667468303831343733";
+const MSG91_AUTH_TOKEN = "415053Tw7tFq1FjM65be3797P1";
+
+let enteredMobile = "";
+
+// 1. Capture Referral Code from Link (login.html?ref=CODE)
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if(refFromUrl){
@@ -135,28 +183,119 @@ if(refFromUrl){
     document.getElementById("displayRefCode").textContent = refFromUrl.trim().toUpperCase();
 }
 
-async function handleLogin(){
-    const mobile = document.getElementById("mobileInput").value.trim().replace(/\D/g,"");
-    const name = document.getElementById("nameInput").value.trim() || ("User " + mobile.slice(-4));
-    
-    if(mobile.length !== 10) return alert("Kripya 10-digit mobile number daalein");
+// 2. SEND OTP VIA MSG91
+function sendOtp(){
+    const mob = document.getElementById("mobileInput").value.trim().replace(/\D/g,"");
+    if(mob.length !== 10){
+        alert("Kripya 10-digit mobile number daalein");
+        return;
+    }
 
-    const docId = "91" + mobile;
-    const btn = document.getElementById("btnLogin");
+    enteredMobile = mob;
+    const btn = document.getElementById("btnSendOtp");
     btn.disabled = true;
-    btn.textContent = "Logging in...";
+    btn.textContent = "Sending OTP...";
+
+    // MSG91 Widget Trigger
+    if (window.initSendOTP) {
+        window.initSendOTP({
+            widgetId: MSG91_WIDGET_ID,
+            tokenAuth: MSG91_AUTH_TOKEN,
+            identifier: "91" + enteredMobile,
+            success: function (data) {
+                btn.disabled = false;
+                btn.textContent = "Send OTP";
+                document.getElementById("mobileSection").style.display = "none";
+                document.getElementById("otpSection").style.display = "block";
+                document.getElementById("pageSubtitle").textContent = `OTP sent to +91 ${enteredMobile}`;
+            },
+            failure: function (error) {
+                btn.disabled = false;
+                btn.textContent = "Send OTP";
+                alert("OTP Send Error: " + (error.message || "Msg91 Service Busy"));
+            }
+        });
+    } else {
+        // Fallback Direct MSG91 Request
+        fetch(`https://control.msg91.com/api/v5/otp?template_id=${MSG91_WIDGET_ID}&mobile=91${enteredMobile}&authkey=${MSG91_AUTH_TOKEN}`, {
+            method: 'POST'
+        }).then(r => r.json()).then(res => {
+            btn.disabled = false;
+            btn.textContent = "Send OTP";
+            document.getElementById("mobileSection").style.display = "none";
+            document.getElementById("otpSection").style.display = "block";
+            document.getElementById("pageSubtitle").textContent = `OTP sent to +91 ${enteredMobile}`;
+        }).catch(err => {
+            btn.disabled = false;
+            btn.textContent = "Send OTP";
+            alert("OTP bhejne me samasya aayi. Dobara try karein.");
+        });
+    }
+}
+
+// 3. VERIFY OTP VIA MSG91 & AUTO LOGIN
+function verifyOtp(){
+    const otp = document.getElementById("otpInput").value.trim();
+    if(!otp || otp.length < 4){
+        alert("Kripya sahi OTP enter karein");
+        return;
+    }
+
+    const btn = document.getElementById("btnVerifyOtp");
+    btn.disabled = true;
+    btn.textContent = "Verifying...";
+
+    if (window.verifyOTP) {
+        window.verifyOTP({
+            widgetId: MSG91_WIDGET_ID,
+            tokenAuth: MSG91_AUTH_TOKEN,
+            identifier: "91" + enteredMobile,
+            otp: otp,
+            success: function (data) {
+                onVerificationSuccess();
+            },
+            failure: function (error) {
+                btn.disabled = false;
+                btn.textContent = "Verify & Login";
+                alert("Galat OTP! Kripya sahi OTP daalein.");
+            }
+        });
+    } else {
+        // Fallback Verify API
+        fetch(`https://control.msg91.com/api/v5/otp/verify?otp=${otp}&mobile=91${enteredMobile}&authkey=${MSG91_AUTH_TOKEN}`, {
+            method: 'GET'
+        }).then(r => r.json()).then(res => {
+            if(res.type === "success" || res.message === "OTP verified success"){
+                onVerificationSuccess();
+            } else {
+                btn.disabled = false;
+                btn.textContent = "Verify & Login";
+                alert("Galat OTP! Kripya sahi code daalein.");
+            }
+        }).catch(err => {
+            btn.disabled = false;
+            btn.textContent = "Verify & Login";
+            alert("Verification error. Kripya dobara koshish karein.");
+        });
+    }
+}
+
+// 4. ON SUCCESSFUL OTP -> SYNC FIREBASE & LOGIN
+async function onVerificationSuccess(){
+    const docId = "91" + enteredMobile;
+    const referredByCode = localStorage.getItem("rdxReferredBy") || "DIRECT";
+    const myReferralCode = "RDX" + enteredMobile.slice(-4);
+    const defaultName = "User " + enteredMobile.slice(-4);
 
     try {
         const uRef = db.collection("customers").doc(docId);
         const snap = await uRef.get();
-        const referredByCode = localStorage.getItem("rdxReferredBy") || "DIRECT";
-        const myReferralCode = "RDX" + mobile.slice(-4);
 
         if(!snap.exists){
-            // Naya User Register ho raha hai:
+            // Naya user create karein (Without Name field - Default User Name set hoga)
             await uRef.set({
-                mobile: mobile,
-                name: name,
+                mobile: enteredMobile,
+                name: defaultName,
                 balance: 0,
                 depositBalance: 0,
                 winnings: 0,
@@ -167,19 +306,30 @@ async function handleLogin(){
             });
         }
 
+        // Sessions set karein
         localStorage.setItem("rdxFirebaseUserId", docId);
-        localStorage.setItem("rdxVerifiedMobile", mobile);
+        localStorage.setItem("rdxVerifiedMobile", enteredMobile);
         localStorage.setItem("rdxLoggedIn", "true");
-        localStorage.setItem("rdxUsername", name);
-        localStorage.setItem("rdxReferral", myReferralCode);
+        localStorage.setItem("rdxUsername", snap.exists ? (snap.data().name || defaultName) : defaultName);
+        localStorage.setItem("rdxReferral", snap.exists ? (snap.data().referralCode || myReferralCode) : myReferralCode);
         localStorage.setItem("rdxReferredBy", snap.exists ? (snap.data().referredBy || "DIRECT") : referredByCode);
 
         location.href = "dashboard.html";
     } catch(err){
-        alert("Error: " + err.message);
-        btn.disabled = false;
-        btn.textContent = "Login / Register";
+        alert("Database error: " + err.message);
+        document.getElementById("btnVerifyOtp").disabled = false;
+        document.getElementById("btnVerifyOtp").textContent = "Verify & Login";
     }
+}
+
+function retryOtp(){
+    sendOtp();
+}
+
+function changeNumber(){
+    document.getElementById("otpSection").style.display = "none";
+    document.getElementById("mobileSection").style.display = "block";
+    document.getElementById("pageSubtitle").textContent = "Enter your 10-digit mobile number";
 }
 </script>
 </body>
