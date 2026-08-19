@@ -99,6 +99,7 @@ th{font-size:13px;color:#69758e}
 
 <main>
 
+<!-- DASHBOARD -->
 <section id="dashboard" class="page active">
 <div class="title">Dashboard</div>
 <div class="stats">
@@ -111,7 +112,7 @@ th{font-size:13px;color:#69758e}
 <div class="card">
 <h3>Firebase Status</h3>
 <div id="dashStatus" class="status bad">Connecting...</div>
-<p>Admin login Firebase Authentication se hoga.</p>
+<p>Admin login Firebase Authentication se successful hua.</p>
 </div>
 </section>
 
@@ -198,6 +199,7 @@ th{font-size:13px;color:#69758e}
 <!-- SETTINGS -->
 <section id="settings" class="page">
 <div class="title">Payment Settings</div>
+<div id="settingsStatus" class="status bad">Loading...</div>
 <div class="card">
 <div class="form">
 <div><label>UPI ID</label><input id="upi"></div>
@@ -205,6 +207,8 @@ th{font-size:13px;color:#69758e}
 <div><label>Account Number</label><input id="account"></div>
 <div><label>IFSC</label><input id="ifsc"></div>
 <div class="full"><label>QR Image URL</label><input id="qr"></div>
+<div><label>Coin Rate</label><input id="rate" type="number" value="1"></div>
+<div><label>Minimum Deposit</label><input id="minimum" type="number" value="100"></div>
 <div class="full"><button id="saveSettings" class="save">Save Settings</button></div>
 </div>
 </div>
@@ -232,6 +236,8 @@ const ADMIN_EMAIL = "nmbaar78@gmail.com";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+const paymentRef = doc(db, "paymentSettings", "config");
 
 let deposits = [];
 let withdrawals = [];
@@ -272,10 +278,11 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "deposits") loadDeposits();
         if(btn.dataset.page === "withdrawals") loadWithdrawals();
         if(btn.dataset.page === "users") loadUsers();
+        if(btn.dataset.page === "settings") loadSettings();
     });
 });
 
-// WITHDRAWALS LOGIC
+// ================= WITHDRAWALS =================
 async function loadWithdrawals(){
     $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
@@ -285,7 +292,11 @@ async function loadWithdrawals(){
         renderWithdrawals();
         $("withdrawalStatus").textContent = "✅ Withdrawals loaded.";
         $("withdrawalStatus").className = "status ok";
-    } catch(e) { $("withdrawalStatus").textContent = e.message; }
+        updateDashboard();
+    } catch(e) { 
+        $("withdrawalStatus").textContent = "❌ " + e.message; 
+        $("withdrawalStatus").className = "status bad";
+    }
 }
 
 function renderWithdrawals(){
@@ -311,22 +322,29 @@ function renderWithdrawals(){
             <td><span class="badge ${s}">${s}</span></td>
             <td>${date}</td>
             <td>
-                ${s === "pending" ? `<button class="action approve" onclick="approveWithdrawal('${w.id}')">✅ Paid</button><button class="action reject" onclick="rejectWithdrawal('${w.id}')">❌ Reject</button>` : "Done"}
+                ${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : "Done"}
             </td>
         </tr>`;
     }).join("");
+
+    document.querySelectorAll("[data-with-app]").forEach(b => {
+        b.addEventListener("click", () => approveWithdrawal(b.dataset.withApp));
+    });
+    document.querySelectorAll("[data-with-rej]").forEach(b => {
+        b.addEventListener("click", () => rejectWithdrawal(b.dataset.withRej));
+    });
 }
 
-window.approveWithdrawal = async function(id) {
+async function approveWithdrawal(id) {
     if(!confirm("Kya aapne user ko payment bhej di hai?")) return;
     try {
         await setDoc(doc(db, "withdrawals", id), { status: "approved", comment: "Payment transfer complete." }, { merge: true });
         alert("✅ Approved");
         loadWithdrawals();
     } catch(e) { alert(e.message); }
-};
+}
 
-window.rejectWithdrawal = async function(id) {
+async function rejectWithdrawal(id) {
     const reason = prompt("Reject karne ka reason likhein:");
     if(!reason) return;
     try {
@@ -334,26 +352,58 @@ window.rejectWithdrawal = async function(id) {
         alert("❌ Rejected");
         loadWithdrawals();
     } catch(e) { alert(e.message); }
-};
-
-// DEPOSITS LOGIC
-async function loadDeposits(){
-    const snap = await getDocs(collection(db, "deposits"));
-    deposits = [];
-    snap.forEach(d => deposits.push({ id: d.id, ...d.data() }));
-    $("depositTable").innerHTML = deposits.map(d => `
-        <tr>
-            <td>${safe(d.id)}</td><td>${safe(d.uid || d.userId)}</td><td>₹${d.amount}</td><td>${safe(d.utr)}</td>
-            <td><span class="badge ${d.status}">${d.status}</span></td>
-            <td>${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString("en-IN") : '—'}</td>
-            <td>${d.status === "pending" ? `<button class="action approve" onclick="approveDeposit('${d.id}')">Approve</button><button class="action reject" onclick="rejectDeposit('${d.id}')">Reject</button>` : 'Done'}</td>
-        </tr>
-    `).join("");
-    $("depositStatus").textContent = "✅ Loaded";
-    $("depositStatus").className = "status ok";
 }
 
-window.approveDeposit = async function(id) {
+$("withdrawalSearch").addEventListener("input", renderWithdrawals);
+$("refreshWithdrawals").addEventListener("click", loadWithdrawals);
+
+// ================= DEPOSITS =================
+async function loadDeposits(){
+    $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "deposits"));
+        deposits = [];
+        snap.forEach(d => deposits.push({ id: d.id, ...d.data() }));
+        renderDeposits();
+        $("depositStatus").textContent = "✅ Deposits loaded.";
+        $("depositStatus").className = "status ok";
+        updateDashboard();
+    } catch(e) {
+        $("depositStatus").textContent = "❌ " + e.message;
+        $("depositStatus").className = "status bad";
+    }
+}
+
+function renderDeposits(){
+    const q = $("depositSearch").value.toLowerCase();
+    const list = deposits.filter(d => String(d.id || "").toLowerCase().includes(q) || String(d.uid || d.userId || "").toLowerCase().includes(q) || String(d.utr || "").toLowerCase().includes(q));
+
+    if(!list.length){
+        $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">No deposits found.</td></tr>`;
+        return;
+    }
+
+    $("depositTable").innerHTML = list.map(d => `
+        <tr>
+            <td>${safe(d.id)}</td>
+            <td>${safe(d.uid || d.userId)}</td>
+            <td>₹${d.amount}</td>
+            <td>${safe(d.utr)}</td>
+            <td><span class="badge ${d.status}">${d.status}</span></td>
+            <td>${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString("en-IN") : '—'}</td>
+            <td>${d.status === "pending" ? `<button class="action approve" data-dep-app="${safe(d.id)}">Approve</button><button class="action reject" data-dep-rej="${safe(d.id)}">Reject</button>` : 'Done'}</td>
+        </tr>
+    `).join("");
+
+    document.querySelectorAll("[data-dep-app]").forEach(b => {
+        b.addEventListener("click", () => approveDeposit(b.dataset.depApp));
+    });
+    document.querySelectorAll("[data-dep-rej]").forEach(b => {
+        b.addEventListener("click", () => rejectDeposit(b.dataset.depRej));
+    });
+}
+
+async function approveDeposit(id) {
     const d = deposits.find(x => x.id === id);
     if(!d || !confirm("Approve karein?")) return;
     const uid = d.uid || d.userId;
@@ -365,39 +415,131 @@ window.approveDeposit = async function(id) {
             t.update(cRef, { balance: bal });
             t.update(doc(db, "deposits", id), { status: "approved", comment: "Payment approved" });
         });
-        alert("Approved!");
+        alert("✅ Approved!");
         loadDeposits();
+        loadUsers();
     } catch(e) { alert(e.message); }
-};
-
-window.rejectDeposit = async function(id) {
-    const r = prompt("Reason:");
-    if(!r) return;
-    await setDoc(doc(db, "deposits", id), { status: "rejected", comment: r }, { merge: true });
-    alert("Rejected");
-    loadDeposits();
-};
-
-async function loadUsers(){
-    const snap = await getDocs(collection(db, "customers"));
-    users = [];
-    snap.forEach(d => users.push({ id: d.id, ...d.data() }));
-    $("userTable").innerHTML = users.map(u => `<tr><td>${safe(u.id)}</td><td>${safe(u.name)}</td><td>${safe(u.mobile)}</td><td>₹${u.balance || 0}</td><td><span class="badge approved">Active</span></td></tr>`).join("");
 }
 
+async function rejectDeposit(id) {
+    const r = prompt("Reason:");
+    if(!r) return;
+    try {
+        await setDoc(doc(db, "deposits", id), { status: "rejected", comment: r }, { merge: true });
+        alert("❌ Rejected");
+        loadDeposits();
+    } catch(e) { alert(e.message); }
+}
+
+$("depositSearch").addEventListener("input", renderDeposits);
+$("refreshDeposits").addEventListener("click", loadDeposits);
+
+// ================= CUSTOMERS =================
+async function loadUsers(){
+    $("userTable").innerHTML = `<tr><td colspan="5" class="empty">Loading...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "customers"));
+        users = [];
+        snap.forEach(d => users.push({ id: d.id, ...d.data() }));
+        renderUsers();
+        updateDashboard();
+    } catch(e) {
+        $("userTable").innerHTML = `<tr><td colspan="5" class="empty">${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderUsers(){
+    const q = $("userSearch").value.toLowerCase();
+    const list = users.filter(u => String(u.id || "").toLowerCase().includes(q) || String(u.name || "").toLowerCase().includes(q) || String(u.mobile || "").toLowerCase().includes(q));
+
+    if(!list.length){
+        $("userTable").innerHTML = `<tr><td colspan="5" class="empty">No customers found.</td></tr>`;
+        return;
+    }
+
+    $("userTable").innerHTML = list.map(u => `
+        <tr>
+            <td>${safe(u.id)}</td>
+            <td>${safe(u.name)}</td>
+            <td>${safe(u.mobile)}</td>
+            <td>₹${u.balance || 0}</td>
+            <td><span class="badge approved">Active</span></td>
+        </tr>`).join("");
+}
+
+$("userSearch").addEventListener("input", renderUsers);
+$("refreshUsers").addEventListener("click", loadUsers);
+
+// ================= NOTIFICATIONS =================
 $("notifTarget").addEventListener("change", e => $("personalUidBox").style.display = e.target.value === "personal" ? "block" : "none");
 $("sendNotifBtn").addEventListener("click", async () => {
     const t = $("notifTarget").value, u = $("notifUid").value.replace(/\D/g,""), title = $("notifTitle").value, msg = $("notifMessage").value;
     if(!title || !msg) return alert("Title & Message required");
     await addDoc(collection(db, "notifications"), { target: t, uid: t === "personal" ? u : "all", title, message: msg, createdAt: serverTimestamp() });
-    alert("Notification Sent!");
+    alert("✅ Notification Sent!");
     $("notifTitle").value = ""; $("notifMessage").value = "";
 });
 
+// ================= SETTINGS =================
+async function loadSettings(){
+    try {
+        const snap = await getDoc(paymentRef);
+        if(snap.exists()){
+            const d = snap.data();
+            $("upi").value = d.upiId || "";
+            $("holder").value = d.accountHolderName || "";
+            $("account").value = d.accountNumber || "";
+            $("ifsc").value = d.ifsc || "";
+            $("qr").value = d.qrCodeUrl || "";
+            $("rate").value = d.coinRate ?? 1;
+            $("minimum").value = d.minimumDeposit ?? 100;
+            $("settingsStatus").textContent = "✅ Settings loaded.";
+            $("settingsStatus").className = "status ok";
+        }
+    } catch(e){
+        $("settingsStatus").textContent = "❌ " + e.message;
+    }
+}
+
+$("saveSettings").addEventListener("click", async () => {
+    try {
+        await setDoc(paymentRef, {
+            upiId: $("upi").value.trim(),
+            accountHolderName: $("holder").value.trim(),
+            accountNumber: $("account").value.trim(),
+            ifsc: $("ifsc").value.trim(),
+            qrCodeUrl: $("qr").value.trim(),
+            coinRate: Number($("rate").value),
+            minimumDeposit: Number($("minimum").value),
+            updatedAt: serverTimestamp()
+        }, { merge: true });
+        alert("✅ Payment Settings Saved!");
+        loadSettings();
+    } catch(e){ alert(e.message); }
+});
+
+// ================= DASHBOARD COUNTS =================
+function updateDashboard(){
+    $("totalUsers").textContent = users.length;
+    $("totalCoins").textContent = users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
+    $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
+    $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    
+    $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
+    $("dashStatus").className = "status ok";
+}
+
 async function loadAll(){
-    loadDeposits();
-    loadWithdrawals();
-    loadUsers();
+    try {
+        await loadSettings();
+        await loadDeposits();
+        await loadWithdrawals();
+        await loadUsers();
+        updateDashboard();
+    } catch(e){
+        $("dashStatus").textContent = "❌ " + e.message;
+        $("dashStatus").className = "status bad";
+    }
 }
 </script>
 </body>
