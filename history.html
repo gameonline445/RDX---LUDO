@@ -1,536 +1,366 @@
 <!DOCTYPE html>
 <html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>RDX LUDO - Deposit History</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History - RDX LUDO</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
 
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html{min-height:100%}
-body{
-  min-height:100vh;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-  color:#101a38;
-  background:
-    radial-gradient(circle at 10% 10%,rgba(83,125,255,.18),transparent 30%),
-    radial-gradient(circle at 90% 15%,rgba(255,116,93,.12),transparent 28%),
-    linear-gradient(135deg,#edf4ff,#fff 52%,#f4f7ff);
-}
-button,input{font:inherit}
-.container{width:100%;max-width:900px;margin:auto;padding:18px 16px 70px}
-.header{
-  background:rgba(255,255,255,.96);
-  border:1px solid #dbe5f6;
-  border-radius:24px;
-  padding:18px;
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  box-shadow:0 14px 35px rgba(38,82,165,.08);
-}
-.logo-text{font-size:28px;font-weight:950;letter-spacing:-1px}
-.logo-text span{color:#416fe5}
-.back{
-  border:0;border-radius:18px;padding:13px 18px;
-  background:#edf3ff;color:#3568d7;font-weight:900;cursor:pointer
-}
-.hero{padding:42px 8px 26px}
-.hero h1{font-size:48px;line-height:1.05;letter-spacing:-2px}
-.hero h1 span{color:#416fe5}
-.hero p{margin-top:12px;color:#7887a4;font-size:18px}
-.card{
-  background:rgba(255,255,255,.97);
-  border:1px solid #d4e0f4;border-radius:28px;padding:24px;
-  box-shadow:0 20px 55px rgba(38,82,165,.10);
-}
-.search-title{font-size:25px;font-weight:900;margin-bottom:15px}
-.date-row{display:flex;gap:10px}
-.date-row input{
-  flex:1;height:62px;border:2px solid #d9e3f4;border-radius:18px;
-  padding:0 16px;background:#fff;color:#17213a;font-size:18px;outline:none
-}
-.date-row input:focus{border-color:#4b78e5;box-shadow:0 0 0 4px rgba(75,120,229,.10)}
-.btn{
-  width:100%;height:62px;border:0;border-radius:19px;margin-top:14px;
-  background:linear-gradient(100deg,#1762e9,#477bed,#705cf0);
-  color:#fff;font-weight:950;font-size:18px;cursor:pointer;
-  box-shadow:0 12px 28px rgba(43,100,226,.23)
-}
-.btn.secondary{background:#eef2f8;color:#5e6c88;box-shadow:none}
-.status{
-  display:none;margin-top:14px;padding:14px 16px;border-radius:16px;
-  font-weight:800;text-align:center
-}
-.status.info{display:block;background:#edf4ff;color:#3568d7}
-.status.error{display:block;background:#fde8ec;color:#bd4052}
-.status.ok{display:block;background:#e7f8ed;color:#27824c}
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #1e293b;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #334155;
+        }
 
-.section-title{font-size:32px;margin:36px 0 16px;letter-spacing:-1px}
-.list{display:grid;gap:14px}
-.item{
-  background:#fff;border:1px solid #dce5f3;border-radius:22px;padding:18px;
-  box-shadow:0 10px 25px rgba(38,82,165,.06)
-}
-.item-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-.amount{font-size:26px;font-weight:950}
-.coins{color:#6d7b96;margin-top:4px;font-weight:700}
-.badge{
-  padding:7px 11px;border-radius:999px;font-size:12px;font-weight:950;text-transform:lowercase
-}
-.badge.approved{background:#dff6e8;color:#27824c}
-.badge.rejected{background:#fde2e7;color:#bf4053}
-.badge.pending{background:#fff0cf;color:#a56c00}
-.badge.other{background:#edf2fa;color:#5c6a84}
-.meta{
-  margin-top:14px;padding-top:14px;border-top:1px solid #edf0f6;
-  display:grid;grid-template-columns:1fr 1fr;gap:10px
-}
-.meta div{color:#64728d;font-size:13px;line-height:1.45}
-.meta strong{display:block;color:#263451;font-size:14px;word-break:break-word}
-.empty{
-  background:#fff;border:1px solid #dce5f3;border-radius:24px;
-  padding:42px 20px;text-align:center;color:#7887a4;font-size:17px;line-height:1.6
-}
-.loader{text-align:center;padding:25px;color:#60708d;font-weight:800}
-.small{font-size:12px;color:#8a97ad;margin-top:12px;text-align:center}
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+        }
 
-@media(max-width:600px){
-  .container{padding:12px 12px 55px}
-  .header{padding:15px;border-radius:20px}
-  .logo-text{font-size:22px}
-  .back{padding:11px 14px}
-  .hero{padding:35px 5px 22px}
-  .hero h1{font-size:40px}
-  .hero p{font-size:16px}
-  .card{padding:18px;border-radius:24px}
-  .search-title{font-size:22px}
-  .date-row{display:block}
-  .date-row input{width:100%}
-  .section-title{font-size:29px}
-  .meta{grid-template-columns:1fr}
-}
-</style>
+        .back-btn {
+            color: #f8fafc;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        /* Tabs */
+        .tab-container {
+            display: flex;
+            padding: 12px 16px;
+            gap: 10px;
+            background: #0f172a;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #1e293b;
+            color: #94a3b8;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: #ffffff;
+        }
+
+        /* Cards */
+        .content-section {
+            padding: 0 16px 20px;
+        }
+
+        .card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-bottom: 14px;
+            border: 1px solid #334155;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-left {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .card-date {
+            font-size: 11px;
+            color: #64748b;
+        }
+
+        .card-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .amount {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        /* Admin Comments / Status Notes */
+        .admin-note {
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .admin-note.rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border-left: 3px solid #ef4444;
+        }
+
+        .admin-note.approved {
+            background: rgba(34, 197, 94, 0.1);
+            color: #86efac;
+            border-left: 3px solid #22c55e;
+        }
+
+        .admin-note.pending {
+            background: rgba(234, 179, 8, 0.1);
+            color: #fde047;
+            border-left: 3px solid #eab308;
+        }
+
+        /* Color Badges */
+        .credit { color: #22c55e; }
+        .debit { color: #ef4444; }
+
+        .badge {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-approved { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+        .badge-rejected { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+        .badge-pending { background: rgba(234, 179, 8, 0.15); color: #eab308; }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1e293b;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #334155;
+            z-index: 100;
+        }
+
+        .nav-item {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active { color: #3b82f6; }
+        .nav-item i { font-size: 18px; }
+    </style>
 </head>
-
 <body>
-<main class="container">
 
-  <header class="header">
-    <div class="logo-text">RDX <span>LUDO</span> HISTORY</div>
-    <button class="back" onclick="goBack()">← वापस</button>
-  </header>
+    <!-- Header -->
+    <header class="header">
+        <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i></a>
+        <h1>Game & Payment History</h1>
+        <div style="width: 18px;"></div>
+    </header>
 
-  <section class="hero">
-    <h1>Deposit <span>History</span></h1>
-    <p>आपकी Deposit की पूरी History</p>
-  </section>
-
-  <section class="card">
-    <div class="search-title">📅 तारीख से History खोजें</div>
-
-    <div class="date-row">
-      <input id="dateInput" type="date">
+    <!-- Tab Switcher -->
+    <div class="tab-container">
+        <button class="tab-btn active" onclick="switchTab('matches')">
+            <i class="fa-solid fa-gamepad"></i> Matches
+        </button>
+        <button class="tab-btn" onclick="switchTab('transactions')">
+            <i class="fa-solid fa-wallet"></i> Transactions
+        </button>
     </div>
 
-    <button id="searchBtn" class="btn">🔍 Search</button>
-    <button id="recentBtn" class="btn secondary">↻ Recent History</button>
-
-    <div id="status" class="status"></div>
-  </section>
-
-  <h2 class="section-title">Recent History</h2>
-  <section id="historyList" class="list">
-    <div class="loader">History load हो रही है...</div>
-  </section>
-
-  <div class="small">
-    Login mobile के आधार पर आपकी deposits दिखाई जाएंगी।
-  </div>
-</main>
-
-<script>
-const firebaseConfig = {
-  apiKey:"AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
-  authDomain:"rdx-ludo.firebaseapp.com",
-  projectId:"rdx-ludo",
-  storageBucket:"rdx-ludo.firebasestorage.app",
-  messagingSenderId:"928340814840",
-  appId:"1:928340814840:web:6eca42a8b76138b268440d"
-};
-
-let db = null;
-try{
-  if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-  db = firebase.firestore();
-}catch(e){
-  console.error(e);
-}
-
-const COLLECTIONS = [
-  "deposits",
-  "depositRequests",
-  "deposit_requests",
-  "transactions"
-];
-
-const dateInput = document.getElementById("dateInput");
-const searchBtn = document.getElementById("searchBtn");
-const recentBtn = document.getElementById("recentBtn");
-const list = document.getElementById("historyList");
-const statusBox = document.getElementById("status");
-
-function normalize(value){
-  return String(value ?? "").replace(/\D/g,"");
-}
-
-function getLoginMobiles(){
-  const values = [
-    localStorage.getItem("rdxVerifiedMobile"),
-    localStorage.getItem("rdxLoginMobile"),
-    localStorage.getItem("rdxFirebaseUserId")
-  ].filter(Boolean);
-
-  const out = new Set();
-
-  values.forEach(v=>{
-    const n = normalize(v);
-
-    if(/^91[6-9]\d{9}$/.test(n)){
-      out.add(n);
-      out.add(n.slice(2));
-      out.add("+" + n);
-    }else if(/^[6-9]\d{9}$/.test(n)){
-      out.add(n);
-      out.add("91" + n);
-      out.add("+91" + n);
-    }
-  });
-
-  return [...out];
-}
-
-function firstValue(obj, keys){
-  for(const key of keys){
-    if(obj[key] !== undefined && obj[key] !== null && obj[key] !== ""){
-      return obj[key];
-    }
-  }
-  return "";
-}
-
-function getUidCandidates(data){
-  const keys = [
-    "customerUid","customerUID","uid","userId","userID",
-    "mobile","phone","phoneNumber","customerMobile",
-    "customerPhone","mobileNumber","userMobile"
-  ];
-
-  const values = [];
-
-  keys.forEach(k=>{
-    if(data[k] !== undefined && data[k] !== null){
-      values.push(normalize(data[k]));
-    }
-  });
-
-  return values.filter(Boolean);
-}
-
-function matchesCurrentUser(data){
-  const logged = getLoginMobiles();
-  if(!logged.length) return false;
-
-  const recordValues = getUidCandidates(data);
-
-  return recordValues.some(rv=>{
-    return logged.some(lv=>{
-      if(rv === lv) return true;
-
-      const a = rv.replace(/^91/,"");
-      const b = lv.replace(/^91/,"");
-
-      return a === b;
-    });
-  });
-}
-
-function toDate(value){
-  if(!value) return null;
-
-  if(value.toDate && typeof value.toDate === "function"){
-    return value.toDate();
-  }
-
-  if(value instanceof Date) return value;
-
-  if(typeof value === "number"){
-    const d = new Date(value);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  if(typeof value === "string"){
-    const d = new Date(value);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  if(value.seconds){
-    const d = new Date(value.seconds * 1000);
-    return isNaN(d.getTime()) ? null : d;
-  }
-
-  return null;
-}
-
-function getRecordDate(data){
-  return firstValue(data,[
-    "createdAt","date","timestamp","created_at",
-    "createdOn","time","updatedAt","approvedAt"
-  ]);
-}
-
-function dateKey(date){
-  if(!date) return "";
-  const y = date.getFullYear();
-  const m = String(date.getMonth()+1).padStart(2,"0");
-  const d = String(date.getDate()).padStart(2,"0");
-  return `${y}-${m}-${d}`;
-}
-
-function money(value){
-  const n = Number(String(value ?? "").replace(/[^\d.]/g,""));
-  if(!Number.isFinite(n)) return "₹0";
-  return "₹" + n.toLocaleString("en-IN");
-}
-
-function statusClass(status){
-  const s = String(status || "").toLowerCase();
-  if(s.includes("approve")) return "approved";
-  if(s.includes("reject")) return "rejected";
-  if(s.includes("pending")) return "pending";
-  return "other";
-}
-
-function formatDate(value){
-  const d = toDate(value);
-  if(!d) return "Date unavailable";
-  return d.toLocaleString("en-IN",{
-    day:"2-digit",
-    month:"2-digit",
-    year:"numeric",
-    hour:"2-digit",
-    minute:"2-digit",
-    second:"2-digit"
-  });
-}
-
-function showStatus(message,type="info"){
-  statusBox.textContent = message;
-  statusBox.className = "status " + type;
-}
-
-function hideStatus(){
-  statusBox.className = "status";
-  statusBox.textContent = "";
-}
-
-function render(items){
-  if(!items.length){
-    list.innerHTML = `
-      <div class="empty">
-        इस तारीख की कोई History नहीं मिली।
-        <br><br>
-        अगर Admin में deposit दिखाई दे रही है लेकिन यहाँ नहीं,
-        तो नीचे Firebase Rules/field mismatch check करें।
-      </div>`;
-    return;
-  }
-
-  list.innerHTML = items.map(item=>{
-    const d = item.data;
-    const amount = firstValue(d,["amount","depositAmount","paidAmount","money"]);
-    const coins = firstValue(d,["coins","coin","creditedCoins"]);
-    const utr = firstValue(d,["utr","UTR","utrNumber","transactionId","txnId"]);
-    const upi = firstValue(d,["upi","upiId","vpa","paymentUpi"]);
-    const requestId = firstValue(d,["requestId","requestID","reqId","id"]);
-    const status = firstValue(d,["status","paymentStatus"]) || "unknown";
-    const uid = firstValue(d,[
-      "customerUid","customerUID","uid","userId","mobile",
-      "phone","phoneNumber","customerMobile"
-    ]);
-
-    return `
-      <article class="item">
-        <div class="item-top">
-          <div>
-            <div class="amount">${money(amount)}</div>
-            <div class="coins">${coins || 0} Coins</div>
-          </div>
-          <span class="badge ${statusClass(status)}">${String(status)}</span>
+    <!-- Match History Tab -->
+    <section id="matches-tab" class="content-section">
+        
+        <!-- Match Won (Approved) -->
+        <div class="card">
+            <div class="card-top">
+                <div class="card-left">
+                    <span class="card-title">Classic Ludo Match</span>
+                    <span class="card-subtitle">vs Player_8921 (Room: 098231)</span>
+                    <span class="card-date">19 Aug 2026, 11:20 AM</span>
+                </div>
+                <div class="card-right">
+                    <span class="amount credit">+ ₹180</span>
+                    <span class="badge badge-approved">Approved</span>
+                </div>
+            </div>
+            <div class="admin-note approved">
+                <i class="fa-solid fa-circle-check"></i> Admin ne screenshot verify karke winning credit kar di hai.
+            </div>
         </div>
 
-        <div class="meta">
-          <div>Request ID<strong>${escapeHtml(requestId || item.id)}</strong></div>
-          <div>Date<strong>${formatDate(getRecordDate(d))}</strong></div>
-          <div>UTR<strong>${escapeHtml(utr || "—")}</strong></div>
-          <div>UPI<strong>${escapeHtml(upi || "—")}</strong></div>
-          <div>Customer UID<strong>${escapeHtml(uid || "—")}</strong></div>
-          <div>Collection<strong>${escapeHtml(item.collection)}</strong></div>
+        <!-- Match Result Rejected (Admin Reason) -->
+        <div class="card">
+            <div class="card-top">
+                <div class="card-left">
+                    <span class="card-title">1 Goti Battle</span>
+                    <span class="card-subtitle">vs Master_Ludo (Room: 774120)</span>
+                    <span class="card-date">18 Aug 2026, 05:40 PM</span>
+                </div>
+                <div class="card-right">
+                    <span class="amount debit">₹100</span>
+                    <span class="badge badge-rejected">Rejected</span>
+                </div>
+            </div>
+            <div class="admin-note rejected">
+                <i class="fa-solid fa-circle-exclamation"></i> <strong>Admin Reason:</strong> Invalid/Blur screenshot upload kiya gaya tha.
+            </div>
         </div>
-      </article>`;
-  }).join("");
-}
 
-function escapeHtml(value){
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
+    </section>
 
-async function readCollection(name){
-  const snap = await db.collection(name).get();
-  return snap.docs.map(doc=>({
-    id:doc.id,
-    collection:name,
-    data:doc.data()
-  }));
-}
+    <!-- Transaction History Tab -->
+    <section id="transactions-tab" class="content-section" style="display: none;">
+        
+        <!-- Deposit Approved & Added -->
+        <div class="card">
+            <div class="card-top">
+                <div class="card-left">
+                    <span class="card-title">Deposit (UPI QR)</span>
+                    <span class="card-subtitle">UTR: 492019382109</span>
+                    <span class="card-date">19 Aug 2026, 10:15 AM</span>
+                </div>
+                <div class="card-right">
+                    <span class="amount credit">+ ₹500</span>
+                    <span class="badge badge-approved">Approved</span>
+                </div>
+            </div>
+            <div class="admin-note approved">
+                <i class="fa-solid fa-wallet"></i> Payment verify ho gaya hai. Balance wallet me add kar diya gaya hai.
+            </div>
+        </div>
 
-async function loadAllDeposits(){
-  if(!db) throw new Error("Firebase database connect नहीं हुआ।");
+        <!-- Deposit Rejected with Reason -->
+        <div class="card">
+            <div class="card-top">
+                <div class="card-left">
+                    <span class="card-title">Deposit (UPI QR)</span>
+                    <span class="card-subtitle">UTR: 110293847562</span>
+                    <span class="card-date">18 Aug 2026, 08:30 PM</span>
+                </div>
+                <div class="card-right">
+                    <span class="amount debit">₹200</span>
+                    <span class="badge badge-rejected">Rejected</span>
+                </div>
+            </div>
+            <div class="admin-note rejected">
+                <i class="fa-solid fa-triangle-exclamation"></i> <strong>Admin Reason:</strong> UTR Number match nahi hua ya payment receive nahi hui.
+            </div>
+        </div>
 
-  const results = [];
-  const errors = [];
+        <!-- Withdrawal Pending -->
+        <div class="card">
+            <div class="card-top">
+                <div class="card-left">
+                    <span class="card-title">Withdrawal Request</span>
+                    <span class="card-subtitle">UPI: user@okhdfcbank</span>
+                    <span class="card-date">19 Aug 2026, 12:00 PM</span>
+                </div>
+                <div class="card-right">
+                    <span class="amount debit">- ₹300</span>
+                    <span class="badge badge-pending">Pending</span>
+                </div>
+            </div>
+            <div class="admin-note pending">
+                <i class="fa-solid fa-clock"></i> Admin verification chal raha hai. Payment 15-30 minute me bhej di jayegi.
+            </div>
+        </div>
 
-  for(const name of COLLECTIONS){
-    try{
-      const rows = await readCollection(name);
-      results.push(...rows);
-    }catch(e){
-      console.warn("Collection read failed:",name,e);
-      errors.push({name,error:e});
-    }
-  }
+    </section>
 
-  // Remove duplicates by collection + document id
-  const unique = new Map();
-  results.forEach(x=>unique.set(x.collection + "/" + x.id,x));
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="dashboard.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="battles.html" class="nav-item">
+            <i class="fa-solid fa-trophy"></i>
+            <span>Battles</span>
+        </a>
+        <a href="history.html" class="nav-item active">
+            <i class="fa-solid fa-clock-rotate-left"></i>
+            <span>History</span>
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
 
-  return {
-    rows:[...unique.values()],
-    errors
-  };
-}
+    <!-- Tab Script -->
+    <script>
+        function switchTab(tabName) {
+            const matchesTab = document.getElementById('matches-tab');
+            const transTab = document.getElementById('transactions-tab');
+            const buttons = document.querySelectorAll('.tab-btn');
 
-function sortNewest(items){
-  return items.sort((a,b)=>{
-    const da = toDate(getRecordDate(a.data))?.getTime() || 0;
-    const dbb = toDate(getRecordDate(b.data))?.getTime() || 0;
-    return dbb - da;
-  });
-}
-
-async function showRecent(){
-  list.innerHTML = `<div class="loader">History load हो रही है...</div>`;
-  hideStatus();
-
-  const mobiles = getLoginMobiles();
-
-  if(!mobiles.length){
-    list.innerHTML = `
-      <div class="empty">
-        पहले login करें।<br>
-        Login mobile localStorage में नहीं मिला।
-      </div>`;
-    return;
-  }
-
-  try{
-    const {rows,errors} = await loadAllDeposits();
-    const mine = sortNewest(rows.filter(matchesCurrentUser));
-
-    render(mine.slice(0,50));
-
-    if(!mine.length){
-      showStatus(
-        "Admin में records हैं तो UID/field name या Firebase Rules mismatch हो सकता है।",
-        "error"
-      );
-    }else{
-      showStatus(`${mine.length} history record मिले।`, "ok");
-    }
-
-    if(errors.length){
-      console.warn("Some collections could not be read:",errors);
-    }
-  }catch(e){
-    console.error(e);
-    showStatus("History load error: " + (e.message || e), "error");
-    list.innerHTML = `<div class="empty">Firebase से History पढ़ी नहीं जा सकी।</div>`;
-  }
-}
-
-async function searchByDate(){
-  const selected = dateInput.value;
-
-  if(!selected){
-    showStatus("पहले तारीख चुनें।","error");
-    return;
-  }
-
-  list.innerHTML = `<div class="loader">Search हो रहा है...</div>`;
-  hideStatus();
-
-  try{
-    const {rows} = await loadAllDeposits();
-
-    const mine = rows.filter(matchesCurrentUser);
-
-    const filtered = sortNewest(
-      mine.filter(item=>{
-        const d = toDate(getRecordDate(item.data));
-        return d && dateKey(d) === selected;
-      })
-    );
-
-    render(filtered);
-
-    const pretty = new Date(selected + "T00:00:00").toLocaleDateString("en-IN",{
-      day:"2-digit",month:"2-digit",year:"numeric"
-    });
-
-    if(filtered.length){
-      showStatus(`${pretty} की ${filtered.length} history मिली।`,"ok");
-    }else{
-      showStatus(`${pretty} की कोई History नहीं मिली।`,"error");
-    }
-  }catch(e){
-    console.error(e);
-    showStatus("Search error: " + (e.message || e),"error");
-    list.innerHTML = `<div class="empty">Firebase से data पढ़ी नहीं जा सकी।</div>`;
-  }
-}
-
-function goBack(){
-  if(document.referrer && document.referrer !== location.href){
-    history.back();
-  }else{
-    location.href="./dashboard.html";
-  }
-}
-
-searchBtn.addEventListener("click",searchByDate);
-recentBtn.addEventListener("click",showRecent);
-
-window.addEventListener("load",()=>{
-  const now = new Date();
-  dateInput.value = dateKey(now);
-  showRecent();
-});
-</script>
+            if (tabName === 'matches') {
+                matchesTab.style.display = 'block';
+                transTab.style.display = 'none';
+                buttons[0].classList.add('active');
+                buttons[1].classList.remove('active');
+            } else {
+                matchesTab.style.display = 'none';
+                transTab.style.display = 'block';
+                buttons[0].classList.remove('active');
+                buttons[1].classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
