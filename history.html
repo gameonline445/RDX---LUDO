@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>History - RDX LUDO</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Firebase SDK Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -13,7 +19,6 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        /* Profile page jaisa subtle soft blue gradient */
         body {
             background: linear-gradient(180deg, #f8faff 0%, #eef4ff 50%, #f1f5f9 100%);
             color: #1e293b;
@@ -21,7 +26,6 @@
             padding-bottom: 90px;
         }
 
-        /* Top Header */
         .top-bar {
             display: flex;
             align-items: center;
@@ -86,7 +90,6 @@
         .icon-money { background: #22c55e; color: #ffffff; }
         .icon-gift { background: #f97316; color: #ffffff; }
 
-        /* Page Title */
         .page-heading {
             padding: 16px 20px 8px;
         }
@@ -103,7 +106,6 @@
             margin-top: 2px;
         }
 
-        /* Filter Switcher */
         .tab-container {
             display: flex;
             padding: 10px 18px 14px;
@@ -131,12 +133,10 @@
             box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
         }
 
-        /* Content List */
         .content-section {
             padding: 0 18px;
         }
 
-        /* Profile Page Matching Rounded Cards */
         .card {
             background: #ffffff;
             border-radius: 20px;
@@ -194,13 +194,11 @@
         .credit { color: #16a34a; }
         .debit { color: #dc2626; }
 
-        /* Badges */
         .badge {
             font-size: 10px;
             padding: 4px 9px;
             border-radius: 10px;
             font-weight: 700;
-            letter-spacing: 0.3px;
             text-transform: uppercase;
         }
 
@@ -208,7 +206,6 @@
         .badge-rejected { background: #fee2e2; color: #b91c1c; }
         .badge-pending { background: #fef9c3; color: #a16207; }
 
-        /* Admin Comments / Notes */
         .admin-note {
             font-size: 12px;
             padding: 11px 14px;
@@ -242,7 +239,13 @@
             margin-top: 2px;
         }
 
-        /* Bottom Navigation Bar */
+        .loading-box, .empty-box {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -268,9 +271,7 @@
             gap: 4px;
         }
 
-        .nav-item.active { 
-            color: #2563eb; 
-        }
+        .nav-item.active { color: #2563eb; }
 
         .nav-icon-box {
             width: 38px;
@@ -290,7 +291,7 @@
 </head>
 <body>
 
-    <!-- Top Header -->
+    <!-- Header -->
     <header class="top-bar">
         <div class="header-left">
             <a href="profile.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
@@ -303,128 +304,33 @@
         </div>
     </header>
 
-    <!-- Page Heading -->
+    <!-- Title -->
     <div class="page-heading">
         <h1>History & Logs</h1>
         <p>Battles, results and wallet transactions</p>
     </div>
 
-    <!-- Tab Filter -->
+    <!-- Tabs -->
     <div class="tab-container">
-        <button class="tab-btn active" onclick="switchTab('matches')">
-            <i class="fa-solid fa-gamepad" style="margin-right: 4px;"></i> Matches
+        <button class="tab-btn" onclick="switchTab('matches')">
+            <i class="fa-solid fa-gamepad"></i> Matches
         </button>
-        <button class="tab-btn" onclick="switchTab('transactions')">
-            <i class="fa-solid fa-wallet" style="margin-right: 4px;"></i> Transactions
+        <button class="tab-btn active" onclick="switchTab('transactions')">
+            <i class="fa-solid fa-wallet"></i> Transactions
         </button>
     </div>
 
-    <!-- Match History -->
-    <section id="matches-tab" class="content-section">
-        
-        <!-- Won Match Card -->
-        <div class="card">
-            <div class="card-top">
-                <div class="card-left">
-                    <span class="card-title">Classic Ludo Battle</span>
-                    <span class="card-subtitle">vs Player_4401 (Room: 084129)</span>
-                    <span class="card-date">19 Aug 2026, 12:15 PM</span>
-                </div>
-                <div class="card-right">
-                    <span class="amount credit">+ ₹180</span>
-                    <span class="badge badge-approved">Approved</span>
-                </div>
-            </div>
-            <div class="admin-note approved">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>Admin ne screenshot verify karke winning wallet me credit kar di hai.</span>
-            </div>
-        </div>
-
-        <!-- Rejected Match Card -->
-        <div class="card">
-            <div class="card-top">
-                <div class="card-left">
-                    <span class="card-title">1 Goti Mode</span>
-                    <span class="card-subtitle">vs FastWinner (Room: 994012)</span>
-                    <span class="card-date">18 Aug 2026, 06:30 PM</span>
-                </div>
-                <div class="card-right">
-                    <span class="amount debit">₹100</span>
-                    <span class="badge badge-rejected">Rejected</span>
-                </div>
-            </div>
-            <div class="admin-note rejected">
-                <i class="fa-solid fa-circle-xmark"></i>
-                <span><strong>Admin Reason:</strong> Galat/puraana screenshot upload kiya gaya tha. Result verify nahi hua.</span>
-            </div>
-        </div>
-
+    <!-- Matches Container -->
+    <section id="matches-tab" class="content-section" style="display: none;">
+        <div id="matches-list" class="loading-box"><i class="fa-solid fa-spinner fa-spin"></i> Matches load ho rahe hain...</div>
     </section>
 
-    <!-- Transaction History -->
-    <section id="transactions-tab" class="content-section" style="display: none;">
-        
-        <!-- Deposit Approved -->
-        <div class="card">
-            <div class="card-top">
-                <div class="card-left">
-                    <span class="card-title">Deposit (UPI QR)</span>
-                    <span class="card-subtitle">UTR: 492019382109</span>
-                    <span class="card-date">19 Aug 2026, 10:30 AM</span>
-                </div>
-                <div class="card-right">
-                    <span class="amount credit">+ ₹500</span>
-                    <span class="badge badge-approved">Approved</span>
-                </div>
-            </div>
-            <div class="admin-note approved">
-                <i class="fa-solid fa-circle-check"></i>
-                <span>Payment verify ho gaya hai. Balance wallet me add kar diya gaya hai.</span>
-            </div>
-        </div>
-
-        <!-- Deposit Rejected -->
-        <div class="card">
-            <div class="card-top">
-                <div class="card-left">
-                    <span class="card-title">Deposit (UPI QR)</span>
-                    <span class="card-subtitle">UTR: 110293847562</span>
-                    <span class="card-date">18 Aug 2026, 09:10 PM</span>
-                </div>
-                <div class="card-right">
-                    <span class="amount debit">₹200</span>
-                    <span class="badge badge-rejected">Rejected</span>
-                </div>
-            </div>
-            <div class="admin-note rejected">
-                <i class="fa-solid fa-triangle-exclamation"></i>
-                <span><strong>Admin Reason:</strong> UTR Number match nahi hua ya payment account me receive nahi hui.</span>
-            </div>
-        </div>
-
-        <!-- Withdrawal Pending -->
-        <div class="card">
-            <div class="card-top">
-                <div class="card-left">
-                    <span class="card-title">Withdrawal Request</span>
-                    <span class="card-subtitle">UPI ID: user@okhdfcbank</span>
-                    <span class="card-date">19 Aug 2026, 11:45 AM</span>
-                </div>
-                <div class="card-right">
-                    <span class="amount debit">- ₹300</span>
-                    <span class="badge badge-pending">Pending</span>
-                </div>
-            </div>
-            <div class="admin-note pending">
-                <i class="fa-solid fa-clock"></i>
-                <span>Admin verification me hai. Payout 15-30 minute me send kar diya jayega.</span>
-            </div>
-        </div>
-
+    <!-- Transactions Container -->
+    <section id="transactions-tab" class="content-section">
+        <div id="transactions-list" class="loading-box"><i class="fa-solid fa-spinner fa-spin"></i> Transactions load ho rahe hain...</div>
     </section>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Bottom Nav -->
     <nav class="bottom-nav">
         <a href="dashboard.html" class="nav-item">
             <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div>
@@ -444,8 +350,88 @@
         </a>
     </nav>
 
-    <!-- Switch Tab Script -->
     <script>
+        // 1. Firebase Config Setup (Aapke dashboard.html / admin.html wala config)
+        const firebaseConfig = {
+            apiKey: "AIzaSy...",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "...",
+            appId: "..."
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        // 2. Logged In User ka Phone/ID check karein
+        const currentUserPhone = localStorage.getItem("userPhone") || "917878852370";
+
+        // 3. Real-Time Transactions Load
+        function loadRealTransactions() {
+            const listContainer = document.getElementById("transactions-list");
+
+            db.collection("deposits")
+              .where("userPhone", "==", currentUserPhone)
+              .onSnapshot((snapshot) => {
+                  if (snapshot.empty) {
+                      listContainer.innerHTML = `<div class="empty-box"><i class="fa-solid fa-receipt fa-2x"></i><br><br>Koi transaction history nahi mili.</div>`;
+                      return;
+                  }
+
+                  let html = "";
+                  snapshot.forEach((doc) => {
+                      const data = doc.data();
+                      const status = (data.status || "pending").toLowerCase();
+                      
+                      let badgeClass = "badge-pending";
+                      let noteClass = "pending";
+                      let icon = "fa-clock";
+                      let comment = data.adminComment || "Admin verification me hai.";
+
+                      if (status === "approved") {
+                          badgeClass = "badge-approved";
+                          noteClass = "approved";
+                          icon = "fa-circle-check";
+                          comment = data.adminComment || "Payment verify ho gaya hai. Balance wallet me add ho gaya hai.";
+                      } else if (status === "rejected") {
+                          badgeClass = "badge-rejected";
+                          noteClass = "rejected";
+                          icon = "fa-triangle-exclamation";
+                          comment = "<strong>Admin Reason:</strong> " + (data.adminComment || "Payment details match nahi hui.");
+                      }
+
+                      const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : "Recently";
+
+                      html += `
+                        <div class="card">
+                            <div class="card-top">
+                                <div class="card-left">
+                                    <span class="card-title">${data.type || 'Deposit (UPI)'}</span>
+                                    <span class="card-subtitle">UTR: ${data.utr || 'N/A'}</span>
+                                    <span class="card-date">${date}</span>
+                                </div>
+                                <div class="card-right">
+                                    <span class="amount ${status === 'approved' ? 'credit' : 'debit'}">₹${data.amount || 0}</span>
+                                    <span class="badge ${badgeClass}">${status}</span>
+                                </div>
+                            </div>
+                            <div class="admin-note ${noteClass}">
+                                <i class="fa-solid ${icon}"></i>
+                                <span>${comment}</span>
+                            </div>
+                        </div>
+                      `;
+                  });
+                  listContainer.innerHTML = html;
+              }, (error) => {
+                  listContainer.innerHTML = `<div class="empty-box" style="color:#ef4444;">Error loading history. Database check karein.</div>`;
+              });
+        }
+
+        // 4. Tab Switcher
         function switchTab(tabName) {
             const matchesTab = document.getElementById('matches-tab');
             const transTab = document.getElementById('transactions-tab');
@@ -463,6 +449,11 @@
                 buttons[1].classList.add('active');
             }
         }
+
+        // Init
+        window.onload = () => {
+            loadRealTransactions();
+        };
     </script>
 </body>
 </html>
