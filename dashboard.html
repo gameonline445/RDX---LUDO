@@ -29,65 +29,78 @@ try {
 </script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
 body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f7f9ff;color:#101a38;min-height:100vh;}
 button{font:inherit;}
 
 /* TOP HEADER */
-.top-header{height:76px;background:linear-gradient(110deg,#eef4ff,#ffffff);border-bottom:1px solid #cbd8f0;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:100;box-shadow:0 5px 18px rgba(36,75,150,.08);}
-.header-left{display:flex;align-items:center;gap:12px;}
-.menu-btn{width:48px;height:48px;border:0;border-radius:16px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:white;font-size:27px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 15px rgba(255,93,80,.25);cursor:pointer;}
-.logo{width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e7efff);border:3px solid #d3e1ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-size:13px;font-weight:900;box-shadow:0 5px 12px rgba(36,93,190,.15);cursor:pointer;}
-.header-right{display:flex;align-items:center;gap:9px;}
-.header-icon{width:48px;height:48px;border:0;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;color:white;box-shadow:0 6px 15px rgba(0,0,0,.12);}
-.notification{background:linear-gradient(145deg,#746df4,#817eff);}
-.wallet-top{background:linear-gradient(145deg,#20c36b,#43d77e);min-width:72px;padding:0 12px;font-size:17px;font-weight:800;}
-.redeem-top{background:linear-gradient(145deg,#ff8a35,#ffad45);min-width:72px;padding:0 12px;font-size:17px;font-weight:800;}
+.top-header{height:66px;background:linear-gradient(110deg,#eef4ff,#ffffff);border-bottom:1px solid #cbd8f0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:100;box-shadow:0 4px 15px rgba(36,75,150,.06);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:white;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(255,93,80,.22);cursor:pointer;}
 
-/* MAIN */
-.container{width:100%;max-width:850px;margin:auto;padding:0 18px 125px;}
-.welcome{padding-top:35px;}
-.welcome h1{font-size:29px;font-weight:850;letter-spacing:-.7px;}
-.welcome p{margin-top:8px;color:#71809d;font-size:17px;}
-.referral{margin-top:30px;min-height:140px;border:1.5px solid #abc2f4;border-radius:27px;padding:28px 25px;background:radial-gradient(circle at 100% 0%,#dce8ff,transparent 40%),linear-gradient(135deg,#eef4ff,#ffffff);display:flex;align-items:center;justify-content:space-between;box-shadow:0 15px 35px rgba(40,88,175,.10);cursor:pointer;}
+.logo{width:44px;height:44px;border-radius:50%;background:#ffffff;border:2.5px solid #d3e1ff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(36,93,190,.12);cursor:pointer;overflow:hidden;}
+.logo img{width:100%;height:100%;object-fit:cover;}
+
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{height:38px;border:0;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(0,0,0,.10);padding:0 12px;gap:5px;}
+.notification{width:38px;padding:0;border-radius:50%;background:linear-gradient(145deg,#746df4,#817eff);}
+.wallet-top{background:linear-gradient(145deg,#20c36b,#43d77e);font-size:13px;font-weight:800;}
+.redeem-top{background:linear-gradient(145deg,#ff8a35,#ffad45);font-size:13px;font-weight:800;}
+
+/* MAIN CONTAINER */
+.container{width:100%;max-width:650px;margin:auto;padding:16px 14px 110px;}
+
+.welcome{padding-top:10px;}
+.welcome h1{font-size:22px;font-weight:900;letter-spacing:-.4px;color:#0f172a;}
+.welcome p{margin-top:3px;color:#64748b;font-size:13px;font-weight:500;}
+
+/* REFERRAL CARD */
+.referral{margin-top:16px;border:1.5px solid #cbdcf7;border-radius:20px;padding:16px 18px;background:linear-gradient(135deg,#f0f5ff 0%,#ffffff 100%);display:flex;align-items:center;justify-content:space-between;box-shadow:0 8px 20px rgba(40,88,175,.06);cursor:pointer;}
 .referral:active{transform:scale(.99);}
-.referral small{display:block;color:#61708c;font-weight:800;letter-spacing:1.5px;font-size:13px;}
-.referral strong{display:block;margin-top:8px;font-size:38px;letter-spacing:-1px;}
-.referral-text{color:#52627f;font-size:15px;margin-top:2px;}
-.referral-arrow{width:56px;height:56px;border-radius:50%;background:#2868e8;color:white;display:flex;align-items:center;justify-content:center;font-size:29px;box-shadow:0 10px 22px rgba(40,104,232,.28);}
+.referral small{display:block;color:#64748b;font-weight:800;letter-spacing:1px;font-size:11px;}
+.referral strong{display:block;margin-top:2px;font-size:24px;font-weight:900;letter-spacing:-.5px;color:#0f172a;}
+.referral-text{color:#64748b;font-size:12px;margin-top:2px;}
+.referral-arrow{width:42px;height:42px;border-radius:50%;background:#2563eb;color:white;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:0 6px 15px rgba(37,99,235,.28);}
 
-.section-head{margin-top:38px;margin-bottom:16px;}
-.section-head small{color:#2564da;font-size:14px;font-weight:850;letter-spacing:2px;}
-.section-head h2{margin-top:6px;font-size:25px;}
+.section-head{margin-top:22px;margin-bottom:10px;}
+.section-head small{color:#2564da;font-size:11px;font-weight:850;letter-spacing:1.5px;}
+.section-head h2{margin-top:2px;font-size:18px;font-weight:900;}
 
-.game-card{height:290px;border-radius:26px;overflow:hidden;position:relative;background:#111;box-shadow:0 15px 35px rgba(0,0,0,.18);}
+/* GAME CARD */
+.game-card{height:185px;border-radius:20px;overflow:hidden;position:relative;background:#111;box-shadow:0 10px 25px rgba(0,0,0,.12);cursor:pointer;}
+.game-card:active{transform:scale(0.99);}
 .game-card img{width:100%;height:100%;object-fit:cover;}
-.game-overlay{position:absolute;inset:0;padding:25px;display:flex;flex-direction:column;justify-content:flex-end;color:white;background:linear-gradient(0deg,rgba(0,0,0,.78),rgba(0,0,0,.02) 70%);}
-.live{width:max-content;padding:7px 13px;border-radius:20px;background:#15944d;color:white;font-size:12px;font-weight:800;}
-.game-overlay h3{margin-top:12px;font-size:29px;}
-.game-overlay p{margin-top:5px;font-size:14px;color:#e8edf7;}
-.play-btn{margin-top:16px;width:max-content;padding:12px 22px;border:0;border-radius:25px;background:#2770ee;color:white;font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 8px 20px rgba(39,112,238,.30);}
+.game-overlay{position:absolute;inset:0;padding:14px;display:flex;flex-direction:column;justify-content:space-between;color:white;background:linear-gradient(180deg,rgba(0,0,0,.2) 0%,rgba(0,0,0,.75) 100%);}
 
-.soon-card{margin-top:16px;min-height:120px;padding:16px;background:#fff;border:1px solid #dce2ed;border-radius:23px;display:flex;align-items:center;gap:15px;box-shadow:0 8px 20px rgba(30,60,120,.05);}
-.soon-card img{width:82px;height:82px;object-fit:cover;border-radius:17px;}
+.live{width:max-content;padding:4px 9px;border-radius:12px;background:rgba(22,163,74,0.85);backdrop-filter:blur(4px);color:white;font-size:10px;font-weight:800;display:flex;align-items:center;gap:4px;}
+.game-bottom-row{display:flex;align-items:flex-end;justify-content:space-between;width:100%;}
+.game-info-left h3{font-size:18px;font-weight:900;}
+.game-info-left p{margin-top:2px;font-size:11px;color:#e2e8f0;}
+
+.play-btn{padding:8px 18px;border:0;border-radius:18px;background:#2563eb;color:white;font-size:13px;font-weight:850;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.4);display:flex;align-items:center;gap:5px;}
+
+/* COMING SOON CARD */
+.soon-card{margin-top:12px;padding:12px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 15px rgba(30,60,120,.03);}
+.soon-card img{width:56px;height:56px;object-fit:cover;border-radius:14px;}
 .soon-info{flex:1;}
-.soon-info h3{font-size:19px;}
-.soon-info p{margin-top:5px;color:#75819a;font-size:14px;}
-.soon-badge{background:#f3f5f9;border:1px solid #dce1e9;color:#65718a;padding:9px 12px;border-radius:20px;font-size:11px;font-weight:800;}
+.soon-info h3{font-size:15px;font-weight:800;}
+.soon-info p{margin-top:2px;color:#64748b;font-size:12px;}
+.soon-badge{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:6px 10px;border-radius:14px;font-size:10px;font-weight:800;display:flex;align-items:center;gap:4px;}
 
 /* SIDE MENU */
-.menu-panel{position:fixed;top:0;left:-100%;width:73%;max-width:430px;height:100vh;background:linear-gradient(180deg,#ffffff 0%,#ffffff 75%,#f9fbff 100%);z-index:300;padding:22px 22px 110px;overflow-y:auto;box-shadow:10px 0 35px rgba(0,0,0,.16);transition:left .3s ease;}
+.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100vh;background:#ffffff;z-index:300;padding:20px 16px 100px;overflow-y:auto;box-shadow:10px 0 35px rgba(0,0,0,.16);transition:left .3s ease;}
 .menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding:5px 2px 24px;border-bottom:1px solid #e1e6f0;}
-.menu-brand{display:flex;align-items:center;gap:13px;}
-.menu-logo{width:58px;height:58px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e7efff);border:3px solid #d3e1ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-size:16px;font-weight:900;cursor:pointer;}
-.menu-user h2{font-size:22px;font-weight:850;}
-.menu-user p{margin-top:4px;color:#71809d;font-size:14px;}
-.close-menu{border:0;background:#f6f7fb;border:1px solid #e0e5ee;width:52px;height:52px;border-radius:50%;font-size:30px;color:#64718a;cursor:pointer;}
-.menu-list{margin-top:22px;}
-.menu-item{width:100%;min-height:76px;border:1px solid #e1e5ed;background:linear-gradient(145deg,#ffffff,#fbfcff);padding:12px 17px;border-radius:22px;margin-bottom:12px;display:flex;align-items:center;gap:17px;text-align:left;color:#17213a;cursor:pointer;box-shadow:0 4px 12px rgba(30,55,100,.04);}
-.menu-item-icon{width:52px;height:52px;flex:0 0 52px;border-radius:17px;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;}
+.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
+.menu-brand{display:flex;align-items:center;gap:10px;}
+.menu-logo{width:46px;height:46px;border-radius:50%;border:2px solid #d3e1ff;cursor:pointer;overflow:hidden;}
+.menu-logo img{width:100%;height:100%;object-fit:cover;}
+.menu-user h2{font-size:17px;font-weight:850;}
+.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
+.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
+.menu-list{margin-top:16px;}
+.menu-item{width:100%;min-height:56px;border:1px solid #e2e8f0;background:#fafbfe;padding:8px 12px;border-radius:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;text-align:left;color:#1e293b;cursor:pointer;}
+.menu-item-icon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:17px;}
 .menu-home{background:linear-gradient(145deg,#716df5,#817eff);}
 .menu-profile{background:linear-gradient(145deg,#ff743e,#ff9c39);}
 .menu-wallet{background:linear-gradient(145deg,#18b965,#43d77e);}
@@ -95,53 +108,17 @@ button{font:inherit;}
 .menu-history{background:linear-gradient(145deg,#7259df,#9868f3);}
 .menu-notification{background:linear-gradient(145deg,#6679f5,#7d8cff);}
 .menu-support{background:linear-gradient(145deg,#12b8e0,#27c9ef);}
-.menu-item-text{flex:1;font-size:18px;font-weight:750;}
-.menu-arrow{color:#69768e;font-size:28px;}
-.menu-overlay{position:fixed;inset:0;background:rgba(17,29,55,.30);backdrop-filter:blur(3px);z-index:250;display:none;}
+.menu-item-text{flex:1;font-size:15px;font-weight:750;}
+.menu-arrow{color:#94a3b8;font-size:20px;}
+.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:250;display:none;}
 .menu-overlay.show{display:block;}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:82px;background:rgba(255,255,255,.97);border-top:1px solid #d6deee;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 20px rgba(30,65,130,.08);backdrop-filter:blur(15px);}
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#66738d;font-size:13px;cursor:pointer;}
-.nav-icon{width:44px;height:44px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;}
-.nav-item.active{color:#202d49;font-weight:700;}
-.nav-item.active .nav-icon{background:#536df5;color:white;box-shadow:0 7px 17px rgba(83,109,245,.3);}
-
-.toast{position:fixed;left:50%;top:90px;transform:translateX(-50%) translateY(-20px);background:#182440;color:white;padding:13px 18px;border-radius:14px;opacity:0;pointer-events:none;transition:.25s;z-index:500;font-size:14px;text-align:center;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-@media(max-width:700px){
-    .top-header{height:70px;padding:0 12px;}
-    .menu-btn{width:46px;height:46px;font-size:25px;}
-    .logo{width:45px;height:45px;font-size:12px;}
-    .header-right{gap:6px;}
-    .header-icon{width:44px;height:44px;border-radius:16px;}
-    .wallet-top,.redeem-top{min-width:48px;padding:0;font-size:0;}
-    .wallet-top::before{content:"💰";font-size:20px;}
-    .redeem-top::before{content:"🎁";font-size:20px;}
-    .container{padding:0 12px 105px;}
-    .welcome{padding-top:30px;}
-    .welcome h1{font-size:27px;}
-    .welcome p{font-size:15px;}
-    .referral{min-height:130px;padding:22px;border-radius:23px;}
-    .referral strong{font-size:34px;}
-    .referral-arrow{width:50px;height:50px;}
-    .game-card{height:235px;border-radius:23px;}
-    .game-overlay{padding:20px;}
-    .game-overlay h3{font-size:25px;}
-    .soon-card{min-height:105px;}
-    .soon-card img{width:70px;height:70px;}
-    .soon-badge{padding:7px 9px;font-size:10px;}
-    .bottom-nav{height:78px;}
-    .menu-panel{width:78%;max-width:390px;padding:20px 16px 105px;}
-    .menu-logo{width:54px;height:54px;}
-    .menu-user h2{font-size:20px;}
-    .menu-user p{font-size:13px;}
-    .close-menu{width:48px;height:48px;font-size:27px;}
-    .menu-item{min-height:72px;border-radius:20px;padding:10px 14px;gap:14px;}
-    .menu-item-icon{width:48px;height:48px;flex-basis:48px;border-radius:16px;font-size:22px;}
-    .menu-item-text{font-size:17px;}
-}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:68px;background:rgba(255,255,255,.98);border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;}
+.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#64748b;font-size:11px;cursor:pointer;}
+.nav-icon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.nav-item.active{color:#2563eb;font-weight:800;}
+.nav-item.active .nav-icon{background:#eff6ff;color:#2563eb;}
 </style>
 </head>
 
@@ -151,12 +128,14 @@ button{font:inherit;}
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <!-- Logo Refresh to Home -->
-        <div class="logo" onclick="goHome()">RDX</div>
+        <!-- Logo Image with Refresh to Home -->
+        <div class="logo" onclick="goHome()">
+            <img src="logo.png" alt="RDX Logo" onerror="this.onerror=null; this.parentElement.innerHTML='RDX';">
+        </div>
     </div>
     <div class="header-right">
         <button class="header-icon notification" onclick="goNotifications()">🔔</button>
-        <button class="header-icon wallet-top" onclick="goWallet()">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon wallet-top" onclick="goWallet()">🪙 <span id="topBalance">0</span></button>
         <button class="header-icon redeem-top" onclick="goRedeem()">🎁 <span id="topRedeem">0</span></button>
     </div>
 </header>
@@ -167,7 +146,9 @@ button{font:inherit;}
 <div class="menu-panel" id="menuPanel">
     <div class="menu-title">
         <div class="menu-brand">
-            <div class="menu-logo" onclick="goHome()">RDX</div>
+            <div class="menu-logo" onclick="goHome()">
+                <img src="logo.png" alt="RDX Logo" onerror="this.onerror=null; this.parentElement.innerHTML='RDX';">
+            </div>
             <div class="menu-user">
                 <h2 id="menuUsername">RDX LUDO</h2>
                 <p>Play · Win · Earn</p>
@@ -177,57 +158,24 @@ button{font:inherit;}
     </div>
 
     <div class="menu-list">
-        <button class="menu-item" onclick="goHome()">
-            <div class="menu-item-icon menu-home">🏠</div>
-            <div class="menu-item-text">Home</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goProfile()">
-            <div class="menu-item-icon menu-profile">👤</div>
-            <div class="menu-item-text">My Profile</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goWallet()">
-            <div class="menu-item-icon menu-wallet">💰</div>
-            <div class="menu-item-text">My Wallet</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goRedeem()">
-            <div class="menu-item-icon menu-refer">🎁</div>
-            <div class="menu-item-text">Refer & Earn</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goHistory()">
-            <div class="menu-item-icon menu-history">↻</div>
-            <div class="menu-item-text">History</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goNotifications()">
-            <div class="menu-item-icon menu-notification">🔔</div>
-            <div class="menu-item-text">Notifications</div>
-            <div class="menu-arrow">›</div>
-        </button>
-
-        <button class="menu-item" onclick="goSupport()">
-            <div class="menu-item-icon menu-support">🎧</div>
-            <div class="menu-item-text">Support</div>
-            <div class="menu-arrow">›</div>
-        </button>
+        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home">🏠</div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile">👤</div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet">💰</div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer">🎁</div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history">↻</div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification">🔔</div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support">🎧</div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
     </div>
 </div>
 
-<!-- MAIN -->
+<!-- MAIN CONTENT -->
 <main class="container">
     <section class="welcome">
-        <h1 id="username">Hey, User</h1>
+        <h1 id="username">Hey, Shyam</h1>
         <p>Welcome to RDX LUDO</p>
     </section>
 
+    <!-- REFERRAL -->
     <section class="referral" onclick="goRedeem()">
         <div>
             <small>REFER & EARN</small>
@@ -242,18 +190,27 @@ button{font:inherit;}
         <h2>Play Your Game</h2>
     </div>
 
-    <article class="game-card">
-        <img src="ludo-classic.jpg" alt="Ludo Classic">
+    <!-- GAME CARD (Full Card Click to Battle) -->
+    <article class="game-card" onclick="goBattles()">
+        <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
         <div class="game-overlay">
             <span class="live">● LIVE</span>
-            <h3>Ludo Classic</h3>
-            <p>Ludo game</p>
-            <button class="play-btn" onclick="goBattles()">▶ Play Now</button>
+            <div class="game-bottom-row">
+                <div class="game-info-left">
+                    <h3>Ludo Classic</h3>
+                    <p>Ludo game</p>
+                </div>
+                <!-- Play button placed on the bottom right corner -->
+                <button class="play-btn" onclick="event.stopPropagation(); goBattles();">
+                    ▶ Play
+                </button>
+            </div>
         </div>
     </article>
 
+    <!-- SOON CARD -->
     <section class="soon-card">
-        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo">
+        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
         <div class="soon-info">
             <h3>1 Goti Ludo</h3>
             <p>Coming soon</p>
@@ -264,25 +221,11 @@ button{font:inherit;}
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="goHome()">
-        <div class="nav-icon">🏠</div>
-        <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="goWallet()">
-        <div class="nav-icon">💰</div>
-        <span>Wallet</span>
-    </button>
-    <button class="nav-item" onclick="goSupport()">
-        <div class="nav-icon">🎧</div>
-        <span>Support</span>
-    </button>
-    <button class="nav-item" onclick="goProfile()">
-        <div class="nav-icon">👤</div>
-        <span>Profile</span>
-    </button>
+    <button class="nav-item active" onclick="goHome()"><div class="nav-icon">🏠</div><span>Home</span></button>
+    <button class="nav-item" onclick="goWallet()"><div class="nav-icon">💰</div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goSupport()"><div class="nav-icon">🎧</div><span>Support</span></button>
+    <button class="nav-item" onclick="goProfile()"><div class="nav-icon">👤</div><span>Profile</span></button>
 </nav>
-
-<div class="toast" id="toast"></div>
 
 <script>
 async function loadFirebaseCustomer(){
@@ -305,7 +248,7 @@ async function loadFirebaseCustomer(){
         let redeem = Number(data.redeemBalance || data.redeem || data.referralBalance || 0);
         document.getElementById("topRedeem").textContent = redeem;
 
-        let username = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User" + firebaseDocId.slice(-4));
+        let username = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
         username = String(username).trim();
         document.getElementById("username").textContent = "Hey, " + username;
         document.getElementById("menuUsername").textContent = username;
@@ -319,15 +262,8 @@ async function loadFirebaseCustomer(){
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-function openMenu(){
-    document.getElementById("menuPanel").classList.add("open");
-    document.getElementById("menuOverlay").classList.add("show");
-}
-
-function closeMenu(){
-    document.getElementById("menuPanel").classList.remove("open");
-    document.getElementById("menuOverlay").classList.remove("show");
-}
+function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
+function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
 
 function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
 function goBattles(){ closeMenu(); window.location.href = "./battles.html"; }
