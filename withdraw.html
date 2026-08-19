@@ -191,6 +191,64 @@
             background: #fff;
         }
 
+        /* Saved Details Box */
+        .saved-card {
+            background: #ffffff;
+            border: 1.5px solid #bdd0f0;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(40, 100, 230, 0.05);
+        }
+
+        .saved-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .saved-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: #101a38;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .saved-sub {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .edit-link-btn {
+            background: #eef4ff;
+            color: #2864e6;
+            border: 1px solid #cbd7e9;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .save-details-btn {
+            width: 100%;
+            height: 44px;
+            border: 1px solid #2864e6;
+            border-radius: 12px;
+            background: #eef4ff;
+            color: #2864e6;
+            font-weight: 800;
+            font-size: 13px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
         .withdraw-btn {
             width: 100%;
             height: 50px;
@@ -320,28 +378,56 @@
             <label for="withdrawAmount">ENTER WITHDRAWAL AMOUNT (₹)</label>
             <input type="number" id="withdrawAmount" placeholder="Min ₹300" min="300" max="100000">
 
-            <!-- UPI Fields -->
-            <div id="upiSection">
-                <label for="upiHolderName">VERIFIED ACCOUNT HOLDER NAME</label>
-                <input type="text" id="upiHolderName" placeholder="Account Holder Name">
+            <!-- ================= UPI SECTION ================= -->
+            <div id="upiContainer">
+                <!-- UPI Saved View (Locked) -->
+                <div id="upiSavedCard" class="saved-card" style="display: none;">
+                    <div class="saved-info">
+                        <span class="saved-title"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> <span id="displayUpiName">—</span></span>
+                        <span class="saved-sub" id="displayUpiId">—</span>
+                    </div>
+                    <button class="edit-link-btn" onclick="editUpiDetails()">✎ Edit</button>
+                </div>
 
-                <label for="upiId">UPI ID (VPA)</label>
-                <input type="text" id="upiId" placeholder="e.g. mobile@okhdfcbank">
+                <!-- UPI Input Form -->
+                <div id="upiInputFields">
+                    <label for="upiHolderName">VERIFIED ACCOUNT HOLDER NAME</label>
+                    <input type="text" id="upiHolderName" placeholder="Account Holder Name">
+
+                    <label for="upiId">UPI ID (VPA)</label>
+                    <input type="text" id="upiId" placeholder="e.g. mobile@okhdfcbank">
+
+                    <button class="save-details-btn" onclick="saveUpiDetails()"><i class="fa-solid fa-floppy-disk"></i> Lock & Save UPI</button>
+                </div>
             </div>
 
-            <!-- Bank Fields -->
-            <div id="bankSection" style="display: none;">
-                <label for="bankHolderName">ACCOUNT HOLDER NAME</label>
-                <input type="text" id="bankHolderName" placeholder="As per bank passbook">
+            <!-- ================= BANK SECTION ================= -->
+            <div id="bankContainer" style="display: none;">
+                <!-- Bank Saved View (Locked) -->
+                <div id="bankSavedCard" class="saved-card" style="display: none;">
+                    <div class="saved-info">
+                        <span class="saved-title"><i class="fa-solid fa-circle-check" style="color:#10b981;"></i> <span id="displayBankHolder">—</span></span>
+                        <span class="saved-sub" id="displayBankDetails">—</span>
+                    </div>
+                    <button class="edit-link-btn" onclick="editBankDetails()">✎ Edit</button>
+                </div>
 
-                <label for="bankName">BANK NAME</label>
-                <input type="text" id="bankName" placeholder="e.g. State Bank of India">
+                <!-- Bank Input Form -->
+                <div id="bankInputFields">
+                    <label for="bankHolderName">ACCOUNT HOLDER NAME</label>
+                    <input type="text" id="bankHolderName" placeholder="As per bank passbook">
 
-                <label for="accountNumber">ACCOUNT NUMBER</label>
-                <input type="text" id="accountNumber" placeholder="Enter bank account number">
+                    <label for="bankName">BANK NAME</label>
+                    <input type="text" id="bankName" placeholder="e.g. State Bank of India">
 
-                <label for="ifscCode">IFSC CODE</label>
-                <input type="text" id="ifscCode" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;">
+                    <label for="accountNumber">ACCOUNT NUMBER</label>
+                    <input type="text" id="accountNumber" placeholder="Enter bank account number">
+
+                    <label for="ifscCode">IFSC CODE</label>
+                    <input type="text" id="ifscCode" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;">
+
+                    <button class="save-details-btn" onclick="saveBankDetails()"><i class="fa-solid fa-floppy-disk"></i> Lock & Save Bank</button>
+                </div>
             </div>
 
             <button class="withdraw-btn" id="btnWithdraw" onclick="submitWithdrawal()">
@@ -399,6 +485,85 @@
             setTimeout(() => t.classList.remove("show"), 2500);
         }
 
+        // ================= UPI LOCK & EDIT =================
+        window.saveUpiDetails = function() {
+            const name = document.getElementById("upiHolderName").value.trim();
+            const upi = document.getElementById("upiId").value.trim();
+
+            if (!name || !upi || !upi.includes("@")) {
+                toast("Valid Account Name aur UPI ID bharein");
+                return;
+            }
+
+            localStorage.setItem("rdxSavedUpiName", name);
+            localStorage.setItem("rdxSavedUpiId", upi);
+            renderSavedUpi();
+            toast("UPI details lock & save ho gayi");
+        };
+
+        window.editUpiDetails = function() {
+            document.getElementById("upiSavedCard").style.display = "none";
+            document.getElementById("upiInputFields").style.display = "block";
+        };
+
+        function renderSavedUpi() {
+            const name = localStorage.getItem("rdxSavedUpiName");
+            const upi = localStorage.getItem("rdxSavedUpiId");
+
+            if (name && upi) {
+                document.getElementById("displayUpiName").textContent = name;
+                document.getElementById("displayUpiId").textContent = upi;
+                document.getElementById("upiSavedCard").style.display = "flex";
+                document.getElementById("upiInputFields").style.display = "none";
+            } else {
+                document.getElementById("upiSavedCard").style.display = "none";
+                document.getElementById("upiInputFields").style.display = "block";
+            }
+        }
+
+        // ================= BANK LOCK & EDIT =================
+        window.saveBankDetails = function() {
+            const holder = document.getElementById("bankHolderName").value.trim();
+            const bank = document.getElementById("bankName").value.trim();
+            const acc = document.getElementById("accountNumber").value.trim();
+            const ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
+
+            if (!holder || !bank || acc.length < 8 || ifsc.length < 8) {
+                toast("Sabhi Bank details sahi se bharein");
+                return;
+            }
+
+            localStorage.setItem("rdxSavedBankHolder", holder);
+            localStorage.setItem("rdxSavedBankName", bank);
+            localStorage.setItem("rdxSavedAccNum", acc);
+            localStorage.setItem("rdxSavedIfsc", ifsc);
+            renderSavedBank();
+            toast("Bank details lock & save ho gayi");
+        };
+
+        window.editBankDetails = function() {
+            document.getElementById("bankSavedCard").style.display = "none";
+            document.getElementById("bankInputFields").style.display = "block";
+        };
+
+        function renderSavedBank() {
+            const holder = localStorage.getItem("rdxSavedBankHolder");
+            const bank = localStorage.getItem("rdxSavedBankName");
+            const acc = localStorage.getItem("rdxSavedAccNum");
+            const ifsc = localStorage.getItem("rdxSavedIfsc");
+
+            if (holder && bank && acc && ifsc) {
+                document.getElementById("displayBankHolder").textContent = holder;
+                document.getElementById("displayBankDetails").textContent = `${bank} • A/C: ${acc} • IFSC: ${ifsc}`;
+                document.getElementById("bankSavedCard").style.display = "flex";
+                document.getElementById("bankInputFields").style.display = "none";
+            } else {
+                document.getElementById("bankSavedCard").style.display = "none";
+                document.getElementById("bankInputFields").style.display = "block";
+            }
+        }
+
+        // ================= LOAD INITIAL DATA =================
         async function loadUserData() {
             if (!userId) {
                 toast("Pehle login karein");
@@ -406,13 +571,17 @@
                 return;
             }
 
-            // Load saved inputs
+            // Fill input values from cache
             document.getElementById("upiHolderName").value = localStorage.getItem("rdxSavedUpiName") || "";
             document.getElementById("upiId").value = localStorage.getItem("rdxSavedUpiId") || "";
             document.getElementById("bankHolderName").value = localStorage.getItem("rdxSavedBankHolder") || "";
             document.getElementById("bankName").value = localStorage.getItem("rdxSavedBankName") || "";
             document.getElementById("accountNumber").value = localStorage.getItem("rdxSavedAccNum") || "";
             document.getElementById("ifscCode").value = localStorage.getItem("rdxSavedIfsc") || "";
+
+            // Render Lock/Saved boxes
+            renderSavedUpi();
+            renderSavedBank();
 
             try {
                 let docId = userId.length === 10 ? "91" + userId : userId;
@@ -423,7 +592,7 @@
                     document.getElementById("winningBalance").textContent = userWinnings;
                 }
             } catch (err) {
-                console.error("Error loading user balance:", err);
+                console.error("Error loading balance:", err);
             }
         }
 
@@ -431,10 +600,11 @@
             currentMode = mode;
             document.getElementById("tabUpi").classList.toggle("active", mode === "upi");
             document.getElementById("tabBank").classList.toggle("active", mode === "bank");
-            document.getElementById("upiSection").style.display = mode === "upi" ? "block" : "none";
-            document.getElementById("bankSection").style.display = mode === "bank" ? "block" : "none";
+            document.getElementById("upiContainer").style.display = mode === "upi" ? "block" : "none";
+            document.getElementById("bankContainer").style.display = mode === "bank" ? "block" : "none";
         };
 
+        // ================= SUBMIT WITHDRAWAL =================
         window.submitWithdrawal = async function() {
             const amount = Number(document.getElementById("withdrawAmount").value);
             const btn = document.getElementById("btnWithdraw");
@@ -464,27 +634,24 @@
             };
 
             if (currentMode === "upi") {
-                const holderName = document.getElementById("upiHolderName").value.trim();
-                const upiId = document.getElementById("upiId").value.trim();
+                const holderName = localStorage.getItem("rdxSavedUpiName") || document.getElementById("upiHolderName").value.trim();
+                const upiId = localStorage.getItem("rdxSavedUpiId") || document.getElementById("upiId").value.trim();
 
                 if (!holderName || !upiId || !upiId.includes("@")) {
-                    toast("Valid UPI ID aur Holder Name bharein");
+                    toast("Pehle UPI details daalkar Save karein");
                     return;
                 }
 
                 withdrawData.holderName = holderName;
                 withdrawData.upiId = upiId;
-
-                localStorage.setItem("rdxSavedUpiName", holderName);
-                localStorage.setItem("rdxSavedUpiId", upiId);
             } else {
-                const holderName = document.getElementById("bankHolderName").value.trim();
-                const bankName = document.getElementById("bankName").value.trim();
-                const accNum = document.getElementById("accountNumber").value.trim();
-                const ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
+                const holderName = localStorage.getItem("rdxSavedBankHolder") || document.getElementById("bankHolderName").value.trim();
+                const bankName = localStorage.getItem("rdxSavedBankName") || document.getElementById("bankName").value.trim();
+                const accNum = localStorage.getItem("rdxSavedAccNum") || document.getElementById("accountNumber").value.trim();
+                const ifsc = localStorage.getItem("rdxSavedIfsc") || document.getElementById("ifscCode").value.trim().toUpperCase();
 
                 if (!holderName || !bankName || accNum.length < 8 || ifsc.length < 8) {
-                    toast("Sabhi Bank details sahi se bharein");
+                    toast("Pehle Bank details daalkar Save karein");
                     return;
                 }
 
@@ -492,11 +659,6 @@
                 withdrawData.bankName = bankName;
                 withdrawData.accountNumber = accNum;
                 withdrawData.ifsc = ifsc;
-
-                localStorage.setItem("rdxSavedBankHolder", holderName);
-                localStorage.setItem("rdxSavedBankName", bankName);
-                localStorage.setItem("rdxSavedAccNum", accNum);
-                localStorage.setItem("rdxSavedIfsc", ifsc);
             }
 
             btn.disabled = true;
