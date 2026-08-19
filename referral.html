@@ -166,9 +166,9 @@ function copyReferralCode() {
 }
 
 function shareWhatsApp() {
-    // 404 Free Relative Registration Link:
+    // 1. WhatsApp share link direct index.html par bheje gi
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-    const inviteLink = `${baseUrl}/login.html?ref=${encodeURIComponent(myReferralCode)}`;
+    const inviteLink = `${baseUrl}/index.html?ref=${encodeURIComponent(myReferralCode)}`;
     const text = `🔥 Play Ludo on RDX LUDO and win real money daily! 🏆\n\n👉 Join using my link & get cash bonus:\n${inviteLink}\n\n🎟 Or use Referral Code: *${myReferralCode}*`;
     window.location.href = `https://wa.me/?text=${encodeURIComponent(text)}`;
 }
