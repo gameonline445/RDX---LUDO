@@ -373,38 +373,24 @@ body{
 
 <script>
 const firebaseConfig = {
-    apiKey:
-        "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain:
-        "rdx-ludo.firebaseapp.com",
-    projectId:
-        "rdx-ludo",
-    storageBucket:
-        "rdx-ludo.firebasestorage.app",
-    messagingSenderId:
-        "928340814840",
-    appId:
-        "1:928340814840:web:6eca42a8b76138b268440d"
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
 let firebaseDB = null;
 
 try{
     if(!firebase.apps.length){
-        firebase.initializeApp(
-            firebaseConfig
-        );
+        firebase.initializeApp(firebaseConfig);
     }
-    firebaseDB =
-        firebase.firestore();
-    console.log(
-        "FIREBASE FIRESTORE CONNECTED"
-    );
+    firebaseDB = firebase.firestore();
+    console.log("FIREBASE FIRESTORE CONNECTED");
 }catch(error){
-    console.error(
-        "FIREBASE INITIALIZATION ERROR:",
-        error
-    );
+    console.error("FIREBASE INITIALIZATION ERROR:", error);
 }
 </script>
 
@@ -609,6 +595,13 @@ let resendSeconds = 30;
 let resendTimer = null;
 let msg91Ready = false;
 
+// 1. Referral Code Lock on Login Page
+const urlParams = new URLSearchParams(window.location.search);
+const refFromUrl = urlParams.get('ref');
+if (refFromUrl && !localStorage.getItem("rdxReferredBy")) {
+    localStorage.setItem("rdxReferredBy", refFromUrl.trim().toUpperCase());
+}
+
 function showMessage(message){
     toast.textContent = message;
     toast.classList.add("show");
@@ -775,6 +768,7 @@ function verifyOTP(){
     );
 }
 
+// 2. LIFETIME REFERRAL LOCK DATABASE LOGIC
 async function saveCustomerToFirebase(mobile){
     try{
         if(!firebaseDB){
@@ -790,21 +784,46 @@ async function saveCustomerToFirebase(mobile){
         }
 
         const userRef = firebaseDB.collection("customers").doc(cleanMobile);
+        const userSnap = await userRef.get();
         const now = firebase.firestore.FieldValue.serverTimestamp();
 
-        await userRef.set(
-            {
+        // Agar user pehle se database me hai, toh uska pura referral lock rahega
+        let finalReferredBy = localStorage.getItem("rdxReferredBy") || "DIRECT";
+        if (userSnap.exists && userSnap.data().referredBy) {
+            finalReferredBy = userSnap.data().referredBy;
+        }
+
+        const myReferralCode = "RDX" + cleanMobile.slice(-4);
+        const defaultName = "User " + cleanMobile.slice(-4);
+
+        if (!userSnap.exists) {
+            // Naya user creation with permanent lock
+            await userRef.set({
+                mobile: "+" + cleanMobile,
+                name: defaultName,
+                balance: 0,
+                depositBalance: 0,
+                winnings: 0,
+                referralBalance: 0,
+                referredBy: finalReferredBy,
+                referralCode: myReferralCode,
+                status: "active",
+                createdAt: now,
+                lastLoginAt: now
+            });
+        } else {
+            // Existing user login - Never overwrite name or referredBy
+            await userRef.set({
                 mobile: "+" + cleanMobile,
                 status: "active",
                 lastLoginAt: now
-            },
-            {
-                merge: true
-            }
-        );
+            }, { merge: true });
+        }
 
         localStorage.setItem("rdxFirebaseUserId", cleanMobile);
         localStorage.setItem("rdxVerifiedMobile", cleanMobile);
+        localStorage.setItem("rdxReferredBy", finalReferredBy);
+        localStorage.setItem("rdxReferral", userSnap.exists ? (userSnap.data().referralCode || myReferralCode) : myReferralCode);
         return true;
     }catch(error){
         console.error("FIREBASE CUSTOMER SAVE ERROR", error);
