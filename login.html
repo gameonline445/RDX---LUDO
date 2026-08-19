@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - Login / Verify</title>
+<title>RDX LUDO - Login</title>
 
 <!-- MSG91 OTP Widget Script -->
 <script type="text/javascript" src="https://control.msg91.com/app/assets/otp-provider/otp-provider.js"></script>
@@ -93,18 +93,6 @@ input:focus{border-color:#0284c7;background:#ffffff;}
 
 .btn-action:disabled{opacity:0.6;cursor:not-allowed;}
 
-.ref-notice{
-    font-size:11px;
-    color:#15803d;
-    background:#dcfce7;
-    border:1px solid #86efac;
-    padding:8px;
-    border-radius:10px;
-    margin-bottom:14px;
-    display:none;
-    font-weight:700;
-}
-
 .resend-box{
     margin-top:14px;
     font-size:12px;
@@ -115,7 +103,6 @@ input:focus{border-color:#0284c7;background:#ffffff;}
     color:#0284c7;
     font-weight:800;
     cursor:pointer;
-    text-decoration:none;
 }
 </style>
 </head>
@@ -127,12 +114,7 @@ input:focus{border-color:#0284c7;background:#ffffff;}
     <h1>RDX LUDO</h1>
     <p id="pageSubtitle">Enter your 10-digit mobile number</p>
 
-    <!-- Referral Applied Badge -->
-    <div id="refNotice" class="ref-notice">
-        🎁 Referral Code Applied: <span id="displayRefCode"></span>
-    </div>
-
-    <!-- STEP 1: MOBILE NUMBER FORM -->
+    <!-- STEP 1: MOBILE NUMBER -->
     <div id="mobileSection">
         <div class="input-group">
             <label>PHONE NUMBER</label>
@@ -141,22 +123,22 @@ input:focus{border-color:#0284c7;background:#ffffff;}
         <button class="btn-action" id="btnSendOtp" onclick="sendOtp()">Send OTP</button>
     </div>
 
-    <!-- STEP 2: OTP VERIFICATION FORM (HIDDEN BY DEFAULT) -->
+    <!-- STEP 2: OTP VERIFICATION -->
     <div id="otpSection" style="display:none;">
         <div class="input-group">
-            <label>ENTER 4/6-DIGIT OTP</label>
+            <label>ENTER OTP</label>
             <input type="number" id="otpInput" placeholder="••••" maxlength="6" inputmode="numeric">
         </div>
         <button class="btn-action" id="btnVerifyOtp" onclick="verifyOtp()">Verify & Login</button>
         
         <div class="resend-box">
-            OTP nahi mila? <span class="resend-btn" onclick="retryOtp()">Resend OTP</span> | <span class="resend-btn" onclick="changeNumber()">Change Number</span>
+            OTP nahi mila? <span class="resend-btn" onclick="sendOtp()">Resend OTP</span> | <span class="resend-btn" onclick="changeNumber()">Change Number</span>
         </div>
     </div>
 </div>
 
 <script>
-// ================= FIREBASE INITIALIZATION =================
+// ================= FIREBASE CONFIG =================
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -168,22 +150,17 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// MSG91 OTP Configuration
-const MSG91_WIDGET_ID = "346473667468303831343733";
-const MSG91_AUTH_TOKEN = "415053Tw7tFq1FjM65be3797P1";
-
-let enteredMobile = "";
-
-// 1. Capture Referral Code from Link (login.html?ref=CODE)
+// 1. Capture Referral Code from Link (?ref=CODE)
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if(refFromUrl){
     localStorage.setItem("rdxReferredBy", refFromUrl.trim().toUpperCase());
-    document.getElementById("refNotice").style.display = "block";
-    document.getElementById("displayRefCode").textContent = refFromUrl.trim().toUpperCase();
 }
 
-// 2. SEND OTP VIA MSG91
+let enteredMobile = "";
+let otpObj = null;
+
+// 2. SEND OTP VIA MSG91 PROVIDER
 function sendOtp(){
     const mob = document.getElementById("mobileInput").value.trim().replace(/\D/g,"");
     if(mob.length !== 10){
@@ -196,48 +173,39 @@ function sendOtp(){
     btn.disabled = true;
     btn.textContent = "Sending OTP...";
 
-    // MSG91 Widget Trigger
-    if (window.initSendOTP) {
-        window.initSendOTP({
-            widgetId: MSG91_WIDGET_ID,
-            tokenAuth: MSG91_AUTH_TOKEN,
-            identifier: "91" + enteredMobile,
-            success: function (data) {
-                btn.disabled = false;
-                btn.textContent = "Send OTP";
-                document.getElementById("mobileSection").style.display = "none";
-                document.getElementById("otpSection").style.display = "block";
-                document.getElementById("pageSubtitle").textContent = `OTP sent to +91 ${enteredMobile}`;
-            },
-            failure: function (error) {
-                btn.disabled = false;
-                btn.textContent = "Send OTP";
-                alert("OTP Send Error: " + (error.message || "Msg91 Service Busy"));
-            }
-        });
-    } else {
-        // Fallback Direct MSG91 Request
-        fetch(`https://control.msg91.com/api/v5/otp?template_id=${MSG91_WIDGET_ID}&mobile=91${enteredMobile}&authkey=${MSG91_AUTH_TOKEN}`, {
-            method: 'POST'
-        }).then(r => r.json()).then(res => {
+    const configuration = {
+        widgetId: "346473667468303831343733",
+        tokenAuth: "415053Tw7tFq1FjM65be3797P1",
+        identifier: "91" + enteredMobile,
+        exposeMethods: true,
+        success: (data) => {
             btn.disabled = false;
             btn.textContent = "Send OTP";
             document.getElementById("mobileSection").style.display = "none";
             document.getElementById("otpSection").style.display = "block";
             document.getElementById("pageSubtitle").textContent = `OTP sent to +91 ${enteredMobile}`;
-        }).catch(err => {
+        },
+        failure: (error) => {
             btn.disabled = false;
             btn.textContent = "Send OTP";
-            alert("OTP bhejne me samasya aayi. Dobara try karein.");
-        });
+            alert("OTP Bhejne me samasya: " + (error?.message || "Kripya number check karein"));
+        }
+    };
+
+    if (window.initSendOTP) {
+        otpObj = window.initSendOTP(configuration);
+    } else {
+        btn.disabled = false;
+        btn.textContent = "Send OTP";
+        alert("MSG91 widget load nahi hua. Page refresh karein.");
     }
 }
 
-// 3. VERIFY OTP VIA MSG91 & AUTO LOGIN
+// 3. VERIFY OTP
 function verifyOtp(){
     const otp = document.getElementById("otpInput").value.trim();
     if(!otp || otp.length < 4){
-        alert("Kripya sahi OTP enter karein");
+        alert("Kripya sahi OTP daalein");
         return;
     }
 
@@ -245,42 +213,41 @@ function verifyOtp(){
     btn.disabled = true;
     btn.textContent = "Verifying...";
 
-    if (window.verifyOTP) {
-        window.verifyOTP({
-            widgetId: MSG91_WIDGET_ID,
-            tokenAuth: MSG91_AUTH_TOKEN,
-            identifier: "91" + enteredMobile,
+    if (otpObj && typeof otpObj.verifyOTP === "function") {
+        otpObj.verifyOTP({
             otp: otp,
-            success: function (data) {
+            success: (data) => {
                 onVerificationSuccess();
             },
-            failure: function (error) {
+            failure: (error) => {
+                btn.disabled = false;
+                btn.textContent = "Verify & Login";
+                alert("Galat OTP! Kripya sahi OTP daalein.");
+            }
+        });
+    } else if (window.verifyOTP) {
+        window.verifyOTP({
+            widgetId: "346473667468303831343733",
+            tokenAuth: "415053Tw7tFq1FjM65be3797P1",
+            identifier: "91" + enteredMobile,
+            otp: otp,
+            success: (data) => {
+                onVerificationSuccess();
+            },
+            failure: (error) => {
                 btn.disabled = false;
                 btn.textContent = "Verify & Login";
                 alert("Galat OTP! Kripya sahi OTP daalein.");
             }
         });
     } else {
-        // Fallback Verify API
-        fetch(`https://control.msg91.com/api/v5/otp/verify?otp=${otp}&mobile=91${enteredMobile}&authkey=${MSG91_AUTH_TOKEN}`, {
-            method: 'GET'
-        }).then(r => r.json()).then(res => {
-            if(res.type === "success" || res.message === "OTP verified success"){
-                onVerificationSuccess();
-            } else {
-                btn.disabled = false;
-                btn.textContent = "Verify & Login";
-                alert("Galat OTP! Kripya sahi code daalein.");
-            }
-        }).catch(err => {
-            btn.disabled = false;
-            btn.textContent = "Verify & Login";
-            alert("Verification error. Kripya dobara koshish karein.");
-        });
+        btn.disabled = false;
+        btn.textContent = "Verify & Login";
+        alert("Verification service ready nahi hai. Dobara OTP mangwayein.");
     }
 }
 
-// 4. ON SUCCESSFUL OTP -> SYNC FIREBASE & LOGIN
+// 4. FIREBASE SYNC & REDIRECT
 async function onVerificationSuccess(){
     const docId = "91" + enteredMobile;
     const referredByCode = localStorage.getItem("rdxReferredBy") || "DIRECT";
@@ -292,7 +259,7 @@ async function onVerificationSuccess(){
         const snap = await uRef.get();
 
         if(!snap.exists){
-            // Naya user create karein (Without Name field - Default User Name set hoga)
+            // Naye user ke liye Firebase entry:
             await uRef.set({
                 mobile: enteredMobile,
                 name: defaultName,
@@ -306,7 +273,7 @@ async function onVerificationSuccess(){
             });
         }
 
-        // Sessions set karein
+        // Session Save
         localStorage.setItem("rdxFirebaseUserId", docId);
         localStorage.setItem("rdxVerifiedMobile", enteredMobile);
         localStorage.setItem("rdxLoggedIn", "true");
@@ -320,10 +287,6 @@ async function onVerificationSuccess(){
         document.getElementById("btnVerifyOtp").disabled = false;
         document.getElementById("btnVerifyOtp").textContent = "Verify & Login";
     }
-}
-
-function retryOtp(){
-    sendOtp();
 }
 
 function changeNumber(){
