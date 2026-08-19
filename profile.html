@@ -6,6 +6,9 @@
 <title>RDX LUDO - Profile</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 body{
@@ -30,21 +33,6 @@ body{
 .wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);min-width:38px;}
 .redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);min-width:38px;}
 
-/* SIDE MENU */
-.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:250;display:none;}
-.menu-overlay.show{display:block;}
-.menu-panel{position:fixed;top:0;left:-310px;width:300px;height:100vh;background:white;z-index:300;padding:20px 16px;box-shadow:10px 0 35px rgba(0,0,0,.15);transition:.3s ease;overflow-y:auto;}
-.menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;margin-bottom:16px;border-bottom:1px solid #e3e8f2;}
-.menu-brand{display:flex;align-items:center;gap:10px;}
-.menu-logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e0f2fe);border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:900;cursor:pointer;}
-.menu-brand h2{font-size:17px;}
-.menu-brand p{color:#71809d;font-size:11px;margin-top:2px;}
-.close-menu{border:0;background:#eef2fa;width:36px;height:36px;border-radius:50%;font-size:20px;color:#66738d;cursor:pointer;}
-.menu-item{width:100%;border:1px solid #e0e5ef;background:#fafbfe;padding:12px 14px;border-radius:14px;margin-bottom:10px;text-align:left;font-size:15px;color:#182440;cursor:pointer;display:flex;align-items:center;gap:12px;}
-.menu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#e8efff;font-size:17px;}
-.menu-item span:nth-child(2){flex:1;}
-
 /* MAIN */
 .main{width:100%;max-width:650px;margin:auto;padding:16px 14px 100px;}
 .profile-card{border:1.5px solid #7dd3fc;border-radius:20px;padding:16px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
@@ -57,14 +45,15 @@ body{
 .mobile-number{margin-top:3px;color:#64748b;font-size:12px;}
 .kyc-btn{margin-top:6px;border:0;border-radius:16px;padding:6px 12px;background:linear-gradient(90deg,#0284c7,#0369a1);color:#fff;font-size:11px;font-weight:800;cursor:pointer;}
 
-.referral-applied{margin-top:14px;padding:14px;border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;}
+/* REFERRAL APPLIED BOX */
+.referral-applied{margin-top:14px;padding:14px;border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.04);}
 .referral-head{display:flex;align-items:center;gap:10px;}
 .referral-icon{width:36px;height:36px;border-radius:10px;background:#e0f2fe;color:#0284c7;display:flex;align-items:center;justify-content:center;font-size:16px;}
 .referral-head h3{font-size:14px;}
 .referral-head p{margin-top:2px;color:#64748b;font-size:11px;}
-.referral-code{margin-top:10px;height:44px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
-.referral-code strong{font-size:15px;letter-spacing:1px;color:#0f172a;}
-.code-check{color:#16a34a;font-weight:900;}
+.referral-code{margin-top:10px;height:44px;border-radius:12px;background:#f8fafc;border:1px solid #e2e8f0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;}
+.referral-code strong{font-size:16px;letter-spacing:1.5px;color:#0f172a;font-weight:900;}
+.code-check{color:#16a34a;font-weight:900;font-size:16px;}
 
 .section-label{margin-top:18px;margin-bottom:8px;color:#0284c7;font-size:11px;font-weight:850;letter-spacing:1.5px;}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
@@ -101,69 +90,48 @@ body{
 .name-input{width:100%;height:44px;border:1.5px solid #cbd5e1;border-radius:12px;padding:0 12px;font-size:14px;outline:none;margin-top:6px;}
 .modal-save{width:100%;height:44px;margin-top:12px;border:0;border-radius:12px;background:linear-gradient(90deg,#0284c7,#0369a1);color:#fff;font-size:14px;font-weight:800;cursor:pointer;}
 </style>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain: "rdx-ludo.firebaseapp.com",
-    projectId: "rdx-ludo",
-    storageBucket: "rdx-ludo.firebasestorage.app",
-    messagingSenderId: "928340814840",
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
-};
-let firebaseDB = null;
-try{ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); firebaseDB = firebase.firestore(); }catch(e){}
-</script>
 </head>
 
 <body>
 
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="openMenu()">☰</button>
-        <div class="logo" onclick="goHome()">RDX</div>
+        <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
+        <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="goNotifications()">🔔</button>
-        <button class="header-icon wallet-top" onclick="goWallet()">💰</button>
-        <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
+        <button class="header-icon notification" onclick="location.href='notification.html'">🔔</button>
+        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰</button>
+        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁</button>
     </div>
 </header>
-
-<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
-
-<div class="menu-panel" id="menuPanel">
-    <div class="menu-title">
-        <div class="menu-brand">
-            <div class="menu-logo" onclick="goHome()">RDX</div>
-            <div><h2>RDX LUDO</h2><p>Play · Win · Earn</p></div>
-        </div>
-        <button class="close-menu" onclick="closeMenu()">×</button>
-    </div>
-    <button class="menu-item" onclick="goHome()"><div class="menu-icon">🏠</div><span>Home</span><span>›</span></button>
-    <button class="menu-item" onclick="goProfile()"><div class="menu-icon">👤</div><span>My Profile</span><span>›</span></button>
-    <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet">💰</div><span>My Wallet</span><span>›</span></button>
-    <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer">🎁</div><span>Refer & Earn</span><span>›</span></button>
-    <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history">↻</div><span>History</span><span>›</span></button>
-    <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification">🔔</div><span>Notifications</span><span>›</span></button>
-    <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support">🎧</div><span>Support</span><span>›</span></button>
-    <button class="menu-item" onclick="logout()"><div class="menu-icon">🚪</div><span>Logout</span><span>›</span></button>
-</div>
 
 <main class="main">
     <section class="profile-card">
         <div class="profile-top"><span class="profile-badge">MY PROFILE</span><button class="edit-btn" onclick="editProfile()">✎ Edit</button></div>
         <div class="profile-details">
             <div class="avatar" id="avatar">R</div>
-            <div class="profile-info"><h2 id="profileName">RDX User</h2><p class="mobile-number" id="mobileNumber">☎ +91 XXXXX XXXXX</p><button class="kyc-btn" onclick="alert('KYC under process')">Complete KYC</button></div>
+            <div class="profile-info">
+                <h2 id="profileName">RDX User</h2>
+                <p class="mobile-number" id="mobileNumber">☎ +91 XXXXX XXXXX</p>
+                <button class="kyc-btn" onclick="alert('KYC verification under process.')">Complete KYC</button>
+            </div>
         </div>
     </section>
 
+    <!-- REFERRAL APPLIED (JISKA REFERRAL LAGAYA HAI) -->
     <section class="referral-applied">
-        <div class="referral-head"><div class="referral-icon">🎟</div><div><h3>Referral Applied</h3><p>Locked to your account</p></div></div>
-        <div class="referral-code"><strong id="referralCode">—</strong><span class="code-check">✓</span></div>
+        <div class="referral-head">
+            <div class="referral-icon">🎟</div>
+            <div>
+                <h3>Referral Applied</h3>
+                <p>Locked to your account</p>
+            </div>
+        </div>
+        <div class="referral-code">
+            <strong id="referralAppliedCode">LOADING...</strong>
+            <span class="code-check">✓</span>
+        </div>
     </section>
 
     <div class="section-label">YOUR STATS</div>
@@ -175,29 +143,43 @@ try{ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); firebaseD
 
     <div class="section-label">QUICK ACTIONS</div>
     <section class="quick-grid">
-        <div class="quick-card" onclick="goHistory()"><div class="quick-top"><div class="quick-icon">🕘</div><span>›</span></div><h3>History</h3><p>Battles & logs</p></div>
-        <div class="quick-card" onclick="goSupport()"><div class="quick-top"><div class="quick-icon">🎧</div><span>›</span></div><h3>Support</h3><p>Chat & help</p></div>
+        <div class="quick-card" onclick="location.href='history.html'"><div class="quick-top"><div class="quick-icon">🕘</div><span>›</span></div><h3>History</h3><p>Battles & logs</p></div>
+        <div class="quick-card" onclick="location.href='support.html'"><div class="quick-top"><div class="quick-icon">🎧</div><span>›</span></div><h3>Support</h3><p>Chat & help</p></div>
     </section>
 
     <button class="logout" onclick="logout()">⇥ &nbsp; Logout</button>
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item active" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item active" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <div class="modal-overlay" id="editModal">
     <div class="edit-modal">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><h3>Edit Profile</h3><button style="border:0;background:none;font-size:18px;cursor:pointer;" onclick="closeEditModal()">✕</button></div>
-        <input type="text" id="realNameInput" class="name-input" placeholder="Enter full name">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3>Edit Profile</h3>
+            <button style="border:0;background:none;font-size:18px;cursor:pointer;" onclick="closeEditModal()">✕</button>
+        </div>
+        <input type="text" id="realNameInput" class="name-input" placeholder="Enter your full name">
         <button class="modal-save" onclick="saveRealName()">Save Name</button>
     </div>
 </div>
 
 <script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseDB = firebase.firestore();
+
 function getItem(k){ return localStorage.getItem(k); }
 function setItem(k,v){ localStorage.setItem(k,v); }
 
@@ -216,18 +198,31 @@ function showProfileName(name){
 async function loadProfile(){
     const m = getCurrentMobile();
     if(m) document.getElementById("mobileNumber").textContent = "☎ +" + m;
-    const ref = getItem("rdxReferral") || "RDX100";
-    document.getElementById("referralCode").textContent = ref;
+
+    const localApplied = getItem("rdxReferredBy") || "DIRECT";
+    document.getElementById("referralAppliedCode").textContent = localApplied;
 
     if(!firebaseDB || !m) return;
     try{
         const doc = await firebaseDB.collection("customers").doc(m).get();
         if(doc.exists){
             const d = doc.data() || {};
-            if(d.name){ showProfileName(d.name); setItem("rdxUsername", d.name); }
-            if(d.referralCode){ document.getElementById("referralCode").textContent = d.referralCode; }
+            if(d.name){ 
+                showProfileName(d.name); 
+                setItem("rdxUsername", d.name); 
+            }
+            
+            // JISKA CODE LAGAYA THA:
+            const appliedCode = d.referredBy || getItem("rdxReferredBy") || "DIRECT";
+            document.getElementById("referralAppliedCode").textContent = appliedCode;
+            setItem("rdxReferredBy", appliedCode);
+
+            // Stats
+            if(d.referralCount !== undefined) document.getElementById("referralCount").textContent = d.referralCount;
+            if(d.gamesPlayed !== undefined) document.getElementById("gamePlayed").textContent = d.gamesPlayed;
+            if(d.coinWon !== undefined) document.getElementById("coinWon").textContent = "₹" + d.coinWon;
         }
-    }catch(e){}
+    }catch(e){ console.error(e); }
 }
 
 function editProfile(){
@@ -248,15 +243,6 @@ async function saveRealName(){
     closeEditModal();
 }
 
-function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
-function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
-function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
-function goProfile(){ closeMenu(); window.location.href = "./profile.html"; }
-function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
-function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
-function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
-function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
-function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
 function logout(){ localStorage.clear(); window.location.href = "./login.html"; }
 
 window.addEventListener("DOMContentLoaded", () => {
