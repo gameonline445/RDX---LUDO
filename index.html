@@ -5,11 +5,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO</title>
 
+<!-- FontAwesome for clean icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <style>
 *{
     box-sizing:border-box;
     margin:0;
     padding:0;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html{
@@ -18,7 +22,12 @@ html{
 
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    background:#f7f9ff;
+    /* Cohesive Deep Sky-Blue Mesh Background */
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
     color:#101a38;
     min-height:100vh;
 }
@@ -29,193 +38,212 @@ button{
 
 .container{
     width:100%;
-    max-width:1050px;
+    max-width:900px;
     margin:auto;
-    padding:0 18px 155px;
+    padding:0 14px 140px;
 }
 
 /* HEADER */
 .header{
-    height:76px;
-    background:rgba(255,255,255,.96);
-    border-bottom:1px solid #dfe5f2;
+    height:66px;
+    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    padding:0 20px;
+    padding:0 14px;
     position:sticky;
     top:0;
-    z-index:50;
-    backdrop-filter:blur(12px);
+    z-index:100;
+    box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
 
 .brand{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
 }
 
 .logo{
-    width:52px;
-    height:52px;
+    width:44px;
+    height:44px;
     border-radius:50%;
-    object-fit:cover;
-    background:linear-gradient(135deg,#145be9,#65a4ff);
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:2.5px solid #93c5fd;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:white;
-    font-size:17px;
+    color:#0284c7;
+    font-size:12px;
     font-weight:900;
-    border:3px solid #d8e4ff;
+    box-shadow:0 4px 12px rgba(2,132,199,0.15);
+    cursor:pointer;
 }
 
 .brand-text h1{
-    font-size:23px;
+    font-size:18px;
     line-height:1;
-    font-weight:850;
+    font-weight:900;
+    color:#0c4a6e;
 }
 
 .brand-text p{
-    margin-top:5px;
-    font-size:14px;
-    color:#6c7895;
+    margin-top:3px;
+    font-size:11px;
+    color:#64748b;
+    font-weight:600;
 }
 
 .signin{
-    border:1.5px solid #3269e8;
-    color:#17223e;
-    background:white;
-    padding:12px 18px;
-    border-radius:25px;
-    font-weight:750;
+    border:1.5px solid #7dd3fc;
+    color:#0284c7;
+    background:#ffffff;
+    padding:8px 16px;
+    border-radius:20px;
+    font-weight:800;
+    font-size:13px;
     cursor:pointer;
+    box-shadow:0 3px 10px rgba(2,132,199,0.10);
+    transition:0.2s;
+}
+
+.signin:active{
+    transform:scale(0.96);
 }
 
 /* HERO */
 .hero{
-    margin-top:24px;
-    padding:28px;
-    border:1px solid #b9cdfc;
-    border-radius:25px;
-    background:
-        radial-gradient(circle at 90% 10%,#d9e6ff,transparent 40%),
-        linear-gradient(135deg,#f1f6ff,#ffffff);
-    box-shadow:0 15px 45px rgba(46,92,190,.12);
+    margin-top:16px;
+    padding:20px;
+    border:1.5px solid #7dd3fc;
+    border-radius:22px;
+    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
+    box-shadow:0 8px 22px rgba(2,132,199,0.10);
 }
 
 .hero-grid{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:25px;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:18px;
     align-items:center;
 }
 
 .badge{
     display:inline-flex;
     align-items:center;
-    padding:9px 15px;
-    border:1px solid #79a5f5;
-    border-radius:30px;
-    color:#2562d8;
-    font-weight:750;
-    font-size:14px;
-    background:#eef5ff;
+    padding:6px 12px;
+    border:1px solid #7dd3fc;
+    border-radius:18px;
+    color:#0284c7;
+    font-weight:850;
+    font-size:11px;
+    background:#ffffff;
+    letter-spacing:0.5px;
 }
 
 .hero h2{
-    font-size:47px;
-    line-height:1.05;
-    margin-top:22px;
-    letter-spacing:-1.5px;
+    font-size:32px;
+    line-height:1.1;
+    margin-top:14px;
+    letter-spacing:-0.8px;
+    color:#0f172a;
+    font-weight:900;
 }
 
 .hero h2 span{
-    color:#1760e8;
+    color:#0284c7;
 }
 
 .hero-sub{
-    margin-top:18px;
-    color:#65728e;
-    font-size:18px;
+    margin-top:8px;
+    color:#64748b;
+    font-size:14px;
+    font-weight:500;
 }
 
 .stats{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin-top:28px;
+    gap:8px;
+    margin-top:18px;
 }
 
 .stat{
-    padding:17px 8px;
+    padding:12px 6px;
     text-align:center;
-    border:1px solid #cbd9f7;
-    border-radius:17px;
-    background:rgba(255,255,255,.65);
+    border:1.5px solid #bae6fd;
+    border-radius:14px;
+    background:rgba(255,255,255,0.85);
 }
 
 .stat strong{
     display:block;
-    font-size:20px;
+    font-size:16px;
+    font-weight:900;
+    color:#0c4a6e;
 }
 
 .stat span{
     display:block;
-    color:#64718d;
-    font-size:13px;
-    margin-top:5px;
+    color:#64748b;
+    font-size:11px;
+    font-weight:700;
+    margin-top:2px;
 }
 
 .hero-images{
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:10px;
 }
 
 .hero-images img{
     width:100%;
-    height:205px;
+    height:130px;
     object-fit:cover;
-    border-radius:20px;
-    box-shadow:0 8px 20px rgba(0,0,0,.14);
+    border-radius:16px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.12);
 }
 
 /* SECTION */
 .section-head{
     display:flex;
-    align-items:end;
+    align-items:flex-end;
     justify-content:space-between;
-    margin:30px 0 15px;
+    margin:22px 0 10px;
 }
 
 .section-head small{
-    color:#1e63d8;
+    color:#0284c7;
     font-weight:850;
     letter-spacing:1.5px;
+    font-size:11px;
 }
 
 .section-head h3{
-    font-size:27px;
-    margin-top:5px;
+    font-size:20px;
+    font-weight:900;
+    color:#0f172a;
+    margin-top:2px;
 }
 
 .live{
-    background:#dff7e7;
-    color:#168548;
-    padding:7px 13px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:800;
+    background:#dcfce7;
+    color:#15803d;
+    border:1px solid #86efac;
+    padding:4px 10px;
+    border-radius:14px;
+    font-size:11px;
+    font-weight:850;
 }
 
 /* GAME CARDS */
 .game-scroll{
     display:flex;
-    gap:15px;
+    gap:12px;
     overflow-x:auto;
     scroll-snap-type:x mandatory;
-    padding-bottom:7px;
+    padding-bottom:6px;
     scrollbar-width:none;
     -webkit-overflow-scrolling:touch;
 }
@@ -226,13 +254,13 @@ button{
 
 .game-card{
     min-width:100%;
-    height:245px;
-    border-radius:23px;
+    height:190px;
+    border-radius:20px;
     overflow:hidden;
     position:relative;
     scroll-snap-align:start;
     background:#111;
-    box-shadow:0 12px 30px rgba(0,0,0,.16);
+    box-shadow:0 10px 25px rgba(0,0,0,0.16);
 }
 
 .game-card img{
@@ -244,64 +272,69 @@ button{
 .game-overlay{
     position:absolute;
     inset:0;
-    background:linear-gradient(90deg,rgba(0,0,0,.76),rgba(0,0,0,.05));
-    padding:25px;
+    background:linear-gradient(180deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.75) 100%);
+    padding:16px;
     color:white;
     display:flex;
     flex-direction:column;
-    justify-content:center;
+    justify-content:flex-end;
 }
 
 .live-label{
     width:max-content;
-    background:#c91720;
-    padding:7px 13px;
-    border-radius:20px;
-    font-size:12px;
+    background:#16a34a;
+    padding:4px 9px;
+    border-radius:10px;
+    font-size:10px;
     font-weight:800;
+    margin-bottom:6px;
 }
 
 .game-overlay h4{
-    font-size:30px;
-    margin-top:10px;
+    font-size:22px;
+    font-weight:900;
+    text-shadow:0 2px 4px rgba(0,0,0,0.6);
 }
 
 .game-overlay p{
-    margin-top:5px;
-    font-size:16px;
-    color:#f1f1f1;
+    margin-top:2px;
+    font-size:12px;
+    color:#e2e8f0;
+    text-shadow:0 1px 3px rgba(0,0,0,0.6);
 }
 
 .play{
     width:max-content;
-    margin-top:18px;
+    margin-top:10px;
     border:0;
-    background:#1460eb;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
     color:white;
-    padding:12px 20px;
-    border-radius:25px;
-    font-weight:800;
+    padding:8px 18px;
+    border-radius:16px;
+    font-size:13px;
+    font-weight:850;
     cursor:pointer;
+    box-shadow:0 4px 12px rgba(2,132,199,0.35);
 }
 
 /* COMING SOON */
 .soon-card{
     min-width:100%;
-    height:150px;
-    border:1px dashed #b6c2d9;
-    border-radius:20px;
-    background:white;
+    height:110px;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    background:#ffffff;
     display:flex;
     align-items:center;
-    padding:18px;
-    gap:18px;
-    scroll-snap-align:start;
+    padding:12px 14px;
+    gap:12px;
+    box-shadow:0 4px 14px rgba(30,60,120,0.03);
 }
 
 .soon-card img{
-    width:95px;
-    height:95px;
-    border-radius:16px;
+    width:64px;
+    height:64px;
+    border-radius:14px;
     object-fit:cover;
 }
 
@@ -310,104 +343,118 @@ button{
 }
 
 .soon-info h4{
-    font-size:20px;
+    font-size:15px;
+    font-weight:850;
+    color:#0f172a;
 }
 
 .soon-info p{
-    color:#68758f;
-    margin-top:5px;
-    font-size:14px;
+    color:#64748b;
+    margin-top:2px;
+    font-size:12px;
 }
 
 .soon{
-    background:#f5f7fb;
-    border:1px solid #d8dfec;
-    color:#61708d;
-    padding:9px 14px;
-    border-radius:20px;
-    font-size:12px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    color:#64748b;
+    padding:5px 10px;
+    border-radius:12px;
+    font-size:10px;
     font-weight:800;
 }
 
 /* PREMIUM */
 .premium{
-    margin-top:28px;
-    padding:25px;
-    border:1px solid #c5d5fa;
-    border-radius:24px;
-    background:linear-gradient(145deg,#f4f7ff,#ffffff);
+    margin-top:20px;
+    padding:18px;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    background:#ffffff;
+    box-shadow:0 6px 18px rgba(2,132,199,0.06);
 }
 
 .premium-badge{
     display:inline-block;
-    padding:8px 13px;
-    border-radius:20px;
-    border:1px solid #8fb2f5;
-    color:#2160d2;
-    font-size:13px;
-    font-weight:800;
+    padding:5px 10px;
+    border-radius:14px;
+    border:1px solid #bae6fd;
+    background:#f0f9ff;
+    color:#0284c7;
+    font-size:11px;
+    font-weight:850;
 }
 
 .premium h3{
-    margin-top:18px;
-    font-size:29px;
+    margin-top:10px;
+    font-size:20px;
+    font-weight:900;
+    color:#0c4a6e;
 }
 
 .premium-description{
-    color:#6b7892;
-    margin-top:6px;
+    color:#64748b;
+    margin-top:4px;
+    font-size:13px;
+    line-height:1.4;
 }
 
 .referral{
-    margin-top:20px;
-    border:1px solid #a9c1f4;
-    border-radius:19px;
-    padding:18px;
-    background:#f7faff;
+    margin-top:14px;
+    border:1.5px solid #7dd3fc;
+    border-radius:18px;
+    padding:14px 16px;
+    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
     display:flex;
     justify-content:space-between;
     align-items:center;
     cursor:pointer;
+    box-shadow:0 4px 14px rgba(2,132,199,0.08);
 }
 
 .referral small{
-    color:#53617d;
-    font-weight:750;
+    color:#0284c7;
+    font-weight:850;
     letter-spacing:1px;
+    font-size:10px;
 }
 
 .referral strong{
     display:block;
-    font-size:38px;
-    margin-top:3px;
+    font-size:26px;
+    font-weight:900;
+    color:#0c4a6e;
+    line-height:1.1;
+    margin-top:2px;
 }
 
 .start{
     text-align:right;
-    color:#2360d3;
-    font-size:13px;
-    font-weight:800;
+    color:#0284c7;
+    font-size:11px;
+    font-weight:850;
 }
 
 .arrow{
-    margin-top:8px;
+    margin-top:4px;
     margin-left:auto;
-    width:44px;
-    height:44px;
+    width:36px;
+    height:36px;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
     color:white;
-    background:#2265e9;
-    font-size:22px;
+    background:#0284c7;
+    font-size:16px;
+    box-shadow:0 4px 12px rgba(2,132,199,0.3);
 }
 
 .feature-scroll{
     display:flex;
-    gap:12px;
+    gap:10px;
     overflow-x:auto;
-    margin-top:14px;
+    margin-top:12px;
     scroll-snap-type:x mandatory;
     scrollbar-width:none;
 }
@@ -417,35 +464,38 @@ button{
 }
 
 .feature{
-    min-width:47%;
-    padding:18px;
-    background:#fff;
-    border:1px solid #e0e5ef;
-    border-radius:18px;
+    min-width:48%;
+    padding:14px;
+    background:#fafbfe;
+    border:1px solid #e2e8f0;
+    border-radius:16px;
     scroll-snap-align:start;
 }
 
 .feature-icon{
-    width:40px;
-    height:40px;
-    border-radius:12px;
-    background:#e8f0ff;
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#e0f2fe;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#2464dc;
-    font-size:20px;
+    color:#0284c7;
+    font-size:15px;
 }
 
 .feature h4{
-    margin-top:11px;
+    margin-top:8px;
+    font-size:13px;
+    font-weight:850;
+    color:#0f172a;
 }
 
 .feature p{
-    color:#69758e;
-    font-size:13px;
-    margin-top:5px;
-    line-height:1.4;
+    color:#64748b;
+    font-size:11px;
+    margin-top:3px;
+    line-height:1.35;
 }
 
 /* FIXED BOTTOM */
@@ -453,57 +503,65 @@ button{
     position:fixed;
     left:50%;
     transform:translateX(-50%);
-    bottom:12px;
-    width:min(100% - 18px,1000px);
+    bottom:10px;
+    width:min(100% - 16px, 650px);
     z-index:100;
 }
 
 .bottom-box{
-    background:rgba(255,255,255,.97);
-    border:2px solid #d1dced;
-    border-radius:28px;
-    padding:15px;
-    box-shadow:0 12px 35px rgba(25,54,115,.17);
-    backdrop-filter:blur(14px);
+    background:rgba(255,255,255,0.96);
+    border:1.5px solid #bae6fd;
+    border-radius:22px;
+    padding:12px 14px;
+    box-shadow:0 10px 30px rgba(2,132,199,0.15);
+    backdrop-filter:blur(12px);
 }
 
 .bottom-links{
     display:flex;
     justify-content:space-around;
-    color:#64718d;
-    font-weight:650;
-    font-size:14px;
-    margin-bottom:14px;
+    color:#64748b;
+    font-weight:750;
+    font-size:11px;
+    margin-bottom:8px;
 }
 
 .join{
     width:100%;
     border:0;
-    background:linear-gradient(90deg,#2162e9,#3976ed);
+    background:linear-gradient(100deg,#0284c7,#0369a1);
     color:white;
-    min-height:60px;
+    min-height:48px;
     border-radius:24px;
-    font-size:21px;
+    font-size:15px;
     font-weight:850;
     cursor:pointer;
-    box-shadow:0 9px 23px rgba(34,99,233,.28);
+    box-shadow:0 6px 18px rgba(2,132,199,0.3);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.join:active{
+    transform:scale(0.98);
 }
 
 /* TOAST */
 .toast{
     position:fixed;
-    top:90px;
+    top:80px;
     left:50%;
     transform:translateX(-50%) translateY(-20px);
-    background:#17233f;
+    background:#182440;
     color:white;
-    padding:13px 18px;
-    border-radius:14px;
+    padding:10px 16px;
+    border-radius:12px;
     opacity:0;
     pointer-events:none;
     transition:.25s;
     z-index:200;
-    font-size:14px;
+    font-size:13px;
 }
 
 .toast.show{
@@ -511,125 +569,19 @@ button{
     transform:translateX(-50%) translateY(0);
 }
 
-/* MOBILE */
+/* RESPONSIVE */
 @media(max-width:700px){
-
-    .header{
-        height:68px;
-        padding:0 14px;
-    }
-
-    .logo{
-        width:42px;
-        height:42px;
-        font-size:13px;
-    }
-
-    .brand-text h1{
-        font-size:17px;
-    }
-
-    .brand-text p{
-        font-size:11px;
-    }
-
-    .signin{
-        padding:9px 14px;
-        font-size:13px;
-    }
-
-    .container{
-        padding:0 12px 150px;
-    }
-
-    .hero{
-        margin-top:14px;
-        padding:20px;
-        border-radius:22px;
-    }
-
     .hero-grid{
         display:block;
     }
-
-    .hero h2{
-        font-size:35px;
-    }
-
-    .hero-sub{
-        font-size:15px;
-    }
-
-    .stats{
-        gap:7px;
-    }
-
-    .stat{
-        padding:14px 4px;
-    }
-
-    .stat strong{
-        font-size:17px;
-    }
-
-    .stat span{
-        font-size:11px;
-    }
-
     .hero-images{
         display:none;
     }
-
-    .section-head h3{
-        font-size:23px;
+    .hero h2{
+        font-size:26px;
     }
-
-    .game-card{
-        height:205px;
-    }
-
-    .game-overlay{
-        padding:18px;
-    }
-
-    .game-overlay h4{
-        font-size:25px;
-    }
-
-    .game-overlay p{
-        font-size:13px;
-    }
-
-    .premium{
-        padding:19px;
-    }
-
-    .premium h3{
-        font-size:25px;
-    }
-
     .feature{
-        min-width:82%;
-    }
-
-    .bottom-wrap{
-        bottom:8px;
-        width:calc(100% - 12px);
-    }
-
-    .bottom-box{
-        padding:12px;
-        border-radius:23px;
-    }
-
-    .bottom-links{
-        font-size:12px;
-    }
-
-    .join{
-        min-height:55px;
-        font-size:18px;
-        border-radius:20px;
+        min-width:78%;
     }
 }
 </style>
@@ -638,37 +590,28 @@ button{
 <body>
 
 <header class="header">
-
     <div class="brand">
-
-        <div class="logo">RDX</div>
-
+        <div class="logo" onclick="goToLogin()">RDX</div>
         <div class="brand-text">
             <h1>RDX LUDO</h1>
             <p>Play · Win · Earn</p>
         </div>
-
     </div>
 
     <!-- SIGN IN → LOGIN -->
     <button class="signin" onclick="goToLogin()">
-        Sign In&nbsp; →
+        Sign In &nbsp;→
     </button>
-
 </header>
-
 
 <main class="container">
 
     <!-- HERO -->
     <section class="hero">
-
         <div class="hero-grid">
-
             <div>
-
                 <span class="badge">
-                    ✣ WELCOME TO RDX LUDO
+                    ✦ WELCOME TO RDX LUDO
                 </span>
 
                 <h2>
@@ -677,415 +620,162 @@ button{
                 </h2>
 
                 <p class="hero-sub">
-                    Welcome to RDX LUDO
+                    India's most trusted real money Ludo platform.
                 </p>
 
                 <div class="stats">
-
                     <div class="stat">
                         <strong>2%</strong>
                         <span>Referral</span>
                     </div>
-
                     <div class="stat">
                         <strong>24/7</strong>
                         <span>Support</span>
                     </div>
-
                     <div class="stat">
-                        <strong>Live</strong>
-                        <span>Chat & Call</span>
+                        <strong>100%</strong>
+                        <span>Secure</span>
                     </div>
-
                 </div>
-
             </div>
-
 
             <div class="hero-images">
-
-                <img
-                    src="ludo-classic.jpg"
-                    alt="Ludo">
-
-                <img
-                    src="ludo-1-goti.jpg"
-                    alt="Gaming">
-
+                <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
+                <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
             </div>
-
         </div>
-
     </section>
-
 
     <!-- GAME ARENA -->
-
     <div class="section-head">
-
         <div>
-
             <small>GAME ARENA</small>
-
-            <h3>
-                Pick Your Mode
-            </h3>
-
+            <h3>Pick Your Mode</h3>
         </div>
-
-        <span class="live">
-            1 LIVE
-        </span>
-
+        <span class="live">● 1 LIVE</span>
     </div>
 
-
     <!-- GAME SLIDER -->
-
     <section class="game-scroll">
-
-        <!-- FIRST GAME -->
-
         <article class="game-card">
-
-            <img
-                src="ludo-classic.jpg"
-                alt="Ludo Classic">
-
+            <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
             <div class="game-overlay">
-
-                <span class="live-label">
-                    ● LIVE NOW
-                </span>
-
-                <h4>
-                    Ludo Classic
-                </h4>
-
-                <p>
-                    Fast · Instant · Fair battles
-                </p>
-
-                <!-- PLAY NOW → LOGIN -->
-                <button
-                    class="play"
-                    onclick="goToLogin()">
-
+                <span class="live-label">● LIVE NOW</span>
+                <h4>Ludo Classic</h4>
+                <p>Fast · Instant · Fair battles</p>
+                <button class="play" onclick="goToLogin()">
                     ▶ Play Now
-
                 </button>
-
             </div>
-
         </article>
-
-
-        <!-- SECOND GAME -->
 
         <article class="game-card">
-
-            <img
-                src="ludo-1-goti.jpg"
-                alt="1 Goti Ludo">
-
+            <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
             <div class="game-overlay">
-
-                <span class="live-label">
-                    COMING SOON
-                </span>
-
-                <h4>
-                    1 Goti Ludo
-                </h4>
-
-                <p>
-                    Fast-paced single-token mode
-                </p>
-
+                <span class="live-label" style="background:#64748b;">🔒 COMING SOON</span>
+                <h4>1 Goti Ludo</h4>
+                <p>Fast-paced single-token mode</p>
             </div>
-
         </article>
-
     </section>
-
 
     <!-- SMALL COMING SOON -->
-
-    <section
-        class="soon-card"
-        style="margin-top:14px;">
-
-        <img
-            src="ludo-1-goti.jpg"
-            alt="1 Goti Ludo">
-
+    <section class="soon-card" style="margin-top:12px;">
+        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
         <div class="soon-info">
-
-            <h4>
-                1 Goti Ludo
-            </h4>
-
-            <p>
-                Fast-paced single-token mode
-            </p>
-
+            <h4>1 Goti Ludo</h4>
+            <p>Fast-paced single-token mode</p>
         </div>
-
-        <span class="soon">
-            🔒 SOON
-        </span>
-
+        <span class="soon">🔒 SOON</span>
     </section>
 
-
     <!-- PREMIUM -->
-
     <section class="premium">
-
-        <span class="premium-badge">
-            ✦ PREMIUM PLATFORM
-        </span>
-
-        <h3>
-            Built for Winners
-        </h3>
-
+        <span class="premium-badge">✦ PLATFORM BENEFITS</span>
+        <h3>Built for Winners</h3>
         <p class="premium-description">
-            Everything you need to play, learn and connect — in one place.
+            Everything you need to play, earn and withdraw seamlessly.
         </p>
 
-
-        <!-- REFERRAL PROGRAM → LOGIN -->
-        <div
-            class="referral"
-            onclick="goToLogin()">
-
+        <!-- REFERRAL PROGRAM -->
+        <div class="referral" onclick="goToLogin()">
             <div>
-
-                <small>
-                    REFERRAL PROGRAM
-                </small>
-
-                <strong>
-                    2%
-                </strong>
-
-                <span style="color:#69758e;">
-                    Refer
-                </span>
-
+                <small>REFERRAL PROGRAM</small>
+                <strong>2% Refer</strong>
+                <span style="font-size:11px;color:#64748b;">Lifetime reward on friend's matches</span>
             </div>
-
             <div class="start">
-
                 START EARNING
-
-                <div class="arrow">
-                    ↗
-                </div>
-
+                <div class="arrow">↗</div>
             </div>
-
         </div>
-
 
         <!-- FEATURES -->
-
         <div class="feature-scroll">
-
             <div class="feature">
-
-                <div class="feature-icon">
-                    🏆
-                </div>
-
-                <h4>
-                    Skill Battles
-                </h4>
-
-                <p>
-                    Head-to-head Ludo experience.
-                </p>
-
+                <div class="feature-icon">🏆</div>
+                <h4>Skill Battles</h4>
+                <p>Head-to-head live Ludo experience.</p>
             </div>
-
-
             <div class="feature">
-
-                <div class="feature-icon">
-                    ▣
-                </div>
-
-                <h4>
-                    Game Wallet
-                </h4>
-
-                <p>
-                    Manage your account activity.
-                </p>
-
+                <div class="feature-icon">💰</div>
+                <h4>Instant Wallet</h4>
+                <p>Instant UPI deposits & withdrawals.</p>
             </div>
-
-
             <div class="feature">
-
-                <div class="feature-icon">
-                    ♧
-                </div>
-
-                <h4>
-                    Refer & Earn
-                </h4>
-
-                <p>
-                    Share and invite your friends.
-                </p>
-
+                <div class="feature-icon">🎁</div>
+                <h4>Refer & Earn</h4>
+                <p>Share with friends & get 2% reward.</p>
             </div>
-
-
             <div class="feature">
-
-                <div class="feature-icon">
-                    ♧
-                </div>
-
-                <h4>
-                    Live Support
-                </h4>
-
-                <p>
-                    Chat or call when support is available.
-                </p>
-
+                <div class="feature-icon">🎧</div>
+                <h4>Live Support</h4>
+                <p>24×7 WhatsApp support for players.</p>
             </div>
-
         </div>
-
     </section>
 
 </main>
 
-
 <!-- FIXED BOTTOM -->
-
 <div class="bottom-wrap">
-
     <div class="bottom-box">
-
         <div class="bottom-links">
-
-            <span>
-                ♢ Secure
-            </span>
-
-            <span>
-                ϟ Instant
-            </span>
-
-            <span>
-                ♔ Refer
-            </span>
-
+            <span>🛡️ 100% Secure</span>
+            <span>⚡ Instant Payout</span>
+            <span>🎁 2% Refer</span>
         </div>
-
-
-        <!-- JOIN RDX LUDO → LOGIN -->
-        <button
-            class="join"
-            onclick="goToLogin()">
-
-            ↪ &nbsp; Join RDX LUDO
-
+        <button class="join" onclick="goToLogin()">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Join RDX LUDO
         </button>
-
     </div>
-
 </div>
 
-
-<div
-    class="toast"
-    id="toast">
-</div>
-
+<div class="toast" id="toast"></div>
 
 <script>
-
-/*
-=========================================
-RDX LUDO REFERRAL SYSTEM
-=========================================
-
-अगर कोई User इस तरह आए:
-
-index.html?ref=NR0041
-
-तो Referral Code आगे Login तक जाएगा।
-
-अगर कोई सामान्य User आए:
-
-index.html
-
-तो सामान्य login.html खुलेगा।
-*/
-
+/* REFERRAL URL PASSTHROUGH LOGIC */
 function goToLogin(){
-
-    /* URL से referral code पढ़ना */
     const params = new URLSearchParams(window.location.search);
-
     const ref = params.get("ref");
 
-    /* Referral मौजूद है */
     if(ref){
-
-        /*
-        Referral Code को sessionStorage में भी रख रहे हैं।
-        इससे अगले page पर भी code सुरक्षित रहेगा।
-        */
-        sessionStorage.setItem(
-            "rdx_referral_code",
-            ref.toUpperCase()
-        );
-
-        /*
-        Referral Code के साथ Login Page खोलना
-        */
-        window.location.href =
-            "./login.html?ref=" +
-            encodeURIComponent(ref);
-
+        sessionStorage.setItem("rdx_referral_code", ref.toUpperCase());
+        window.location.href = "./login.html?ref=" + encodeURIComponent(ref.toUpperCase());
         return;
     }
 
-    /*
-    Referral नहीं है तो सामान्य Login
-    */
-    window.location.href =
-        "./login.html";
+    window.location.href = "./login.html";
 }
 
-
-/* Existing toast function */
 function showMessage(message){
-
-    const toast =
-        document.getElementById("toast");
-
-    toast.textContent =
-        message;
-
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
     toast.classList.add("show");
-
     setTimeout(function(){
-
         toast.classList.remove("show");
-
-    },1800);
-
+    }, 1800);
 }
-
 </script>
 
 </body>
