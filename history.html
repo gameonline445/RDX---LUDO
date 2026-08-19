@@ -1,1232 +1,2327 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width,initial-scale=1"
+>
+
+<title>RDX LUDO - Deposit History</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f7ff;
+color:#17213c;
+}
+
+button,
+input{
+font:inherit;
+}
+
+button{
+cursor:pointer;
+border:0;
+}
+
+/* =========================
+HEADER
+========================= */
+
+header{
+background:#fff;
+border-bottom:1px solid #dce2ed;
+padding:22px 5%;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+.logo{
+font-size:30px;
+font-weight:900;
+}
+
+.logo span{
+color:#2869ed;
+}
+
+.back{
+background:#eaf1ff;
+color:#2869ed;
+padding:13px 22px;
+border-radius:12px;
+font-weight:bold;
+font-size:16px;
+}
+
+/* =========================
+MAIN
+========================= */
+
+main{
+max-width:1200px;
+margin:auto;
+padding:35px 20px 70px;
+}
+
+.heading{
+font-size:40px;
+font-weight:900;
+margin-bottom:8px;
+}
+
+.heading span{
+color:#2869ed;
+}
+
+.subheading{
+font-size:20px;
+color:#75819b;
+margin-bottom:30px;
+}
+
+/* =========================
+SEARCH CARD
+========================= */
+
+.search-card{
+background:#fff;
+border:1px solid #dce3f2;
+border-radius:20px;
+padding:24px;
+box-shadow:0 8px 25px #00000008;
+margin-bottom:25px;
+}
+
+.search-title{
+font-size:25px;
+font-weight:900;
+margin-bottom:18px;
+}
+
+.search-row{
+display:flex;
+flex-direction:column;
+gap:12px;
+}
+
+.date-input{
+width:100%;
+padding:18px;
+border:1px solid #ccd6e8;
+border-radius:14px;
+outline:none;
+background:#fff;
+color:#17213c;
+font-size:20px;
+}
+
+.date-input:focus{
+border-color:#2869ed;
+}
+
+.search-btn{
+width:100%;
+padding:18px;
+border-radius:14px;
+background:#2869ed;
+color:#fff;
+font-weight:900;
+font-size:20px;
+}
+
+.clear-btn{
+width:100%;
+padding:18px;
+border-radius:14px;
+background:#edf1f7;
+color:#536079;
+font-weight:900;
+font-size:20px;
+}
+
+/* =========================
+MESSAGE
+========================= */
+
+.message{
+padding:18px;
+border-radius:14px;
+margin-bottom:25px;
+font-weight:800;
+font-size:18px;
+display:none;
+}
+
+.message.show{
+display:block;
+}
+
+.message.ok{
+background:#dcf8e9;
+color:#12804b;
+}
+
+.message.error{
+background:#ffe3e8;
+color:#c72e43;
+}
+
+/* =========================
+RECENT
+========================= */
+
+.history-title{
+font-size:32px;
+font-weight:900;
+margin:30px 0 20px;
+}
+
+.date-section{
+margin-bottom:30px;
+}
+
+.date-heading{
+font-size:21px;
+font-weight:900;
+background:#176f55;
+color:#fff;
+padding:16px 18px;
+border-radius:14px 14px 0 0;
+}
+
+/* =========================
+TABLE
+========================= */
+
+.table-wrapper{
+background:#fff;
+overflow-x:auto;
+border-radius:0 0 15px 15px;
+border:1px solid #e2e6ee;
+-webkit-overflow-scrolling:touch;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+min-width:900px;
+}
+
+thead{
+background:#176f55;
+color:#fff;
+}
+
+th{
+padding:16px 14px;
+text-align:left;
+font-size:14px;
+white-space:nowrap;
+}
+
+td{
+padding:17px 14px;
+border-bottom:1px solid #edf0f4;
+font-size:15px;
+white-space:nowrap;
+}
+
+tbody tr:last-child td{
+border-bottom:0;
+}
+
+tbody tr:hover{
+background:#fafcff;
+}
+
+/* =========================
+STATUS
+========================= */
+
+.status{
+display:inline-block;
+padding:8px 13px;
+border-radius:9px;
+font-size:12px;
+font-weight:900;
+border:2px solid;
+}
+
+.status.approved{
+color:#27984b;
+border-color:#35a857;
+background:#f4fff7;
+}
+
+.status.rejected{
+color:#d73545;
+border-color:#dd4050;
+background:#fff7f8;
+}
+
+.status.pending{
+color:#b87800;
+border-color:#e5b340;
+background:#fffaf0;
+}
+
+/* =========================
+AMOUNT
+========================= */
+
+.amount{
+font-weight:900;
+font-size:18px;
+}
+
+.utr{
+font-weight:bold;
+color:#35415b;
+}
+
+.account{
+font-weight:600;
+}
+
+.reason{
+color:#c83242;
+font-weight:700;
+white-space:normal;
+max-width:250px;
+}
+
+/* =========================
+EMPTY
+========================= */
+
+.empty{
+background:#fff;
+border:1px solid #dce3f2;
+border-radius:18px;
+padding:45px 20px;
+text-align:center;
+color:#7b879f;
+font-size:19px;
+}
+
+/* =========================
+LOADING
+========================= */
+
+.loading{
+text-align:center;
+padding:40px;
+color:#66728b;
+font-weight:bold;
+font-size:18px;
+}
+
+/* =========================
+DEBUG
+========================= */
+
+.debug{
+background:#fff8df;
+border:1px solid #edd36b;
+color:#725d12;
+padding:18px;
+border-radius:14px;
+margin-bottom:25px;
+display:none;
+}
+
+.debug.show{
+display:block;
+}
+
+.debug strong{
+display:block;
+margin-bottom:10px;
+}
+
+/* =========================
+MOBILE
+========================= */
+
+@media(max-width:700px){
+
+header{
+padding:18px 15px;
+}
+
+.logo{
+font-size:22px;
+}
+
+.back{
+padding:10px 14px;
+font-size:14px;
+}
+
+main{
+padding:25px 12px 60px;
+}
+
+.heading{
+font-size:30px;
+}
+
+.subheading{
+font-size:17px;
+}
+
+.search-card{
+padding:17px;
+}
+
+.search-title{
+font-size:22px;
+}
+
+.date-input{
+font-size:18px;
+}
+
+.search-btn,
+.clear-btn{
+font-size:18px;
+}
+
+.history-title{
+font-size:27px;
+}
+
+.date-heading{
+font-size:18px;
+}
+
+table{
+min-width:900px;
+}
+
+}
+
+/* =========================
+SMALL MOBILE
+========================= */
+
+@media(max-width:400px){
+
+.heading{
+font-size:27px;
+}
+
+.logo{
+font-size:20px;
+}
+
+.back{
+font-size:13px;
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================
+HEADER
+========================= -->
+
+<header>
+
+<div class="logo">
+RDX <span>LUDO</span> HISTORY
+</div>
+
+<button
+class="back"
+id="backBtn"
+>
+← वापस
+</button>
+
+</header>
+
+
+<!-- =========================
+MAIN
+========================= -->
+
+<main>
+
+<div class="heading">
+Deposit <span>History</span>
+</div>
+
+<div class="subheading">
+आपकी Deposit की पूरी History
+</div>
+
+
+<!-- =========================
+DATE SEARCH
+========================= -->
+
+<div class="search-card">
+
+<div class="search-title">
+📅 तारीख से History खोजें
+</div>
+
+<div class="search-row">
+
+<input
+type="date"
+id="dateSearch"
+class="date-input"
+>
+
+<button
+id="searchBtn"
+class="search-btn"
+>
+🔍 Search
+</button>
+
+<button
+id="clearBtn"
+class="clear-btn"
+>
+↻ Recent History
+</button>
+
+</div>
+
+</div>
+
+
+<!-- =========================
+MESSAGE
+========================= -->
+
+<div
+id="message"
+class="message"
+></div>
+
+
+<!-- =========================
+DEBUG MESSAGE
+========================= -->
+
+<div
+id="debug"
+class="debug"
+></div>
+
+
+<!-- =========================
+RECENT HISTORY
+========================= -->
+
+<div class="history-title">
+Recent History
+</div>
+
+<div id="historyContainer">
+
+<div class="loading">
+History Loading...
+</div>
+
+</div>
+
+</main>
+
+
 <script type="module">
 
-import {
-  initializeApp
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-
-import {
-  getFirestore,
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 /* =====================================================
-   FIREBASE CONFIG
+FIREBASE APP
+===================================================== */
+
+import {
+initializeApp
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+/* =====================================================
+FIREBASE AUTH
+===================================================== */
+
+import {
+getAuth,
+onAuthStateChanged
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+/* =====================================================
+FIRESTORE
+===================================================== */
+
+import {
+getFirestore,
+collection,
+getDocs,
+query,
+where
+}
+from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* =====================================================
+FIREBASE CONFIG
 ===================================================== */
 
 const firebaseConfig = {
 
-  apiKey:
-    "AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
+apiKey:
+"AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
 
-  authDomain:
-    "rdx-ludo.firebaseapp.com",
+authDomain:
+"rdx-ludo.firebaseapp.com",
 
-  projectId:
-    "rdx-ludo",
+projectId:
+"rdx-ludo",
 
-  storageBucket:
-    "rdx-ludo.firebasestorage.app",
+storageBucket:
+"rdx-ludo.firebasestorage.app",
 
-  messagingSenderId:
-    "928340814840",
+messagingSenderId:
+"928340814840",
 
-  appId:
-    "1:928340814840:web:6eca42a8b76138b268440d"
+appId:
+"1:928340814840:web:6eca42a8b76138b268440d"
 
 };
 
-/* =====================================================
-   FIREBASE INIT
-===================================================== */
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
 
 /* =====================================================
-   COLLECTION
+INITIALIZE
 ===================================================== */
 
-const DEPOSITS_COLLECTION = "deposits";
+const app =
+initializeApp(
+firebaseConfig
+);
+
+const auth =
+getAuth(app);
+
+const db =
+getFirestore(app);
+
 
 /* =====================================================
-   VARIABLES
+COLLECTION
 ===================================================== */
 
-let currentUser = null;
+const DEPOSITS_COLLECTION =
+"deposits";
+
+
+/* =====================================================
+DATA
+===================================================== */
 
 let allHistory = [];
 
+let currentUser = null;
+
+let customerUIDs = [];
+
+
 /* =====================================================
-   ELEMENTS
+ELEMENTS
 ===================================================== */
 
 const historyContainer =
-  document.getElementById("historyContainer");
+document.getElementById(
+"historyContainer"
+);
 
 const dateSearch =
-  document.getElementById("dateSearch");
+document.getElementById(
+"dateSearch"
+);
 
 const searchBtn =
-  document.getElementById("searchBtn");
+document.getElementById(
+"searchBtn"
+);
 
 const clearBtn =
-  document.getElementById("clearBtn");
+document.getElementById(
+"clearBtn"
+);
 
 const message =
-  document.getElementById("message");
+document.getElementById(
+"message"
+);
+
+const debug =
+document.getElementById(
+"debug"
+);
+
 
 /* =====================================================
-   SAFE HTML
+SAFE HTML
 ===================================================== */
 
-function safe(value) {
+function safe(value){
 
-  return String(value ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+return String(
+value ?? ""
+)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
 
+
 /* =====================================================
-   MESSAGE
+MESSAGE
 ===================================================== */
 
-function showMessage(text, type) {
+function showMessage(
+text,
+type
+){
 
-  message.textContent = text;
+message.textContent =
+text;
 
-  message.className =
-    "message show " + type;
-
-}
-
-function hideMessage() {
-
-  message.textContent = "";
-
-  message.className = "message";
+message.className =
+"message show " +
+type;
 
 }
+
 
 /* =====================================================
-   NORMALIZE UID / MOBILE
+HIDE MESSAGE
 ===================================================== */
 
-function normalizeNumber(value) {
+function hideMessage(){
 
-  if (!value) {
-    return "";
-  }
+message.className =
+"message";
 
-  return String(value)
-    .replace(/\D/g, "")
-    .replace(/^91(?=\d{10}$)/, "");
+message.textContent =
+"";
 
 }
 
+
 /* =====================================================
-   GET FIREBASE AUTH IDENTIFIERS
+DEBUG
 ===================================================== */
 
-function getAuthIdentifiers(user) {
+function showDebug(
+title,
+lines
+){
 
-  const identifiers = new Set();
+debug.innerHTML = `
 
-  if (!user) {
-    return identifiers;
-  }
+<strong>${safe(title)}</strong>
 
-  /* Firebase Auth UID */
+${lines
+.map(
+line =>
+`<div>${safe(line)}</div>`
+)
+.join("")
+}
 
-  if (user.uid) {
+`;
 
-    identifiers.add(
-      String(user.uid).trim()
-    );
-
-  }
-
-  /* Phone number */
-
-  if (user.phoneNumber) {
-
-    const rawPhone =
-      String(user.phoneNumber).trim();
-
-    identifiers.add(rawPhone);
-
-    const normalized =
-      normalizeNumber(rawPhone);
-
-    if (normalized) {
-
-      identifiers.add(normalized);
-
-      identifiers.add("91" + normalized);
-
-      identifiers.add("+91" + normalized);
-
-    }
-
-  }
-
-  return identifiers;
+debug.className =
+"debug show";
 
 }
 
+
+function hideDebug(){
+
+debug.className =
+"debug";
+
+debug.innerHTML =
+"";
+
+}
+
+
 /* =====================================================
-   GET DEPOSIT IDENTIFIERS
+NORMALIZE UID
 ===================================================== */
 
-function getDepositIdentifiers(deposit) {
+function normalizeUID(
+value
+){
 
-  const identifiers = new Set();
+if(
+value === null ||
+value === undefined
+){
 
-  const fields = [
-
-    deposit.userId,
-
-    deposit.uid,
-
-    deposit.customerId,
-
-    deposit.userUID,
-
-    deposit.mobile,
-
-    deposit.phone,
-
-    deposit.phoneNumber
-
-  ];
-
-  fields.forEach(value => {
-
-    if (!value) {
-      return;
-    }
-
-    const raw =
-      String(value).trim();
-
-    identifiers.add(raw);
-
-    const normalized =
-      normalizeNumber(raw);
-
-    if (normalized) {
-
-      identifiers.add(normalized);
-
-      identifiers.add("91" + normalized);
-
-      identifiers.add("+91" + normalized);
-
-    }
-
-  });
-
-  return identifiers;
+return "";
 
 }
 
+return String(value)
+.trim()
+.replace(/\s/g,"")
+.replace(/^\+/,"");
+
+}
+
+
 /* =====================================================
-   CHECK DEPOSIT BELONGS TO USER
+GET DEPOSIT UID
 ===================================================== */
 
-function belongsToCurrentUser(deposit, user) {
+function getDepositUID(
+deposit
+){
 
-  const authIds =
-    getAuthIdentifiers(user);
+const values = [
 
-  const depositIds =
-    getDepositIdentifiers(deposit);
+deposit.uid,
 
-  for (const id of authIds) {
+deposit.userId,
 
-    if (depositIds.has(id)) {
+deposit.customerId,
 
-      return true;
+deposit.customerUID,
 
-    }
+deposit.userUID,
 
-  }
+deposit.customerUid,
 
-  return false;
+deposit.userUid
+
+];
+
+
+for(
+const value of values
+){
+
+const uid =
+normalizeUID(value);
+
+if(uid){
+
+return uid;
 
 }
 
+}
+
+return "";
+
+}
+
+
 /* =====================================================
-   GET UTR
+GET UTR
 ===================================================== */
 
-function getUTR(deposit) {
+function getUTR(
+deposit
+){
 
-  return String(
+const values = [
 
-    deposit.utr ??
-    deposit.utrNumber ??
-    deposit.utrNo ??
-    deposit.transactionId ??
-    deposit.transactionNumber ??
-    ""
+deposit.utr,
 
-  ).trim();
+deposit.utrNumber,
+
+deposit.utrNo,
+
+deposit.transactionId,
+
+deposit.transactionNumber
+
+];
+
+
+for(
+const value of values
+){
+
+if(
+value !== undefined &&
+value !== null &&
+String(value).trim() !== ""
+){
+
+return String(value).trim();
 
 }
 
+}
+
+return "";
+
+}
+
+
 /* =====================================================
-   GET ACCOUNT
+GET ACCOUNT
 ===================================================== */
 
-function getAccount(deposit) {
+function getAccount(
+deposit
+){
 
-  return String(
+const values = [
 
-    deposit.accountHolderName ??
-    deposit.accountName ??
-    deposit.accountHolder ??
-    deposit.upiName ??
-    deposit.upiId ??
-    deposit.account ??
-    ""
+deposit.accountHolderName,
 
-  ).trim();
+deposit.account,
+
+deposit.accountName,
+
+deposit.accountHolder,
+
+deposit.upiId,
+
+deposit.upiID,
+
+deposit.upi
+
+];
+
+
+for(
+const value of values
+){
+
+if(
+value !== undefined &&
+value !== null &&
+String(value).trim() !== ""
+){
+
+return String(value).trim();
 
 }
 
+}
+
+return "";
+
+}
+
+
 /* =====================================================
-   GET STATUS
+GET STATUS
 ===================================================== */
 
-function getStatus(deposit) {
+function getStatus(
+deposit
+){
 
-  return String(
+return String(
 
-    deposit.status ??
-    "pending"
+deposit.status ??
+"pending"
 
-  )
-    .trim()
-    .toLowerCase();
+)
+.trim()
+.toLowerCase();
 
 }
 
+
 /* =====================================================
-   CONVERT FIREBASE DATE
+DATE CONVERTER
 ===================================================== */
 
-function getDateValue(value) {
+function getDateValue(
+value
+){
 
-  if (!value) {
-    return null;
-  }
+if(!value){
 
-  /* Firebase Timestamp */
-
-  if (
-    typeof value.toDate === "function"
-  ) {
-
-    return value.toDate();
-
-  }
-
-  /* JS Date */
-
-  if (value instanceof Date) {
-
-    return value;
-
-  }
-
-  /* Firestore timestamp object */
-
-  if (
-    typeof value === "object" &&
-    typeof value.seconds === "number"
-  ) {
-
-    return new Date(
-      value.seconds * 1000
-    );
-
-  }
-
-  /* Number */
-
-  if (typeof value === "number") {
-
-    const d =
-      new Date(value);
-
-    if (!isNaN(d.getTime())) {
-
-      return d;
-
-    }
-
-  }
-
-  /* String */
-
-  if (typeof value === "string") {
-
-    const d =
-      new Date(value);
-
-    if (!isNaN(d.getTime())) {
-
-      return d;
-
-    }
-
-  }
-
-  return null;
+return null;
 
 }
 
+
+/* Firebase Timestamp */
+
+if(
+typeof value.toDate ===
+"function"
+){
+
+const d =
+value.toDate();
+
+if(
+d &&
+!isNaN(d.getTime())
+){
+
+return d;
+
+}
+
+}
+
+
+/* Date */
+
+if(
+value instanceof Date
+){
+
+if(
+!isNaN(value.getTime())
+){
+
+return value;
+
+}
+
+}
+
+
+/* Firestore timestamp object */
+
+if(
+typeof value === "object" &&
+typeof value.seconds === "number"
+){
+
+const d =
+new Date(
+value.seconds * 1000
+);
+
+if(
+!isNaN(d.getTime())
+){
+
+return d;
+
+}
+
+}
+
+
+/* Number */
+
+if(
+typeof value === "number"
+){
+
+const d =
+new Date(value);
+
+if(
+!isNaN(d.getTime())
+){
+
+return d;
+
+}
+
+}
+
+
+/* String */
+
+if(
+typeof value === "string"
+){
+
+const d =
+new Date(value);
+
+if(
+!isNaN(d.getTime())
+){
+
+return d;
+
+}
+
+}
+
+return null;
+
+}
+
+
 /* =====================================================
-   GET HISTORY DATE
+FINAL HISTORY DATE
 ===================================================== */
 
-function getHistoryDate(deposit) {
+function getHistoryDate(
+deposit
+){
 
-  const status =
-    getStatus(deposit);
+const status =
+getStatus(
+deposit
+);
 
-  /*
-     APPROVED
-     सबसे पहले approvedAt
-  */
 
-  if (status === "approved") {
+/*
+APPROVED
+*/
 
-    return (
+if(
+status === "approved"
+){
 
-      getDateValue(
-        deposit.approvedAt
-      )
+return (
 
-      ||
+getDateValue(
+deposit.approvedAt
+)
 
-      getDateValue(
-        deposit.updatedAt
-      )
+||
 
-      ||
+getDateValue(
+deposit.updatedAt
+)
 
-      getDateValue(
-        deposit.createdAt
-      )
+||
 
-    );
+getDateValue(
+deposit.createdAt
+)
 
-  }
-
-  /*
-     REJECTED
-     सबसे पहले rejectedAt
-  */
-
-  if (status === "rejected") {
-
-    return (
-
-      getDateValue(
-        deposit.rejectedAt
-      )
-
-      ||
-
-      getDateValue(
-        deposit.updatedAt
-      )
-
-      ||
-
-      getDateValue(
-        deposit.createdAt
-      )
-
-    );
-
-  }
-
-  /*
-     PENDING
-  */
-
-  return (
-
-    getDateValue(
-      deposit.createdAt
-    )
-
-    ||
-
-    getDateValue(
-      deposit.updatedAt
-    )
-
-  );
+);
 
 }
 
+
+/*
+REJECTED
+*/
+
+if(
+status === "rejected" ||
+status === "reject"
+){
+
+return (
+
+getDateValue(
+deposit.rejectedAt
+)
+
+||
+
+getDateValue(
+deposit.updatedAt
+)
+
+||
+
+getDateValue(
+deposit.createdAt
+)
+
+);
+
+}
+
+
+/*
+PENDING
+*/
+
+return (
+
+getDateValue(
+deposit.createdAt
+)
+
+||
+
+getDateValue(
+deposit.updatedAt
+)
+
+);
+
+}
+
+
 /* =====================================================
-   FORMAT DATE
+DATE FORMAT
 ===================================================== */
 
-function formatDate(date) {
+function formatDate(
+date
+){
 
-  if (!date) {
-    return "—";
-  }
+if(!date){
 
-  return date.toLocaleDateString(
-    "en-GB",
-    {
-      day: "2-digit",
-      month: "short",
-      year: "numeric"
-    }
-  );
+return "—";
 
 }
 
+return date.toLocaleDateString(
+"en-GB",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+);
+
+}
+
+
 /* =====================================================
-   FORMAT DATE TIME
+DATE TIME
 ===================================================== */
 
-function formatDateTime(date) {
+function formatDateTime(
+date
+){
 
-  if (!date) {
-    return "—";
-  }
+if(!date){
 
-  return (
-
-    date.toLocaleDateString(
-      "en-GB",
-      {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric"
-      }
-    )
-
-    +
-
-    " "
-
-    +
-
-    date.toLocaleTimeString(
-      "en-IN",
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-      }
-    )
-
-  );
+return "—";
 
 }
 
+return (
+
+date.toLocaleDateString(
+"en-GB",
+{
+day:"2-digit",
+month:"2-digit",
+year:"numeric"
+}
+)
+
++
+
+" "
+
++
+
+date.toLocaleTimeString(
+"en-IN",
+{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit",
+hour12:true
+}
+)
+
+);
+
+}
+
+
 /* =====================================================
-   DATE KEY
+DATE KEY
 ===================================================== */
 
-function dateKey(date) {
+function dateKey(
+date
+){
 
-  if (!date) {
-    return "";
-  }
+if(!date){
 
-  const year =
-    date.getFullYear();
-
-  const month =
-    String(
-      date.getMonth() + 1
-    ).padStart(2, "0");
-
-  const day =
-    String(
-      date.getDate()
-    ).padStart(2, "0");
-
-  return (
-    year +
-    "-" +
-    month +
-    "-" +
-    day
-  );
+return "";
 
 }
 
+const year =
+date.getFullYear();
+
+const month =
+String(
+date.getMonth()+1
+)
+.padStart(2,"0");
+
+const day =
+String(
+date.getDate()
+)
+.padStart(2,"0");
+
+return (
+
+year +
+"-" +
+month +
+"-" +
+day
+
+);
+
+}
+
+
 /* =====================================================
-   GET REJECT REASON
+REASON
 ===================================================== */
 
-function getReason(deposit) {
+function getReason(
+deposit
+){
 
-  return String(
+const values = [
 
-    deposit.rejectReason ??
-    deposit.rejectionReason ??
-    deposit.reason ??
-    deposit.comment ??
-    ""
+deposit.rejectReason,
 
-  ).trim();
+deposit.rejectionReason,
+
+deposit.rejectedReason,
+
+deposit.reason,
+
+deposit.reject_reason,
+
+deposit.comment
+
+];
+
+
+for(
+const value of values
+){
+
+if(
+value !== undefined &&
+value !== null &&
+String(value).trim() !== ""
+){
+
+return String(value).trim();
 
 }
 
+}
+
+return "";
+
+}
+
+
 /* =====================================================
-   GET AMOUNT
+AMOUNT
 ===================================================== */
 
-function getAmount(deposit) {
+function getAmount(
+deposit
+){
 
-  const value =
+const value =
 
-    deposit.amount ??
-    deposit.depositAmount ??
-    0;
+deposit.amount ??
+deposit.depositAmount ??
+deposit.approvedAmount ??
+0;
 
-  const number =
-    Number(value);
+const number =
+Number(value);
 
-  return isNaN(number)
-    ? 0
-    : number;
+if(
+isNaN(number)
+){
+
+return 0;
 
 }
 
+return number;
+
+}
+
+
 /* =====================================================
-   RENDER HISTORY
+STATUS HTML
 ===================================================== */
 
-function renderHistory(list) {
+function getStatusHTML(
+status
+){
 
-  if (!list.length) {
+if(
+status === "approved"
+){
 
-    historyContainer.innerHTML = `
+return `
 
-      <div class="empty">
+<span class="status approved">
 
-        कोई Deposit History नहीं मिली।
+🟢 APPROVED
 
-      </div>
+</span>
 
-    `;
-
-    return;
-
-  }
-
-  /* ===================================================
-     SORT NEWEST FIRST
-  =================================================== */
-
-  const sorted =
-    [...list].sort(
-      (a, b) => {
-
-        const da =
-          getHistoryDate(a);
-
-        const db =
-          getHistoryDate(b);
-
-        return (
-
-          (db?.getTime() || 0)
-
-          -
-
-          (da?.getTime() || 0)
-
-        );
-
-      }
-    );
-
-  /* ===================================================
-     GROUP BY DATE
-  =================================================== */
-
-  const groups = {};
-
-  sorted.forEach(deposit => {
-
-    const date =
-      getHistoryDate(deposit);
-
-    const key =
-      dateKey(date);
-
-    if (!groups[key]) {
-
-      groups[key] = [];
-
-    }
-
-    groups[key].push(deposit);
-
-  });
-
-  /* ===================================================
-     DATE GROUPS NEWEST FIRST
-  =================================================== */
-
-  const dates =
-    Object.keys(groups)
-      .sort()
-      .reverse();
-
-  let html = "";
-
-  /* ===================================================
-     BUILD EACH DATE
-  =================================================== */
-
-  dates.forEach(key => {
-
-    const group =
-      groups[key];
-
-    const firstDate =
-      getHistoryDate(
-        group[0]
-      );
-
-    html += `
-
-      <div class="date-section">
-
-        <div class="date-heading">
-
-          📅 ${safe(
-            formatDate(firstDate)
-          )}
-
-        </div>
-
-        <div class="table-wrapper">
-
-          <table>
-
-            <thead>
-
-              <tr>
-
-                <th>UTR No.</th>
-
-                <th>Amount</th>
-
-                <th>Status</th>
-
-                <th>Account</th>
-
-                <th>Date & Time</th>
-
-                <th>Reason</th>
-
-              </tr>
-
-            </thead>
-
-            <tbody>
-
-    `;
-
-    /* ===============================================
-       ROWS
-    =============================================== */
-
-    group.forEach(deposit => {
-
-      const status =
-        getStatus(deposit);
-
-      const amount =
-        getAmount(deposit);
-
-      const utr =
-        getUTR(deposit);
-
-      const account =
-        getAccount(deposit);
-
-      const finalDate =
-        getHistoryDate(deposit);
-
-      const reason =
-        getReason(deposit);
-
-      let statusHTML = "";
-
-      if (status === "approved") {
-
-        statusHTML = `
-
-          <span class="status approved">
-
-            🟢 APPROVED
-
-          </span>
-
-        `;
-
-      }
-
-      else if (status === "rejected") {
-
-        statusHTML = `
-
-          <span class="status rejected">
-
-            🔴 REJECT
-
-          </span>
-
-        `;
-
-      }
-
-      else {
-
-        statusHTML = `
-
-          <span class="status pending">
-
-            🟡 PENDING
-
-          </span>
-
-        `;
-
-      }
-
-      let reasonHTML = "—";
-
-      if (
-        status === "rejected" &&
-        reason
-      ) {
-
-        reasonHTML =
-          safe(reason);
-
-      }
-
-      html += `
-
-        <tr>
-
-          <td class="utr">
-
-            ${safe(
-              utr || "—"
-            )}
-
-          </td>
-
-          <td class="amount">
-
-            ₹${amount.toLocaleString(
-              "en-IN"
-            )}
-
-          </td>
-
-          <td>
-
-            ${statusHTML}
-
-          </td>
-
-          <td class="account">
-
-            ${safe(
-              account || "—"
-            )}
-
-          </td>
-
-          <td>
-
-            ${safe(
-              formatDateTime(
-                finalDate
-              )
-            )}
-
-          </td>
-
-          <td class="reason">
-
-            ${reasonHTML}
-
-          </td>
-
-        </tr>
-
-      `;
-
-    });
-
-    html += `
-
-            </tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    `;
-
-  });
-
-  historyContainer.innerHTML =
-    html;
+`;
 
 }
 
+
+if(
+status === "rejected" ||
+status === "reject"
+){
+
+return `
+
+<span class="status rejected">
+
+🔴 REJECT
+
+</span>
+
+`;
+
+}
+
+
+return `
+
+<span class="status pending">
+
+🟡 PENDING
+
+</span>
+
+`;
+
+}
+
+
 /* =====================================================
-   LOAD HISTORY
+RENDER HISTORY
 ===================================================== */
 
-async function loadHistory() {
+function renderHistory(
+list
+){
 
-  if (!currentUser) {
+if(
+!list ||
+!list.length
+){
 
-    historyContainer.innerHTML = `
+historyContainer.innerHTML = `
 
-      <div class="empty">
+<div class="empty">
 
-        कृपया पहले लॉगिन करें।
+कोई Deposit History नहीं मिली।
 
-      </div>
+</div>
 
-    `;
+`;
 
-    return;
-
-  }
-
-  historyContainer.innerHTML = `
-
-    <div class="loading">
-
-      History Loading...
-
-    </div>
-
-  `;
-
-  try {
-
-    /*
-       IMPORTANT:
-
-       यहाँ query(userId == auth.uid)
-       नहीं लगाई गई है।
-
-       क्योंकि तुम्हारे database में
-       userId/uid = mobile number है।
-
-       इसलिए deposits पढ़कर
-       current Firebase user के
-       UID / phone number से matching
-       की जा रही है।
-    */
-
-    const depositsRef =
-      collection(
-        db,
-        DEPOSITS_COLLECTION
-      );
-
-    const snap =
-      await getDocs(
-        depositsRef
-      );
-
-    allHistory = [];
-
-    snap.forEach(docSnap => {
-
-      const data =
-        docSnap.data();
-
-      /*
-         सबसे important matching
-      */
-
-      if (
-        belongsToCurrentUser(
-          data,
-          currentUser
-        )
-      ) {
-
-        allHistory.push({
-
-          id:
-            docSnap.id,
-
-          ...data
-
-        });
-
-      }
-
-    });
-
-    /* =================================================
-       DEBUG
-    ================================================= */
-
-    console.log(
-      "Firebase Auth UID:",
-      currentUser.uid
-    );
-
-    console.log(
-      "Firebase Phone:",
-      currentUser.phoneNumber
-    );
-
-    console.log(
-      "Matching deposits:",
-      allHistory
-    );
-
-    /* =================================================
-       RENDER
-    ================================================= */
-
-    renderHistory(
-      allHistory
-    );
-
-  }
-
-  catch(error) {
-
-    console.error(
-      "History Error:",
-      error
-    );
-
-    historyContainer.innerHTML = `
-
-      <div class="empty">
-
-        History लोड नहीं हो सकी।
-
-        <br><br>
-
-        ${safe(
-          error.message
-        )}
-
-      </div>
-
-    `;
-
-  }
+return;
 
 }
 
+
+/* SORT */
+
+const sorted = [
+...list
+]
+.sort(
+(a,b) => {
+
+const da =
+getHistoryDate(a);
+
+const db =
+getHistoryDate(b);
+
+return (
+
+(db?.getTime() || 0)
+
+-
+
+(da?.getTime() || 0)
+
+);
+
+}
+);
+
+
+/* GROUP */
+
+const groups = {};
+
+
+sorted.forEach(
+deposit => {
+
+const date =
+getHistoryDate(
+deposit
+);
+
+const key =
+dateKey(date) ||
+"unknown";
+
+
+if(
+!groups[key]
+){
+
+groups[key] = [];
+
+}
+
+
+groups[key].push(
+deposit
+);
+
+});
+
+
+/* DATE ORDER */
+
+const dates =
+Object.keys(groups)
+.sort(
+(a,b) => {
+
+if(a === "unknown"){
+return 1;
+}
+
+if(b === "unknown"){
+return -1;
+}
+
+return b.localeCompare(a);
+
+});
+
+
+let html = "";
+
+
 /* =====================================================
-   SEARCH BY DATE
+DATE GROUPS
 ===================================================== */
 
-function searchByDate() {
+dates.forEach(
+key => {
 
-  const selectedDate =
-    dateSearch.value;
+const group =
+groups[key];
 
-  if (!selectedDate) {
+const date =
+group.length
+?
+getHistoryDate(
+group[0]
+)
+:
+null;
 
-    hideMessage();
 
-    renderHistory(
-      allHistory
-    );
+html += `
 
-    return;
+<div class="date-section">
 
-  }
+<div class="date-heading">
 
-  const filtered =
-    allHistory.filter(
-      deposit => {
+📅 ${safe(
+formatDate(date)
+)}
 
-        const date =
-          getHistoryDate(
-            deposit
-          );
+</div>
 
-        return (
-          dateKey(date)
-          ===
-          selectedDate
-        );
+<div class="table-wrapper">
 
-      }
-    );
+<table>
 
-  if (filtered.length) {
+<thead>
 
-    const displayDate =
-      selectedDate
-        .split("-")
-        .reverse()
-        .join("-");
+<tr>
 
-    showMessage(
-      displayDate +
-      " की History मिली।",
-      "ok"
-    );
+<th>UTR No.</th>
 
-  }
+<th>Amount</th>
 
-  else {
+<th>Status</th>
 
-    const displayDate =
-      selectedDate
-        .split("-")
-        .reverse()
-        .join("-");
+<th>Account</th>
 
-    showMessage(
-      displayDate +
-      " की कोई History नहीं मिली।",
-      "error"
-    );
+<th>Date & Time</th>
 
-  }
+<th>Reason</th>
 
-  renderHistory(
-    filtered
-  );
+</tr>
+
+</thead>
+
+<tbody>
+
+`;
+
+
+/* =====================================================
+ROWS
+===================================================== */
+
+group.forEach(
+deposit => {
+
+const status =
+getStatus(
+deposit
+);
+
+const amount =
+getAmount(
+deposit
+);
+
+const utr =
+getUTR(
+deposit
+);
+
+const account =
+getAccount(
+deposit
+);
+
+const finalDate =
+getHistoryDate(
+deposit
+);
+
+const reason =
+getReason(
+deposit
+);
+
+
+let reasonHTML =
+"—";
+
+
+if(
+(
+status === "rejected" ||
+status === "reject"
+)
+&&
+reason
+){
+
+reasonHTML =
+safe(reason);
 
 }
 
+
+html += `
+
+<tr>
+
+<td class="utr">
+
+${safe(
+utr || "—"
+)}
+
+</td>
+
+<td class="amount">
+
+₹${amount.toLocaleString(
+"en-IN"
+)}
+
+</td>
+
+<td>
+
+${getStatusHTML(
+status
+)}
+
+</td>
+
+<td class="account">
+
+${safe(
+account || "—"
+)}
+
+</td>
+
+<td>
+
+${safe(
+formatDateTime(
+finalDate
+)
+)}
+
+</td>
+
+<td class="reason">
+
+${reasonHTML}
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+
+html += `
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+
+historyContainer.innerHTML =
+html;
+
+}
+
+
 /* =====================================================
-   SEARCH BUTTON
+GET POSSIBLE CUSTOMER UID
+===================================================== */
+
+function buildPossibleCustomerUIDs(
+user
+){
+
+const result = [];
+
+
+/*
+1. Firebase Auth UID
+*/
+
+if(
+user.uid
+){
+
+result.push(
+normalizeUID(
+user.uid
+)
+);
+
+}
+
+
+/*
+2. Phone Number
+
+Example:
+
++917878852370
+
+becomes:
+
+917878852370
+*/
+
+if(
+user.phoneNumber
+){
+
+const phone =
+normalizeUID(
+user.phoneNumber
+);
+
+if(phone){
+
+result.push(
+phone
+);
+
+}
+
+}
+
+
+/*
+3. Phone number without
+country code if needed
+*/
+
+if(
+user.phoneNumber
+){
+
+const phone =
+normalizeUID(
+user.phoneNumber
+);
+
+if(
+phone.length > 10
+){
+
+result.push(
+phone.slice(-10)
+);
+
+}
+
+}
+
+
+/*
+Remove duplicates
+*/
+
+return [
+...new Set(
+result.filter(Boolean)
+)
+];
+
+}
+
+
+/* =====================================================
+LOAD HISTORY
+===================================================== */
+
+async function loadHistory(){
+
+if(!currentUser){
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+कृपया पहले लॉगिन करें।
+
+</div>
+
+`;
+
+return;
+
+}
+
+
+historyContainer.innerHTML = `
+
+<div class="loading">
+
+⏳ History Loading...
+
+</div>
+
+`;
+
+hideMessage();
+hideDebug();
+
+
+try{
+
+const depositsRef =
+collection(
+db,
+DEPOSITS_COLLECTION
+);
+
+
+const found = {};
+
+
+/* =====================================================
+UID OPTIONS
+===================================================== */
+
+customerUIDs =
+buildPossibleCustomerUIDs(
+currentUser
+);
+
+
+/*
+सबसे पहले Auth UID और
+Mobile UID दोनों से खोजेंगे।
+*/
+
+for(
+const uid of customerUIDs
+){
+
+/* uid field */
+
+try{
+
+const q =
+query(
+depositsRef,
+where(
+"uid",
+"==",
+uid
+)
+);
+
+const snap =
+await getDocs(q);
+
+snap.forEach(
+docSnap => {
+
+found[
+docSnap.id
+] = {
+
+id:
+docSnap.id,
+
+...docSnap.data()
+
+};
+
+});
+
+}
+catch(error){
+
+console.warn(
+"uid query error:",
+error
+);
+
+}
+
+
+/* userId field */
+
+try{
+
+const q =
+query(
+depositsRef,
+where(
+"userId",
+"==",
+uid
+)
+);
+
+const snap =
+await getDocs(q);
+
+snap.forEach(
+docSnap => {
+
+found[
+docSnap.id
+] = {
+
+id:
+docSnap.id,
+
+...docSnap.data()
+
+};
+
+});
+
+}
+catch(error){
+
+console.warn(
+"userId query error:",
+error
+);
+
+}
+
+
+/* customerId */
+
+try{
+
+const q =
+query(
+depositsRef,
+where(
+"customerId",
+"==",
+uid
+)
+);
+
+const snap =
+await getDocs(q);
+
+snap.forEach(
+docSnap => {
+
+found[
+docSnap.id
+] = {
+
+id:
+docSnap.id,
+
+...docSnap.data()
+
+};
+
+});
+
+}
+catch(error){
+
+console.warn(
+"customerId query error:",
+error
+);
+
+}
+
+}
+
+
+/* =====================================================
+FINAL HISTORY
+===================================================== */
+
+allHistory =
+Object.values(
+found
+);
+
+
+/* =====================================================
+SHOW RESULT
+===================================================== */
+
+if(
+allHistory.length
+){
+
+hideDebug();
+
+renderHistory(
+allHistory
+);
+
+}
+else{
+
+/*
+अगर रिकॉर्ड नहीं मिला,
+तो स्क्रीन पर उपयोगी जानकारी दिखाएँ।
+*/
+
+showDebug(
+"History नहीं मिली",
+[
+"Firebase Auth UID: " +
+(currentUser.uid || "—"),
+
+"Login Mobile: " +
+(currentUser.phoneNumber || "—"),
+
+"खोजे गए UID: " +
+(
+customerUIDs.length
+?
+customerUIDs.join(" , ")
+:
+"कोई UID नहीं मिला"
+),
+
+"Deposit में uid/userId इसी ग्राहक UID से match होना चाहिए।"
+]
+);
+
+renderHistory([]);
+
+}
+
+}
+catch(error){
+
+console.error(
+"History Error:",
+error
+);
+
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+History लोड नहीं हो सकी।
+
+<br><br>
+
+${safe(
+error.message
+)}
+
+</div>
+
+`;
+
+}
+
+}
+
+
+/* =====================================================
+SEARCH BY DATE
+===================================================== */
+
+function searchByDate(){
+
+const selectedDate =
+dateSearch.value;
+
+
+if(!selectedDate){
+
+hideMessage();
+
+renderHistory(
+allHistory
+);
+
+return;
+
+}
+
+
+const filtered =
+allHistory.filter(
+deposit => {
+
+const date =
+getHistoryDate(
+deposit
+);
+
+return (
+dateKey(date)
+===
+selectedDate
+);
+
+});
+
+
+const displayDate =
+selectedDate
+.split("-")
+.reverse()
+.join("-");
+
+
+if(
+filtered.length
+){
+
+showMessage(
+displayDate +
+" की History मिली।",
+"ok"
+);
+
+}
+else{
+
+showMessage(
+displayDate +
+" की कोई History नहीं मिली।",
+"error"
+);
+
+}
+
+
+renderHistory(
+filtered
+);
+
+}
+
+
+/* =====================================================
+SEARCH BUTTON
 ===================================================== */
 
 searchBtn.addEventListener(
-  "click",
-  searchByDate
+"click",
+searchByDate
 );
 
+
 /* =====================================================
-   DATE CHANGE
+DATE CHANGE
 ===================================================== */
 
 dateSearch.addEventListener(
-  "change",
-  searchByDate
+"change",
+searchByDate
 );
 
+
 /* =====================================================
-   RECENT BUTTON
+RECENT BUTTON
 ===================================================== */
 
 clearBtn.addEventListener(
-  "click",
-  () => {
+"click",
+() => {
 
-    dateSearch.value = "";
+dateSearch.value = "";
 
-    hideMessage();
+hideMessage();
 
-    renderHistory(
-      allHistory
-    );
+hideDebug();
 
-  }
+renderHistory(
+allHistory
 );
 
+}
+);
+
+
 /* =====================================================
-   BACK BUTTON
+BACK BUTTON
 ===================================================== */
 
 document
-  .getElementById("backBtn")
-  .addEventListener(
-    "click",
-    () => {
+.getElementById(
+"backBtn"
+)
+.addEventListener(
+"click",
+() => {
 
-      window.history.back();
+window.history.back();
 
-    }
-  );
+}
+);
+
 
 /* =====================================================
-   AUTH
+AUTH STATE
 ===================================================== */
 
 onAuthStateChanged(
-  auth,
-  async user => {
+auth,
+async user => {
 
-    if (user) {
+if(user){
 
-      currentUser =
-        user;
+currentUser =
+user;
 
-      await loadHistory();
-
-    }
-
-    else {
-
-      currentUser =
-        null;
-
-      historyContainer.innerHTML = `
-
-        <div class="empty">
-
-          कृपया अपने खाते में लॉगिन करके
-          History देखें।
-
-        </div>
-
-      `;
-
-    }
-
-  }
+console.log(
+"Firebase Auth UID:",
+user.uid
 );
+
+console.log(
+"Firebase Phone:",
+user.phoneNumber
+);
+
+await loadHistory();
+
+}
+else{
+
+currentUser =
+null;
+
+allHistory = [];
+
+historyContainer.innerHTML = `
+
+<div class="empty">
+
+कृपया अपने खाते में लॉगिन करके
+History देखें।
+
+</div>
+
+`;
+
+}
+
+});
+
 
 </script>
 
-Es code ko khan lgana h and file nam btao 
+</body>
+
+</html>
