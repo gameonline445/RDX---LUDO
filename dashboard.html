@@ -5,31 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Dashboard</title>
 
-<!-- FontAwesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-  authDomain: "rdx-ludo.firebaseapp.com",
-  projectId: "rdx-ludo",
-  storageBucket: "rdx-ludo.firebasestorage.app",
-  messagingSenderId: "928340814840",
-  appId: "1:928340814840:web:6eca42a8b76138b268440d"
-};
-
-let firebaseDB = null;
-try {
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    firebaseDB = firebase.firestore();
-} catch (error) {
-    console.error("Firebase error:", error);
-}
-</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -76,7 +54,6 @@ button{font:inherit;}
     cursor:pointer;
 }
 
-/* ORIGINAL RDX LOGO */
 .logo{
     width:44px;
     height:44px;
@@ -112,14 +89,12 @@ button{font:inherit;}
 .wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);font-size:13px;font-weight:800;}
 .redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);font-size:13px;font-weight:800;}
 
-/* MAIN CONTAINER */
+/* MAIN */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px 115px;}
-
 .welcome{padding-top:10px;}
 .welcome h1{font-size:22px;font-weight:900;letter-spacing:-.4px;color:#0369a1;}
 .welcome p{margin-top:3px;color:#64748b;font-size:13px;font-weight:500;}
 
-/* REFERRAL CARD */
 .referral{
     margin-top:16px;
     border:1.5px solid #7dd3fc;
@@ -142,7 +117,7 @@ button{font:inherit;}
 .section-head small{color:#0284c7;font-size:11px;font-weight:850;letter-spacing:1.5px;}
 .section-head h2{margin-top:2px;font-size:18px;font-weight:900;color:#0f172a;}
 
-/* GAME CARD (NO EXTRA BORDER COLOR - CLEAN BOARD VIEW) */
+/* GAME CARD */
 .game-card{
     height:185px;
     border-radius:20px;
@@ -166,18 +141,9 @@ button{font:inherit;}
     background:linear-gradient(180deg,rgba(0,0,0,0.05) 0%,rgba(0,0,0,0.65) 100%);
 }
 
-/* SLOW BLINKING (BULB ANIMATION) FOR LIVE */
 @keyframes slowPulse {
-    0%, 100% {
-        opacity: 1;
-        box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
-        transform: scale(1);
-    }
-    50% {
-        opacity: 0.35;
-        box-shadow: 0 0 2px rgba(34, 197, 94, 0.2);
-        transform: scale(0.97);
-    }
+    0%, 100% { opacity: 1; box-shadow: 0 0 10px rgba(34, 197, 94, 0.9); transform: scale(1); }
+    50% { opacity: 0.35; box-shadow: 0 0 2px rgba(34, 197, 94, 0.2); transform: scale(0.97); }
 }
 
 .live{
@@ -197,10 +163,8 @@ button{font:inherit;}
 .game-bottom-row{display:flex;align-items:flex-end;justify-content:space-between;width:100%;}
 .game-info-left h3{font-size:18px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,0.6);}
 .game-info-left p{margin-top:2px;font-size:11px;color:#e2e8f0;text-shadow:0 1px 3px rgba(0,0,0,0.6);}
-
 .play-btn{padding:8px 18px;border:0;border-radius:18px;background:#2563eb;color:white;font-size:13px;font-weight:850;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.4);display:flex;align-items:center;gap:5px;}
 
-/* COMING SOON CARD */
 .soon-card{margin-top:12px;padding:12px 14px;background:#fff;border:1px solid #e2e8f0;border-radius:18px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 15px rgba(30,60,120,.03);}
 .soon-card img{width:56px;height:56px;object-fit:cover;border-radius:14px;}
 .soon-info{flex:1;}
@@ -208,31 +172,7 @@ button{font:inherit;}
 .soon-info p{margin-top:2px;color:#64748b;font-size:12px;}
 .soon-badge{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:6px 10px;border-radius:14px;font-size:10px;font-weight:800;display:flex;align-items:center;gap:4px;}
 
-/* SIDE MENU */
-.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100vh;background:#ffffff;z-index:300;padding:20px 16px 100px;overflow-y:auto;box-shadow:10px 0 35px rgba(0,0,0,.16);transition:left .3s ease;}
-.menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
-.menu-brand{display:flex;align-items:center;gap:10px;}
-.menu-logo{width:46px;height:46px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e0f2fe);border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:13px;font-weight:900;cursor:pointer;}
-.menu-user h2{font-size:17px;font-weight:850;}
-.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
-.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
-.menu-list{margin-top:16px;}
-.menu-item{width:100%;min-height:56px;border:1px solid #e2e8f0;background:#fafbfe;padding:8px 12px;border-radius:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;text-align:left;color:#1e293b;cursor:pointer;}
-.menu-item-icon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:17px;}
-.menu-home{background:linear-gradient(145deg,#716df5,#817eff);}
-.menu-profile{background:linear-gradient(145deg,#ff743e,#ff9c39);}
-.menu-wallet{background:linear-gradient(145deg,#18b965,#43d77e);}
-.menu-refer{background:linear-gradient(145deg,#ff8a35,#ffb044);}
-.menu-history{background:linear-gradient(145deg,#7259df,#9868f3);}
-.menu-notification{background:linear-gradient(145deg,#6679f5,#7d8cff);}
-.menu-support{background:linear-gradient(145deg,#12b8e0,#27c9ef);}
-.menu-item-text{flex:1;font-size:15px;font-weight:750;}
-.menu-arrow{color:#94a3b8;font-size:20px;}
-.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:250;display:none;}
-.menu-overlay.show{display:block;}
-
-/* BOTTOM NAVIGATION */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -248,7 +188,6 @@ button{font:inherit;}
     z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
 }
-
 .nav-item{
     width:25%;
     height:100%;
@@ -265,68 +204,22 @@ button{font:inherit;}
     cursor:pointer;
     position:relative;
 }
-
-.nav-icon-box{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    color:#ffffff;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-    transition:transform 0.2s ease;
-}
-
-.nav-item:active .nav-icon-box{
-    transform:scale(0.92);
-}
-
-.icon-home {
-    background: linear-gradient(145deg, #6366f1, #8b5cf6);
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
-}
-
-.icon-wallet {
-    background: linear-gradient(145deg, #10b981, #059669);
-    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
-}
-
-.icon-support {
-    background: linear-gradient(145deg, #06b6d4, #0284c7);
-    box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
-}
-
-.icon-profile {
-    background: linear-gradient(145deg, #f97316, #ea580c);
-    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
-}
-
-.nav-item.active {
-    color: #101a38;
-    font-weight: 800;
-}
-
-.nav-item.active::after {
-    content: "";
-    position: absolute;
-    bottom: 6px;
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: #6366f1;
-}
+.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
+.nav-item:active .nav-icon-box{transform:scale(0.92);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.nav-item.active{color:#101a38;font-weight:800;}
+.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#6366f1;}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <!-- Original RDX Logo with Refresh to Home -->
         <div class="logo" onclick="goHome()">RDX</div>
     </div>
     <div class="header-right">
@@ -336,40 +229,12 @@ button{font:inherit;}
     </div>
 </header>
 
-<!-- SIDE MENU -->
-<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
-
-<div class="menu-panel" id="menuPanel">
-    <div class="menu-title">
-        <div class="menu-brand">
-            <div class="menu-logo" onclick="goHome()">RDX</div>
-            <div class="menu-user">
-                <h2 id="menuUsername">RDX LUDO</h2>
-                <p>Play · Win · Earn</p>
-            </div>
-        </div>
-        <button class="close-menu" onclick="closeMenu()">×</button>
-    </div>
-
-    <div class="menu-list">
-        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home">🏠</div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile">👤</div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet">💰</div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer">🎁</div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history">↻</div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification">🔔</div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support">🎧</div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
-    </div>
-</div>
-
-<!-- MAIN CONTENT -->
 <main class="container">
     <section class="welcome">
         <h1 id="username">Hey, User</h1>
         <p>Welcome to RDX LUDO</p>
     </section>
 
-    <!-- REFERRAL -->
     <section class="referral" onclick="goRedeem()">
         <div>
             <small>REFER & EARN</small>
@@ -384,7 +249,7 @@ button{font:inherit;}
         <h2>Play Your Game</h2>
     </div>
 
-    <!-- GAME CARD (Pure Original Board View, No Extra Color) -->
+    <!-- GAME CARD (Full Card Clickable) -->
     <article class="game-card" onclick="goBattles()">
         <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
         <div class="game-overlay">
@@ -394,7 +259,6 @@ button{font:inherit;}
                     <h3>Ludo Classic</h3>
                     <p>Ludo game</p>
                 </div>
-                <!-- Play button on the bottom right corner -->
                 <button class="play-btn" onclick="event.stopPropagation(); goBattles();">
                     ▶ Play
                 </button>
@@ -402,7 +266,6 @@ button{font:inherit;}
         </div>
     </article>
 
-    <!-- SOON CARD -->
     <section class="soon-card">
         <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
         <div class="soon-info">
@@ -413,35 +276,30 @@ button{font:inherit;}
     </section>
 </main>
 
-<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="goHome()">
-        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
-        <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="goWallet()">
-        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
-        <span>Wallet</span>
-    </button>
-    <button class="nav-item" onclick="goSupport()">
-        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
-        <span>Support</span>
-    </button>
-    <button class="nav-item" onclick="goProfile()">
-        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
-        <span>Profile</span>
-    </button>
+    <button class="nav-item active" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+  authDomain: "rdx-ludo.firebaseapp.com",
+  projectId: "rdx-ludo",
+  storageBucket: "rdx-ludo.firebasestorage.app",
+  messagingSenderId: "928340814840",
+  appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseDB = firebase.firestore();
+
 async function loadFirebaseCustomer(){
     try {
-        if(!firebaseDB) return;
-        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                     localStorage.getItem("rdxVerifiedMobile") || 
-                     localStorage.getItem("rdxUserMobile");
-        if(!mobile) return;
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
         const cleanMobile = String(mobile).replace(/\D/g,"");
+        if(!cleanMobile) return;
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
@@ -449,40 +307,25 @@ async function loadFirebaseCustomer(){
         if(!snapshot.exists) return;
 
         const data = snapshot.data();
-        let balance = Number(data.balance || 0);
-        document.getElementById("topBalance").textContent = balance;
-        let redeem = Number(data.redeemBalance || data.redeem || data.referralBalance || 0);
-        document.getElementById("topRedeem").textContent = redeem;
+        document.getElementById("topBalance").textContent = Number(data.balance || 0);
+        document.getElementById("topRedeem").textContent = Number(data.referralBalance || data.redeemBalance || 0);
 
-        let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
-        fullName = String(fullName).trim();
-
-        // FIRST NAME ONLY
-        let firstName = fullName.split(" ")[0];
+        let fullName = data.name || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
+        let firstName = String(fullName).trim().split(" ")[0];
 
         document.getElementById("username").textContent = "Hey, " + firstName;
-        document.getElementById("menuUsername").textContent = firstName;
-
-        localStorage.setItem("rdxUsername", fullName);
-        localStorage.setItem("rdxBalance", String(balance));
-    } catch(error){
-        console.error(error);
-    }
+    } catch(error){ console.error(error); }
 }
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
-function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
-
-function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
-function goBattles(){ closeMenu(); window.location.href = "./battles.html"; }
-function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
-function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
-function goProfile(){ closeMenu(); window.location.href = "./profile.html"; }
-function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
-function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
-function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
+function goHome(){ window.location.href = "./dashboard.html"; }
+function goBattles(){ window.location.href = "./battles.html"; }
+function goWallet(){ window.location.href = "./wallet.html"; }
+function goSupport(){ window.location.href = "./support.html"; }
+function goProfile(){ window.location.href = "./profile.html"; }
+function goRedeem(){ window.location.href = "./referral.html"; }
+function goNotifications(){ window.location.href = "./notification.html"; }
 </script>
 </body>
 </html>
