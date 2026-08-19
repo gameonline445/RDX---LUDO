@@ -213,6 +213,8 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .action{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;margin:2px;}
 .approve{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
 .reject{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+.delete-btn{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
+.delete-all-btn{background:linear-gradient(100deg,#e11d48,#be123c);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
 .refresh{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
 
 .save{
@@ -346,14 +348,17 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
-<button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+    <button id="deleteAllUsersBtn" class="action delete-all-btn"><i class="fa-solid fa-triangle-exclamation"></i> Delete All Customers</button>
+</div>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date...">
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Joined Date</th><th>Status</th></tr>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Joined Date</th><th>Status</th><th>Action</th></tr>
 </thead>
-<tbody id="userTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+<tbody id="userTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -407,7 +412,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, runTransaction, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -432,7 +437,6 @@ let users = [];
 const $ = id => document.getElementById(id);
 const safe = v => String(v ?? "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
-// Universal Date Parser Helper
 function parseItemTime(ts) {
     if (!ts) return { dateObj: new Date(0), formatted: "—" };
     let d;
@@ -509,7 +513,6 @@ async function loadWithdrawals(){
             });
         });
 
-        // 1. Pending Sabse Upar 2. Date/Time Latest to Oldest
         list.sort((a, b) => {
             const aPending = String(a.status || "").toLowerCase() === "pending";
             const bPending = String(b.status || "").toLowerCase() === "pending";
@@ -618,7 +621,6 @@ async function loadDeposits(){
             });
         });
 
-        // 1. Pending Sabse Upar 2. Date/Time Latest to Oldest
         list.sort((a, b) => {
             const aPending = String(a.status || "").toLowerCase() === "pending";
             const bPending = String(b.status || "").toLowerCase() === "pending";
@@ -721,9 +723,9 @@ async function rejectDeposit(id) {
 $("depositSearch").addEventListener("input", renderDeposits);
 $("refreshDeposits").addEventListener("click", loadDeposits);
 
-// ================= CUSTOMERS =================
+// ================= CUSTOMERS & DELETE LOGIC =================
 async function loadUsers(){
-    $("userTable").innerHTML = `<tr><td colspan="6" class="empty">Loading...</td></tr>`;
+    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "customers"));
         let list = [];
@@ -738,13 +740,12 @@ async function loadUsers(){
             });
         });
 
-        // Date-wise sorting (Newest customers on top)
         list.sort((a, b) => b.timeObj - a.timeObj);
         users = list;
         renderUsers();
         updateDashboard();
     } catch(e) {
-        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
     }
 }
 
@@ -762,7 +763,7 @@ function renderUsers(){
     });
 
     if(!list.length){
-        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">No customers found.</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
         return;
     }
 
@@ -774,9 +775,55 @@ function renderUsers(){
             <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
             <td>${u.formattedDate}</td>
             <td><span class="badge approved">Active</span></td>
+            <td>
+                <button class="action delete-btn" data-del-user="${safe(u.id)}"><i class="fa-solid fa-trash-can"></i> Delete</button>
+            </td>
         </tr>`).join("");
+
+    document.querySelectorAll("[data-del-user]").forEach(b => {
+        b.addEventListener("click", () => deleteSingleUser(b.dataset.delUser));
+    });
 }
 
+// 1. DELETE SINGLE USER
+async function deleteSingleUser(userId) {
+    if (!confirm(`Kya aap sach mein customer (${userId}) ko permanently delete karna chahte hain?`)) return;
+
+    try {
+        await deleteDoc(doc(db, "customers", userId));
+        alert("✅ Customer deleted successfully!");
+        loadUsers();
+    } catch(e) {
+        alert("Delete error: " + e.message);
+    }
+}
+
+// 2. DELETE ALL USERS (BULK DELETE)
+async function deleteAllUsers() {
+    if (!users.length) return alert("Koi customer data nahi hai.");
+
+    const confirm1 = confirm(`⚠️ DANGER: Kya aap sabhi (${users.length}) customers ko permanently delete karna chahte hain? Ye wapas nahi aayega!`);
+    if (!confirm1) return;
+
+    const securityCode = prompt("Sabhi users ko delete karne ke liye 'DELETE ALL' type karein:");
+    if (securityCode !== "DELETE ALL") return alert("Galat confirmation code! Process cancel kar di gayi.");
+
+    try {
+        const batch = writeBatch(db);
+        users.forEach(u => {
+            const userRef = doc(db, "customers", u.id);
+            batch.delete(userRef);
+        });
+
+        await batch.commit();
+        alert("✅ Sabhi customers database se delete ho gaye.");
+        loadUsers();
+    } catch(e) {
+        alert("Bulk delete error: " + e.message);
+    }
+}
+
+$("deleteAllUsersBtn").addEventListener("click", deleteAllUsers);
 $("userSearch").addEventListener("input", renderUsers);
 $("refreshUsers").addEventListener("click", loadUsers);
 
