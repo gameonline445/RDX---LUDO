@@ -26,28 +26,17 @@ const firebaseConfig = {
 let firebaseDB = null;
 
 try {
-
     if (!firebase.apps.length) {
         firebase.initializeApp(firebaseConfig);
     }
-
     firebaseDB = firebase.firestore();
-
     console.log("Firebase connected");
-
 } catch (error) {
-
-    console.error(
-        "Firebase initialization error:",
-        error
-    );
-
+    console.error("Firebase initialization error:", error);
 }
 </script>
 
-
 <style>
-
 *{
     box-sizing:border-box;
     margin:0;
@@ -61,10 +50,8 @@ html{
 body{
     font-family:-apple-system,BlinkMacSystemFont,
     "Segoe UI",Roboto,Arial,sans-serif;
-
     background:#f7f9ff;
     color:#101a38;
-
     min-height:100vh;
 }
 
@@ -72,30 +59,19 @@ button{
     font:inherit;
 }
 
-
 /* ================= HEADER ================= */
-
 .top-header{
     height:76px;
-
-    background:
-    linear-gradient(110deg,#eef4ff,#ffffff);
-
+    background:linear-gradient(110deg,#eef4ff,#ffffff);
     border-bottom:1px solid #cbd8f0;
-
     display:flex;
     align-items:center;
     justify-content:space-between;
-
     padding:0 18px;
-
     position:sticky;
     top:0;
-
     z-index:100;
-
-    box-shadow:
-    0 5px 18px rgba(36,75,150,.08);
+    box-shadow:0 5px 18px rgba(36,75,150,.08);
 }
 
 .header-left{
@@ -107,49 +83,31 @@ button{
 .menu-btn{
     width:48px;
     height:48px;
-
     border:0;
     border-radius:16px;
-
-    background:
-    linear-gradient(145deg,#ff7165,#ff8a70);
-
+    background:linear-gradient(145deg,#ff7165,#ff8a70);
     color:white;
-
     font-size:27px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
-    box-shadow:
-    0 6px 15px rgba(255,93,80,.25);
-
+    box-shadow:0 6px 15px rgba(255,93,80,.25);
     cursor:pointer;
 }
 
 .logo{
     width:48px;
     height:48px;
-
     border-radius:50%;
-
-    background:
-    linear-gradient(145deg,#ffffff,#e7efff);
-
+    background:linear-gradient(145deg,#ffffff,#e7efff);
     border:3px solid #d3e1ff;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     color:#1762df;
-
     font-size:13px;
     font-weight:900;
-
-    box-shadow:
-    0 5px 12px rgba(36,93,190,.15);
+    box-shadow:0 5px 12px rgba(36,93,190,.15);
 }
 
 .header-right{
@@ -161,71 +119,44 @@ button{
 .header-icon{
     width:48px;
     height:48px;
-
     border:0;
-
     border-radius:18px;
-
     display:flex;
     align-items:center;
     justify-content:center;
-
     font-size:22px;
-
     cursor:pointer;
-
     color:white;
-
-    box-shadow:
-    0 6px 15px rgba(0,0,0,.12);
+    box-shadow:0 6px 15px rgba(0,0,0,.12);
 }
 
 .notification{
-    background:
-    linear-gradient(145deg,#746df4,#817eff);
+    background:linear-gradient(145deg,#746df4,#817eff);
 }
 
 .wallet-top{
-    background:
-    linear-gradient(145deg,#20c36b,#43d77e);
-
+    background:linear-gradient(145deg,#20c36b,#43d77e);
     min-width:72px;
-
     padding:0 12px;
-
     font-size:17px;
-
     font-weight:800;
 }
 
 .redeem-top{
-    background:
-    linear-gradient(145deg,#ff8a35,#ffad45);
-
+    background:linear-gradient(145deg,#ff8a35,#ffad45);
     min-width:72px;
-
     padding:0 12px;
-
     font-size:17px;
-
     font-weight:800;
 }
 
-
 /* ================= MAIN ================= */
-
 .container{
     width:100%;
-
     max-width:850px;
-
     margin:auto;
-
     padding:0 18px 125px;
 }
-
-
-/* ================= WELCOME ================= */
 
 .welcome{
     padding-top:35px;
@@ -243,39 +174,17 @@ button{
     font-size:17px;
 }
 
-
-/* ================= REFERRAL ================= */
-
 .referral{
     margin-top:30px;
-
     min-height:140px;
-
     border:1.5px solid #abc2f4;
-
     border-radius:27px;
-
     padding:28px 25px;
-
-    background:
-    radial-gradient(
-        circle at 100% 0%,
-        #dce8ff,
-        transparent 40%
-    ),
-    linear-gradient(
-        135deg,
-        #eef4ff,
-        #ffffff
-    );
-
+    background:radial-gradient(circle at 100% 0%,#dce8ff,transparent 40%),linear-gradient(135deg,#eef4ff,#ffffff);
     display:flex;
     align-items:center;
     justify-content:space-between;
-
-    box-shadow:
-    0 15px 35px rgba(40,88,175,.10);
-
+    box-shadow:0 15px 35px rgba(40,88,175,.10);
     cursor:pointer;
 }
 
@@ -285,57 +194,37 @@ button{
 
 .referral small{
     display:block;
-
     color:#61708c;
-
     font-weight:800;
-
     letter-spacing:1.5px;
-
     font-size:13px;
 }
 
 .referral strong{
     display:block;
-
     margin-top:8px;
-
     font-size:38px;
-
     letter-spacing:-1px;
 }
 
 .referral-text{
     color:#52627f;
-
     font-size:15px;
-
     margin-top:2px;
 }
 
 .referral-arrow{
     width:56px;
     height:56px;
-
     border-radius:50%;
-
     background:#2868e8;
-
     color:white;
-
     display:flex;
-
     align-items:center;
     justify-content:center;
-
     font-size:29px;
-
-    box-shadow:
-    0 10px 22px rgba(40,104,232,.28);
+    box-shadow:0 10px 22px rgba(40,104,232,.28);
 }
-
-
-/* ================= SECTION ================= */
 
 .section-head{
     margin-top:38px;
@@ -344,155 +233,94 @@ button{
 
 .section-head small{
     color:#2564da;
-
     font-size:14px;
-
     font-weight:850;
-
     letter-spacing:2px;
 }
 
 .section-head h2{
     margin-top:6px;
-
     font-size:25px;
 }
 
-
-/* ================= GAME ================= */
-
 .game-card{
     height:290px;
-
     border-radius:26px;
-
     overflow:hidden;
-
     position:relative;
-
     background:#111;
-
-    box-shadow:
-    0 15px 35px rgba(0,0,0,.18);
+    box-shadow:0 15px 35px rgba(0,0,0,.18);
 }
 
 .game-card img{
     width:100%;
     height:100%;
-
     object-fit:cover;
 }
 
 .game-overlay{
     position:absolute;
-
     inset:0;
-
     padding:25px;
-
     display:flex;
-
     flex-direction:column;
-
     justify-content:flex-end;
-
     color:white;
-
-    background:
-    linear-gradient(
-        0deg,
-        rgba(0,0,0,.78),
-        rgba(0,0,0,.02) 70%
-    );
+    background:linear-gradient(0deg,rgba(0,0,0,.78),rgba(0,0,0,.02) 70%);
 }
 
 .live{
     width:max-content;
-
     padding:7px 13px;
-
     border-radius:20px;
-
     background:#15944d;
-
     color:white;
-
     font-size:12px;
-
     font-weight:800;
 }
 
 .game-overlay h3{
     margin-top:12px;
-
     font-size:29px;
 }
 
 .game-overlay p{
     margin-top:5px;
-
     font-size:14px;
-
     color:#e8edf7;
 }
 
 .play-btn{
     margin-top:16px;
-
     width:max-content;
-
     padding:12px 22px;
-
     border:0;
-
     border-radius:25px;
-
     background:#2770ee;
-
     color:white;
-
     font-size:17px;
-
     font-weight:800;
-
     cursor:pointer;
-
-    box-shadow:
-    0 8px 20px rgba(39,112,238,.30);
+    box-shadow:0 8px 20px rgba(39,112,238,.30);
 }
-
-
-/* ================= COMING SOON ================= */
 
 .soon-card{
     margin-top:16px;
-
     min-height:120px;
-
     padding:16px;
-
     background:#fff;
-
     border:1px solid #dce2ed;
-
     border-radius:23px;
-
     display:flex;
-
     align-items:center;
-
     gap:15px;
-
-    box-shadow:
-    0 8px 20px rgba(30,60,120,.05);
+    box-shadow:0 8px 20px rgba(30,60,120,.05);
 }
 
 .soon-card img{
     width:82px;
     height:82px;
-
     object-fit:cover;
-
     border-radius:17px;
 }
 
@@ -506,59 +334,33 @@ button{
 
 .soon-info p{
     margin-top:5px;
-
     color:#75819a;
-
     font-size:14px;
 }
 
 .soon-badge{
     background:#f3f5f9;
-
     border:1px solid #dce1e9;
-
     color:#65718a;
-
     padding:9px 12px;
-
     border-radius:20px;
-
     font-size:11px;
-
     font-weight:800;
 }
 
-
 /* ================= SIDE MENU ================= */
-
 .menu-panel{
     position:fixed;
-
     top:0;
     left:-100%;
-
     width:73%;
     max-width:430px;
-
     height:100vh;
-
-    background:
-    linear-gradient(
-        180deg,
-        #ffffff 0%,
-        #ffffff 75%,
-        #f9fbff 100%
-    );
-
+    background:linear-gradient(180deg,#ffffff 0%,#ffffff 75%,#f9fbff 100%);
     z-index:300;
-
     padding:22px 22px 110px;
-
     overflow-y:auto;
-
-    box-shadow:
-    10px 0 35px rgba(0,0,0,.16);
-
+    box-shadow:10px 0 35px rgba(0,0,0,.16);
     transition:left .3s ease;
 }
 
@@ -568,45 +370,29 @@ button{
 
 .menu-title{
     display:flex;
-
     align-items:center;
-
     justify-content:space-between;
-
     padding:5px 2px 24px;
-
     border-bottom:1px solid #e1e6f0;
 }
 
 .menu-brand{
     display:flex;
-
     align-items:center;
-
     gap:13px;
 }
 
 .menu-logo{
     width:58px;
     height:58px;
-
     border-radius:50%;
-
-    background:
-    linear-gradient(145deg,#ffffff,#e7efff);
-
+    background:linear-gradient(145deg,#ffffff,#e7efff);
     border:3px solid #d3e1ff;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     color:#1762df;
-
     font-size:16px;
-
     font-weight:900;
 }
 
@@ -617,28 +403,19 @@ button{
 
 .menu-user p{
     margin-top:4px;
-
     color:#71809d;
-
     font-size:14px;
 }
 
 .close-menu{
     border:0;
-
     background:#f6f7fb;
-
     border:1px solid #e0e5ee;
-
     width:52px;
     height:52px;
-
     border-radius:50%;
-
     font-size:30px;
-
     color:#64718a;
-
     cursor:pointer;
 }
 
@@ -648,107 +425,58 @@ button{
 
 .menu-item{
     width:100%;
-
     min-height:76px;
-
     border:1px solid #e1e5ed;
-
-    background:
-    linear-gradient(145deg,#ffffff,#fbfcff);
-
+    background:linear-gradient(145deg,#ffffff,#fbfcff);
     padding:12px 17px;
-
     border-radius:22px;
-
     margin-bottom:12px;
-
     display:flex;
-
     align-items:center;
-
     gap:17px;
-
     text-align:left;
-
     color:#17213a;
-
     cursor:pointer;
-
-    box-shadow:
-    0 4px 12px rgba(30,55,100,.04);
+    box-shadow:0 4px 12px rgba(30,55,100,.04);
 }
 
 .menu-item-icon{
     width:52px;
     height:52px;
-
     flex:0 0 52px;
-
     border-radius:17px;
-
     display:flex;
-
     align-items:center;
-
     justify-content:center;
-
     color:white;
-
     font-size:24px;
 }
 
-.menu-home{
-    background:linear-gradient(145deg,#716df5,#817eff);
-}
-
-.menu-profile{
-    background:linear-gradient(145deg,#ff743e,#ff9c39);
-}
-
-.menu-wallet{
-    background:linear-gradient(145deg,#18b965,#43d77e);
-}
-
-.menu-refer{
-    background:linear-gradient(145deg,#ff8a35,#ffb044);
-}
-
-.menu-history{
-    background:linear-gradient(145deg,#7259df,#9868f3);
-}
-
-.menu-notification{
-    background:linear-gradient(145deg,#6679f5,#7d8cff);
-}
-
-.menu-support{
-    background:linear-gradient(145deg,#12b8e0,#27c9ef);
-}
+.menu-home{ background:linear-gradient(145deg,#716df5,#817eff); }
+.menu-profile{ background:linear-gradient(145deg,#ff743e,#ff9c39); }
+.menu-wallet{ background:linear-gradient(145deg,#18b965,#43d77e); }
+.menu-refer{ background:linear-gradient(145deg,#ff8a35,#ffb044); }
+.menu-history{ background:linear-gradient(145deg,#7259df,#9868f3); }
+.menu-notification{ background:linear-gradient(145deg,#6679f5,#7d8cff); }
+.menu-support{ background:linear-gradient(145deg,#12b8e0,#27c9ef); }
 
 .menu-item-text{
     flex:1;
-
     font-size:18px;
     font-weight:750;
 }
 
 .menu-arrow{
     color:#69768e;
-
     font-size:28px;
 }
 
 .menu-overlay{
     position:fixed;
-
     inset:0;
-
     background:rgba(17,29,55,.30);
-
     backdrop-filter:blur(3px);
-
     z-index:250;
-
     display:none;
 }
 
@@ -756,1187 +484,341 @@ button{
     display:block;
 }
 
-
 /* ================= BOTTOM NAV ================= */
-
 .bottom-nav{
     position:fixed;
-
     bottom:0;
     left:0;
-
     width:100%;
-
     height:82px;
-
-    background:
-    rgba(255,255,255,.97);
-
+    background:rgba(255,255,255,.97);
     border-top:1px solid #d6deee;
-
     display:flex;
-
     justify-content:space-around;
-
     align-items:center;
-
     z-index:200;
-
-    box-shadow:
-    0 -5px 20px rgba(30,65,130,.08);
-
+    box-shadow:0 -5px 20px rgba(30,65,130,.08);
     backdrop-filter:blur(15px);
 }
 
 .nav-item{
     width:25%;
-
     height:100%;
-
     border:0;
-
     background:transparent;
-
     display:flex;
-
     flex-direction:column;
-
     align-items:center;
-
     justify-content:center;
-
     gap:5px;
-
     color:#66738d;
-
     font-size:13px;
-
     cursor:pointer;
 }
 
 .nav-icon{
     width:44px;
     height:44px;
-
     border-radius:15px;
-
     display:flex;
-
     align-items:center;
     justify-content:center;
-
     font-size:22px;
 }
 
 .nav-item.active{
     color:#202d49;
-
     font-weight:700;
 }
 
 .nav-item.active .nav-icon{
     background:#536df5;
-
     color:white;
-
-    box-shadow:
-    0 7px 17px rgba(83,109,245,.3);
+    box-shadow:0 7px 17px rgba(83,109,245,.3);
 }
 
-
 /* ================= TOAST ================= */
-
 .toast{
     position:fixed;
-
     left:50%;
     top:90px;
-
-    transform:
-    translateX(-50%)
-    translateY(-20px);
-
+    transform:translateX(-50%) translateY(-20px);
     background:#182440;
-
     color:white;
-
     padding:13px 18px;
-
     border-radius:14px;
-
     opacity:0;
-
     pointer-events:none;
-
     transition:.25s;
-
     z-index:500;
-
     font-size:14px;
-
     text-align:center;
 }
 
 .toast.show{
     opacity:1;
-
-    transform:
-    translateX(-50%)
-    translateY(0);
+    transform:translateX(-50%) translateY(0);
 }
-
-
-/* ================= MOBILE ================= */
 
 @media(max-width:700px){
-
-    .top-header{
-        height:70px;
-        padding:0 12px;
-    }
-
-    .menu-btn{
-        width:46px;
-        height:46px;
-        font-size:25px;
-    }
-
-    .logo{
-        width:45px;
-        height:45px;
-        font-size:12px;
-    }
-
-    .header-right{
-        gap:6px;
-    }
-
-    .header-icon{
-        width:44px;
-        height:44px;
-        border-radius:16px;
-    }
-
-    .wallet-top,
-    .redeem-top{
-        min-width:48px;
-        padding:0;
-        font-size:0;
-    }
-
-    .wallet-top::before{
-        content:"💰";
-        font-size:20px;
-    }
-
-    .redeem-top::before{
-        content:"🎁";
-        font-size:20px;
-    }
-
-    .container{
-        padding:0 12px 105px;
-    }
-
-    .welcome{
-        padding-top:30px;
-    }
-
-    .welcome h1{
-        font-size:27px;
-    }
-
-    .welcome p{
-        font-size:15px;
-    }
-
-    .referral{
-        min-height:130px;
-        padding:22px;
-        border-radius:23px;
-    }
-
-    .referral strong{
-        font-size:34px;
-    }
-
-    .referral-arrow{
-        width:50px;
-        height:50px;
-    }
-
-    .game-card{
-        height:235px;
-        border-radius:23px;
-    }
-
-    .game-overlay{
-        padding:20px;
-    }
-
-    .game-overlay h3{
-        font-size:25px;
-    }
-
-    .soon-card{
-        min-height:105px;
-    }
-
-    .soon-card img{
-        width:70px;
-        height:70px;
-    }
-
-    .soon-badge{
-        padding:7px 9px;
-        font-size:10px;
-    }
-
-    .bottom-nav{
-        height:78px;
-    }
-
-    .menu-panel{
-        width:78%;
-        max-width:390px;
-        padding:20px 16px 105px;
-    }
-
-    .menu-logo{
-        width:54px;
-        height:54px;
-    }
-
-    .menu-user h2{
-        font-size:20px;
-    }
-
-    .menu-user p{
-        font-size:13px;
-    }
-
-    .close-menu{
-        width:48px;
-        height:48px;
-        font-size:27px;
-    }
-
-    .menu-item{
-        min-height:72px;
-        border-radius:20px;
-        padding:10px 14px;
-        gap:14px;
-    }
-
-    .menu-item-icon{
-        width:48px;
-        height:48px;
-        flex-basis:48px;
-        border-radius:16px;
-        font-size:22px;
-    }
-
-    .menu-item-text{
-        font-size:17px;
-    }
-
+    .top-header{ height:70px; padding:0 12px; }
+    .menu-btn{ width:46px; height:46px; font-size:25px; }
+    .logo{ width:45px; height:45px; font-size:12px; }
+    .header-right{ gap:6px; }
+    .header-icon{ width:44px; height:44px; border-radius:16px; }
+    .wallet-top,.redeem-top{ min-width:48px; padding:0; font-size:0; }
+    .wallet-top::before{ content:"💰"; font-size:20px; }
+    .redeem-top::before{ content:"🎁"; font-size:20px; }
+    .container{ padding:0 12px 105px; }
+    .welcome{ padding-top:30px; }
+    .welcome h1{ font-size:27px; }
+    .welcome p{ font-size:15px; }
+    .referral{ min-height:130px; padding:22px; border-radius:23px; }
+    .referral strong{ font-size:34px; }
+    .referral-arrow{ width:50px; height:50px; }
+    .game-card{ height:235px; border-radius:23px; }
+    .game-overlay{ padding:20px; }
+    .game-overlay h3{ font-size:25px; }
+    .soon-card{ min-height:105px; }
+    .soon-card img{ width:70px; height:70px; }
+    .soon-badge{ padding:7px 9px; font-size:10px; }
+    .bottom-nav{ height:78px; }
+    .menu-panel{ width:78%; max-width:390px; padding:20px 16px 105px; }
+    .menu-logo{ width:54px; height:54px; }
+    .menu-user h2{ font-size:20px; }
+    .menu-user p{ font-size:13px; }
+    .close-menu{ width:48px; height:48px; font-size:27px; }
+    .menu-item{ min-height:72px; border-radius:20px; padding:10px 14px; gap:14px; }
+    .menu-item-icon{ width:48px; height:48px; flex-basis:48px; border-radius:16px; font-size:22px; }
+    .menu-item-text{ font-size:17px; }
 }
-
 </style>
-
 </head>
 
 <body>
 
-
 <!-- ================= TOP HEADER ================= -->
-
 <header class="top-header">
-
     <div class="header-left">
-
-        <button
-            class="menu-btn"
-            onclick="openMenu()">
-
-            ☰
-
-        </button>
-
-        <div class="logo">
-            RDX
-        </div>
-
+        <button class="menu-btn" onclick="openMenu()">☰</button>
+        <div class="logo">RDX</div>
     </div>
-
-
     <div class="header-right">
-
-        <button
-            class="header-icon notification"
-            onclick="showMessage('No new notifications')">
-
-            🔔
-
-        </button>
-
-
-        <button
-            class="header-icon wallet-top"
-            onclick="goWallet()">
-
-            💰 <span id="topBalance">0</span>
-
-        </button>
-
-
-        <button
-            class="header-icon redeem-top"
-            onclick="goRedeem()">
-
-            🎁 <span id="topRedeem">0</span>
-
-        </button>
-
+        <button class="header-icon notification" onclick="goNotifications()">🔔</button>
+        <button class="header-icon wallet-top" onclick="goWallet()">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="goRedeem()">🎁 <span id="topRedeem">0</span></button>
     </div>
-
 </header>
 
-
 <!-- ================= SIDE MENU ================= -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
-<div
-    class="menu-overlay"
-    id="menuOverlay"
-    onclick="closeMenu()">
-</div>
-
-
-<div
-    class="menu-panel"
-    id="menuPanel">
-
+<div class="menu-panel" id="menuPanel">
     <div class="menu-title">
-
         <div class="menu-brand">
-
-            <div class="menu-logo">
-                RDX
-            </div>
-
+            <div class="menu-logo">RDX</div>
             <div class="menu-user">
-
-                <h2 id="menuUsername">
-                    RDX LUDO
-                </h2>
-
-                <p>
-                    Play · Win · Earn
-                </p>
-
+                <h2 id="menuUsername">RDX LUDO</h2>
+                <p>Play · Win · Earn</p>
             </div>
-
         </div>
-
-        <button
-            class="close-menu"
-            onclick="closeMenu()">
-
-            ×
-
-        </button>
-
+        <button class="close-menu" onclick="closeMenu()">×</button>
     </div>
-
 
     <div class="menu-list">
-
-        <button
-            class="menu-item"
-            onclick="goHome()">
-
-            <div class="menu-item-icon menu-home">
-                🏠
-            </div>
-
-            <div class="menu-item-text">
-                Home
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goHome()">
+            <div class="menu-item-icon menu-home">🏠</div>
+            <div class="menu-item-text">Home</div>
+            <div class="menu-arrow">›</div>
         </button>
 
-
-        <button
-            class="menu-item"
-            onclick="goProfile()">
-
-            <div class="menu-item-icon menu-profile">
-                👤
-            </div>
-
-            <div class="menu-item-text">
-                My Profile
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goProfile()">
+            <div class="menu-item-icon menu-profile">👤</div>
+            <div class="menu-item-text">My Profile</div>
+            <div class="menu-arrow">›</div>
         </button>
 
-
-        <button
-            class="menu-item"
-            onclick="goWallet()">
-
-            <div class="menu-item-icon menu-wallet">
-                💰
-            </div>
-
-            <div class="menu-item-text">
-                My Wallet
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goWallet()">
+            <div class="menu-item-icon menu-wallet">💰</div>
+            <div class="menu-item-text">My Wallet</div>
+            <div class="menu-arrow">›</div>
         </button>
 
-
-        <button
-            class="menu-item"
-            onclick="goRedeem()">
-
-            <div class="menu-item-icon menu-refer">
-                🎁
-            </div>
-
-            <div class="menu-item-text">
-                Refer & Earn
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goRedeem()">
+            <div class="menu-item-icon menu-refer">🎁</div>
+            <div class="menu-item-text">Refer & Earn</div>
+            <div class="menu-arrow">›</div>
         </button>
 
-
-        <button
-            class="menu-item"
-            onclick="showMessage('History page coming soon')">
-
-            <div class="menu-item-icon menu-history">
-                ↻
-            </div>
-
-            <div class="menu-item-text">
-                History
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goHistory()">
+            <div class="menu-item-icon menu-history">↻</div>
+            <div class="menu-item-text">History</div>
+            <div class="menu-arrow">›</div>
         </button>
 
-
-        <button
-            class="menu-item"
-            onclick="showMessage('No new notifications')">
-
-            <div class="menu-item-icon menu-notification">
-                🔔
-            </div>
-
-            <div class="menu-item-text">
-                Notifications
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goNotifications()">
+            <div class="menu-item-icon menu-notification">🔔</div>
+            <div class="menu-item-text">Notifications</div>
+            <div class="menu-arrow">›</div>
         </button>
 
-
-        <button
-            class="menu-item"
-            onclick="goSupport()">
-
-            <div class="menu-item-icon menu-support">
-                🎧
-            </div>
-
-            <div class="menu-item-text">
-                Support
-            </div>
-
-            <div class="menu-arrow">
-                ›
-            </div>
-
+        <button class="menu-item" onclick="goSupport()">
+            <div class="menu-item-icon menu-support">🎧</div>
+            <div class="menu-item-text">Support</div>
+            <div class="menu-arrow">›</div>
         </button>
-
     </div>
-
 </div>
-
 
 <!-- ================= MAIN ================= -->
-
 <main class="container">
-
     <section class="welcome">
-
-        <h1 id="username">
-            Hey, User
-        </h1>
-
-        <p>
-            Welcome to RDX LUDO
-        </p>
-
+        <h1 id="username">Hey, User</h1>
+        <p>Welcome to RDX LUDO</p>
     </section>
 
-
-    <section
-        class="referral"
-        onclick="goRedeem()">
-
+    <section class="referral" onclick="goRedeem()">
         <div>
-
-            <small>
-                REFER & EARN
-            </small>
-
-            <strong>
-                2% Refer
-            </strong>
-
-            <div class="referral-text">
-                Invite friends and earn rewards
-            </div>
-
+            <small>REFER & EARN</small>
+            <strong>2% Refer</strong>
+            <div class="referral-text">Invite friends and earn rewards</div>
         </div>
-
-        <div class="referral-arrow">
-            ↗
-        </div>
-
+        <div class="referral-arrow">↗</div>
     </section>
-
 
     <div class="section-head">
-
-        <small>
-            GAMES
-        </small>
-
-        <h2>
-            Play Your Game
-        </h2>
-
+        <small>GAMES</small>
+        <h2>Play Your Game</h2>
     </div>
 
-
     <article class="game-card">
-
-        <img
-            src="ludo-classic.jpg"
-            alt="Ludo Classic">
-
+        <img src="ludo-classic.jpg" alt="Ludo Classic">
         <div class="game-overlay">
-
-            <span class="live">
-                ● LIVE
-            </span>
-
-            <h3>
-                Ludo Classic
-            </h3>
-
-            <p>
-                Ludo game
-            </p>
-
-            <button
-                class="play-btn"
-                onclick="goBattles()">
-
-                ▶ Play Now
-
-            </button>
-
+            <span class="live">● LIVE</span>
+            <h3>Ludo Classic</h3>
+            <p>Ludo game</p>
+            <button class="play-btn" onclick="goBattles()">▶ Play Now</button>
         </div>
-
     </article>
 
-
     <section class="soon-card">
-
-        <img
-            src="ludo-1-goti.jpg"
-            alt="1 Goti Ludo">
-
+        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo">
         <div class="soon-info">
-
-            <h3>
-                1 Goti Ludo
-            </h3>
-
-            <p>
-                Coming soon
-            </p>
-
+            <h3>1 Goti Ludo</h3>
+            <p>Coming soon</p>
         </div>
-
-        <span class="soon-badge">
-            🔒 SOON
-        </span>
-
+        <span class="soon-badge">🔒 SOON</span>
     </section>
-
 </main>
 
-
 <!-- ================= BOTTOM NAV ================= -->
-
 <nav class="bottom-nav">
-
-    <button
-        class="nav-item active"
-        onclick="goHome()">
-
-        <div class="nav-icon">
-            🏠
-        </div>
-
-        <span>
-            Home
-        </span>
-
+    <button class="nav-item active" onclick="goHome()">
+        <div class="nav-icon">🏠</div>
+        <span>Home</span>
     </button>
-
-
-    <button
-        class="nav-item"
-        onclick="goWallet()">
-
-        <div class="nav-icon">
-            💰
-        </div>
-
-        <span>
-            Wallet
-        </span>
-
+    <button class="nav-item" onclick="goWallet()">
+        <div class="nav-icon">💰</div>
+        <span>Wallet</span>
     </button>
-
-
-    <button
-        class="nav-item"
-        onclick="goSupport()">
-
-        <div class="nav-icon">
-            🎧
-        </div>
-
-        <span>
-            Support
-        </span>
-
+    <button class="nav-item" onclick="goSupport()">
+        <div class="nav-icon">🎧</div>
+        <span>Support</span>
     </button>
-
-
-    <button
-        class="nav-item"
-        onclick="goProfile()">
-
-        <div class="nav-icon">
-            👤
-        </div>
-
-        <span>
-            Profile
-        </span>
-
+    <button class="nav-item" onclick="goProfile()">
+        <div class="nav-icon">👤</div>
+        <span>Profile</span>
     </button>
-
 </nav>
 
-
 <!-- ================= TOAST ================= -->
-
-<div
-    class="toast"
-    id="toast">
-</div>
-
+<div class="toast" id="toast"></div>
 
 <script>
-
-/* =====================================================
-   FIREBASE USER DATA
-===================================================== */
-
 async function loadFirebaseCustomer(){
-
     try {
-
         if(!firebaseDB){
-
-            console.error(
-                "Firebase DB not connected"
-            );
-
-            showMessage(
-                "Firebase connect नहीं है"
-            );
-
+            console.error("Firebase DB not connected");
+            showMessage("Firebase connect नहीं है");
             return;
         }
 
-
-        /*
-         * Login page ने mobile number save किया है.
-         */
-
-        let mobile =
-            localStorage.getItem(
-                "rdxFirebaseUserId"
-            );
-
-
-        /*
-         * दूसरा backup mobile
-         */
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                     localStorage.getItem("rdxVerifiedMobile") || 
+                     localStorage.getItem("rdxUserMobile");
 
         if(!mobile){
-
-            mobile =
-                localStorage.getItem(
-                    "rdxVerifiedMobile"
-                );
-        }
-
-
-        /*
-         * तीसरा backup
-         */
-
-        if(!mobile){
-
-            mobile =
-                localStorage.getItem(
-                    "rdxUserMobile"
-                );
-        }
-
-
-        if(!mobile){
-
-            console.error(
-                "Firebase user mobile नहीं मिली"
-            );
-
-            showMessage(
-                "User login information नहीं मिली"
-            );
-
+            console.error("Firebase user mobile नहीं मिली");
             return;
         }
 
+        const cleanMobile = String(mobile).replace(/\D/g,"");
+        let firebaseDocId = cleanMobile;
 
-        /*
-         * केवल digits रखें
-         */
-
-        const cleanMobile =
-            String(mobile).replace(/\D/g,"");
-
-
-        /*
-         * अगर number 10 digit है
-         * तो 91 जोड़ें
-         */
-
-        let firebaseDocId =
-            cleanMobile;
-
-
-        if(
-            /^[6-9]\d{9}$/.test(cleanMobile)
-        ){
-
-            firebaseDocId =
-                "91" + cleanMobile;
-
+        if(/^[6-9]\d{9}$/.test(cleanMobile)){
+            firebaseDocId = "91" + cleanMobile;
         }
 
-
-        /*
-         * Firebase customer document
-         */
-
-        const userRef =
-            firebaseDB
-                .collection("customers")
-                .doc(firebaseDocId);
-
-
-        console.log(
-            "Loading Firebase customer:",
-            firebaseDocId
-        );
-
-
-        const snapshot =
-            await userRef.get();
-
+        const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
+        const snapshot = await userRef.get();
 
         if(!snapshot.exists){
-
-            console.error(
-                "Customer document नहीं मिला:",
-                firebaseDocId
-            );
-
-            showMessage(
-                "Customer data नहीं मिला"
-            );
-
             return;
         }
 
+        const data = snapshot.data();
 
-        const data =
-            snapshot.data();
+        let balance = Number(data.balance || 0);
+        document.getElementById("topBalance").textContent = balance;
 
+        let redeem = Number(data.redeemBalance || data.redeem || data.referralBalance || 0);
+        document.getElementById("topRedeem").textContent = redeem;
 
-        console.log(
-            "Firebase customer data:",
-            data
-        );
+        let username = data.name || data.fullName || data.username || data.realName || localStorage.getItem("rdxUsername") || ("User" + firebaseDocId.slice(-4));
+        username = String(username).trim();
 
+        document.getElementById("username").textContent = "Hey, " + username;
+        document.getElementById("menuUsername").textContent = username;
 
-        /* =================================================
-           BALANCE
-        ================================================= */
-
-        let balance =
-            Number(data.balance || 0);
-
-
-        document.getElementById(
-            "topBalance"
-        ).textContent =
-            balance;
-
-
-        /* =================================================
-           REFER / REDEEM
-        ================================================= */
-
-        let redeem =
-            Number(
-                data.redeemBalance ||
-                data.redeem ||
-                data.referralBalance ||
-                0
-            );
-
-
-        document.getElementById(
-            "topRedeem"
-        ).textContent =
-            redeem;
-
-
-        /* =================================================
-           ACTUAL USER NAME
-        =================================================
-
-           Firebase में इनमें से कोई field हो सकती है:
-
-           name
-           fullName
-           username
-           realName
-
-        ================================================= */
-
-        let username =
-            data.name ||
-            data.fullName ||
-            data.username ||
-            data.realName ||
-            "";
-
-
-        /*
-         * अगर Firebase में नाम खाली है
-         * तो localStorage से पहले का नाम देखें.
-         */
-
-        if(
-            !username ||
-            String(username).trim() === ""
-        ){
-
-            username =
-                localStorage.getItem(
-                    "rdxUsername"
-                ) || "";
-
-        }
-
-
-        /*
-         * अगर फिर भी नाम नहीं मिला
-         * तो mobile के last 4 digits दिखाएं.
-         */
-
-        if(
-            !username ||
-            String(username).trim() === ""
-        ){
-
-            const lastFour =
-                firebaseDocId.slice(-4);
-
-            username =
-                "User" + lastFour;
-
-        }
-
-
-        username =
-            String(username).trim();
-
-
-        /* =================================================
-           DASHBOARD NAME
-        ================================================= */
-
-        document.getElementById(
-            "username"
-        ).textContent =
-            "Hey, " + username;
-
-
-        /* =================================================
-           SIDE MENU NAME
-        ================================================= */
-
-        document.getElementById(
-            "menuUsername"
-        ).textContent =
-            username;
-
-
-        /* =================================================
-           LOCAL STORAGE CACHE
-        ================================================= */
-
-        localStorage.setItem(
-            "rdxUsername",
-            username
-        );
-
-
-        localStorage.setItem(
-            "rdxUserMobile",
-            data.mobile ||
-            ("+" + firebaseDocId)
-        );
-
-
-        localStorage.setItem(
-            "rdxBalance",
-            String(balance)
-        );
-
-
-        localStorage.setItem(
-            "rdxRedeem",
-            String(redeem)
-        );
-
-
-        console.log(
-            "Dashboard Firebase data loaded successfully"
-        );
-
+        localStorage.setItem("rdxUsername", username);
+        localStorage.setItem("rdxUserMobile", data.mobile || ("+" + firebaseDocId));
+        localStorage.setItem("rdxBalance", String(balance));
+        localStorage.setItem("rdxRedeem", String(redeem));
 
     } catch(error){
-
-        console.error(
-            "FIREBASE DASHBOARD ERROR:",
-            error
-        );
-
-        showMessage(
-            "Firebase data load नहीं हो पाया"
-        );
-
+        console.error("FIREBASE DASHBOARD ERROR:", error);
     }
-
 }
 
-
-/* =====================================================
-   LOAD USER WHEN PAGE OPENS
-===================================================== */
-
-window.addEventListener(
-    "load",
-    function(){
-
-        loadFirebaseCustomer();
-
-    }
-);
-
-
-/* =====================================================
-   MENU
-===================================================== */
+window.addEventListener("load", function(){
+    loadFirebaseCustomer();
+});
 
 function openMenu(){
-
-    document
-    .getElementById("menuPanel")
-    .classList.add("open");
-
-    document
-    .getElementById("menuOverlay")
-    .classList.add("show");
-
+    document.getElementById("menuPanel").classList.add("open");
+    document.getElementById("menuOverlay").classList.add("show");
 }
-
 
 function closeMenu(){
-
-    document
-    .getElementById("menuPanel")
-    .classList.remove("open");
-
-    document
-    .getElementById("menuOverlay")
-    .classList.remove("show");
-
+    document.getElementById("menuPanel").classList.remove("open");
+    document.getElementById("menuOverlay").classList.remove("show");
 }
 
-
-/* =====================================================
-   HOME
-===================================================== */
-
-function goHome(){
-
-    closeMenu();
-
-    window.location.href =
-        "./dashboard.html";
-}
-
-
-/* =====================================================
-   BATTLES
-===================================================== */
-
-function goBattles(){
-
-    closeMenu();
-
-    window.location.href =
-        "./battles.html";
-}
-
-
-/* =====================================================
-   WALLET
-===================================================== */
-
-function goWallet(){
-
-    closeMenu();
-
-    window.location.href =
-        "./wallet.html";
-}
-
-
-/* =====================================================
-   SUPPORT
-===================================================== */
-
-function goSupport(){
-
-    closeMenu();
-
-    window.location.href =
-        "./support.html";
-}
-
-
-/* =====================================================
-   PROFILE
-===================================================== */
-
-function goProfile(){
-
-    closeMenu();
-
-    window.location.href =
-        "./profile.html";
-}
-
-
-/* =====================================================
-   REFER
-===================================================== */
-
-function goRedeem(){
-
-    closeMenu();
-
-    window.location.href =
-        "./referral.html";
-}
-
-
-/* =====================================================
-   TOAST
-===================================================== */
+function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
+function goBattles(){ closeMenu(); window.location.href = "./battles.html"; }
+function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
+function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
+function goProfile(){ closeMenu(); window.location.href = "./profile.html"; }
+function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
+function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
+function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
 
 function showMessage(message){
-
-    const toast =
-        document.getElementById("toast");
-
-    toast.textContent =
-        message;
-
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
     toast.classList.add("show");
-
-    setTimeout(
-        function(){
-
-            toast.classList.remove("show");
-
-        },
-        1800
-    );
-
+    setTimeout(function(){ toast.classList.remove("show"); }, 1800);
 }
-
 </script>
 
 </body>
