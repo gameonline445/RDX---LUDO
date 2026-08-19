@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
-<!-- FIREBASE -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
@@ -27,64 +27,66 @@ try {
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{width:100%;height:100dvh;overflow:hidden;position:fixed;inset:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#101a38;background:radial-gradient(circle at 0% 0%,#dfeaff 0%,transparent 35%),radial-gradient(circle at 100% 15%,#e9ddff 0%,transparent 35%),linear-gradient(180deg,#f3f7ff 0%,#ffffff 55%,#f2f6ff 100%);}
+html,body{
+    width:100%;height:100dvh;overflow:hidden;position:fixed;inset:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:#101a38;
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+}
 button{font:inherit;}
 
 /* HEADER */
-.top-header{position:fixed;top:0;left:0;right:0;width:100%;height:70px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#edf4ff,#ffffff,#edf4ff);border-bottom:1px solid #c8d7f3;box-shadow:0 5px 20px rgba(43,82,150,.10);}
+.top-header{position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
 .header-left{display:flex;align-items:center;gap:10px;}
-.menu-btn{width:48px;height:48px;border:0;border-radius:16px;background:linear-gradient(145deg,#ff6e61,#ff9077);color:#ffffff;font-size:26px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(255,96,80,.25);cursor:pointer;}
-.logo{width:48px;height:48px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e7efff);border:3px solid #d4e2ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-size:14px;font-weight:900;box-shadow:0 6px 15px rgba(36,93,190,.15);cursor:pointer;}
-.header-right{display:flex;align-items:center;gap:7px;}
-.header-icon{width:47px;height:47px;border:0;border-radius:17px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:21px;box-shadow:0 6px 15px rgba(0,0,0,.12);cursor:pointer;}
-.notification{background:linear-gradient(145deg,#756cf3,#817eff);}
-.wallet-top{background:linear-gradient(145deg,#16bf68,#45d980);min-width:55px;font-weight:800;}
-.redeem-top{background:linear-gradient(145deg,#ff8733,#ffb04b);min-width:55px;}
+.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:#ffffff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(255,96,80,.22);cursor:pointer;}
+.logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#dbeafe);border:2.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:900;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{height:38px;border:0;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(0,0,0,.10);padding:0 12px;gap:5px;}
+.notification{width:38px;padding:0;border-radius:50%;background:linear-gradient(145deg,#6366f1,#818cf8);}
+.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);font-size:13px;font-weight:800;}
+.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);font-size:13px;font-weight:800;}
 
 /* CONTAINER */
-.container{position:fixed;top:70px;left:0;right:0;bottom:78px;width:100%;max-width:850px;margin:0 auto;padding:18px 14px 12px;overflow:hidden;display:flex;flex-direction:column;}
-.wallet-card{flex:0 0 auto;width:100%;border:1.5px solid #aec5f1;border-radius:27px;padding:25px 27px 24px;background:radial-gradient(circle at 0% 0%,#dfeaff,transparent 40%),radial-gradient(circle at 100% 10%,#d9e8ff,transparent 42%),linear-gradient(135deg,#f1f6ff,#ffffff);box-shadow:0 14px 35px rgba(45,91,175,.10);}
-.wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
-.wallet-title{display:inline-flex;align-items:center;gap:8px;color:#2e64d5;border:1px solid #9db9ef;background:#edf4ff;padding:10px 16px;border-radius:25px;font-size:15px;font-weight:850;letter-spacing:.5px;}
-.history-btn{border:1px solid #d0d9eb;background:rgba(255,255,255,.90);color:#17213a;padding:10px 17px;border-radius:25px;font-weight:750;font-size:15px;cursor:pointer;}
-.balance-label{color:#697895;font-size:18px;margin-bottom:2px;}
-.balance{color:#101a38;font-size:56px;line-height:1;font-weight:900;letter-spacing:-2.5px;}
-.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:27px;}
-.action-btn{height:66px;border-radius:35px;font-size:19px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;}
-.add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#2162e9,#3979f1);box-shadow:0 10px 25px rgba(34,99,233,.27);}
-.withdraw-btn{color:#17213a;border:1.5px solid #b9c9e8;background:rgba(255,255,255,.90);box-shadow:0 4px 15px rgba(0,0,0,.04);}
+.container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
+.wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
+.history-btn{border:1px solid #bae6fd;background:#ffffff;color:#0c4a6e;padding:6px 14px;border-radius:20px;font-weight:750;font-size:12px;cursor:pointer;}
+.balance-label{color:#64748b;font-size:14px;margin-bottom:2px;}
+.balance{color:#0c4a6e;font-size:42px;line-height:1;font-weight:900;letter-spacing:-1.5px;}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.action-btn{height:48px;border-radius:24px;font-size:15px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
+.add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#0284c7,#0369a1);box-shadow:0 6px 16px rgba(2,132,199,.3);}
+.withdraw-btn{color:#0c4a6e;border:1.5px solid #7dd3fc;background:#ffffff;}
 
-.balance-grid{flex:1 1 auto;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:15px;}
-.balance-box{min-height:0;height:100%;border:1.5px solid #c1d1ed;border-radius:25px;background:linear-gradient(145deg,rgba(255,255,255,.97),rgba(247,250,255,.96));padding:18px 20px;box-shadow:0 8px 20px rgba(30,60,120,.04);}
-.balance-icon{width:48px;height:48px;border-radius:16px;background:linear-gradient(145deg,#e5f0ff,#dceaff);border:1px solid #a9c6ef;display:flex;align-items:center;justify-content:center;font-size:23px;color:#2871df;}
-.balance-box h3{margin-top:14px;font-size:17px;color:#65728d;font-weight:800;letter-spacing:.4px;}
-.balance-value{margin-top:6px;font-size:27px;font-weight:900;color:#101a38;}
-.balance-note{display:block;margin-top:6px;color:#a0aabd;font-size:14px;}
+.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.balance-box{border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;padding:14px;box-shadow:0 4px 12px rgba(2,132,199,0.05);}
+.balance-icon{width:36px;height:36px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0284c7;}
+.balance-box h3{margin-top:8px;font-size:13px;color:#64748b;font-weight:800;}
+.balance-value{margin-top:3px;font-size:20px;font-weight:900;color:#0f172a;}
+.balance-note{display:block;margin-top:3px;color:#94a3b8;font-size:11px;}
 
-.info-box{flex:0 0 auto;min-height:84px;margin-top:13px;border:1px solid #d5ddea;border-radius:22px;background:rgba(255,255,255,.88);padding:16px 18px;display:flex;align-items:center;gap:13px;color:#738099;font-size:15px;line-height:1.45;}
-.info-icon{width:29px;height:29px;flex:0 0 29px;border:2px solid #4e7ed9;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#3d71d3;font-size:17px;font-weight:800;}
-
-/* BOTTOM NAVIGATION */
-.bottom-nav{position:fixed;left:0;right:0;bottom:0;width:100%;height:78px;z-index:1100;display:flex;align-items:center;justify-content:space-around;background:rgba(255,255,255,.98);border-top:1px solid #d5deef;box-shadow:0 -5px 20px rgba(30,65,130,.09);}
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#66738d;font-size:13px;cursor:pointer;}
-.nav-icon{width:45px;height:45px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:22px;}
-.nav-item.active{color:#202d49;font-weight:800;}
-.nav-item.active .nav-icon{background:linear-gradient(145deg,#536df5,#596af0);color:#ffffff;box-shadow:0 8px 18px rgba(83,109,245,.30);}
+.info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
+.info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
 
 /* SIDE MENU */
-.menu-overlay{position:fixed;inset:0;background:rgba(17,29,55,.30);backdrop-filter:blur(3px);z-index:2000;display:none;}
+.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:2000;display:none;}
 .menu-overlay.show{display:block;}
-.menu-panel{position:fixed;top:0;left:-100%;width:78%;max-width:390px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 105px;overflow:hidden;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
+.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
 .menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding:5px 2px 24px;border-bottom:1px solid #e1e6f0;}
-.menu-brand{display:flex;align-items:center;gap:13px;}
-.menu-logo{width:54px;height:54px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e7efff);border:3px solid #d3e1ff;display:flex;align-items:center;justify-content:center;color:#1762df;font-weight:900;cursor:pointer;}
-.menu-user h2{font-size:20px;font-weight:850;}
-.menu-user p{margin-top:4px;color:#71809d;font-size:13px;}
-.close-menu{border:1px solid #e0e5ee;background:#f6f7fb;width:48px;height:48px;border-radius:50%;font-size:27px;color:#64718a;cursor:pointer;}
-.menu-list{margin-top:22px;}
-.menu-item{width:100%;min-height:68px;border:1px solid #e1e5ed;background:#ffffff;padding:10px 14px;border-radius:20px;margin-bottom:12px;display:flex;align-items:center;gap:14px;text-align:left;color:#17213a;cursor:pointer;}
-.menu-item-icon{width:48px;height:48px;flex:0 0 48px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:#ffffff;font-size:22px;}
+.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
+.menu-brand{display:flex;align-items:center;gap:10px;}
+.menu-logo{width:46px;height:46px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#e0f2fe);border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;color:#0284c7;font-weight:900;cursor:pointer;}
+.menu-user h2{font-size:17px;font-weight:850;}
+.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
+.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
+.menu-list{margin-top:16px;}
+.menu-item{width:100%;min-height:56px;border:1px solid #e2e8f0;background:#fafbfe;padding:8px 12px;border-radius:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;text-align:left;color:#1e293b;cursor:pointer;}
+.menu-item-icon{width:38px;height:38px;flex:0 0 38px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:17px;}
 .menu-home{background:linear-gradient(145deg,#716df5,#817eff);}
 .menu-profile{background:linear-gradient(145deg,#ff743e,#ff9c39);}
 .menu-wallet{background:linear-gradient(145deg,#18b965,#43d77e);}
@@ -92,52 +94,37 @@ button{font:inherit;}
 .menu-history{background:linear-gradient(145deg,#7259df,#9868f3);}
 .menu-notification{background:linear-gradient(145deg,#6679f5,#7d8cff);}
 .menu-support{background:linear-gradient(145deg,#12b8e0,#27c9ef);}
-.menu-item-text{flex:1;font-size:17px;font-weight:750;}
-.menu-arrow{color:#69768e;font-size:28px;}
+.menu-item-text{flex:1;font-size:15px;font-weight:750;}
+.menu-arrow{color:#94a3b8;font-size:20px;}
 
-@media(max-width:700px){
-    .top-header{height:70px;padding-left:12px;padding-right:12px;}
-    .header-icon{width:44px;height:44px;border-radius:16px;}
-    .wallet-top,.redeem-top{min-width:44px;font-size:0;}
-    .wallet-top::before{content:"💰";font-size:20px;}
-    .redeem-top::before{content:"🎁";font-size:20px;}
-    .container{top:70px;bottom:78px;padding:14px 12px 10px;}
-    .wallet-card{padding:22px 20px 20px;border-radius:25px;}
-    .wallet-top-row{margin-bottom:20px;}
-    .wallet-title{padding:9px 13px;font-size:13px;}
-    .history-btn{padding:9px 13px;font-size:14px;}
-    .balance-label{font-size:17px;}
-    .balance{font-size:52px;letter-spacing:-2px;}
-    .wallet-actions{gap:12px;margin-top:25px;}
-    .action-btn{height:62px;font-size:17px;}
-    .balance-grid{gap:11px;margin-top:13px;}
-    .balance-box{padding:16px;border-radius:22px;}
-    .balance-icon{width:45px;height:45px;border-radius:15px;font-size:21px;}
-    .balance-box h3{margin-top:12px;font-size:14px;}
-    .balance-value{font-size:24px;}
-    .balance-note{font-size:12px;}
-    .info-box{min-height:78px;margin-top:11px;padding:14px;font-size:13px;border-radius:19px;}
-}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
+.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
+.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
+.nav-item:active .nav-icon-box{transform:scale(0.92);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.nav-item.active{color:#101a38;font-weight:800;}
+.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#10b981;}
 </style>
 </head>
 
 <body>
 
-<!-- HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()">☰</button>
-        <!-- Logo click to Home -->
         <div class="logo" onclick="goHome()">RDX</div>
     </div>
     <div class="header-right">
         <button class="header-icon notification" onclick="goNotifications()">🔔</button>
-        <button class="header-icon wallet-top" onclick="goWallet()">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon wallet-top" onclick="goWallet()">🪙 <span id="topBalance">0</span></button>
         <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
     </div>
 </header>
 
-<!-- SIDE MENU -->
 <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
 <div class="menu-panel" id="menuPanel">
@@ -151,7 +138,6 @@ button{font:inherit;}
         </div>
         <button class="close-menu" onclick="closeMenu()">×</button>
     </div>
-
     <div class="menu-list">
         <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home">🏠</div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
         <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile">👤</div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
@@ -163,7 +149,6 @@ button{font:inherit;}
     </div>
 </div>
 
-<!-- MAIN -->
 <main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
@@ -172,14 +157,12 @@ button{font:inherit;}
         </div>
         <div class="balance-label">Total Balance</div>
         <div class="balance">₹<span id="mainBalance">0</span></div>
-
         <div class="wallet-actions">
             <button class="action-btn add-btn" onclick="goDeposit()">＋ Add Cash</button>
             <button class="action-btn withdraw-btn" onclick="goWithdraw()">▣ Withdraw</button>
         </div>
     </section>
 
-    <!-- DEPOSIT / WINNINGS -->
     <section class="balance-grid">
         <div class="balance-box">
             <div class="balance-icon">▣</div>
@@ -187,7 +170,6 @@ button{font:inherit;}
             <div class="balance-value">₹<span id="depositBalance">0</span></div>
             <span class="balance-note">For battles only</span>
         </div>
-
         <div class="balance-box">
             <div class="balance-icon">🏆</div>
             <h3>WINNINGS</h3>
@@ -202,12 +184,11 @@ button{font:inherit;}
     </div>
 </main>
 
-<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()"><div class="nav-icon">🏠</div><span>Home</span></button>
-    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon">💰</div><span>Wallet</span></button>
-    <button class="nav-item" onclick="goSupport()"><div class="nav-icon">🎧</div><span>Support</span></button>
-    <button class="nav-item" onclick="goProfile()"><div class="nav-icon">👤</div><span>Profile</span></button>
+    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
@@ -216,7 +197,6 @@ async function loadFirebaseCustomer(){
         if(!firebaseDB) return;
         let mobile = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserMobile");
         if(!mobile) return;
-
         const cleanMobile = String(mobile).replace(/\D/g,"");
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
@@ -228,32 +208,18 @@ async function loadFirebaseCustomer(){
         const balance = Number(data.balance || 0);
         document.getElementById("mainBalance").textContent = balance;
         document.getElementById("topBalance").textContent = balance;
+        document.getElementById("depositBalance").textContent = Number(data.depositBalance || data.deposit || 0);
+        document.getElementById("winningBalance").textContent = Number(data.winnings || data.winningBalance || 0);
 
-        const deposit = Number(data.depositBalance || data.deposit || 0);
-        document.getElementById("depositBalance").textContent = deposit;
-
-        const winnings = Number(data.winnings || data.winningBalance || 0);
-        document.getElementById("winningBalance").textContent = winnings;
-
-        const username = localStorage.getItem("rdxUsername") || ("User" + firebaseDocId.slice(-4));
-        document.getElementById("menuUsername").textContent = username;
-    } catch(error){
-        console.error(error);
-    }
+        let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
+        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+    } catch(error){ console.error(error); }
 }
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-function openMenu(){
-    document.getElementById("menuPanel").classList.add("open");
-    document.getElementById("menuOverlay").classList.add("show");
-}
-
-function closeMenu(){
-    document.getElementById("menuPanel").classList.remove("open");
-    document.getElementById("menuOverlay").classList.remove("show");
-}
-
+function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
+function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
 function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
 function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
 function goDeposit(){ closeMenu(); window.location.href = "./deposit.html"; }
