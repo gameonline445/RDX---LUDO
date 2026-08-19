@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>RDX LUDO - Deposit History</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f5f7ff;color:#18213d}
+.page{width:min(1100px,94%);margin:28px auto 70px}
+.topbar{background:#fff;border:1px solid #e5e9f5;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:25px;font-weight:800}.logo span,h1 span{color:#3867e8}
+button{border:0;cursor:pointer;font:inherit;font-weight:700}
+#backBtn{background:#eef3ff;color:#3867e8;padding:13px 20px;border-radius:16px}
+h1{margin:55px 0 8px;font-size:clamp(40px,7vw,64px);line-height:1}
+.subtitle{margin:0 0 38px;color:#7a86a5;font-size:20px}
+.search-card{background:#fff;border:1px solid #dfe5f3;border-radius:25px;padding:28px}
+.search-title{font-size:25px;font-weight:800;margin-bottom:20px}
+#dateSearch{width:100%;height:62px;border:2px solid #dce3f4;border-radius:18px;padding:0 18px;font-size:18px;color:#18213d;background:#fff}
+.buttons{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:15px}
+#searchBtn{background:#3867e8;color:white;padding:17px;border-radius:17px;font-size:20px}
+#clearBtn{background:#eef1f7;color:#596681;padding:17px;border-radius:17px;font-size:20px}
+.message{display:none;margin-top:18px;padding:15px 18px;border-radius:15px;font-weight:700}
+.message.show{display:block}.message.ok{background:#e3f7eb;color:#20834c}.message.error{background:#ffe5e9;color:#c5364c}
+.section-title{margin:48px 0 18px;font-size:30px}
+.empty,.loading{background:#fff;border:1px solid #dfe5f3;border-radius:22px;padding:45px 20px;text-align:center;color:#7b87a4;font-size:20px}
+.date-section{margin:24px 0 30px}.date-heading{background:#eef3ff;color:#3867e8;padding:15px 18px;border-radius:15px 15px 0 0;font-weight:800;font-size:20px}
+.table-wrapper{background:#fff;border:1px solid #e0e5f1;border-top:0;border-radius:0 0 18px 18px;overflow-x:auto}
+table{width:100%;min-width:850px;border-collapse:collapse}
+th,td{padding:17px 15px;border-bottom:1px solid #edf0f6;text-align:left;vertical-align:middle}
+th{color:#6d7895;font-size:14px;background:#fafbfe;white-space:nowrap}
+.utr{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-weight:600}
+.amount{font-weight:800;white-space:nowrap}.status{display:inline-block;padding:7px 11px;border-radius:20px;font-size:12px;font-weight:800;white-space:nowrap}
+.approved{background:#ddf6e7;color:#20814a}.rejected{background:#ffe2e7;color:#c4384f}.pending{background:#fff2cc;color:#9b7410}
+.account,.reason{max-width:220px;word-break:break-word}
+@media(max-width:650px){.page{width:94%;margin-top:15px}.topbar{padding:17px}.logo{font-size:21px}h1{margin-top:38px}.subtitle{font-size:17px;margin-bottom:25px}.search-card{padding:20px 16px}.buttons{grid-template-columns:1fr}.section-title{font-size:27px}}
+</style>
+</head>
+<body>
+<main class="page">
+<header class="topbar">
+<div class="logo">RDX <span>LUDO</span> HISTORY</div>
+<button id="backBtn">← वापस</button>
+</header>
+
+<h1>Deposit <span>History</span></h1>
+<p class="subtitle">आपकी Deposit की पूरी History</p>
+
+<section class="search-card">
+<div class="search-title">📅 तारीख से History खोजें</div>
+<input type="date" id="dateSearch">
+<div class="buttons">
+<button id="searchBtn">🔍 Search</button>
+<button id="clearBtn">↻ Recent History</button>
+</div>
+<div id="message" class="message"></div>
+</section>
+
+<h2 class="section-title">Recent History</h2>
+<section id="historyContainer"><div class="loading">History Loading...</div></section>
+</main>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {getAuth,onAuthStateChanged,setPersistence,browserLocalPersistence} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {getFirestore,collection,getDocs,query,where} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
+authDomain:"rdx-ludo.firebaseapp.com",
+projectId:"rdx-ludo",
+storageBucket:"rdx-ludo.firebasestorage.app",
+messagingSenderId:"928340814840",
+appId:"1:928340814840:web:6eca42a8b76138b268440d"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const depositsRef=collection(db,"deposits");
+
+let currentUser=null;
+let allHistory=[];
+
+const historyContainer=document.getElementById("historyContainer");
+const dateSearch=document.getElementById("dateSearch");
+const searchBtn=document.getElementById("searchBtn");
+const clearBtn=document.getElementById("clearBtn");
+const message=document.getElementById("message");
+
+function safe(v){
+return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+
+function normalizeNumber(v){
+if(!v)return "";
+const d=String(v).replace(/\D/g,"");
+if(/^91\d{10}$/.test(d))return d.slice(2);
+return d;
+}
+
+function authIds(user){
+const s=new Set();
+if(!user)return s;
+if(user.uid)s.add(String(user.uid).trim());
+if(user.phoneNumber){
+const raw=String(user.phoneNumber).trim();
+const n=normalizeNumber(raw);
+s.add(raw);
+if(n){s.add(n);s.add("91"+n);s.add("+91"+n);}
+}
+return s;
+}
+
+function depositIds(d){
+const s=new Set();
+[
+d.userId,d.uid,d.customerId,d.userUID,
+d.mobile,d.phone,d.phoneNumber
+].forEach(v=>{
+if(!v)return;
+const raw=String(v).trim();
+s.add(raw);
+const n=normalizeNumber(raw);
+if(n){s.add(n);s.add("91"+n);s.add("+91"+n);}
+});
+return s;
+}
+
+function belongs(d,u){
+const a=authIds(u),b=depositIds(d);
+for(const id of a)if(b.has(id))return true;
+return false;
+}
+
+function dateValue(v){
+if(!v)return null;
+if(typeof v.toDate==="function")return v.toDate();
+if(v instanceof Date)return v;
+if(typeof v==="object"&&typeof v.seconds==="number")return new Date(v.seconds*1000);
+if(typeof v==="number"){const d=new Date(v);return isNaN(d)?null:d;}
+if(typeof v==="string"){const d=new Date(v);return isNaN(d)?null:d;}
+return null;
+}
+
+function historyDate(d){
+const st=String(d.status??"pending").toLowerCase().trim();
+if(st==="approved")return dateValue(d.approvedAt)||dateValue(d.updatedAt)||dateValue(d.createdAt);
+if(st==="rejected")return dateValue(d.rejectedAt)||dateValue(d.updatedAt)||dateValue(d.createdAt);
+return dateValue(d.createdAt)||dateValue(d.updatedAt);
+}
+
+function dateKey(d){
+if(!d)return "";
+return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function formatDate(d){
+return d?d.toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"}):"—";
+}
+
+function formatDateTime(d){
+if(!d)return "—";
+return d.toLocaleDateString("en-GB",{day:"2-digit",month:"2-digit",year:"numeric"})+" "+
+d.toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true});
+}
+
+function getUTR(d){
+return String(d.utr??d.utrNumber??d.utrNo??d.transactionId??d.transactionNumber??"").trim();
+}
+
+function getAccount(d){
+return String(d.accountHolderName??d.accountName??d.accountHolder??d.upiName??d.upiId??d.account??"").trim();
+}
+
+function getReason(d){
+return String(d.rejectReason??d.rejectionReason??d.reason??d.comment??"").trim();
+}
+
+function getAmount(d){
+const n=Number(d.amount??d.depositAmount??0);
+return isNaN(n)?0:n;
+}
+
+function statusHTML(st){
+if(st==="approved")return '<span class="status approved">🟢 APPROVED</span>';
+if(st==="rejected")return '<span class="status rejected">🔴 REJECTED</span>';
+return '<span class="status pending">🟡 PENDING</span>';
+}
+
+function renderHistory(list){
+if(!list.length){
+historyContainer.innerHTML='<div class="empty">कोई Deposit History नहीं मिली।</div>';
+return;
+}
+
+const sorted=[...list].sort((a,b)=>(historyDate(b)?.getTime()||0)-(historyDate(a)?.getTime()||0));
+const groups={};
+
+sorted.forEach(d=>{
+const k=dateKey(historyDate(d));
+if(!groups[k])groups[k]=[];
+groups[k].push(d);
+});
+
+let html="";
+Object.keys(groups).sort().reverse().forEach(k=>{
+const group=groups[k];
+html+=`<div class="date-section">
+<div class="date-heading">📅 ${safe(formatDate(historyDate(group[0])))}</div>
+<div class="table-wrapper"><table>
+<thead><tr><th>UTR No.</th><th>Amount</th><th>Status</th><th>Account / UPI</th><th>Date & Time</th><th>Reason</th></tr></thead><tbody>`;
+
+group.forEach(d=>{
+const st=String(d.status??"pending").toLowerCase().trim();
+const reason=getReason(d);
+html+=`<tr>
+<td class="utr">${safe(getUTR(d)||"—")}</td>
+<td class="amount">₹${getAmount(d).toLocaleString("en-IN")}</td>
+<td>${statusHTML(st)}</td>
+<td class="account">${safe(getAccount(d)||"—")}</td>
+<td>${safe(formatDateTime(historyDate(d)))}</td>
+<td class="reason">${st==="rejected"&&reason?safe(reason):"—"}</td>
+</tr>`;
+});
+
+html+="</tbody></table></div></div>";
+});
+
+historyContainer.innerHTML=html;
+}
+
+async function loadHistory(){
+if(!currentUser){
+historyContainer.innerHTML='<div class="empty">कृपया पहले लॉगिन करें।</div>';
+return;
+}
+
+historyContainer.innerHTML='<div class="loading">History Loading...</div>';
+
+try{
+const ids=[...authIds(currentUser)].filter(Boolean);
+const fields=["userId","uid","customerId","userUID","mobile","phone","phoneNumber"];
+const found=new Map();
+
+for(const field of fields){
+try{
+const q=query(depositsRef,where(field,"in",ids.slice(0,30)));
+const snap=await getDocs(q);
+snap.forEach(doc=>{
+found.set(doc.id,{id:doc.id,...doc.data()});
+});
+}catch(e){
+console.warn("Query skipped:",field,e);
+}
+}
+
+allHistory=[...found.values()].filter(d=>belongs(d,currentUser));
+
+console.log("AUTH UID:",currentUser.uid);
+console.log("AUTH PHONE:",currentUser.phoneNumber);
+console.log("MATCHING DEPOSITS:",allHistory);
+
+renderHistory(allHistory);
+}catch(e){
+console.error(e);
+historyContainer.innerHTML='<div class="empty">History लोड नहीं हो सकी।<br><br>'+safe(e.message)+'</div>';
+}
+}
+
+function showMessage(t,type){
+message.textContent=t;
+message.className="message show "+type;
+}
+
+function hideMessage(){
+message.textContent="";
+message.className="message";
+}
+
+function searchByDate(){
+const selected=dateSearch.value;
+if(!selected){hideMessage();renderHistory(allHistory);return;}
+
+const filtered=allHistory.filter(d=>dateKey(historyDate(d))===selected);
+const display=selected.split("-").reverse().join("-");
+
+showMessage(display+(filtered.length?" की History मिली।":" की कोई History नहीं मिली।"),filtered.length?"ok":"error");
+renderHistory(filtered);
+}
+
+searchBtn.addEventListener("click",searchByDate);
+dateSearch.addEventListener("change",searchByDate);
+
+clearBtn.addEventListener("click",()=>{
+dateSearch.value="";
+hideMessage();
+renderHistory(allHistory);
+});
+
+document.getElementById("backBtn").addEventListener("click",()=>window.history.back());
+
+try{
+await setPersistence(auth,browserLocalPersistence);
+}catch(e){
+console.warn("Persistence:",e);
+}
+
+onAuthStateChanged(auth,async user=>{
+console.log("AUTH STATE:",user);
+if(user){
+currentUser=user;
+await loadHistory();
+}else{
+currentUser=null;
+historyContainer.innerHTML='<div class="empty">कृपया अपने खाते में लॉगिन करके History देखें।</div>';
+}
+});
+</script>
+</body>
+</html>
