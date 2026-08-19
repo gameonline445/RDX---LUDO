@@ -54,6 +54,7 @@
             text-decoration: none;
             font-size: 16px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+            cursor: pointer;
         }
 
         .brand-badge {
@@ -104,6 +105,20 @@
             font-size: 13px;
             color: #7a879f;
             margin-top: 2px;
+        }
+
+        .clear-all-btn {
+            background: #ffe3e7;
+            color: #c72e43;
+            border: 1px solid #f4bbc5;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         /* Filter Switcher Tabs */
@@ -196,6 +211,12 @@
             color: #101a38;
         }
 
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .badge-type {
             font-size: 10px;
             padding: 4px 8px;
@@ -212,6 +233,27 @@
         .badge-type.personal {
             background: #dcfce7;
             color: #15803d;
+        }
+
+        .delete-btn {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #94a3b8;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
         }
 
         .notif-body {
@@ -276,7 +318,7 @@
     <!-- Top Header -->
     <header class="top-bar">
         <div class="header-left">
-            <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+            <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
             <span class="brand-badge">RDX LUDO</span>
         </div>
         <div class="header-icons">
@@ -292,6 +334,9 @@
             <h1>Notifications</h1>
             <p>Alerts, updates and direct messages</p>
         </div>
+        <button class="clear-all-btn" onclick="clearAllNotifications()">
+            <i class="fa-solid fa-trash-can"></i> Clear All
+        </button>
     </div>
 
     <!-- Filter Tabs -->
@@ -329,7 +374,7 @@
             <b>🎧</b>
             Support
         </a>
-        <a class="nav" href="profile.html">
+        <a class="nav active" href="profile.html">
             <b>👤</b>
             Profile
         </a>
@@ -371,22 +416,59 @@
         let allNotifications = [];
         let currentFilter = 'all';
 
+        // Load Deleted IDs from LocalStorage
+        function getDeletedNotifIds() {
+            return JSON.parse(localStorage.getItem("rdxDeletedNotifs") || "[]");
+        }
+
+        // Save Deleted ID
+        window.deleteNotification = function(notifId) {
+            if (!confirm("Kya aap is notification ko hatana chahte hain?")) return;
+
+            let deleted = getDeletedNotifIds();
+            if (!deleted.includes(notifId)) {
+                deleted.push(notifId);
+                localStorage.setItem("rdxDeletedNotifs", JSON.stringify(deleted));
+            }
+
+            allNotifications = allNotifications.filter(item => item.id !== notifId);
+            renderNotifications();
+        };
+
+        // Clear All Notifications
+        window.clearAllNotifications = function() {
+            if (allNotifications.length === 0) return;
+            if (!confirm("Kya aap saare notifications clear karna chahte hain?")) return;
+
+            let deleted = getDeletedNotifIds();
+            allNotifications.forEach(n => {
+                if (!deleted.includes(n.id)) deleted.push(n.id);
+            });
+
+            localStorage.setItem("rdxDeletedNotifs", JSON.stringify(deleted));
+            allNotifications = [];
+            renderNotifications();
+        };
+
         // Load Notifications
         async function loadNotifications() {
             const container = document.getElementById("notif-list");
+            const deletedIds = getDeletedNotifIds();
 
             try {
                 const snap = await getDocs(collection(db, "notifications"));
                 allNotifications = [];
 
                 snap.forEach(docSnap => {
+                    const notifId = docSnap.id;
+                    if (deletedIds.includes(notifId)) return; // Skipped if deleted by user
+
                     const data = docSnap.data();
                     const target = String(data.target || "all").toLowerCase();
                     const notifUid = String(data.uid || "").replace(/\D/g, "");
 
-                    // Check if notification is for ALL or for this specific user
                     if (target === "all" || notifUid === currentUserId || (currentUserId && notifUid.includes(currentUserId))) {
-                        allNotifications.push({ id: docSnap.id, ...data });
+                        allNotifications.push({ id: notifId, ...data });
                     }
                 });
 
@@ -399,7 +481,7 @@
                     return;
                 }
 
-                // Latest timestamp first
+                // Latest first
                 allNotifications.sort((a, b) => {
                     const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
                     const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
@@ -461,9 +543,14 @@
                                 </div>
                                 <span class="notif-title">${title}</span>
                             </div>
-                            <span class="badge-type ${isPersonal ? 'personal' : 'broadcast'}">
-                                ${isPersonal ? 'Personal' : 'Broadcast'}
-                            </span>
+                            <div class="header-actions">
+                                <span class="badge-type ${isPersonal ? 'personal' : 'broadcast'}">
+                                    ${isPersonal ? 'Personal' : 'Broadcast'}
+                                </span>
+                                <button class="delete-btn" onclick="deleteNotification('${data.id}')" title="Delete">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
                         <p class="notif-body">${message}</p>
                         <div class="notif-date">
@@ -476,7 +563,7 @@
             container.innerHTML = html;
         }
 
-        // Tab Filter Switcher
+        // Filter Switcher
         window.filterNotifs = function(filterType) {
             currentFilter = filterType;
 
