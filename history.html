@@ -6,336 +6,59 @@
     <title>RDX LUDO - History & Logs</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(180deg, #f8faff 0%, #eef4ff 50%, #f1f5f9 100%);
-            color: #101a38;
-            min-height: 100vh;
-            padding-bottom: 85px;
-        }
-
-        .top-bar {
-            height: 70px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 16px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #ccd8ed;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .back-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 14px;
-            background: #ffffff;
-            border: 1px solid #cbd7e9;
-            color: #2864e6;
-            text-decoration: none;
-            font-size: 16px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
-            cursor: pointer;
-        }
-
-        .brand-badge {
-            background: #ffffff;
-            border: 1px solid #dce6fb;
-            color: #2362d9;
-            font-weight: 900;
-            font-size: 13px;
-            padding: 6px 14px;
-            border-radius: 20px;
-            box-shadow: 0 2px 6px rgba(35, 98, 217, 0.08);
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 8px;
-        }
-
-        .topicon {
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            display: grid;
-            place-items: center;
-            font-size: 16px;
-            color: #ffffff;
-        }
-
-        .icon-bell { background: #7368ef; }
-        .icon-cash { background: #35bf71; }
-        .icon-gift { background: #ff933c; }
-
-        .page-heading {
-            padding: 16px 18px 8px;
-        }
-
-        .page-heading h1 {
-            font-size: 22px;
-            font-weight: 800;
-            color: #101a38;
-        }
-
-        .page-heading p {
-            font-size: 13px;
-            color: #7a879f;
-            margin-top: 2px;
-        }
-
-        .filter-section {
-            padding: 10px 18px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #748097;
-            font-size: 14px;
-        }
-
-        .search-input {
-            width: 100%;
-            height: 44px;
-            padding: 0 14px 0 40px;
-            border-radius: 14px;
-            border: 1.5px solid #cbd7e9;
-            background: #ffffff;
-            font-size: 13px;
-            font-weight: 600;
-            color: #101a38;
-            outline: none;
-            box-shadow: 0 2px 6px rgba(66, 117, 211, 0.05);
-        }
-
-        .date-filter-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .date-input {
-            flex: 1;
-            height: 42px;
-            padding: 0 12px;
-            border-radius: 12px;
-            border: 1.5px solid #cbd7e9;
-            background: #ffffff;
-            font-size: 12px;
-            font-weight: 600;
-            color: #101a38;
-            outline: none;
-        }
-
-        .clear-btn {
-            height: 42px;
-            padding: 0 14px;
-            border-radius: 12px;
-            border: 1px solid #cbd7e9;
-            background: #eef1f6;
-            color: #748097;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .content-section {
-            padding: 0 18px;
-        }
-
-        .card {
-            background: #ffffff;
-            border-radius: 18px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1.5px solid #bdd0f0;
-            box-shadow: 0 6px 18px rgba(66, 117, 211, 0.08);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .card-left {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
-        .card-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #101a38;
-        }
-
-        .card-subtitle {
-            font-size: 12px;
-            color: #6b7891;
-            font-weight: 600;
-            word-break: break-all;
-        }
-
-        .card-date {
-            font-size: 11px;
-            color: #9aa6bc;
-            margin-top: 2px;
-        }
-
-        .card-right {
-            text-align: right;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 5px;
-        }
-
-        .amount {
-            font-size: 18px;
-            font-weight: 900;
-        }
-
-        .credit { color: #13834d; }
-        .debit { color: #c72e43; }
-
-        .badge {
-            font-size: 10px;
-            padding: 4px 9px;
-            border-radius: 8px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
-
-        .badge-approved { background: #dcf8e9; color: #13834d; border: 1px solid #b8e9cf; }
-        .badge-rejected { background: #ffe3e7; color: #c72e43; border: 1px solid #f4bbc5; }
-        .badge-pending { background: #fff4d6; color: #a37200; border: 1px solid #fae19c; }
-
-        .admin-note {
-            font-size: 12px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            line-height: 1.4;
-        }
-
-        .admin-note.approved { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
-        .admin-note.rejected { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
-        .admin-note.pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
-
-        .status-box {
-            text-align: center;
-            padding: 40px 20px;
-            color: #7a879f;
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .bottom {
-            height: 64px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            background: #ffffff;
-            border-top: 1px solid #d5deed;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-
-        .nav {
-            border: 0;
-            background: #ffffff;
-            color: #6d7890;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            font-size: 12px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .nav b { font-size: 21px; }
-        .nav.active { color: #18213a; font-weight: 900; }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+        body{background:linear-gradient(180deg,#f8faff 0%,#eef4ff 50%,#f1f5f9 100%);color:#101a38;min-height:100vh;padding-bottom:85px;}
+        .top-bar{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid #ccd8ed;}
+        .header-left{display:flex;align-items:center;gap:10px;}
+        .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#ffffff;border:1px solid #cbd7e9;color:#2864e6;cursor:pointer;}
+        .brand-badge{background:#ffffff;border:1px solid #dce6fb;color:#2362d9;font-weight:900;font-size:13px;padding:6px 14px;border-radius:20px;cursor:pointer;}
+        .header-icons{display:flex;gap:8px;}
+        .topicon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:16px;color:#ffffff;cursor:pointer;}
+        .icon-bell{background:#7368ef;} .icon-cash{background:#35bf71;} .icon-gift{background:#ff933c;}
+        .page-heading{padding:16px 18px 8px;}
+        .page-heading h1{font-size:22px;font-weight:800;}
+        .filter-section{padding:10px 18px 14px;display:flex;flex-direction:column;gap:10px;}
+        .search-input{width:100%;height:44px;padding:0 14px;border-radius:14px;border:1.5px solid #cbd7e9;outline:none;}
+        .content-section{padding:0 18px;}
+        .card{background:#ffffff;border-radius:18px;padding:16px;margin-bottom:12px;border:1.5px solid #bdd0f0;display:flex;flex-direction:column;gap:10px;}
+        .card-top{display:flex;justify-content:space-between;align-items:flex-start;}
+        .amount{font-size:18px;font-weight:900;}
+        .credit{color:#13834d;} .debit{color:#c72e43;}
+        .badge{font-size:10px;padding:4px 9px;border-radius:8px;font-weight:800;text-transform:uppercase;}
+        .badge-approved{background:#dcf8e9;color:#13834d;}
+        .badge-rejected{background:#ffe3e7;color:#c72e43;}
+        .badge-pending{background:#fff4d6;color:#a37200;}
+        .bottom{height:64px;display:grid;grid-template-columns:repeat(4,1fr);background:#ffffff;border-top:1px solid #d5deed;position:fixed;bottom:0;left:0;right:0;z-index:100;}
+        .nav{border:0;background:#ffffff;color:#6d7890;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;text-decoration:none;cursor:pointer;}
+        .nav.active{color:#18213a;font-weight:900;}
     </style>
 </head>
 <body>
 
     <header class="top-bar">
         <div class="header-left">
-            <button class="back-btn" onclick="location.href='wallet.html'"><i class="fa-solid fa-chevron-left"></i></button>
-            <span class="brand-badge">RDX LUDO</span>
+            <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
+            <!-- Logo Click to Home -->
+            <span class="brand-badge" onclick="location.href='dashboard.html'">RDX LUDO</span>
         </div>
         <div class="header-icons">
-            <div class="topicon icon-bell">🔔</div>
-            <div class="topicon icon-cash">💵</div>
-            <div class="topicon icon-gift">🎁</div>
+            <div class="topicon icon-bell" onclick="location.href='notification.html'">🔔</div>
+            <div class="topicon icon-cash" onclick="location.href='wallet.html'">💵</div>
+            <div class="topicon icon-gift" onclick="location.href='referral.html'">🎁</div>
         </div>
     </header>
 
     <div class="page-heading">
         <h1>Transactions & Logs</h1>
-        <p>Search wallet deposits, withdrawals & payout status</p>
+        <p>Deposit & Withdrawal status</p>
     </div>
 
     <div class="filter-section">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by UTR, UPI, Bank, Status...">
-        </div>
-        <div class="date-filter-box">
-            <input type="date" id="dateInput" class="date-input">
-            <button class="clear-btn" onclick="clearFilters()">
-                <i class="fa-solid fa-rotate-left"></i> Clear
-            </button>
-        </div>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by UTR, UPI, Bank, Status...">
     </div>
 
     <section class="content-section">
-        <div id="transactions-list" class="status-box">
-            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #2864e6; margin-bottom: 10px;"></i><br>
-            Transactions load ho rahe hain...
-        </div>
+        <div id="transactions-list" style="text-align:center;padding:40px;color:#7a879f;">Transactions load ho rahe hain...</div>
     </section>
 
     <nav class="bottom">
@@ -357,179 +80,47 @@
             messagingSenderId: "928340814840",
             appId: "1:928340814840:web:6eca42a8b76138b268440d"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        function getLoggedInUserId() {
-            const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserId") || "";
-            return String(raw).replace(/\D/g, "");
-        }
+        const currentUserId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
 
-        const currentUserId = getLoggedInUserId();
-        let allTransactions = [];
+        async function loadData() {
+            if(!currentUserId) return;
+            let items = [];
+            const depSnap = await getDocs(collection(db, "deposits"));
+            depSnap.forEach(d => {
+                const data = d.data();
+                if(String(data.uid || data.userId).includes(currentUserId)) items.push({type: 'deposit', ...data});
+            });
 
-        async function loadRealTransactions() {
-            const listContainer = document.getElementById("transactions-list");
+            const withSnap = await getDocs(collection(db, "withdrawals"));
+            withSnap.forEach(d => {
+                const data = d.data();
+                if(String(data.uid).includes(currentUserId)) items.push({type: 'withdrawal', ...data});
+            });
 
-            if (!currentUserId) {
-                listContainer.innerHTML = `<div class="status-box">Pehle <a href="login.html" style="color:#2864e6;">Login</a> karein.</div>`;
-                return;
-            }
+            items.sort((a,b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
 
-            try {
-                // 1. Deposits fetch
-                const depSnap = await getDocs(collection(db, "deposits"));
-                let items = [];
+            const list = document.getElementById("transactions-list");
+            if(!items.length) { list.innerHTML = "Koi record nahi mila."; return; }
 
-                depSnap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const docUid = String(data.userId || data.uid || data.customerId || "").replace(/\D/g, "");
-                    if (docUid === currentUserId || (data.mobile && data.mobile.includes(currentUserId))) {
-                        items.push({ id: docSnap.id, type: "deposit", ...data });
-                    }
-                });
-
-                // 2. Withdrawals fetch
-                const withSnap = await getDocs(collection(db, "withdrawals"));
-                withSnap.forEach(docSnap => {
-                    const data = docSnap.data();
-                    const docUid = String(data.uid || data.userId || "").replace(/\D/g, "");
-                    if (docUid === currentUserId) {
-                        items.push({ id: docSnap.id, type: "withdrawal", ...data });
-                    }
-                });
-
-                if (items.length === 0) {
-                    listContainer.innerHTML = `<div class="status-box"><i class="fa-solid fa-receipt fa-2x" style="color:#cbd7e9; margin-bottom:8px;"></i><br>Koi transaction record nahi mila.</div>`;
-                    return;
-                }
-
-                // Sort Latest First
-                items.sort((a, b) => {
-                    const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
-                    const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
-                    return timeB - timeA;
-                });
-
-                allTransactions = items;
-                renderList(allTransactions);
-
-            } catch (error) {
-                console.error("Load error:", error);
-                listContainer.innerHTML = `<div class="status-box" style="color:#c72e43;">Error loading history: ${error.message}</div>`;
-            }
-        }
-
-        function renderList(list) {
-            const listContainer = document.getElementById("transactions-list");
-
-            if (list.length === 0) {
-                listContainer.innerHTML = `<div class="status-box">Koi matching record nahi mila.</div>`;
-                return;
-            }
-
-            let html = "";
-            list.forEach(data => {
-                const isDeposit = data.type === "deposit";
-                const status = String(data.status || "pending").toLowerCase();
-                const amount = Number(data.amount || 0);
-
-                let title = isDeposit ? "Deposit (UPI QR)" : `Withdrawal (${data.mode || 'UPI'})`;
-                let subTitle = "";
-
-                if (isDeposit) {
-                    subTitle = `UTR: ${data.utr || '—'}`;
-                } else {
-                    if (data.mode === "BANK") {
-                        subTitle = `Bank: ${data.bankName || ''} | A/C: ${data.accountNumber || ''} | IFSC: ${data.ifsc || ''}`;
-                    } else {
-                        subTitle = `UPI: ${data.upiId || ''} (${data.holderName || ''})`;
-                    }
-                }
-
-                let dateString = "Recently";
-                if (data.createdAt && typeof data.createdAt.toDate === "function") {
-                    dateString = data.createdAt.toDate().toLocaleString('en-IN', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short'
-                    });
-                }
-
-                let badgeClass = "badge-pending";
-                let noteClass = "pending";
-                let noteText = "Admin verification chal raha hai. Jald update hoga.";
-
-                if (status === "approved") {
-                    badgeClass = "badge-approved";
-                    noteClass = "approved";
-                    noteText = data.comment && data.comment.trim() !== "" ? data.comment : (isDeposit ? "Payment verify ho gaya. Balance add hua." : "Withdrawal transfer complete ho gaya.");
-                } else if (status === "rejected") {
-                    badgeClass = "badge-rejected";
-                    noteClass = "rejected";
-                    noteText = "<strong>Admin Reason:</strong> " + (data.comment || "Payment details invalid pai gayi.");
-                }
-
-                html += `
-                    <div class="card">
-                        <div class="card-top">
-                            <div class="card-left">
-                                <span class="card-title">${title}</span>
-                                <span class="card-subtitle">${subTitle}</span>
-                                <span class="card-date">${dateString}</span>
-                            </div>
-                            <div class="card-right">
-                                <span class="amount ${isDeposit ? 'credit' : 'debit'}">${isDeposit ? '+' : '-'} ₹${amount}</span>
-                                <span class="badge ${badgeClass}">${status}</span>
-                            </div>
+            list.innerHTML = items.map(d => `
+                <div class="card">
+                    <div class="card-top">
+                        <div>
+                            <b>${d.type === 'deposit' ? 'Deposit (UPI QR)' : 'Withdrawal (' + (d.mode || 'UPI') + ')'}</b><br>
+                            <small>${d.utr ? 'UTR: '+d.utr : (d.upiId || d.accountNumber || '')}</small>
                         </div>
-                        <div class="admin-note ${noteClass}">
-                            <i class="fa-solid ${status === 'approved' ? 'fa-circle-check' : status === 'rejected' ? 'fa-triangle-exclamation' : 'fa-clock'}"></i>
-                            <span>${noteText}</span>
+                        <div>
+                            <span class="amount ${d.type === 'deposit' ? 'credit' : 'debit'}">₹${d.amount}</span><br>
+                            <span class="badge badge-${d.status}">${d.status}</span>
                         </div>
                     </div>
-                `;
-            });
-
-            listContainer.innerHTML = html;
+                </div>
+            `).join("");
         }
-
-        function applyFilters() {
-            const searchText = document.getElementById("searchInput").value.toLowerCase().trim();
-            const selectedDate = document.getElementById("dateInput").value;
-
-            const filtered = allTransactions.filter(item => {
-                const utr = String(item.utr || "").toLowerCase();
-                const upi = String(item.upiId || "").toLowerCase();
-                const bank = String(item.bankName || "").toLowerCase();
-                const acc = String(item.accountNumber || "").toLowerCase();
-                const status = String(item.status || "").toLowerCase();
-                const amount = String(item.amount || "").toLowerCase();
-
-                const matchesSearch = !searchText || utr.includes(searchText) || upi.includes(searchText) || bank.includes(searchText) || acc.includes(searchText) || status.includes(searchText) || amount.includes(searchText);
-
-                let matchesDate = true;
-                if (selectedDate && item.createdAt && typeof item.createdAt.toDate === "function") {
-                    const itemDate = item.createdAt.toDate().toISOString().split("T")[0];
-                    matchesDate = (itemDate === selectedDate);
-                }
-
-                return matchesSearch && matchesDate;
-            });
-
-            renderList(filtered);
-        }
-
-        window.clearFilters = function() {
-            document.getElementById("searchInput").value = "";
-            document.getElementById("dateInput").value = "";
-            renderList(allTransactions);
-        };
-
-        document.getElementById("searchInput").addEventListener("input", applyFilters);
-        document.getElementById("dateInput").addEventListener("change", applyFilters);
-
-        loadRealTransactions();
+        loadData();
     </script>
 </body>
 </html>
