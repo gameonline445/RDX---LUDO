@@ -1,2327 +1,2003 @@
 <!DOCTYPE html>
 <html lang="hi">
-
 <head>
 
-<meta charset="UTF-8">
-
-<meta
-name="viewport"
-content="width=device-width,initial-scale=1"
->
-
-<title>RDX LUDO - Deposit History</title>
-
-<style>
-
-*{
-box-sizing:border-box;
-}
-
-body{
-margin:0;
-font-family:Arial,sans-serif;
-background:#f4f7ff;
-color:#17213c;
-}
-
-button,
-input{
-font:inherit;
-}
-
-button{
-cursor:pointer;
-border:0;
-}
-
-/* =========================
-HEADER
-========================= */
-
-header{
-background:#fff;
-border-bottom:1px solid #dce2ed;
-padding:22px 5%;
-display:flex;
-align-items:center;
-justify-content:space-between;
-}
-
-.logo{
-font-size:30px;
-font-weight:900;
-}
-
-.logo span{
-color:#2869ed;
-}
-
-.back{
-background:#eaf1ff;
-color:#2869ed;
-padding:13px 22px;
-border-radius:12px;
-font-weight:bold;
-font-size:16px;
-}
-
-/* =========================
-MAIN
-========================= */
-
-main{
-max-width:1200px;
-margin:auto;
-padding:35px 20px 70px;
-}
-
-.heading{
-font-size:40px;
-font-weight:900;
-margin-bottom:8px;
-}
-
-.heading span{
-color:#2869ed;
-}
-
-.subheading{
-font-size:20px;
-color:#75819b;
-margin-bottom:30px;
-}
-
-/* =========================
-SEARCH CARD
-========================= */
-
-.search-card{
-background:#fff;
-border:1px solid #dce3f2;
-border-radius:20px;
-padding:24px;
-box-shadow:0 8px 25px #00000008;
-margin-bottom:25px;
-}
-
-.search-title{
-font-size:25px;
-font-weight:900;
-margin-bottom:18px;
-}
-
-.search-row{
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-.date-input{
-width:100%;
-padding:18px;
-border:1px solid #ccd6e8;
-border-radius:14px;
-outline:none;
-background:#fff;
-color:#17213c;
-font-size:20px;
-}
-
-.date-input:focus{
-border-color:#2869ed;
-}
-
-.search-btn{
-width:100%;
-padding:18px;
-border-radius:14px;
-background:#2869ed;
-color:#fff;
-font-weight:900;
-font-size:20px;
-}
-
-.clear-btn{
-width:100%;
-padding:18px;
-border-radius:14px;
-background:#edf1f7;
-color:#536079;
-font-weight:900;
-font-size:20px;
-}
-
-/* =========================
-MESSAGE
-========================= */
-
-.message{
-padding:18px;
-border-radius:14px;
-margin-bottom:25px;
-font-weight:800;
-font-size:18px;
-display:none;
-}
-
-.message.show{
-display:block;
-}
-
-.message.ok{
-background:#dcf8e9;
-color:#12804b;
-}
-
-.message.error{
-background:#ffe3e8;
-color:#c72e43;
-}
-
-/* =========================
-RECENT
-========================= */
-
-.history-title{
-font-size:32px;
-font-weight:900;
-margin:30px 0 20px;
-}
-
-.date-section{
-margin-bottom:30px;
-}
-
-.date-heading{
-font-size:21px;
-font-weight:900;
-background:#176f55;
-color:#fff;
-padding:16px 18px;
-border-radius:14px 14px 0 0;
-}
-
-/* =========================
-TABLE
-========================= */
-
-.table-wrapper{
-background:#fff;
-overflow-x:auto;
-border-radius:0 0 15px 15px;
-border:1px solid #e2e6ee;
--webkit-overflow-scrolling:touch;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:900px;
-}
-
-thead{
-background:#176f55;
-color:#fff;
-}
-
-th{
-padding:16px 14px;
-text-align:left;
-font-size:14px;
-white-space:nowrap;
-}
-
-td{
-padding:17px 14px;
-border-bottom:1px solid #edf0f4;
-font-size:15px;
-white-space:nowrap;
-}
-
-tbody tr:last-child td{
-border-bottom:0;
-}
-
-tbody tr:hover{
-background:#fafcff;
-}
-
-/* =========================
-STATUS
-========================= */
-
-.status{
-display:inline-block;
-padding:8px 13px;
-border-radius:9px;
-font-size:12px;
-font-weight:900;
-border:2px solid;
-}
-
-.status.approved{
-color:#27984b;
-border-color:#35a857;
-background:#f4fff7;
-}
-
-.status.rejected{
-color:#d73545;
-border-color:#dd4050;
-background:#fff7f8;
-}
-
-.status.pending{
-color:#b87800;
-border-color:#e5b340;
-background:#fffaf0;
-}
-
-/* =========================
-AMOUNT
-========================= */
-
-.amount{
-font-weight:900;
-font-size:18px;
-}
-
-.utr{
-font-weight:bold;
-color:#35415b;
-}
-
-.account{
-font-weight:600;
-}
-
-.reason{
-color:#c83242;
-font-weight:700;
-white-space:normal;
-max-width:250px;
-}
-
-/* =========================
-EMPTY
-========================= */
-
-.empty{
-background:#fff;
-border:1px solid #dce3f2;
-border-radius:18px;
-padding:45px 20px;
-text-align:center;
-color:#7b879f;
-font-size:19px;
-}
-
-/* =========================
-LOADING
-========================= */
-
-.loading{
-text-align:center;
-padding:40px;
-color:#66728b;
-font-weight:bold;
-font-size:18px;
-}
-
-/* =========================
-DEBUG
-========================= */
-
-.debug{
-background:#fff8df;
-border:1px solid #edd36b;
-color:#725d12;
-padding:18px;
-border-radius:14px;
-margin-bottom:25px;
-display:none;
-}
-
-.debug.show{
-display:block;
-}
-
-.debug strong{
-display:block;
-margin-bottom:10px;
-}
-
-/* =========================
-MOBILE
-========================= */
-
-@media(max-width:700px){
-
-header{
-padding:18px 15px;
-}
-
-.logo{
-font-size:22px;
-}
-
-.back{
-padding:10px 14px;
-font-size:14px;
-}
-
-main{
-padding:25px 12px 60px;
-}
-
-.heading{
-font-size:30px;
-}
-
-.subheading{
-font-size:17px;
-}
-
-.search-card{
-padding:17px;
-}
-
-.search-title{
-font-size:22px;
-}
-
-.date-input{
-font-size:18px;
-}
-
-.search-btn,
-.clear-btn{
-font-size:18px;
-}
-
-.history-title{
-font-size:27px;
-}
-
-.date-heading{
-font-size:18px;
-}
-
-table{
-min-width:900px;
-}
-
-}
-
-/* =========================
-SMALL MOBILE
-========================= */
-
-@media(max-width:400px){
-
-.heading{
-font-size:27px;
-}
-
-.logo{
-font-size:20px;
-}
-
-.back{
-font-size:13px;
-}
-
-}
-
-</style>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>RDX LUDO - Deposit History</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family:
+        Arial,
+        "Noto Sans Devanagari",
+        sans-serif;
+      background: #f4f7ff;
+      color: #17213d;
+    }
+
+    .header {
+      background: #ffffff;
+      padding: 24px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #dfe5f2;
+    }
+
+    .logo {
+      font-size: 30px;
+      font-weight: 800;
+    }
+
+    .logo span {
+      color: #2f68e8;
+    }
+
+    .back-btn {
+      border: 0;
+      background: #edf3ff;
+      color: #2865e8;
+      padding: 15px 22px;
+      border-radius: 18px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      padding: 45px 24px 80px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 48px;
+      line-height: 1.1;
+    }
+
+    h1 span {
+      color: #2f68e8;
+    }
+
+    .subtitle {
+      margin-top: 14px;
+      font-size: 21px;
+      color: #7a86a4;
+    }
+
+    .search-card {
+      background: #ffffff;
+      margin-top: 40px;
+      padding: 30px;
+      border-radius: 28px;
+      border: 1px solid #dce4f3;
+      box-shadow:
+        0 8px 30px rgba(40, 70, 130, 0.06);
+    }
+
+    .search-title {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 20px;
+    }
+
+    .date-input {
+      width: 100%;
+      height: 70px;
+      border: 2px solid #d7dfef;
+      border-radius: 18px;
+      padding: 0 20px;
+      font-size: 20px;
+      color: #17213d;
+      background: #ffffff;
+      outline: none;
+    }
+
+    .date-input:focus {
+      border-color: #2f68e8;
+    }
+
+    .buttons {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .search-btn,
+    .recent-btn {
+      width: 100%;
+      height: 68px;
+      border: 0;
+      border-radius: 18px;
+      font-size: 21px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .search-btn {
+      background: #2f68e8;
+      color: white;
+    }
+
+    .recent-btn {
+      background: #edf1f8;
+      color: #56637f;
+    }
+
+    .search-btn:active,
+    .recent-btn:active,
+    .back-btn:active {
+      transform: scale(0.98);
+    }
+
+    .message {
+      display: none;
+      margin-top: 20px;
+      padding: 17px 20px;
+      border-radius: 15px;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .message.ok {
+      background: #dff7e8;
+      color: #188344;
+    }
+
+    .message.error {
+      background: #ffe3e7;
+      color: #c53445;
+    }
+
+    .section-title {
+      margin-top: 50px;
+      font-size: 34px;
+      font-weight: 800;
+    }
+
+    .loading,
+    .empty {
+      margin-top: 25px;
+      background: #ffffff;
+      border: 1px solid #dce4f3;
+      border-radius: 22px;
+      padding: 50px 25px;
+      text-align: center;
+      font-size: 21px;
+      color: #697590;
+    }
+
+    .error-box {
+      margin-top: 25px;
+      background: #fff0f1;
+      border: 1px solid #ffc8cd;
+      border-radius: 22px;
+      padding: 25px;
+      color: #b42335;
+      font-size: 16px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .date-section {
+      margin-top: 35px;
+    }
+
+    .date-heading {
+      font-size: 25px;
+      font-weight: 800;
+      margin-bottom: 15px;
+      color: #263252;
+    }
+
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      background: white;
+      border-radius: 20px;
+      border: 1px solid #dce4f3;
+      box-shadow:
+        0 8px 25px rgba(40, 70, 130, 0.05);
+    }
+
+    table {
+      width: 100%;
+      min-width: 950px;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f5f7fc;
+      color: #66728e;
+      font-size: 15px;
+      text-align: left;
+      padding: 18px;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 18px;
+      border-top: 1px solid #edf0f6;
+      font-size: 15px;
+      vertical-align: middle;
+    }
+
+    .utr {
+      font-weight: 700;
+      color: #293858;
+    }
+
+    .amount {
+      font-weight: 800;
+      color: #1d2945;
+      white-space: nowrap;
+    }
+
+    .account {
+      max-width: 220px;
+      word-break: break-word;
+    }
+
+    .reason {
+      max-width: 220px;
+      word-break: break-word;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .status.approved {
+      background: #dcf7e7;
+      color: #21854a;
+    }
+
+    .status.rejected {
+      background: #ffe0e5;
+      color: #c72f43;
+    }
+
+    .status.pending {
+      background: #fff1c9;
+      color: #9a6b00;
+    }
+
+    @media (max-width: 700px) {
+
+      .header {
+        padding: 18px 16px;
+      }
+
+      .logo {
+        font-size: 24px;
+      }
+
+      .back-btn {
+        padding: 12px 15px;
+        font-size: 15px;
+      }
+
+      .container {
+        padding: 32px 16px 60px;
+      }
+
+      h1 {
+        font-size: 40px;
+      }
+
+      .subtitle {
+        font-size: 18px;
+      }
+
+      .search-card {
+        padding: 20px;
+        border-radius: 22px;
+      }
+
+      .search-title {
+        font-size: 23px;
+      }
+
+      .section-title {
+        font-size: 30px;
+      }
+
+    }
+
+  </style>
 
 </head>
-
 
 <body>
 
 
-<!-- =========================
-HEADER
-========================= -->
+  <!-- =================================================
+       HEADER
+  ================================================== -->
 
-<header>
+  <header class="header">
 
-<div class="logo">
-RDX <span>LUDO</span> HISTORY
-</div>
+    <div class="logo">
+      RDX <span>LUDO</span> HISTORY
+    </div>
 
-<button
-class="back"
-id="backBtn"
->
-← वापस
-</button>
+    <button
+      class="back-btn"
+      id="backBtn"
+    >
+      ← वापस
+    </button>
 
-</header>
+  </header>
 
 
-<!-- =========================
-MAIN
-========================= -->
+  <!-- =================================================
+       MAIN
+  ================================================== -->
 
-<main>
+  <main class="container">
 
-<div class="heading">
-Deposit <span>History</span>
-</div>
+    <h1>
+      Deposit <span>History</span>
+    </h1>
 
-<div class="subheading">
-आपकी Deposit की पूरी History
-</div>
+    <div class="subtitle">
+      आपकी Deposit की पूरी History
+    </div>
 
 
-<!-- =========================
-DATE SEARCH
-========================= -->
+    <!-- =================================================
+         SEARCH
+    ================================================== -->
 
-<div class="search-card">
+    <div class="search-card">
 
-<div class="search-title">
-📅 तारीख से History खोजें
-</div>
+      <div class="search-title">
+        📅 तारीख से History खोजें
+      </div>
 
-<div class="search-row">
+      <input
+        type="date"
+        id="dateSearch"
+        class="date-input"
+      >
 
-<input
-type="date"
-id="dateSearch"
-class="date-input"
->
+      <div class="buttons">
 
-<button
-id="searchBtn"
-class="search-btn"
->
-🔍 Search
-</button>
+        <button
+          id="searchBtn"
+          class="search-btn"
+        >
+          🔍 Search
+        </button>
 
-<button
-id="clearBtn"
-class="clear-btn"
->
-↻ Recent History
-</button>
+        <button
+          id="clearBtn"
+          class="recent-btn"
+        >
+          ↻ Recent History
+        </button>
 
-</div>
+      </div>
 
-</div>
+      <div
+        id="message"
+        class="message"
+      ></div>
 
+    </div>
 
-<!-- =========================
-MESSAGE
-========================= -->
 
-<div
-id="message"
-class="message"
-></div>
+    <!-- =================================================
+         HISTORY
+    ================================================== -->
 
+    <div class="section-title">
+      Recent History
+    </div>
 
-<!-- =========================
-DEBUG MESSAGE
-========================= -->
+    <div id="historyContainer">
 
-<div
-id="debug"
-class="debug"
-></div>
+      <div class="loading">
+        History Loading...
+      </div>
 
+    </div>
 
-<!-- =========================
-RECENT HISTORY
-========================= -->
+  </main>
 
-<div class="history-title">
-Recent History
-</div>
 
-<div id="historyContainer">
+  <!-- =================================================
+       FIREBASE
+  ================================================== -->
 
-<div class="loading">
-History Loading...
-</div>
+  <script type="module">
 
-</div>
+    import {
+      initializeApp
+    } from
+    "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-</main>
 
+    import {
+      getAuth,
+      onAuthStateChanged
+    } from
+    "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
-<script type="module">
 
+    import {
+      getFirestore,
+      collection,
+      getDocs
+    } from
+    "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-/* =====================================================
-FIREBASE APP
-===================================================== */
 
-import {
-initializeApp
-}
-from
-"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+    /* =================================================
+       FIREBASE CONFIG
+    ================================================= */
 
+    const firebaseConfig = {
 
-/* =====================================================
-FIREBASE AUTH
-===================================================== */
+      apiKey:
+        "AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
 
-import {
-getAuth,
-onAuthStateChanged
-}
-from
-"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+      authDomain:
+        "rdx-ludo.firebaseapp.com",
 
+      projectId:
+        "rdx-ludo",
 
-/* =====================================================
-FIRESTORE
-===================================================== */
+      storageBucket:
+        "rdx-ludo.firebasestorage.app",
 
-import {
-getFirestore,
-collection,
-getDocs,
-query,
-where
-}
-from
-"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+      messagingSenderId:
+        "928340814840",
 
+      appId:
+        "1:928340814840:web:6eca42a8b76138b268440d"
 
-/* =====================================================
-FIREBASE CONFIG
-===================================================== */
+    };
 
-const firebaseConfig = {
 
-apiKey:
-"AIzaSyAsGWpMcC2WtMpv3_498me8_ydjL8wN1Qc",
+    /* =================================================
+       FIREBASE INIT
+    ================================================= */
 
-authDomain:
-"rdx-ludo.firebaseapp.com",
+    const app =
+      initializeApp(firebaseConfig);
 
-projectId:
-"rdx-ludo",
+    const auth =
+      getAuth(app);
 
-storageBucket:
-"rdx-ludo.firebasestorage.app",
+    const db =
+      getFirestore(app);
 
-messagingSenderId:
-"928340814840",
 
-appId:
-"1:928340814840:web:6eca42a8b76138b268440d"
+    /* =================================================
+       COLLECTION
+    ================================================= */
 
-};
+    const DEPOSITS_COLLECTION =
+      "deposits";
 
 
-/* =====================================================
-INITIALIZE
-===================================================== */
+    /* =================================================
+       VARIABLES
+    ================================================= */
 
-const app =
-initializeApp(
-firebaseConfig
-);
+    let currentUser = null;
 
-const auth =
-getAuth(app);
+    let allHistory = [];
 
-const db =
-getFirestore(app);
 
+    /* =================================================
+       ELEMENTS
+    ================================================= */
 
-/* =====================================================
-COLLECTION
-===================================================== */
+    const historyContainer =
+      document.getElementById(
+        "historyContainer"
+      );
 
-const DEPOSITS_COLLECTION =
-"deposits";
+    const dateSearch =
+      document.getElementById(
+        "dateSearch"
+      );
 
+    const searchBtn =
+      document.getElementById(
+        "searchBtn"
+      );
 
-/* =====================================================
-DATA
-===================================================== */
+    const clearBtn =
+      document.getElementById(
+        "clearBtn"
+      );
 
-let allHistory = [];
+    const message =
+      document.getElementById(
+        "message"
+      );
 
-let currentUser = null;
+    const backBtn =
+      document.getElementById(
+        "backBtn"
+      );
 
-let customerUIDs = [];
 
+    /* =================================================
+       SAFE HTML
+    ================================================= */
 
-/* =====================================================
-ELEMENTS
-===================================================== */
+    function safe(value) {
 
-const historyContainer =
-document.getElementById(
-"historyContainer"
-);
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
-const dateSearch =
-document.getElementById(
-"dateSearch"
-);
+    }
 
-const searchBtn =
-document.getElementById(
-"searchBtn"
-);
 
-const clearBtn =
-document.getElementById(
-"clearBtn"
-);
+    /* =================================================
+       MESSAGE
+    ================================================= */
 
-const message =
-document.getElementById(
-"message"
-);
+    function showMessage(
+      text,
+      type
+    ) {
 
-const debug =
-document.getElementById(
-"debug"
-);
+      message.textContent =
+        text;
 
+      message.className =
+        "message show " +
+        type;
 
-/* =====================================================
-SAFE HTML
-===================================================== */
+    }
 
-function safe(value){
 
-return String(
-value ?? ""
-)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
+    function hideMessage() {
 
-}
+      message.textContent =
+        "";
 
+      message.className =
+        "message";
 
-/* =====================================================
-MESSAGE
-===================================================== */
+    }
 
-function showMessage(
-text,
-type
-){
 
-message.textContent =
-text;
+    /* =================================================
+       NORMALIZE PHONE
+    ================================================= */
 
-message.className =
-"message show " +
-type;
+    function normalizeNumber(
+      value
+    ) {
 
-}
+      if (!value) {
+        return "";
+      }
 
+      return String(value)
+        .replace(/\D/g, "")
+        .replace(
+          /^91(?=\d{10}$)/,
+          ""
+        );
 
-/* =====================================================
-HIDE MESSAGE
-===================================================== */
+    }
 
-function hideMessage(){
 
-message.className =
-"message";
+    /* =================================================
+       AUTH IDENTIFIERS
+    ================================================= */
 
-message.textContent =
-"";
+    function getAuthIdentifiers(
+      user
+    ) {
 
-}
+      const identifiers =
+        new Set();
 
 
-/* =====================================================
-DEBUG
-===================================================== */
+      if (!user) {
+        return identifiers;
+      }
 
-function showDebug(
-title,
-lines
-){
 
-debug.innerHTML = `
+      /* Firebase UID */
 
-<strong>${safe(title)}</strong>
+      if (user.uid) {
 
-${lines
-.map(
-line =>
-`<div>${safe(line)}</div>`
-)
-.join("")
-}
+        identifiers.add(
+          String(
+            user.uid
+          ).trim()
+        );
 
-`;
+      }
 
-debug.className =
-"debug show";
 
-}
+      /* Phone */
 
+      if (user.phoneNumber) {
 
-function hideDebug(){
+        const rawPhone =
+          String(
+            user.phoneNumber
+          ).trim();
 
-debug.className =
-"debug";
 
-debug.innerHTML =
-"";
+        identifiers.add(
+          rawPhone
+        );
 
-}
 
+        const normalized =
+          normalizeNumber(
+            rawPhone
+          );
 
-/* =====================================================
-NORMALIZE UID
-===================================================== */
 
-function normalizeUID(
-value
-){
+        if (normalized) {
 
-if(
-value === null ||
-value === undefined
-){
+          identifiers.add(
+            normalized
+          );
 
-return "";
+          identifiers.add(
+            "91" + normalized
+          );
 
-}
+          identifiers.add(
+            "+91" + normalized
+          );
 
-return String(value)
-.trim()
-.replace(/\s/g,"")
-.replace(/^\+/,"");
+        }
 
-}
+      }
 
 
-/* =====================================================
-GET DEPOSIT UID
-===================================================== */
+      return identifiers;
 
-function getDepositUID(
-deposit
-){
+    }
 
-const values = [
 
-deposit.uid,
+    /* =================================================
+       DEPOSIT IDENTIFIERS
+    ================================================= */
 
-deposit.userId,
+    function getDepositIdentifiers(
+      deposit
+    ) {
 
-deposit.customerId,
+      const identifiers =
+        new Set();
 
-deposit.customerUID,
 
-deposit.userUID,
+      const fields = [
 
-deposit.customerUid,
+        deposit.userId,
 
-deposit.userUid
+        deposit.uid,
 
-];
+        deposit.customerId,
 
+        deposit.userUID,
 
-for(
-const value of values
-){
+        deposit.mobile,
 
-const uid =
-normalizeUID(value);
+        deposit.phone,
 
-if(uid){
+        deposit.phoneNumber
 
-return uid;
+      ];
 
-}
 
-}
+      fields.forEach(
+        value => {
 
-return "";
+          if (!value) {
+            return;
+          }
 
-}
 
+          const raw =
+            String(value).trim();
 
-/* =====================================================
-GET UTR
-===================================================== */
 
-function getUTR(
-deposit
-){
+          identifiers.add(
+            raw
+          );
 
-const values = [
 
-deposit.utr,
+          const normalized =
+            normalizeNumber(
+              raw
+            );
 
-deposit.utrNumber,
 
-deposit.utrNo,
+          if (normalized) {
 
-deposit.transactionId,
+            identifiers.add(
+              normalized
+            );
 
-deposit.transactionNumber
+            identifiers.add(
+              "91" + normalized
+            );
 
-];
+            identifiers.add(
+              "+91" + normalized
+            );
 
+          }
 
-for(
-const value of values
-){
+        }
+      );
 
-if(
-value !== undefined &&
-value !== null &&
-String(value).trim() !== ""
-){
 
-return String(value).trim();
+      return identifiers;
 
-}
+    }
 
-}
 
-return "";
+    /* =================================================
+       MATCH USER
+    ================================================= */
 
-}
+    function belongsToCurrentUser(
+      deposit,
+      user
+    ) {
 
+      const authIds =
+        getAuthIdentifiers(
+          user
+        );
 
-/* =====================================================
-GET ACCOUNT
-===================================================== */
 
-function getAccount(
-deposit
-){
+      const depositIds =
+        getDepositIdentifiers(
+          deposit
+        );
 
-const values = [
 
-deposit.accountHolderName,
+      for (
+        const id of authIds
+      ) {
 
-deposit.account,
+        if (
+          depositIds.has(id)
+        ) {
 
-deposit.accountName,
+          return true;
 
-deposit.accountHolder,
+        }
 
-deposit.upiId,
+      }
 
-deposit.upiID,
 
-deposit.upi
+      return false;
 
-];
+    }
 
 
-for(
-const value of values
-){
+    /* =================================================
+       UTR
+    ================================================= */
 
-if(
-value !== undefined &&
-value !== null &&
-String(value).trim() !== ""
-){
+    function getUTR(
+      deposit
+    ) {
 
-return String(value).trim();
+      return String(
 
-}
+        deposit.utr ??
 
-}
+        deposit.utrNumber ??
 
-return "";
+        deposit.utrNo ??
 
-}
+        deposit.transactionId ??
 
+        deposit.transactionNumber ??
 
-/* =====================================================
-GET STATUS
-===================================================== */
+        ""
 
-function getStatus(
-deposit
-){
+      ).trim();
 
-return String(
+    }
 
-deposit.status ??
-"pending"
 
-)
-.trim()
-.toLowerCase();
+    /* =================================================
+       ACCOUNT
+    ================================================= */
 
-}
+    function getAccount(
+      deposit
+    ) {
 
+      return String(
 
-/* =====================================================
-DATE CONVERTER
-===================================================== */
+        deposit.accountHolderName ??
 
-function getDateValue(
-value
-){
+        deposit.accountName ??
 
-if(!value){
+        deposit.accountHolder ??
 
-return null;
+        deposit.upiName ??
 
-}
+        deposit.upiId ??
 
+        deposit.account ??
 
-/* Firebase Timestamp */
+        ""
 
-if(
-typeof value.toDate ===
-"function"
-){
+      ).trim();
 
-const d =
-value.toDate();
+    }
 
-if(
-d &&
-!isNaN(d.getTime())
-){
 
-return d;
+    /* =================================================
+       STATUS
+    ================================================= */
 
-}
+    function getStatus(
+      deposit
+    ) {
 
-}
+      return String(
 
+        deposit.status ??
+        "pending"
 
-/* Date */
+      )
+      .trim()
+      .toLowerCase();
 
-if(
-value instanceof Date
-){
+    }
 
-if(
-!isNaN(value.getTime())
-){
 
-return value;
+    /* =================================================
+       FIREBASE DATE
+    ================================================= */
 
-}
+    function getDateValue(
+      value
+    ) {
 
-}
+      if (!value) {
+        return null;
+      }
 
 
-/* Firestore timestamp object */
+      /* Firebase Timestamp */
 
-if(
-typeof value === "object" &&
-typeof value.seconds === "number"
-){
+      if (
+        typeof value.toDate ===
+        "function"
+      ) {
 
-const d =
-new Date(
-value.seconds * 1000
-);
+        return value.toDate();
 
-if(
-!isNaN(d.getTime())
-){
+      }
 
-return d;
 
-}
+      /* Firestore object */
 
-}
+      if (
+        typeof value ===
+          "object" &&
 
+        typeof value.seconds ===
+          "number"
+      ) {
 
-/* Number */
+        return new Date(
+          value.seconds * 1000
+        );
 
-if(
-typeof value === "number"
-){
+      }
 
-const d =
-new Date(value);
 
-if(
-!isNaN(d.getTime())
-){
+      /* JS Date */
 
-return d;
+      if (
+        value instanceof Date
+      ) {
 
-}
+        return value;
 
-}
+      }
 
 
-/* String */
+      /* Number */
 
-if(
-typeof value === "string"
-){
+      if (
+        typeof value ===
+        "number"
+      ) {
 
-const d =
-new Date(value);
+        const d =
+          new Date(value);
 
-if(
-!isNaN(d.getTime())
-){
 
-return d;
+        if (
+          !isNaN(
+            d.getTime()
+          )
+        ) {
 
-}
+          return d;
 
-}
+        }
 
-return null;
+      }
 
-}
 
+      /* String */
 
-/* =====================================================
-FINAL HISTORY DATE
-===================================================== */
+      if (
+        typeof value ===
+        "string"
+      ) {
 
-function getHistoryDate(
-deposit
-){
+        const d =
+          new Date(value);
 
-const status =
-getStatus(
-deposit
-);
 
+        if (
+          !isNaN(
+            d.getTime()
+          )
+        ) {
 
-/*
-APPROVED
-*/
+          return d;
 
-if(
-status === "approved"
-){
+        }
 
-return (
+      }
 
-getDateValue(
-deposit.approvedAt
-)
 
-||
+      return null;
 
-getDateValue(
-deposit.updatedAt
-)
+    }
 
-||
 
-getDateValue(
-deposit.createdAt
-)
+    /* =================================================
+       HISTORY DATE
+    ================================================= */
 
-);
+    function getHistoryDate(
+      deposit
+    ) {
 
-}
+      const status =
+        getStatus(
+          deposit
+        );
 
 
-/*
-REJECTED
-*/
+      /* APPROVED */
 
-if(
-status === "rejected" ||
-status === "reject"
-){
+      if (
+        status ===
+        "approved"
+      ) {
 
-return (
+        return (
 
-getDateValue(
-deposit.rejectedAt
-)
+          getDateValue(
+            deposit.approvedAt
+          )
 
-||
+          ||
 
-getDateValue(
-deposit.updatedAt
-)
+          getDateValue(
+            deposit.updatedAt
+          )
 
-||
+          ||
 
-getDateValue(
-deposit.createdAt
-)
+          getDateValue(
+            deposit.createdAt
+          )
 
-);
+        );
 
-}
+      }
 
 
-/*
-PENDING
-*/
+      /* REJECTED */
 
-return (
+      if (
+        status ===
+        "rejected"
+      ) {
 
-getDateValue(
-deposit.createdAt
-)
+        return (
 
-||
+          getDateValue(
+            deposit.rejectedAt
+          )
 
-getDateValue(
-deposit.updatedAt
-)
+          ||
 
-);
+          getDateValue(
+            deposit.updatedAt
+          )
 
-}
+          ||
 
+          getDateValue(
+            deposit.createdAt
+          )
 
-/* =====================================================
-DATE FORMAT
-===================================================== */
+        );
 
-function formatDate(
-date
-){
+      }
 
-if(!date){
 
-return "—";
+      /* PENDING */
 
-}
+      return (
 
-return date.toLocaleDateString(
-"en-GB",
-{
-day:"2-digit",
-month:"2-digit",
-year:"numeric"
-}
-);
+        getDateValue(
+          deposit.createdAt
+        )
 
-}
+        ||
 
+        getDateValue(
+          deposit.updatedAt
+        )
 
-/* =====================================================
-DATE TIME
-===================================================== */
+      );
 
-function formatDateTime(
-date
-){
+    }
 
-if(!date){
 
-return "—";
+    /* =================================================
+       FORMAT DATE
+    ================================================= */
 
-}
+    function formatDate(
+      date
+    ) {
 
-return (
+      if (!date) {
+        return "—";
+      }
 
-date.toLocaleDateString(
-"en-GB",
-{
-day:"2-digit",
-month:"2-digit",
-year:"numeric"
-}
-)
 
-+
+      return date.toLocaleDateString(
+        "en-GB",
+        {
+          day: "2-digit",
+          month: "short",
+          year: "numeric"
+        }
+      );
 
-" "
+    }
 
-+
 
-date.toLocaleTimeString(
-"en-IN",
-{
-hour:"2-digit",
-minute:"2-digit",
-second:"2-digit",
-hour12:true
-}
-)
+    /* =================================================
+       FORMAT DATE TIME
+    ================================================= */
 
-);
+    function formatDateTime(
+      date
+    ) {
 
-}
+      if (!date) {
+        return "—";
+      }
 
 
-/* =====================================================
-DATE KEY
-===================================================== */
+      return (
 
-function dateKey(
-date
-){
+        date.toLocaleDateString(
+          "en-GB",
+          {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+          }
+        )
 
-if(!date){
+        +
 
-return "";
+        " "
 
-}
+        +
 
-const year =
-date.getFullYear();
+        date.toLocaleTimeString(
+          "en-IN",
+          {
+            hour:
+              "2-digit",
 
-const month =
-String(
-date.getMonth()+1
-)
-.padStart(2,"0");
+            minute:
+              "2-digit",
 
-const day =
-String(
-date.getDate()
-)
-.padStart(2,"0");
+            second:
+              "2-digit",
 
-return (
+            hour12:
+              true
+          }
+        )
 
-year +
-"-" +
-month +
-"-" +
-day
+      );
 
-);
+    }
 
-}
 
+    /* =================================================
+       DATE KEY
+    ================================================= */
 
-/* =====================================================
-REASON
-===================================================== */
+    function dateKey(
+      date
+    ) {
 
-function getReason(
-deposit
-){
+      if (!date) {
+        return "";
+      }
 
-const values = [
 
-deposit.rejectReason,
+      const year =
+        date.getFullYear();
 
-deposit.rejectionReason,
 
-deposit.rejectedReason,
+      const month =
+        String(
+          date.getMonth() + 1
+        ).padStart(
+          2,
+          "0"
+        );
 
-deposit.reason,
 
-deposit.reject_reason,
+      const day =
+        String(
+          date.getDate()
+        ).padStart(
+          2,
+          "0"
+        );
 
-deposit.comment
 
-];
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day
+      );
 
+    }
 
-for(
-const value of values
-){
 
-if(
-value !== undefined &&
-value !== null &&
-String(value).trim() !== ""
-){
+    /* =================================================
+       REASON
+    ================================================= */
 
-return String(value).trim();
+    function getReason(
+      deposit
+    ) {
 
-}
+      return String(
 
-}
+        deposit.rejectReason ??
 
-return "";
+        deposit.rejectionReason ??
 
-}
+        deposit.reason ??
 
+        deposit.comment ??
 
-/* =====================================================
-AMOUNT
-===================================================== */
+        ""
 
-function getAmount(
-deposit
-){
+      ).trim();
 
-const value =
+    }
 
-deposit.amount ??
-deposit.depositAmount ??
-deposit.approvedAmount ??
-0;
 
-const number =
-Number(value);
+    /* =================================================
+       AMOUNT
+    ================================================= */
 
-if(
-isNaN(number)
-){
+    function getAmount(
+      deposit
+    ) {
 
-return 0;
+      const value =
 
-}
+        deposit.amount ??
 
-return number;
+        deposit.depositAmount ??
 
-}
+        0;
 
 
-/* =====================================================
-STATUS HTML
-===================================================== */
+      const number =
+        Number(value);
 
-function getStatusHTML(
-status
-){
 
-if(
-status === "approved"
-){
+      return isNaN(number)
+        ? 0
+        : number;
 
-return `
+    }
 
-<span class="status approved">
 
-🟢 APPROVED
+    /* =================================================
+       STATUS HTML
+    ================================================= */
 
-</span>
+    function getStatusHTML(
+      status
+    ) {
 
-`;
+      if (
+        status ===
+        "approved"
+      ) {
 
-}
+        return `
 
+          <span
+            class="status approved"
+          >
+            🟢 APPROVED
+          </span>
 
-if(
-status === "rejected" ||
-status === "reject"
-){
+        `;
 
-return `
+      }
 
-<span class="status rejected">
 
-🔴 REJECT
+      if (
+        status ===
+        "rejected"
+      ) {
 
-</span>
+        return `
 
-`;
+          <span
+            class="status rejected"
+          >
+            🔴 REJECT
+          </span>
 
-}
+        `;
 
+      }
 
-return `
 
-<span class="status pending">
+      return `
 
-🟡 PENDING
+        <span
+          class="status pending"
+        >
+          🟡 PENDING
+        </span>
 
-</span>
+      `;
 
-`;
+    }
 
-}
 
+    /* =================================================
+       RENDER HISTORY
+    ================================================= */
 
-/* =====================================================
-RENDER HISTORY
-===================================================== */
+    function renderHistory(
+      list
+    ) {
 
-function renderHistory(
-list
-){
+      if (!list.length) {
 
-if(
-!list ||
-!list.length
-){
+        historyContainer.innerHTML = `
 
-historyContainer.innerHTML = `
+          <div class="empty">
 
-<div class="empty">
+            कोई Deposit History नहीं मिली।
 
-कोई Deposit History नहीं मिली।
+          </div>
 
-</div>
+        `;
 
-`;
+        return;
 
-return;
+      }
 
-}
 
+      /* SORT */
 
-/* SORT */
+      const sorted =
+        [...list].sort(
+          (a, b) => {
 
-const sorted = [
-...list
-]
-.sort(
-(a,b) => {
+            const da =
+              getHistoryDate(a);
 
-const da =
-getHistoryDate(a);
+            const db =
+              getHistoryDate(b);
 
-const db =
-getHistoryDate(b);
 
-return (
+            return (
 
-(db?.getTime() || 0)
+              (
+                db?.getTime() ||
+                0
+              )
 
--
+              -
 
-(da?.getTime() || 0)
+              (
+                da?.getTime() ||
+                0
+              )
 
-);
+            );
 
-}
-);
+          }
+        );
 
 
-/* GROUP */
+      /* GROUP */
 
-const groups = {};
+      const groups = {};
 
 
-sorted.forEach(
-deposit => {
+      sorted.forEach(
+        deposit => {
 
-const date =
-getHistoryDate(
-deposit
-);
+          const date =
+            getHistoryDate(
+              deposit
+            );
 
-const key =
-dateKey(date) ||
-"unknown";
 
+          const key =
+            dateKey(
+              date
+            );
 
-if(
-!groups[key]
-){
 
-groups[key] = [];
+          if (
+            !groups[key]
+          ) {
 
-}
+            groups[key] = [];
 
+          }
 
-groups[key].push(
-deposit
-);
 
-});
+          groups[key].push(
+            deposit
+          );
 
+        }
+      );
 
-/* DATE ORDER */
 
-const dates =
-Object.keys(groups)
-.sort(
-(a,b) => {
+      const dates =
+        Object.keys(
+          groups
+        )
+        .sort()
+        .reverse();
 
-if(a === "unknown"){
-return 1;
-}
 
-if(b === "unknown"){
-return -1;
-}
+      let html = "";
 
-return b.localeCompare(a);
 
-});
+      dates.forEach(
+        key => {
 
+          const group =
+            groups[key];
 
-let html = "";
 
+          const firstDate =
+            getHistoryDate(
+              group[0]
+            );
 
-/* =====================================================
-DATE GROUPS
-===================================================== */
 
-dates.forEach(
-key => {
+          html += `
 
-const group =
-groups[key];
+            <div
+              class="date-section"
+            >
 
-const date =
-group.length
-?
-getHistoryDate(
-group[0]
-)
-:
-null;
+              <div
+                class="date-heading"
+              >
+                📅 ${safe(
+                  formatDate(
+                    firstDate
+                  )
+                )}
+              </div>
 
 
-html += `
+              <div
+                class="table-wrapper"
+              >
 
-<div class="date-section">
+                <table>
 
-<div class="date-heading">
+                  <thead>
 
-📅 ${safe(
-formatDate(date)
-)}
+                    <tr>
 
-</div>
+                      <th>
+                        UTR No.
+                      </th>
 
-<div class="table-wrapper">
+                      <th>
+                        Amount
+                      </th>
 
-<table>
+                      <th>
+                        Status
+                      </th>
 
-<thead>
+                      <th>
+                        Account
+                      </th>
 
-<tr>
+                      <th>
+                        Date & Time
+                      </th>
 
-<th>UTR No.</th>
+                      <th>
+                        Reason
+                      </th>
 
-<th>Amount</th>
+                    </tr>
 
-<th>Status</th>
+                  </thead>
 
-<th>Account</th>
+                  <tbody>
 
-<th>Date & Time</th>
+          `;
 
-<th>Reason</th>
 
-</tr>
+          group.forEach(
+            deposit => {
 
-</thead>
+              const status =
+                getStatus(
+                  deposit
+                );
 
-<tbody>
 
-`;
+              const amount =
+                getAmount(
+                  deposit
+                );
 
 
-/* =====================================================
-ROWS
-===================================================== */
+              const utr =
+                getUTR(
+                  deposit
+                );
 
-group.forEach(
-deposit => {
 
-const status =
-getStatus(
-deposit
-);
+              const account =
+                getAccount(
+                  deposit
+                );
 
-const amount =
-getAmount(
-deposit
-);
 
-const utr =
-getUTR(
-deposit
-);
+              const finalDate =
+                getHistoryDate(
+                  deposit
+                );
 
-const account =
-getAccount(
-deposit
-);
 
-const finalDate =
-getHistoryDate(
-deposit
-);
+              const reason =
+                getReason(
+                  deposit
+                );
 
-const reason =
-getReason(
-deposit
-);
 
+              let reasonHTML =
+                "—";
 
-let reasonHTML =
-"—";
 
+              if (
+                status ===
+                  "rejected" &&
+                reason
+              ) {
 
-if(
-(
-status === "rejected" ||
-status === "reject"
-)
-&&
-reason
-){
+                reasonHTML =
+                  safe(reason);
 
-reasonHTML =
-safe(reason);
+              }
 
-}
 
+              html += `
 
-html += `
+                <tr>
 
-<tr>
+                  <td
+                    class="utr"
+                  >
+                    ${safe(
+                      utr || "—"
+                    )}
+                  </td>
 
-<td class="utr">
 
-${safe(
-utr || "—"
-)}
+                  <td
+                    class="amount"
+                  >
+                    ₹${amount.toLocaleString(
+                      "en-IN"
+                    )}
+                  </td>
 
-</td>
 
-<td class="amount">
+                  <td>
+                    ${getStatusHTML(
+                      status
+                    )}
+                  </td>
 
-₹${amount.toLocaleString(
-"en-IN"
-)}
 
-</td>
+                  <td
+                    class="account"
+                  >
+                    ${safe(
+                      account || "—"
+                    )}
+                  </td>
 
-<td>
 
-${getStatusHTML(
-status
-)}
+                  <td>
+                    ${safe(
+                      formatDateTime(
+                        finalDate
+                      )
+                    )}
+                  </td>
 
-</td>
 
-<td class="account">
+                  <td
+                    class="reason"
+                  >
+                    ${reasonHTML}
+                  </td>
 
-${safe(
-account || "—"
-)}
+                </tr>
 
-</td>
+              `;
 
-<td>
+            }
+          );
 
-${safe(
-formatDateTime(
-finalDate
-)
-)}
 
-</td>
+          html += `
 
-<td class="reason">
+                  </tbody>
 
-${reasonHTML}
+                </table>
 
-</td>
+              </div>
 
-</tr>
+            </div>
 
-`;
+          `;
 
-});
+        }
+      );
 
 
-html += `
+      historyContainer.innerHTML =
+        html;
 
-</tbody>
+    }
 
-</table>
 
-</div>
+    /* =================================================
+       LOAD HISTORY
+    ================================================= */
 
-</div>
+    async function loadHistory() {
 
-`;
+      if (!currentUser) {
 
-});
+        historyContainer.innerHTML = `
 
+          <div class="empty">
 
-historyContainer.innerHTML =
-html;
+            कृपया पहले लॉगिन करें।
 
-}
+          </div>
 
+        `;
 
-/* =====================================================
-GET POSSIBLE CUSTOMER UID
-===================================================== */
+        return;
 
-function buildPossibleCustomerUIDs(
-user
-){
+      }
 
-const result = [];
 
+      historyContainer.innerHTML = `
 
-/*
-1. Firebase Auth UID
-*/
+        <div class="loading">
 
-if(
-user.uid
-){
+          History Loading...
 
-result.push(
-normalizeUID(
-user.uid
-)
-);
+        </div>
 
-}
+      `;
 
 
-/*
-2. Phone Number
+      try {
 
-Example:
+        console.log(
+          "=========================="
+        );
 
-+917878852370
+        console.log(
+          "RDX HISTORY START"
+        );
 
-becomes:
+        console.log(
+          "Firebase UID:",
+          currentUser.uid
+        );
 
-917878852370
-*/
+        console.log(
+          "Firebase Phone:",
+          currentUser.phoneNumber
+        );
 
-if(
-user.phoneNumber
-){
 
-const phone =
-normalizeUID(
-user.phoneNumber
-);
+        /* GET DEPOSITS */
 
-if(phone){
+        const depositsRef =
+          collection(
+            db,
+            DEPOSITS_COLLECTION
+          );
 
-result.push(
-phone
-);
 
-}
+        const snapshot =
+          await getDocs(
+            depositsRef
+          );
 
-}
 
+        console.log(
+          "Total deposits:",
+          snapshot.size
+        );
 
-/*
-3. Phone number without
-country code if needed
-*/
 
-if(
-user.phoneNumber
-){
+        allHistory = [];
 
-const phone =
-normalizeUID(
-user.phoneNumber
-);
 
-if(
-phone.length > 10
-){
+        snapshot.forEach(
+          docSnap => {
 
-result.push(
-phone.slice(-10)
-);
+            const data =
+              docSnap.data();
 
-}
 
-}
+            console.log(
+              "Deposit:",
+              docSnap.id,
+              data
+            );
 
 
-/*
-Remove duplicates
-*/
+            if (
+              belongsToCurrentUser(
+                data,
+                currentUser
+              )
+            ) {
 
-return [
-...new Set(
-result.filter(Boolean)
-)
-];
+              allHistory.push({
 
-}
+                id:
+                  docSnap.id,
 
+                ...data
 
-/* =====================================================
-LOAD HISTORY
-===================================================== */
+              });
 
-async function loadHistory(){
+            }
 
-if(!currentUser){
+          }
+        );
 
-historyContainer.innerHTML = `
 
-<div class="empty">
+        console.log(
+          "MATCHING HISTORY:",
+          allHistory
+        );
 
-कृपया पहले लॉगिन करें।
 
-</div>
+        console.log(
+          "Matching count:",
+          allHistory.length
+        );
 
-`;
 
-return;
+        console.log(
+          "=========================="
+        );
 
-}
 
+        renderHistory(
+          allHistory
+        );
 
-historyContainer.innerHTML = `
+      }
 
-<div class="loading">
+      catch(error) {
 
-⏳ History Loading...
+        console.error(
+          "HISTORY ERROR:",
+          error
+        );
 
-</div>
 
-`;
+        historyContainer.innerHTML = `
 
-hideMessage();
-hideDebug();
+          <div class="error-box">
 
+            <strong>
+              ❌ History लोड नहीं हो सकी
+            </strong>
 
-try{
+            <br><br>
 
-const depositsRef =
-collection(
-db,
-DEPOSITS_COLLECTION
-);
+            <b>Error:</b>
 
+            ${safe(
+              error.message
+            )}
 
-const found = {};
+            <br><br>
 
+            अगर यहाँ
+            <b>Missing or insufficient permissions</b>
+            लिखा है, तो Firebase Firestore Rules में
+            read permission की समस्या है।
 
-/* =====================================================
-UID OPTIONS
-===================================================== */
+          </div>
 
-customerUIDs =
-buildPossibleCustomerUIDs(
-currentUser
-);
+        `;
 
+      }
 
-/*
-सबसे पहले Auth UID और
-Mobile UID दोनों से खोजेंगे।
-*/
+    }
 
-for(
-const uid of customerUIDs
-){
 
-/* uid field */
+    /* =================================================
+       SEARCH DATE
+    ================================================= */
 
-try{
+    function searchByDate() {
 
-const q =
-query(
-depositsRef,
-where(
-"uid",
-"==",
-uid
-)
-);
+      const selectedDate =
+        dateSearch.value;
 
-const snap =
-await getDocs(q);
 
-snap.forEach(
-docSnap => {
+      if (!selectedDate) {
 
-found[
-docSnap.id
-] = {
+        hideMessage();
 
-id:
-docSnap.id,
+        renderHistory(
+          allHistory
+        );
 
-...docSnap.data()
+        return;
 
-};
+      }
 
-});
 
-}
-catch(error){
+      const filtered =
+        allHistory.filter(
+          deposit => {
 
-console.warn(
-"uid query error:",
-error
-);
+            const date =
+              getHistoryDate(
+                deposit
+              );
 
-}
 
+            return (
+              dateKey(date)
+              ===
+              selectedDate
+            );
 
-/* userId field */
+          }
+        );
 
-try{
 
-const q =
-query(
-depositsRef,
-where(
-"userId",
-"==",
-uid
-)
-);
+      const displayDate =
+        selectedDate
+          .split("-")
+          .reverse()
+          .join("-");
 
-const snap =
-await getDocs(q);
 
-snap.forEach(
-docSnap => {
+      if (
+        filtered.length
+      ) {
 
-found[
-docSnap.id
-] = {
+        showMessage(
+          displayDate +
+          " की History मिली।",
+          "ok"
+        );
 
-id:
-docSnap.id,
+      }
 
-...docSnap.data()
+      else {
 
-};
+        showMessage(
+          displayDate +
+          " की कोई History नहीं मिली।",
+          "error"
+        );
 
-});
+      }
 
-}
-catch(error){
 
-console.warn(
-"userId query error:",
-error
-);
+      renderHistory(
+        filtered
+      );
 
-}
+    }
 
 
-/* customerId */
+    /* =================================================
+       SEARCH BUTTON
+    ================================================= */
 
-try{
+    searchBtn.addEventListener(
+      "click",
+      searchByDate
+    );
 
-const q =
-query(
-depositsRef,
-where(
-"customerId",
-"==",
-uid
-)
-);
 
-const snap =
-await getDocs(q);
+    /* =================================================
+       DATE CHANGE
+    ================================================= */
 
-snap.forEach(
-docSnap => {
+    dateSearch.addEventListener(
+      "change",
+      searchByDate
+    );
 
-found[
-docSnap.id
-] = {
 
-id:
-docSnap.id,
+    /* =================================================
+       RECENT HISTORY
+    ================================================= */
 
-...docSnap.data()
+    clearBtn.addEventListener(
+      "click",
+      () => {
 
-};
+        dateSearch.value =
+          "";
 
-});
+        hideMessage();
 
-}
-catch(error){
+        renderHistory(
+          allHistory
+        );
 
-console.warn(
-"customerId query error:",
-error
-);
+      }
+    );
 
-}
 
-}
+    /* =================================================
+       BACK
+    ================================================= */
 
+    backBtn.addEventListener(
+      "click",
+      () => {
 
-/* =====================================================
-FINAL HISTORY
-===================================================== */
+        window.history.back();
 
-allHistory =
-Object.values(
-found
-);
+      }
+    );
 
 
-/* =====================================================
-SHOW RESULT
-===================================================== */
+    /* =================================================
+       AUTH STATE
+    ================================================= */
 
-if(
-allHistory.length
-){
+    onAuthStateChanged(
+      auth,
+      async user => {
 
-hideDebug();
+        console.log(
+          "Auth state changed:",
+          user
+        );
 
-renderHistory(
-allHistory
-);
 
-}
-else{
+        if (user) {
 
-/*
-अगर रिकॉर्ड नहीं मिला,
-तो स्क्रीन पर उपयोगी जानकारी दिखाएँ।
-*/
+          currentUser =
+            user;
 
-showDebug(
-"History नहीं मिली",
-[
-"Firebase Auth UID: " +
-(currentUser.uid || "—"),
 
-"Login Mobile: " +
-(currentUser.phoneNumber || "—"),
+          await loadHistory();
 
-"खोजे गए UID: " +
-(
-customerUIDs.length
-?
-customerUIDs.join(" , ")
-:
-"कोई UID नहीं मिला"
-),
+        }
 
-"Deposit में uid/userId इसी ग्राहक UID से match होना चाहिए।"
-]
-);
+        else {
 
-renderHistory([]);
+          currentUser =
+            null;
 
-}
 
-}
-catch(error){
+          historyContainer.innerHTML = `
 
-console.error(
-"History Error:",
-error
-);
+            <div class="empty">
 
+              कृपया अपने खाते में लॉगिन करके
+              History देखें।
 
-historyContainer.innerHTML = `
+            </div>
 
-<div class="empty">
+          `;
 
-History लोड नहीं हो सकी।
+        }
 
-<br><br>
+      }
+    );
 
-${safe(
-error.message
-)}
-
-</div>
-
-`;
-
-}
-
-}
-
-
-/* =====================================================
-SEARCH BY DATE
-===================================================== */
-
-function searchByDate(){
-
-const selectedDate =
-dateSearch.value;
-
-
-if(!selectedDate){
-
-hideMessage();
-
-renderHistory(
-allHistory
-);
-
-return;
-
-}
-
-
-const filtered =
-allHistory.filter(
-deposit => {
-
-const date =
-getHistoryDate(
-deposit
-);
-
-return (
-dateKey(date)
-===
-selectedDate
-);
-
-});
-
-
-const displayDate =
-selectedDate
-.split("-")
-.reverse()
-.join("-");
-
-
-if(
-filtered.length
-){
-
-showMessage(
-displayDate +
-" की History मिली।",
-"ok"
-);
-
-}
-else{
-
-showMessage(
-displayDate +
-" की कोई History नहीं मिली।",
-"error"
-);
-
-}
-
-
-renderHistory(
-filtered
-);
-
-}
-
-
-/* =====================================================
-SEARCH BUTTON
-===================================================== */
-
-searchBtn.addEventListener(
-"click",
-searchByDate
-);
-
-
-/* =====================================================
-DATE CHANGE
-===================================================== */
-
-dateSearch.addEventListener(
-"change",
-searchByDate
-);
-
-
-/* =====================================================
-RECENT BUTTON
-===================================================== */
-
-clearBtn.addEventListener(
-"click",
-() => {
-
-dateSearch.value = "";
-
-hideMessage();
-
-hideDebug();
-
-renderHistory(
-allHistory
-);
-
-}
-);
-
-
-/* =====================================================
-BACK BUTTON
-===================================================== */
-
-document
-.getElementById(
-"backBtn"
-)
-.addEventListener(
-"click",
-() => {
-
-window.history.back();
-
-}
-);
-
-
-/* =====================================================
-AUTH STATE
-===================================================== */
-
-onAuthStateChanged(
-auth,
-async user => {
-
-if(user){
-
-currentUser =
-user;
-
-console.log(
-"Firebase Auth UID:",
-user.uid
-);
-
-console.log(
-"Firebase Phone:",
-user.phoneNumber
-);
-
-await loadHistory();
-
-}
-else{
-
-currentUser =
-null;
-
-allHistory = [];
-
-historyContainer.innerHTML = `
-
-<div class="empty">
-
-कृपया अपने खाते में लॉगिन करके
-History देखें।
-
-</div>
-
-`;
-
-}
-
-});
-
-
-</script>
+  </script>
 
 </body>
-
 </html>
