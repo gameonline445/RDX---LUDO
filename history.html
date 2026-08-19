@@ -2,73 +2,69 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>History - RDX LUDO</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>RDX LUDO - History & Logs</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <!-- Firebase SDK Scripts -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
         body {
             background: linear-gradient(180deg, #f8faff 0%, #eef4ff 50%, #f1f5f9 100%);
-            color: #1e293b;
+            color: #101a38;
             min-height: 100vh;
-            padding-bottom: 90px;
+            padding-bottom: 85px;
         }
 
+        /* Top Header */
         .top-bar {
+            height: 70px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 18px;
-            background: rgba(255, 255, 255, 0.85);
+            padding: 0 16px;
+            background: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            border-bottom: 1px solid #ccd8ed;
         }
 
         .header-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .back-btn {
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 12px;
+            border-radius: 14px;
             background: #ffffff;
-            border: 1px solid #e2e8f0;
-            color: #334155;
+            border: 1px solid #cbd7e9;
+            color: #2864e6;
             text-decoration: none;
-            font-size: 15px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            font-size: 16px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
         }
 
         .brand-badge {
             background: #ffffff;
-            border: 1px solid #dbeafe;
-            color: #2563eb;
-            font-weight: 800;
+            border: 1px solid #dce6fb;
+            color: #2362d9;
+            font-weight: 900;
             font-size: 13px;
-            padding: 6px 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 2px 6px rgba(35, 98, 217, 0.08);
         }
 
         .header-icons {
@@ -76,83 +72,86 @@
             gap: 8px;
         }
 
-        .icon-circle {
-            width: 36px;
-            height: 36px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 15px;
+        .topicon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: #ffffff;
         }
 
-        .icon-bell { background: #6366f1; color: #ffffff; }
-        .icon-money { background: #22c55e; color: #ffffff; }
-        .icon-gift { background: #f97316; color: #ffffff; }
+        .icon-bell { background: #7368ef; }
+        .icon-cash { background: #35bf71; }
+        .icon-gift { background: #ff933c; }
 
+        /* Page Heading */
         .page-heading {
-            padding: 16px 20px 8px;
+            padding: 16px 18px 8px;
         }
 
         .page-heading h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
-            color: #0f172a;
+            color: #101a38;
         }
 
         .page-heading p {
             font-size: 13px;
-            color: #64748b;
+            color: #7a879f;
             margin-top: 2px;
         }
 
+        /* Filter Switcher Tabs */
         .tab-container {
             display: flex;
             padding: 10px 18px 14px;
-            gap: 10px;
+            gap: 8px;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 11px;
+            padding: 12px;
             border-radius: 14px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd7e9;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
-            background: #ffffff;
-            color: #64748b;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+            background: #eef1f6;
+            color: #748097;
             transition: all 0.2s ease;
         }
 
         .tab-btn.active {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            background: linear-gradient(100deg, #2864e6, #3e7bf0);
             color: #ffffff;
-            border-color: #2563eb;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.28);
+            border-color: #2864e6;
+            box-shadow: 0 4px 14px rgba(40, 100, 230, 0.3);
         }
 
+        /* Content List */
         .content-section {
             padding: 0 18px;
         }
 
+        /* Rounded Cards */
         .card {
             background: #ffffff;
-            border-radius: 20px;
-            padding: 16px 18px;
-            margin-bottom: 14px;
-            border: 1px solid rgba(219, 234, 254, 0.7);
-            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.05);
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1.5px solid #bdd0f0;
+            box-shadow: 0 6px 18px rgba(66, 117, 211, 0.08);
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
         }
 
         .card-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
         }
 
         .card-left {
@@ -163,19 +162,21 @@
 
         .card-title {
             font-size: 15px;
-            font-weight: 700;
-            color: #0f172a;
+            font-weight: 800;
+            color: #101a38;
         }
 
         .card-subtitle {
             font-size: 12px;
-            color: #64748b;
-            font-weight: 500;
+            color: #6b7891;
+            font-weight: 600;
+            word-break: break-all;
         }
 
         .card-date {
             font-size: 11px;
-            color: #94a3b8;
+            color: #9aa6bc;
+            margin-top: 2px;
         }
 
         .card-right {
@@ -187,32 +188,34 @@
         }
 
         .amount {
-            font-size: 17px;
-            font-weight: 800;
+            font-size: 18px;
+            font-weight: 900;
         }
 
-        .credit { color: #16a34a; }
-        .debit { color: #dc2626; }
+        .credit { color: #13834d; }
+        .debit { color: #c72e43; }
 
+        /* Badges */
         .badge {
             font-size: 10px;
             padding: 4px 9px;
-            border-radius: 10px;
-            font-weight: 700;
+            border-radius: 8px;
+            font-weight: 800;
             text-transform: uppercase;
         }
 
-        .badge-approved { background: #dcfce7; color: #15803d; }
-        .badge-rejected { background: #fee2e2; color: #b91c1c; }
-        .badge-pending { background: #fef9c3; color: #a16207; }
+        .badge-approved { background: #dcf8e9; color: #13834d; border: 1px solid #b8e9cf; }
+        .badge-rejected { background: #ffe3e7; color: #c72e43; border: 1px solid #f4bbc5; }
+        .badge-pending { background: #fff4d6; color: #a37200; border: 1px solid #fae19c; }
 
+        /* Admin Comments Notes */
         .admin-note {
             font-size: 12px;
-            padding: 11px 14px;
-            border-radius: 14px;
+            padding: 10px 12px;
+            border-radius: 12px;
             display: flex;
             align-items: flex-start;
-            gap: 9px;
+            gap: 8px;
             line-height: 1.4;
         }
 
@@ -239,54 +242,44 @@
             margin-top: 2px;
         }
 
-        .loading-box, .empty-box {
+        .status-box {
             text-align: center;
             padding: 40px 20px;
-            color: #64748b;
+            color: #7a879f;
             font-size: 14px;
+            font-weight: 600;
         }
 
-        .bottom-nav {
+        /* Bottom Nav */
+        .bottom {
+            height: 64px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: #ffffff;
+            border-top: 1px solid #d5deed;
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #e2e8f0;
             z-index: 100;
         }
 
-        .nav-item {
-            color: #64748b;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 600;
+        .nav {
+            border: 0;
+            background: #ffffff;
+            color: #6d7890;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
-        }
-
-        .nav-item.active { color: #2563eb; }
-
-        .nav-icon-box {
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            border-radius: 14px;
-            font-size: 17px;
+            gap: 3px;
+            font-size: 12px;
+            text-decoration: none;
+            cursor: pointer;
         }
 
-        .nav-item.active .nav-icon-box {
-            background: #eff6ff;
-            color: #2563eb;
-        }
+        .nav b { font-size: 21px; }
+        .nav.active { color: #18213a; font-weight: 900; }
     </style>
 </head>
 <body>
@@ -298,13 +291,13 @@
             <span class="brand-badge">RDX LUDO</span>
         </div>
         <div class="header-icons">
-            <div class="icon-circle icon-bell"><i class="fa-solid fa-bell"></i></div>
-            <div class="icon-circle icon-money"><i class="fa-solid fa-sack-dollar"></i></div>
-            <div class="icon-circle icon-gift"><i class="fa-solid fa-gift"></i></div>
+            <div class="topicon icon-bell">🔔</div>
+            <div class="topicon icon-cash">💵</div>
+            <div class="topicon icon-gift">🎁</div>
         </div>
     </header>
 
-    <!-- Title -->
+    <!-- Page Title -->
     <div class="page-heading">
         <h1>History & Logs</h1>
         <p>Battles, results and wallet transactions</p>
@@ -312,148 +305,210 @@
 
     <!-- Tabs -->
     <div class="tab-container">
-        <button class="tab-btn" onclick="switchTab('matches')">
-            <i class="fa-solid fa-gamepad"></i> Matches
+        <button class="tab-btn" id="btnMatches" onclick="switchTab('matches')">
+            <i class="fa-solid fa-gamepad" style="margin-right: 4px;"></i> Matches
         </button>
-        <button class="tab-btn active" onclick="switchTab('transactions')">
-            <i class="fa-solid fa-wallet"></i> Transactions
+        <button class="tab-btn active" id="btnTransactions" onclick="switchTab('transactions')">
+            <i class="fa-solid fa-wallet" style="margin-right: 4px;"></i> Transactions
         </button>
     </div>
 
-    <!-- Matches Container -->
+    <!-- Matches List Container -->
     <section id="matches-tab" class="content-section" style="display: none;">
-        <div id="matches-list" class="loading-box"><i class="fa-solid fa-spinner fa-spin"></i> Matches load ho rahe hain...</div>
+        <div class="status-box">
+            <i class="fa-solid fa-gamepad fa-2x" style="margin-bottom: 10px; color: #cbd7e9;"></i><br>
+            Abhi koi match history nahi hai.
+        </div>
     </section>
 
-    <!-- Transactions Container -->
+    <!-- Transactions List Container -->
     <section id="transactions-tab" class="content-section">
-        <div id="transactions-list" class="loading-box"><i class="fa-solid fa-spinner fa-spin"></i> Transactions load ho rahe hain...</div>
+        <div id="transactions-list" class="status-box">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #2864e6; margin-bottom: 10px;"></i><br>
+            Transactions load ho rahe hain...
+        </div>
     </section>
 
-    <!-- Bottom Nav -->
-    <nav class="bottom-nav">
-        <a href="dashboard.html" class="nav-item">
-            <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div>
-            <span>Home</span>
+    <!-- Bottom Navigation -->
+    <nav class="bottom">
+        <a class="nav" href="dashboard.html">
+            <b>🏠</b>
+            Home
         </a>
-        <a href="wallet.html" class="nav-item">
-            <div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div>
-            <span>Wallet</span>
+        <a class="nav" href="wallet.html">
+            <b>💰</b>
+            Wallet
         </a>
-        <a href="support.html" class="nav-item">
-            <div class="nav-icon-box"><i class="fa-solid fa-headset"></i></div>
-            <span>Support</span>
+        <a class="nav" href="support.html">
+            <b>🎧</b>
+            Support
         </a>
-        <a href="profile.html" class="nav-item active">
-            <div class="nav-icon-box"><i class="fa-solid fa-user"></i></div>
-            <span>Profile</span>
+        <a class="nav active" href="profile.html">
+            <b>👤</b>
+            Profile
         </a>
     </nav>
 
-    <script>
-        // 1. Firebase Config Setup (Aapke dashboard.html / admin.html wala config)
+    <!-- Firebase v12 Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+        import { 
+            getFirestore, 
+            collection, 
+            query, 
+            where, 
+            onSnapshot 
+        } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+        // Firebase Config
         const firebaseConfig = {
-            apiKey: "AIzaSy...",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "...",
-            appId: "..."
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // User Identification
+        function getLoggedInUserId() {
+            const raw = localStorage.getItem("rdxFirebaseUserId") || 
+                        localStorage.getItem("rdxVerifiedMobile") || 
+                        localStorage.getItem("rdxUserId") || 
+                        localStorage.getItem("userId") || "";
+            return String(raw).replace(/\D/g, "");
         }
-        const db = firebase.firestore();
 
-        // 2. Logged In User ka Phone/ID check karein
-        const currentUserPhone = localStorage.getItem("userPhone") || "917878852370";
+        const userId = getLoggedInUserId();
 
-        // 3. Real-Time Transactions Load
-        function loadRealTransactions() {
+        // Real-Time Transaction Listener
+        function listenToTransactions() {
             const listContainer = document.getElementById("transactions-list");
 
-            db.collection("deposits")
-              .where("userPhone", "==", currentUserPhone)
-              .onSnapshot((snapshot) => {
-                  if (snapshot.empty) {
-                      listContainer.innerHTML = `<div class="empty-box"><i class="fa-solid fa-receipt fa-2x"></i><br><br>Koi transaction history nahi mili.</div>`;
-                      return;
-                  }
+            if (!userId) {
+                listContainer.innerHTML = `
+                    <div class="status-box">
+                        <i class="fa-solid fa-arrow-right-to-bracket fa-2x" style="color: #cbd7e9; margin-bottom: 8px;"></i><br>
+                        History dekhne ke liye pehle <a href="login.html" style="color:#2864e6; font-weight:800;">Login</a> karein.
+                    </div>`;
+                return;
+            }
 
-                  let html = "";
-                  snapshot.forEach((doc) => {
-                      const data = doc.data();
-                      const status = (data.status || "pending").toLowerCase();
-                      
-                      let badgeClass = "badge-pending";
-                      let noteClass = "pending";
-                      let icon = "fa-clock";
-                      let comment = data.adminComment || "Admin verification me hai.";
+            const depositsQuery = query(
+                collection(db, "deposits"),
+                where("uid", "==", userId)
+            );
 
-                      if (status === "approved") {
-                          badgeClass = "badge-approved";
-                          noteClass = "approved";
-                          icon = "fa-circle-check";
-                          comment = data.adminComment || "Payment verify ho gaya hai. Balance wallet me add ho gaya hai.";
-                      } else if (status === "rejected") {
-                          badgeClass = "badge-rejected";
-                          noteClass = "rejected";
-                          icon = "fa-triangle-exclamation";
-                          comment = "<strong>Admin Reason:</strong> " + (data.adminComment || "Payment details match nahi hui.");
-                      }
+            onSnapshot(depositsQuery, (snapshot) => {
+                if (snapshot.empty) {
+                    listContainer.innerHTML = `
+                        <div class="status-box">
+                            <i class="fa-solid fa-receipt fa-2x" style="color: #cbd7e9; margin-bottom: 8px;"></i><br>
+                            Aapne abhi tak koi deposit nahi kiya hai.
+                        </div>`;
+                    return;
+                }
 
-                      const date = data.createdAt ? new Date(data.createdAt.toDate()).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : "Recently";
+                // Array me sort karein (Latest Date sabse upar)
+                let docs = [];
+                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
+                
+                docs.sort((a, b) => {
+                    const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+                    const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+                    return timeB - timeA;
+                });
 
-                      html += `
+                let html = "";
+                docs.forEach((data) => {
+                    const status = String(data.status || "pending").toLowerCase();
+                    const amount = Number(data.amount || 0);
+                    const utr = data.utr || "N/A";
+                    
+                    let dateString = "Recently";
+                    if (data.createdAt && data.createdAt.toDate) {
+                        dateString = data.createdAt.toDate().toLocaleString('en-IN', {
+                            dateStyle: 'medium',
+                            timeStyle: 'short'
+                        });
+                    }
+
+                    let badgeClass = "badge-pending";
+                    let noteClass = "pending";
+                    let icon = "fa-clock";
+                    let noteText = "Admin verification chal raha hai. Jald balance update hoga.";
+
+                    if (status === "approved") {
+                        badgeClass = "badge-approved";
+                        noteClass = "approved";
+                        icon = "fa-circle-check";
+                        noteText = data.comment && data.comment.trim() !== "" 
+                            ? data.comment 
+                            : "Payment verify ho gaya hai. Balance wallet me add kar diya gaya hai.";
+                    } else if (status === "rejected") {
+                        badgeClass = "badge-rejected";
+                        noteClass = "rejected";
+                        icon = "fa-triangle-exclamation";
+                        noteText = "<strong>Admin Reason:</strong> " + (data.comment || "Payment receive nahi hui ya UTR galat tha.");
+                    }
+
+                    html += `
                         <div class="card">
                             <div class="card-top">
                                 <div class="card-left">
-                                    <span class="card-title">${data.type || 'Deposit (UPI)'}</span>
-                                    <span class="card-subtitle">UTR: ${data.utr || 'N/A'}</span>
-                                    <span class="card-date">${date}</span>
+                                    <span class="card-title">Deposit (UPI QR)</span>
+                                    <span class="card-subtitle">UTR: ${utr}</span>
+                                    <span class="card-date">${dateString}</span>
                                 </div>
                                 <div class="card-right">
-                                    <span class="amount ${status === 'approved' ? 'credit' : 'debit'}">₹${data.amount || 0}</span>
+                                    <span class="amount ${status === 'approved' ? 'credit' : 'debit'}">₹${amount}</span>
                                     <span class="badge ${badgeClass}">${status}</span>
                                 </div>
                             </div>
                             <div class="admin-note ${noteClass}">
                                 <i class="fa-solid ${icon}"></i>
-                                <span>${comment}</span>
+                                <span>${noteText}</span>
                             </div>
                         </div>
-                      `;
-                  });
-                  listContainer.innerHTML = html;
-              }, (error) => {
-                  listContainer.innerHTML = `<div class="empty-box" style="color:#ef4444;">Error loading history. Database check karein.</div>`;
-              });
+                    `;
+                });
+
+                listContainer.innerHTML = html;
+            }, (error) => {
+                console.error("Firestore read error:", error);
+                listContainer.innerHTML = `
+                    <div class="status-box" style="color: #c72e43;">
+                        <i class="fa-solid fa-triangle-exclamation fa-2x"></i><br><br>
+                        History load karne me dikkat aayi.
+                    </div>`;
+            });
         }
 
-        // 4. Tab Switcher
-        function switchTab(tabName) {
-            const matchesTab = document.getElementById('matches-tab');
-            const transTab = document.getElementById('transactions-tab');
-            const buttons = document.querySelectorAll('.tab-btn');
+        // Tab Switching
+        window.switchTab = function(tab) {
+            const matchesTab = document.getElementById("matches-tab");
+            const transTab = document.getElementById("transactions-tab");
+            const btnMatches = document.getElementById("btnMatches");
+            const btnTransactions = document.getElementById("btnTransactions");
 
-            if (tabName === 'matches') {
-                matchesTab.style.display = 'block';
-                transTab.style.display = 'none';
-                buttons[0].classList.add('active');
-                buttons[1].classList.remove('active');
+            if (tab === "matches") {
+                matchesTab.style.display = "block";
+                transTab.style.display = "none";
+                btnMatches.classList.add("active");
+                btnTransactions.classList.remove("active");
             } else {
-                matchesTab.style.display = 'none';
-                transTab.style.display = 'block';
-                buttons[0].classList.remove('active');
-                buttons[1].classList.add('active');
+                matchesTab.style.display = "none";
+                transTab.style.display = "block";
+                btnTransactions.classList.add("active");
+                btnMatches.classList.remove("active");
             }
-        }
-
-        // Init
-        window.onload = () => {
-            loadRealTransactions();
         };
+
+        // Start Listening
+        listenToTransactions();
     </script>
 </body>
 </html>
