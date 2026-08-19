@@ -348,17 +348,14 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
-<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-    <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-    <button id="deleteAllUsersBtn" class="action delete-all-btn"><i class="fa-solid fa-triangle-exclamation"></i> Delete All Customers</button>
-</div>
+<button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date...">
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Joined Date</th><th>Status</th><th>Action</th></tr>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Joined Date</th><th>Status</th></tr>
 </thead>
-<tbody id="userTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+<tbody id="userTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -366,8 +363,11 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 
 <!-- NOTIFICATIONS -->
 <section id="notifications" class="page">
-<div class="title">Send Notifications</div>
+<div class="title">Notifications Management</div>
+
+<!-- Send Form -->
 <div class="card">
+<h3 style="font-size:16px; font-weight:850; color:#0c4a6e; margin-bottom:12px;"><i class="fa-solid fa-paper-plane"></i> Send New Notification</h3>
 <div class="form">
 <div class="full">
 <label>Target</label>
@@ -380,9 +380,31 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <label>Customer Mobile / UID</label>
 <input id="notifUid" placeholder="e.g. 917878852370">
 </div>
-<div class="full"><label>Title</label><input id="notifTitle"></div>
-<div class="full"><label>Message</label><textarea id="notifMessage" rows="3"></textarea></div>
+<div class="full"><label>Title</label><input id="notifTitle" placeholder="Notification Title..."></div>
+<div class="full"><label>Message</label><textarea id="notifMessage" rows="3" placeholder="Notification Message..."></textarea></div>
 <div class="full"><button id="sendNotifBtn" class="save" style="width:100%;">🚀 Send Notification</button></div>
+</div>
+</div>
+
+<!-- Sent Notifications History & Delete Options -->
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-list-check"></i> Sent Notifications History</h3>
+    <div style="display:flex; gap:6px;">
+        <button id="refreshNotifs" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+        <button id="deleteAllNotifsBtn" class="action delete-all-btn"><i class="fa-solid fa-trash-can"></i> Delete All Notifications</button>
+    </div>
+</div>
+
+<div class="table">
+<table>
+<thead>
+<tr>
+<th>Target</th><th>User / UID</th><th>Title</th><th>Message</th><th>Date & Time</th><th>Action</th>
+</tr>
+</thead>
+<tbody id="notifTable"><tr><td colspan="6" class="empty">Loading notifications...</td></tr></tbody>
+</table>
 </div>
 </div>
 </section>
@@ -433,6 +455,7 @@ const paymentRef = doc(db, "paymentSettings", "config");
 let deposits = [];
 let withdrawals = [];
 let users = [];
+let notificationsList = [];
 
 const $ = id => document.getElementById(id);
 const safe = v => String(v ?? "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -492,6 +515,7 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "deposits") loadDeposits();
         if(btn.dataset.page === "withdrawals") loadWithdrawals();
         if(btn.dataset.page === "users") loadUsers();
+        if(btn.dataset.page === "notifications") loadNotifications();
         if(btn.dataset.page === "settings") loadSettings();
     });
 });
@@ -723,9 +747,9 @@ async function rejectDeposit(id) {
 $("depositSearch").addEventListener("input", renderDeposits);
 $("refreshDeposits").addEventListener("click", loadDeposits);
 
-// ================= CUSTOMERS & DELETE LOGIC =================
+// ================= CUSTOMERS (CLEAN & SAFE VIEW) =================
 async function loadUsers(){
-    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+    $("userTable").innerHTML = `<tr><td colspan="6" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "customers"));
         let list = [];
@@ -745,7 +769,7 @@ async function loadUsers(){
         renderUsers();
         updateDashboard();
     } catch(e) {
-        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`;
     }
 }
 
@@ -763,7 +787,7 @@ function renderUsers(){
     });
 
     if(!list.length){
-        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">No customers found.</td></tr>`;
         return;
     }
 
@@ -775,67 +799,132 @@ function renderUsers(){
             <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
             <td>${u.formattedDate}</td>
             <td><span class="badge approved">Active</span></td>
-            <td>
-                <button class="action delete-btn" data-del-user="${safe(u.id)}"><i class="fa-solid fa-trash-can"></i> Delete</button>
-            </td>
         </tr>`).join("");
+}
 
-    document.querySelectorAll("[data-del-user]").forEach(b => {
-        b.addEventListener("click", () => deleteSingleUser(b.dataset.delUser));
+$("userSearch").addEventListener("input", renderUsers);
+$("refreshUsers").addEventListener("click", loadUsers);
+
+// ================= NOTIFICATIONS (MANAGEMENT & DELETE) =================
+$("notifTarget").addEventListener("change", e => $("personalUidBox").style.display = e.target.value === "personal" ? "block" : "none");
+
+// 1. Send Notification
+$("sendNotifBtn").addEventListener("click", async () => {
+    const t = $("notifTarget").value;
+    const u = $("notifUid").value.replace(/\D/g,"");
+    const title = $("notifTitle").value.trim();
+    const msg = $("notifMessage").value.trim();
+
+    if(!title || !msg) return alert("Title & Message bharna zaroori hai");
+    if(t === "personal" && !u) return alert("Personal notification ke liye User UID / Mobile zaroori hai");
+
+    const btn = $("sendNotifBtn");
+    btn.disabled = true;
+    btn.textContent = "Sending...";
+
+    try {
+        await addDoc(collection(db, "notifications"), { 
+            target: t, 
+            uid: t === "personal" ? (u.length === 10 ? "91" + u : u) : "all", 
+            title: title, 
+            message: msg, 
+            createdAt: serverTimestamp() 
+        });
+        alert("✅ Notification Sent Successfully!");
+        $("notifTitle").value = ""; 
+        $("notifMessage").value = "";
+        loadNotifications();
+    } catch(err) {
+        alert("Error sending notification: " + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "🚀 Send Notification";
+});
+
+// 2. Load Notifications History
+async function loadNotifications(){
+    $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Loading notifications...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "notifications"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.date);
+            list.push({ 
+                id: d.id, 
+                ...data, 
+                timeObj: timeInfo.dateObj, 
+                formattedDate: timeInfo.formatted 
+            });
+        });
+
+        // Latest Notifications on Top
+        list.sort((a, b) => b.timeObj - a.timeObj);
+        notificationsList = list;
+        renderNotifications();
+    } catch(e) {
+        $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderNotifications(){
+    if(!notificationsList.length){
+        $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi tak koi notification nahi bheji gayi.</td></tr>`;
+        return;
+    }
+
+    $("notifTable").innerHTML = notificationsList.map(n => {
+        const isAll = String(n.target || "").toLowerCase() === "all" || String(n.uid || "").toLowerCase() === "all";
+        return `
+        <tr>
+            <td><span class="badge ${isAll ? 'approved' : 'pending'}">${isAll ? '📢 All' : '👤 Personal'}</span></td>
+            <td><b>${safe(isAll ? 'All Users' : n.uid)}</b></td>
+            <td><b>${safe(n.title)}</b></td>
+            <td style="max-width:300px; word-break:break-word;">${safe(n.message)}</td>
+            <td><i class="fa-regular fa-clock"></i> ${n.formattedDate}</td>
+            <td>
+                <button class="action delete-btn" data-del-notif="${safe(n.id)}"><i class="fa-solid fa-trash-can"></i> Delete</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-del-notif]").forEach(b => {
+        b.addEventListener("click", () => deleteSingleNotification(b.dataset.delNotif));
     });
 }
 
-// 1. DELETE SINGLE USER
-async function deleteSingleUser(userId) {
-    if (!confirm(`Kya aap sach mein customer (${userId}) ko permanently delete karna chahte hain?`)) return;
-
+// 3. Delete Single Notification
+async function deleteSingleNotification(notifId) {
+    if (!confirm("Kya aap is notification ko delete karna chahte hain?")) return;
     try {
-        await deleteDoc(doc(db, "customers", userId));
-        alert("✅ Customer deleted successfully!");
-        loadUsers();
+        await deleteDoc(doc(db, "notifications", notifId));
+        alert("✅ Notification deleted!");
+        loadNotifications();
     } catch(e) {
         alert("Delete error: " + e.message);
     }
 }
 
-// 2. DELETE ALL USERS (BULK DELETE)
-async function deleteAllUsers() {
-    if (!users.length) return alert("Koi customer data nahi hai.");
-
-    const confirm1 = confirm(`⚠️ DANGER: Kya aap sabhi (${users.length}) customers ko permanently delete karna chahte hain? Ye wapas nahi aayega!`);
-    if (!confirm1) return;
-
-    const securityCode = prompt("Sabhi users ko delete karne ke liye 'DELETE ALL' type karein:");
-    if (securityCode !== "DELETE ALL") return alert("Galat confirmation code! Process cancel kar di gayi.");
+// 4. Delete All Notifications
+async function deleteAllNotifications() {
+    if (!notificationsList.length) return alert("Delete karne ke liye koi notification nahi hai.");
+    if (!confirm(`⚠️ Kya aap sach mein sabhi (${notificationsList.length}) notifications ko permanently delete karna chahte hain?`)) return;
 
     try {
         const batch = writeBatch(db);
-        users.forEach(u => {
-            const userRef = doc(db, "customers", u.id);
-            batch.delete(userRef);
+        notificationsList.forEach(n => {
+            batch.delete(doc(db, "notifications", n.id));
         });
-
         await batch.commit();
-        alert("✅ Sabhi customers database se delete ho gaye.");
-        loadUsers();
+        alert("✅ Sabhi notifications delete ho gayi hain.");
+        loadNotifications();
     } catch(e) {
         alert("Bulk delete error: " + e.message);
     }
 }
 
-$("deleteAllUsersBtn").addEventListener("click", deleteAllUsers);
-$("userSearch").addEventListener("input", renderUsers);
-$("refreshUsers").addEventListener("click", loadUsers);
-
-// ================= NOTIFICATIONS =================
-$("notifTarget").addEventListener("change", e => $("personalUidBox").style.display = e.target.value === "personal" ? "block" : "none");
-$("sendNotifBtn").addEventListener("click", async () => {
-    const t = $("notifTarget").value, u = $("notifUid").value.replace(/\D/g,""), title = $("notifTitle").value, msg = $("notifMessage").value;
-    if(!title || !msg) return alert("Title & Message required");
-    await addDoc(collection(db, "notifications"), { target: t, uid: t === "personal" ? u : "all", title, message: msg, createdAt: serverTimestamp() });
-    alert("✅ Notification Sent!");
-    $("notifTitle").value = ""; $("notifMessage").value = "";
-});
+$("refreshNotifs").addEventListener("click", loadNotifications);
+$("deleteAllNotifsBtn").addEventListener("click", deleteAllNotifications);
 
 // ================= SETTINGS =================
 async function loadSettings(){
@@ -892,6 +981,7 @@ async function loadAll(){
         await loadDeposits();
         await loadWithdrawals();
         await loadUsers();
+        await loadNotifications();
         updateDashboard();
     } catch(e){
         $("dashStatus").textContent = "❌ " + e.message;
