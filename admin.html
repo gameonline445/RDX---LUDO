@@ -12,7 +12,6 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    /* Site Matching Deep Sky-Blue Mesh Background */
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
@@ -309,12 +308,12 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div id="depositStatus" class="status bad">Loading...</div>
 <div class="card">
 <button id="refreshDeposits" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-<input id="depositSearch" class="search" placeholder="UID / UTR / Request ID search">
+<input id="depositSearch" class="search" placeholder="Search by Date, UID, Mobile, UTR, Request ID...">
 <div class="table">
 <table>
 <thead>
 <tr>
-<th>Request ID</th><th>Customer UID</th><th>Amount</th><th>UTR</th><th>Status</th><th>Date</th><th>Action</th>
+<th>Request ID</th><th>Customer UID</th><th>Amount</th><th>UTR</th><th>Status</th><th>Date & Time</th><th>Action</th>
 </tr>
 </thead>
 <tbody id="depositTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
@@ -329,12 +328,12 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div id="withdrawalStatus" class="status bad">Loading...</div>
 <div class="card">
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-<input id="withdrawalSearch" class="search" placeholder="UID / UPI / Bank search">
+<input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
 <table>
 <thead>
 <tr>
-<th>Request ID</th><th>UID</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date</th><th>Action</th>
+<th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th>
 </tr>
 </thead>
 <tbody id="withdrawalTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
@@ -348,13 +347,13 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="title">Customers</div>
 <div class="card">
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-<input id="userSearch" class="search" placeholder="UID / Name / Mobile">
+<input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date...">
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Status</th></tr>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Joined Date</th><th>Status</th></tr>
 </thead>
-<tbody id="userTable"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+<tbody id="userTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -433,6 +432,30 @@ let users = [];
 const $ = id => document.getElementById(id);
 const safe = v => String(v ?? "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 
+// Universal Date Parser Helper
+function parseItemTime(ts) {
+    if (!ts) return { dateObj: new Date(0), formatted: "—" };
+    let d;
+    if (typeof ts.toDate === "function") {
+        d = ts.toDate();
+    } else if (ts.seconds) {
+        d = new Date(ts.seconds * 1000);
+    } else {
+        d = new Date(ts);
+    }
+
+    const formatted = isNaN(d.getTime()) ? "—" : d.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+    });
+
+    return { dateObj: d, formatted: formatted };
+}
+
 async function login(){
     const email = $("email").value.trim().toLowerCase();
     const password = $("password").value;
@@ -474,8 +497,28 @@ async function loadWithdrawals(){
     $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "withdrawals"));
-        withdrawals = [];
-        snap.forEach(d => withdrawals.push({ id: d.id, ...d.data() }));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.date);
+            list.push({ 
+                id: d.id, 
+                ...data, 
+                timeObj: timeInfo.dateObj, 
+                formattedDate: timeInfo.formatted 
+            });
+        });
+
+        // 1. Pending Sabse Upar 2. Date/Time Latest to Oldest
+        list.sort((a, b) => {
+            const aPending = String(a.status || "").toLowerCase() === "pending";
+            const bPending = String(b.status || "").toLowerCase() === "pending";
+            if (aPending && !bPending) return -1;
+            if (!aPending && bPending) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        withdrawals = list;
         renderWithdrawals();
         $("withdrawalStatus").textContent = "✅ Withdrawals loaded.";
         $("withdrawalStatus").className = "status ok";
@@ -487,8 +530,23 @@ async function loadWithdrawals(){
 }
 
 function renderWithdrawals(){
-    const q = $("withdrawalSearch").value.toLowerCase();
-    const list = withdrawals.filter(w => String(w.uid || "").includes(q) || String(w.upiId || "").includes(q) || String(w.accountNumber || "").includes(q));
+    const q = $("withdrawalSearch").value.toLowerCase().trim();
+    const list = withdrawals.filter(w => {
+        const fullSearchPool = `
+            ${w.id || ''} 
+            ${w.uid || ''} 
+            ${w.mobile || ''} 
+            ${w.upiId || ''} 
+            ${w.holderName || ''} 
+            ${w.bankName || ''} 
+            ${w.accountNumber || ''} 
+            ${w.ifsc || ''} 
+            ${w.amount || ''} 
+            ${w.status || ''} 
+            ${w.formattedDate || ''}
+        `.toLowerCase();
+        return fullSearchPool.includes(q);
+    });
 
     if(!list.length){
         $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">No requests found.</td></tr>`;
@@ -498,18 +556,17 @@ function renderWithdrawals(){
     $("withdrawalTable").innerHTML = list.map(w => {
         const s = String(w.status || "pending").toLowerCase();
         let details = w.mode === "BANK" ? `Bank: ${safe(w.bankName)} | A/C: ${safe(w.accountNumber)} | IFSC: ${safe(w.ifsc)}` : `UPI: ${safe(w.upiId)} (${safe(w.holderName)})`;
-        let date = w.createdAt?.toDate ? w.createdAt.toDate().toLocaleString("en-IN") : "—";
 
         return `
         <tr>
             <td>${safe(w.id)}</td>
-            <td>${safe(w.uid)}</td>
-            <td><b>₹${w.amount}</b></td>
+            <td><b>${safe(w.uid || w.mobile || '—')}</b></td>
+            <td><b style="color:#be123c;">₹${w.amount}</b></td>
             <td>${details}</td>
             <td><span class="badge ${s}">${s}</span></td>
-            <td>${date}</td>
+            <td><i class="fa-regular fa-clock"></i> ${w.formattedDate}</td>
             <td>
-                ${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : "Done"}
+                ${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : `<span style="color:#64748b;font-weight:700;">Done</span>`}
             </td>
         </tr>`;
     }).join("");
@@ -523,20 +580,20 @@ function renderWithdrawals(){
 }
 
 async function approveWithdrawal(id) {
-    if(!confirm("Kya aapne user ko payment bhej di hai?")) return;
+    if(!confirm("Kya aapne user ko payment transfer kar di hai?")) return;
     try {
         await setDoc(doc(db, "withdrawals", id), { status: "approved", comment: "Payment transfer complete." }, { merge: true });
-        alert("✅ Approved");
+        alert("✅ Withdrawal Approved!");
         loadWithdrawals();
     } catch(e) { alert(e.message); }
 }
 
 async function rejectWithdrawal(id) {
-    const reason = prompt("Reject karne ka reason likhein:");
+    const reason = prompt("Reject karne ka reason / note likhein:");
     if(!reason) return;
     try {
         await setDoc(doc(db, "withdrawals", id), { status: "rejected", comment: reason.trim() }, { merge: true });
-        alert("❌ Rejected");
+        alert("❌ Withdrawal Rejected");
         loadWithdrawals();
     } catch(e) { alert(e.message); }
 }
@@ -549,8 +606,28 @@ async function loadDeposits(){
     $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "deposits"));
-        deposits = [];
-        snap.forEach(d => deposits.push({ id: d.id, ...d.data() }));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.date);
+            list.push({ 
+                id: d.id, 
+                ...data, 
+                timeObj: timeInfo.dateObj, 
+                formattedDate: timeInfo.formatted 
+            });
+        });
+
+        // 1. Pending Sabse Upar 2. Date/Time Latest to Oldest
+        list.sort((a, b) => {
+            const aPending = String(a.status || "").toLowerCase() === "pending";
+            const bPending = String(b.status || "").toLowerCase() === "pending";
+            if (aPending && !bPending) return -1;
+            if (!aPending && bPending) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        deposits = list;
         renderDeposits();
         $("depositStatus").textContent = "✅ Deposits loaded.";
         $("depositStatus").className = "status ok";
@@ -562,25 +639,39 @@ async function loadDeposits(){
 }
 
 function renderDeposits(){
-    const q = $("depositSearch").value.toLowerCase();
-    const list = deposits.filter(d => String(d.id || "").toLowerCase().includes(q) || String(d.uid || d.userId || "").toLowerCase().includes(q) || String(d.utr || "").toLowerCase().includes(q));
+    const q = $("depositSearch").value.toLowerCase().trim();
+    const list = deposits.filter(d => {
+        const fullSearchPool = `
+            ${d.id || ''} 
+            ${d.uid || ''} 
+            ${d.userId || ''} 
+            ${d.mobile || ''} 
+            ${d.utr || ''} 
+            ${d.amount || ''} 
+            ${d.status || ''} 
+            ${d.formattedDate || ''}
+        `.toLowerCase();
+        return fullSearchPool.includes(q);
+    });
 
     if(!list.length){
         $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">No deposits found.</td></tr>`;
         return;
     }
 
-    $("depositTable").innerHTML = list.map(d => `
+    $("depositTable").innerHTML = list.map(d => {
+        const s = String(d.status || "pending").toLowerCase();
+        return `
         <tr>
             <td>${safe(d.id)}</td>
-            <td>${safe(d.uid || d.userId)}</td>
-            <td>₹${d.amount}</td>
-            <td>${safe(d.utr)}</td>
-            <td><span class="badge ${d.status}">${d.status}</span></td>
-            <td>${d.createdAt?.toDate ? d.createdAt.toDate().toLocaleString("en-IN") : '—'}</td>
-            <td>${d.status === "pending" ? `<button class="action approve" data-dep-app="${safe(d.id)}">Approve</button><button class="action reject" data-dep-rej="${safe(d.id)}">Reject</button>` : 'Done'}</td>
+            <td><b>${safe(d.uid || d.userId || d.mobile || '—')}</b></td>
+            <td><b style="color:#15803d;">₹${d.amount}</b></td>
+            <td><b>${safe(d.utr || '—')}</b></td>
+            <td><span class="badge ${s}">${s}</span></td>
+            <td><i class="fa-regular fa-clock"></i> ${d.formattedDate}</td>
+            <td>${s === "pending" ? `<button class="action approve" data-dep-app="${safe(d.id)}">Approve</button><button class="action reject" data-dep-rej="${safe(d.id)}">Reject</button>` : `<span style="color:#64748b;font-weight:700;">Done</span>`}</td>
         </tr>
-    `).join("");
+    `}).join("");
 
     document.querySelectorAll("[data-dep-app]").forEach(b => {
         b.addEventListener("click", () => approveDeposit(b.dataset.depApp));
@@ -592,28 +683,37 @@ function renderDeposits(){
 
 async function approveDeposit(id) {
     const d = deposits.find(x => x.id === id);
-    if(!d || !confirm("Approve karein?")) return;
-    const uid = d.uid || d.userId;
+    if(!d || !confirm(`₹${d.amount} approve karke customer wallet me add karein?`)) return;
+    const uid = String(d.uid || d.userId).replace(/\D/g, "");
     try {
         await runTransaction(db, async t => {
-            const cRef = doc(db, "customers", uid.length === 10 ? "91"+uid : uid);
+            const cRef = doc(db, "customers", uid.length === 10 ? "91" + uid : uid);
             const cSnap = await t.get(cRef);
-            const bal = Number(cSnap.data()?.balance || 0) + Number(d.amount);
-            t.update(cRef, { balance: bal });
-            t.update(doc(db, "deposits", id), { status: "approved", comment: "Payment approved" });
+            const currentBal = Number(cSnap.data()?.balance || 0);
+            const currentDep = Number(cSnap.data()?.depositBalance || 0);
+            const amt = Number(d.amount);
+
+            t.update(cRef, { 
+                balance: currentBal + amt,
+                depositBalance: currentDep + amt 
+            });
+            t.update(doc(db, "deposits", id), { 
+                status: "approved", 
+                comment: "Payment verify ho gaya. Balance account me add ho chuka hai." 
+            });
         });
-        alert("✅ Approved!");
+        alert("✅ Deposit Approved & Wallet Updated!");
         loadDeposits();
         loadUsers();
     } catch(e) { alert(e.message); }
 }
 
 async function rejectDeposit(id) {
-    const r = prompt("Reason:");
+    const r = prompt("Reject karne ka reason daalein:");
     if(!r) return;
     try {
-        await setDoc(doc(db, "deposits", id), { status: "rejected", comment: r }, { merge: true });
-        alert("❌ Rejected");
+        await setDoc(doc(db, "deposits", id), { status: "rejected", comment: r.trim() }, { merge: true });
+        alert("❌ Deposit Rejected");
         loadDeposits();
     } catch(e) { alert(e.message); }
 }
@@ -623,33 +723,56 @@ $("refreshDeposits").addEventListener("click", loadDeposits);
 
 // ================= CUSTOMERS =================
 async function loadUsers(){
-    $("userTable").innerHTML = `<tr><td colspan="5" class="empty">Loading...</td></tr>`;
+    $("userTable").innerHTML = `<tr><td colspan="6" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "customers"));
-        users = [];
-        snap.forEach(d => users.push({ id: d.id, ...d.data() }));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.joinedAt);
+            list.push({ 
+                id: d.id, 
+                ...data, 
+                timeObj: timeInfo.dateObj, 
+                formattedDate: timeInfo.formatted 
+            });
+        });
+
+        // Date-wise sorting (Newest customers on top)
+        list.sort((a, b) => b.timeObj - a.timeObj);
+        users = list;
         renderUsers();
         updateDashboard();
     } catch(e) {
-        $("userTable").innerHTML = `<tr><td colspan="5" class="empty">${safe(e.message)}</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`;
     }
 }
 
 function renderUsers(){
-    const q = $("userSearch").value.toLowerCase();
-    const list = users.filter(u => String(u.id || "").toLowerCase().includes(q) || String(u.name || "").toLowerCase().includes(q) || String(u.mobile || "").toLowerCase().includes(q));
+    const q = $("userSearch").value.toLowerCase().trim();
+    const list = users.filter(u => {
+        const fullSearchPool = `
+            ${u.id || ''} 
+            ${u.name || ''} 
+            ${u.mobile || ''} 
+            ${u.balance || ''} 
+            ${u.formattedDate || ''}
+        `.toLowerCase();
+        return fullSearchPool.includes(q);
+    });
 
     if(!list.length){
-        $("userTable").innerHTML = `<tr><td colspan="5" class="empty">No customers found.</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">No customers found.</td></tr>`;
         return;
     }
 
     $("userTable").innerHTML = list.map(u => `
         <tr>
             <td>${safe(u.id)}</td>
-            <td>${safe(u.name)}</td>
-            <td>${safe(u.mobile)}</td>
-            <td>₹${u.balance || 0}</td>
+            <td><b>${safe(u.name || 'User')}</b></td>
+            <td>${safe(u.mobile || u.id)}</td>
+            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td>${u.formattedDate}</td>
             <td><span class="badge approved">Active</span></td>
         </tr>`).join("");
 }
@@ -708,7 +831,7 @@ $("saveSettings").addEventListener("click", async () => {
 // ================= DASHBOARD COUNTS =================
 function updateDashboard(){
     $("totalUsers").textContent = users.length;
-    $("totalCoins").textContent = users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
+    $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
     $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
     $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
     
