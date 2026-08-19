@@ -20,7 +20,6 @@
             padding-bottom: 85px;
         }
 
-        /* Top Header */
         .top-bar {
             height: 70px;
             display: flex;
@@ -86,7 +85,6 @@
         .icon-cash { background: #35bf71; }
         .icon-gift { background: #ff933c; }
 
-        /* Page Heading */
         .page-heading {
             padding: 16px 18px 8px;
         }
@@ -103,7 +101,6 @@
             margin-top: 2px;
         }
 
-        /* Filter Switcher Tabs */
         .tab-container {
             display: flex;
             padding: 10px 18px 14px;
@@ -130,12 +127,10 @@
             box-shadow: 0 4px 14px rgba(40, 100, 230, 0.3);
         }
 
-        /* Content List */
         .content-section {
             padding: 0 18px;
         }
 
-        /* Rounded Cards */
         .card {
             background: #ffffff;
             border-radius: 18px;
@@ -195,7 +190,6 @@
         .credit { color: #13834d; }
         .debit { color: #c72e43; }
 
-        /* Badges */
         .badge {
             font-size: 10px;
             padding: 4px 9px;
@@ -208,7 +202,6 @@
         .badge-rejected { background: #ffe3e7; color: #c72e43; border: 1px solid #f4bbc5; }
         .badge-pending { background: #fff4d6; color: #a37200; border: 1px solid #fae19c; }
 
-        /* Admin Comments Notes */
         .admin-note {
             font-size: 12px;
             padding: 10px 12px;
@@ -250,7 +243,6 @@
             font-weight: 600;
         }
 
-        /* Bottom Nav */
         .bottom {
             height: 64px;
             display: grid;
@@ -284,7 +276,6 @@
 </head>
 <body>
 
-    <!-- Header -->
     <header class="top-bar">
         <div class="header-left">
             <a href="profile.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
@@ -297,13 +288,11 @@
         </div>
     </header>
 
-    <!-- Page Title -->
     <div class="page-heading">
         <h1>History & Logs</h1>
         <p>Battles, results and wallet transactions</p>
     </div>
 
-    <!-- Tabs -->
     <div class="tab-container">
         <button class="tab-btn" id="btnMatches" onclick="switchTab('matches')">
             <i class="fa-solid fa-gamepad" style="margin-right: 4px;"></i> Matches
@@ -313,7 +302,6 @@
         </button>
     </div>
 
-    <!-- Matches List Container -->
     <section id="matches-tab" class="content-section" style="display: none;">
         <div class="status-box">
             <i class="fa-solid fa-gamepad fa-2x" style="margin-bottom: 10px; color: #cbd7e9;"></i><br>
@@ -321,7 +309,6 @@
         </div>
     </section>
 
-    <!-- Transactions List Container -->
     <section id="transactions-tab" class="content-section">
         <div id="transactions-list" class="status-box">
             <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #2864e6; margin-bottom: 10px;"></i><br>
@@ -329,7 +316,6 @@
         </div>
     </section>
 
-    <!-- Bottom Navigation -->
     <nav class="bottom">
         <a class="nav" href="dashboard.html">
             <b>🏠</b>
@@ -349,18 +335,14 @@
         </a>
     </nav>
 
-    <!-- Firebase v12 Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
         import { 
             getFirestore, 
             collection, 
-            query, 
-            where, 
-            onSnapshot 
+            getDocs 
         } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
@@ -373,22 +355,21 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // User Identification
         function getLoggedInUserId() {
             const raw = localStorage.getItem("rdxFirebaseUserId") || 
                         localStorage.getItem("rdxVerifiedMobile") || 
                         localStorage.getItem("rdxUserId") || 
-                        localStorage.getItem("userId") || "";
+                        localStorage.getItem("userId") || 
+                        localStorage.getItem("rdx_userId") || "";
             return String(raw).replace(/\D/g, "");
         }
 
-        const userId = getLoggedInUserId();
+        const currentUserId = getLoggedInUserId();
 
-        // Real-Time Transaction Listener
-        function listenToTransactions() {
+        async function loadRealTransactions() {
             const listContainer = document.getElementById("transactions-list");
 
-            if (!userId) {
+            if (!currentUserId) {
                 listContainer.innerHTML = `
                     <div class="status-box">
                         <i class="fa-solid fa-arrow-right-to-bracket fa-2x" style="color: #cbd7e9; margin-bottom: 8px;"></i><br>
@@ -397,39 +378,43 @@
                 return;
             }
 
-            const depositsQuery = query(
-                collection(db, "deposits"),
-                where("uid", "==", userId)
-            );
+            try {
+                const snap = await getDocs(collection(db, "deposits"));
+                let userDeposits = [];
 
-            onSnapshot(depositsQuery, (snapshot) => {
-                if (snapshot.empty) {
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const docUid = String(data.userId || data.uid || data.customerId || "").replace(/\D/g, "");
+
+                    if (docUid === currentUserId || (data.mobile && data.mobile.includes(currentUserId))) {
+                        userDeposits.push({ id: docSnap.id, ...data });
+                    }
+                });
+
+                if (userDeposits.length === 0) {
                     listContainer.innerHTML = `
                         <div class="status-box">
                             <i class="fa-solid fa-receipt fa-2x" style="color: #cbd7e9; margin-bottom: 8px;"></i><br>
-                            Aapne abhi tak koi deposit nahi kiya hai.
+                            Aapne abhi tak koi deposit request submit nahi ki hai.
                         </div>`;
                     return;
                 }
 
-                // Array me sort karein (Latest Date sabse upar)
-                let docs = [];
-                snapshot.forEach(doc => docs.push({ id: doc.id, ...doc.data() }));
-                
-                docs.sort((a, b) => {
+                // Date sort (Latest sabse upar)
+                userDeposits.sort((a, b) => {
                     const timeA = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
                     const timeB = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
                     return timeB - timeA;
                 });
 
                 let html = "";
-                docs.forEach((data) => {
+                userDeposits.forEach((data) => {
                     const status = String(data.status || "pending").toLowerCase();
                     const amount = Number(data.amount || 0);
-                    const utr = data.utr || "N/A";
+                    const utr = data.utr || "—";
                     
                     let dateString = "Recently";
-                    if (data.createdAt && data.createdAt.toDate) {
+                    if (data.createdAt && typeof data.createdAt.toDate === "function") {
                         dateString = data.createdAt.toDate().toLocaleString('en-IN', {
                             dateStyle: 'medium',
                             timeStyle: 'short'
@@ -439,7 +424,7 @@
                     let badgeClass = "badge-pending";
                     let noteClass = "pending";
                     let icon = "fa-clock";
-                    let noteText = "Admin verification chal raha hai. Jald balance update hoga.";
+                    let noteText = "Admin verification chal raha hai. Thodi der me update hoga.";
 
                     if (status === "approved") {
                         badgeClass = "badge-approved";
@@ -452,7 +437,7 @@
                         badgeClass = "badge-rejected";
                         noteClass = "rejected";
                         icon = "fa-triangle-exclamation";
-                        noteText = "<strong>Admin Reason:</strong> " + (data.comment || "Payment receive nahi hui ya UTR galat tha.");
+                        noteText = "<strong>Admin Reason:</strong> " + (data.comment && data.comment.trim() !== "" ? data.comment : "Payment receive nahi hui ya UTR galat tha.");
                     }
 
                     html += `
@@ -477,17 +462,17 @@
                 });
 
                 listContainer.innerHTML = html;
-            }, (error) => {
-                console.error("Firestore read error:", error);
+
+            } catch (error) {
+                console.error("History loading error:", error);
                 listContainer.innerHTML = `
                     <div class="status-box" style="color: #c72e43;">
                         <i class="fa-solid fa-triangle-exclamation fa-2x"></i><br><br>
-                        History load karne me dikkat aayi.
+                        History load karne me dikkat aayi: ${error.message}
                     </div>`;
-            });
+            }
         }
 
-        // Tab Switching
         window.switchTab = function(tab) {
             const matchesTab = document.getElementById("matches-tab");
             const transTab = document.getElementById("transactions-tab");
@@ -507,8 +492,7 @@
             }
         };
 
-        // Start Listening
-        listenToTransactions();
+        loadRealTransactions();
     </script>
 </body>
 </html>
