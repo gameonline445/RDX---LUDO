@@ -348,8 +348,8 @@ body{
     transform:translateX(-50%) translateY(20px);
     background:#182440;
     color:#ffffff;
-    padding:10px 16px;
-    border-radius:12px;
+    padding:12px 18px;
+    border-radius:14px;
     font-size:13px;
     font-weight:650;
     opacity:0;
@@ -358,6 +358,7 @@ body{
     z-index:9999;
     max-width:90%;
     text-align:center;
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);
 }
 
 .toast.show{
@@ -399,17 +400,9 @@ try{
 <body>
 
 <div class="top-bar">
-    <button
-        type="button"
-        class="back-btn"
-        onclick="goBack()"
-    >
-        <span class="back-icon">
-            ←
-        </span>
-        <span>
-            Back
-        </span>
+    <button type="button" class="back-btn" onclick="goBack()">
+        <span class="back-icon">←</span>
+        <span>Back</span>
     </button>
 </div>
 
@@ -429,10 +422,7 @@ try{
 
 <section class="login-card">
 
-<span
-    class="step"
-    id="stepLabel"
->
+<span class="step" id="stepLabel">
     ✨ STEP 1
 </span>
 
@@ -440,25 +430,15 @@ try{
     Mobile Login
 </h2>
 
-<p
-    class="subtitle"
-    id="subtitleText"
->
+<p class="subtitle" id="subtitleText">
     Enter your registered mobile number.
     We will send you an OTP for secure login.
 </p>
 
-<div
-    class="form-group"
-    id="mobileGroup"
->
-    <label>
-        Mobile Number
-    </label>
+<div class="form-group" id="mobileGroup">
+    <label>Mobile Number</label>
     <div class="mobile-wrap">
-        <div class="country-code">
-            🇮🇳 +91
-        </div>
+        <div class="country-code">🇮🇳 +91</div>
         <input
             class="mobile-input"
             type="tel"
@@ -481,9 +461,7 @@ try{
 </button>
 
 <div id="otpSection">
-    <label class="otp-label">
-        Enter OTP
-    </label>
+    <label class="otp-label">Enter OTP</label>
     <input
         class="otp-input"
         type="tel"
@@ -493,10 +471,7 @@ try{
         autocomplete="one-time-code"
         maxlength="6"
     >
-    <p
-        class="otp-hint"
-        id="otpHint"
-    >
+    <p class="otp-hint" id="otpHint">
         OTP will be sent to your registered mobile number.
     </p>
     <button
@@ -544,10 +519,7 @@ try{
 
 </main>
 
-<div
-    class="toast"
-    id="toast"
-></div>
+<div class="toast" id="toast"></div>
 
 <!-- MSG91 CONFIGURATION -->
 <script>
@@ -595,7 +567,7 @@ let resendSeconds = 30;
 let resendTimer = null;
 let msg91Ready = false;
 
-// 1. Referral Code Lock on Login Page
+// 1. Referral Code URL Catch
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if (refFromUrl && !localStorage.getItem("rdxReferredBy")) {
@@ -608,7 +580,7 @@ function showMessage(message){
     clearTimeout(showMessage.timer);
     showMessage.timer = setTimeout(function(){
         toast.classList.remove("show");
-    }, 4000);
+    }, 4500);
 }
 
 function checkMSG91Ready(){
@@ -668,17 +640,6 @@ function startLogin(){
     currentIdentifier = "91" + mobile;
     localStorage.setItem("rdxLoginMobile", currentIdentifier);
 
-    mobileGroup.style.display = "none";
-    continueBtn.style.display = "none";
-    stepLabel.textContent = "✨ STEP 2";
-    titleText.textContent = "Verify Mobile Number";
-    subtitleText.textContent = "Enter the OTP sent to your registered mobile number.";
-    otpSection.style.display = "block";
-    otpInput.value = "";
-    verifyBtn.disabled = true;
-    resendBtn.disabled = true;
-    otpHint.textContent = "OTP will be sent to your registered mobile number.";
-
     sendOTPNow();
 }
 
@@ -687,6 +648,9 @@ function sendOTPNow(){
         showMessage("MSG91 Send OTP method ready नहीं है।");
         return;
     }
+
+    continueBtn.disabled = true;
+    continueBtn.textContent = "Sending OTP...";
     verifyBtn.disabled = true;
     resendBtn.disabled = true;
     showMessage("OTP भेजा जा रहा है...");
@@ -700,7 +664,17 @@ function sendOTPNow(){
             }else if(data && data.requestId){
                 currentReqId = data.requestId;
             }
+
+            // OTP Bhejne ke baad screen step 2 par switch hogi
+            mobileGroup.style.display = "none";
+            continueBtn.style.display = "none";
+            stepLabel.textContent = "✨ STEP 2";
+            titleText.textContent = "Verify Mobile Number";
+            subtitleText.textContent = "Enter the OTP sent to your registered mobile number.";
+            otpSection.style.display = "block";
+            otpInput.value = "";
             otpHint.textContent = "OTP आपके registered mobile number पर भेज दिया गया है।";
+
             verifyBtn.disabled = true;
             showMessage("OTP successfully sent.");
             startResendTimer();
@@ -708,9 +682,18 @@ function sendOTPNow(){
         },
         function(error){
             console.error("MSG91 SEND OTP ERROR:", error);
+            continueBtn.disabled = false;
+            continueBtn.textContent = "Send OTP";
             verifyBtn.disabled = true;
             resendBtn.disabled = false;
-            showMessage("OTP भेजने में समस्या हुई।");
+
+            let errMsg = "OTP भेजने में समस्या हुई।";
+            if (error) {
+                if (typeof error === "string") errMsg = error;
+                else if (error.message) errMsg = error.message;
+                else if (error.description) errMsg = error.description;
+            }
+            showMessage(errMsg);
         }
     );
 }
@@ -768,7 +751,6 @@ function verifyOTP(){
     );
 }
 
-// 2. LIFETIME REFERRAL LOCK DATABASE LOGIC
 async function saveCustomerToFirebase(mobile){
     try{
         if(!firebaseDB){
@@ -787,7 +769,6 @@ async function saveCustomerToFirebase(mobile){
         const userSnap = await userRef.get();
         const now = firebase.firestore.FieldValue.serverTimestamp();
 
-        // Agar user pehle se database me hai, toh uska pura referral lock rahega
         let finalReferredBy = localStorage.getItem("rdxReferredBy") || "DIRECT";
         if (userSnap.exists && userSnap.data().referredBy) {
             finalReferredBy = userSnap.data().referredBy;
@@ -797,7 +778,6 @@ async function saveCustomerToFirebase(mobile){
         const defaultName = "User " + cleanMobile.slice(-4);
 
         if (!userSnap.exists) {
-            // Naya user creation with permanent lock
             await userRef.set({
                 mobile: "+" + cleanMobile,
                 name: defaultName,
@@ -812,7 +792,6 @@ async function saveCustomerToFirebase(mobile){
                 lastLoginAt: now
             });
         } else {
-            // Existing user login - Never overwrite name or referredBy
             await userRef.set({
                 mobile: "+" + cleanMobile,
                 status: "active",
