@@ -3,42 +3,274 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RDX LUDO - History & Logs</title>
+    <title>RDX LUDO - History & Transactions</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
-        body{background:linear-gradient(180deg,#f8faff 0%,#eef4ff 50%,#f1f5f9 100%);color:#101a38;min-height:100vh;padding-bottom:85px;}
-        .top-bar{height:70px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:rgba(255,255,255,0.9);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100;border-bottom:1px solid #ccd8ed;}
-        .header-left{display:flex;align-items:center;gap:10px;}
-        .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#ffffff;border:1px solid #cbd7e9;color:#2864e6;cursor:pointer;}
-        .brand-badge{background:#ffffff;border:1px solid #dce6fb;color:#2362d9;font-weight:900;font-size:13px;padding:6px 14px;border-radius:20px;cursor:pointer;}
-        .header-icons{display:flex;gap:8px;}
-        .topicon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:16px;color:#ffffff;cursor:pointer;}
-        .icon-bell{background:#7368ef;} .icon-cash{background:#35bf71;} .icon-gift{background:#ff933c;}
-        .page-heading{padding:16px 18px 8px;}
-        .page-heading h1{font-size:22px;font-weight:800;}
-        .filter-section{padding:10px 18px 14px;display:flex;flex-direction:column;gap:10px;}
-        .search-input{width:100%;height:44px;padding:0 14px;border-radius:14px;border:1.5px solid #cbd7e9;outline:none;}
-        .content-section{padding:0 18px;}
-        .card{background:#ffffff;border-radius:18px;padding:16px;margin-bottom:12px;border:1.5px solid #bdd0f0;display:flex;flex-direction:column;gap:10px;}
-        .card-top{display:flex;justify-content:space-between;align-items:flex-start;}
-        .amount{font-size:18px;font-weight:900;}
-        .credit{color:#13834d;} .debit{color:#c72e43;}
-        .badge{font-size:10px;padding:4px 9px;border-radius:8px;font-weight:800;text-transform:uppercase;}
-        .badge-approved{background:#dcf8e9;color:#13834d;}
-        .badge-rejected{background:#ffe3e7;color:#c72e43;}
-        .badge-pending{background:#fff4d6;color:#a37200;}
-        .bottom{height:64px;display:grid;grid-template-columns:repeat(4,1fr);background:#ffffff;border-top:1px solid #d5deed;position:fixed;bottom:0;left:0;right:0;z-index:100;}
-        .nav{border:0;background:#ffffff;color:#6d7890;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;text-decoration:none;cursor:pointer;}
-        .nav.active{color:#18213a;font-weight:900;}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(180deg, #f8faff 0%, #eef4ff 50%, #f1f5f9 100%);
+            color: #101a38;
+            min-height: 100vh;
+            padding-bottom: 85px;
+        }
+
+        /* TOP HEADER */
+        .top-bar {
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #ccd8ed;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: #ffffff;
+            border: 1px solid #cbd7e9;
+            color: #2864e6;
+            text-decoration: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .brand-badge {
+            background: #ffffff;
+            border: 1px solid #dce6fb;
+            color: #2362d9;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .header-icons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .topicon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            font-size: 16px;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .icon-bell { background: #7368ef; }
+        .icon-cash { background: #35bf71; }
+        .icon-gift { background: #ff933c; }
+
+        /* HEADING & FILTER */
+        .page-heading {
+            padding: 16px 18px 8px;
+        }
+
+        .page-heading h1 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #101a38;
+        }
+
+        .page-heading p {
+            font-size: 13px;
+            color: #7a879f;
+            margin-top: 2px;
+        }
+
+        .filter-section {
+            padding: 10px 18px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 46px;
+            padding: 0 16px;
+            border-radius: 14px;
+            border: 1.5px solid #cbd7e9;
+            background: #ffffff;
+            font-size: 13px;
+            font-weight: 600;
+            color: #101a38;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(66, 117, 211, 0.05);
+        }
+
+        .search-input:focus {
+            border-color: #2864e6;
+        }
+
+        /* CONTENT */
+        .content-section {
+            padding: 0 18px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border: 1.5px solid #bdd0f0;
+            box-shadow: 0 6px 18px rgba(66, 117, 211, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-left {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #101a38;
+        }
+
+        .card-subtitle {
+            font-size: 12px;
+            color: #6b7891;
+            font-weight: 600;
+            word-break: break-all;
+        }
+
+        .card-date {
+            font-size: 11px;
+            color: #9aa6bc;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 2px;
+        }
+
+        .card-right {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .amount {
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .credit { color: #13834d; }
+        .debit { color: #c72e43; }
+
+        .badge {
+            font-size: 10px;
+            padding: 4px 9px;
+            border-radius: 8px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .badge-approved { background: #dcf8e9; color: #13834d; border: 1px solid #b8e9cf; }
+        .badge-rejected { background: #ffe3e7; color: #c72e43; border: 1px solid #f4bbc5; }
+        .badge-pending { background: #fff4d6; color: #a37200; border: 1px solid #fae19c; }
+
+        /* ADMIN COMMENT BOX */
+        .admin-note {
+            font-size: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.4;
+        }
+
+        .admin-note.approved { background: #f0fdf4; color: #15803d; border: 1px solid #bbf7d0; }
+        .admin-note.rejected { background: #fff1f2; color: #be123c; border: 1px solid #fecdd3; }
+        .admin-note.pending { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+
+        .status-box {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7a879f;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* BOTTOM NAV */
+        .bottom {
+            height: 64px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            background: #ffffff;
+            border-top: 1px solid #d5deed;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .nav {
+            border: 0;
+            background: #ffffff;
+            color: #6d7890;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            font-size: 12px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .nav b { font-size: 21px; }
+        .nav.active { color: #18213a; font-weight: 900; }
     </style>
 </head>
 <body>
 
+    <!-- HEADER -->
     <header class="top-bar">
         <div class="header-left">
             <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
-            <!-- Logo Click to Home -->
             <span class="brand-badge" onclick="location.href='dashboard.html'">RDX LUDO</span>
         </div>
         <div class="header-icons">
@@ -50,17 +282,23 @@
 
     <div class="page-heading">
         <h1>Transactions & Logs</h1>
-        <p>Deposit & Withdrawal status</p>
+        <p>Deposit, withdrawal status aur admin updates</p>
     </div>
 
+    <!-- SEARCH BAR -->
     <div class="filter-section">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by UTR, UPI, Bank, Status...">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search by Date, Time, UTR, Bank, UPI...">
     </div>
 
+    <!-- TRANSACTION LIST -->
     <section class="content-section">
-        <div id="transactions-list" style="text-align:center;padding:40px;color:#7a879f;">Transactions load ho rahe hain...</div>
+        <div id="transactions-list" class="status-box">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #2864e6; margin-bottom: 10px;"></i><br>
+            Transactions load ho rahe hain...
+        </div>
     </section>
 
+    <!-- BOTTOM NAV -->
     <nav class="bottom">
         <a class="nav" href="dashboard.html"><b>🏠</b>Home</a>
         <a class="nav" href="wallet.html"><b>💰</b>Wallet</a>
@@ -68,6 +306,7 @@
         <a class="nav active" href="profile.html"><b>👤</b>Profile</a>
     </nav>
 
+    <!-- FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -80,47 +319,186 @@
             messagingSenderId: "928340814840",
             appId: "1:928340814840:web:6eca42a8b76138b268440d"
         };
+
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        const currentUserId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
+        function getUserId() {
+            const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserId") || "";
+            return String(raw).replace(/\D/g, "");
+        }
 
-        async function loadData() {
-            if(!currentUserId) return;
-            let items = [];
-            const depSnap = await getDocs(collection(db, "deposits"));
-            depSnap.forEach(d => {
-                const data = d.data();
-                if(String(data.uid || data.userId).includes(currentUserId)) items.push({type: 'deposit', ...data});
+        const currentUserId = getUserId();
+        let allTransactions = [];
+
+        // Helper function for converting Timestamp to Date & Time
+        function parseTimestamp(ts) {
+            if (!ts) return { dateObj: new Date(0), formatted: "Recently" };
+            let d;
+            if (typeof ts.toDate === "function") {
+                d = ts.toDate();
+            } else if (ts.seconds) {
+                d = new Date(ts.seconds * 1000);
+            } else {
+                d = new Date(ts);
+            }
+
+            const formatted = d.toLocaleString("en-IN", {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: true
             });
 
-            const withSnap = await getDocs(collection(db, "withdrawals"));
-            withSnap.forEach(d => {
-                const data = d.data();
-                if(String(data.uid).includes(currentUserId)) items.push({type: 'withdrawal', ...data});
-            });
+            return { dateObj: d, formatted: formatted };
+        }
 
-            items.sort((a,b) => (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0));
+        async function loadTransactions() {
+            const container = document.getElementById("transactions-list");
 
-            const list = document.getElementById("transactions-list");
-            if(!items.length) { list.innerHTML = "Koi record nahi mila."; return; }
+            if (!currentUserId) {
+                container.innerHTML = `<div class="status-box">Pehle <a href="login.html" style="color:#2864e6;">Login</a> karein.</div>`;
+                return;
+            }
 
-            list.innerHTML = items.map(d => `
-                <div class="card">
-                    <div class="card-top">
-                        <div>
-                            <b>${d.type === 'deposit' ? 'Deposit (UPI QR)' : 'Withdrawal (' + (d.mode || 'UPI') + ')'}</b><br>
-                            <small>${d.utr ? 'UTR: '+d.utr : (d.upiId || d.accountNumber || '')}</small>
+            try {
+                let list = [];
+
+                // 1. Deposits fetch
+                const depSnap = await getDocs(collection(db, "deposits"));
+                depSnap.forEach(d => {
+                    const data = d.data();
+                    const docUid = String(data.userId || data.uid || data.customerId || "").replace(/\D/g, "");
+                    if (docUid === currentUserId || (data.mobile && data.mobile.includes(currentUserId))) {
+                        const timeInfo = parseTimestamp(data.createdAt || data.date);
+                        list.push({ id: d.id, type: "deposit", ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+                    }
+                });
+
+                // 2. Withdrawals fetch
+                const withSnap = await getDocs(collection(db, "withdrawals"));
+                withSnap.forEach(d => {
+                    const data = d.data();
+                    const docUid = String(data.uid || data.userId || "").replace(/\D/g, "");
+                    if (docUid === currentUserId) {
+                        const timeInfo = parseTimestamp(data.createdAt || data.date);
+                        list.push({ id: d.id, type: "withdrawal", ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+                    }
+                });
+
+                if (list.length === 0) {
+                    container.innerHTML = `<div class="status-box"><i class="fa-solid fa-receipt fa-2x" style="color:#cbd7e9; margin-bottom:8px;"></i><br>Koi transaction record nahi mila.</div>`;
+                    return;
+                }
+
+                // Recent (Latest) transaction sabse upar sort karein
+                list.sort((a, b) => b.timeObj - a.timeObj);
+
+                allTransactions = list;
+                renderList(allTransactions);
+
+            } catch (err) {
+                console.error("Error loading transactions:", err);
+                container.innerHTML = `<div class="status-box" style="color:#c72e43;">Error: ${err.message}</div>`;
+            }
+        }
+
+        function renderList(items) {
+            const container = document.getElementById("transactions-list");
+
+            if (items.length === 0) {
+                container.innerHTML = `<div class="status-box">Koi matching transaction nahi mila.</div>`;
+                return;
+            }
+
+            let html = "";
+            items.forEach(data => {
+                const isDeposit = data.type === "deposit";
+                const status = String(data.status || "pending").toLowerCase();
+                const amount = Number(data.amount || 0);
+
+                let title = isDeposit ? "Deposit (UPI QR)" : `Withdrawal (${data.mode || 'UPI'})`;
+                let subTitle = "";
+
+                if (isDeposit) {
+                    subTitle = data.utr ? `UTR: ${data.utr}` : "Deposit Request";
+                } else {
+                    if (data.mode === "BANK") {
+                        subTitle = `Bank: ${data.bankName || ''} | A/C: ${data.accountNumber || ''} | IFSC: ${data.ifsc || ''}`;
+                    } else {
+                        subTitle = `UPI: ${data.upiId || ''} (${data.holderName || ''})`;
+                    }
+                }
+
+                let badgeClass = "badge-pending";
+                let noteClass = "pending";
+                let noteText = "Admin verification chal raha hai. Payment jald update hogi.";
+
+                if (status === "approved") {
+                    badgeClass = "badge-approved";
+                    noteClass = "approved";
+                    noteText = data.comment && data.comment.trim() !== "" ? data.comment : (isDeposit ? "Payment verify ho gaya. Balance account me add ho chuka hai." : "Withdrawal transfer successful ho gaya.");
+                } else if (status === "rejected") {
+                    badgeClass = "badge-rejected";
+                    noteClass = "rejected";
+                    noteText = "<strong>Admin Reason:</strong> " + (data.comment || "Payment details invalid pai gayi. Support se contact karein.");
+                }
+
+                html += `
+                    <div class="card">
+                        <div class="card-top">
+                            <div class="card-left">
+                                <span class="card-title">${title}</span>
+                                <span class="card-subtitle">${subTitle}</span>
+                                <span class="card-date"><i class="fa-regular fa-clock"></i> ${data.formattedDate}</span>
+                            </div>
+                            <div class="card-right">
+                                <span class="amount ${isDeposit ? 'credit' : 'debit'}">${isDeposit ? '+' : '-'} ₹${amount}</span>
+                                <span class="badge ${badgeClass}">${status}</span>
+                            </div>
                         </div>
-                        <div>
-                            <span class="amount ${d.type === 'deposit' ? 'credit' : 'debit'}">₹${d.amount}</span><br>
-                            <span class="badge badge-${d.status}">${d.status}</span>
+                        <div class="admin-note ${noteClass}">
+                            <i class="fa-solid ${status === 'approved' ? 'fa-circle-check' : status === 'rejected' ? 'fa-triangle-exclamation' : 'fa-clock'}"></i>
+                            <span>${noteText}</span>
                         </div>
                     </div>
-                </div>
-            `).join("");
+                `;
+            });
+
+            container.innerHTML = html;
         }
-        loadData();
+
+        // Live Search Filter (Date, Time, UTR, UPI, Status)
+        document.getElementById("searchInput").addEventListener("input", function(e) {
+            const q = e.target.value.toLowerCase().trim();
+            if (!q) {
+                renderList(allTransactions);
+                return;
+            }
+
+            const filtered = allTransactions.filter(item => {
+                const textPool = `
+                    ${item.type || ''} 
+                    ${item.utr || ''} 
+                    ${item.upiId || ''} 
+                    ${item.bankName || ''} 
+                    ${item.accountNumber || ''} 
+                    ${item.ifsc || ''} 
+                    ${item.status || ''} 
+                    ${item.amount || ''} 
+                    ${item.formattedDate || ''} 
+                    ${item.comment || ''}
+                `.toLowerCase();
+
+                return textPool.includes(q);
+            });
+
+            renderList(filtered);
+        });
+
+        loadTransactions();
     </script>
 </body>
 </html>
