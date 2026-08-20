@@ -567,11 +567,15 @@ let resendSeconds = 30;
 let resendTimer = null;
 let msg91Ready = false;
 
-// 1. Referral Code URL Catch
+// Catch & store Referral Code locally
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
-if (refFromUrl && !localStorage.getItem("rdxReferredBy")) {
-    localStorage.setItem("rdxReferredBy", refFromUrl.trim().toUpperCase());
+if (refFromUrl && refFromUrl.trim() !== "") {
+    const cleanRef = refFromUrl.trim().toUpperCase();
+    sessionStorage.setItem("rdx_referral_code", cleanRef);
+    if (!localStorage.getItem("rdxReferredBy")) {
+        localStorage.setItem("rdxReferredBy", cleanRef);
+    }
 }
 
 function showMessage(message){
@@ -665,7 +669,6 @@ function sendOTPNow(){
                 currentReqId = data.requestId;
             }
 
-            // OTP Bhejne ke baad screen step 2 par switch hogi
             mobileGroup.style.display = "none";
             continueBtn.style.display = "none";
             stepLabel.textContent = "✨ STEP 2";
@@ -751,6 +754,7 @@ function verifyOTP(){
     );
 }
 
+// PERMANENT LIFETIME REFERRAL LOCK DATABASE LOGIC
 async function saveCustomerToFirebase(mobile){
     try{
         if(!firebaseDB){
@@ -769,8 +773,15 @@ async function saveCustomerToFirebase(mobile){
         const userSnap = await userRef.get();
         const now = firebase.firestore.FieldValue.serverTimestamp();
 
-        let finalReferredBy = localStorage.getItem("rdxReferredBy") || "DIRECT";
-        if (userSnap.exists && userSnap.data().referredBy) {
+        // 1. Determine incoming referral
+        const incomingRef = urlParams.get('ref') || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
+        let finalReferredBy = "DIRECT";
+        if (incomingRef && incomingRef.trim() !== "") {
+            finalReferredBy = incomingRef.trim().toUpperCase();
+        }
+
+        // 2. Existing database lock: agar pehle se koi valid referral tha toh kabhi overwrite nahi hoga
+        if (userSnap.exists && userSnap.data().referredBy && userSnap.data().referredBy !== "DIRECT") {
             finalReferredBy = userSnap.data().referredBy;
         }
 
@@ -778,6 +789,7 @@ async function saveCustomerToFirebase(mobile){
         const defaultName = "User " + cleanMobile.slice(-4);
 
         if (!userSnap.exists) {
+            // New user registration
             await userRef.set({
                 mobile: "+" + cleanMobile,
                 name: defaultName,
@@ -792,11 +804,16 @@ async function saveCustomerToFirebase(mobile){
                 lastLoginAt: now
             });
         } else {
-            await userRef.set({
-                mobile: "+" + cleanMobile,
+            // Existing user login
+            let updatePayload = {
                 status: "active",
                 lastLoginAt: now
-            }, { merge: true });
+            };
+            // Agar pehle direct tha aur ab referral link se aaya hai toh update kar do
+            if ((!userSnap.data().referredBy || userSnap.data().referredBy === "DIRECT") && finalReferredBy !== "DIRECT") {
+                updatePayload.referredBy = finalReferredBy;
+            }
+            await userRef.set(updatePayload, { merge: true });
         }
 
         localStorage.setItem("rdxFirebaseUserId", cleanMobile);
