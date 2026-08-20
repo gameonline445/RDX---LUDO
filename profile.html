@@ -49,12 +49,14 @@ button{font:inherit;}
     border-radius:14px;
     background:linear-gradient(145deg,#ff7165,#ff8a70);
     color:white;
-    font-size:22px;
+    font-size:20px;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
+    box-shadow:0 4px 12px rgba(255,113,101,0.25);
 }
+.menu-btn:active{transform:scale(0.95);}
 .logo{
     width:44px;
     height:44px;
@@ -163,7 +165,7 @@ button{font:inherit;}
     cursor:pointer;
 }
 
-/* REFERRAL LOCKED BOX */
+/* REFERRAL LOCKED STATUS */
 .ref-box{
     margin-top:16px;
     background:#ffffff;
@@ -313,6 +315,127 @@ button{font:inherit;}
     gap:8px;
 }
 
+/* SIDE MENU DRAWER */
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+    backdrop-filter:blur(4px);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+}
+.drawer-overlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:280px;
+    height:100%;
+    background:#ffffff;
+    z-index:1000;
+    box-shadow:4px 0 25px rgba(2,132,199,0.15);
+    transform:translateX(-100%);
+    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    display:flex;
+    flex-direction:column;
+}
+.drawer.active{
+    transform:translateX(0);
+}
+.drawer-header{
+    padding:20px 16px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.drawer-user{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+.drawer-avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#0284c7,#0369a1);
+    color:white;
+    font-size:18px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.drawer-close{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1px solid #bae6fd;
+    background:#ffffff;
+    color:#0c4a6e;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.drawer-links{
+    flex:1;
+    overflow-y:auto;
+    padding:12px;
+}
+.drawer-item{
+    width:100%;
+    padding:12px 14px;
+    border:0;
+    border-radius:14px;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    font-weight:750;
+    color:#334155;
+    cursor:pointer;
+    margin-bottom:4px;
+    transition:background 0.2s ease;
+}
+.drawer-item:hover, .drawer-item:active{
+    background:#f0f9ff;
+    color:#0284c7;
+}
+.drawer-item i{
+    font-size:16px;
+    width:22px;
+    text-align:center;
+    color:#0284c7;
+}
+.drawer-footer{
+    padding:14px;
+    border-top:1px solid #e2e8f0;
+}
+.drawer-logout{
+    width:100%;
+    padding:12px;
+    border:1px solid #fecdd3;
+    border-radius:14px;
+    background:#fff1f2;
+    color:#be123c;
+    font-weight:800;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+}
+
 /* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
@@ -369,13 +492,44 @@ button{font:inherit;}
 
 <body>
 
+<!-- SIDE DRAWER OVERLAY & MENU -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
+<div class="drawer" id="sideDrawer">
+    <div class="drawer-header">
+        <div class="drawer-user">
+            <div class="drawer-avatar" id="drawerAvatar">U</div>
+            <div>
+                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
+                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
+            </div>
+        </div>
+        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="drawer-links">
+        <button class="drawer-item" onclick="location.href='dashboard.html'"><i class="fa-solid fa-house"></i> Home</button>
+        <button class="drawer-item" onclick="location.href='profile.html'"><i class="fa-solid fa-user"></i> My Profile</button>
+        <button class="drawer-item" onclick="location.href='wallet.html'"><i class="fa-solid fa-wallet"></i> My Wallet</button>
+        <button class="drawer-item" onclick="location.href='deposit.html'"><i class="fa-solid fa-money-bill-wave"></i> Add Cash</button>
+        <button class="drawer-item" onclick="location.href='withdraw.html'"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw Cash</button>
+        <button class="drawer-item" onclick="location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> History & Logs</button>
+        <button class="drawer-item" onclick="location.href='referral.html'"><i class="fa-solid fa-gift"></i> Refer & Earn 2%</button>
+        <button class="drawer-item" onclick="location.href='support.html'"><i class="fa-solid fa-headset"></i> 24/7 Support</button>
+    </div>
+
+    <div class="drawer-footer">
+        <button class="drawer-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </div>
+</div>
+
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
+        <!-- 3-LINE BUTTON OPENS MENU -->
+        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
         <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="location.href='notification.html'">🔔</button>
+        <button class="header-icon notification" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰</button>
         <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁</button>
     </div>
@@ -489,6 +643,14 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
+// 3-LINE MENU TOGGLE
+function toggleMenu() {
+    const drawer = document.getElementById("sideDrawer");
+    const overlay = document.getElementById("drawerOverlay");
+    drawer.classList.toggle("active");
+    overlay.classList.toggle("active");
+}
+
 async function loadUserProfile() {
     if (!userId) {
         location.href = "login.html";
@@ -504,6 +666,10 @@ async function loadUserProfile() {
             document.getElementById("profileName").textContent = userName;
             document.getElementById("avatarText").textContent = userName.charAt(0).toUpperCase();
             document.getElementById("profileMobile").textContent = "+" + userId;
+            
+            document.getElementById("drawerName").textContent = userName;
+            document.getElementById("drawerAvatar").textContent = userName.charAt(0).toUpperCase();
+            document.getElementById("drawerMobile").textContent = "+" + userId;
             
             // Live Database Referral Lock Display
             const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
