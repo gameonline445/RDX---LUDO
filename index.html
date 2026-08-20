@@ -22,7 +22,6 @@ html{
 
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    /* Deep Sky-Blue Mesh Background */
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
@@ -649,7 +648,6 @@ button{
 
     <!-- GAME SLIDER -->
     <section class="game-scroll">
-        <!-- FULL CARD CLICKABLE TO LOGIN -->
         <article class="game-card" onclick="goToLogin()">
             <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
             <div class="game-overlay">
@@ -666,7 +664,6 @@ button{
             </div>
         </article>
 
-        <!-- SECOND GAME -->
         <article class="game-card">
             <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
             <div class="game-overlay">
@@ -754,21 +751,22 @@ button{
 </div>
 
 <script>
-// 1. URL Se Referral Code Padhna aur Local Storage me First-Time Lock Karna
+// 1. Referral URL Param Read & Lock (Never Lose Ref)
 const params = new URLSearchParams(window.location.search);
 const ref = params.get("ref");
-if (ref) {
-    // Agar pehle se koi referral lock nahi hai tabhi naya wala lock hoga
+if (ref && ref.trim() !== "") {
+    const cleanRef = ref.trim().toUpperCase();
+    sessionStorage.setItem("rdx_referral_code", cleanRef);
     if (!localStorage.getItem("rdxReferredBy")) {
-        localStorage.setItem("rdxReferredBy", ref.trim().toUpperCase());
+        localStorage.setItem("rdxReferredBy", cleanRef);
     }
 }
 
-// 2. Kahi Bhi Click Kare Toh Login Page Par Referral Pass Hokar Jayega
+// 2. Pass Referral Code To Login Page
 function goToLogin(){
-    const currentRef = ref || localStorage.getItem("rdxReferredBy");
-    if(currentRef){
-        window.location.href = "./login.html?ref=" + encodeURIComponent(currentRef.toUpperCase());
+    const currentRef = ref || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
+    if (currentRef && currentRef.trim() !== "") {
+        window.location.href = "./login.html?ref=" + encodeURIComponent(currentRef.trim().toUpperCase());
         return;
     }
     window.location.href = "./login.html";
