@@ -166,7 +166,7 @@ main{flex:1;padding:20px 18px;max-width:1200px;}
 .page.active{display:block;}
 .title{font-size:22px;font-weight:900;color:#0c4a6e;margin-bottom:16px;}
 
-/* 6 STATS GRID */
+/* STATS */
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
 .stat{
     background:#ffffff;
@@ -217,6 +217,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .approve{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
 .reject{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
 .edit-status-btn{background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;}
+.view-btn{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
 .delete-btn{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
 .delete-all-btn{background:linear-gradient(100deg,#e11d48,#be123c);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
 .refresh{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
@@ -235,6 +236,57 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .form{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .full{grid-column:1/-1;}
 .empty{text-align:center;padding:25px;color:#64748b;font-size:13px;font-weight:600;}
+
+/* REFERRAL MODAL POPUP */
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.6);
+    backdrop-filter:blur(4px);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+}
+.modal-box{
+    width:100%;
+    max-width:650px;
+    background:#ffffff;
+    border-radius:24px;
+    border:1.5px solid #bae6fd;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    max-height:85vh;
+}
+.modal-header{
+    padding:16px 20px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
+.modal-close{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:#ffffff;
+    border:1px solid #bae6fd;
+    color:#0c4a6e;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.modal-body{
+    padding:16px;
+    overflow-y:auto;
+    flex:1;
+}
 
 @media(max-width:800px){
     .stats{grid-template-columns:1fr 1fr;}
@@ -284,6 +336,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button class="nav active" data-page="dashboard"><i class="fa-solid fa-chart-pie"></i> &nbsp;Dashboard</button>
 <button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
 <button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
+<button class="nav" data-page="referrals"><i class="fa-solid fa-gift"></i> &nbsp;Referral Analytics</button>
 <button class="nav" data-page="users"><i class="fa-solid fa-users"></i> &nbsp;Customers</button>
 <button class="nav" data-page="notifications"><i class="fa-solid fa-bell"></i> &nbsp;Notifications</button>
 <button class="nav" data-page="settings"><i class="fa-solid fa-gear"></i> &nbsp;Payment Settings</button>
@@ -350,18 +403,48 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- REFERRAL ANALYTICS & LEADERBOARD -->
+<section id="referrals" class="page">
+<div class="title">Referral Analytics & Leaderboard</div>
+
+<div class="stats" style="grid-template-columns:repeat(3,1fr); margin-bottom:14px;">
+<div class="stat"><small>Total Referrals Joined</small><h2 class="blue" id="totalReferralsCount">0</h2></div>
+<div class="stat"><small>Today's Referrals</small><h2 class="green" id="todayReferralsCount">0</h2></div>
+<div class="stat"><small>Total Referral Payouts</small><h2 class="purple" id="totalReferralEarnings">₹0</h2></div>
+</div>
+
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-ranking-star"></i> Top Referrers (Sorted by Most Referrals)</h3>
+    <button id="refreshReferrals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="referralSearch" class="search" placeholder="Search by Referrer Mobile, Code, Name or Date...">
+
+<div class="table">
+<table>
+<thead>
+<tr>
+<th>Rank</th><th>Referrer Name</th><th>Referrer Mobile</th><th>Referral Code</th><th>Total Referrals</th><th>Referral Earnings</th><th>Action</th>
+</tr>
+</thead>
+<tbody id="referralLeaderboardTable"><tr><td colspan="7" class="empty">Loading referral analytics...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
 <!-- CUSTOMERS -->
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
-<input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date...">
+<input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Joined Date</th><th>Status</th></tr>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Referred By</th><th>Joined Date</th><th>Status</th></tr>
 </thead>
-<tbody id="userTable"><tr><td colspan="6" class="empty">Loading...</td></tr></tbody>
+<tbody id="userTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -435,6 +518,30 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- REFERRED USERS BREAKDOWN MODAL -->
+<div class="modal-overlay" id="referredUsersModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalReferrerTitle">Referred Users List</h3>
+            <button class="modal-close" onclick="closeReferralModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th><th>Customer Mobile</th><th>Customer Name</th><th>Joined Date & Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalReferredUsersTable">
+                        <tr><td colspan="4" class="empty">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
@@ -460,6 +567,7 @@ let deposits = [];
 let withdrawals = [];
 let users = [];
 let notificationsList = [];
+let referralAnalytics = [];
 
 const $ = id => document.getElementById(id);
 const safe = v => String(v ?? "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -487,7 +595,6 @@ function parseItemTime(ts) {
     return { dateObj: d, formatted: formatted };
 }
 
-// LOGO REFRESH ADMIN DASHBOARD
 window.refreshAdminDashboard = async () => {
     document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
     document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
@@ -530,6 +637,7 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "deposits") loadDeposits();
         if(btn.dataset.page === "withdrawals") loadWithdrawals();
         if(btn.dataset.page === "users") loadUsers();
+        if(btn.dataset.page === "referrals") loadReferralAnalytics();
         if(btn.dataset.page === "notifications") loadNotifications();
         if(btn.dataset.page === "settings") loadSettings();
     });
@@ -643,7 +751,6 @@ async function rejectWithdrawal(id) {
     } catch(e) { alert(e.message); }
 }
 
-// EDIT WITHDRAWAL STATUS
 async function editWithdrawalStatus(id) {
     const w = withdrawals.find(x => x.id === id);
     if (!w) return;
@@ -786,7 +893,6 @@ async function rejectDeposit(id) {
     } catch(e) { alert(e.message); }
 }
 
-// EDIT DEPOSIT STATUS (WITH AUTO-WALLET REVERSAL/ADJUSTMENT)
 async function editDepositStatus(id) {
     const d = deposits.find(x => x.id === id);
     if (!d) return;
@@ -809,14 +915,11 @@ async function editDepositStatus(id) {
             let currentBal = Number(cSnap.data()?.balance || 0);
             let currentDep = Number(cSnap.data()?.depositBalance || 0);
 
-            // 1. Agar pehle Approved tha aur ab Pending/Reject ho raha hai -> Wallet se amount minus karein
             if (oldStatus === "approved" && (clean === "pending" || clean === "rejected")) {
                 currentBal = Math.max(0, currentBal - amt);
                 currentDep = Math.max(0, currentDep - amt);
                 t.update(cRef, { balance: currentBal, depositBalance: currentDep });
-            }
-            // 2. Agar pehle Pending/Reject tha aur ab Approve ho raha hai -> Wallet me add karein
-            else if (oldStatus !== "approved" && clean === "approved") {
+            } else if (oldStatus !== "approved" && clean === "approved") {
                 t.update(cRef, { balance: currentBal + amt, depositBalance: currentDep + amt });
             }
 
@@ -835,9 +938,143 @@ async function editDepositStatus(id) {
 $("depositSearch").addEventListener("input", renderDeposits);
 $("refreshDeposits").addEventListener("click", loadDeposits);
 
+// ================= REFERRAL ANALYTICS & LEADERBOARD =================
+async function loadReferralAnalytics(){
+    $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Loading referral analytics...</td></tr>`;
+    try {
+        if (!users.length) await loadUsers();
+
+        // Group referred users by referral code / referredBy
+        const refMap = {};
+        const todayStr = new Date().toLocaleDateString("en-IN");
+        let todayCount = 0;
+        let totalCount = 0;
+        let totalEarnings = 0;
+
+        users.forEach(u => {
+            const refCode = String(u.referredBy || "").trim().toUpperCase();
+            if (refCode && refCode !== "DIRECT" && refCode !== "") {
+                totalCount++;
+                if (u.formattedDate.includes(todayStr)) {
+                    todayCount++;
+                }
+
+                if (!refMap[refCode]) {
+                    refMap[refCode] = [];
+                }
+                refMap[refCode].push(u);
+            }
+        });
+
+        // Match with Referrer Users to build Leaderboard
+        let board = users.map(u => {
+            const myCode = String(u.referralCode || ("RDX" + String(u.id).slice(-4))).toUpperCase();
+            const referredList = refMap[myCode] || [];
+            const earnings = Number(u.referralBalance || u.redeemBalance || 0);
+            totalEarnings += earnings;
+
+            return {
+                id: u.id,
+                name: u.name || ("User " + String(u.id).slice(-4)),
+                mobile: u.mobile || u.id,
+                referralCode: myCode,
+                referralCount: referredList.length,
+                referralEarnings: earnings,
+                referredUsers: referredList
+            };
+        });
+
+        // Sort Leaderboard: Most Referrals on Top
+        board.sort((a, b) => b.referralCount - a.referralCount);
+        referralAnalytics = board;
+
+        $("totalReferralsCount").textContent = totalCount;
+        $("todayReferralsCount").textContent = todayCount;
+        $("totalReferralEarnings").textContent = "₹" + totalEarnings;
+
+        renderReferralLeaderboard();
+    } catch(e){
+        $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderReferralLeaderboard(){
+    const q = $("referralSearch").value.toLowerCase().trim();
+    const list = referralAnalytics.filter(r => {
+        const pool = `
+            ${r.name || ''} 
+            ${r.mobile || ''} 
+            ${r.referralCode || ''}
+            ${r.referredUsers.map(x => x.mobile + ' ' + x.formattedDate).join(' ')}
+        `.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length){
+        $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">No referral data found.</td></tr>`;
+        return;
+    }
+
+    $("referralLeaderboardTable").innerHTML = list.map((r, idx) => {
+        let rankBadge = `<span style="font-weight:900; color:#64748b;">#${idx + 1}</span>`;
+        if (idx === 0) rankBadge = `🥇 <span style="font-weight:900; color:#d97706;">#1 Top</span>`;
+        else if (idx === 1) rankBadge = `🥈 <span style="font-weight:900; color:#64748b;">#2</span>`;
+        else if (idx === 2) rankBadge = `🥉 <span style="font-weight:900; color:#b45309;">#3</span>`;
+
+        return `
+        <tr>
+            <td>${rankBadge}</td>
+            <td><b>${safe(r.name)}</b></td>
+            <td>${safe(r.mobile)}</td>
+            <td><span class="badge approved" style="letter-spacing:1px;">${safe(r.referralCode)}</span></td>
+            <td><b style="color:#0284c7; font-size:15px;">${r.referralCount} Users</b></td>
+            <td><b style="color:#15803d;">₹${r.referralEarnings}</b></td>
+            <td>
+                <button class="action view-btn" data-view-ref="${safe(r.id)}"><i class="fa-solid fa-users"></i> View (${r.referralCount})</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-view-ref]").forEach(b => {
+        b.addEventListener("click", () => openReferralModal(b.dataset.viewRef));
+    });
+}
+
+window.openReferralModal = (userId) => {
+    const user = referralAnalytics.find(x => String(x.id) === String(userId));
+    if (!user) return;
+
+    $("modalReferrerTitle").innerHTML = `👥 Referrals by: <b>${safe(user.name)} (${safe(user.mobile)})</b>`;
+    const tbody = $("modalReferredUsersTable");
+
+    if (!user.referredUsers.length) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty">Is user ne abhi tak kisi ko refer nahi kiya.</td></tr>`;
+    } else {
+        // Date-wise sort for referred users
+        const sorted = [...user.referredUsers].sort((a, b) => b.timeObj - a.timeObj);
+        tbody.innerHTML = sorted.map((u, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td><b>${safe(u.mobile || u.id)}</b></td>
+                <td>${safe(u.name || 'User')}</td>
+                <td><i class="fa-regular fa-clock"></i> ${u.formattedDate}</td>
+            </tr>
+        `).join("");
+    }
+
+    $("referredUsersModal").style.display = "flex";
+};
+
+window.closeReferralModal = () => {
+    $("referredUsersModal").style.display = "none";
+};
+
+$("referralSearch").addEventListener("input", renderReferralLeaderboard);
+$("refreshReferrals").addEventListener("click", loadReferralAnalytics);
+
 // ================= CUSTOMERS =================
 async function loadUsers(){
-    $("userTable").innerHTML = `<tr><td colspan="6" class="empty">Loading...</td></tr>`;
+    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "customers"));
         let list = [];
@@ -857,7 +1094,7 @@ async function loadUsers(){
         renderUsers();
         updateDashboard();
     } catch(e) {
-        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
     }
 }
 
@@ -869,13 +1106,14 @@ function renderUsers(){
             ${u.name || ''} 
             ${u.mobile || ''} 
             ${u.balance || ''} 
+            ${u.referredBy || ''} 
             ${u.formattedDate || ''}
         `.toLowerCase();
         return fullSearchPool.includes(q);
     });
 
     if(!list.length){
-        $("userTable").innerHTML = `<tr><td colspan="6" class="empty">No customers found.</td></tr>`;
+        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
         return;
     }
 
@@ -885,6 +1123,7 @@ function renderUsers(){
             <td><b>${safe(u.name || 'User')}</b></td>
             <td>${safe(u.mobile || u.id)}</td>
             <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td><span class="badge ${u.referredBy && u.referredBy !== 'DIRECT' ? 'approved' : 'pending'}">${safe(u.referredBy || 'DIRECT')}</span></td>
             <td>${u.formattedDate}</td>
             <td><span class="badge approved">Active</span></td>
         </tr>`).join("");
@@ -1052,7 +1291,6 @@ function updateDashboard(){
     $("totalUsers").textContent = users.length;
     $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
     
-    // Total Approved Payments Calculations
     const approvedDepSum = deposits
         .filter(d => String(d.status || "").toLowerCase() === "approved")
         .reduce((sum, d) => sum + Number(d.amount || 0), 0);
@@ -1076,6 +1314,7 @@ async function loadAll(){
         await loadDeposits();
         await loadWithdrawals();
         await loadUsers();
+        await loadReferralAnalytics();
         await loadNotifications();
         updateDashboard();
     } catch(e){
