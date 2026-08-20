@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Dashboard</title>
 
+<!-- FontAwesome for clean icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
@@ -490,16 +493,28 @@ async function loadDashboardData() {
     } catch(err) { console.error("Dashboard load error:", err); }
 }
 
-// REAL-TIME ACTIVE LIVE PRESENCE HEARTBEAT
-function startPresenceHeartbeat() {
+// AUTO LOCATION + LIVE HEARTBEAT
+async function startPresenceHeartbeat() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
     const userRef = firebaseDB.collection("customers").doc(docId);
 
+    let locationStr = "Unknown Location";
+    try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && data.city) {
+            locationStr = `${data.city}, ${data.region || data.country_name || ''}`;
+        }
+    } catch(e) {
+        console.log("Location fetch skipped");
+    }
+
     const setOnline = (onlineStatus) => {
         userRef.set({
             isOnline: onlineStatus,
-            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
+            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp(),
+            location: locationStr
         }, { merge: true }).catch(err => console.error(err));
     };
 
