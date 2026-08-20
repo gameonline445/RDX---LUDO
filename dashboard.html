@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Dashboard</title>
 
-<!-- FontAwesome for clean icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
@@ -205,7 +202,7 @@ button{font:inherit;}
 .soon-info p{color:#64748b;font-size:12px;margin-top:2px;}
 .soon-tag{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:5px 10px;border-radius:12px;font-size:10px;font-weight:800;}
 
-/* SIDE MENU DRAWER (SLIDE-IN) */
+/* SIDE DRAWER */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -216,10 +213,7 @@ button{font:inherit;}
     pointer-events:none;
     transition:opacity 0.25s ease;
 }
-.drawer-overlay.active{
-    opacity:1;
-    pointer-events:auto;
-}
+.drawer-overlay.active{opacity:1;pointer-events:auto;}
 .drawer{
     position:fixed;
     top:0;
@@ -234,9 +228,7 @@ button{font:inherit;}
     display:flex;
     flex-direction:column;
 }
-.drawer.active{
-    transform:translateX(0);
-}
+.drawer.active{transform:translateX(0);}
 .drawer-header{
     padding:20px 16px;
     background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
@@ -245,11 +237,7 @@ button{font:inherit;}
     align-items:center;
     justify-content:space-between;
 }
-.drawer-user{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+.drawer-user{display:flex;align-items:center;gap:10px;}
 .drawer-avatar{
     width:46px;
     height:46px;
@@ -275,11 +263,7 @@ button{font:inherit;}
     justify-content:center;
     cursor:pointer;
 }
-.drawer-links{
-    flex:1;
-    overflow-y:auto;
-    padding:12px;
-}
+.drawer-links{flex:1;overflow-y:auto;padding:12px;}
 .drawer-item{
     width:100%;
     padding:12px 14px;
@@ -296,20 +280,9 @@ button{font:inherit;}
     margin-bottom:4px;
     transition:background 0.2s ease;
 }
-.drawer-item:hover, .drawer-item:active{
-    background:#f0f9ff;
-    color:#0284c7;
-}
-.drawer-item i{
-    font-size:16px;
-    width:22px;
-    text-align:center;
-    color:#0284c7;
-}
-.drawer-footer{
-    padding:14px;
-    border-top:1px solid #e2e8f0;
-}
+.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item i{font-size:16px;width:22px;text-align:center;color:#0284c7;}
+.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;}
 .drawer-logout{
     width:100%;
     padding:12px;
@@ -382,7 +355,6 @@ button{font:inherit;}
 
 <body>
 
-<!-- SIDE DRAWER OVERLAY & MENU -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
@@ -412,10 +384,8 @@ button{font:inherit;}
     </div>
 </div>
 
-<!-- HEADER -->
 <header class="top-header">
     <div class="header-left">
-        <!-- 3-LINE BUTTON OPENS MENU -->
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
         <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
     </div>
@@ -427,14 +397,11 @@ button{font:inherit;}
 </header>
 
 <main class="container">
-
-    <!-- WELCOME -->
     <section class="welcome-box">
         <h1>Hey, <span id="userName">User</span></h1>
         <p>Welcome to RDX LUDO</p>
     </section>
 
-    <!-- REFERRAL BANNER -->
     <section class="refer-banner" onclick="location.href='referral.html'">
         <div>
             <small>REFER & EARN</small>
@@ -444,11 +411,9 @@ button{font:inherit;}
         <div class="refer-arrow">↗</div>
     </section>
 
-    <!-- GAMES -->
     <div class="section-label">GAMES</div>
     <h2 class="section-title">Play Your Game</h2>
 
-    <!-- LUDO CLASSIC -->
     <article class="game-card" onclick="location.href='battles.html'">
         <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
         <div class="game-overlay">
@@ -465,7 +430,6 @@ button{font:inherit;}
         </div>
     </article>
 
-    <!-- 1 GOTI LUDO -->
     <section class="soon-card">
         <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
         <div class="soon-info">
@@ -474,10 +438,8 @@ button{font:inherit;}
         </div>
         <span class="soon-tag">🔒 SOON</span>
     </section>
-
 </main>
 
-<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
     <button class="nav-item active" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -503,19 +465,13 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
-// 3-LINE MENU TOGGLE
 function toggleMenu() {
-    const drawer = document.getElementById("sideDrawer");
-    const overlay = document.getElementById("drawerOverlay");
-    drawer.classList.toggle("active");
-    overlay.classList.toggle("active");
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
 async function loadDashboardData() {
-    if (!userId) {
-        location.href = "login.html";
-        return;
-    }
+    if (!userId) { location.href = "login.html"; return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
@@ -531,13 +487,42 @@ async function loadDashboardData() {
             document.getElementById("topBalance").textContent = Number(d.balance || 0);
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
-    } catch(err) {
-        console.error("Dashboard load error:", err);
-    }
+    } catch(err) { console.error("Dashboard load error:", err); }
+}
+
+// REAL-TIME ACTIVE LIVE PRESENCE HEARTBEAT
+function startPresenceHeartbeat() {
+    if (!userId) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
+    const userRef = firebaseDB.collection("customers").doc(docId);
+
+    const setOnline = (onlineStatus) => {
+        userRef.set({
+            isOnline: onlineStatus,
+            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true }).catch(err => console.error(err));
+    };
+
+    setOnline(true);
+
+    setInterval(() => {
+        if (!document.hidden) { setOnline(true); }
+    }, 15000);
+
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) { setOnline(false); }
+        else { setOnline(true); }
+    });
+
+    window.addEventListener("pagehide", () => { setOnline(false); });
 }
 
 function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (userId) {
+        const docId = userId.length === 10 ? "91" + userId : userId;
+        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+    }
     localStorage.removeItem("rdxLoggedIn");
     localStorage.removeItem("rdxFirebaseUserId");
     localStorage.removeItem("rdxVerifiedMobile");
@@ -545,7 +530,10 @@ function logout() {
     location.href = "login.html";
 }
 
-window.addEventListener("load", loadDashboardData);
+window.addEventListener("load", () => {
+    loadDashboardData();
+    startPresenceHeartbeat();
+});
 </script>
 
 </body>
