@@ -175,14 +175,14 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-signal"></i> Active Online Users (Screen Open)</h3>
     <button id="refreshLiveUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 </div>
-<p style="font-size:12px; color:#64748b; margin-top:4px;">Jo users is waqt site kholkar phone par active hain, wahi <b>Online</b> dikhenge.</p>
-<input id="liveSearch" class="search" placeholder="Search live users by Mobile or Name...">
+<p style="font-size:12px; color:#64748b; margin-top:4px;">Jo users is waqt site kholkar phone par active hain, unka Mobile aur City/State yahan live dikhega.</p>
+<input id="liveSearch" class="search" placeholder="Search live users by Mobile, Name or Location...">
 <div class="table">
 <table>
 <thead>
-<tr><th>Status</th><th>Mobile Number</th><th>Customer Name</th><th>Wallet Balance</th><th>Last Active Pulse</th></tr>
+<tr><th>Status</th><th>Mobile Number</th><th>Customer Name</th><th>Live Location</th><th>Wallet Balance</th><th>Last Active</th></tr>
 </thead>
-<tbody id="liveUsersTable"><tr><td colspan="5" class="empty">Scanning online users...</td></tr></tbody>
+<tbody id="liveUsersTable"><tr><td colspan="6" class="empty">Scanning online users...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -443,14 +443,14 @@ function renderLiveUsers() {
         const diffSec = (now - lastTime) / 1000;
         const isCurrentlyActive = u.isOnline === true && diffSec < 35;
         if (!isCurrentlyActive) return false;
-        const pool = `${u.name || ''} ${u.mobile || ''}`.toLowerCase();
+        const pool = `${u.name || ''} ${u.mobile || ''} ${u.location || ''}`.toLowerCase();
         return pool.includes(q);
     });
 
     $("activeLiveUsersCount").textContent = onlineList.length + " Live";
 
     if (!onlineList.length) {
-        $("liveUsersTable").innerHTML = `<tr><td colspan="5" class="empty">Abhi koi user screen kholkar live nahi hai.</td></tr>`;
+        $("liveUsersTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi koi user screen kholkar live nahi hai.</td></tr>`;
         return;
     }
 
@@ -459,6 +459,7 @@ function renderLiveUsers() {
             <td><span class="badge live-online">Active Online</span></td>
             <td><b>${safe(u.mobile)}</b></td>
             <td>${safe(u.name)}</td>
+            <td>📍 <b>${safe(u.location || 'Unknown Location')}</b></td>
             <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
             <td><i class="fa-regular fa-clock"></i> Just Now</td>
         </tr>
