@@ -481,10 +481,14 @@ async function loadDashboardData() {
         const snap = await firebaseDB.collection("customers").doc(docId).get();
         if (snap.exists) {
             const d = snap.data();
-            const displayName = d.name || ("User " + userId.slice(-4));
-            document.getElementById("userName").textContent = displayName;
-            document.getElementById("drawerName").textContent = displayName;
-            document.getElementById("drawerAvatar").textContent = displayName.charAt(0).toUpperCase();
+            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
+            
+            // Extract First Name Only (e.g. "Shyam सरकार जी" -> "Shyam")
+            const firstName = fullName.split(" ")[0] || "User";
+
+            document.getElementById("userName").textContent = firstName;
+            document.getElementById("drawerName").textContent = fullName;
+            document.getElementById("drawerAvatar").textContent = firstName.charAt(0).toUpperCase();
             document.getElementById("drawerMobile").textContent = "+" + userId;
 
             document.getElementById("topBalance").textContent = Number(d.balance || 0);
