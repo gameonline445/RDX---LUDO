@@ -104,8 +104,12 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .modal-close{width:32px;height:32px;border-radius:50%;background:#ffffff;border:1px solid #bae6fd;color:#0c4a6e;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .modal-body{padding:16px;overflow-y:auto;flex:1;}
 
+.kyc-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+.kyc-preview-item{background:#f8fafc;border:1px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
+.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #e2e8f0;margin-top:6px;}
+
 @media(max-width:800px){.stats{grid-template-columns:1fr 1fr;}.sidebar{width:180px;}}
-@media(max-width:600px){.layout{display:block;}.sidebar{width:100%;min-height:auto;display:flex;overflow:auto;border-right:0;border-bottom:1.5px solid #bae6fd;padding:8px;}.nav{min-width:max-content;padding:8px 12px;margin-bottom:0;margin-right:6px;}main{padding:14px 10px;}.stats{grid-template-columns:1fr 1fr;}.form{grid-template-columns:1fr;}.full{grid-column:auto;}}
+@media(max-width:600px){.layout{display:block;}.sidebar{width:100%;min-height:auto;display:flex;overflow:auto;border-right:0;border-bottom:1.5px solid #bae6fd;padding:8px;}.nav{min-width:max-content;padding:8px 12px;margin-bottom:0;margin-right:6px;}main{padding:14px 10px;}.stats{grid-template-columns:1fr 1fr;}.form{grid-template-columns:1fr;}.full{grid-column:auto;}.kyc-preview-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 
@@ -138,6 +142,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <aside class="sidebar">
 <button class="nav active" data-page="dashboard"><i class="fa-solid fa-chart-pie"></i> &nbsp;Dashboard</button>
 <button class="nav" data-page="liveusers"><i class="fa-solid fa-tower-broadcast"></i> &nbsp;Live Users Monitor</button>
+<button class="nav" data-page="kycrequests"><i class="fa-solid fa-id-card"></i> &nbsp;KYC Requests</button>
 <button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
 <button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
 <button class="nav" data-page="referrals"><i class="fa-solid fa-gift"></i> &nbsp;Referral Analytics</button>
@@ -148,17 +153,18 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 
 <main>
 
+<!-- DASHBOARD -->
 <section id="dashboard" class="page active">
 <div class="title">Dashboard</div>
 <div class="stats">
 <div class="stat"><small>Active Live Users</small><h2 class="green" id="activeLiveUsersCount">0 Live</h2></div>
+<div class="stat"><small>Pending KYC</small><h2 class="orange" id="pendingKycCount">0</h2></div>
 <div class="stat"><small>Total Customers</small><h2 class="blue" id="totalUsers">0</h2></div>
 <div class="stat"><small>Total Balance</small><h2 class="green" id="totalCoins">₹0</h2></div>
 <div class="stat"><small>Total Deposit Paid</small><h2 class="purple" id="totalApprovedDeposits">₹0</h2></div>
 <div class="stat"><small>Total Withdrawal Paid</small><h2 class="green" id="totalApprovedWithdrawals">₹0</h2></div>
 <div class="stat"><small>Pending Deposits</small><h2 class="orange" id="pendingDeposits">0</h2></div>
 <div class="stat"><small>Pending Withdrawals</small><h2 class="red" id="pendingWithdrawals">0</h2></div>
-<div class="stat"><small>Total Referrals</small><h2 class="blue" id="dashTotalRefs">0</h2></div>
 </div>
 
 <div class="card">
@@ -168,6 +174,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- LIVE USERS MONITOR -->
 <section id="liveusers" class="page">
 <div class="title">🟢 Real-Time Live Users Monitor</div>
 <div class="card">
@@ -188,6 +195,27 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- KYC REQUESTS -->
+<section id="kycrequests" class="page">
+<div class="title">📄 Document KYC Verification Requests</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-id-card"></i> Submitted KYC Documents</h3>
+    <button id="refreshKyc" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="kycSearch" class="search" placeholder="Search by Mobile or ID Number...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Customer UID</th><th>Mobile</th><th>ID Number</th><th>Status</th><th>Date</th><th>Action</th></tr>
+</thead>
+<tbody id="kycTable"><tr><td colspan="6" class="empty">Loading KYC requests...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- DEPOSITS -->
 <section id="deposits" class="page">
 <div class="title">Deposit Requests</div>
 <div id="depositStatus" class="status bad">Loading...</div>
@@ -205,6 +233,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- WITHDRAWALS -->
 <section id="withdrawals" class="page">
 <div class="title">Withdrawal Requests</div>
 <div id="withdrawalStatus" class="status bad">Loading...</div>
@@ -222,6 +251,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- REFERRAL ANALYTICS -->
 <section id="referrals" class="page">
 <div class="title">Referral Analytics & Leaderboard</div>
 <div class="stats" style="grid-template-columns:repeat(3,1fr); margin-bottom:14px;">
@@ -247,6 +277,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- CUSTOMERS -->
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
@@ -255,7 +286,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>Referred By</th><th>Joined Date</th><th>Status</th></tr>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
 <tbody id="userTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
 </table>
@@ -263,6 +294,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- NOTIFICATIONS -->
 <section id="notifications" class="page">
 <div class="title">Notifications Management</div>
 <div class="card">
@@ -304,6 +336,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- SETTINGS -->
 <section id="settings" class="page">
 <div class="title">Payment Settings</div>
 <div id="settingsStatus" class="status bad">Loading...</div>
@@ -325,6 +358,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- REFERRAL BREAKDOWN MODAL -->
 <div class="modal-overlay" id="referredUsersModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -334,12 +368,23 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
         <div class="modal-body">
             <div class="table">
                 <table>
-                    <thead>
-                        <tr><th>#</th><th>Customer Mobile</th><th>Customer Name</th><th>Joined Date & Time</th></tr>
-                    </thead>
+                    <thead><tr><th>#</th><th>Customer Mobile</th><th>Customer Name</th><th>Joined Date & Time</th></tr></thead>
                     <tbody id="modalReferredUsersTable"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
                 </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- KYC DOCUMENT PREVIEW MODAL -->
+<div class="modal-overlay" id="kycPreviewModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalKycTitle">KYC Document Preview</h3>
+            <button class="modal-close" onclick="closeKycPreviewModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" id="modalKycContent">
+            <!-- Dynamic Images -->
         </div>
     </div>
 </div>
@@ -368,6 +413,7 @@ const paymentRef = doc(db, "paymentSettings", "config");
 let deposits = [];
 let withdrawals = [];
 let users = [];
+let kycRequests = [];
 let notificationsList = [];
 let referralAnalytics = [];
 
@@ -427,6 +473,7 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "deposits") loadDeposits();
         if(btn.dataset.page === "withdrawals") loadWithdrawals();
         if(btn.dataset.page === "users") loadUsers();
+        if(btn.dataset.page === "kycrequests") loadKycRequests();
         if(btn.dataset.page === "liveusers") renderLiveUsers();
         if(btn.dataset.page === "referrals") loadReferralAnalytics();
         if(btn.dataset.page === "notifications") loadNotifications();
@@ -434,6 +481,7 @@ document.querySelectorAll(".nav").forEach(btn => {
     });
 });
 
+// ================= LIVE ACTIVE USERS MONITOR =================
 function renderLiveUsers() {
     const q = $("liveSearch").value.toLowerCase().trim();
     const now = Date.now();
@@ -469,6 +517,132 @@ function renderLiveUsers() {
 $("liveSearch").addEventListener("input", renderLiveUsers);
 $("refreshLiveUsers").addEventListener("click", () => { loadUsers().then(renderLiveUsers); });
 
+// ================= KYC REQUESTS =================
+async function loadKycRequests() {
+    $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Loading KYC requests...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "kycRequests"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.submittedAt || data.date);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => {
+            const aPending = String(a.status || "").toLowerCase() === "pending";
+            const bPending = String(b.status || "").toLowerCase() === "pending";
+            if (aPending && !bPending) return -1;
+            if (!aPending && bPending) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        kycRequests = list;
+        renderKycRequests();
+        $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+    } catch(e) {
+        $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderKycRequests() {
+    const q = $("kycSearch").value.toLowerCase().trim();
+    const list = kycRequests.filter(k => {
+        const pool = `${k.id || ''} ${k.mobile || ''} ${k.docNumber || ''} ${k.status || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if (!list.length) {
+        $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">No KYC requests found.</td></tr>`;
+        return;
+    }
+
+    $("kycTable").innerHTML = list.map(k => {
+        const s = String(k.status || "pending").toLowerCase();
+        return `
+        <tr>
+            <td><b>${safe(k.id)}</b></td>
+            <td><b>${safe(k.mobile)}</b></td>
+            <td><b>${safe(k.docNumber || '—')}</b></td>
+            <td><span class="badge ${s}">${s}</span></td>
+            <td><i class="fa-regular fa-clock"></i> ${k.formattedDate}</td>
+            <td>
+                <button class="action view-btn" data-view-kyc="${safe(k.id)}"><i class="fa-solid fa-eye"></i> View & Approve</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-view-kyc]").forEach(b => {
+        b.addEventListener("click", () => openKycPreview(b.dataset.viewKyc));
+    });
+}
+
+window.openKycPreview = (docId) => {
+    const item = kycRequests.find(x => x.id === docId);
+    if (!item) return;
+
+    $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
+    const container = $("modalKycContent");
+    const s = String(item.status || "pending").toLowerCase();
+
+    container.innerHTML = `
+        <div class="kyc-preview-grid">
+            <div class="kyc-preview-item">
+                <strong style="font-size:12px; color:#0c4a6e;">Aadhaar Front Photo</strong>
+                <img src="${item.frontImage}" alt="Front" onclick="window.open('${item.frontImage}')">
+            </div>
+            <div class="kyc-preview-item">
+                <strong style="font-size:12px; color:#0c4a6e;">Aadhaar Back Photo</strong>
+                <img src="${item.backImage}" alt="Back" onclick="window.open('${item.backImage}')">
+            </div>
+        </div>
+        <div class="kyc-preview-item" style="margin-top:12px;">
+            <strong style="font-size:12px; color:#0c4a6e;">User Selfie Photo</strong>
+            <img src="${item.selfieImage}" alt="Selfie" style="max-height:220px;" onclick="window.open('${item.selfieImage}')">
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:16px;">
+            <button class="action approve" style="flex:1; padding:12px; font-size:13px;" onclick="approveKyc('${item.id}')">✅ Approve KYC</button>
+            <button class="action reject" style="flex:1; padding:12px; font-size:13px;" onclick="rejectKyc('${item.id}')">❌ Reject KYC</button>
+        </div>
+    `;
+
+    $("kycPreviewModal").style.display = "flex";
+};
+
+window.closeKycPreviewModal = () => {
+    $("kycPreviewModal").style.display = "none";
+};
+
+window.approveKyc = async (uid) => {
+    if (!confirm("Kya aap is user ka KYC Approve karna chahte hain?")) return;
+    try {
+        await setDoc(doc(db, "customers", uid), { kycStatus: "verified" }, { merge: true });
+        await setDoc(doc(db, "kycRequests", uid), { status: "approved" }, { merge: true });
+        alert("✅ KYC Successfully Approved!");
+        closeKycPreviewModal();
+        loadKycRequests();
+        loadUsers();
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+window.rejectKyc = async (uid) => {
+    const reason = prompt("Reject karne ka reason likhein:");
+    if (!reason) return;
+    try {
+        await setDoc(doc(db, "customers", uid), { kycStatus: "rejected", kycRejectReason: reason.trim() }, { merge: true });
+        await setDoc(doc(db, "kycRequests", uid), { status: "rejected", comment: reason.trim() }, { merge: true });
+        alert("❌ KYC Rejected!");
+        closeKycPreviewModal();
+        loadKycRequests();
+        loadUsers();
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+$("kycSearch").addEventListener("input", renderKycRequests);
+$("refreshKyc").addEventListener("click", loadKycRequests);
+
+// ================= WITHDRAWALS =================
 async function loadWithdrawals(){
     $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
@@ -568,6 +742,7 @@ async function editWithdrawalStatus(id) {
 $("withdrawalSearch").addEventListener("input", renderWithdrawals);
 $("refreshWithdrawals").addEventListener("click", loadWithdrawals);
 
+// ================= DEPOSITS =================
 async function loadDeposits(){
     $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
@@ -700,6 +875,7 @@ async function editDepositStatus(id) {
 $("depositSearch").addEventListener("input", renderDeposits);
 $("refreshDeposits").addEventListener("click", loadDeposits);
 
+// ================= REFERRAL ANALYTICS =================
 async function loadReferralAnalytics(){
     $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Loading referral analytics...</td></tr>`;
     try {
@@ -743,7 +919,6 @@ async function loadReferralAnalytics(){
 
         $("totalReferralsCount").textContent = totalCount;
         $("todayReferralsCount").textContent = todayCount;
-        $("dashTotalRefs").textContent = totalCount;
         $("totalReferralEarnings").textContent = "₹" + totalEarnings;
 
         renderReferralLeaderboard();
@@ -815,6 +990,7 @@ window.closeReferralModal = () => { $("referredUsersModal").style.display = "non
 $("referralSearch").addEventListener("input", renderReferralLeaderboard);
 $("refreshReferrals").addEventListener("click", loadReferralAnalytics);
 
+// ================= CUSTOMERS =================
 async function loadUsers(){
     $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
@@ -846,7 +1022,7 @@ async function loadUsers(){
 function renderUsers(){
     const q = $("userSearch").value.toLowerCase().trim();
     const list = users.filter(u => {
-        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.referredBy || ''} ${u.formattedDate || ''}`.toLowerCase();
+        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.kycStatus || ''} ${u.referredBy || ''}`.toLowerCase();
         return pool.includes(q);
     });
 
@@ -855,21 +1031,25 @@ function renderUsers(){
         return;
     }
 
-    $("userTable").innerHTML = list.map(u => `
+    $("userTable").innerHTML = list.map(u => {
+        const kycBadge = u.kycStatus === 'verified' ? '<span class="badge approved">Verified</span>' : (u.kycStatus === 'pending' ? '<span class="badge pending">Under Review</span>' : '<span class="badge rejected">Not Done</span>');
+        return `
         <tr>
             <td>${safe(u.id)}</td>
             <td><b>${safe(u.name || 'User')}</b></td>
             <td>${safe(u.mobile || u.id)}</td>
             <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td>${kycBadge}</td>
             <td><span class="badge ${u.referredBy && u.referredBy !== 'DIRECT' ? 'approved' : 'pending'}">${safe(u.referredBy || 'DIRECT')}</span></td>
-            <td>${u.formattedDate}</td>
             <td><span class="badge approved">Active</span></td>
-        </tr>`).join("");
+        </tr>`;
+    }).join("");
 }
 
 $("userSearch").addEventListener("input", renderUsers);
 $("refreshUsers").addEventListener("click", loadUsers);
 
+// ================= NOTIFICATIONS =================
 $("notifTarget").addEventListener("change", e => $("personalUidBox").style.display = e.target.value === "personal" ? "block" : "none");
 
 $("sendNotifBtn").addEventListener("click", async () => {
@@ -970,6 +1150,7 @@ async function deleteAllNotifications() {
 $("refreshNotifs").addEventListener("click", loadNotifications);
 $("deleteAllNotifsBtn").addEventListener("click", deleteAllNotifications);
 
+// ================= SETTINGS =================
 async function loadSettings(){
     try {
         const snap = await getDoc(paymentRef);
@@ -1021,6 +1202,7 @@ function updateDashboard(){
 
     $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
     $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     
     $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
     $("dashStatus").className = "status ok";
@@ -1032,6 +1214,7 @@ async function loadAll(){
         await loadDeposits();
         await loadWithdrawals();
         await loadUsers();
+        await loadKycRequests();
         await loadReferralAnalytics();
         await loadNotifications();
         updateDashboard();
