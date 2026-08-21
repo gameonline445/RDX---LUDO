@@ -123,12 +123,7 @@ button{font:inherit;}
     font-weight:800;
     cursor:pointer;
 }
-.user-row{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    margin-top:14px;
-}
+.user-row{display:flex;align-items:center;gap:14px;margin-top:14px;}
 .avatar{
     width:64px;
     height:64px;
@@ -142,17 +137,9 @@ button{font:inherit;}
     justify-content:center;
     box-shadow:0 4px 14px rgba(2,132,199,0.25);
 }
-.user-details h2{
-    font-size:20px;
-    font-weight:900;
-    color:#0c4a6e;
-}
-.user-details p{
-    color:#64748b;
-    font-size:13px;
-    font-weight:700;
-    margin-top:2px;
-}
+.user-details h2{font-size:20px;font-weight:900;color:#0c4a6e;}
+.user-details p{color:#64748b;font-size:13px;font-weight:700;margin-top:2px;}
+
 .kyc-btn{
     margin-top:8px;
     background:linear-gradient(100deg,#0284c7,#0369a1);
@@ -163,6 +150,22 @@ button{font:inherit;}
     font-size:11px;
     font-weight:850;
     cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+}
+.kyc-verified-badge{
+    margin-top:8px;
+    background:#dcfce7;
+    color:#15803d;
+    border:1px solid #86efac;
+    padding:5px 12px;
+    border-radius:14px;
+    font-size:11px;
+    font-weight:850;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
 }
 
 /* REFERRAL LOCKED STATUS */
@@ -174,17 +177,8 @@ button{font:inherit;}
     padding:16px;
     box-shadow:0 4px 14px rgba(2,132,199,0.06);
 }
-.ref-title-row{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-bottom:10px;
-}
-.ref-title-row small{
-    color:#64748b;
-    font-size:11px;
-    font-weight:600;
-}
+.ref-title-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.ref-title-row small{color:#64748b;font-size:11px;font-weight:600;}
 .ref-pill{
     background:#f8fafc;
     border:1.5px solid #cbd5e1;
@@ -194,31 +188,12 @@ button{font:inherit;}
     justify-content:space-between;
     align-items:center;
 }
-.ref-pill strong{
-    font-size:16px;
-    font-weight:900;
-    color:#0c4a6e;
-    letter-spacing:1px;
-}
-.ref-pill i{
-    color:#16a34a;
-    font-size:18px;
-}
+.ref-pill strong{font-size:16px;font-weight:900;color:#0c4a6e;letter-spacing:1px;}
+.ref-pill i{color:#16a34a;font-size:18px;}
 
 /* STATS */
-.section-label{
-    font-size:11px;
-    font-weight:850;
-    color:#64748b;
-    letter-spacing:1px;
-    margin:18px 0 8px;
-    text-transform:uppercase;
-}
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-}
+.section-label{font-size:11px;font-weight:850;color:#64748b;letter-spacing:1px;margin:18px 0 8px;text-transform:uppercase;}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
 .stat-item{
     background:#ffffff;
     border:1.5px solid #bae6fd;
@@ -239,27 +214,11 @@ button{font:inherit;}
     margin:0 auto 8px;
     font-size:15px;
 }
-.stat-item small{
-    display:block;
-    font-size:10px;
-    font-weight:800;
-    color:#64748b;
-    text-transform:uppercase;
-}
-.stat-item strong{
-    display:block;
-    font-size:16px;
-    font-weight:900;
-    color:#0c4a6e;
-    margin-top:2px;
-}
+.stat-item small{display:block;font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;}
+.stat-item strong{display:block;font-size:16px;font-weight:900;color:#0c4a6e;margin-top:2px;}
 
 /* ACTIONS */
-.action-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-}
+.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .action-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
@@ -271,11 +230,7 @@ button{font:inherit;}
     justify-content:space-between;
     box-shadow:0 4px 12px rgba(2,132,199,0.04);
 }
-.action-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+.action-left{display:flex;align-items:center;gap:10px;}
 .action-icon{
     width:34px;
     height:34px;
@@ -287,15 +242,8 @@ button{font:inherit;}
     justify-content:center;
     font-size:15px;
 }
-.action-text h4{
-    font-size:13px;
-    font-weight:850;
-    color:#0f172a;
-}
-.action-text p{
-    font-size:11px;
-    color:#64748b;
-}
+.action-text h4{font-size:13px;font-weight:850;color:#0f172a;}
+.action-text p{font-size:11px;color:#64748b;}
 
 /* LOGOUT */
 .logout-btn{
@@ -315,7 +263,7 @@ button{font:inherit;}
     gap:8px;
 }
 
-/* SIDE MENU DRAWER */
+/* SIDE DRAWER */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -326,10 +274,7 @@ button{font:inherit;}
     pointer-events:none;
     transition:opacity 0.25s ease;
 }
-.drawer-overlay.active{
-    opacity:1;
-    pointer-events:auto;
-}
+.drawer-overlay.active{opacity:1;pointer-events:auto;}
 .drawer{
     position:fixed;
     top:0;
@@ -344,9 +289,7 @@ button{font:inherit;}
     display:flex;
     flex-direction:column;
 }
-.drawer.active{
-    transform:translateX(0);
-}
+.drawer.active{transform:translateX(0);}
 .drawer-header{
     padding:20px 16px;
     background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
@@ -355,11 +298,7 @@ button{font:inherit;}
     align-items:center;
     justify-content:space-between;
 }
-.drawer-user{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+.drawer-user{display:flex;align-items:center;gap:10px;}
 .drawer-avatar{
     width:46px;
     height:46px;
@@ -385,11 +324,7 @@ button{font:inherit;}
     justify-content:center;
     cursor:pointer;
 }
-.drawer-links{
-    flex:1;
-    overflow-y:auto;
-    padding:12px;
-}
+.drawer-links{flex:1;overflow-y:auto;padding:12px;}
 .drawer-item{
     width:100%;
     padding:12px 14px;
@@ -406,20 +341,9 @@ button{font:inherit;}
     margin-bottom:4px;
     transition:background 0.2s ease;
 }
-.drawer-item:hover, .drawer-item:active{
-    background:#f0f9ff;
-    color:#0284c7;
-}
-.drawer-item i{
-    font-size:16px;
-    width:22px;
-    text-align:center;
-    color:#0284c7;
-}
-.drawer-footer{
-    padding:14px;
-    border-top:1px solid #e2e8f0;
-}
+.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item i{font-size:16px;width:22px;text-align:center;color:#0284c7;}
+.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;}
 .drawer-logout{
     width:100%;
     padding:12px;
@@ -487,6 +411,77 @@ button{font:inherit;}
 .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
 .nav-item.active{color:#101a38;font-weight:800;}
 .nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#f97316;}
+
+/* AADHAAR KYC MODAL */
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.6);
+    backdrop-filter:blur(4px);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+}
+.modal-box{
+    width:100%;
+    max-width:400px;
+    background:#ffffff;
+    border-radius:24px;
+    border:1.5px solid #bae6fd;
+    box-shadow:0 20px 50px rgba(2,132,199,0.2);
+    overflow:hidden;
+}
+.modal-header{
+    padding:18px 20px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
+.modal-close{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:#ffffff;
+    border:1px solid #bae6fd;
+    color:#0c4a6e;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.modal-body{padding:20px;}
+.modal-body label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin-bottom:6px;}
+.modal-body input{
+    width:100%;
+    height:46px;
+    border-radius:14px;
+    border:1.5px solid #bae6fd;
+    background:#f8fafc;
+    font-size:15px;
+    font-weight:700;
+    padding:0 14px;
+    outline:none;
+    margin-bottom:12px;
+}
+.modal-body input:focus{border-color:#0284c7;background:#ffffff;}
+.btn-kyc-action{
+    width:100%;
+    height:46px;
+    border:0;
+    border-radius:23px;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    font-size:14px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(2,132,199,0.3);
+}
+.btn-kyc-action:disabled{opacity:0.6;cursor:not-allowed;}
 </style>
 </head>
 
@@ -524,7 +519,6 @@ button{font:inherit;}
 
 <header class="top-header">
     <div class="header-left">
-        <!-- 3-LINE BUTTON OPENS MENU -->
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
         <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
     </div>
@@ -547,7 +541,9 @@ button{font:inherit;}
             <div class="user-details">
                 <h2 id="profileName">Loading...</h2>
                 <p><i class="fa-solid fa-phone" style="font-size:11px;"></i> <span id="profileMobile">+91**********</span></p>
-                <button class="kyc-btn" onclick="alert('KYC System Complete!')">Complete KYC</button>
+                <div id="kycContainer">
+                    <button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>
+                </div>
             </div>
         </div>
     </div>
@@ -618,12 +614,44 @@ button{font:inherit;}
 
 </main>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
     <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
     <button class="nav-item active" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
+
+<!-- AADHAAR OTP KYC MODAL -->
+<div class="modal-overlay" id="kycModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-shield-halved"></i> Aadhaar KYC Verification</h3>
+            <button class="modal-close" onclick="closeKycModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <!-- Step 1: Enter Aadhaar -->
+            <div id="kycStep1">
+                <label>ENTER 12-DIGIT AADHAAR NUMBER</label>
+                <input type="tel" id="inputAadhaar" placeholder="XXXX XXXX XXXX" maxlength="12" inputmode="numeric">
+                <p style="font-size:12px; color:#64748b; margin-bottom:14px; line-height:1.4;">
+                    Aadhaar se link registered mobile number par 6-digit OTP bheja jayega.
+                </p>
+                <button class="btn-kyc-action" id="btnSendAadhaarOtp" onclick="sendAadhaarOtp()">Send OTP</button>
+            </div>
+
+            <!-- Step 2: Enter OTP -->
+            <div id="kycStep2" style="display:none;">
+                <label>ENTER 6-DIGIT AADHAAR OTP</label>
+                <input type="tel" id="inputAadhaarOtp" placeholder="------" maxlength="6" inputmode="numeric" style="letter-spacing:4px; text-align:center; font-size:18px;">
+                <p style="font-size:12px; color:#16a34a; font-weight:700; margin-bottom:14px;">
+                    ✅ OTP sent to registered mobile number.
+                </p>
+                <button class="btn-kyc-action" id="btnVerifyAadhaarOtp" onclick="verifyAadhaarOtp()">Verify & Complete KYC</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
 const firebaseConfig = {
@@ -643,12 +671,9 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
-// 3-LINE MENU TOGGLE
 function toggleMenu() {
-    const drawer = document.getElementById("sideDrawer");
-    const overlay = document.getElementById("drawerOverlay");
-    drawer.classList.toggle("active");
-    overlay.classList.toggle("active");
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
 async function loadUserProfile() {
@@ -671,17 +696,87 @@ async function loadUserProfile() {
             document.getElementById("drawerAvatar").textContent = userName.charAt(0).toUpperCase();
             document.getElementById("drawerMobile").textContent = "+" + userId;
             
-            // Live Database Referral Lock Display
             const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
             document.getElementById("referredByCode").textContent = refCode;
 
             document.getElementById("winnings").textContent = "₹" + (d.winnings || 0);
             document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
             document.getElementById("totalReferrals").textContent = (d.totalReferrals || 0);
+
+            // KYC Status Display Check
+            const kycContainer = document.getElementById("kycContainer");
+            if (d.kycStatus === "verified") {
+                kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
+            } else {
+                kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
+            }
         }
     } catch(err) {
         console.error("Profile load error:", err);
     }
+}
+
+// KYC MODAL FUNCTIONS
+function openKycModal() {
+    document.getElementById("kycStep1").style.display = "block";
+    document.getElementById("kycStep2").style.display = "none";
+    document.getElementById("inputAadhaar").value = "";
+    document.getElementById("inputAadhaarOtp").value = "";
+    document.getElementById("kycModal").style.display = "flex";
+}
+
+function closeKycModal() {
+    document.getElementById("kycModal").style.display = "none";
+}
+
+async function sendAadhaarOtp() {
+    const aadhaarVal = document.getElementById("inputAadhaar").value.replace(/\D/g, "");
+    if (aadhaarVal.length !== 12) {
+        alert("Kripya sahi 12-digit Aadhaar number daalein.");
+        return;
+    }
+
+    const btn = document.getElementById("btnSendAadhaarOtp");
+    btn.disabled = true;
+    btn.textContent = "Sending OTP...";
+
+    // Simulated API call (In production, replace with Surepass / Setu API endpoint)
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = "Send OTP";
+        document.getElementById("kycStep1").style.display = "none";
+        document.getElementById("kycStep2").style.display = "block";
+        document.getElementById("inputAadhaarOtp").focus();
+    }, 1200);
+}
+
+async function verifyAadhaarOtp() {
+    const otpVal = document.getElementById("inputAadhaarOtp").value.replace(/\D/g, "");
+    if (otpVal.length < 4) {
+        alert("Kripya sahi 6-digit OTP bharein.");
+        return;
+    }
+
+    const btn = document.getElementById("btnVerifyAadhaarOtp");
+    btn.disabled = true;
+    btn.textContent = "Verifying...";
+
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    try {
+        await firebaseDB.collection("customers").doc(docId).set({
+            kycStatus: "verified",
+            kycVerifiedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+        alert("✅ Aadhaar KYC Successfully Verified!");
+        closeKycModal();
+        loadUserProfile();
+    } catch(err) {
+        alert("KYC Verification Error: " + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "Verify & Complete KYC";
 }
 
 async function editName() {
@@ -690,18 +785,18 @@ async function editName() {
     const docId = userId.length === 10 ? "91" + userId : userId;
     
     try {
-        await firebaseDB.collection("customers").doc(docId).set({
-            name: newName.trim()
-        }, { merge: true });
+        await firebaseDB.collection("customers").doc(docId).set({ name: newName.trim() }, { merge: true });
         alert("✅ Naam Update Ho Gaya!");
         loadUserProfile();
-    } catch(e) {
-        alert("Error: " + e.message);
-    }
+    } catch(e) { alert("Error: " + e.message); }
 }
 
 function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (userId) {
+        const docId = userId.length === 10 ? "91" + userId : userId;
+        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+    }
     localStorage.removeItem("rdxLoggedIn");
     localStorage.removeItem("rdxFirebaseUserId");
     localStorage.removeItem("rdxVerifiedMobile");
