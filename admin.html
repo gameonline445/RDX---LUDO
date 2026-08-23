@@ -25,7 +25,8 @@ button{cursor:pointer;border:0;}
 /* LOGIN */
 #login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 14px;}
 .login-box{width:100%;max-width:380px;background:#ffffff;padding:26px 20px;border-radius:24px;border:1.5px solid #7dd3fc;box-shadow:0 12px 30px rgba(2,132,199,0.12);}
-.logo{width:64px;height:64px;margin:0 auto 12px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#ffffff,#dbeafe);border:3px solid #93c5fd;color:#0284c7;font-size:18px;font-weight:900;box-shadow:0 6px 16px rgba(2,132,199,0.2);}
+.logo-box{width:70px;height:70px;margin:0 auto 12px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:2.5px solid #93c5fd;box-shadow:0 6px 16px rgba(2,132,199,0.2);background:#fff;}
+.logo-box img{width:100%;height:100%;object-fit:cover;}
 h1{text-align:center;font-size:22px;color:#0c4a6e;font-weight:900;}
 .sub{text-align:center;color:#64748b;font-size:13px;margin-top:2px;margin-bottom:20px;font-weight:600;}
 label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin:10px 0 5px;letter-spacing:0.5px;}
@@ -39,7 +40,8 @@ input:focus,select:focus,textarea:focus{border-color:#0284c7;background:#ffffff;
 header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
 .brand{font-weight:900;font-size:18px;color:#0c4a6e;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
 .brand:active{transform:scale(0.98);}
-.brand .admin-logo{width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#dbeafe);border:2px solid #93c5fd;color:#0284c7;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+.brand .admin-logo-box{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;background:#fff;}
+.brand .admin-logo-box img{width:100%;height:100%;object-fit:cover;}
 .brand span{color:#0284c7;}
 .logout{padding:8px 16px;border-radius:20px;background:#fff1f2;border:1px solid #fecdd3;color:#be123c;font-weight:800;font-size:13px;cursor:pointer;}
 
@@ -118,7 +120,9 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 
 <section id="login">
 <div class="login-box">
-<div class="logo">RDX</div>
+<div class="logo-box">
+    <img src="logo.png" alt="RDX Logo" onerror="this.src='https://i.ibb.co/vz6G1V7/logo.png'">
+</div>
 <h1>RDX LUDO</h1>
 <div class="sub">Admin Panel</div>
 <label>Admin Email</label>
@@ -133,7 +137,9 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <section id="admin">
 <header>
 <div class="brand" onclick="refreshAdminDashboard()" title="Click to Refresh Admin Dashboard">
-    <div class="admin-logo">RDX</div>
+    <div class="admin-logo-box">
+        <img src="logo.png" alt="RDX Logo" onerror="this.src='https://i.ibb.co/vz6G1V7/logo.png'">
+    </div>
     <div>RDX <span>LUDO</span> ADMIN</div>
 </div>
 <button id="logout" class="logout">Logout</button>
@@ -805,7 +811,7 @@ window.openKycPreview = (docId) => {
     $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
     const container = $("modalKycContent");
 
-    // ONLY FRONT & BACK PHOTO (NO SELFIE)
+    // ONLY FRONT & BACK PHOTO
     container.innerHTML = `
         <div class="kyc-preview-grid">
             <div class="kyc-preview-item">
