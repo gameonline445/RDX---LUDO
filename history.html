@@ -25,7 +25,7 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
-button{font:inherit;}
+button,input{font:inherit;}
 
 /* TOP HEADER */
 .top-header{
@@ -95,10 +95,40 @@ button{font:inherit;}
     font-size:20px;
     font-weight:900;
     color:#0c4a6e;
-    margin-bottom:14px;
+    margin-bottom:12px;
     display:flex;
     align-items:center;
     gap:8px;
+}
+
+/* SEARCH BAR */
+.search-box-wrap{
+    position:relative;
+    margin-bottom:12px;
+}
+.search-icon{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#0284c7;
+    font-size:14px;
+}
+.search-input{
+    width:100%;
+    height:46px;
+    border-radius:14px;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    padding:0 14px 0 38px;
+    font-size:13px;
+    font-weight:700;
+    color:#0f172a;
+    outline:none;
+    box-shadow:0 4px 14px rgba(2,132,199,0.04);
+}
+.search-input:focus{
+    border-color:#0284c7;
 }
 
 /* FILTER TABS */
@@ -168,11 +198,18 @@ button{font:inherit;}
     font-weight:600;
     margin-top:2px;
 }
-.history-details small{
+.history-details .utr-tag{
+    display:inline-block;
+    font-size:11px;
+    color:#0369a1;
+    font-weight:750;
+    margin-top:2px;
+}
+.history-details .reason-tag{
     display:block;
     font-size:10px;
     color:#be123c;
-    font-weight:700;
+    font-weight:750;
     margin-top:2px;
 }
 
@@ -399,6 +436,12 @@ button{font:inherit;}
         <i class="fa-solid fa-clock-rotate-left" style="color:#0284c7;"></i> History & Activity Logs
     </div>
 
+    <!-- SEARCH BAR -->
+    <div class="search-box-wrap">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="historySearchInput" class="search-input" placeholder="Search by Date, UTR, Amount, Status, Opponent...">
+    </div>
+
     <!-- TABS -->
     <div class="filter-scroll">
         <button class="tab-btn active" onclick="setFilter('all', this)">All Activity</button>
@@ -522,7 +565,8 @@ function startRealtimeLogsListener() {
                     prize: b.prize,
                     status: battleStatus,
                     isWon: isWon,
-                    isCancelled: isCancelled
+                    isCancelled: isCancelled,
+                    searchKey: `battle vs ${oppName} ${timeInfo.formatted} ${b.amount} ${b.prize} ${battleStatus} ${doc.id}`
                 });
             }
         });
@@ -538,6 +582,9 @@ function startRealtimeLogsListener() {
             const cleanUid = String(d.uid || d.userId).replace(/\D/g, "");
             if (cleanUid === userId) {
                 const timeInfo = parseItemTime(d.createdAt || d.date);
+                const rawStatus = String(d.status || "pending").toLowerCase();
+                const utrVal = d.utr ? String(d.utr).trim() : "";
+
                 list.push({
                     type: "deposit",
                     id: doc.id,
@@ -545,8 +592,10 @@ function startRealtimeLogsListener() {
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
                     amount: d.amount,
-                    status: String(d.status || "pending").toLowerCase(),
-                    comment: d.comment || ""
+                    status: rawStatus,
+                    utr: utrVal,
+                    comment: d.comment || "",
+                    searchKey: `deposit amount ${timeInfo.formatted} ${d.amount} ${utrVal} ${rawStatus} ${d.comment || ''} ${doc.id}`
                 });
             }
         });
@@ -562,6 +611,9 @@ function startRealtimeLogsListener() {
             const cleanUid = String(w.uid || w.mobile).replace(/\D/g, "");
             if (cleanUid === userId) {
                 const timeInfo = parseItemTime(w.createdAt || w.date);
+                const rawStatus = String(w.status || "pending").toLowerCase();
+                const modeVal = w.mode === "BANK" ? `Bank: ${w.accountNumber || ''}` : `UPI: ${w.upiId || ''}`;
+
                 list.push({
                     type: "withdrawal",
                     id: doc.id,
@@ -569,8 +621,10 @@ function startRealtimeLogsListener() {
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
                     amount: w.amount,
-                    status: String(w.status || "pending").toLowerCase(),
-                    comment: w.comment || ""
+                    status: rawStatus,
+                    modeInfo: modeVal,
+                    comment: w.comment || "",
+                    searchKey: `withdrawal cash ${timeInfo.formatted} ${w.amount} ${modeVal} ${rawStatus} ${w.comment || ''} ${doc.id}`
                 });
             }
         });
@@ -587,18 +641,26 @@ function mergeAndRenderLogs() {
 
 function renderLogs() {
     const container = document.getElementById("logsContainer");
+    const searchVal = document.getElementById("historySearchInput").value.toLowerCase().trim();
+
     let filtered = allLogs;
 
+    // Filter by Tab
     if (activeTab === "battles") filtered = allLogs.filter(x => x.type === "battle");
     else if (activeTab === "deposits") filtered = allLogs.filter(x => x.type === "deposit");
     else if (activeTab === "withdrawals") filtered = allLogs.filter(x => x.type === "withdrawal");
+
+    // Filter by Search Query (Date, UTR, Amount, Status, Opponent Name)
+    if (searchVal !== "") {
+        filtered = filtered.filter(item => (item.searchKey || "").toLowerCase().includes(searchVal));
+    }
 
     if (!filtered.length) {
         container.innerHTML = `
             <div class="empty-state">
                 <i class="fa-solid fa-folder-open"></i>
-                <h4 style="color:#0c4a6e; font-size:15px; font-weight:850;">No History Records</h4>
-                <p style="font-size:12px; margin-top:4px;">Is category mein abhi koi logs nahi hain.</p>
+                <h4 style="color:#0c4a6e; font-size:15px; font-weight:850;">No Records Found</h4>
+                <p style="font-size:12px; margin-top:4px;">Aapki search ya selected tab ke hisab se koi data nahi mila.</p>
             </div>
         `;
         return;
@@ -652,9 +714,10 @@ function renderLogs() {
                     <div class="history-left">
                         <div class="history-icon icon-dep"><i class="fa-solid fa-money-bill-wave"></i></div>
                         <div class="history-details">
-                            <h4>${item.title}</h4>
+                            <h4>Deposit Amount</h4>
                             <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
-                            ${item.comment && s === 'rejected' ? `<small>Reason: ${item.comment}</small>` : ''}
+                            ${item.utr ? `<span class="utr-tag"><i class="fa-solid fa-receipt"></i> UTR: ${item.utr}</span>` : ''}
+                            ${item.comment && s === 'rejected' ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
                         </div>
                     </div>
                     <div class="history-right">
@@ -677,9 +740,10 @@ function renderLogs() {
                     <div class="history-left">
                         <div class="history-icon icon-with"><i class="fa-solid fa-money-bill-transfer"></i></div>
                         <div class="history-details">
-                            <h4>${item.title}</h4>
+                            <h4>Withdrawal Cash</h4>
                             <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
-                            ${item.comment && s === 'rejected' ? `<small>Reason: ${item.comment}</small>` : ''}
+                            ${item.modeInfo ? `<span class="utr-tag" style="color:#64748b;">${item.modeInfo}</span>` : ''}
+                            ${item.comment && s === 'rejected' ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
                         </div>
                     </div>
                     <div class="history-right">
@@ -691,6 +755,9 @@ function renderLogs() {
         }
     }).join("");
 }
+
+// Search Bar Real-Time Trigger
+document.getElementById("historySearchInput").addEventListener("input", renderLogs);
 
 function setFilter(type, btnEl) {
     activeTab = type;
