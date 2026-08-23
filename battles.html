@@ -222,7 +222,7 @@ button,input{font:inherit;}
 .btn-start{background:linear-gradient(100deg,#16a34a,#15803d);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-reject{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 
-/* MATCH ROOM VIEW (VIEW 2) */
+/* MATCH ROOM VIEW */
 #roomView{display:none;}
 .back-top-btn{
     display:inline-flex;
@@ -290,15 +290,16 @@ button,input{font:inherit;}
     font-weight:700;
     margin-bottom:6px;
 }
-.status-update-grid{
+
+/* 2-BUTTON LAYOUT (ONLY WON & LOST) */
+.status-update-grid-2{
     display:grid;
-    grid-template-columns:1fr 1fr 1fr;
-    gap:8px;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
     margin-top:10px;
 }
-.btn-won{background:#16a34a;color:white;border:0;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
-.btn-lost{background:#dc2626;color:white;border:0;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
-.btn-cancel{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-won{background:#16a34a;color:white;border:0;padding:13px;border-radius:14px;font-weight:850;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-lost{background:#dc2626;color:white;border:0;padding:13px;border-radius:14px;font-weight:850;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
 
 /* PROOF UPLOAD BOX */
 .proof-upload-box{
@@ -323,7 +324,7 @@ button,input{font:inherit;}
     cursor:pointer;
 }
 
-/* INSUFFICIENT BALANCE POPUP MODAL */
+/* INSUFFICIENT BALANCE MODAL */
 .modal-overlay{
     position:fixed;
     inset:0;
@@ -476,7 +477,7 @@ button,input{font:inherit;}
         <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back</button>
 
         <div class="battle-card" style="margin-bottom:12px;">
-            <span class="badge-tag tag-live">● LIVE MATCH</span>
+            <span class="badge-tag tag-live" id="roomLiveBadge">● LIVE MATCH</span>
             <div class="battle-meta" style="margin-top:8px;">
                 <div class="meta-col"><small>ENTRY</small><strong id="roomEntryFee">₹100</strong></div>
                 <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong id="roomPrizeFee" style="color:#16a34a;">₹190</strong></div>
@@ -528,15 +529,14 @@ button,input{font:inherit;}
             <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
-        <!-- RESULT UPDATE & PROOF UPLOAD -->
+        <!-- ONLY 2 OPTIONS: I WON OR I LOST (NO CANCEL ALLOWED ONCE ROOM IS LIVE) -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
 
-            <div class="status-update-grid" id="resultBtnGrid">
+            <div class="status-update-grid-2" id="resultBtnGrid">
                 <button class="btn-won" onclick="openWonProofBox()"><i class="fa-solid fa-trophy"></i> I Won</button>
                 <button class="btn-lost" onclick="submitGameResult('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
-                <button class="btn-cancel" onclick="submitGameResult('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
             <!-- PROOF UPLOAD (Only for I Won) -->
@@ -549,7 +549,7 @@ button,input{font:inherit;}
             </div>
 
             <div id="resultSubmittedMsg" style="display:none; text-align:center; padding:12px 0; color:#0284c7; font-weight:800; font-size:13px;">
-                Result Submitted. Waiting for confirmation...
+                Result Submitted. Processing outcome...
             </div>
         </div>
     </div>
@@ -767,7 +767,7 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-// START BATTLE (DEDUCT WALLET ONLY WHEN MATCH STARTS)
+// START BATTLE (WALLET DEDUCT WHEN LIVE)
 async function startBattle(bId, amt, oppUid) {
     const docId = userId.length === 10 ? "91" + userId : userId;
 
@@ -812,6 +812,14 @@ function renderRoomView(b, isCreator) {
     document.getElementById("roomP1Avatar").textContent = b.creatorName.charAt(0).toUpperCase();
     document.getElementById("roomP2Avatar").textContent = b.acceptedName.charAt(0).toUpperCase();
 
+    if(b.status === "conflict") {
+        document.getElementById("roomLiveBadge").className = "badge-tag tag-conflict";
+        document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT";
+    } else {
+        document.getElementById("roomLiveBadge").className = "badge-tag tag-live";
+        document.getElementById("roomLiveBadge").textContent = "● LIVE MATCH";
+    }
+
     if(b.roomCode){
         document.getElementById("setRoomCodeWrap").style.display = "none";
         document.getElementById("waitingForCodeWrap").style.display = "none";
@@ -842,7 +850,7 @@ function copyRoomCode() {
     alert("Room Code Copied: " + code);
 }
 
-// PROOF COMPRESSION & SUBMISSION
+// PROOF COMPRESSION
 function openWonProofBox() {
     document.getElementById("proofUploadBox").style.display = "block";
 }
@@ -882,6 +890,7 @@ function compressImageFile(file) {
     });
 }
 
+// WIN PROOF & AUTO RESULT EVALUATION
 async function uploadWinProofAndSubmit() {
     const file = document.getElementById("winProofFile").files[0];
     if(!file){ alert("Kripya winning screenshot upload karein."); return; }
@@ -894,15 +903,12 @@ async function uploadWinProofAndSubmit() {
         const proofBase64 = await compressImageFile(file);
         const docId = userId.length === 10 ? "91" + userId : userId;
 
-        await firebaseDB.collection("battles").doc(activeBattleId).update({
-            [`result_${docId}`]: "won",
-            [`proof_${docId}`]: proofBase64
-        });
+        await processResultWithAutoSettlement(docId, "won", proofBase64);
 
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
-        alert("✅ Proof & Result Submit Ho Gaya!");
+        alert("✅ Winning Claim & Proof Submitted!");
     } catch(err) {
         alert("Error: " + err.message);
     }
@@ -911,15 +917,76 @@ async function uploadWinProofAndSubmit() {
 }
 
 async function submitGameResult(type) {
-    if(!confirm("Result submit karein?")) return;
+    if(!confirm(`Kya aap result '${type.toUpperCase()}' submit karna chahte hain?`)) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
 
-    await firebaseDB.collection("battles").doc(activeBattleId).update({
-        [`result_${docId}`]: type
-    });
+    try {
+        await processResultWithAutoSettlement(docId, type, null);
+        document.getElementById("resultBtnGrid").style.display = "none";
+        document.getElementById("resultSubmittedMsg").style.display = "block";
+    } catch(e) {
+        alert("Result error: " + e.message);
+    }
+}
 
-    document.getElementById("resultBtnGrid").style.display = "none";
-    document.getElementById("resultSubmittedMsg").style.display = "block";
+// ================= AUTOMATIC RESULT EVALUATION ENGINE =================
+async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
+    await firebaseDB.runTransaction(async t => {
+        const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
+        const battleDoc = await t.get(battleRef);
+        if(!battleDoc.exists) return;
+
+        const b = battleDoc.data();
+        if(b.status === "completed" || b.status === "cancelled") return;
+
+        const p1Uid = b.creatorUid;
+        const p2Uid = b.acceptedUid;
+        const prizeAmt = Number(b.prize || 0);
+
+        const otherUid = (myUid === p1Uid) ? p2Uid : p1Uid;
+        const myResult = myType;
+        const otherResult = b[`result_${otherUid}`] || null;
+
+        let updates = {
+            [`result_${myUid}`]: myResult
+        };
+        if(proofBase64) {
+            updates[`proof_${myUid}`] = proofBase64;
+        }
+
+        // AUTO-DECISION CHECK
+        if(otherResult !== null) {
+            // CASE 1: Automatic Win (Ek Won, Ek Lost)
+            if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
+                const winnerUid = (myResult === "won") ? myUid : otherUid;
+                const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
+                const winnerSnap = await t.get(winnerRef);
+
+                const currentBal = Number(winnerSnap.data()?.balance || 0);
+                const currentWin = Number(winnerSnap.data()?.winnings || 0);
+                const currentPlayed = Number(winnerSnap.data()?.matchesPlayed || 0);
+
+                // Auto Credit to Winner
+                t.update(winnerRef, {
+                    balance: currentBal + prizeAmt,
+                    winnings: currentWin + prizeAmt,
+                    matchesPlayed: currentPlayed + 1
+                });
+
+                updates.status = "completed";
+                updates.winnerUid = winnerUid;
+                updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
+                updates.resolvedBy = "auto";
+            }
+            // CASE 2: Dispute (Dono ne Won claim kiya) -> Send to Admin Panel
+            else if(myResult === "won" && otherResult === "won") {
+                updates.status = "conflict";
+                updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+        }
+
+        t.update(battleRef, updates);
+    });
 }
 
 function showLobbyView() {
