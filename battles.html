@@ -55,20 +55,28 @@ button,input{font:inherit;}
     justify-content:center;
     cursor:pointer;
 }
+
+/* BRAND 3D LOGO */
 .logo{
-    width:44px;
-    height:44px;
+    width:46px;
+    height:46px;
     border-radius:50%;
-    background:linear-gradient(145deg,#ffffff,#dbeafe);
-    border:2.5px solid #93c5fd;
+    overflow:hidden;
     display:flex;
     align-items:center;
     justify-content:center;
-    color:#0284c7;
-    font-size:12px;
-    font-weight:900;
     cursor:pointer;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
+
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
     height:38px;
@@ -444,7 +452,9 @@ button,input{font:inherit;}
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
-        <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
+        <div class="logo" onclick="location.href='dashboard.html'">
+            <img src="logo.png" alt="RDX Logo">
+        </div>
     </div>
     <div class="header-right">
         <button class="header-icon notification icon-only" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
@@ -676,18 +686,15 @@ function listenBattles() {
             const isCreator = b.creatorUid === docId;
             const isAccepter = b.acceptedUid === docId;
 
-            // Check if user has an active/pending bet
             if((b.status === "open" || b.status === "requested" || b.status === "live") && (isCreator || isAccepter)){
                 activeCount++;
             }
 
-            // Check Active Match View
             if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 activeBattleId = bId;
                 renderRoomView(b, isCreator);
             }
 
-            // A. OPEN & REQUESTED BATTLES
             if(b.status === "open" || b.status === "requested"){
                 if(b.status === "open"){
                     openHTML += `
@@ -729,7 +736,6 @@ function listenBattles() {
                 }
             }
 
-            // B. RUNNING BATTLES
             if(b.status === "live" || b.status === "conflict"){
                 runningHTML += `
                     <div class="battle-card" onclick="openRunningMatch('${bId}')" style="cursor:pointer;">
@@ -781,7 +787,7 @@ async function requestPlayBattle(bId, amt) {
     });
 }
 
-// CANCEL PLAY REQUEST (Opponent can cancel before Room Code / Start)
+// CANCEL PLAY REQUEST
 async function cancelMyPlayRequest(bId) {
     if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
     await firebaseDB.collection("battles").doc(bId).update({
@@ -792,7 +798,7 @@ async function cancelMyPlayRequest(bId) {
     });
 }
 
-// REJECT BATTLE (Creator can reject request)
+// REJECT BATTLE
 async function rejectBattleRequest(bId) {
     await firebaseDB.collection("battles").doc(bId).update({
         status: "open",
@@ -991,7 +997,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 
         // AUTO-DECISION CHECK
         if(otherResult !== null) {
-            // CASE 1: Automatic Win (1 Won aur 1 Lost) -> Instant Credit
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
                 const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
@@ -1012,7 +1017,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
                 updates.resolvedBy = "auto";
             }
-            // CASE 2: Dispute (Dono ne Won claim kiya) -> Send to Admin Panel
             else if(myResult === "won" && otherResult === "won") {
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
