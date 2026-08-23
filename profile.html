@@ -340,8 +340,8 @@ button{font:inherit;}
     width:34px;
     height:34px;
     border-radius:50%;
-    border:1px solid #bae6fd;
     background:#ffffff;
+    border:1px solid #bae6fd;
     color:#0c4a6e;
     font-size:16px;
     display:flex;
@@ -352,7 +352,7 @@ button{font:inherit;}
 .drawer-links{flex:1;overflow-y:auto;padding:12px;}
 .drawer-item{
     width:100%;
-    padding:12px 14px;
+    padding:10px 14px;
     border:0;
     border-radius:14px;
     background:transparent;
@@ -363,11 +363,29 @@ button{font:inherit;}
     font-weight:750;
     color:#334155;
     cursor:pointer;
-    margin-bottom:4px;
+    margin-bottom:6px;
     transition:background 0.2s ease;
 }
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item i{font-size:16px;width:22px;text-align:center;color:#0284c7;}
+.drawer-item-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+
 .drawer-footer{display:none;}
 
 /* BOTTOM NAV */
@@ -525,14 +543,13 @@ button{font:inherit;}
     </div>
 
     <div class="drawer-links">
-        <button class="drawer-item" onclick="location.href='dashboard.html'"><i class="fa-solid fa-house"></i> Home</button>
-        <button class="drawer-item" onclick="location.href='profile.html'"><i class="fa-solid fa-user"></i> My Profile</button>
-        <button class="drawer-item" onclick="location.href='wallet.html'"><i class="fa-solid fa-wallet"></i> My Wallet</button>
-        <button class="drawer-item" onclick="location.href='deposit.html'"><i class="fa-solid fa-money-bill-wave"></i> Add Cash</button>
-        <button class="drawer-item" onclick="location.href='withdraw.html'"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw Cash</button>
-        <button class="drawer-item" onclick="location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> History & Logs</button>
-        <button class="drawer-item" onclick="location.href='referral.html'"><i class="fa-solid fa-gift"></i> Refer & Earn 2%</button>
-        <button class="drawer-item" onclick="location.href='support.html'"><i class="fa-solid fa-headset"></i> 24/7 Support</button>
+        <button class="drawer-item" onclick="location.href='dashboard.html'"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="drawer-item" onclick="location.href='profile.html'"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
+        <button class="drawer-item" onclick="location.href='wallet.html'"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
+        <button class="drawer-item" onclick="location.href='referral.html'"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
+        <button class="drawer-item" onclick="location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
+        <button class="drawer-item" onclick="location.href='notification.html'"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
+        <button class="drawer-item" onclick="location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
     </div>
 </div>
 
@@ -859,6 +876,7 @@ function logout() {
         const docId = userId.length === 10 ? "91" + userId : userId;
         firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
     }
+    localStorage.getItem("rdxLoggedIn");
     localStorage.removeItem("rdxLoggedIn");
     localStorage.removeItem("rdxFirebaseUserId");
     localStorage.removeItem("rdxVerifiedMobile");
