@@ -43,8 +43,15 @@ body{
 .menu-brand h2{font-size:17px;}
 .menu-brand p{color:#71809d;font-size:11px;margin-top:2px;}
 .close-menu{border:0;background:#eef2fa;width:36px;height:36px;border-radius:50%;font-size:20px;color:#66738d;cursor:pointer;}
-.menu-item{width:100%;border:1px solid #e0e5ef;background:#fafbfe;padding:12px 14px;border-radius:14px;margin-bottom:10px;text-align:left;font-size:15px;color:#182440;cursor:pointer;display:flex;align-items:center;gap:12px;}
-.menu-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#e8efff;font-size:17px;}
+.menu-item{width:100%;border:0;background:transparent;padding:10px 0;border-radius:14px;margin-bottom:4px;text-align:left;font-size:15px;color:#334155;font-weight:750;cursor:pointer;display:flex;align-items:center;gap:12px;}
+.menu-item-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-item span:nth-child(2){flex:1;}
 
 /* MAIN */
@@ -109,13 +116,13 @@ body{
         </div>
         <button class="close-menu" onclick="closeMenu()">×</button>
     </div>
-    <button class="menu-item" onclick="goHome()"><div class="menu-icon">🏠</div><span>Home</span><span>›</span></button>
-    <button class="menu-item" onclick="goProfile()"><div class="menu-icon">👤</div><span>My Profile</span><span>›</span></button>
-    <button class="menu-item" onclick="goWallet()"><div class="menu-icon">💰</div><span>My Wallet</span><span>›</span></button>
-    <button class="menu-item" onclick="goRedeem()"><div class="menu-icon">🎁</div><span>Refer & Earn</span><span>›</span></button>
-    <button class="menu-item" onclick="goHistory()"><div class="menu-icon">🕘</div><span>History</span><span>›</span></button>
-    <button class="menu-item" onclick="goNotifications()"><div class="menu-icon">🔔</div><span>Notifications</span><span>›</span></button>
-    <button class="menu-item" onclick="goSupport()"><div class="menu-icon">🎧</div><span>Support</span><span>›</span></button>
+    <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span><span>›</span></button>
+    <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span><span>›</span></button>
+    <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span><span>›</span></button>
+    <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span><span>›</span></button>
+    <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span><span>›</span></button>
+    <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span><span>›</span></button>
+    <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span><span>›</span></button>
 </div>
 
 <main class="main">
