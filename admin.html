@@ -53,7 +53,7 @@ main{flex:1;padding:20px 18px;max-width:1200px;}
 .page.active{display:block;}
 .title{font-size:22px;font-weight:900;color:#0c4a6e;margin-bottom:16px;}
 
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
 .stat{background:#ffffff;border:1.5px solid #bae6fd;border-radius:18px;padding:16px;box-shadow:0 4px 14px rgba(2,132,199,0.05);}
 .stat small{color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase;}
 .stat h2{margin:6px 0 0;font-size:22px;font-weight:900;}
@@ -108,7 +108,8 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .kyc-preview-item{background:#f8fafc;border:1px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
 .kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #e2e8f0;margin-top:6px;cursor:pointer;}
 
-@media(max-width:800px){.stats{grid-template-columns:1fr 1fr;}.sidebar{width:180px;}}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr);}.sidebar{width:180px;}}
 @media(max-width:600px){.layout{display:block;}.sidebar{width:100%;min-height:auto;display:flex;overflow:auto;border-right:0;border-bottom:1.5px solid #bae6fd;padding:8px;}.nav{min-width:max-content;padding:8px 12px;margin-bottom:0;margin-right:6px;}main{padding:14px 10px;}.stats{grid-template-columns:1fr 1fr;}.form{grid-template-columns:1fr;}.full{grid-column:auto;}.kyc-preview-grid{grid-template-columns:1fr;}}
 </style>
 </head>
@@ -166,6 +167,8 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="stat"><small>Total Deposit Paid</small><h2 class="purple" id="totalApprovedDeposits">₹0</h2></div>
 <div class="stat"><small>Total Withdrawal Paid</small><h2 class="green" id="totalApprovedWithdrawals">₹0</h2></div>
 <div class="stat"><small>Pending Deposits</small><h2 class="orange" id="pendingDeposits">0</h2></div>
+<div class="stat"><small>Pending Withdrawals</small><h2 class="red" id="pendingWithdrawals">0</h2></div>
+<div class="stat"><small>Total Referrals</small><h2 class="blue" id="dashTotalRefs">0</h2></div>
 </div>
 
 <div class="card">
@@ -469,8 +472,10 @@ window.refreshAdminDashboard = async () => {
     document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
     document.querySelector('.nav[data-page="dashboard"]').classList.add("active");
     $("dashboard").classList.add("active");
-    $("dashStatus").textContent = "🔄 Refreshing data...";
-    $("dashStatus").className = "status bad";
+    if($("dashStatus")) {
+        $("dashStatus").textContent = "🔄 Refreshing data...";
+        $("dashStatus").className = "status bad";
+    }
     await loadAll();
 };
 
@@ -535,7 +540,7 @@ async function loadBattles() {
 
         battlesList = list;
         renderBattles();
-        $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
+        updateDashboard();
     } catch(e) {
         $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Error: ${safe(e.message)}</td></tr>`;
     }
@@ -711,7 +716,7 @@ function renderLiveUsers() {
         return pool.includes(q);
     });
 
-    $("activeLiveUsersCount").textContent = onlineList.length + " Live";
+    if($("activeLiveUsersCount")) $("activeLiveUsersCount").textContent = onlineList.length + " Live";
 
     if (!onlineList.length) {
         $("liveUsersTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi koi user screen kholkar live nahi hai.</td></tr>`;
@@ -755,7 +760,7 @@ async function loadKycRequests() {
 
         kycRequests = list;
         renderKycRequests();
-        $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+        updateDashboard();
     } catch(e) {
         $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
     }
@@ -1129,9 +1134,10 @@ async function loadReferralAnalytics(){
         board.sort((a, b) => b.referralCount - a.referralCount);
         referralAnalytics = board;
 
-        $("totalReferralsCount").textContent = totalCount;
-        $("todayReferralsCount").textContent = todayCount;
-        $("totalReferralEarnings").textContent = "₹" + totalEarnings;
+        if($("totalReferralsCount")) $("totalReferralsCount").textContent = totalCount;
+        if($("todayReferralsCount")) $("todayReferralsCount").textContent = todayCount;
+        if($("dashTotalRefs")) $("dashTotalRefs").textContent = totalCount;
+        if($("totalReferralEarnings")) $("totalReferralEarnings").textContent = "₹" + totalEarnings;
 
         renderReferralLeaderboard();
     } catch(e){ $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Error: ${safe(e.message)}</td></tr>`; }
@@ -1375,10 +1381,16 @@ async function loadSettings(){
             $("qr").value = d.qrCodeUrl || "";
             $("rate").value = d.coinRate ?? 1;
             $("minimum").value = d.minimumDeposit ?? 100;
-            $("settingsStatus").textContent = "✅ Settings loaded.";
-            $("settingsStatus").className = "status ok";
+            if($("settingsStatus")) {
+                $("settingsStatus").textContent = "✅ Settings loaded.";
+                $("settingsStatus").className = "status ok";
+            }
         }
-    } catch(e){ $("settingsStatus").textContent = "❌ " + e.message; }
+    } catch(e){ 
+        if($("settingsStatus")) {
+            $("settingsStatus").textContent = "❌ " + e.message; 
+        }
+    }
 }
 
 $("saveSettings").addEventListener("click", async () => {
@@ -1399,25 +1411,28 @@ $("saveSettings").addEventListener("click", async () => {
 });
 
 function updateDashboard(){
-    $("totalUsers").textContent = users.length;
-    $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
+    if($("totalUsers")) $("totalUsers").textContent = users.length;
+    if($("totalCoins")) $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
     
     const approvedDepSum = deposits
         .filter(d => String(d.status || "").toLowerCase() === "approved")
         .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-    $("totalApprovedDeposits").textContent = "₹" + approvedDepSum;
+    if($("totalApprovedDeposits")) $("totalApprovedDeposits").textContent = "₹" + approvedDepSum;
 
     const approvedWithSum = withdrawals
         .filter(w => String(w.status || "").toLowerCase() === "approved")
         .reduce((sum, w) => sum + Number(w.amount || 0), 0);
-    $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
+    if($("totalApprovedWithdrawals")) $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
 
-    $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
-    $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
-    $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+    if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
+    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+    if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
     
-    $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
-    $("dashStatus").className = "status ok";
+    if($("dashStatus")) {
+        $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
+        $("dashStatus").className = "status ok";
+    }
 }
 
 async function loadAll(){
@@ -1432,8 +1447,10 @@ async function loadAll(){
         await loadNotifications();
         updateDashboard();
     } catch(e){
-        $("dashStatus").textContent = "❌ " + e.message;
-        $("dashStatus").className = "status bad";
+        if($("dashStatus")) {
+            $("dashStatus").textContent = "❌ " + e.message;
+            $("dashStatus").className = "status bad";
+        }
     }
 }
 </script>
