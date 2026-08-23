@@ -324,13 +324,17 @@ button{font:inherit;}
     width:46px;
     height:46px;
     border-radius:50%;
-    background:linear-gradient(145deg,#0284c7,#0369a1);
-    color:white;
-    font-size:18px;
-    font-weight:900;
+    overflow:hidden;
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
     justify-content:center;
+}
+.drawer-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
 }
 .drawer-close{
     width:34px;
@@ -364,22 +368,7 @@ button{font:inherit;}
 }
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
 .drawer-item i{font-size:16px;width:22px;text-align:center;color:#0284c7;}
-.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;}
-.drawer-logout{
-    width:100%;
-    padding:12px;
-    border:1px solid #fecdd3;
-    border-radius:14px;
-    background:#fff1f2;
-    color:#be123c;
-    font-weight:800;
-    font-size:13px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    cursor:pointer;
-}
+.drawer-footer{display:none;}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -524,7 +513,9 @@ button{font:inherit;}
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
         <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">U</div>
+            <div class="drawer-avatar" id="drawerAvatar">
+                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
+            </div>
             <div>
                 <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
                 <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
@@ -542,10 +533,6 @@ button{font:inherit;}
         <button class="drawer-item" onclick="location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> History & Logs</button>
         <button class="drawer-item" onclick="location.href='referral.html'"><i class="fa-solid fa-gift"></i> Refer & Earn 2%</button>
         <button class="drawer-item" onclick="location.href='support.html'"><i class="fa-solid fa-headset"></i> 24/7 Support</button>
-    </div>
-
-    <div class="drawer-footer">
-        <button class="drawer-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
     </div>
 </div>
 
@@ -722,7 +709,7 @@ async function loadUserProfile() {
             document.getElementById("profileMobile").textContent = "+" + userId;
             
             document.getElementById("drawerName").textContent = userName;
-            document.getElementById("drawerAvatar").textContent = userName.charAt(0).toUpperCase();
+            document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
             
             const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
