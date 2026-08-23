@@ -59,7 +59,7 @@ button{font:inherit;}
 .menu-btn:active{transform:scale(0.95);}
 
 /* BRAND 3D LOGO */
-.logo-img-btn{
+.logo{
     width:46px;
     height:46px;
     border-radius:50%;
@@ -72,7 +72,7 @@ button{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-.logo-img-btn img{
+.logo img{
     width:100%;
     height:100%;
     object-fit:cover;
@@ -351,13 +351,11 @@ button{font:inherit;}
     font-size:18px;
     color:#ffffff;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
-    transition:transform 0.2s ease;
 }
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 .nav-item.active{color:#101a38;font-weight:800;}
 .nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#6366f1;}
 </style>
@@ -397,8 +395,8 @@ button{font:inherit;}
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo-img-btn" onclick="location.href='dashboard.html'">
-            <img src="logo.png" alt="RDX Ludo Logo" onerror="this.src='https://i.ibb.co/vz6G1V7/logo.png'">
+        <div class="logo" onclick="location.href='dashboard.html'">
+            <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
@@ -504,7 +502,6 @@ async function loadDashboardData() {
     } catch(err) { console.error("Dashboard load error:", err); }
 }
 
-// AUTO LOCATION + LIVE HEARTBEAT
 async function startPresenceHeartbeat() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
