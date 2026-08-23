@@ -216,11 +216,12 @@ button,input{font:inherit;}
     justify-content:center;
 }
 
-.card-actions{display:flex;justify-content:flex-end;gap:8px;}
+.card-actions{display:flex;justify-content:flex-end;gap:8px;align-items:center;}
 .btn-play{background:linear-gradient(100deg,#2563eb,#1d4ed8);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-delete{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-start{background:linear-gradient(100deg,#16a34a,#15803d);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-reject{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-cancel-req{background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;cursor:pointer;}
 
 /* MATCH ROOM VIEW */
 #roomView{display:none;}
@@ -291,7 +292,7 @@ button,input{font:inherit;}
     margin-bottom:6px;
 }
 
-/* 2-BUTTON LAYOUT (ONLY WON & LOST) */
+/* 2-BUTTON ONLY (WON & LOST) */
 .status-update-grid-2{
     display:grid;
     grid-template-columns:1fr 1fr;
@@ -529,7 +530,7 @@ button,input{font:inherit;}
             <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
-        <!-- ONLY 2 OPTIONS: I WON OR I LOST (NO CANCEL ALLOWED ONCE ROOM IS LIVE) -->
+        <!-- ONLY 2 OPTIONS: I WON OR I LOST -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
@@ -539,7 +540,7 @@ button,input{font:inherit;}
                 <button class="btn-lost" onclick="submitGameResult('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
             </div>
 
-            <!-- PROOF UPLOAD (Only for I Won) -->
+            <!-- PROOF UPLOAD -->
             <div class="proof-upload-box" id="proofUploadBox">
                 <label><i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof</label>
                 <input type="file" id="winProofFile" accept="image/*,video/*">
@@ -596,6 +597,7 @@ const userId = getCleanUserId();
 let myCurrentBalance = 0;
 let myUserName = "User";
 let activeBattleId = null;
+let hasActivePendingBet = false;
 
 function showErrorModal(msg) {
     document.getElementById("errorModalMsg").textContent = msg;
@@ -619,8 +621,13 @@ async function loadUserData() {
     });
 }
 
-// 1. CREATE BATTLE (Min ₹100)
+// 1. CREATE BATTLE (Only 1 Active Bet allowed at a time)
 async function createBattle() {
+    if(hasActivePendingBet) {
+        alert("Aapki pehle se ek bet active ya pending hai. Nayi bet lagane ke liye pehle purani bet delete/complete karein.");
+        return;
+    }
+
     const amt = Number(document.getElementById("battleAmountInput").value);
     if(isNaN(amt) || amt < 100){
         alert("Kam se kam ₹100 ka match set karein.");
@@ -661,12 +668,18 @@ function listenBattles() {
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
         let runningHTML = "";
+        let activeCount = 0;
 
         snap.forEach(doc => {
             const b = doc.data();
             const bId = doc.id;
             const isCreator = b.creatorUid === docId;
             const isAccepter = b.acceptedUid === docId;
+
+            // Check if user has an active/pending bet
+            if((b.status === "open" || b.status === "requested" || b.status === "live") && (isCreator || isAccepter)){
+                activeCount++;
+            }
 
             // Check Active Match View
             if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
@@ -704,7 +717,12 @@ function listenBattles() {
                                 <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
                             </div>
                             <div class="card-actions">
-                                ${isCreator ? `<button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Start</button><button class="btn-reject" onclick="rejectBattleRequest('${bId}')">✕ Reject</button>` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Waiting for Creator...</span>`}
+                                ${isCreator ? `
+                                    <button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Start</button>
+                                    <button class="btn-reject" onclick="rejectBattleRequest('${bId}')">✕ Reject</button>
+                                ` : (isAccepter ? `
+                                    <button class="btn-cancel-req" onclick="cancelMyPlayRequest('${bId}')">Cancel Request</button>
+                                ` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Waiting for Creator...</span>`)}
                             </div>
                         </div>
                     `;
@@ -730,6 +748,8 @@ function listenBattles() {
             }
         });
 
+        hasActivePendingBet = (activeCount > 0);
+
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
         document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live running battles.</p>`;
     });
@@ -743,6 +763,10 @@ async function deleteBattle(bId) {
 
 // REQUEST TO PLAY
 async function requestPlayBattle(bId, amt) {
+    if(hasActivePendingBet) {
+        alert("Aap pehle se kisi doosri bet me shamil hain.");
+        return;
+    }
     if(myCurrentBalance < amt){
         showErrorModal("Insufficient balance");
         return;
@@ -757,7 +781,18 @@ async function requestPlayBattle(bId, amt) {
     });
 }
 
-// REJECT BATTLE
+// CANCEL PLAY REQUEST (Opponent can cancel before Room Code / Start)
+async function cancelMyPlayRequest(bId) {
+    if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "open",
+        acceptedUid: null,
+        acceptedName: null,
+        requestTime: null
+    });
+}
+
+// REJECT BATTLE (Creator can reject request)
 async function rejectBattleRequest(bId) {
     await firebaseDB.collection("battles").doc(bId).update({
         status: "open",
@@ -929,7 +964,7 @@ async function submitGameResult(type) {
     }
 }
 
-// ================= AUTOMATIC RESULT EVALUATION ENGINE =================
+// AUTOMATIC RESULT EVALUATION ENGINE
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -956,7 +991,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 
         // AUTO-DECISION CHECK
         if(otherResult !== null) {
-            // CASE 1: Automatic Win (Ek Won, Ek Lost)
+            // CASE 1: Automatic Win (1 Won aur 1 Lost) -> Instant Credit
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
                 const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
@@ -966,7 +1001,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 const currentWin = Number(winnerSnap.data()?.winnings || 0);
                 const currentPlayed = Number(winnerSnap.data()?.matchesPlayed || 0);
 
-                // Auto Credit to Winner
                 t.update(winnerRef, {
                     balance: currentBal + prizeAmt,
                     winnings: currentWin + prizeAmt,
