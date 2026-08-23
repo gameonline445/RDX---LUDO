@@ -317,22 +317,7 @@ button{font:inherit;}
 .menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 
-.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;}
-.drawer-logout{
-    width:100%;
-    padding:12px;
-    border:1px solid #fecdd3;
-    border-radius:14px;
-    background:#fff1f2;
-    color:#be123c;
-    font-weight:800;
-    font-size:13px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    cursor:pointer;
-}
+.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;display:none;}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -411,10 +396,6 @@ button{font:inherit;}
         <button class="drawer-item" onclick="location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
         <button class="drawer-item" onclick="location.href='notification.html'"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
         <button class="drawer-item" onclick="location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    </div>
-
-    <div class="drawer-footer">
-        <button class="drawer-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
     </div>
 </div>
 
