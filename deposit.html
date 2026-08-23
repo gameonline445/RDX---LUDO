@@ -206,101 +206,29 @@ button{font:inherit;}
 }
 
 /* SIDE DRAWER */
-.drawer-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.45);
-    backdrop-filter:blur(4px);
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.25s ease;
-}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{
-    position:fixed;
-    top:0;
-    left:0;
-    width:280px;
-    height:100%;
-    background:#ffffff;
-    z-index:1000;
-    box-shadow:4px 0 25px rgba(2,132,199,0.15);
-    transform:translateX(-100%);
-    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-    display:flex;
-    flex-direction:column;
-}
-.drawer.active{transform:translateX(0);}
-.drawer-header{
-    padding:20px 16px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    background:linear-gradient(145deg,#0284c7,#0369a1);
-    color:white;
-    font-size:18px;
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.drawer-close{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    border:1px solid #bae6fd;
-    background:#ffffff;
-    color:#0c4a6e;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{
-    width:100%;
-    padding:12px 14px;
-    border:0;
-    border-radius:14px;
-    background:transparent;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:14px;
-    font-weight:750;
-    color:#334155;
-    cursor:pointer;
-    margin-bottom:4px;
-    transition:background 0.2s ease;
-}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item i{font-size:16px;width:22px;text-align:center;color:#0284c7;}
-.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;}
-.drawer-logout{
-    width:100%;
-    padding:12px;
-    border:1px solid #fecdd3;
-    border-radius:14px;
-    background:#fff1f2;
-    color:#be123c;
-    font-weight:800;
-    font-size:13px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    cursor:pointer;
-}
+.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:2000;display:none;}
+.menu-overlay.show{display:block;}
+.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
+.menu-panel.open{left:0;}
+.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
+.menu-brand{display:flex;align-items:center;gap:10px;}
+.menu-logo{width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;background:#ffffff;cursor:pointer;}
+.menu-logo img{width:100%;height:100%;object-fit:cover;}
+.menu-user h2{font-size:17px;font-weight:850;}
+.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
+.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
+.menu-list{margin-top:16px;}
+.menu-item{width:100%;min-height:52px;border:0;background:transparent;padding:6px 0;border-radius:14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left;color:#334155;cursor:pointer;}
+.menu-item-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.menu-item-text{flex:1;font-size:15px;font-weight:750;}
+.menu-arrow{color:#94a3b8;font-size:20px;}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -359,38 +287,34 @@ button{font:inherit;}
 <body>
 
 <!-- SIDE DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">U</div>
-            <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<div class="menu-panel" id="menuPanel">
+    <div class="menu-title">
+        <div class="menu-brand">
+            <div class="menu-logo" onclick="goHome()">
+                <img src="logo.png" alt="RDX Logo">
+            </div>
+            <div class="menu-user">
+                <h2 id="menuUsername">RDX LUDO</h2>
+                <p>Play · Win · Earn</p>
             </div>
         </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
+        <button class="close-menu" onclick="closeMenu()">×</button>
     </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="location.href='dashboard.html'"><i class="fa-solid fa-house"></i> Home</button>
-        <button class="drawer-item" onclick="location.href='profile.html'"><i class="fa-solid fa-user"></i> My Profile</button>
-        <button class="drawer-item" onclick="location.href='wallet.html'"><i class="fa-solid fa-wallet"></i> My Wallet</button>
-        <button class="drawer-item" onclick="location.href='deposit.html'"><i class="fa-solid fa-money-bill-wave"></i> Add Cash</button>
-        <button class="drawer-item" onclick="location.href='withdraw.html'"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw Cash</button>
-        <button class="drawer-item" onclick="location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> History & Logs</button>
-        <button class="drawer-item" onclick="location.href='referral.html'"><i class="fa-solid fa-gift"></i> Refer & Earn 2%</button>
-        <button class="drawer-item" onclick="location.href='support.html'"><i class="fa-solid fa-headset"></i> 24/7 Support</button>
-    </div>
-
-    <div class="drawer-footer">
-        <button class="drawer-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    <div class="menu-list">
+        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
     </div>
 </div>
 
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
         <div class="logo" onclick="location.href='dashboard.html'">
             <img src="logo.png" alt="RDX Logo">
         </div>
@@ -459,10 +383,8 @@ const userId = getCleanUserId();
 const amountInput = document.getElementById("depositAmountInput");
 const btnProceed = document.getElementById("btnProceed");
 
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
+function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
+function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
 
 function updateProceedButton() {
     const val = Number(amountInput.value) || 0;
@@ -514,22 +436,10 @@ async function loadUserData() {
         if (snap.exists) {
             const d = snap.data();
             const displayName = d.name || ("User " + userId.slice(-4));
-            document.getElementById("drawerName").textContent = displayName;
-            document.getElementById("drawerAvatar").textContent = displayName.charAt(0).toUpperCase();
-            document.getElementById("drawerMobile").textContent = "+" + userId;
             document.getElementById("topBalance").textContent = Number(d.balance || 0);
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
     } catch(err) { console.error(err); }
-}
-
-function logout() {
-    if (!confirm("Kya aap Logout karna chahte hain?")) return;
-    localStorage.removeItem("rdxLoggedIn");
-    localStorage.removeItem("rdxFirebaseUserId");
-    localStorage.removeItem("rdxVerifiedMobile");
-    localStorage.removeItem("rdxAccessToken");
-    location.href = "login.html";
 }
 
 window.addEventListener("load", loadUserData);
