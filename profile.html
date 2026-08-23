@@ -340,8 +340,8 @@ button{font:inherit;}
     width:34px;
     height:34px;
     border-radius:50%;
-    background:#ffffff;
     border:1px solid #bae6fd;
+    background:#ffffff;
     color:#0c4a6e;
     font-size:16px;
     display:flex;
@@ -711,7 +711,7 @@ function toggleMenu() {
 
 async function loadUserProfile() {
     if (!userId) {
-        location.href = "login.html";
+        window.location.replace("login.html");
         return;
     }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -870,18 +870,17 @@ async function editName() {
     } catch(e) { alert("Error: " + e.message); }
 }
 
-function logout() {
+async function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
     if (userId) {
         const docId = userId.length === 10 ? "91" + userId : userId;
-        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+        try {
+            await firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+        } catch(e) { console.error(e); }
     }
-    localStorage.getItem("rdxLoggedIn");
-    localStorage.removeItem("rdxLoggedIn");
-    localStorage.removeItem("rdxFirebaseUserId");
-    localStorage.removeItem("rdxVerifiedMobile");
-    localStorage.removeItem("rdxAccessToken");
-    location.href = "login.html";
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("login.html");
 }
 
 window.addEventListener("load", loadUserProfile);
