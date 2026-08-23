@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Battles</title>
 
+<!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
@@ -13,84 +16,399 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    min-height:100vh;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
     color:#101a38;
-    padding-bottom:95px;
+    min-height:100vh;
+    padding-bottom:100px;
 }
 button,input{font:inherit;}
 
-/* HEADER */
-.header{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;position:sticky;top:0;z-index:1000;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
+/* TOP HEADER */
+.top-header{
+    height:66px;
+    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 4px 18px rgba(2,132,199,0.08);
+}
 .header-left{display:flex;align-items:center;gap:10px;}
-.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff755e,#ff9270);color:#fff;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#dbeafe);border:2.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:900;cursor:pointer;}
-.header-actions{display:flex;align-items:center;gap:8px;}
-.header-icon{width:38px;height:38px;border-radius:50%;border:0;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;background:linear-gradient(145deg,#6366f1,#818cf8);color:white;}
-.coin-head{min-width:68px;height:38px;border-radius:19px;border:0;background:linear-gradient(145deg,#16a34a,#22c55e);color:white;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;padding:0 10px;}
+.menu-btn{
+    width:42px;
+    height:42px;
+    border:0;
+    border-radius:14px;
+    background:linear-gradient(145deg,#ff7165,#ff8a70);
+    color:white;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.logo{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:2.5px solid #93c5fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#0284c7;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{
+    height:38px;
+    padding:0 10px;
+    border:0;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    font-size:13px;
+    font-weight:800;
+    color:white;
+    cursor:pointer;
+}
+.icon-only{width:38px;padding:0;border-radius:50%;}
+.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
+.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);}
+.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);}
 
-.container{width:100%;max-width:650px;margin:auto;padding:16px 14px 100px;}
-.create-card{border:1.5px solid #7dd3fc;border-radius:20px;padding:14px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);display:flex;align-items:center;gap:10px;margin-bottom:18px;box-shadow:0 6px 18px rgba(2,132,199,0.08);}
-.amount-input{flex:1;min-width:0;height:48px;border:1.5px solid #bae6fd;border-radius:14px;background:#ffffff;padding:0 14px;outline:none;font-size:15px;font-weight:800;color:#0f172a;}
-.set-btn{height:48px;min-width:90px;border:0;border-radius:14px;background:linear-gradient(145deg,#0284c7,#0369a1);color:white;font-size:16px;font-weight:850;cursor:pointer;}
+.container{width:100%;max-width:650px;margin:auto;padding:14px;}
 
-.section-title{display:flex;align-items:center;gap:6px;margin:18px 0 10px;font-size:16px;font-weight:900;color:#0c4a6e;}
-.battle{background:#ffffff;border:1.5px solid #bae6fd;border-radius:18px;padding:14px;margin-bottom:12px;box-shadow:0 4px 14px rgba(2,132,199,0.06);}
-.battle-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.status-badge{padding:4px 10px;border-radius:10px;font-size:10px;font-weight:800;text-transform:uppercase;}
-.status-open{background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;}
-.status-live{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
+/* SET BATTLE CARD */
+.set-card{
+    background:#ffffff;
+    border:1.5px solid #7dd3fc;
+    border-radius:22px;
+    padding:14px 16px;
+    box-shadow:0 6px 18px rgba(2,132,199,0.08);
+    display:flex;
+    gap:10px;
+    align-items:center;
+    margin-bottom:20px;
+}
+.bet-input{
+    flex:1;
+    height:48px;
+    border:1.5px solid #bae6fd;
+    background:#f8fafc;
+    border-radius:14px;
+    padding:0 14px;
+    font-size:16px;
+    font-weight:800;
+    color:#0c4a6e;
+    outline:none;
+}
+.bet-input:focus{border-color:#0284c7;background:#ffffff;}
+.btn-set{
+    width:90px;
+    height:48px;
+    border:0;
+    border-radius:14px;
+    background:linear-gradient(100deg,#2563eb,#1d4ed8);
+    color:white;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(37,99,235,0.3);
+}
 
-.battle-middle{display:grid;grid-template-columns:1fr 1fr;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;overflow:hidden;margin-bottom:10px;}
-.money-box{padding:8px 12px;}
-.money-box + .money-box{border-left:1px solid #e2e8f0;text-align:right;}
-.money-label{display:block;color:#64748b;font-size:10px;font-weight:800;}
-.money-value{display:block;margin-top:2px;font-size:17px;font-weight:900;}
-.prize-value{color:#0284c7;}
-.play-btn{width:100%;height:42px;border:0;border-radius:12px;background:linear-gradient(100deg,#0284c7,#0369a1);color:white;font-size:14px;font-weight:850;cursor:pointer;}
+/* SECTION TITLES */
+.section-head{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:17px;
+    font-weight:900;
+    color:#0c4a6e;
+    margin:18px 0 10px;
+}
 
-.player-row{display:grid;grid-template-columns:1fr 34px 1fr;align-items:center;gap:6px;margin-bottom:10px;}
-.player{display:flex;align-items:center;gap:6px;}
-.player.right{justify-content:flex-end;text-align:right;}
-.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#e0f2fe;color:#0284c7;font-weight:800;font-size:12px;}
-.player-name{font-size:12px;font-weight:750;}
-.vs{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#0284c7;color:#fff;font-size:10px;font-weight:900;margin:auto;}
+/* BATTLE CARDS */
+.battle-card{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    padding:14px 16px;
+    margin-bottom:12px;
+    box-shadow:0 4px 14px rgba(2,132,199,0.05);
+}
+.card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+}
+.badge-tag{
+    padding:3px 8px;
+    border-radius:8px;
+    font-size:10px;
+    font-weight:850;
+    letter-spacing:0.5px;
+    text-transform:uppercase;
+}
+.tag-open{background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;}
+.tag-req{background:#fef3c7;color:#b45309;border:1px solid #fde68a;}
+.tag-live{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.tag-conflict{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
 
-/* MODAL */
-.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:3000;display:none;align-items:flex-end;justify-content:center;}
-.modal-overlay.show{display:flex;}
-.room-modal{background:#ffffff;width:100%;max-width:520px;border-radius:24px 24px 0 0;padding:20px 18px 24px;max-height:85vh;overflow-y:auto;}
-.modal-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #e2e8f0;padding-bottom:10px;}
-.modal-title{font-size:16px;font-weight:900;}
-.modal-close{background:#f1f5f9;border:0;width:32px;height:32px;border-radius:50%;font-size:15px;cursor:pointer;}
-.code-display-box{background:#f0f9ff;border:2px dashed #7dd3fc;border-radius:16px;padding:14px;text-align:center;margin:14px 0;}
-.code-display-box strong{display:block;font-size:28px;font-weight:900;color:#0284c7;letter-spacing:3px;margin-top:3px;}
-.input-room-code{width:100%;height:46px;border:1.5px solid #cbd5e1;border-radius:12px;padding:0 12px;font-size:15px;text-align:center;outline:none;margin-top:6px;}
-.btn-ludo-app{width:100%;height:46px;border:0;border-radius:14px;background:linear-gradient(135deg,#16a34a,#15803d);color:#fff;font-size:15px;font-weight:850;cursor:pointer;margin-top:8px;}
-.result-section{border-top:1px solid #e2e8f0;margin-top:14px;padding-top:12px;}
-.result-title{font-size:12px;font-weight:800;color:#475569;margin-bottom:8px;text-align:center;}
-.result-buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.btn-won{background:#dcfce7;border:1.5px solid #86efac;color:#15803d;height:42px;border-radius:10px;font-weight:850;cursor:pointer;}
-.btn-lost{background:#fee2e2;border:1.5px solid #fca5a5;color:#b91c1c;height:42px;border-radius:10px;font-weight:850;cursor:pointer;}
-.btn-cancel-match{width:100%;margin-top:10px;height:38px;background:#f8fafc;border:1px solid #cbd5e1;color:#64748b;border-radius:10px;font-size:12px;font-weight:750;cursor:pointer;}
-.empty{padding:25px 12px;text-align:center;color:#78849a;background:#fff;border:1px dashed #cbd5e8;border-radius:16px;font-size:13px;}
+.user-tag{font-size:11px;font-weight:700;color:#64748b;}
+.user-tag strong{color:#0c4a6e;}
 
-.toast{position:fixed;left:50%;top:80px;transform:translateX(-50%) translateY(-20px);background:#182440;color:white;padding:10px 16px;border-radius:12px;opacity:0;pointer-events:none;transition:.25s;z-index:5000;font-size:13px;text-align:center;}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.battle-meta{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border-top:1px dashed #e2e8f0;
+    border-bottom:1px dashed #e2e8f0;
+    padding:8px 0;
+    margin-bottom:10px;
+}
+.meta-col small{font-size:10px;font-weight:800;color:#64748b;}
+.meta-col strong{display:block;font-size:16px;font-weight:900;color:#0c4a6e;}
+
+.vs-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin:10px 0;
+}
+.player-box{display:flex;align-items:center;gap:8px;}
+.player-avatar{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    background:#0284c7;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:13px;
+    font-weight:800;
+}
+.player-name{font-size:13px;font-weight:800;color:#0c4a6e;}
+.vs-circle{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    background:#3b82f6;
+    color:white;
+    font-size:10px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.card-actions{display:flex;justify-content:flex-end;gap:8px;}
+.btn-play{background:linear-gradient(100deg,#2563eb,#1d4ed8);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-delete{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-start{background:linear-gradient(100deg,#16a34a,#15803d);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-reject{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+
+/* MATCH ROOM VIEW (VIEW 2) */
+#roomView{display:none;}
+.back-top-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:8px 16px;
+    border-radius:20px;
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    color:#0c4a6e;
+    font-size:13px;
+    font-weight:850;
+    cursor:pointer;
+    margin-bottom:14px;
+}
+.room-box{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    padding:16px;
+    margin-bottom:12px;
+}
+.room-code-display{
+    background:#f0f9ff;
+    border:1.5px solid #bae6fd;
+    border-radius:16px;
+    padding:12px 16px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:10px;
+}
+.room-code-display strong{font-size:22px;color:#0284c7;font-weight:900;letter-spacing:2px;}
+.btn-copy{background:#2563eb;color:white;border:0;padding:8px 18px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-open-ludo{
+    width:100%;
+    padding:12px;
+    border:1.5px solid #bae6fd;
+    border-radius:16px;
+    background:#ffffff;
+    color:#0c4a6e;
+    font-weight:850;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    margin-bottom:12px;
+}
+.rules-box{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    padding:16px;
+    margin-bottom:12px;
+}
+.rule-item{
+    background:#f0f9ff;
+    border:1px solid #bae6fd;
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:12px;
+    color:#334155;
+    font-weight:700;
+    margin-bottom:6px;
+}
+.status-update-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
+    margin-top:10px;
+}
+.btn-won{background:#16a34a;color:white;border:0;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-lost{background:#dc2626;color:white;border:0;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-cancel{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
+
+/* INSUFFICIENT BALANCE POPUP MODAL */
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.6);
+    backdrop-filter:blur(4px);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+}
+.modal-box{
+    width:100%;
+    max-width:340px;
+    background:#ffffff;
+    border-radius:24px;
+    padding:24px 20px;
+    text-align:center;
+    position:relative;
+    box-shadow:0 20px 50px rgba(0,0,0,0.25);
+}
+.modal-close-btn{
+    position:absolute;
+    top:14px;
+    right:14px;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    background:#f1f5f9;
+    color:#64748b;
+    border:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.error-icon-box{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:#fee2e2;
+    color:#ef4444;
+    font-size:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 12px;
+}
+.btn-modal-ok{
+    width:100%;
+    height:46px;
+    border:0;
+    border-radius:23px;
+    background:linear-gradient(100deg,#3b82f6,#2563eb);
+    color:white;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    margin-top:16px;
+}
 
 /* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
-.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:74px;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(12px);
+    border-top:1.5px solid #e2e8f0;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:200;
+    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
+}
+.nav-item{
+    width:25%;
+    height:100%;
+    border:0;
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    color:#64748b;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    position:relative;
+}
+.nav-icon-box{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    color:#ffffff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 .nav-item.active{color:#101a38;font-weight:800;}
 .nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#6366f1;}
 </style>
@@ -98,69 +416,138 @@ button,input{font:inherit;}
 
 <body>
 
-<header class="header">
+<header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
         <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
     </div>
-    <div class="header-actions">
-        <button class="header-icon" onclick="location.href='notification.html'">🔔</button>
-        <div class="coin-head" onclick="location.href='wallet.html'">
-            🪙 <span id="headerBalance">0</span>
-        </div>
+    <div class="header-right">
+        <button class="header-icon notification icon-only" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁 <span id="topReferral">0</span></button>
     </div>
 </header>
 
 <main class="container">
-    <div class="create-card">
-        <input id="amountInput" class="amount-input" type="number" min="10" step="10" placeholder="Enter Amount (e.g. 50, 100)" inputmode="numeric">
-        <button class="set-btn" id="setBtn" onclick="createBattle()">SET</button>
+
+    <!-- VIEW 1: BATTLE LOBBY -->
+    <div id="lobbyView">
+        <!-- SET BATTLE -->
+        <div class="set-card">
+            <input type="number" id="battleAmountInput" class="bet-input" placeholder="Enter Amount (Min ₹100)" min="100">
+            <button class="btn-set" onclick="createBattle()">SET</button>
+        </div>
+
+        <!-- OPEN BATTLES -->
+        <div class="section-head"><i class="fa-solid fa-crosshairs" style="color:#0284c7;"></i> Open Battles</div>
+        <div id="openBattlesList">
+            <p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">Loading open battles...</p>
+        </div>
+
+        <!-- RUNNING BATTLES -->
+        <div class="section-head"><i class="fa-solid fa-fire-flame-curved" style="color:#ea580c;"></i> Running Battles</div>
+        <div id="runningBattlesList">
+            <p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">Loading running battles...</p>
+        </div>
     </div>
 
-    <div class="section-title"><span>⚔️ Open Battles</span></div>
-    <div id="openBattles"><div class="empty">Open battles loading...</div></div>
+    <!-- VIEW 2: ACTIVE MATCH ROOM -->
+    <div id="roomView">
+        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back</button>
 
-    <div class="section-title" style="margin-top:20px;"><span>🔥 Running Battles</span></div>
-    <div id="runningBattles"><div class="empty">Running battles loading...</div></div>
+        <div class="battle-card" style="margin-bottom:12px;">
+            <span class="badge-tag tag-live">● LIVE MATCH</span>
+            <div class="battle-meta" style="margin-top:8px;">
+                <div class="meta-col"><small>ENTRY</small><strong id="roomEntryFee">₹100</strong></div>
+                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong id="roomPrizeFee" style="color:#16a34a;">₹190</strong></div>
+            </div>
+            <div class="vs-row">
+                <div class="player-box">
+                    <div class="player-avatar" id="roomP1Avatar">P1</div>
+                    <span class="player-name" id="roomP1Name">Player 1</span>
+                </div>
+                <div class="vs-circle">VS</div>
+                <div class="player-box">
+                    <span class="player-name" id="roomP2Name">Player 2</span>
+                    <div class="player-avatar" id="roomP2Avatar" style="background:#ea580c;">P2</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ROOM CODE BOX -->
+        <div class="room-box">
+            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-key"></i> Room Code</h4>
+            <small style="color:#64748b; font-weight:600;">Share & join in Ludo King</small>
+
+            <!-- If Creator & Code Missing -->
+            <div id="setRoomCodeWrap" style="display:none; margin-top:10px;">
+                <div style="display:flex; gap:8px;">
+                    <input type="text" id="manualRoomCodeInput" class="bet-input" placeholder="Create room in Ludo King & paste code">
+                    <button class="btn-set" onclick="submitRoomCode()">SET</button>
+                </div>
+            </div>
+
+            <!-- If Code Available -->
+            <div class="room-code-display" id="showRoomCodeWrap" style="display:none;">
+                <strong id="displayRoomCode">--------</strong>
+                <button class="btn-copy" onclick="copyRoomCode()"><i class="fa-solid fa-copy"></i> Copy</button>
+            </div>
+
+            <!-- If Opponent waiting for code -->
+            <div id="waitingForCodeWrap" style="display:none; text-align:center; padding:12px 0;">
+                <p style="color:#64748b; font-size:12px; font-weight:700;">Waiting for opponent to create room code...</p>
+            </div>
+        </div>
+
+        <button class="btn-open-ludo" onclick="window.open('https://ludoking.com/', '_blank')">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> Play game in Ludo King App
+        </button>
+
+        <div class="rules-box">
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-shield"></i> Match Rules</h4>
+            <div class="rule-item">• Record every game</div>
+            <div class="rule-item">• Video proof required for dispute</div>
+            <div class="rule-item">• Wrong result = Penalty on account</div>
+            <div class="rule-item">• Result not updated → Penalty ₹25</div>
+        </div>
+
+        <!-- RESULT UPDATE -->
+        <div class="room-box">
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
+            <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
+
+            <div class="status-update-grid" id="resultBtnGrid">
+                <button class="btn-won" onclick="submitGameResult('won')"><i class="fa-solid fa-trophy"></i> I Won</button>
+                <button class="btn-lost" onclick="submitGameResult('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
+                <button class="btn-cancel" onclick="submitGameResult('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
+            </div>
+            <div id="resultSubmittedMsg" style="display:none; text-align:center; padding:12px 0; color:#0284c7; font-weight:800; font-size:13px;">
+                Result Submitted. Waiting for confirmation...
+            </div>
+        </div>
+    </div>
+
 </main>
 
-<div class="modal-overlay" id="roomModal">
-    <div class="room-modal">
-        <div class="modal-top">
-            <span class="modal-title">🎲 Ludo King Battle Room</span>
-            <button class="modal-close" onclick="closeRoomModal()">✕</button>
-        </div>
-        <div class="code-display-box" id="codeBox">
-            <small style="font-size:11px;font-weight:800;color:#64748b;">LUDO KING ROOM CODE</small>
-            <strong id="displayRoomCode">WAITING...</strong>
-        </div>
-        <div id="hostCodeSection" style="display:none; margin-bottom:10px;">
-            <label style="font-size:11px; font-weight:800; color:#64748b;">ENTER LUDO KING ROOM CODE:</label>
-            <input type="text" id="inputLudoCode" class="input-room-code" placeholder="8-Digit Code">
-            <button class="play-btn" style="margin-top:6px;" onclick="updateRoomCode()">Save & Share Code</button>
-        </div>
-        <button class="btn-ludo-app" id="btnOpenLudo" onclick="launchLudoKing()">
-            🚀 Copy Code & Open Ludo King
-        </button>
-        <div class="result-section">
-            <div class="result-title">MATCH KHATAM HONE KE BAAD RESULT SELECT KAREIN:</div>
-            <div class="result-buttons">
-                <button class="btn-won" onclick="submitMatchResult('won')">🏆 I WON</button>
-                <button class="btn-lost" onclick="submitMatchResult('lost')">❌ I LOST</button>
-            </div>
-            <button class="btn-cancel-match" onclick="cancelOrDisputeMatch()">⚠️ Cancel / Report Issue</button>
-        </div>
+<!-- INSUFFICIENT BALANCE MODAL -->
+<div class="modal-overlay" id="errorModal">
+    <div class="modal-box">
+        <button class="modal-close-btn" onclick="closeErrorModal()"><i class="fa-solid fa-xmark"></i></button>
+        <div class="error-icon-box"><i class="fa-solid fa-circle-xmark"></i></div>
+        <small style="font-size:11px; font-weight:850; color:#ef4444; letter-spacing:1px;">ERROR</small>
+        <h3 style="font-size:18px; font-weight:900; color:#0f172a; margin:4px 0;">Error</h3>
+        <p style="font-size:13px; color:#64748b; font-weight:600;" id="errorModalMsg">Insufficient balance</p>
+        <button class="btn-modal-ok" onclick="closeErrorModal()">OK</button>
     </div>
 </div>
 
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
     <button class="nav-item active" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
     <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
     <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
-
-<div class="toast" id="toast"></div>
 
 <script>
 const firebaseConfig = {
@@ -171,273 +558,294 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-let db = null;
-try {
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    db = firebase.firestore();
-} catch(e) { console.error(e); }
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseDB = firebase.firestore();
 
-function getUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserId") || "";
+function getCleanUserId() {
+    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
-const currentUserId = getUserId();
-let currentBalance = 0;
-let activeRoomData = null;
-let activeRoomUnsub = null;
+const userId = getCleanUserId();
+let myCurrentBalance = 0;
+let myUserName = "User";
+let activeBattleId = null;
 
-if (!currentUserId) location.href = "login.html";
-
-function showMessage(msg) {
-    const t = document.getElementById("toast");
-    t.textContent = msg;
-    t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 2500);
+function showErrorModal(msg) {
+    document.getElementById("errorModalMsg").textContent = msg;
+    document.getElementById("errorModal").style.display = "flex";
+}
+function closeErrorModal() {
+    document.getElementById("errorModal").style.display = "none";
 }
 
-async function loadBalance() {
-    try {
-        let docId = currentUserId.length === 10 ? "91" + currentUserId : currentUserId;
-        const snap = await db.collection("customers").doc(docId).get();
-        if (snap.exists) {
-            currentBalance = Number(snap.data().balance || 0);
-            document.getElementById("headerBalance").textContent = currentBalance;
+async function loadUserData() {
+    if(!userId){ location.href = "login.html"; return; }
+    const docId = userId.length === 10 ? "91" + userId : userId;
+    firebaseDB.collection("customers").doc(docId).onSnapshot(snap => {
+        if(snap.exists){
+            const d = snap.data();
+            myCurrentBalance = Number(d.balance || 0);
+            myUserName = d.name || ("User " + userId.slice(-4));
+            document.getElementById("topBalance").textContent = myCurrentBalance;
+            document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
-    } catch(err) { console.error(err); }
-}
-
-function listenBattles() {
-    db.collection("rooms").where("status", "in", ["open", "running"]).onSnapshot(snapshot => {
-        let rooms = [];
-        snapshot.forEach(doc => rooms.push({ id: doc.id, ...doc.data() }));
-        rooms.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
-
-        const open = rooms.filter(r => r.status === "open");
-        const running = rooms.filter(r => r.status === "running");
-        renderOpen(open);
-        renderRunning(running);
     });
 }
 
-function renderOpen(rooms) {
-    const container = document.getElementById("openBattles");
-    if (!rooms.length) {
-        container.innerHTML = `<div class="empty">Abhi koi Open Battle nahi hai.<br>Upar amount daalkar challenge banayein.</div>`;
-        return;
-    }
-    container.innerHTML = rooms.map(r => {
-        const isMine = String(r.hostId).replace(/\D/g,"") === currentUserId;
-        return `
-            <div class="battle">
-                <div class="battle-top">
-                    <span class="status-badge status-open">⚔ OPEN</span>
-                    <span style="font-size:12px; color:#64748b;">BY: <b>${r.hostName || 'Player'}</b></span>
-                </div>
-                <div class="battle-middle">
-                    <div class="money-box"><span class="money-label">ENTRY FEE</span><span class="money-value">₹${r.entry}</span></div>
-                    <div class="money-box"><span class="money-label">WIN PRIZE</span><span class="money-value prize-value">₹${r.prize}</span></div>
-                </div>
-                ${isMine ? 
-                    `<button class="play-btn" style="background:#64748b;" onclick="openRoomModal('${r.id}')">⏳ Waiting for Player... (View)</button>` : 
-                    `<button class="play-btn" onclick="joinBattle('${r.id}', ${r.entry})">Play ₹${r.entry}</button>`
-                }
-            </div>
-        `;
-    }).join("");
-}
-
-function renderRunning(rooms) {
-    const container = document.getElementById("runningBattles");
-    if (!rooms.length) {
-        container.innerHTML = `<div class="empty">Abhi koi Running Battle nahi hai.</div>`;
-        return;
-    }
-    container.innerHTML = rooms.map(r => {
-        const isMyMatch = (String(r.hostId).replace(/\D/g,"") === currentUserId) || (String(r.player2Id).replace(/\D/g,"") === currentUserId);
-        return `
-            <div class="battle">
-                <div class="battle-top">
-                    <span class="status-badge status-live">● LIVE MATCH</span>
-                    <span style="font-size:12px; color:#64748b;">PRIZE: <b style="color:#16a34a;">₹${r.prize}</b></span>
-                </div>
-                <div class="player-row">
-                    <div class="player"><div class="avatar">👤</div><span class="player-name">${r.hostName || 'Host'}</span></div>
-                    <div class="vs">VS</div>
-                    <div class="player right"><span class="player-name">${r.player2Name || 'Player 2'}</span><div class="avatar">👤</div></div>
-                </div>
-                ${isMyMatch ? 
-                    `<button class="play-btn" style="background:#16a34a;" onclick="openRoomModal('${r.id}')">🎲 Open Ludo King Room</button>` : 
-                    `<button class="play-btn" style="background:#94a3b8;" disabled>🔒 Live Match</button>`
-                }
-            </div>
-        `;
-    }).join("");
-}
-
+// 1. CREATE BATTLE (Min ₹100)
 async function createBattle() {
-    const amount = Number(document.getElementById("amountInput").value);
-    if (!amount || amount < 10) return showMessage("Min battle entry ₹10 hai");
-    if (amount > currentBalance) return showMessage("Paryapt balance nahi hai");
-
-    const btn = document.getElementById("setBtn");
-    btn.disabled = true;
-
-    try {
-        let docId = currentUserId.length === 10 ? "91" + currentUserId : currentUserId;
-        const prize = Math.floor(amount * 1.90);
-
-        await db.runTransaction(async t => {
-            const uRef = db.collection("customers").doc(docId);
-            const uSnap = await t.get(uRef);
-            const bal = Number(uSnap.data()?.balance || 0);
-            if (bal < amount) throw new Error("Insufficient balance");
-
-            t.update(uRef, { balance: bal - amount });
-            const rRef = db.collection("rooms").doc();
-            t.set(rRef, {
-                hostId: currentUserId,
-                hostName: (localStorage.getItem("rdxUsername") || ("User " + currentUserId.slice(-4))).split(" ")[0],
-                entry: amount,
-                prize: prize,
-                status: "open",
-                roomCode: "",
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-        });
-
-        document.getElementById("amountInput").value = "";
-        await loadBalance();
-        showMessage("Battle create ho gayi!");
-    } catch(err) {
-        showMessage(err.message);
+    const amt = Number(document.getElementById("battleAmountInput").value);
+    if(isNaN(amt) || amt < 100){
+        alert("Kam se kam ₹100 ka match set karein.");
+        return;
     }
-    btn.disabled = false;
-}
+    if(myCurrentBalance < amt){
+        showErrorModal("Insufficient balance");
+        return;
+    }
 
-async function joinBattle(roomId, entry) {
-    if (entry > currentBalance) return showMessage("Paryapt balance nahi hai");
-    if (!confirm(`Kya aap ₹${entry} ki battle join karna chahte hain?`)) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
+    const prize = Math.round(amt * 1.90);
 
     try {
-        let docId = currentUserId.length === 10 ? "91" + currentUserId : currentUserId;
-        await db.runTransaction(async t => {
-            const rRef = db.collection("rooms").doc(roomId);
-            const uRef = db.collection("customers").doc(docId);
-            const rSnap = await t.get(rRef);
-            const uSnap = await t.get(uRef);
-
-            if (rSnap.data().status !== "open") throw new Error("Battle already shuru ho chuki hai");
-            const bal = Number(uSnap.data()?.balance || 0);
-            if (bal < entry) throw new Error("Insufficient balance");
-
-            t.update(uRef, { balance: bal - entry });
-            t.update(rRef, {
-                player2Id: currentUserId,
-                player2Name: (localStorage.getItem("rdxUsername") || ("User " + currentUserId.slice(-4))).split(" ")[0],
-                status: "running",
-                joinedAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
+        await firebaseDB.collection("battles").add({
+            creatorUid: docId,
+            creatorName: myUserName,
+            creatorMobile: "+" + userId,
+            amount: amt,
+            prize: prize,
+            status: "open",
+            acceptedUid: null,
+            acceptedName: null,
+            roomCode: null,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            requestTime: null
         });
-        await loadBalance();
-        openRoomModal(roomId);
-    } catch(err) { showMessage(err.message); }
+        document.getElementById("battleAmountInput").value = "";
+    } catch(err) {
+        alert("Error: " + err.message);
+    }
 }
 
-function openRoomModal(roomId) {
-    const modal = document.getElementById("roomModal");
-    modal.classList.add("show");
-    if (activeRoomUnsub) activeRoomUnsub();
+// 2. REAL-TIME BATTLES LISTENER
+function listenBattles() {
+    const docId = userId.length === 10 ? "91" + userId : userId;
 
-    activeRoomUnsub = db.collection("rooms").doc(roomId).onSnapshot(doc => {
-        if (!doc.exists) { closeRoomModal(); return; }
-        activeRoomData = { id: doc.id, ...doc.data() };
-        renderModalData();
+    firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
+        let openHTML = "";
+        let runningHTML = "";
+
+        snap.forEach(doc => {
+            const b = doc.data();
+            const bId = doc.id;
+            const isCreator = b.creatorUid === docId;
+            const isAccepter = b.acceptedUid === docId;
+
+            // Check Active Match View
+            if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+                activeBattleId = bId;
+                renderRoomView(b, isCreator);
+            }
+
+            // A. OPEN & REQUESTED BATTLES
+            if(b.status === "open" || b.status === "requested"){
+                if(b.status === "open"){
+                    openHTML += `
+                        <div class="battle-card">
+                            <div class="card-top">
+                                <span class="badge-tag tag-open">⚔ OPEN</span>
+                                <span class="user-tag">FROM <strong>${b.creatorName}</strong></span>
+                            </div>
+                            <div class="battle-meta">
+                                <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
+                                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
+                            </div>
+                            <div class="card-actions">
+                                ${isCreator ? `<button class="btn-delete" onclick="deleteBattle('${bId}')"><i class="fa-solid fa-trash"></i> Delete</button>` : `<button class="btn-play" onclick="requestPlayBattle('${bId}', ${b.amount})">Play</button>`}
+                            </div>
+                        </div>
+                    `;
+                } else if(b.status === "requested"){
+                    openHTML += `
+                        <div class="battle-card">
+                            <div class="card-top">
+                                <span class="badge-tag tag-req">⚔ REQUESTED</span>
+                                <span class="user-tag">FROM <strong>${b.creatorName}</strong> ACCEPTED <strong>${b.acceptedName}</strong></span>
+                            </div>
+                            <div class="battle-meta">
+                                <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
+                                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
+                            </div>
+                            <div class="card-actions">
+                                ${isCreator ? `<button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Start</button><button class="btn-reject" onclick="rejectBattleRequest('${bId}')">✕ Reject</button>` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Waiting for Creator...</span>`}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // B. RUNNING BATTLES
+            if(b.status === "live" || b.status === "conflict"){
+                runningHTML += `
+                    <div class="battle-card" onclick="openRunningMatch('${bId}')" style="cursor:pointer;">
+                        <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
+                        <div class="battle-meta" style="margin-top:6px;">
+                            <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
+                            <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
+                        </div>
+                        <div class="vs-row">
+                            <div class="player-box"><span class="player-name">${b.creatorName}</span></div>
+                            <div class="vs-circle">VS</div>
+                            <div class="player-box"><span class="player-name">${b.acceptedName}</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
+        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live running battles.</p>`;
     });
 }
 
-function renderModalData() {
-    if (!activeRoomData) return;
-    const isHost = String(activeRoomData.hostId).replace(/\D/g,"") === currentUserId;
-    const codeDisplay = document.getElementById("displayRoomCode");
-    const hostCodeSection = document.getElementById("hostCodeSection");
+// DELETE BATTLE
+async function deleteBattle(bId) {
+    if(!confirm("Battle delete karein?")) return;
+    await firebaseDB.collection("battles").doc(bId).delete();
+}
 
-    if (activeRoomData.roomCode && activeRoomData.roomCode.trim() !== "") {
-        codeDisplay.textContent = activeRoomData.roomCode;
-        hostCodeSection.style.display = "none";
+// REQUEST TO PLAY (Balance Check)
+async function requestPlayBattle(bId, amt) {
+    if(myCurrentBalance < amt){
+        showErrorModal("Insufficient balance");
+        return;
+    }
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "requested",
+        acceptedUid: docId,
+        acceptedName: myUserName,
+        requestTime: firebase.firestore.FieldValue.serverTimestamp()
+    });
+}
+
+// REJECT BATTLE
+async function rejectBattleRequest(bId) {
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "open",
+        acceptedUid: null,
+        acceptedName: null,
+        requestTime: null
+    });
+}
+
+// START BATTLE (DEDUCT WALLET ONLY WHEN MATCH STARTS)
+async function startBattle(bId, amt, oppUid) {
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    try {
+        await firebaseDB.runTransaction(async t => {
+            const p1Ref = firebaseDB.collection("customers").doc(docId);
+            const p2Ref = firebaseDB.collection("customers").doc(oppUid);
+            const bRef = firebaseDB.collection("battles").doc(bId);
+
+            const p1Snap = await t.get(p1Ref);
+            const p2Snap = await t.get(p2Ref);
+
+            const p1Bal = Number(p1Snap.data()?.balance || 0);
+            const p2Bal = Number(p2Snap.data()?.balance || 0);
+
+            if(p1Bal < amt || p2Bal < amt){
+                throw new Error("Kisi player ke pass balance kam hai.");
+            }
+
+            // Deduct entry fee from both players
+            t.update(p1Ref, { balance: p1Bal - amt });
+            t.update(p2Ref, { balance: p2Bal - amt });
+
+            // Mark match Live
+            t.update(bRef, {
+                status: "live",
+                startedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+    } catch(err) {
+        alert(err.message);
+    }
+}
+
+// RENDER ACTIVE ROOM VIEW
+function renderRoomView(b, isCreator) {
+    document.getElementById("lobbyView").style.display = "none";
+    document.getElementById("roomView").style.display = "block";
+
+    document.getElementById("roomEntryFee").textContent = "₹" + b.amount;
+    document.getElementById("roomPrizeFee").textContent = "₹" + b.prize;
+    document.getElementById("roomP1Name").textContent = b.creatorName;
+    document.getElementById("roomP2Name").textContent = b.acceptedName;
+    document.getElementById("roomP1Avatar").textContent = b.creatorName.charAt(0).toUpperCase();
+    document.getElementById("roomP2Avatar").textContent = b.acceptedName.charAt(0).toUpperCase();
+
+    if(b.roomCode){
+        document.getElementById("setRoomCodeWrap").style.display = "none";
+        document.getElementById("waitingForCodeWrap").style.display = "none";
+        document.getElementById("showRoomCodeWrap").style.display = "flex";
+        document.getElementById("displayRoomCode").textContent = b.roomCode;
     } else {
-        if (isHost) {
-            codeDisplay.textContent = "ENTER CODE BELOW";
-            hostCodeSection.style.display = "block";
+        if(isCreator){
+            document.getElementById("setRoomCodeWrap").style.display = "block";
+            document.getElementById("waitingForCodeWrap").style.display = "none";
+            document.getElementById("showRoomCodeWrap").style.display = "none";
         } else {
-            codeDisplay.textContent = "WAITING FOR HOST...";
-            hostCodeSection.style.display = "none";
+            document.getElementById("setRoomCodeWrap").style.display = "none";
+            document.getElementById("waitingForCodeWrap").style.display = "block";
+            document.getElementById("showRoomCodeWrap").style.display = "none";
         }
     }
 }
 
-function closeRoomModal() {
-    document.getElementById("roomModal").classList.remove("show");
-    if (activeRoomUnsub) activeRoomUnsub();
-    activeRoomData = null;
+async function submitRoomCode() {
+    const code = document.getElementById("manualRoomCodeInput").value.trim();
+    if(!code){ alert("Room code likhein."); return; }
+    await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
 }
 
-async function updateRoomCode() {
-    const code = document.getElementById("inputLudoCode").value.trim();
-    if (!code || code.length < 6) return showMessage("Valid Ludo King room code daalein");
-    try {
-        await db.collection("rooms").doc(activeRoomData.id).update({ roomCode: code });
-        showMessage("Room code update ho gaya!");
-    } catch(err) { showMessage(err.message); }
+function copyRoomCode() {
+    const code = document.getElementById("displayRoomCode").textContent;
+    navigator.clipboard.writeText(code);
+    alert("Room Code Copied: " + code);
 }
 
-function launchLudoKing() {
-    if (activeRoomData?.roomCode) {
-        navigator.clipboard.writeText(activeRoomData.roomCode);
-        showMessage("Room Code Copied: " + activeRoomData.roomCode);
-    }
-    setTimeout(() => { window.location.href = "ludoking://"; }, 400);
+// SUBMIT RESULT (WIN / LOSS / CANCEL)
+async function submitGameResult(type) {
+    if(!confirm("Result submit karein?")) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    await firebaseDB.collection("battles").doc(activeBattleId).update({
+        [`result_${docId}`]: type
+    });
+
+    document.getElementById("resultBtnGrid").style.display = "none";
+    document.getElementById("resultSubmittedMsg").style.display = "block";
 }
 
-async function submitMatchResult(result) {
-    if (!activeRoomData) return;
-    if (!confirm(`Kya aap confirm karte hain ki aap match '${result.toUpperCase()}' kar chuke hain?`)) return;
-
-    try {
-        await db.collection("rooms").doc(activeRoomData.id).update({
-            [`result_${currentUserId}`]: result,
-            status: result === 'lost' ? 'completed' : 'under_review'
-        });
-        showMessage("Result submit ho gaya. Admin verify karega.");
-        closeRoomModal();
-    } catch(err) { showMessage(err.message); }
+function showLobbyView() {
+    document.getElementById("roomView").style.display = "none";
+    document.getElementById("lobbyView").style.display = "block";
 }
 
-async function cancelOrDisputeMatch() {
-    if (!activeRoomData) return;
-    if (activeRoomData.status === "open") {
-        if (!confirm("Room cancel karke amount refund lein?")) return;
-        try {
-            let docId = currentUserId.length === 10 ? "91" + currentUserId : currentUserId;
-            await db.runTransaction(async t => {
-                const rRef = db.collection("rooms").doc(activeRoomData.id);
-                const uRef = db.collection("customers").doc(docId);
-                const uSnap = await t.get(uRef);
-                t.update(uRef, { balance: Number(uSnap.data()?.balance || 0) + Number(activeRoomData.entry) });
-                t.delete(rRef);
-            });
-            await loadBalance();
-            closeRoomModal();
-            showMessage("Room cancel ho gaya.");
-        } catch(e) { showMessage(e.message); }
-    } else {
-        showMessage("Match running hai. Kripya Support par screenshot bhejein.");
-    }
+function openRunningMatch(bId) {
+    activeBattleId = bId;
+    document.getElementById("lobbyView").style.display = "none";
+    document.getElementById("roomView").style.display = "block";
 }
 
-window.addEventListener("load", async () => {
-    await loadBalance();
+window.addEventListener("load", () => {
+    loadUserData();
     listenBattles();
 });
 </script>
+
 </body>
 </html>
