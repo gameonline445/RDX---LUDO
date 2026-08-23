@@ -300,6 +300,29 @@ button,input{font:inherit;}
 .btn-lost{background:#dc2626;color:white;border:0;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-cancel{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;padding:12px 6px;border-radius:14px;font-weight:850;font-size:13px;cursor:pointer;}
 
+/* PROOF UPLOAD BOX */
+.proof-upload-box{
+    background:#f8fafc;
+    border:1.5px dashed #bae6fd;
+    border-radius:14px;
+    padding:14px;
+    margin-top:12px;
+    display:none;
+}
+.proof-upload-box label{display:block;font-size:12px;font-weight:800;color:#0284c7;margin-bottom:6px;}
+.proof-upload-box input{width:100%;margin-bottom:10px;}
+.btn-submit-proof{
+    width:100%;
+    padding:10px;
+    background:#16a34a;
+    color:white;
+    border:0;
+    border-radius:12px;
+    font-weight:850;
+    font-size:13px;
+    cursor:pointer;
+}
+
 /* INSUFFICIENT BALANCE POPUP MODAL */
 .modal-overlay{
     position:fixed;
@@ -432,19 +455,16 @@ button,input{font:inherit;}
 
     <!-- VIEW 1: BATTLE LOBBY -->
     <div id="lobbyView">
-        <!-- SET BATTLE -->
         <div class="set-card">
             <input type="number" id="battleAmountInput" class="bet-input" placeholder="Enter Amount (Min ₹100)" min="100">
             <button class="btn-set" onclick="createBattle()">SET</button>
         </div>
 
-        <!-- OPEN BATTLES -->
         <div class="section-head"><i class="fa-solid fa-crosshairs" style="color:#0284c7;"></i> Open Battles</div>
         <div id="openBattlesList">
             <p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">Loading open battles...</p>
         </div>
 
-        <!-- RUNNING BATTLES -->
         <div class="section-head"><i class="fa-solid fa-fire-flame-curved" style="color:#ea580c;"></i> Running Battles</div>
         <div id="runningBattlesList">
             <p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">Loading running battles...</p>
@@ -479,7 +499,6 @@ button,input{font:inherit;}
             <h4 style="font-size:14px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-key"></i> Room Code</h4>
             <small style="color:#64748b; font-weight:600;">Share & join in Ludo King</small>
 
-            <!-- If Creator & Code Missing -->
             <div id="setRoomCodeWrap" style="display:none; margin-top:10px;">
                 <div style="display:flex; gap:8px;">
                     <input type="text" id="manualRoomCodeInput" class="bet-input" placeholder="Create room in Ludo King & paste code">
@@ -487,13 +506,11 @@ button,input{font:inherit;}
                 </div>
             </div>
 
-            <!-- If Code Available -->
             <div class="room-code-display" id="showRoomCodeWrap" style="display:none;">
                 <strong id="displayRoomCode">--------</strong>
                 <button class="btn-copy" onclick="copyRoomCode()"><i class="fa-solid fa-copy"></i> Copy</button>
             </div>
 
-            <!-- If Opponent waiting for code -->
             <div id="waitingForCodeWrap" style="display:none; text-align:center; padding:12px 0;">
                 <p style="color:#64748b; font-size:12px; font-weight:700;">Waiting for opponent to create room code...</p>
             </div>
@@ -511,16 +528,26 @@ button,input{font:inherit;}
             <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
-        <!-- RESULT UPDATE -->
+        <!-- RESULT UPDATE & PROOF UPLOAD -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
 
             <div class="status-update-grid" id="resultBtnGrid">
-                <button class="btn-won" onclick="submitGameResult('won')"><i class="fa-solid fa-trophy"></i> I Won</button>
+                <button class="btn-won" onclick="openWonProofBox()"><i class="fa-solid fa-trophy"></i> I Won</button>
                 <button class="btn-lost" onclick="submitGameResult('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
                 <button class="btn-cancel" onclick="submitGameResult('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
+
+            <!-- PROOF UPLOAD (Only for I Won) -->
+            <div class="proof-upload-box" id="proofUploadBox">
+                <label><i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof</label>
+                <input type="file" id="winProofFile" accept="image/*,video/*">
+                <button class="btn-submit-proof" id="btnSubmitProof" onclick="uploadWinProofAndSubmit()">
+                    Submit Proof & Win Claim
+                </button>
+            </div>
+
             <div id="resultSubmittedMsg" style="display:none; text-align:center; padding:12px 0; color:#0284c7; font-weight:800; font-size:13px;">
                 Result Submitted. Waiting for confirmation...
             </div>
@@ -714,7 +741,7 @@ async function deleteBattle(bId) {
     await firebaseDB.collection("battles").doc(bId).delete();
 }
 
-// REQUEST TO PLAY (Balance Check)
+// REQUEST TO PLAY
 async function requestPlayBattle(bId, amt) {
     if(myCurrentBalance < amt){
         showErrorModal("Insufficient balance");
@@ -760,11 +787,9 @@ async function startBattle(bId, amt, oppUid) {
                 throw new Error("Kisi player ke pass balance kam hai.");
             }
 
-            // Deduct entry fee from both players
             t.update(p1Ref, { balance: p1Bal - amt });
             t.update(p2Ref, { balance: p2Bal - amt });
 
-            // Mark match Live
             t.update(bRef, {
                 status: "live",
                 startedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -817,7 +842,74 @@ function copyRoomCode() {
     alert("Room Code Copied: " + code);
 }
 
-// SUBMIT RESULT (WIN / LOSS / CANCEL)
+// PROOF COMPRESSION & SUBMISSION
+function openWonProofBox() {
+    document.getElementById("proofUploadBox").style.display = "block";
+}
+
+function compressImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+                const maxDim = 800;
+
+                if (width > height && width > maxDim) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                } else if (height > maxDim) {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+                resolve(compressedBase64);
+            };
+            img.onerror = err => reject(err);
+        };
+        reader.onerror = err => reject(err);
+    });
+}
+
+async function uploadWinProofAndSubmit() {
+    const file = document.getElementById("winProofFile").files[0];
+    if(!file){ alert("Kripya winning screenshot upload karein."); return; }
+
+    const btn = document.getElementById("btnSubmitProof");
+    btn.disabled = true;
+    btn.textContent = "Uploading Proof...";
+
+    try {
+        const proofBase64 = await compressImageFile(file);
+        const docId = userId.length === 10 ? "91" + userId : userId;
+
+        await firebaseDB.collection("battles").doc(activeBattleId).update({
+            [`result_${docId}`]: "won",
+            [`proof_${docId}`]: proofBase64
+        });
+
+        document.getElementById("proofUploadBox").style.display = "none";
+        document.getElementById("resultBtnGrid").style.display = "none";
+        document.getElementById("resultSubmittedMsg").style.display = "block";
+        alert("✅ Proof & Result Submit Ho Gaya!");
+    } catch(err) {
+        alert("Error: " + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "Submit Proof & Win Claim";
+}
+
 async function submitGameResult(type) {
     if(!confirm("Result submit karein?")) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
