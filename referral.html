@@ -27,7 +27,8 @@ button{font:inherit;}
 .top-header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
 .header-left{display:flex;align-items:center;gap:10px;}
 .menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:white;font-size:22px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.logo{width:44px;height:44px;border-radius:50%;background:linear-gradient(145deg,#ffffff,#dbeafe);border:2.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:900;cursor:pointer;}
+.logo{width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1.5px solid #bae6fd;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
+.logo img{width:100%;height:100%;object-fit:cover;}
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{width:38px;height:38px;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:white;cursor:pointer;}
 .notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
@@ -68,7 +69,9 @@ button{font:inherit;}
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
-        <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
+        <div class="logo" onclick="location.href='dashboard.html'">
+            <img src="logo.png" alt="RDX Logo">
+        </div>
     </div>
     <div class="header-right">
         <button class="header-icon notification" onclick="location.href='notification.html'">🔔</button>
@@ -166,7 +169,6 @@ function copyReferralCode() {
 }
 
 function shareWhatsApp() {
-    // 1. WhatsApp share link direct index.html par bheje gi
     const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
     const inviteLink = `${baseUrl}/index.html?ref=${encodeURIComponent(myReferralCode)}`;
     const text = `🔥 Play Ludo on RDX LUDO and win real money daily! 🏆\n\n👉 Join using my link & get cash bonus:\n${inviteLink}\n\n🎟 Or use Referral Code: *${myReferralCode}*`;
