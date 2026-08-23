@@ -1,181 +1,680 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RDX LUDO - History & Transactions</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent;}
-        body{
-            background:
-                radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
-                radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
-                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
-                linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-            color:#101a38;
-            min-height:100vh;
-            padding-bottom:85px;
-        }
-        .top-bar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
-        .header-left{display:flex;align-items:center;gap:10px;}
-        .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#ffffff;border:1px solid #bae6fd;color:#0284c7;cursor:pointer;}
-        .brand-badge{background:#ffffff;border:1px solid #bae6fd;color:#0284c7;font-weight:900;font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;}
-        .header-icons{display:flex;gap:6px;}
-        .topicon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:15px;color:#ffffff;cursor:pointer;}
-        .icon-bell{background:#6366f1;} .icon-cash{background:#16a34a;} .icon-gift{background:#ea580c;}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RDX LUDO - History & Logs</title>
 
-        .page-heading{padding:14px 14px 6px;}
-        .page-heading h1{font-size:18px;font-weight:850;color:#0c4a6e;}
-        .page-heading p{font-size:12px;color:#64748b;}
-        .filter-section{padding:8px 14px 12px;}
-        .search-input{width:100%;height:42px;padding:0 14px;border-radius:12px;border:1.5px solid #bae6fd;background:#ffffff;font-size:12px;font-weight:600;outline:none;}
+<!-- FontAwesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        .content-section{padding:0 14px;}
-        .card{background:#ffffff;border-radius:16px;padding:14px;margin-bottom:10px;border:1.5px solid #bae6fd;box-shadow:0 4px 14px rgba(2,132,199,0.06);display:flex;flex-direction:column;gap:8px;}
-        .card-top{display:flex;justify-content:space-between;align-items:flex-start;}
-        .card-title{font-size:14px;font-weight:800;}
-        .card-subtitle{font-size:11px;color:#64748b;word-break:break-all;}
-        .card-date{font-size:10px;color:#94a3b8;margin-top:2px;}
-        .amount{font-size:16px;font-weight:900;}
-        .credit{color:#16a34a;} .debit{color:#dc2626;}
-        .badge{font-size:9px;padding:3px 7px;border-radius:6px;font-weight:800;text-transform:uppercase;}
-        .badge-approved{background:#dcfce7;color:#15803d;}
-        .badge-rejected{background:#fee2e2;color:#b91c1c;}
-        .badge-pending{background:#fef3c7;color:#b45309;}
-        .admin-note{font-size:11px;padding:8px 10px;border-radius:10px;}
-        .admin-note.approved{background:#f0fdf4;color:#15803d;}
-        .admin-note.rejected{background:#fff1f2;color:#be123c;}
-        .admin-note.pending{background:#fffbeb;color:#b45309;}
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-        /* BOTTOM NAV */
-        .bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
-        .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
-        .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
-        .nav-item:active .nav-icon-box{transform:scale(0.92);}
-        .icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-        .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-        .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-        .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
-    </style>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+    color:#101a38;
+    min-height:100vh;
+    padding-bottom:95px;
+}
+button{font:inherit;}
+
+/* TOP HEADER */
+.top-header{
+    height:66px;
+    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 4px 18px rgba(2,132,199,0.08);
+}
+.header-left{display:flex;align-items:center;gap:10px;}
+.menu-btn{
+    width:42px;
+    height:42px;
+    border:0;
+    border-radius:14px;
+    background:linear-gradient(145deg,#ff7165,#ff8a70);
+    color:white;
+    font-size:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.logo{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:2.5px solid #93c5fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#0284c7;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{
+    height:38px;
+    padding:0 10px;
+    border:0;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5px;
+    font-size:13px;
+    font-weight:800;
+    color:white;
+    cursor:pointer;
+}
+.icon-only{width:38px;padding:0;border-radius:50%;}
+.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
+.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);}
+.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);}
+
+.container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
+
+/* PAGE TITLE */
+.page-title{
+    font-size:20px;
+    font-weight:900;
+    color:#0c4a6e;
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+/* FILTER TABS */
+.filter-scroll{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    scrollbar-width:none;
+    margin-bottom:16px;
+}
+.filter-scroll::-webkit-scrollbar{display:none;}
+.tab-btn{
+    padding:8px 16px;
+    border-radius:18px;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    color:#64748b;
+    font-weight:850;
+    font-size:12px;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all 0.2s ease;
+}
+.tab-btn.active{
+    background:#0284c7;
+    color:#ffffff;
+    border-color:#0284c7;
+    box-shadow:0 4px 12px rgba(2,132,199,0.25);
+}
+
+/* HISTORY CARDS */
+.history-card{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:18px;
+    padding:14px 16px;
+    margin-bottom:10px;
+    box-shadow:0 4px 12px rgba(2,132,199,0.04);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.history-left{display:flex;align-items:center;gap:12px;}
+.history-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+}
+.icon-win{background:#dcfce7;color:#15803d;}
+.icon-lost{background:#fee2e2;color:#be123c;}
+.icon-cancel{background:#f1f5f9;color:#64748b;}
+.icon-dep{background:#e0f2fe;color:#0284c7;}
+.icon-with{background:#fef3c7;color:#b45309;}
+
+.history-details h4{
+    font-size:14px;
+    font-weight:850;
+    color:#0c4a6e;
+}
+.history-details p{
+    font-size:11px;
+    color:#64748b;
+    font-weight:600;
+    margin-top:2px;
+}
+
+.history-right{text-align:right;}
+.amount-win{font-size:16px;font-weight:900;color:#15803d;}
+.amount-loss{font-size:16px;font-weight:900;color:#be123c;}
+.amount-cancel{font-size:16px;font-weight:900;color:#64748b;}
+.badge-status{
+    display:inline-block;
+    padding:2px 8px;
+    border-radius:8px;
+    font-size:9px;
+    font-weight:850;
+    text-transform:uppercase;
+    margin-top:4px;
+}
+.status-won{background:#dcfce7;color:#15803d;}
+.status-lost{background:#fee2e2;color:#be123c;}
+.status-cancelled{background:#f1f5f9;color:#64748b;}
+
+.empty-state{
+    text-align:center;
+    padding:40px 14px;
+    color:#64748b;
+}
+.empty-state i{font-size:36px;color:#bae6fd;margin-bottom:10px;}
+
+/* SIDE DRAWER */
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+    backdrop-filter:blur(4px);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+}
+.drawer-overlay.active{opacity:1;pointer-events:auto;}
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:280px;
+    height:100%;
+    background:#ffffff;
+    z-index:1000;
+    box-shadow:4px 0 25px rgba(2,132,199,0.15);
+    transform:translateX(-100%);
+    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    display:flex;
+    flex-direction:column;
+}
+.drawer.active{transform:translateX(0);}
+.drawer-header{
+    padding:20px 16px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.drawer-user{display:flex;align-items:center;gap:10px;}
+.drawer-avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#0284c7,#0369a1);
+    color:white;
+    font-size:18px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.drawer-close{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1px solid #bae6fd;
+    background:#ffffff;
+    color:#0c4a6e;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.drawer-links{flex:1;overflow-y:auto;padding:12px;}
+.drawer-item{
+    width:100%;
+    padding:12px 14px;
+    border:0;
+    border-radius:14px;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    font-weight:750;
+    color:#334155;
+    cursor:pointer;
+    margin-bottom:4px;
+}
+.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item i{font-size:16px;width:22px;text-align:center;color:#0284c7;}
+.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;}
+.drawer-logout{
+    width:100%;
+    padding:12px;
+    border:1px solid #fecdd3;
+    border-radius:14px;
+    background:#fff1f2;
+    color:#be123c;
+    font-weight:800;
+    font-size:13px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+}
+
+/* BOTTOM NAV */
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:74px;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(12px);
+    border-top:1.5px solid #e2e8f0;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:200;
+    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
+}
+.nav-item{
+    width:25%;
+    height:100%;
+    border:0;
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    color:#64748b;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    position:relative;
+}
+.nav-icon-box{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    color:#ffffff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+</style>
 </head>
+
 <body>
 
-    <header class="top-bar">
-        <div class="header-left">
-            <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
-            <span class="brand-badge" onclick="location.href='dashboard.html'">RDX LUDO</span>
+<!-- SIDE DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
+<div class="drawer" id="sideDrawer">
+    <div class="drawer-header">
+        <div class="drawer-user">
+            <div class="drawer-avatar" id="drawerAvatar">U</div>
+            <div>
+                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
+                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
+            </div>
         </div>
-        <div class="header-icons">
-            <div class="topicon icon-bell" onclick="location.href='notification.html'">🔔</div>
-            <div class="topicon icon-cash" onclick="location.href='wallet.html'">💵</div>
-            <div class="topicon icon-gift" onclick="location.href='referral.html'">🎁</div>
-        </div>
-    </header>
-
-    <div class="page-heading">
-        <h1>Transactions & Logs</h1>
-        <p>Deposit, withdrawal status aur updates</p>
+        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div class="filter-section">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search by Date, Time, UTR, Bank, UPI...">
+    <div class="drawer-links">
+        <button class="drawer-item" onclick="location.href='dashboard.html'"><i class="fa-solid fa-house"></i> Home</button>
+        <button class="drawer-item" onclick="location.href='profile.html'"><i class="fa-solid fa-user"></i> My Profile</button>
+        <button class="drawer-item" onclick="location.href='wallet.html'"><i class="fa-solid fa-wallet"></i> My Wallet</button>
+        <button class="drawer-item" onclick="location.href='deposit.html'"><i class="fa-solid fa-money-bill-wave"></i> Add Cash</button>
+        <button class="drawer-item" onclick="location.href='withdraw.html'"><i class="fa-solid fa-money-bill-transfer"></i> Withdraw Cash</button>
+        <button class="drawer-item" onclick="location.href='history.html'"><i class="fa-solid fa-clock-rotate-left"></i> History & Logs</button>
+        <button class="drawer-item" onclick="location.href='referral.html'"><i class="fa-solid fa-gift"></i> Refer & Earn 2%</button>
+        <button class="drawer-item" onclick="location.href='support.html'"><i class="fa-solid fa-headset"></i> 24/7 Support</button>
     </div>
 
-    <section class="content-section">
-        <div id="transactions-list" style="text-align:center;padding:30px;color:#64748b;font-size:13px;">Transactions load ho rahe hain...</div>
-    </section>
+    <div class="drawer-footer">
+        <button class="drawer-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </div>
+</div>
 
-    <nav class="bottom-nav">
-        <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-        <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
-    </nav>
+<header class="top-header">
+    <div class="header-left">
+        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <div class="logo" onclick="location.href='dashboard.html'">RDX</div>
+    </div>
+    <div class="header-right">
+        <button class="header-icon notification icon-only" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁 <span id="topReferral">0</span></button>
+    </div>
+</header>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+<main class="container">
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-            authDomain: "rdx-ludo.firebaseapp.com",
-            projectId: "rdx-ludo",
-            storageBucket: "rdx-ludo.firebasestorage.app",
-            messagingSenderId: "928340814840",
-            appId: "1:928340814840:web:6eca42a8b76138b268440d"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    <div class="page-title">
+        <i class="fa-solid fa-clock-rotate-left" style="color:#0284c7;"></i> History & Activity Logs
+    </div>
 
-        const currentUserId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
-        let allTransactions = [];
+    <!-- TABS -->
+    <div class="filter-scroll">
+        <button class="tab-btn active" onclick="setFilter('all', this)">All Activity</button>
+        <button class="tab-btn" onclick="setFilter('battles', this)">⚔️ Battles History</button>
+        <button class="tab-btn" onclick="setFilter('deposits', this)">💰 Deposits</button>
+        <button class="tab-btn" onclick="setFilter('withdrawals', this)">💳 Withdrawals</button>
+    </div>
 
-        function parseTimestamp(ts) {
-            if (!ts) return { dateObj: new Date(0), formatted: "Recently" };
-            let d = ts.toDate ? ts.toDate() : (ts.seconds ? new Date(ts.seconds * 1000) : new Date(ts));
-            return { dateObj: d, formatted: d.toLocaleString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true }) };
+    <!-- LOGS LIST -->
+    <div id="logsContainer">
+        <p style="text-align:center; color:#64748b; font-size:13px; padding:30px;">Loading history records...</p>
+    </div>
+
+</main>
+
+<nav class="bottom-nav">
+    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+</nav>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseDB = firebase.firestore();
+
+function getCleanUserId() {
+    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
+    return String(raw).replace(/\D/g, "");
+}
+const userId = getCleanUserId();
+let allLogs = [];
+let activeTab = "all";
+
+function toggleMenu() {
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
+
+function parseItemTime(ts) {
+    if (!ts) return { dateObj: new Date(0), formatted: "—" };
+    let d;
+    if (typeof ts.toDate === "function") { d = ts.toDate(); }
+    else if (ts.seconds) { d = new Date(ts.seconds * 1000); }
+    else { d = new Date(ts); }
+
+    const formatted = isNaN(d.getTime()) ? "—" : d.toLocaleString("en-IN", {
+        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true
+    });
+    return { dateObj: d, formatted: formatted };
+}
+
+async function loadHeaderUserData() {
+    if (!userId) { location.href = "login.html"; return; }
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    try {
+        const snap = await firebaseDB.collection("customers").doc(docId).get();
+        if (snap.exists) {
+            const d = snap.data();
+            const displayName = d.name || ("User " + userId.slice(-4));
+            document.getElementById("drawerName").textContent = displayName;
+            document.getElementById("drawerAvatar").textContent = displayName.charAt(0).toUpperCase();
+            document.getElementById("drawerMobile").textContent = "+" + userId;
+            document.getElementById("topBalance").textContent = Number(d.balance || 0);
+            document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
+    } catch(err) { console.error(err); }
+}
 
-        async function loadTransactions() {
-            if(!currentUserId) return;
-            let list = [];
-            const depSnap = await getDocs(collection(db, "deposits"));
-            depSnap.forEach(d => {
-                const data = d.data();
-                if(String(data.userId || data.uid).includes(currentUserId)){
-                    const timeInfo = parseTimestamp(data.createdAt);
-                    list.push({ id: d.id, type: "deposit", ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+async function fetchAllHistoryLogs() {
+    if (!userId) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
+    let list = [];
+
+    try {
+        // 1. Fetch Battles where user participated
+        const battlesSnap = await firebaseDB.collection("battles").get();
+        battlesSnap.forEach(doc => {
+            const b = doc.data();
+            if (b.creatorUid === docId || b.acceptedUid === docId) {
+                const timeInfo = parseItemTime(b.resolvedAt || b.startedAt || b.createdAt);
+                const isCreator = b.creatorUid === docId;
+                const oppName = isCreator ? (b.acceptedName || "Opponent") : (b.creatorName || "Creator");
+
+                let battleStatus = "Live";
+                let isWon = false;
+                let isCancelled = false;
+
+                if (b.status === "completed") {
+                    if (b.winnerUid === docId) {
+                        battleStatus = "Won";
+                        isWon = true;
+                    } else {
+                        battleStatus = "Lost";
+                    }
+                } else if (b.status === "cancelled") {
+                    battleStatus = "Cancelled";
+                    isCancelled = true;
                 }
-            });
 
-            const withSnap = await getDocs(collection(db, "withdrawals"));
-            withSnap.forEach(d => {
-                const data = d.data();
-                if(String(data.uid).includes(currentUserId)){
-                    const timeInfo = parseTimestamp(data.createdAt);
-                    list.push({ id: d.id, type: "withdrawal", ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
-                }
-            });
-
-            list.sort((a,b) => b.timeObj - a.timeObj);
-            allTransactions = list;
-            renderList(allTransactions);
-        }
-
-        function renderList(items) {
-            const container = document.getElementById("transactions-list");
-            if (!items.length) { container.innerHTML = "Koi record nahi mila."; return; }
-
-            container.innerHTML = items.map(data => {
-                const isDeposit = data.type === "deposit";
-                const status = String(data.status || "pending").toLowerCase();
-                return `
-                    <div class="card">
-                        <div class="card-top">
-                            <div>
-                                <div class="card-title">${isDeposit ? 'Deposit (UPI QR)' : 'Withdrawal (' + (data.mode || 'UPI') + ')'}</div>
-                                <div class="card-subtitle">${data.utr ? 'UTR: '+data.utr : (data.upiId || data.accountNumber || '')}</div>
-                                <div class="card-date"><i class="fa-regular fa-clock"></i> ${data.formattedDate}</div>
-                            </div>
-                            <div style="text-align:right;">
-                                <div class="amount ${isDeposit ? 'credit' : 'debit'}">${isDeposit ? '+' : '-'} ₹${data.amount}</div>
-                                <span class="badge badge-${status}">${status}</span>
-                            </div>
-                        </div>
-                        <div class="admin-note ${status}">
-                            <span>${data.comment || (status === 'approved' ? 'Payment Verified.' : 'Processing request...')}</span>
-                        </div>
-                    </div>`;
-            }).join("");
-        }
-
-        document.getElementById("searchInput").addEventListener("input", e => {
-            const q = e.target.value.toLowerCase().trim();
-            renderList(allTransactions.filter(i => JSON.stringify(i).toLowerCase().includes(q)));
+                list.push({
+                    type: "battle",
+                    id: doc.id,
+                    title: `Battle vs ${oppName}`,
+                    dateStr: timeInfo.formatted,
+                    timeObj: timeInfo.dateObj,
+                    amount: b.amount,
+                    prize: b.prize,
+                    status: battleStatus,
+                    isWon: isWon,
+                    isCancelled: isCancelled
+                });
+            }
         });
 
-        loadTransactions();
-    </script>
+        // 2. Fetch Deposits
+        const depSnap = await firebaseDB.collection("deposits").get();
+        depSnap.forEach(doc => {
+            const d = doc.data();
+            const cleanUid = String(d.uid || d.userId).replace(/\D/g, "");
+            if (cleanUid === userId) {
+                const timeInfo = parseItemTime(d.createdAt || d.date);
+                list.push({
+                    type: "deposit",
+                    id: doc.id,
+                    title: "Deposit Cash",
+                    dateStr: timeInfo.formatted,
+                    timeObj: timeInfo.dateObj,
+                    amount: d.amount,
+                    status: d.status || "pending"
+                });
+            }
+        });
+
+        // 3. Fetch Withdrawals
+        const withSnap = await firebaseDB.collection("withdrawals").get();
+        withSnap.forEach(doc => {
+            const w = doc.data();
+            const cleanUid = String(w.uid || w.mobile).replace(/\D/g, "");
+            if (cleanUid === userId) {
+                const timeInfo = parseItemTime(w.createdAt || w.date);
+                list.push({
+                    type: "withdrawal",
+                    id: doc.id,
+                    title: "Withdrawal Cash",
+                    dateStr: timeInfo.formatted,
+                    timeObj: timeInfo.dateObj,
+                    amount: w.amount,
+                    status: w.status || "pending"
+                });
+            }
+        });
+
+        // Sort: Most Recent First
+        list.sort((a, b) => b.timeObj - a.timeObj);
+        allLogs = list;
+        renderLogs();
+    } catch(err) {
+        document.getElementById("logsContainer").innerHTML = `<p style="text-align:center; color:#be123c; padding:30px;">Error loading logs: ${err.message}</p>`;
+    }
+}
+
+function renderLogs() {
+    const container = document.getElementById("logsContainer");
+    let filtered = allLogs;
+
+    if (activeTab === "battles") filtered = allLogs.filter(x => x.type === "battle");
+    else if (activeTab === "deposits") filtered = allLogs.filter(x => x.type === "deposit");
+    else if (activeTab === "withdrawals") filtered = allLogs.filter(x => x.type === "withdrawal");
+
+    if (!filtered.length) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-folder-open"></i>
+                <h4 style="color:#0c4a6e; font-size:15px; font-weight:850;">No History Records</h4>
+                <p style="font-size:12px; margin-top:4px;">Is category mein abhi koi logs nahi hain.</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = filtered.map(item => {
+        if (item.type === "battle") {
+            let iconBox = `<div class="history-icon icon-lost"><i class="fa-solid fa-gamepad"></i></div>`;
+            let amtClass = "amount-loss";
+            let amtSign = `- ₹${item.amount}`;
+            let statusBadge = `<span class="badge-status status-lost">Lost</span>`;
+
+            if (item.isWon) {
+                iconBox = `<div class="history-icon icon-win"><i class="fa-solid fa-trophy"></i></div>`;
+                amtClass = "amount-win";
+                amtSign = `+ ₹${item.prize}`;
+                statusBadge = `<span class="badge-status status-won">Won</span>`;
+            } else if (item.isCancelled) {
+                iconBox = `<div class="history-icon icon-cancel"><i class="fa-solid fa-ban"></i></div>`;
+                amtClass = "amount-cancel";
+                amtSign = `Refund ₹${item.amount}`;
+                statusBadge = `<span class="badge-status status-cancelled">Cancelled</span>`;
+            }
+
+            return `
+                <div class="history-card">
+                    <div class="history-left">
+                        ${iconBox}
+                        <div class="history-details">
+                            <h4>${item.title}</h4>
+                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="${amtClass}">${amtSign}</div>
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        } else if (item.type === "deposit") {
+            const s = String(item.status).toLowerCase();
+            const sBadge = s === 'approved' ? '<span class="badge-status status-won">Success</span>' : '<span class="badge-status status-cancelled">Pending</span>';
+            return `
+                <div class="history-card">
+                    <div class="history-left">
+                        <div class="history-icon icon-dep"><i class="fa-solid fa-money-bill-wave"></i></div>
+                        <div class="history-details">
+                            <h4>Deposit Amount</h4>
+                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="amount-win">+ ₹${item.amount}</div>
+                        ${sBadge}
+                    </div>
+                </div>
+            `;
+        } else if (item.type === "withdrawal") {
+            const s = String(item.status).toLowerCase();
+            const sBadge = s === 'approved' ? '<span class="badge-status status-won">Success</span>' : '<span class="badge-status status-cancelled">Pending</span>';
+            return `
+                <div class="history-card">
+                    <div class="history-left">
+                        <div class="history-icon icon-with"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                        <div class="history-details">
+                            <h4>Withdrawal Cash</h4>
+                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="amount-loss">- ₹${item.amount}</div>
+                        ${sBadge}
+                    </div>
+                </div>
+            `;
+        }
+    }).join("");
+}
+
+function setFilter(type, btnEl) {
+    activeTab = type;
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btnEl.classList.add("active");
+    renderLogs();
+}
+
+function logout() {
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    localStorage.removeItem("rdxLoggedIn");
+    localStorage.removeItem("rdxFirebaseUserId");
+    localStorage.removeItem("rdxVerifiedMobile");
+    localStorage.removeItem("rdxAccessToken");
+    location.href = "login.html";
+}
+
+window.addEventListener("load", () => {
+    loadHeaderUserData();
+    fetchAllHistoryLogs();
+});
+</script>
+
 </body>
 </html>
