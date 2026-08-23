@@ -91,7 +91,6 @@ button{font:inherit;}
 
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
-/* PAGE TITLE */
 .page-title{
     font-size:20px;
     font-weight:900;
@@ -169,23 +168,33 @@ button{font:inherit;}
     font-weight:600;
     margin-top:2px;
 }
+.history-details small{
+    display:block;
+    font-size:10px;
+    color:#be123c;
+    font-weight:700;
+    margin-top:2px;
+}
 
 .history-right{text-align:right;}
 .amount-win{font-size:16px;font-weight:900;color:#15803d;}
 .amount-loss{font-size:16px;font-weight:900;color:#be123c;}
 .amount-cancel{font-size:16px;font-weight:900;color:#64748b;}
+
+/* BADGES */
 .badge-status{
     display:inline-block;
-    padding:2px 8px;
+    padding:3px 8px;
     border-radius:8px;
-    font-size:9px;
+    font-size:10px;
     font-weight:850;
     text-transform:uppercase;
     margin-top:4px;
 }
-.status-won{background:#dcfce7;color:#15803d;}
-.status-lost{background:#fee2e2;color:#be123c;}
-.status-cancelled{background:#f1f5f9;color:#64748b;}
+.status-approved, .status-success, .status-won{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.status-rejected, .status-lost{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+.status-pending{background:#fef3c7;color:#b45309;border:1px solid #fde68a;}
+.status-cancelled{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;}
 
 .empty-state{
     text-align:center;
@@ -432,6 +441,10 @@ const userId = getCleanUserId();
 let allLogs = [];
 let activeTab = "all";
 
+let battlesData = [];
+let depositsData = [];
+let withdrawalsData = [];
+
 function toggleMenu() {
     document.getElementById("sideDrawer").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
@@ -468,15 +481,15 @@ async function loadHeaderUserData() {
     } catch(err) { console.error(err); }
 }
 
-async function fetchAllHistoryLogs() {
+// REAL-TIME LISTENER FOR ALL LOGS
+function startRealtimeLogsListener() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
-    let list = [];
 
-    try {
-        // 1. Fetch Battles where user participated
-        const battlesSnap = await firebaseDB.collection("battles").get();
-        battlesSnap.forEach(doc => {
+    // 1. Battles Real-Time Listener
+    firebaseDB.collection("battles").onSnapshot(snap => {
+        let list = [];
+        snap.forEach(doc => {
             const b = doc.data();
             if (b.creatorUid === docId || b.acceptedUid === docId) {
                 const timeInfo = parseItemTime(b.resolvedAt || b.startedAt || b.createdAt);
@@ -513,10 +526,14 @@ async function fetchAllHistoryLogs() {
                 });
             }
         });
+        battlesData = list;
+        mergeAndRenderLogs();
+    });
 
-        // 2. Fetch Deposits
-        const depSnap = await firebaseDB.collection("deposits").get();
-        depSnap.forEach(doc => {
+    // 2. Deposits Real-Time Listener
+    firebaseDB.collection("deposits").onSnapshot(snap => {
+        let list = [];
+        snap.forEach(doc => {
             const d = doc.data();
             const cleanUid = String(d.uid || d.userId).replace(/\D/g, "");
             if (cleanUid === userId) {
@@ -524,18 +541,23 @@ async function fetchAllHistoryLogs() {
                 list.push({
                     type: "deposit",
                     id: doc.id,
-                    title: "Deposit Cash",
+                    title: "Deposit Amount",
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
                     amount: d.amount,
-                    status: d.status || "pending"
+                    status: String(d.status || "pending").toLowerCase(),
+                    comment: d.comment || ""
                 });
             }
         });
+        depositsData = list;
+        mergeAndRenderLogs();
+    });
 
-        // 3. Fetch Withdrawals
-        const withSnap = await firebaseDB.collection("withdrawals").get();
-        withSnap.forEach(doc => {
+    // 3. Withdrawals Real-Time Listener
+    firebaseDB.collection("withdrawals").onSnapshot(snap => {
+        let list = [];
+        snap.forEach(doc => {
             const w = doc.data();
             const cleanUid = String(w.uid || w.mobile).replace(/\D/g, "");
             if (cleanUid === userId) {
@@ -547,18 +569,20 @@ async function fetchAllHistoryLogs() {
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
                     amount: w.amount,
-                    status: w.status || "pending"
+                    status: String(w.status || "pending").toLowerCase(),
+                    comment: w.comment || ""
                 });
             }
         });
+        withdrawalsData = list;
+        mergeAndRenderLogs();
+    });
+}
 
-        // Sort: Most Recent First
-        list.sort((a, b) => b.timeObj - a.timeObj);
-        allLogs = list;
-        renderLogs();
-    } catch(err) {
-        document.getElementById("logsContainer").innerHTML = `<p style="text-align:center; color:#be123c; padding:30px;">Error loading logs: ${err.message}</p>`;
-    }
+function mergeAndRenderLogs() {
+    allLogs = [...battlesData, ...depositsData, ...withdrawalsData];
+    allLogs.sort((a, b) => b.timeObj - a.timeObj);
+    renderLogs();
 }
 
 function renderLogs() {
@@ -615,38 +639,52 @@ function renderLogs() {
                 </div>
             `;
         } else if (item.type === "deposit") {
-            const s = String(item.status).toLowerCase();
-            const sBadge = s === 'approved' ? '<span class="badge-status status-won">Success</span>' : '<span class="badge-status status-cancelled">Pending</span>';
+            const s = item.status;
+            let statusBadge = `<span class="badge-status status-pending">Pending</span>`;
+            if (s === "approved" || s === "success") {
+                statusBadge = `<span class="badge-status status-approved">Success</span>`;
+            } else if (s === "rejected" || s === "failed") {
+                statusBadge = `<span class="badge-status status-rejected">Rejected</span>`;
+            }
+
             return `
                 <div class="history-card">
                     <div class="history-left">
                         <div class="history-icon icon-dep"><i class="fa-solid fa-money-bill-wave"></i></div>
                         <div class="history-details">
-                            <h4>Deposit Amount</h4>
+                            <h4>${item.title}</h4>
                             <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                            ${item.comment && s === 'rejected' ? `<small>Reason: ${item.comment}</small>` : ''}
                         </div>
                     </div>
                     <div class="history-right">
                         <div class="amount-win">+ ₹${item.amount}</div>
-                        ${sBadge}
+                        ${statusBadge}
                     </div>
                 </div>
             `;
         } else if (item.type === "withdrawal") {
-            const s = String(item.status).toLowerCase();
-            const sBadge = s === 'approved' ? '<span class="badge-status status-won">Success</span>' : '<span class="badge-status status-cancelled">Pending</span>';
+            const s = item.status;
+            let statusBadge = `<span class="badge-status status-pending">Pending</span>`;
+            if (s === "approved" || s === "success") {
+                statusBadge = `<span class="badge-status status-approved">Success</span>`;
+            } else if (s === "rejected" || s === "failed") {
+                statusBadge = `<span class="badge-status status-rejected">Rejected</span>`;
+            }
+
             return `
                 <div class="history-card">
                     <div class="history-left">
                         <div class="history-icon icon-with"><i class="fa-solid fa-money-bill-transfer"></i></div>
                         <div class="history-details">
-                            <h4>Withdrawal Cash</h4>
+                            <h4>${item.title}</h4>
                             <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                            ${item.comment && s === 'rejected' ? `<small>Reason: ${item.comment}</small>` : ''}
                         </div>
                     </div>
                     <div class="history-right">
                         <div class="amount-loss">- ₹${item.amount}</div>
-                        ${sBadge}
+                        ${statusBadge}
                     </div>
                 </div>
             `;
@@ -672,7 +710,7 @@ function logout() {
 
 window.addEventListener("load", () => {
     loadHeaderUserData();
-    fetchAllHistoryLogs();
+    startRealtimeLogsListener();
 });
 </script>
 
