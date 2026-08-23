@@ -96,7 +96,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .full{grid-column:1/-1;}
 .empty{text-align:center;padding:25px;color:#64748b;font-size:13px;font-weight:600;}
 
-/* MODAL */
+/* MODALS */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;display:none;align-items:center;justify-content:center;padding:14px;}
 .modal-box{width:100%;max-width:650px;background:#ffffff;border-radius:24px;border:1.5px solid #bae6fd;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:hidden;display:flex;flex-direction:column;max-height:85vh;}
 .modal-header{padding:16px 20px;background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;}
@@ -106,7 +106,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 
 .kyc-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
 .kyc-preview-item{background:#f8fafc;border:1px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
-.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #e2e8f0;margin-top:6px;}
+.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #e2e8f0;margin-top:6px;cursor:pointer;}
 
 @media(max-width:800px){.stats{grid-template-columns:1fr 1fr;}.sidebar{width:180px;}}
 @media(max-width:600px){.layout{display:block;}.sidebar{width:100%;min-height:auto;display:flex;overflow:auto;border-right:0;border-bottom:1.5px solid #bae6fd;padding:8px;}.nav{min-width:max-content;padding:8px 12px;margin-bottom:0;margin-right:6px;}main{padding:14px 10px;}.stats{grid-template-columns:1fr 1fr;}.form{grid-template-columns:1fr;}.full{grid-column:auto;}.kyc-preview-grid{grid-template-columns:1fr;}}
@@ -160,12 +160,12 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="stats">
 <div class="stat"><small>Active Live Users</small><h2 class="green" id="activeLiveUsersCount">0 Live</h2></div>
 <div class="stat"><small>Live Matches</small><h2 class="orange" id="liveBattlesCount">0</h2></div>
+<div class="stat"><small>Pending KYC</small><h2 class="orange" id="pendingKycCount">0</h2></div>
 <div class="stat"><small>Total Customers</small><h2 class="blue" id="totalUsers">0</h2></div>
 <div class="stat"><small>Total Balance</small><h2 class="green" id="totalCoins">₹0</h2></div>
 <div class="stat"><small>Total Deposit Paid</small><h2 class="purple" id="totalApprovedDeposits">₹0</h2></div>
 <div class="stat"><small>Total Withdrawal Paid</small><h2 class="green" id="totalApprovedWithdrawals">₹0</h2></div>
 <div class="stat"><small>Pending Deposits</small><h2 class="orange" id="pendingDeposits">0</h2></div>
-<div class="stat"><small>Pending Withdrawals</small><h2 class="red" id="pendingWithdrawals">0</h2></div>
 </div>
 
 <div class="card">
@@ -216,12 +216,12 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- KYC REQUESTS -->
+<!-- KYC REQUESTS (FRONT & BACK ONLY) -->
 <section id="kycrequests" class="page">
 <div class="title">📄 Document KYC Verification Requests</div>
 <div class="card">
 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-id-card"></i> Submitted KYC Documents</h3>
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-id-card"></i> Submitted KYC Documents (Front & Back)</h3>
     <button id="refreshKyc" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 </div>
 <input id="kycSearch" class="search" placeholder="Search by Mobile or ID Number...">
@@ -397,7 +397,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 
-<!-- KYC DOCUMENT PREVIEW MODAL -->
+<!-- KYC DOCUMENT PREVIEW MODAL (FRONT & BACK ONLY) -->
 <div class="modal-overlay" id="kycPreviewModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -733,7 +733,7 @@ function renderLiveUsers() {
 $("liveSearch").addEventListener("input", renderLiveUsers);
 $("refreshLiveUsers").addEventListener("click", () => { loadUsers().then(renderLiveUsers); });
 
-// ================= KYC REQUESTS =================
+// ================= KYC REQUESTS (FRONT & BACK ONLY) =================
 async function loadKycRequests() {
     $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Loading KYC requests...</td></tr>`;
     try {
@@ -755,6 +755,7 @@ async function loadKycRequests() {
 
         kycRequests = list;
         renderKycRequests();
+        $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     } catch(e) {
         $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
     }
@@ -799,6 +800,7 @@ window.openKycPreview = (docId) => {
     $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
     const container = $("modalKycContent");
 
+    // ONLY FRONT & BACK PHOTO (NO SELFIE)
     container.innerHTML = `
         <div class="kyc-preview-grid">
             <div class="kyc-preview-item">
@@ -809,10 +811,6 @@ window.openKycPreview = (docId) => {
                 <strong style="font-size:12px; color:#0c4a6e;">Back Photo</strong>
                 <img src="${item.backImage}" alt="Back" onclick="window.open('${item.backImage}')">
             </div>
-        </div>
-        <div class="kyc-preview-item" style="margin-top:12px;">
-            <strong style="font-size:12px; color:#0c4a6e;">User Selfie Photo</strong>
-            <img src="${item.selfieImage}" alt="Selfie" style="max-height:220px;" onclick="window.open('${item.selfieImage}')">
         </div>
 
         <div style="display:flex; gap:10px; margin-top:16px;">
@@ -1416,6 +1414,7 @@ function updateDashboard(){
 
     $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
     $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     
     $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
     $("dashStatus").className = "status ok";
