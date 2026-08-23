@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RDX LUDO</title>
+
+<!-- FontAwesome for clean icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+    color:#101a38;
+    min-height:100vh;
+}
+
+button{
+    font:inherit;
+}
+
+.container{
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    padding:0 14px 140px;
+}
+
+/* HEADER */
+.header{
+    height:66px;
+    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 14px;
+    position:sticky;
+    top:0;
+    z-index:100;
+    box-shadow:0 4px 18px rgba(2,132,199,0.08);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo{
+    width:44px;
+    height:44px;
+    border-radius:50%;
+    background:linear-gradient(145deg,#ffffff,#dbeafe);
+    border:2.5px solid #93c5fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#0284c7;
+    font-size:12px;
+    font-weight:900;
+    box-shadow:0 4px 12px rgba(2,132,199,0.15);
+    cursor:pointer;
+}
+
+.brand-text h1{
+    font-size:18px;
+    line-height:1;
+    font-weight:900;
+    color:#0c4a6e;
+}
+
+.brand-text p{
+    margin-top:3px;
+    font-size:11px;
+    color:#64748b;
+    font-weight:600;
+}
+
+.signin{
+    border:1.5px solid #7dd3fc;
+    color:#0284c7;
+    background:#ffffff;
+    padding:8px 16px;
+    border-radius:20px;
+    font-weight:800;
+    font-size:13px;
+    cursor:pointer;
+    box-shadow:0 3px 10px rgba(2,132,199,0.10);
+    transition:0.2s;
+}
+
+.signin:active{
+    transform:scale(0.96);
+}
+
+/* HERO */
+.hero{
+    margin-top:16px;
+    padding:20px;
+    border:1.5px solid #7dd3fc;
+    border-radius:22px;
+    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
+    box-shadow:0 8px 22px rgba(2,132,199,0.10);
+}
+
+.hero-grid{
+    display:grid;
+    grid-template-columns:1.2fr 0.8fr;
+    gap:18px;
+    align-items:center;
+}
+
+.badge{
+    display:inline-flex;
+    align-items:center;
+    padding:6px 12px;
+    border:1px solid #7dd3fc;
+    border-radius:18px;
+    color:#0284c7;
+    font-weight:850;
+    font-size:11px;
+    background:#ffffff;
+    letter-spacing:0.5px;
+}
+
+.hero h2{
+    font-size:32px;
+    line-height:1.1;
+    margin-top:14px;
+    letter-spacing:-0.8px;
+    color:#0f172a;
+    font-weight:900;
+}
+
+.hero h2 span{
+    color:#0284c7;
+}
+
+.hero-sub{
+    margin-top:8px;
+    color:#64748b;
+    font-size:14px;
+    font-weight:500;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+    margin-top:18px;
+}
+
+.stat{
+    padding:12px 6px;
+    text-align:center;
+    border:1.5px solid #bae6fd;
+    border-radius:14px;
+    background:rgba(255,255,255,0.85);
+}
+
+.stat strong{
+    display:block;
+    font-size:16px;
+    font-weight:900;
+    color:#0c4a6e;
+}
+
+.stat span{
+    display:block;
+    color:#64748b;
+    font-size:11px;
+    font-weight:700;
+    margin-top:2px;
+}
+
+.hero-images{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.hero-images img{
+    width:100%;
+    height:130px;
+    object-fit:cover;
+    border-radius:16px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.12);
+}
+
+/* SECTION */
+.section-head{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    margin:22px 0 10px;
+}
+
+.section-head small{
+    color:#0284c7;
+    font-weight:850;
+    letter-spacing:1.5px;
+    font-size:11px;
+}
+
+.section-head h3{
+    font-size:20px;
+    font-weight:900;
+    color:#0f172a;
+    margin-top:2px;
+}
+
+.live-count-badge{
+    background:#dcfce7;
+    color:#15803d;
+    border:1px solid #86efac;
+    padding:4px 10px;
+    border-radius:14px;
+    font-size:11px;
+    font-weight:850;
+}
+
+/* GAME CARDS */
+.game-scroll{
+    display:flex;
+    gap:12px;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding-bottom:6px;
+    scrollbar-width:none;
+    -webkit-overflow-scrolling:touch;
+}
+
+.game-scroll::-webkit-scrollbar{
+    display:none;
+}
+
+.game-card{
+    min-width:100%;
+    height:190px;
+    border-radius:20px;
+    overflow:hidden;
+    position:relative;
+    scroll-snap-align:start;
+    background:#111;
+    box-shadow:0 10px 25px rgba(0,0,0,0.16);
+    cursor:pointer;
+    transition:transform 0.2s ease;
+}
+
+.game-card:active{
+    transform:scale(0.99);
+}
+
+.game-card img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.game-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.75) 100%);
+    padding:14px;
+    color:white;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+@keyframes slowPulse {
+    0%, 100% {
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(34, 197, 94, 0.95);
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.35;
+        box-shadow: 0 0 2px rgba(34, 197, 94, 0.2);
+        transform: scale(0.96);
+    }
+}
+
+.live-label{
+    align-self:flex-end;
+    background:#16a34a;
+    color:white;
+    padding:4px 10px;
+    border-radius:12px;
+    font-size:10px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    gap:4px;
+    animation: slowPulse 1.8s ease-in-out infinite;
+}
+
+.game-bottom-row{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    width:100%;
+}
+
+.game-info-left h4{
+    font-size:20px;
+    font-weight:900;
+    text-shadow:0 2px 4px rgba(0,0,0,0.6);
+}
+
+.game-info-left p{
+    margin-top:2px;
+    font-size:11px;
+    color:#e2e8f0;
+    text-shadow:0 1px 3px rgba(0,0,0,0.6);
+}
+
+.play{
+    border:0;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    padding:8px 18px;
+    border-radius:16px;
+    font-size:13px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(2,132,199,0.35);
+    display:flex;
+    align-items:center;
+    gap:5px;
+}
+
+/* COMING SOON */
+.soon-card{
+    min-width:100%;
+    height:110px;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    background:#ffffff;
+    display:flex;
+    align-items:center;
+    padding:12px 14px;
+    gap:12px;
+    box-shadow:0 4px 14px rgba(30,60,120,0.03);
+}
+
+.soon-card img{
+    width:64px;
+    height:64px;
+    border-radius:14px;
+    object-fit:cover;
+}
+
+.soon-info{
+    flex:1;
+}
+
+.soon-info h4{
+    font-size:15px;
+    font-weight:850;
+    color:#0f172a;
+}
+
+.soon-info p{
+    color:#64748b;
+    margin-top:2px;
+    font-size:12px;
+}
+
+.soon{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    color:#64748b;
+    padding:5px 10px;
+    border-radius:12px;
+    font-size:10px;
+    font-weight:800;
+}
+
+/* PREMIUM */
+.premium{
+    margin-top:20px;
+    padding:18px;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    background:#ffffff;
+    box-shadow:0 6px 18px rgba(2,132,199,0.06);
+}
+
+.premium-badge{
+    display:inline-block;
+    padding:5px 10px;
+    border-radius:14px;
+    border:1px solid #bae6fd;
+    background:#f0f9ff;
+    color:#0284c7;
+    font-size:11px;
+    font-weight:850;
+}
+
+.premium h3{
+    margin-top:10px;
+    font-size:20px;
+    font-weight:900;
+    color:#0c4a6e;
+}
+
+.premium-description{
+    color:#64748b;
+    margin-top:4px;
+    font-size:13px;
+    line-height:1.4;
+}
+
+.referral{
+    margin-top:14px;
+    border:1.5px solid #7dd3fc;
+    border-radius:18px;
+    padding:14px 16px;
+    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(2,132,199,0.08);
+}
+
+.referral small{
+    color:#0284c7;
+    font-weight:850;
+    letter-spacing:1px;
+    font-size:10px;
+}
+
+.referral strong{
+    display:block;
+    font-size:26px;
+    font-weight:900;
+    color:#0c4a6e;
+    line-height:1.1;
+    margin-top:2px;
+}
+
+.start{
+    text-align:right;
+    color:#0284c7;
+    font-size:11px;
+    font-weight:850;
+}
+
+.arrow{
+    margin-top:4px;
+    margin-left:auto;
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    background:#0284c7;
+    font-size:16px;
+    box-shadow:0 4px 12px rgba(2,132,199,0.3);
+}
+
+.feature-scroll{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    margin-top:12px;
+    scroll-snap-type:x mandatory;
+    scrollbar-width:none;
+}
+
+.feature-scroll::-webkit-scrollbar{
+    display:none;
+}
+
+.feature{
+    min-width:48%;
+    padding:14px;
+    background:#fafbfe;
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+    scroll-snap-align:start;
+}
+
+.feature-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
+    background:#e0f2fe;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#0284c7;
+    font-size:15px;
+}
+
+.feature h4{
+    margin-top:8px;
+    font-size:13px;
+    font-weight:850;
+    color:#0f172a;
+}
+
+.feature p{
+    color:#64748b;
+    font-size:11px;
+    margin-top:3px;
+    line-height:1.35;
+}
+
+/* FIXED BOTTOM */
+.bottom-wrap{
+    position:fixed;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:10px;
+    width:min(100% - 16px, 650px);
+    z-index:100;
+}
+
+.bottom-box{
+    background:rgba(255,255,255,0.96);
+    border:1.5px solid #bae6fd;
+    border-radius:22px;
+    padding:12px 14px;
+    box-shadow:0 10px 30px rgba(2,132,199,0.15);
+    backdrop-filter:blur(12px);
+}
+
+.bottom-links{
+    display:flex;
+    justify-content:space-around;
+    color:#64748b;
+    font-weight:750;
+    font-size:11px;
+    margin-bottom:8px;
+}
+
+.join{
+    width:100%;
+    border:0;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    min-height:48px;
+    border-radius:24px;
+    font-size:15px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 6px 18px rgba(2,132,199,0.3);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.join:active{
+    transform:scale(0.98);
+}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+    <div class="brand">
+        <div class="logo" onclick="goToLogin()">RDX</div>
+        <div class="brand-text">
+            <h1>RDX LUDO</h1>
+            <p>Play · Win · Earn</p>
+        </div>
+    </div>
+
+    <button class="signin" onclick="goToLogin()">
+        Sign In &nbsp;→
+    </button>
+</header>
+
+<main class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-grid">
+            <div>
+                <span class="badge">
+                    ✦ WELCOME TO RDX LUDO
+                </span>
+
+                <h2>
+                    Play Ludo.<br>
+                    <span>Win Real Cash.</span>
+                </h2>
+
+                <p class="hero-sub">
+                    India's most trusted real money Ludo platform.
+                </p>
+
+                <div class="stats">
+                    <div class="stat">
+                        <strong>2%</strong>
+                        <span>Referral</span>
+                    </div>
+                    <div class="stat">
+                        <strong>24/7</strong>
+                        <span>Support</span>
+                    </div>
+                    <div class="stat">
+                        <strong>100%</strong>
+                        <span>Secure</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-images">
+                <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
+                <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
+            </div>
+        </div>
+    </section>
+
+    <!-- GAME ARENA -->
+    <div class="section-head">
+        <div>
+            <small>GAME ARENA</small>
+            <h3>Pick Your Mode</h3>
+        </div>
+        <span class="live-count-badge">● 1 LIVE</span>
+    </div>
+
+    <!-- GAME SLIDER -->
+    <section class="game-scroll">
+        <article class="game-card" onclick="goToLogin()">
+            <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
+            <div class="game-overlay">
+                <span class="live-label">● LIVE</span>
+                <div class="game-bottom-row">
+                    <div class="game-info-left">
+                        <h4>Ludo Classic</h4>
+                        <p>Fast · Instant · Fair battles</p>
+                    </div>
+                    <button class="play" onclick="event.stopPropagation(); goToLogin();">
+                        ▶ Play
+                    </button>
+                </div>
+            </div>
+        </article>
+
+        <article class="game-card">
+            <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
+            <div class="game-overlay">
+                <span class="live-label" style="background:#64748b; animation:none;">🔒 COMING SOON</span>
+                <div class="game-bottom-row">
+                    <div class="game-info-left">
+                        <h4>1 Goti Ludo</h4>
+                        <p>Fast-paced single-token mode</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <!-- SMALL COMING SOON -->
+    <section class="soon-card" style="margin-top:12px;">
+        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
+        <div class="soon-info">
+            <h4>1 Goti Ludo</h4>
+            <p>Fast-paced single-token mode</p>
+        </div>
+        <span class="soon">🔒 SOON</span>
+    </section>
+
+    <!-- PREMIUM -->
+    <section class="premium">
+        <span class="premium-badge">✦ PLATFORM BENEFITS</span>
+        <h3>Built for Winners</h3>
+        <p class="premium-description">
+            Everything you need to play, earn and withdraw seamlessly.
+        </p>
+
+        <!-- REFERRAL PROGRAM -->
+        <div class="referral" onclick="goToLogin()">
+            <div>
+                <small>REFERRAL PROGRAM</small>
+                <strong>2% Refer</strong>
+                <span style="font-size:11px;color:#64748b;">Lifetime reward on friend's matches</span>
+            </div>
+            <div class="start">
+                START EARNING
+                <div class="arrow">↗</div>
+            </div>
+        </div>
+
+        <!-- FEATURES -->
+        <div class="feature-scroll">
+            <div class="feature">
+                <div class="feature-icon">🏆</div>
+                <h4>Skill Battles</h4>
+                <p>Head-to-head live Ludo experience.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">💰</div>
+                <h4>Instant Wallet</h4>
+                <p>Instant UPI deposits & withdrawals.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎁</div>
+                <h4>Refer & Earn</h4>
+                <p>Share with friends & get 2% reward.</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎧</div>
+                <h4>Live Support</h4>
+                <p>24×7 WhatsApp support for players.</p>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- FIXED BOTTOM -->
+<div class="bottom-wrap">
+    <div class="bottom-box">
+        <div class="bottom-links">
+            <span>🛡️ 100% Secure</span>
+            <span>⚡ Instant Payout</span>
+            <span>🎁 2% Refer</span>
+        </div>
+        <button class="join" onclick="goToLogin()">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i> Join RDX LUDO
+        </button>
+    </div>
+</div>
+
+<script>
+// 1. Referral URL Param Read & Lock (Never Lose Ref)
+const params = new URLSearchParams(window.location.search);
+const ref = params.get("ref");
+if (ref && ref.trim() !== "") {
+    const cleanRef = ref.trim().toUpperCase();
+    sessionStorage.setItem("rdx_referral_code", cleanRef);
+    if (!localStorage.getItem("rdxReferredBy")) {
+        localStorage.setItem("rdxReferredBy", cleanRef);
+    }
+}
+
+// 2. Pass Referral Code To Login Page
+function goToLogin(){
+    const currentRef = ref || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
+    if (currentRef && currentRef.trim() !== "") {
+        window.location.href = "./login.html?ref=" + encodeURIComponent(currentRef.trim().toUpperCase());
+        return;
+    }
+    window.location.href = "./login.html";
+}
+</script>
+
+</body>
+</html>
