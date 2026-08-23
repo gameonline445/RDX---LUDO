@@ -142,6 +142,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <aside class="sidebar">
 <button class="nav active" data-page="dashboard"><i class="fa-solid fa-chart-pie"></i> &nbsp;Dashboard</button>
 <button class="nav" data-page="liveusers"><i class="fa-solid fa-tower-broadcast"></i> &nbsp;Live Users Monitor</button>
+<button class="nav" data-page="battles"><i class="fa-solid fa-gamepad"></i> &nbsp;Battles Management</button>
 <button class="nav" data-page="kycrequests"><i class="fa-solid fa-id-card"></i> &nbsp;KYC Requests</button>
 <button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
 <button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
@@ -158,7 +159,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="title">Dashboard</div>
 <div class="stats">
 <div class="stat"><small>Active Live Users</small><h2 class="green" id="activeLiveUsersCount">0 Live</h2></div>
-<div class="stat"><small>Pending KYC</small><h2 class="orange" id="pendingKycCount">0</h2></div>
+<div class="stat"><small>Live Matches</small><h2 class="orange" id="liveBattlesCount">0</h2></div>
 <div class="stat"><small>Total Customers</small><h2 class="blue" id="totalUsers">0</h2></div>
 <div class="stat"><small>Total Balance</small><h2 class="green" id="totalCoins">₹0</h2></div>
 <div class="stat"><small>Total Deposit Paid</small><h2 class="purple" id="totalApprovedDeposits">₹0</h2></div>
@@ -190,6 +191,26 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <tr><th>Status</th><th>Mobile Number</th><th>Customer Name</th><th>Live Location</th><th>Wallet Balance</th><th>Last Active</th></tr>
 </thead>
 <tbody id="liveUsersTable"><tr><td colspan="6" class="empty">Scanning online users...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- BATTLES MANAGEMENT -->
+<section id="battles" class="page">
+<div class="title">⚔️ Battles & Disputes Management</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-gamepad"></i> Real-Time Ludo King Battles</h3>
+    <button id="refreshBattles" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="battleSearch" class="search" placeholder="Search by Battle ID, Player Name, Mobile, Status...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Battle ID</th><th>Player 1 (Creator)</th><th>Player 2 (Accepter)</th><th>Entry</th><th>Prize</th><th>Room Code</th><th>Status</th><th>Action</th></tr>
+</thead>
+<tbody id="battleTable"><tr><td colspan="8" class="empty">Loading battles...</td></tr></tbody>
 </table>
 </div>
 </div>
@@ -383,9 +404,18 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
             <h3 id="modalKycTitle">KYC Document Preview</h3>
             <button class="modal-close" onclick="closeKycPreviewModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="modal-body" id="modalKycContent">
-            <!-- Dynamic Images -->
+        <div class="modal-body" id="modalKycContent"></div>
+    </div>
+</div>
+
+<!-- BATTLE PROOF & RESOLVE MODAL -->
+<div class="modal-overlay" id="battleResolveModal">
+    <div class="modal-box" style="max-width:550px;">
+        <div class="modal-header">
+            <h3 id="modalBattleTitle">Match Proof & Dispute Resolve</h3>
+            <button class="modal-close" onclick="closeBattleModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
+        <div class="modal-body" id="modalBattleContent"></div>
     </div>
 </div>
 
@@ -414,6 +444,7 @@ let deposits = [];
 let withdrawals = [];
 let users = [];
 let kycRequests = [];
+let battlesList = [];
 let notificationsList = [];
 let referralAnalytics = [];
 
@@ -473,6 +504,7 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "deposits") loadDeposits();
         if(btn.dataset.page === "withdrawals") loadWithdrawals();
         if(btn.dataset.page === "users") loadUsers();
+        if(btn.dataset.page === "battles") loadBattles();
         if(btn.dataset.page === "kycrequests") loadKycRequests();
         if(btn.dataset.page === "liveusers") renderLiveUsers();
         if(btn.dataset.page === "referrals") loadReferralAnalytics();
@@ -480,6 +512,190 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "settings") loadSettings();
     });
 });
+
+// ================= BATTLES MANAGEMENT & DISPUTES =================
+async function loadBattles() {
+    $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Loading battles...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "battles"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.startedAt);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => {
+            const aLive = a.status === "live" || a.status === "conflict";
+            const bLive = b.status === "live" || b.status === "conflict";
+            if (aLive && !bLive) return -1;
+            if (!aLive && bLive) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        battlesList = list;
+        renderBattles();
+        $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
+    } catch(e) {
+        $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderBattles() {
+    const q = $("battleSearch").value.toLowerCase().trim();
+    const list = battlesList.filter(b => {
+        const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length) {
+        $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">No battles found.</td></tr>`;
+        return;
+    }
+
+    $("battleTable").innerHTML = list.map(b => {
+        let badgeClass = "pending";
+        if(b.status === "live") badgeClass = "approved";
+        else if(b.status === "conflict") badgeClass = "rejected";
+        else if(b.status === "completed") badgeClass = "approved";
+
+        return `
+        <tr>
+            <td><b>${safe(b.id)}</b></td>
+            <td><b>${safe(b.creatorName)}</b> <br><small style="color:#64748b;">${safe(b.creatorMobile)}</small></td>
+            <td><b>${safe(b.acceptedName || 'Waiting...')}</b></td>
+            <td><b style="color:#be123c;">₹${b.amount}</b></td>
+            <td><b style="color:#15803d;">₹${b.prize}</b></td>
+            <td><span class="badge approved" style="letter-spacing:1px;">${safe(b.roomCode || '—')}</span></td>
+            <td><span class="badge ${badgeClass}">${safe(b.status)}</span></td>
+            <td>
+                <button class="action view-btn" data-resolve-battle="${safe(b.id)}"><i class="fa-solid fa-shield"></i> View & Resolve</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-resolve-battle]").forEach(btn => {
+        btn.addEventListener("click", () => openBattleResolve(btn.dataset.resolveBattle));
+    });
+}
+
+window.openBattleResolve = (bId) => {
+    const b = battlesList.find(x => x.id === bId);
+    if (!b) return;
+
+    $("modalBattleTitle").innerHTML = `⚔️ Match: <b>${safe(b.creatorName)} vs ${safe(b.acceptedName || 'Opponent')}</b>`;
+    const container = $("modalBattleContent");
+
+    const p1Proof = b[`proof_${b.creatorUid}`] || null;
+    const p2Proof = b.acceptedUid ? b[`proof_${b.acceptedUid}`] : null;
+
+    const p1Result = b[`result_${b.creatorUid}`] || "Not Submitted";
+    const p2Result = b.acceptedUid ? (b[`result_${b.acceptedUid}`] || "Not Submitted") : "N/A";
+
+    container.innerHTML = `
+        <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:800; color:#0c4a6e;">
+                <span>Entry Fee: ₹${b.amount}</span>
+                <span style="color:#15803d;">Prize: ₹${b.prize}</span>
+            </div>
+            <div style="font-size:12px; color:#64748b; margin-top:4px;">Room Code: <b>${safe(b.roomCode || 'Not Set')}</b> | Status: <b>${safe(b.status)}</b></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+            <div style="background:#fff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                <strong style="font-size:13px; color:#0c4a6e;">${safe(b.creatorName)}</strong>
+                <div style="font-size:11px; color:#64748b; margin:2px 0;">Claim: <b style="color:#0284c7;">${p1Result}</b></div>
+                ${p1Proof ? `<img src="${p1Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p1Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
+            </div>
+
+            <div style="background:#fff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                <strong style="font-size:13px; color:#0c4a6e;">${safe(b.acceptedName || 'Opponent')}</strong>
+                <div style="font-size:11px; color:#64748b; margin:2px 0;">Claim: <b style="color:#0284c7;">${p2Result}</b></div>
+                ${p2Proof ? `<img src="${p2Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p2Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
+            </div>
+        </div>
+
+        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement Action:</h4>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.creatorUid}', '${b.prize}')">🏆 Make ${safe(b.creatorName)} WINNER (Credit ₹${b.prize})</button>
+            ${b.acceptedUid ? `<button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.acceptedUid}', '${b.prize}')">🏆 Make ${safe(b.acceptedName)} WINNER (Credit ₹${b.prize})</button>` : ''}
+            <button class="action reject" style="padding:10px; font-size:13px;" onclick="refundBattle('${b.id}', '${b.creatorUid}', '${b.acceptedUid}', '${b.amount}')">↩️ Cancel Match & Refund Both (₹${b.amount})</button>
+        </div>
+    `;
+
+    $("battleResolveModal").style.display = "flex";
+};
+
+window.closeBattleModal = () => {
+    $("battleResolveModal").style.display = "none";
+};
+
+window.declareWinner = async (bId, winnerUid, prize) => {
+    if (!confirm(`Winner ko ₹${prize} prize credit karein?`)) return;
+    try {
+        await runTransaction(db, async t => {
+            const userRef = doc(db, "customers", winnerUid);
+            const battleRef = doc(db, "battles", bId);
+
+            const userSnap = await t.get(userRef);
+            const currentBal = Number(userSnap.data()?.balance || 0);
+            const currentWin = Number(userSnap.data()?.winnings || 0);
+            const currentPlayed = Number(userSnap.data()?.matchesPlayed || 0);
+
+            t.update(userRef, {
+                balance: currentBal + Number(prize),
+                winnings: currentWin + Number(prize),
+                matchesPlayed: currentPlayed + 1
+            });
+
+            t.update(battleRef, {
+                status: "completed",
+                winnerUid: winnerUid,
+                resolvedAt: serverTimestamp()
+            });
+        });
+
+        alert("✅ Match Resolved & Winner Credited Successfully!");
+        closeBattleModal();
+        loadBattles();
+        loadUsers();
+    } catch(e) {
+        alert("Settlement Error: " + e.message);
+    }
+};
+
+window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
+    if (!confirm(`Match cancel karke dono players ko ₹${entryAmt} refund karein?`)) return;
+    try {
+        await runTransaction(db, async t => {
+            const p1Ref = doc(db, "customers", p1Uid);
+            const p1Snap = await t.get(p1Ref);
+            t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + Number(entryAmt) });
+
+            if (p2Uid) {
+                const p2Ref = doc(db, "customers", p2Uid);
+                const p2Snap = await t.get(p2Ref);
+                t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + Number(entryAmt) });
+            }
+
+            t.update(doc(db, "battles", bId), {
+                status: "cancelled",
+                refunded: true,
+                resolvedAt: serverTimestamp()
+            });
+        });
+
+        alert("✅ Match Cancelled & Refunded Successfully!");
+        closeBattleModal();
+        loadBattles();
+        loadUsers();
+    } catch(e) {
+        alert("Refund Error: " + e.message);
+    }
+};
+
+$("battleSearch").addEventListener("input", renderBattles);
+$("refreshBattles").addEventListener("click", loadBattles);
 
 // ================= LIVE ACTIVE USERS MONITOR =================
 function renderLiveUsers() {
@@ -539,7 +755,6 @@ async function loadKycRequests() {
 
         kycRequests = list;
         renderKycRequests();
-        $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     } catch(e) {
         $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
     }
@@ -583,16 +798,15 @@ window.openKycPreview = (docId) => {
 
     $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
     const container = $("modalKycContent");
-    const s = String(item.status || "pending").toLowerCase();
 
     container.innerHTML = `
         <div class="kyc-preview-grid">
             <div class="kyc-preview-item">
-                <strong style="font-size:12px; color:#0c4a6e;">Aadhaar Front Photo</strong>
+                <strong style="font-size:12px; color:#0c4a6e;">Front Photo</strong>
                 <img src="${item.frontImage}" alt="Front" onclick="window.open('${item.frontImage}')">
             </div>
             <div class="kyc-preview-item">
-                <strong style="font-size:12px; color:#0c4a6e;">Aadhaar Back Photo</strong>
+                <strong style="font-size:12px; color:#0c4a6e;">Back Photo</strong>
                 <img src="${item.backImage}" alt="Back" onclick="window.open('${item.backImage}')">
             </div>
         </div>
@@ -1202,7 +1416,6 @@ function updateDashboard(){
 
     $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
     $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
-    $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     
     $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
     $("dashStatus").className = "status ok";
@@ -1214,6 +1427,7 @@ async function loadAll(){
         await loadDeposits();
         await loadWithdrawals();
         await loadUsers();
+        await loadBattles();
         await loadKycRequests();
         await loadReferralAnalytics();
         await loadNotifications();
