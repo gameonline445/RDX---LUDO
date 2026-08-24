@@ -478,7 +478,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const paymentRef = doc(db, paymentSettings, "config");
+const paymentRef = doc(db, "paymentSettings", "config");
 
 let deposits = [];
 let withdrawals = [];
@@ -1083,7 +1083,7 @@ window.applyPenaltyToUser = async (uId) => {
     } catch(e) { alert("Penalty Error: " + e.message); }
 };
 
-if($("userHistorySearch")) $("userHistorySearch").addEventListener("input", loadUserHistoryList);
+if($("userHistorySearch")) $("userHistorySearch").addEventListener("input", renderUserHistoryList);
 if($("refreshUserHistory")) $("refreshUserHistory").addEventListener("click", loadUserHistoryList);
 
 // ================= BATTLES MANAGEMENT & DISPUTES =================
@@ -1191,7 +1191,7 @@ window.openBattleResolve = (bId) => {
             </div>
         </div>
 
-        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement (Protected against double payout):</h4>
+        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement & Separate Penalty Actions:</h4>
         <div style="display:flex; flex-direction:column; gap:8px;">
             <button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.creatorUid}', '${b.prize}')">🏆 Make ${safe(b.creatorName)} WINNER (Credit ₹${b.prize})</button>
             ${b.acceptedUid ? `<button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.acceptedUid}', '${b.prize}')">🏆 Make ${safe(b.acceptedName)} WINNER (Credit ₹${b.prize})</button>` : ''}
@@ -1225,8 +1225,6 @@ window.declareWinner = async (bId, winnerUid, prize) => {
             if(!userSnap.exists) throw new Error("Winner customer nahi mila!");
 
             const bData = battleSnap.data();
-            
-            // Strict double-payout check
             if(bData.settledOnce === true) {
                 throw new Error("⚠️ ROK DIYA GAYA HAI: Yeh match pehle hi settle ho chuka hai. Dubara rashi nahi bhej sakte!");
             }
@@ -1246,7 +1244,7 @@ window.declareWinner = async (bId, winnerUid, prize) => {
                 status: "completed",
                 winnerUid: winnerUid,
                 refunded: false,
-                settledOnce: true, // Lock set kar diya gaya hai
+                settledOnce: true,
                 resolvedAt: serverTimestamp()
             });
         });
@@ -1290,7 +1288,7 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
             t.update(battleRef, {
                 status: "cancelled",
                 refunded: true,
-                settledOnce: true, // Lock set kar diya gaya hai
+                settledOnce: true,
                 winnerUid: null,
                 resolvedAt: serverTimestamp()
             });
