@@ -186,7 +186,7 @@ button{font:inherit;}
 
     <div class="info-box">
         <div class="info-icon">i</div>
-        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI[span_3](start_span)[span_3](end_span).</div>
+        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI.</div>
     </div>
 </main>
 
@@ -201,31 +201,55 @@ button{font:inherit;}
 async function loadFirebaseCustomer(){
     try{
         if(!firebaseDB) return;
-        let mobile = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserMobile");
-        if(!mobile) return;
+        
+        // Sabhi possible local storage keys se user identifier dhoondhein
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                     localStorage.getItem("rdxVerifiedMobile") || 
+                     localStorage.getItem("rdxUserMobile") || 
+                     localStorage.getItem("rdxMobile") ||
+                     localStorage.getItem("userMobile");
+
+        if(!mobile) {
+            // Agar storage mein nahi hai, toh URL parameters ya default check karein
+            console.log("User mobile not found in localStorage.");
+            return;
+        }
+
         const cleanMobile = String(mobile).replace(/\D/g,"");
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         const snapshot = await userRef.get();
-        if(!snapshot.exists) return;
+        
+        if(!snapshot.exists) {
+            // Agar bina prefix ke ho toh try karein
+            const altRef = firebaseDB.collection("customers").doc(cleanMobile);
+            const altSnap = await altRef.get();
+            if(!altSnap.exists) return;
+            processCustomerData(altSnap.data(), cleanMobile);
+            return;
+        }
 
-        const data = snapshot.data();
-        const balance = Number(data.balance || 0);
-        const winnings = Number(data.winnings || data.winningBalance || 0);
-        const deposit = Number(data.depositBalance || data.deposit || 0);
-
-        document.getElementById("mainBalance").textContent = balance;
-        document.getElementById("topBalance").textContent = balance;
-        document.getElementById("depositBalance").textContent = deposit;
-        document.getElementById("winningBalance").textContent = winnings;
-
-        let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
-        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
-    } catch(error){ console.error(error); }
+        processCustomerData(snapshot.data(), firebaseDocId);
+    } catch(error){ console.error("Wallet Load Error:", error); }
 }
 
-window.addEventListener("load", loadFirebaseCard); // Keeping reference clean
+function processCustomerData(data, docId) {
+    const balance = Number(data.balance || 0);
+    // Winnings / Winning Balance fetch karein
+    const winnings = Number(data.winnings || data.winningBalance || 0);
+    // Deposit Balance fetch karein (agar field na ho toh balance - winnings)
+    const deposit = Number(data.depositBalance || data.deposit || Math.max(0, balance - winnings));
+
+    document.getElementById("mainBalance").textContent = balance;
+    document.getElementById("topBalance").textContent = balance;
+    document.getElementById("depositBalance").textContent = deposit;
+    document.getElementById("winningBalance").textContent = winnings;
+
+    let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(docId).slice(-4));
+    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+}
+
 window.addEventListener("load", loadFirebaseCustomer);
 
 function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
