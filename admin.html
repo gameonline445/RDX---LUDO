@@ -328,7 +328,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- CUSTOMERS (WITH BALANCE EDIT FEATURE) -->
+<!-- CUSTOMERS -->
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
@@ -449,7 +449,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 
-<!-- BATTLE PROOF & RESOLVE MODAL (WITH SEPARATE PENALTY & WIN/LOSS ACTIONS) -->
+<!-- BATTLE PROOF & RESOLVE MODAL -->
 <div class="modal-overlay" id="battleResolveModal">
     <div class="modal-box" style="max-width:550px;">
         <div class="modal-header">
@@ -1055,6 +1055,7 @@ window.closeBattleModal = () => {
     if($("battleResolveModal")) $("battleResolveModal").style.display = "none";
 };
 
+// FIXED FIRESTORE TRANSACTION: ALL READS BEFORE ALL WRITES
 window.declareWinner = async (bId, winnerUid, prize) => {
     if (!confirm(`Winner ko ₹${prize} prize credit karein?`)) return;
     try {
@@ -1062,14 +1063,21 @@ window.declareWinner = async (bId, winnerUid, prize) => {
             const userRef = doc(db, "customers", winnerUid);
             const battleRef = doc(db, "battles", bId);
 
+            // 1. ALL READS FIRST
             const userSnap = await t.get(userRef);
-            const currentBal = Number(userSnap.data()?.balance || 0);
-            const currentWin = Number(userSnap.data()?.winnings || 0);
+            const battleSnap = await t.get(battleRef);
+
+            if(!userSnap.exists) throw new Error("Winner customer not found!");
+
+            const curBal = Number(userSnap.data()?.balance || 0);
+            const curWin = Number(userSnap.data()?.winnings || userSnap.data()?.winningBalance || 0);
             const currentPlayed = Number(userSnap.data()?.matchesPlayed || 0);
 
+            // 2. ALL WRITES AFTER
             t.update(userRef, {
-                balance: currentBal + Number(prize),
-                winnings: currentWin + Number(prize),
+                balance: curBal + Number(prize),
+                winnings: curWin + Number(prize),
+                winningBalance: curWin + Number(prize),
                 matchesPlayed: currentPlayed + 1
             });
 
@@ -1089,28 +1097,40 @@ window.declareWinner = async (bId, winnerUid, prize) => {
     }
 };
 
+// FIXED FIRESTORE TRANSACTION: ALL READS BEFORE ALL WRITES
 window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
     if (!confirm(`Match cancel karke dono players ko ₹${entryAmt} refund karein?`)) return;
     try {
         await runTransaction(db, async t => {
             const p1Ref = doc(db, "customers", p1Uid);
-            const p1Snap = await t.get(p1Ref);
-            t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + Number(entryAmt) });
+            const p2Ref = p2Uid ? doc(db, "customers", p2Uid) : null;
+            const battleRef = doc(db, "battles", bId);
 
-            if (p2Uid) {
-                const p2Ref = doc(db, "customers", p2Uid);
-                const p2Snap = await t.get(p2Ref);
-                t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + Number(entryAmt) });
+            // 1. ALL READS FIRST
+            const p1Snap = await t.get(p1Ref);
+            const p2Snap = p2Ref ? await t.get(p2Ref) : null;
+
+            const amt = Number(entryAmt || 0);
+
+            // 2. ALL WRITES AFTER
+            if (p1Snap.exists) {
+                const p1Bal = Number(p1Snap.data()?.balance || 0);
+                t.update(p1Ref, { balance: p1Bal + amt });
             }
 
-            t.update(doc(db, "battles", bId), {
+            if (p2Ref && p2Snap && p2Snap.exists) {
+                const p2Bal = Number(p2Snap.data()?.balance || 0);
+                t.update(p2Ref, { balance: p2Bal + amt });
+            }
+
+            t.update(battleRef, {
                 status: "cancelled",
                 refunded: true,
                 resolvedAt: serverTimestamp()
             });
         });
 
-        alert("✅ Match Cancelled & Refunded Successfully!");
+        alert("✅ Match Cancelled & Refunded Successfully to Both Players!");
         closeBattleModal();
         loadBattles();
         loadUsers();
@@ -1308,112 +1328,6 @@ window.rejectKyc = async (uid) => {
 
 if($("kycSearch")) $("kycSearch").addEventListener("input", renderKycRequests);
 if($("refreshKyc")) $("refreshKyc").addEventListener("click", loadKycRequests);
-
-// ================= WITHDRAWALS =================
-async function loadWithdrawals(){
-    if(!$("withdrawalTable")) return;
-    $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
-    try {
-        const snap = await getDocs(collection(db, "withdrawals"));
-        let list = [];
-        snap.forEach(d => {
-            const data = d.data();
-            const timeInfo = parseItemTime(data.createdAt || data.date);
-            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
-        });
-
-        list.sort((a, b) => {
-            const aPending = String(a.status || "").toLowerCase() === "pending";
-            const bPending = String(b.status || "").toLowerCase() === "pending";
-            if (aPending && !bPending) return -1;
-            if (!aPending && bPending) return 1;
-            return b.timeObj - a.timeObj;
-        });
-
-        withdrawals = list;
-        renderWithdrawals();
-        if($("withdrawalStatus")) {
-            $("withdrawalStatus").textContent = "✅ Withdrawals loaded.";
-            $("withdrawalStatus").className = "status ok";
-        }
-        updateDashboard();
-    } catch(e) { 
-        if($("withdrawalStatus")) {
-            $("withdrawalStatus").textContent = "❌ " + e.message; 
-            $("withdrawalStatus").className = "status bad";
-        }
-    }
-}
-
-function renderWithdrawals(){
-    if(!$("withdrawalTable") || !$("withdrawalSearch")) return;
-    const q = $("withdrawalSearch").value.toLowerCase().trim();
-    const list = withdrawals.filter(w => {
-        const pool = `${w.id || ''} ${w.uid || ''} ${w.mobile || ''} ${w.upiId || ''} ${w.holderName || ''} ${w.bankName || ''} ${w.accountNumber || ''} ${w.ifsc || ''} ${w.amount || ''} ${w.status || ''} ${w.formattedDate || ''}`.toLowerCase();
-        return pool.includes(q);
-    });
-
-    if(!list.length){
-        $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">No requests found.</td></tr>`;
-        return;
-    }
-
-    $("withdrawalTable").innerHTML = list.map(w => {
-        const s = String(w.status || "pending").toLowerCase();
-        let details = w.mode === "BANK" ? `Bank: ${safe(w.bankName)} | A/C: ${safe(w.accountNumber)} | IFSC: ${safe(w.ifsc)}` : `UPI: ${safe(w.upiId)} (${safe(w.holderName)})`;
-        return `
-        <tr>
-            <td>${safe(w.id)}</td>
-            <td><b>${safe(w.uid || w.mobile || '—')}</b></td>
-            <td><b style="color:#be123c;">₹${w.amount}</b></td>
-            <td>${details}</td>
-            <td><span class="badge ${s}">${s}</span></td>
-            <td><i class="fa-regular fa-clock"></i> ${w.formattedDate}</td>
-            <td>${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : `<button class="action edit-status-btn" data-with-edit="${safe(w.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`}</td>
-        </tr>`;
-    }).join("");
-
-    document.querySelectorAll("[data-with-app]").forEach(b => { b.addEventListener("click", () => approveWithdrawal(b.dataset.withApp)); });
-    document.querySelectorAll("[data-with-rej]").forEach(b => { b.addEventListener("click", () => rejectWithdrawal(b.dataset.withRej)); });
-    document.querySelectorAll("[data-with-edit]").forEach(b => { b.addEventListener("click", () => editWithdrawalStatus(b.dataset.withEdit)); });
-}
-
-async function approveWithdrawal(id) {
-    if(!confirm("Kya aapne user ko payment transfer kar di hai?")) return;
-    try {
-        await setDoc(doc(db, "withdrawals", id), { status: "approved", comment: "Payment transfer complete." }, { merge: true });
-        alert("✅ Withdrawal Approved!");
-        loadWithdrawals();
-    } catch(e) { alert(e.message); }
-}
-
-async function rejectWithdrawal(id) {
-    const reason = prompt("Reject karne ka reason / note likhein:");
-    if(!reason) return;
-    try {
-        await setDoc(doc(db, "withdrawals", id), { status: "rejected", comment: reason.trim() }, { merge: true });
-        alert("❌ Withdrawal Rejected");
-        loadWithdrawals();
-    } catch(e) { alert(e.message); }
-}
-
-async function editWithdrawalStatus(id) {
-    const w = withdrawals.find(x => x.id === id);
-    if (!w) return;
-    const newStatus = prompt(`Status change karein (Type: pending / approved / rejected):`, w.status);
-    if (!newStatus) return;
-    const clean = newStatus.trim().toLowerCase();
-    if (!["pending", "approved", "rejected"].includes(clean)) return alert("Galat status! Sirf 'pending', 'approved' ya 'rejected' daalein.");
-
-    try {
-        await setDoc(doc(db, "withdrawals", id), { status: clean, comment: `Status edited by admin to ${clean}` }, { merge: true });
-        alert(`✅ Status successfully changed to '${clean}'`);
-        loadWithdrawals();
-    } catch(e) { alert("Error: " + e.message); }
-}
-
-if($("withdrawalSearch")) $("withdrawalSearch").addEventListener("input", renderWithdrawals);
-if($("refreshWithdrawals")) $("refreshWithdrawals").addEventListener("click", loadWithdrawals);
 
 // ================= DEPOSITS =================
 async function loadDeposits(){
