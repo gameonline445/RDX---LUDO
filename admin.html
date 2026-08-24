@@ -129,7 +129,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
-<button id="loginBtn" class="login-btn" onclick="triggerLogin()">Login</button>
+<button id="loginBtn" class="login-btn" onclick="executeAdminLogin()">Login</button>
 <div id="error"></div>
 </div>
 </section>
@@ -513,8 +513,8 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-// Global login function attached directly to HTML onclick attribute
-window.triggerLogin = async function() {
+// Make executeAdminLogin globally accessible for direct onclick binding in HTML
+window.executeAdminLogin = async function() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
     const errBox = $("error");
@@ -1765,7 +1765,7 @@ async function loadAll(){
     } catch(e){
         if($("dashStatus")) {
             $("dashStatus").textContent = "❌ " + e.message;
-            $("dashStatus.className") = "status bad";
+            $("dashStatus").className = "status bad";
         }
     }
 }
