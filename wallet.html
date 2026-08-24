@@ -186,7 +186,7 @@ button{font:inherit;}
 
     <div class="info-box">
         <div class="info-icon">i</div>
-        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI[span_4](start_span)[span_4](end_span).</div>
+        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI[span_2](start_span)[span_2](end_span).</div>
     </div>
 </main>
 
@@ -201,17 +201,14 @@ button{font:inherit;}
 async function loadFirebaseCustomer(){
     try{
         if(!firebaseDB) return;
-
+        
         let mobile = localStorage.getItem("rdxFirebaseUserId") || 
                      localStorage.getItem("rdxVerifiedMobile") || 
                      localStorage.getItem("rdxUserMobile") || 
                      localStorage.getItem("rdxMobile") ||
                      localStorage.getItem("userMobile");
 
-        if(!mobile) {
-            console.log("No mobile found in localStorage.");
-            return;
-        }
+        if(!mobile) return;
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
@@ -220,27 +217,14 @@ async function loadFirebaseCustomer(){
         let snapshot = await userRef.get();
         
         if(!snapshot.exists) {
-            const altRef = firebaseDB.collection("customers").doc(cleanMobile);
-            snapshot = await altRef.get();
-            if(!snapshot.exists) {
-                const querySnap = await firebaseDB.collection("customers").where("mobile", "==", cleanMobile).get();
-                if(!querySnap.empty) {
-                    snapshot = querySnap.docs[0];
-                } else {
-                    const querySnap91 = await firebaseDB.collection("customers").where("mobile", "==", "91" + cleanMobile).get();
-                    if(!querySnap91.empty) {
-                        snapshot = querySnap91.docs[0];
-                    }
-                }
-            }
+            snapshot = await firebaseDB.collection("customers").doc(cleanMobile).get();
         }
 
         if(snapshot && snapshot.exists) {
             const data = snapshot.data();
             
-            // Winning aur Deposit balance properly sync karein
             const winnings = Number(data.winnings || data.winningBalance || 0);
-            const deposit = Number(data.depositBalance || data.deposit || data.balance || 0);
+            const deposit = Number(data.depositBalance || data.deposit || 0);
             const totalBalance = deposit + winnings;
 
             document.getElementById("mainBalance").textContent = totalBalance;
