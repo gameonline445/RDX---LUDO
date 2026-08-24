@@ -480,7 +480,58 @@ button,input{font:inherit;}
 
         <div class="section-head"><i class="fa-solid fa-fire-flame-curved" style="color:#ea580c;"></i> Running Battles</div>
         <div id="runningBattlesList">
-            <p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">Loading running battles...</p>
+            <!-- 4 FAKE ACTIVE DUMMY RUNNING BATTLES (₹300, ₹500, ₹1000, ₹2000) -->
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹300</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹570</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Rahul_99</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Aman_King</span></div>
+                </div>
+            </div>
+
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹500</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹950</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Karan_007</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">RDX_Pro</span></div>
+                </div>
+            </div>
+
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹1000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹1900</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Vikash_Yadav</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Desi_Gamer</span></div>
+                </div>
+            </div>
+
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹2000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹3800</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Royal_Ludo</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Badshah_77</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -547,17 +598,17 @@ button,input{font:inherit;}
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
 
             <div class="status-update-grid-3" id="resultBtnGrid">
-                <button class="btn-won" onclick="openWonProofBox()"><i class="fa-solid fa-trophy"></i> I Won</button>
-                <button class="btn-lost" onclick="submitGameResult('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
-                <button class="btn-cancel" onclick="submitGameResult('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
+                <button class="btn-won" onclick="openProofBox('won')"><i class="fa-solid fa-trophy"></i> I Won</button>
+                <button class="btn-lost" onclick="openProofBox('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
+                <button class="btn-cancel" onclick="openProofBox('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
-            <!-- PROOF UPLOAD -->
+            <!-- PROOF UPLOAD (FOR WIN & CANCEL) -->
             <div class="proof-upload-box" id="proofUploadBox">
-                <label><i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof</label>
+                <label id="proofBoxLabel"><i class="fa-solid fa-image"></i> Upload Screenshot / Video Proof</label>
                 <input type="file" id="winProofFile" accept="image/*,video/*">
-                <button class="btn-submit-proof" id="btnSubmitProof" onclick="uploadWinProofAndSubmit()">
-                    Submit Proof & Win Claim
+                <button class="btn-submit-proof" id="btnSubmitProof" onclick="uploadProofAndSubmit()">
+                    Submit Proof & Claim
                 </button>
             </div>
 
@@ -602,7 +653,7 @@ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
 function getCleanUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
+    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile"] || "";
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
@@ -610,6 +661,7 @@ let myCurrentBalance = 0;
 let myUserName = "User";
 let activeBattleId = null;
 let activeBattlesCount = 0;
+let selectedResultType = "won";
 
 function showErrorModal(msg) {
     document.getElementById("errorModalMsg").textContent = msg;
@@ -679,7 +731,7 @@ function listenBattles() {
 
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
-        let runningHTML = "";
+        let dbRunningHTML = "";
         let count = 0;
 
         snap.forEach(doc => {
@@ -739,7 +791,7 @@ function listenBattles() {
             }
 
             if(b.status === "live" || b.status === "conflict"){
-                runningHTML += `
+                dbRunningHTML += `
                     <div class="battle-card" onclick="openRunningMatch('${bId}')" style="cursor:pointer;">
                         <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
                         <div class="battle-meta" style="margin-top:6px;">
@@ -759,7 +811,60 @@ function listenBattles() {
         activeBattlesCount = count;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live running battles.</p>`;
+        
+        // Combine DB running battles + 4 fake interactive tables
+        const fakeRunningHTML = `
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹300</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹570</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Rahul_99</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Aman_King</span></div>
+                </div>
+            </div>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹500</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹950</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Karan_007</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">RDX_Pro</span></div>
+                </div>
+            </div>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹1000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹1900</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Vikash_Yadav</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Desi_Gamer</span></div>
+                </div>
+            </div>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹2000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹3800</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Royal_Ludo</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Badshah_77</span></div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById("runningBattlesList").innerHTML = dbRunningHTML + fakeRunningHTML;
     });
 }
 
@@ -894,8 +999,22 @@ function copyRoomCode() {
 }
 
 // PROOF COMPRESSION
-function openWonProofBox() {
+function openProofBox(type) {
+    selectedResultType = type;
     document.getElementById("proofUploadBox").style.display = "block";
+    const label = document.getElementById("proofBoxLabel");
+    const btn = document.getElementById("btnSubmitProof");
+
+    if(type === 'won') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof`;
+        btn.textContent = "Submit Proof & Win Claim";
+    } else if(type === 'lost') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional / Required for dispute)`;
+        btn.textContent = "Submit Loss Claim";
+    } else if(type === 'cancel') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Cancel / Dispute Proof Screenshot`;
+        btn.textContent = "Submit Cancel Claim";
+    }
 }
 
 function compressImageFile(file) {
@@ -933,46 +1052,39 @@ function compressImageFile(file) {
     });
 }
 
-// WIN PROOF & AUTO RESULT EVALUATION
-async function uploadWinProofAndSubmit() {
+// UPLOAD PROOF & SUBMIT RESULT
+async function uploadProofAndSubmit() {
     const file = document.getElementById("winProofFile").files[0];
-    if(!file){ alert("Kripya winning screenshot upload karein."); return; }
+    if(selectedResultType === 'won' && !file) {
+        alert("Kripya winning screenshot upload karein.");
+        return;
+    }
 
     const btn = document.getElementById("btnSubmitProof");
     btn.disabled = true;
     btn.textContent = "Uploading Proof...";
 
     try {
-        const proofBase64 = await compressImageFile(file);
+        let proofBase64 = null;
+        if(file) {
+            proofBase64 = await compressImageFile(file);
+        }
         const docId = userId.length === 10 ? "91" + userId : userId;
 
-        await processResultWithAutoSettlement(docId, "won", proofBase64);
+        await processResultWithAutoSettlement(docId, selectedResultType, proofBase64);
 
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
-        alert("✅ Winning Claim & Proof Submitted!");
+        alert("✅ Claim & Proof Submitted Successfully!");
     } catch(err) {
         alert("Error: " + err.message);
     }
     btn.disabled = false;
-    btn.textContent = "Submit Proof & Win Claim";
+    btn.textContent = "Submit Proof & Claim";
 }
 
-async function submitGameResult(type) {
-    if(!confirm(`Kya aap result '${type.toUpperCase()}' submit karna chahte hain?`)) return;
-    const docId = userId.length === 10 ? "91" + userId : userId;
-
-    try {
-        await processResultWithAutoSettlement(docId, type, null);
-        document.getElementById("resultBtnGrid").style.display = "none";
-        document.getElementById("resultSubmittedMsg").style.display = "block";
-    } catch(e) {
-        alert("Result error: " + e.message);
-    }
-}
-
-// AUTOMATIC RESULT EVALUATION ENGINE (WITH CANCEL REFUND)
+// AUTOMATIC RESULT EVALUATION ENGINE (WITH CANCEL CONFLICT/ADMIN APPROVAL)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -984,7 +1096,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 
         const p1Uid = b.creatorUid;
         const p2Uid = b.acceptedUid;
-        const entryAmt = Number(b.amount || 0);
         const prizeAmt = Number(b.prize || 0);
 
         const otherUid = (myUid === p1Uid) ? p2Uid : p1Uid;
@@ -998,33 +1109,13 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // IF ANY PLAYER CLICKS CANCEL -> REFUND BOTH PLAYERS
-        if(myResult === "cancel") {
-            const p1Ref = firebaseDB.collection("customers").doc(p1Uid);
-            const p2Ref = firebaseDB.collection("customers").doc(p2Uid);
-            const p1Snap = await t.get(p1Ref);
-            const p2Snap = await t.get(p2Ref);
-
-            t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + entryAmt });
-            t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + entryAmt });
-
-            updates.status = "cancelled";
-            updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
+        // IF ANY PLAYER CLAIMS CANCEL OR CONFLICT -> GOES TO CONFLICT FOR ADMIN APPROVAL
+        if(myResult === "cancel" || otherResult === "cancel") {
+            updates.status = "conflict";
+            updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
         }
         else if(otherResult !== null) {
-            if(otherResult === "cancel") {
-                const p1Ref = firebaseDB.collection("customers").doc(p1Uid);
-                const p2Ref = firebaseDB.collection("customers").doc(p2Uid);
-                const p1Snap = await t.get(p1Ref);
-                const p2Snap = await t.get(p2Ref);
-
-                t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + entryAmt });
-                t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + entryAmt });
-
-                updates.status = "cancelled";
-                updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
-            }
-            else if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
+            if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
                 const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
                 const winnerSnap = await t.get(winnerRef);
@@ -1045,10 +1136,13 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
                 updates.resolvedBy = "auto";
             }
-            else if(myResult === "won" && otherResult === "won") {
+            else if(myResult === "won" && otherResult === "won" || myResult === otherResult) {
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
             }
+        } else {
+            // First person submitted, wait for opponent or admin check
+            updates.status = "conflict";
         }
 
         t.update(battleRef, updates);
