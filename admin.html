@@ -236,6 +236,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 <input id="kycSearch" class="search" placeholder="Search by Mobile or ID Number...">
 <div class="table">
+<table>
 <thead>
 <tr><th>Customer UID</th><th>Mobile</th><th>ID Number</th><th>Status</th><th>Date</th><th>Action</th></tr>
 </thead>
@@ -271,6 +272,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
+<table>
 <thead>
 <tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -333,6 +335,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
+<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -678,7 +681,6 @@ window.openUserCompleteHistory = async (uId) => {
 
             if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
-                // Determine opponent name and opponent mobile/UID if available
                 let opponentInfo = isCreator ? (data.acceptedName || data.acceptedMobile || "Waiting...") : (data.creatorName || data.creatorMobile || "Creator");
                 
                 userBats.push({ 
@@ -767,9 +769,6 @@ window.openUserCompleteHistory = async (uId) => {
                         ${userBats.length ? userBats.map((b, idx) => {
                             let resTxt = b.status;
                             let resBadge = 'pending';
-                            let betDisplay = `₹${b.amount || 0}`;
-                            let prizeDisplay = `₹${b.prize || 0}`;
-
                             if(b.status === 'completed') {
                                 if(String(b.winnerUid || "").replace(/\D/g, "") === String(user.id).replace(/\D/g, "")) {
                                     resTxt = `WIN (+₹${b.prize || 0}) with Bet ₹${b.amount || 0}`;
@@ -1752,7 +1751,7 @@ function updateDashboard(){
     if($("totalApprovedWithdrawals")) $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
 
     if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
-    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w =>-w.status || "").length;
     if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
     
