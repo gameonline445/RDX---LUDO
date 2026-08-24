@@ -43,7 +43,7 @@ header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#fff
 .brand .admin-logo-box{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;background:#fff;}
 .brand .admin-logo-box img{width:100%;height:100%;object-fit:cover;}
 .brand span{color:#0284c7;}
-.logout{padding:8px 16px;border-radius:20px;background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c;font-weight:800;font-size:13px;cursor:pointer;}
+.logout{padding:8px 16px;border-radius:20px;background:#fff1f2;border:1px solid #fecdd3;color:#be123c;font-weight:800;font-size:13px;cursor:pointer;}
 
 .layout{display:flex;}
 .sidebar{width:230px;min-height:calc(100vh - 66px);background:#ffffff;border-right:1.5px solid #bae6fd;padding:14px;}
@@ -107,8 +107,8 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .modal-body{padding:16px;overflow-y:auto;flex:1;}
 
 .kyc-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
-.kyc-preview-item{background:#f8fafc;border:1.5px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
-.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1.5px solid #e2e8f0;margin-top:6px;cursor:pointer;}
+.kyc-preview-item{background:#f8fafc;border:1px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
+.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #e2e8f0;margin-top:6px;cursor:pointer;}
 
 @media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr);}.sidebar{width:180px;}}
@@ -129,7 +129,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
-<button id="loginBtn" class="login-btn">Login</button>
+<button id="loginBtn" class="login-btn" onclick="executeAdminLogin()">Login</button>
 <div id="error"></div>
 </div>
 </section>
@@ -226,7 +226,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- KYC REQUESTS -->
+<!-- KYC REQUESTS (FRONT & BACK ONLY) -->
 <section id="kycrequests" class="page">
 <div class="title">📄 Document KYC Verification Requests</div>
 <div class="card">
@@ -335,6 +335,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
+<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -437,7 +438,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 
-<!-- KYC DOCUMENT PREVIEW MODAL -->
+<!-- KYC DOCUMENT PREVIEW MODAL (FRONT & BACK ONLY) -->
 <div class="modal-overlay" id="kycPreviewModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -515,8 +516,7 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-// Robust login handler bound via addEventListener and onclick both to guarantee response
-async function handleLoginAction() {
+window.executeAdminLogin = async function() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
     const errBox = $("error");
@@ -540,16 +540,7 @@ async function handleLoginAction() {
             errBox.style.display = "block";
         }
     }
-}
-
-window.executeAdminLogin = handleLoginAction;
-
-window.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = $("loginBtn");
-    if(loginBtn) {
-        loginBtn.addEventListener("click", handleLoginAction);
-    }
-});
+};
 
 onAuthStateChanged(auth, u => {
     if(u && u.email){
@@ -676,7 +667,7 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userWiths.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch User Battles with Opponent Mobile Number
+        // Fetch User Battles (Win, Loss, Cancel, Bet Amount, Opponent Name)
         const batSnap = await getDocs(collection(db, "battles"));
         const userBats = [];
         batSnap.forEach(d => {
@@ -690,14 +681,12 @@ window.openUserCompleteHistory = async (uId) => {
 
             if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
-                
-                // Show Opponent Mobile Number if available, else Name, else UID
-                let opponentMobile = isCreator ? (data.acceptedMobile || data.acceptedName || data.acceptedUid || "Waiting...") : (data.creatorMobile || data.creatorName || data.creatorUid || "Creator");
+                let opponentInfo = isCreator ? (data.acceptedName || data.acceptedMobile || "Waiting...") : (data.creatorName || data.creatorMobile || "Creator");
                 
                 userBats.push({ 
                     id: d.id, 
                     ...data, 
-                    opponentMobile: opponentMobile,
+                    opponentInfo: opponentInfo,
                     isCreator: isCreator,
                     formattedDate: timeInfo.formatted, 
                     timeObj: timeInfo.dateObj 
@@ -706,6 +695,7 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userBats.sort((a, b) => b.timeObj - a.timeObj);
 
+        // Calculate Battle Stats & Bet Amounts
         let totalBattles = userBats.length;
         let winBattles = 0;
         let lossBattles = 0;
@@ -723,6 +713,7 @@ window.openUserCompleteHistory = async (uId) => {
             }
         });
 
+        // Render Data Inside Modal
         container.innerHTML = `
             <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px;">
                 <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
@@ -769,11 +760,11 @@ window.openUserCompleteHistory = async (uId) => {
                 </table>
             </div>
 
-            <!-- TOTAL BATTLE HISTORY (WITH OPPONENT MOBILE NUMBER & BET AMOUNT) -->
-            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent Mobile & Bet History (${userBats.length})</h4>
+            <!-- TOTAL BATTLE HISTORY (WITH OPPONENT & BET AMOUNT DETAILS) -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent & Bet History (${userBats.length})</h4>
             <div class="table" style="max-height:180px;">
                 <table>
-                    <thead><tr><th>#</th><th>Opponent Mobile</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>#</th><th>Opponent</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
                         ${userBats.length ? userBats.map((b, idx) => {
                             let resTxt = b.status;
@@ -793,7 +784,7 @@ window.openUserCompleteHistory = async (uId) => {
                                 resTxt = `LIVE / ACTIVE (Bet ₹${b.amount || 0})`;
                                 resBadge = 'pending';
                             }
-                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentMobile)}</b></td><td><b style="color:#0284c7;">₹${b.amount || 0}</b></td><td>₹${b.prize || 0}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
+                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentInfo)}</b></td><td><b style="color:#0284c7;">₹${b.amount || 0}</b></td><td>₹${b.prize || 0}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
                         }).join("") : `<tr><td colspan="6" class="empty">No battle history found.</td></tr>`}
                     </tbody>
                 </table>
@@ -844,7 +835,7 @@ function renderBattles() {
     if(!$("battleTable") || !$("battleSearch")) return;
     const q = $("battleSearch").value.toLowerCase().trim();
     const list = battlesList.filter(b => {
-        const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.acceptedMobile || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
+        const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
         return pool.includes(q);
     });
 
@@ -863,7 +854,7 @@ function renderBattles() {
         <tr>
             <td><b>${safe(b.id)}</b></td>
             <td><b>${safe(b.creatorName)}</b> <br><small style="color:#64748b;">${safe(b.creatorMobile)}</small></td>
-            <td><b>${safe(b.acceptedName || 'Waiting...')}</b> <br><small style="color:#64748b;">${safe(b.acceptedMobile || '')}</small></td>
+            <td><b>${safe(b.acceptedName || 'Waiting...')}</b></td>
             <td><b style="color:#be123c;">₹${b.amount}</b></td>
             <td><b style="color:#15803d;">₹${b.prize}</b></td>
             <td><span class="badge approved" style="letter-spacing:1px;">${safe(b.roomCode || '—')}</span></td>
@@ -1329,465 +1320,4 @@ function renderDeposits(){
 
     document.querySelectorAll("[data-dep-app]").forEach(b => { b.addEventListener("click", () => approveDeposit(b.dataset.depApp)); });
     document.querySelectorAll("[data-dep-rej]").forEach(b => { b.addEventListener("click", () => rejectDeposit(b.dataset.depRej)); });
-    document.querySelectorAll("[data-dep-edit]").forEach(b => { b.addEventListener("click", () => editDepositStatus(b.dataset.depEdit)); });
-}
-
-async function approveDeposit(id) {
-    const d = deposits.find(x => x.id === id);
-    if(!d || !confirm(`₹${d.amount} approve karke customer wallet me add karein?`)) return;
-    const uid = String(d.uid || d.userId).replace(/\D/g, "");
-    try {
-        await runTransaction(db, async t => {
-            const cRef = doc(db, "customers", uid.length === 10 ? "91" + uid : uid);
-            const cSnap = await t.get(cRef);
-            const currentBal = Number(cSnap.data()?.balance || 0);
-            const currentDep = Number(cSnap.data()?.depositBalance || 0);
-            const amt = Number(d.amount);
-
-            t.update(cRef, { balance: currentBal + amt, depositBalance: currentDep + amt });
-            t.update(doc(db, "deposits", id), { status: "approved", comment: "Payment verify ho gaya." });
-        });
-        alert("✅ Deposit Approved & Wallet Updated!");
-        loadDeposits();
-        loadUsers();
-    } catch(e) { alert(e.message); }
-}
-
-async function rejectDeposit(id) {
-    const r = prompt("Reject karne ka reason daalein:");
-    if(!r) return;
-    try {
-        await setDoc(doc(db, "deposits", id), { status: "rejected", comment: r.trim() }, { merge: true });
-        alert("❌ Deposit Rejected");
-        loadDeposits();
-    } catch(e) { alert(e.message); }
-}
-
-async function editDepositStatus(id) {
-    const d = deposits.find(x => x.id === id);
-    if (!d) return;
-    const oldStatus = String(d.status || "").toLowerCase();
-    const newStatus = prompt(`Status change karein (Type: pending / approved / rejected):`, oldStatus);
-    if (!newStatus) return;
-    const clean = newStatus.trim().toLowerCase();
-    if (!["pending", "approved", "rejected"].includes(clean)) return alert("Galat status! Sirf 'pending', 'approved' ya 'rejected' daalein.");
-    if (clean === oldStatus) return;
-
-    const uid = String(d.uid || d.userId).replace(/\D/g, "");
-    const amt = Number(d.amount || 0);
-
-    try {
-        await runTransaction(db, async t => {
-            const cRef = doc(db, "customers", uid.length === 10 ? "91" + uid : uid);
-            const cSnap = await t.get(cRef);
-            let currentBal = Number(cSnap.data()?.balance || 0);
-            let currentDep = Number(cSnap.data()?.depositBalance || 0);
-
-            if (oldStatus === "approved" && (clean === "pending" || clean === "rejected")) {
-                currentBal = Math.max(0, currentBal - amt);
-                currentDep = Math.max(0, currentDep - amt);
-                t.update(cRef, { balance: currentBal, depositBalance: currentDep });
-            } else if (oldStatus !== "approved" && clean === "approved") {
-                t.update(cRef, { balance: currentBal + amt, depositBalance: currentDep + amt });
-            }
-
-            t.update(doc(db, "deposits", id), { status: clean, comment: `Status edited by admin from ${oldStatus} to ${clean}` });
-        });
-
-        alert(`✅ Deposit status updated to '${clean}' & Customer balance synced!`);
-        loadDeposits();
-        loadUsers();
-    } catch(e) { alert("Error: " + e.message); }
-}
-
-if($("depositSearch")) $("depositSearch").addEventListener("input", renderDeposits);
-if($("refreshDeposits")) $("refreshDeposits").addEventListener("click", loadDeposits);
-
-// ================= REFERRAL ANALYTICS =================
-async function loadReferralAnalytics(){
-    if(!$("referralLeaderboardTable")) return;
-    $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Loading referral analytics...</td></tr>`;
-    try {
-        if (!users.length) await loadUsers();
-
-        const refMap = {};
-        const todayStr = new Date().toLocaleDateString("en-IN");
-        let todayCount = 0;
-        let totalCount = 0;
-        let totalEarnings = 0;
-
-        users.forEach(u => {
-            const refCode = String(u.referredBy || "").trim().toUpperCase();
-            if (refCode && refCode !== "DIRECT" && refCode !== "") {
-                totalCount++;
-                if (u.formattedDate.includes(todayStr)) { todayCount++; }
-                if (!refMap[refCode]) { refMap[refCode] = []; }
-                refMap[refCode].push(u);
-            }
-        });
-
-        let board = users.map(u => {
-            const myCode = String(u.referralCode || ("RDX" + String(u.id).slice(-4))).toUpperCase();
-            const referredList = refMap[myCode] || [];
-            const earnings = Number(u.referralBalance || u.redeemBalance || 0);
-            totalEarnings += earnings;
-
-            return {
-                id: u.id,
-                name: u.name || ("User " + String(u.id).slice(-4)),
-                mobile: u.mobile || u.id,
-                referralCode: myCode,
-                referralCount: referredList.length,
-                referralEarnings: earnings,
-                referredUsers: referredList
-            };
-        });
-
-        board.sort((a, b) => b.referralCount - a.referralCount);
-        referralAnalytics = board;
-
-        if($("totalReferralsCount")) $("totalReferralsCount").textContent = totalCount;
-        if($("todayReferralsCount")) $("todayReferralsCount").textContent = todayCount;
-        if($("dashTotalRefs")) $("dashTotalRefs").textContent = totalCount;
-        if($("totalReferralEarnings")) $("totalReferralEarnings").textContent = "₹" + totalEarnings;
-
-        renderReferralLeaderboard();
-    } catch(e){ 
-        if($("referralLeaderboardTable")) $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Error: ${safe(e.message)}</td></tr>`; 
-    }
-}
-
-function renderReferralLeaderboard(){
-    if(!$("referralLeaderboardTable") || !$("referralSearch")) return;
-    const q = $("referralSearch").value.toLowerCase().trim();
-    const list = referralAnalytics.filter(r => {
-        const pool = `${r.name || ''} ${r.mobile || ''} ${r.referralCode || ''} ${r.referredUsers.map(x => x.mobile + ' ' + x.formattedDate).join(' ')}`.toLowerCase();
-        return pool.includes(q);
-    });
-
-    if(!list.length){
-        $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">No referral data found.</td></tr>`;
-        return;
-    }
-
-    $("referralLeaderboardTable").innerHTML = list.map((r, idx) => {
-        let rankBadge = `<span style="font-weight:900; color:#64748b;">#${idx + 1}</span>`;
-        if (idx === 0) rankBadge = `🥇 <span style="font-weight:900; color:#d97706;">#1 Top</span>`;
-        else if (idx === 1) rankBadge = `🥈 <span style="font-weight:900; color:#64748b;">#2</span>`;
-        else if (idx === 2) rankBadge = `🥉 <span style="font-weight:900; color:#b45309;">#3</span>`;
-
-        return `
-        <tr>
-            <td>${rankBadge}</td>
-            <td><b>${safe(r.name)}</b></td>
-            <td>${safe(r.mobile)}</td>
-            <td><span class="badge approved" style="letter-spacing:1px;">${safe(r.referralCode)}</span></td>
-            <td><b style="color:#0284c7; font-size:15px;">${r.referralCount} Users</b></td>
-            <td><b style="color:#15803d;">₹${r.referralEarnings}</b></td>
-            <td>
-                <button class="action view-btn" data-view-ref="${safe(r.id)}"><i class="fa-solid fa-users"></i> View (${r.referralCount})</button>
-            </td>
-        </tr>`;
-    }).join("");
-
-    document.querySelectorAll("[data-view-ref]").forEach(b => {
-        b.addEventListener("click", () => openReferralModal(b.dataset.viewRef));
-    });
-}
-
-window.openReferralModal = (userId) => {
-    const user = referralAnalytics.find(x => String(x.id) === String(userId));
-    if (!user) return;
-
-    if($("modalReferrerTitle")) $("modalReferrerTitle").innerHTML = `👥 Referrals by: <b>${safe(user.name)} (${safe(user.mobile)})</b>`;
-    const tbody = $("modalReferredUsersTable");
-    if(!tbody) return;
-
-    if (!user.referredUsers.length) {
-        tbody.innerHTML = `<tr><td colspan="4" class="empty">Is user ne abhi tak kisi ko refer nahi kiya.</td></tr>`;
-    } else {
-        const sorted = [...user.referredUsers].sort((a, b) => b.timeObj - a.timeObj);
-        tbody.innerHTML = sorted.map((u, i) => `
-            <tr>
-                <td>${i + 1}</td>
-                <td><b>${safe(u.mobile || u.id)}</b></td>
-                <td>${safe(u.name || 'User')}</td>
-                <td><i class="fa-regular fa-clock"></i> ${u.formattedDate}</td>
-            </tr>
-        `).join("");
-    }
-    if($("referredUsersModal")) $("referredUsersModal").style.display = "flex";
-};
-
-window.closeReferralModal = () => { 
-    if($("referredUsersModal")) $("referredUsersModal").style.display = "none"; 
-};
-
-if($("referralSearch")) $("referralSearch").addEventListener("input", renderReferralLeaderboard);
-if($("refreshReferrals")) $("refreshReferrals").addEventListener("click", loadReferralAnalytics);
-
-// ================= CUSTOMERS =================
-async function loadUsers(){
-    if(!$("userTable")) return;
-    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
-    try {
-        const snap = await getDocs(collection(db, "customers"));
-        let list = [];
-        snap.forEach(d => {
-            const data = d.data();
-            const timeInfo = parseItemTime(data.createdAt || data.joinedAt);
-            const lastSeenInfo = parseItemTime(data.lastSeenAt || data.lastLoginAt);
-            list.push({ 
-                id: d.id, 
-                ...data, 
-                timeObj: timeInfo.dateObj, 
-                formattedDate: timeInfo.formatted,
-                lastSeenObj: lastSeenInfo.dateObj
-            });
-        });
-
-        list.sort((a, b) => b.timeObj - a.timeObj);
-        users = list;
-        renderUsers();
-        renderLiveUsers();
-        updateDashboard();
-    } catch(e) {
-        if($("userTable")) $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
-    }
-}
-
-function renderUsers(){
-    if(!$("userTable") || !$("userSearch")) return;
-    const q = $("userSearch").value.toLowerCase().trim();
-    const list = users.filter(u => {
-        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.kycStatus || ''} ${u.referredBy || ''}`.toLowerCase();
-        return pool.includes(q);
-    });
-
-    if(!list.length){
-        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
-        return;
-    }
-
-    $("userTable").innerHTML = list.map(u => {
-        const kycBadge = u.kycStatus === 'verified' ? '<span class="badge approved">Verified</span>' : (u.kycStatus === 'pending' ? '<span class="badge pending">Under Review</span>' : '<span class="badge rejected">Not Done</span>');
-        return `
-        <tr>
-            <td>${safe(u.id)}</td>
-            <td><b>${safe(u.name || 'User')}</b></td>
-            <td>${safe(u.mobile || u.id)}</td>
-            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
-            <td>${kycBadge}</td>
-            <td><span class="badge ${u.referredBy && u.referredBy !== 'DIRECT' ? 'approved' : 'pending'}">${safe(u.referredBy || 'DIRECT')}</span></td>
-            <td><span class="badge approved">Active</span></td>
-        </tr>`;
-    }).join("");
-}
-
-if($("userSearch")) $("userSearch").addEventListener("input", renderUsers);
-if($("refreshUsers")) $("refreshUsers").addEventListener("click", loadUsers);
-
-// ================= NOTIFICATIONS =================
-const notifTargetEl = $("notifTarget");
-if(notifTargetEl) {
-    notifTargetEl.addEventListener("change", e => {
-        const box = $("personalUidBox");
-        if(box) box.style.display = e.target.value === "personal" ? "block" : "none";
-    });
-}
-
-const sendNotifBtnEl = $("sendNotifBtn");
-if(sendNotifBtnEl) {
-    sendNotifBtnEl.addEventListener("click", async () => {
-        const t = $("notifTarget").value;
-        const u = $("notifUid").value.replace(/\D/g,"");
-        const title = $("notifTitle").value.trim();
-        const msg = $("notifMessage").value.trim();
-
-        if(!title || !msg) return alert("Title & Message bharna zaroori hai");
-        if(t === "personal" && !u) return alert("Personal notification ke liye User UID / Mobile zaroori hai");
-
-        sendNotifBtnEl.disabled = true;
-        sendNotifBtnEl.textContent = "Sending...";
-
-        try {
-            await addDoc(collection(db, "notifications"), { 
-                target: t, 
-                uid: t === "personal" ? (u.length === 10 ? "91" + u : u) : "all", 
-                title: title, 
-                message: msg, 
-                createdAt: serverTimestamp() 
-            });
-            alert("✅ Notification Sent Successfully!");
-            $("notifTitle").value = ""; 
-            $("notifMessage").value = "";
-            loadNotifications();
-        } catch(err) { alert("Error: " + err.message); }
-        sendNotifBtnEl.disabled = false;
-        sendNotifBtnEl.textContent = "🚀 Send Notification";
-    });
-}
-
-async function loadNotifications(){
-    if(!$("notifTable")) return;
-    $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Loading notifications...</td></tr>`;
-    try {
-        const snap = await getDocs(collection(db, "notifications"));
-        let list = [];
-        snap.forEach(d => {
-            const data = d.data();
-            const timeInfo = parseItemTime(data.createdAt || data.date);
-            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
-        });
-
-        list.sort((a, b) => b.timeObj - a.timeObj);
-        notificationsList = list;
-        renderNotifications();
-    } catch(e) { 
-        if($("notifTable")) $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`; 
-    }
-}
-
-function renderNotifications(){
-    if(!$("notifTable")) return;
-    if(!notificationsList.length){
-        $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi tak koi notification nahi bheji gayi.</td></tr>`;
-        return;
-    }
-
-    $("notifTable").innerHTML = notificationsList.map(n => {
-        const isAll = String(n.target || "").toLowerCase() === "all" || String(n.uid || "").toLowerCase() === "all";
-        return `
-        <tr>
-            <td><span class="badge ${isAll ? 'approved' : 'pending'}">${isAll ? '📢 All' : '👤 Personal'}</span></td>
-            <td><b>${safe(isAll ? 'All Users' : n.uid)}</b></td>
-            <td><b>${safe(n.title)}</b></td>
-            <td style="max-width:300px; word-break:break-word;">${safe(n.message)}</td>
-            <td><i class="fa-regular fa-clock"></i> ${n.formattedDate}</td>
-            <td>
-                <button class="action delete-btn" data-del-notif="${safe(n.id)}"><i class="fa-solid fa-trash-can"></i> Delete</button>
-            </td>
-        </tr>`;
-    }).join("");
-
-    document.querySelectorAll("[data-del-notif]").forEach(b => {
-        b.addEventListener("click", () => deleteSingleNotification(b.dataset.delNotif));
-    });
-}
-
-async function deleteSingleNotification(notifId) {
-    if (!confirm("Kya aap is notification ko delete karna chahte hain?")) return;
-    try {
-        await deleteDoc(doc(db, "notifications", notifId));
-        alert("✅ Notification deleted!");
-        loadNotifications();
-    } catch(e) { alert("Delete error: " + e.message); }
-}
-
-async function deleteAllNotifications() {
-    if (!notificationsList.length) return alert("Delete karne ke liye koi notification nahi hai.");
-    if (!confirm(`⚠️ Kya aap sach mein sabhi (${notificationsList.length}) notifications ko permanently delete karna chahte hain?`)) return;
-
-    try {
-        const batch = writeBatch(db);
-        notificationsList.forEach(n => { batch.delete(doc(db, "notifications", n.id)); });
-        await batch.commit();
-        alert("✅ Sabhi notifications delete ho gayi hain.");
-        loadNotifications();
-    } catch(e) { alert("Bulk delete error: " + e.message); }
-}
-
-if($("refreshNotifs")) $("refreshNotifs").addEventListener("click", loadNotifications);
-if($("deleteAllNotifsBtn")) $("deleteAllNotifsBtn").addEventListener("click", deleteAllNotifications);
-
-// ================= SETTINGS =================
-async function loadSettings(){
-    try {
-        const snap = await getDoc(paymentRef);
-        if(snap.exists()){
-            const d = snap.data();
-            if($("upi")) $("upi").value = d.upiId || "";
-            if($("holder")) $("holder").value = d.accountHolderName || "";
-            if($("account")) $("account").value = d.accountNumber || "";
-            if($("ifsc")) $("ifsc").value = d.ifsc || "";
-            if($("qr")) $("qr").value = d.qrCodeUrl || "";
-            if($("rate")) $("rate").value = d.coinRate ?? 1;
-            if($("minimum")) $("minimum").value = d.minimumDeposit ?? 100;
-            if($("settingsStatus")) {
-                $("settingsStatus").textContent = "✅ Settings loaded.";
-                $("settingsStatus").className = "status ok";
-            }
-        }
-    } catch(e){ 
-        if($("settingsStatus")) {
-            $("settingsStatus").textContent = "❌ " + e.message; 
-        }
-    }
-}
-
-const saveSettingsBtn = $("saveSettings");
-if(saveSettingsBtn) {
-    saveSettingsBtn.addEventListener("click", async () => {
-        try {
-            await setDoc(paymentRef, {
-                upiId: $("upi") ? $("upi").value.trim() : "",
-                accountHolderName: $("holder") ? $("holder").value.trim() : "",
-                accountNumber: $("account") ? $("account").value.trim() : "",
-                ifsc: $("ifsc") ? $("ifsc").value.trim() : "",
-                qrCodeUrl: $("qr") ? $("qr").value.trim() : "",
-                coinRate: Number($("rate") ? $("rate").value : 1),
-                minimumDeposit: Number($("minimum") ? $("minimum").value : 100),
-                updatedAt: serverTimestamp()
-            }, { merge: true });
-            alert("✅ Payment Settings Saved!");
-            loadSettings();
-        } catch(e){ alert(e.message); }
-    });
-}
-
-function updateDashboard(){
-    if($("totalUsers")) $("totalUsers").textContent = users.length;
-    if($("totalCoins")) $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
-    
-    const approvedDepSum = deposits
-        .filter(d => String(d.status || "").toLowerCase() === "approved")
-        .reduce((sum, d) => sum + Number(d.amount || 0), 0);
-    if($("totalApprovedDeposits")) $("totalApprovedDeposits").textContent = "₹" + approvedDepSum;
-
-    const approvedWithSum = withdrawals
-        .filter(w => String(w.status || "").toLowerCase() === "approved")
-        .reduce((sum, w) => sum + Number(w.amount || 0), 0);
-    if($("totalApprovedWithdrawals")) $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
-
-    if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
-    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
-    if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
-    if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
-    
-    if($("dashStatus")) {
-        $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
-        $("dashStatus").className = "status ok";
-    }
-}
-
-async function loadAll(){
-    try {
-        await loadSettings();
-        await loadDeposits();
-        await loadWithdrawals();
-        await loadUsers();
-        await loadBattles();
-        await loadKycRequests();
-        await loadReferralAnalytics();
-        await loadNotifications();
-        updateDashboard();
-    } catch(e){
-        if($("dashStatus")) {
-            $("dashStatus").textContent = "❌ " + e.message;
-            $("dashStatus").className = "status bad";
-        }
-    }
-}
-</script>
-</body>
-</html>
+    document.querySelectorAll("[data-dep-edit]").forEach(b => { b.addEventListener("click", () => editDepositStatus(b.dataset.depEdit)
