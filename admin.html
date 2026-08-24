@@ -478,7 +478,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const paymentRef = doc(db, "paymentSettings", "config");
+const paymentRef = doc(db, paymentSettings, "config");
 
 let deposits = [];
 let withdrawals = [];
@@ -586,7 +586,7 @@ document.querySelectorAll(".nav").forEach(btn => {
     });
 });
 
-// ================= CUSTOMERS & BALANCE EDIT FEATURE =================
+// ================= CUSTOMERS =================
 async function loadUsers(){
     if(!$("userTable")) return;
     $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
@@ -669,7 +669,7 @@ window.editUserWalletBalance = async (uId) => {
 if($("userSearch")) $("userSearch").addEventListener("input", renderUsers);
 if($("refreshUsers")) $("refreshUsers").addEventListener("click", loadUsers);
 
-// ================= WITHDRAWALS (WITH SAFE REJECTION REFUND & DUPLICATE PREVENTION) =================
+// ================= WITHDRAWALS =================
 async function loadWithdrawals(){
     if(!$("withdrawalTable")) return;
     $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
@@ -1132,7 +1132,7 @@ function renderBattles() {
         let badgeClass = "pending";
         if(b.status === "live") badgeClass = "approved";
         else if(b.status === "conflict") badgeClass = "rejected";
-        else if(b.status === "completed") badgeClass = "approved";
+        else if(b.status === "completed" || b.status === "cancelled") badgeClass = "approved";
 
         return `
         <tr>
@@ -1174,7 +1174,7 @@ window.openBattleResolve = (bId) => {
                 <span>Entry Fee: ₹${b.amount}</span>
                 <span style="color:#15803d;">Prize: ₹${b.prize}</span>
             </div>
-            <div style="font-size:12px; color:#64748b; margin-top:4px;">Room Code: <b>${safe(b.roomCode || 'Not Set')}</b> | Status: <b>${safe(b.status)}</b></div>
+            <div style="font-size:12px; color:#64748b; margin-top:4px;">Room Code: <b>${safe(b.roomCode || 'Not Set')}</b> | Status: <b>${safe(b.status)}</b> ${b.settledOnce ? '<span style="color:#15803d; font-weight:900;">(Already Settled)</span>' : ''}</div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
@@ -1191,7 +1191,7 @@ window.openBattleResolve = (bId) => {
             </div>
         </div>
 
-        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement (Editable & Protected against double refund):</h4>
+        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement (Protected against double payout):</h4>
         <div style="display:flex; flex-direction:column; gap:8px;">
             <button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.creatorUid}', '${b.prize}')">🏆 Make ${safe(b.creatorName)} WINNER (Credit ₹${b.prize})</button>
             ${b.acceptedUid ? `<button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.acceptedUid}', '${b.prize}')">🏆 Make ${safe(b.acceptedName)} WINNER (Credit ₹${b.prize})</button>` : ''}
@@ -1210,7 +1210,7 @@ window.closeBattleModal = () => {
     if($("battleResolveModal")) $("battleResolveModal").style.display = "none";
 };
 
-// DECLARE WINNER WITH DOUBLE SETTLEMENT PROTECTION (EDITS ALLOWED)
+// DECLARE WINNER WITH STRICT SINGLE-TIME SETTLEMENT PROTECTION
 window.declareWinner = async (bId, winnerUid, prize) => {
     if (!confirm(`Winner ko ₹${prize} prize credit karein?`)) return;
     try {
@@ -1225,8 +1225,10 @@ window.declareWinner = async (bId, winnerUid, prize) => {
             if(!userSnap.exists) throw new Error("Winner customer nahi mila!");
 
             const bData = battleSnap.data();
-            if(bData.status === "completed" && bData.winnerUid === winnerUid) {
-                throw new Error("Yeh match pehle hi is winner ke liye settle ho chuka hai.");
+            
+            // Strict double-payout check
+            if(bData.settledOnce === true) {
+                throw new Error("⚠️ ROK DIYA GAYA HAI: Yeh match pehle hi settle ho chuka hai. Dubara rashi nahi bhej sakte!");
             }
 
             const curBal = Number(userSnap.data()?.balance || 0);
@@ -1244,6 +1246,7 @@ window.declareWinner = async (bId, winnerUid, prize) => {
                 status: "completed",
                 winnerUid: winnerUid,
                 refunded: false,
+                settledOnce: true, // Lock set kar diya gaya hai
                 resolvedAt: serverTimestamp()
             });
         });
@@ -1255,7 +1258,7 @@ window.declareWinner = async (bId, winnerUid, prize) => {
     } catch(e) { alert("Settlement Error: " + e.message); }
 };
 
-// REFUND BATTLE WITH DOUBLE REFUND PROTECTION (EDITS ALLOWED)
+// REFUND BATTLE WITH STRICT SINGLE-TIME REFUND PROTECTION
 window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
     if (!confirm(`Match cancel karke dono players ko ₹${entryAmt} refund karein?`)) return;
     try {
@@ -1271,8 +1274,8 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
             if(!battleSnap.exists) throw new Error("Battle nahi mili!");
             const bData = battleSnap.data();
 
-            if(bData.status === "cancelled" && bData.refunded === true) {
-                throw new Error("Yeh match pehle hi cancel aur refund ho chuka hai.");
+            if(bData.settledOnce === true) {
+                throw new Error("⚠️ ROK DIYA GAYA HAI: Yeh match pehle hi settle/cancel ho chuka hai. Dubara refund nahi hoga!");
             }
 
             const amt = Number(entryAmt || 0);
@@ -1287,6 +1290,7 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
             t.update(battleRef, {
                 status: "cancelled",
                 refunded: true,
+                settledOnce: true, // Lock set kar diya gaya hai
                 winnerUid: null,
                 resolvedAt: serverTimestamp()
             });
