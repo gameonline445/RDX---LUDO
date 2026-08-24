@@ -126,7 +126,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <h1>RDX LUDO</h1>
 <div class="sub">Admin Panel</div>
 <label>Admin Email</label>
-<input id="email" type="email" value="nmbaar78@gmail.com" autocomplete="username">
+<input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
 <button id="loginBtn" class="login-btn">Login</button>
@@ -271,7 +271,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
-<table>
 <thead>
 <tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -497,7 +496,6 @@ async function login(){
         return;
     }
 
-    // 100% Direct Firebase Login without any email list restriction block
     try { 
         await signInWithEmailAndPassword(auth, emailInput, passwordInput);
         errBox.style.display = "none";
@@ -1385,7 +1383,7 @@ async function deleteAllNotifications() {
 
     try {
         const batch = writeBatch(db);
-        notificationsList.notificationsList.forEach(n => { batch.delete(doc(db, "notifications", n.id)); });
+        notificationsList.forEach(n => { batch.delete(doc(db, "notifications", n.id)); });
         await batch.commit();
         alert("✅ Sabhi notifications delete ho gayi hain.");
         loadNotifications();
