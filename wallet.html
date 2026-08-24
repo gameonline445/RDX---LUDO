@@ -186,7 +186,7 @@ button{font:inherit;}
 
     <div class="info-box">
         <div class="info-icon">i</div>
-        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI.</div>
+        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI[span_2](start_span)[span_2](end_span).</div>
     </div>
 </main>
 
@@ -201,8 +201,8 @@ button{font:inherit;}
 async function loadFirebaseCustomer(){
     try{
         if(!firebaseDB) return;
-        
-        // Sabhi possible local storage keys se user identifier dhoondhein
+
+        // Sabhi possible mobile / user keys check karein
         let mobile = localStorage.getItem("rdxFirebaseUserId") || 
                      localStorage.getItem("rdxVerifiedMobile") || 
                      localStorage.getItem("rdxUserMobile") || 
@@ -210,8 +210,7 @@ async function loadFirebaseCustomer(){
                      localStorage.getItem("userMobile");
 
         if(!mobile) {
-            // Agar storage mein nahi hai, toh URL parameters ya default check karein
-            console.log("User mobile not found in localStorage.");
+            console.log("No user session found in localStorage.");
             return;
         }
 
@@ -219,35 +218,29 @@ async function loadFirebaseCustomer(){
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
-        const snapshot = await userRef.get();
+        let snapshot = await userRef.get();
         
         if(!snapshot.exists) {
-            // Agar bina prefix ke ho toh try karein
             const altRef = firebaseDB.collection("customers").doc(cleanMobile);
-            const altSnap = await altRef.get();
-            if(!altSnap.exists) return;
-            processCustomerData(altSnap.data(), cleanMobile);
-            return;
+            snapshot = await altRef.get();
+            if(!snapshot.exists) return;
         }
 
-        processCustomerData(snapshot.data(), firebaseDocId);
+        const data = snapshot.data();
+        
+        // Exact Deposit and Winnings mapping as per database fields
+        const totalBalance = Number(data.balance || 0);
+        const winnings = Number(data.winnings || data.winningBalance || 0);
+        const deposit = Number(data.depositBalance || data.deposit || Math.max(0, totalBalance - winnings));
+
+        document.getElementById("mainBalance").textContent = totalBalance;
+        document.getElementById("topBalance").textContent = totalBalance;
+        document.getElementById("depositBalance").textContent = deposit;
+        document.getElementById("winningBalance").textContent = winnings;
+
+        let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
+        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
     } catch(error){ console.error("Wallet Load Error:", error); }
-}
-
-function processCustomerData(data, docId) {
-    const balance = Number(data.balance || 0);
-    // Winnings / Winning Balance fetch karein
-    const winnings = Number(data.winnings || data.winningBalance || 0);
-    // Deposit Balance fetch karein (agar field na ho toh balance - winnings)
-    const deposit = Number(data.depositBalance || data.deposit || Math.max(0, balance - winnings));
-
-    document.getElementById("mainBalance").textContent = balance;
-    document.getElementById("topBalance").textContent = balance;
-    document.getElementById("depositBalance").textContent = deposit;
-    document.getElementById("winningBalance").textContent = winnings;
-
-    let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(docId).slice(-4));
-    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
 }
 
 window.addEventListener("load", loadFirebaseCustomer);
