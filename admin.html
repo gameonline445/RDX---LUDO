@@ -43,7 +43,7 @@ header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#fff
 .brand .admin-logo-box{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;background:#fff;}
 .brand .admin-logo-box img{width:100%;height:100%;object-fit:cover;}
 .brand span{color:#0284c7;}
-.logout{padding:8px 16px;border-radius:20px;background:#fff1f2;border:1px solid #fecdd3;color:#be123c;font-weight:800;font-size:13px;cursor:pointer;}
+.logout{padding:8px 16px;border-radius:20px;background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c;font-weight:800;font-size:13px;cursor:pointer;}
 
 .layout{display:flex;}
 .sidebar{width:230px;min-height:calc(100vh - 66px);background:#ffffff;border-right:1.5px solid #bae6fd;padding:14px;}
@@ -107,8 +107,8 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .modal-body{padding:16px;overflow-y:auto;flex:1;}
 
 .kyc-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
-.kyc-preview-item{background:#f8fafc;border:1px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
-.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1px solid #e2e8f0;margin-top:6px;cursor:pointer;}
+.kyc-preview-item{background:#f8fafc;border:1.5px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
+.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1.5px solid #e2e8f0;margin-top:6px;cursor:pointer;}
 
 @media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr);}.sidebar{width:180px;}}
@@ -335,7 +335,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
-<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -667,7 +666,7 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userWiths.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch User Battles (Win, Loss, Cancel, Bet Amount, Opponent Name)
+        // Fetch User Battles (Win, Loss, Cancel, Bet Amount, Opponent Mobile Number)
         const batSnap = await getDocs(collection(db, "battles"));
         const userBats = [];
         batSnap.forEach(d => {
@@ -681,12 +680,14 @@ window.openUserCompleteHistory = async (uId) => {
 
             if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
-                let opponentInfo = isCreator ? (data.acceptedName || data.acceptedMobile || "Waiting...") : (data.creatorName || data.creatorMobile || "Creator");
+                
+                // Show Opponent Mobile Number if available, else fallback to Name
+                let opponentMobile = isCreator ? (data.acceptedMobile || data.acceptedName || "Waiting...") : (data.creatorMobile || data.creatorName || "Creator");
                 
                 userBats.push({ 
                     id: d.id, 
                     ...data, 
-                    opponentInfo: opponentInfo,
+                    opponentMobile: opponentMobile,
                     isCreator: isCreator,
                     formattedDate: timeInfo.formatted, 
                     timeObj: timeInfo.dateObj 
@@ -760,11 +761,11 @@ window.openUserCompleteHistory = async (uId) => {
                 </table>
             </div>
 
-            <!-- TOTAL BATTLE HISTORY (WITH OPPONENT & BET AMOUNT DETAILS) -->
-            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent & Bet History (${userBats.length})</h4>
+            <!-- TOTAL BATTLE HISTORY (WITH OPPONENT MOBILE NUMBER & BET AMOUNT) -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent Mobile & Bet History (${userBats.length})</h4>
             <div class="table" style="max-height:180px;">
                 <table>
-                    <thead><tr><th>#</th><th>Opponent</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>#</th><th>Opponent Mobile / User</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
                         ${userBats.length ? userBats.map((b, idx) => {
                             let resTxt = b.status;
@@ -784,7 +785,7 @@ window.openUserCompleteHistory = async (uId) => {
                                 resTxt = `LIVE / ACTIVE (Bet ₹${b.amount || 0})`;
                                 resBadge = 'pending';
                             }
-                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentInfo)}</b></td><td><b style="color:#0284c7;">₹${b.amount || 0}</b></td><td>₹${b.prize || 0}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
+                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentMobile)}</b></td><td><b style="color:#0284c7;">₹${b.amount || 0}</b></td><td>₹${b.prize || 0}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
                         }).join("") : `<tr><td colspan="6" class="empty">No battle history found.</td></tr>`}
                     </tbody>
                 </table>
@@ -835,7 +836,7 @@ function renderBattles() {
     if(!$("battleTable") || !$("battleSearch")) return;
     const q = $("battleSearch").value.toLowerCase().trim();
     const list = battlesList.filter(b => {
-        const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
+        const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.acceptedMobile || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
         return pool.includes(q);
     });
 
@@ -854,7 +855,7 @@ function renderBattles() {
         <tr>
             <td><b>${safe(b.id)}</b></td>
             <td><b>${safe(b.creatorName)}</b> <br><small style="color:#64748b;">${safe(b.creatorMobile)}</small></td>
-            <td><b>${safe(b.acceptedName || 'Waiting...')}</b></td>
+            <td><b>${safe(b.acceptedName || 'Waiting...')}</b> <br><small style="color:#64748b;">${safe(b.acceptedMobile || '')}</small></td>
             <td><b style="color:#be123c;">₹${b.amount}</b></td>
             <td><b style="color:#15803d;">₹${b.prize}</b></td>
             <td><span class="badge approved" style="letter-spacing:1px;">${safe(b.roomCode || '—')}</span></td>
@@ -1751,7 +1752,7 @@ function updateDashboard(){
     if($("totalApprovedWithdrawals")) $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
 
     if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
-    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w =>-w.status || "").length;
+    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
     if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
     if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
     
