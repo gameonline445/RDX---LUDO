@@ -528,8 +528,8 @@ button,input{font:inherit;}
             </div>
         </div>
 
-        <button class="btn-open-ludo" onclick="window.open('https://ludoking.com/', '_blank')">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Play game in Ludo King App
+        <button class="btn-open-ludo">
+            Play game in Ludo King App
         </button>
 
         <div class="rules-box">
@@ -542,7 +542,7 @@ button,input{font:inherit;}
 
         <!-- ONLY 2 OPTIONS: I WON OR I LOST -->
         <div class="room-box">
-            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
 
             <div class="status-update-grid-2" id="resultBtnGrid">
@@ -607,7 +607,7 @@ const userId = getCleanUserId();
 let myCurrentBalance = 0;
 let myUserName = "User";
 let activeBattleId = null;
-let hasActivePendingBet = false;
+let activeBattlesCount = 0;
 
 function showErrorModal(msg) {
     document.getElementById("errorModalMsg").textContent = msg;
@@ -631,10 +631,10 @@ async function loadUserData() {
     });
 }
 
-// 1. CREATE BATTLE (Only 1 Active Bet allowed at a time)
+// 1. CREATE BATTLE (Maximum 2 battles allowed simultaneously)
 async function createBattle() {
-    if(hasActivePendingBet) {
-        alert("Aapki pehle se ek bet active ya pending hai. Nayi bet lagane ke liye pehle purani bet delete/complete karein.");
+    if(activeBattlesCount >= 2) {
+        alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain. Pehle ek match complete karein.");
         return;
     }
 
@@ -678,7 +678,7 @@ function listenBattles() {
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
         let runningHTML = "";
-        let activeCount = 0;
+        let count = 0;
 
         snap.forEach(doc => {
             const b = doc.data();
@@ -686,8 +686,9 @@ function listenBattles() {
             const isCreator = b.creatorUid === docId;
             const isAccepter = b.acceptedUid === docId;
 
-            if((b.status === "open" || b.status === "requested" || b.status === "live") && (isCreator || isAccepter)){
-                activeCount++;
+            // Count active/pending/live battles for this user (Max limit = 2)
+            if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+                count++;
             }
 
             if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
@@ -754,7 +755,7 @@ function listenBattles() {
             }
         });
 
-        hasActivePendingBet = (activeCount > 0);
+        activeBattlesCount = count;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
         document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live running battles.</p>`;
@@ -769,8 +770,8 @@ async function deleteBattle(bId) {
 
 // REQUEST TO PLAY
 async function requestPlayBattle(bId, amt) {
-    if(hasActivePendingBet) {
-        alert("Aap pehle se kisi doosri bet me shamil hain.");
+    if(activeBattlesCount >= 2) {
+        alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain.");
         return;
     }
     if(myCurrentBalance < amt){
@@ -808,7 +809,7 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-// START BATTLE (WALLET DEDUCT WHEN LIVE)
+// START BATTLE (WALLET DEDUCT WHEN BOTH ACCEPT)
 async function startBattle(bId, amt, oppUid) {
     const docId = userId.length === 10 ? "91" + userId : userId;
 
@@ -1003,12 +1004,13 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 const winnerSnap = await t.get(winnerRef);
 
                 const currentBal = Number(winnerSnap.data()?.balance || 0);
-                const currentWin = Number(winnerSnap.data()?.winnings || 0);
+                const currentWin = Number(winnerSnap.data()?.winnings || winnerSnap.data()?.winningBalance || 0);
                 const currentPlayed = Number(winnerSnap.data()?.matchesPlayed || 0);
 
                 t.update(winnerRef, {
                     balance: currentBal + prizeAmt,
                     winnings: currentWin + prizeAmt,
+                    winningBalance: currentWin + prizeAmt,
                     matchesPlayed: currentPlayed + 1
                 });
 
