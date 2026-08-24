@@ -223,11 +223,8 @@ async function loadFirebaseCustomer(){
         if(snapshot && snapshot.exists) {
             const data = snapshot.data();
             
-            // Database se 'depositBalance' (ya 'deposit') aur 'winnings' ko alag alag read karein
-            const deposit = Number(data.depositBalance || data.deposit || 0);
             const winnings = Number(data.winnings || data.winningBalance || 0);
-            
-            // Total balance hamesha deposit + winnings hona chahiye taaki mismatch na ho
+            const deposit = Number(data.depositBalance || data.deposit || 0);
             const totalBalance = deposit + winnings;
 
             document.getElementById("mainBalance").textContent = totalBalance;
