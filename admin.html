@@ -271,6 +271,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
+<table>
 <thead>
 <tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -488,20 +489,24 @@ async function login(){
     const passwordInput = $("password").value;
     const errBox = $("error");
     
-    errBox.style.display = "none";
+    if(errBox) errBox.style.display = "none";
 
     if(!emailInput || !passwordInput) {
-        errBox.textContent = "Kripya Email aur Password dono bharein!";
-        errBox.style.display = "block";
+        if(errBox) {
+            errBox.textContent = "Kripya Email aur Password dono bharein!";
+            errBox.style.display = "block";
+        }
         return;
     }
 
     try { 
         await signInWithEmailAndPassword(auth, emailInput, passwordInput);
-        errBox.style.display = "none";
+        if(errBox) errBox.style.display = "none";
     } catch(e){ 
-        errBox.textContent = "Login Error: " + e.message;
-        errBox.style.display = "block";
+        if(errBox) {
+            errBox.textContent = "Login Error: " + e.message;
+            errBox.style.display = "block";
+        }
     }
 }
 
@@ -514,23 +519,28 @@ window.addEventListener("DOMContentLoaded", () => {
 
 onAuthStateChanged(auth, u => {
     if(u && u.email){
-        $("login").style.display = "none";
-        $("admin").style.display = "block";
+        if($("login")) $("login").style.display = "none";
+        if($("admin")) $("admin").style.display = "block";
         loadAll();
     } else {
-        $("login").style.display = "flex";
-        $("admin").style.display = "none";
+        if($("login")) $("login").style.display = "flex";
+        if($("admin")) $("admin").style.display = "none";
     }
 });
 
-$("logout").addEventListener("click", () => signOut(auth));
+const logoutBtn = $("logout");
+if(logoutBtn) {
+    logoutBtn.addEventListener("click", () => signOut(auth));
+}
 
 document.querySelectorAll(".nav").forEach(btn => {
     btn.addEventListener("click", async () => {
         document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
         document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
         btn.classList.add("active");
-        $(btn.dataset.page).classList.add("active");
+        const targetPage = $(btn.dataset.page);
+        if(targetPage) targetPage.classList.add("active");
+        
         if(btn.dataset.page === "deposits") loadDeposits();
         if(btn.dataset.page === "withdrawals") loadWithdrawals();
         if(btn.dataset.page === "users") loadUsers();
@@ -545,6 +555,7 @@ document.querySelectorAll(".nav").forEach(btn => {
 
 // ================= BATTLES MANAGEMENT & DISPUTES =================
 async function loadBattles() {
+    if(!$("battleTable")) return;
     $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Loading battles...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "battles"));
@@ -567,11 +578,12 @@ async function loadBattles() {
         renderBattles();
         updateDashboard();
     } catch(e) {
-        $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Error: ${safe(e.message)}</td></tr>`;
+        if($("battleTable")) $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Error: ${safe(e.message)}</td></tr>`;
     }
 }
 
 function renderBattles() {
+    if(!$("battleTable") || !$("battleSearch")) return;
     const q = $("battleSearch").value.toLowerCase().trim();
     const list = battlesList.filter(b => {
         const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
@@ -613,8 +625,9 @@ window.openBattleResolve = (bId) => {
     const b = battlesList.find(x => x.id === bId);
     if (!b) return;
 
-    $("modalBattleTitle").innerHTML = `⚔️ Match: <b>${safe(b.creatorName)} vs ${safe(b.acceptedName || 'Opponent')}</b>`;
+    if($("modalBattleTitle")) $("modalBattleTitle").innerHTML = `⚔️ Match: <b>${safe(b.creatorName)} vs ${safe(b.acceptedName || 'Opponent')}</b>`;
     const container = $("modalBattleContent");
+    if(!container) return;
 
     const p1Proof = b[`proof_${b.creatorUid}`] || null;
     const p2Proof = b.acceptedUid ? b[`proof_${b.acceptedUid}`] : null;
@@ -653,11 +666,11 @@ window.openBattleResolve = (bId) => {
         </div>
     `;
 
-    $("battleResolveModal").style.display = "flex";
+    if($("battleResolveModal")) $("battleResolveModal").style.display = "flex";
 };
 
 window.closeBattleModal = () => {
-    $("battleResolveModal").style.display = "none";
+    if($("battleResolveModal")) $("battleResolveModal").style.display = "none";
 };
 
 window.declareWinner = async (bId, winnerUid, prize) => {
@@ -724,11 +737,12 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
     }
 };
 
-$("battleSearch").addEventListener("input", renderBattles);
-$("refreshBattles").addEventListener("click", loadBattles);
+if($("battleSearch")) $("battleSearch").addEventListener("input", renderBattles);
+if($("refreshBattles")) $("refreshBattles").addEventListener("click", loadBattles);
 
 // ================= LIVE ACTIVE USERS MONITOR =================
 function renderLiveUsers() {
+    if(!$("liveUsersTable") || !$("liveSearch")) return;
     const q = $("liveSearch").value.toLowerCase().trim();
     const now = Date.now();
     
@@ -760,11 +774,12 @@ function renderLiveUsers() {
     `).join("");
 }
 
-$("liveSearch").addEventListener("input", renderLiveUsers);
-$("refreshLiveUsers").addEventListener("click", () => { loadUsers().then(renderLiveUsers); });
+if($("liveSearch")) $("liveSearch").addEventListener("input", renderLiveUsers);
+if($("refreshLiveUsers")) $("refreshLiveUsers").addEventListener("click", () => { loadUsers().then(renderLiveUsers); });
 
 // ================= KYC REQUESTS (FRONT & BACK ONLY) =================
 async function loadKycRequests() {
+    if(!$("kycTable")) return;
     $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Loading KYC requests...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "kycRequests"));
@@ -787,11 +802,12 @@ async function loadKycRequests() {
         renderKycRequests();
         updateDashboard();
     } catch(e) {
-        $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
+        if($("kycTable")) $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
     }
 }
 
 function renderKycRequests() {
+    if(!$("kycTable") || !$("kycSearch")) return;
     const q = $("kycSearch").value.toLowerCase().trim();
     const list = kycRequests.filter(k => {
         const pool = `${k.id || ''} ${k.mobile || ''} ${k.docNumber || ''} ${k.status || ''}`.toLowerCase();
@@ -827,10 +843,10 @@ window.openKycPreview = (docId) => {
     const item = kycRequests.find(x => x.id === docId);
     if (!item) return;
 
-    $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
+    if($("modalKycTitle")) $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
     const container = $("modalKycContent");
+    if(!container) return;
 
-    // ONLY FRONT & BACK PHOTO
     container.innerHTML = `
         <div class="kyc-preview-grid">
             <div class="kyc-preview-item">
@@ -849,11 +865,11 @@ window.openKycPreview = (docId) => {
         </div>
     `;
 
-    $("kycPreviewModal").style.display = "flex";
+    if($("kycPreviewModal")) $("kycPreviewModal").style.display = "flex";
 };
 
 window.closeKycPreviewModal = () => {
-    $("kycPreviewModal").style.display = "none";
+    if($("kycPreviewModal")) $("kycPreviewModal").style.display = "none";
 };
 
 window.approveKyc = async (uid) => {
@@ -881,11 +897,12 @@ window.rejectKyc = async (uid) => {
     } catch(e) { alert("Error: " + e.message); }
 };
 
-$("kycSearch").addEventListener("input", renderKycRequests);
-$("refreshKyc").addEventListener("click", loadKycRequests);
+if($("kycSearch")) $("kycSearch").addEventListener("input", renderKycRequests);
+if($("refreshKyc")) $("refreshKyc").addEventListener("click", loadKycRequests);
 
 // ================= WITHDRAWALS =================
 async function loadWithdrawals(){
+    if(!$("withdrawalTable")) return;
     $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "withdrawals"));
@@ -906,16 +923,21 @@ async function loadWithdrawals(){
 
         withdrawals = list;
         renderWithdrawals();
-        $("withdrawalStatus").textContent = "✅ Withdrawals loaded.";
-        $("withdrawalStatus").className = "status ok";
+        if($("withdrawalStatus")) {
+            $("withdrawalStatus").textContent = "✅ Withdrawals loaded.";
+            $("withdrawalStatus").className = "status ok";
+        }
         updateDashboard();
     } catch(e) { 
-        $("withdrawalStatus").textContent = "❌ " + e.message; 
-        $("withdrawalStatus").className = "status bad";
+        if($("withdrawalStatus")) {
+            $("withdrawalStatus").textContent = "❌ " + e.message; 
+            $("withdrawalStatus").className = "status bad";
+        }
     }
 }
 
 function renderWithdrawals(){
+    if(!$("withdrawalTable") || !$("withdrawalSearch")) return;
     const q = $("withdrawalSearch").value.toLowerCase().trim();
     const list = withdrawals.filter(w => {
         const pool = `${w.id || ''} ${w.uid || ''} ${w.mobile || ''} ${w.upiId || ''} ${w.holderName || ''} ${w.bankName || ''} ${w.accountNumber || ''} ${w.ifsc || ''} ${w.amount || ''} ${w.status || ''} ${w.formattedDate || ''}`.toLowerCase();
@@ -981,11 +1003,12 @@ async function editWithdrawalStatus(id) {
     } catch(e) { alert("Error: " + e.message); }
 }
 
-$("withdrawalSearch").addEventListener("input", renderWithdrawals);
-$("refreshWithdrawals").addEventListener("click", loadWithdrawals);
+if($("withdrawalSearch")) $("withdrawalSearch").addEventListener("input", renderWithdrawals);
+if($("refreshWithdrawals")) $("refreshWithdrawals").addEventListener("click", loadWithdrawals);
 
 // ================= DEPOSITS =================
 async function loadDeposits(){
+    if(!$("depositTable")) return;
     $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "deposits"));
@@ -1006,16 +1029,21 @@ async function loadDeposits(){
 
         deposits = list;
         renderDeposits();
-        $("depositStatus").textContent = "✅ Deposits loaded.";
-        $("depositStatus").className = "status ok";
+        if($("depositStatus")) {
+            $("depositStatus").textContent = "✅ Deposits loaded.";
+            $("depositStatus").className = "status ok";
+        }
         updateDashboard();
     } catch(e) {
-        $("depositStatus").textContent = "❌ " + e.message;
-        $("depositStatus").className = "status bad";
+        if($("depositStatus")) {
+            $("depositStatus").textContent = "❌ " + e.message;
+            $("depositStatus").className = "status bad";
+        }
     }
 }
 
 function renderDeposits(){
+    if(!$("depositTable") || !$("depositSearch")) return;
     const q = $("depositSearch").value.toLowerCase().trim();
     const list = deposits.filter(d => {
         const pool = `${d.id || ''} ${d.uid || ''} ${d.userId || ''} ${d.mobile || ''} ${d.utr || ''} ${d.amount || ''} ${d.status || ''} ${d.formattedDate || ''}`.toLowerCase();
@@ -1114,11 +1142,12 @@ async function editDepositStatus(id) {
     } catch(e) { alert("Error: " + e.message); }
 }
 
-$("depositSearch").addEventListener("input", renderDeposits);
-$("refreshDeposits").addEventListener("click", loadDeposits);
+if($("depositSearch")) $("depositSearch").addEventListener("input", renderDeposits);
+if($("refreshDeposits")) $("refreshDeposits").addEventListener("click", loadDeposits);
 
 // ================= REFERRAL ANALYTICS =================
 async function loadReferralAnalytics(){
+    if(!$("referralLeaderboardTable")) return;
     $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Loading referral analytics...</td></tr>`;
     try {
         if (!users.length) await loadUsers();
@@ -1165,10 +1194,13 @@ async function loadReferralAnalytics(){
         if($("totalReferralEarnings")) $("totalReferralEarnings").textContent = "₹" + totalEarnings;
 
         renderReferralLeaderboard();
-    } catch(e){ $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Error: ${safe(e.message)}</td></tr>`; }
+    } catch(e){ 
+        if($("referralLeaderboardTable")) $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Error: ${safe(e.message)}</td></tr>`; 
+    }
 }
 
 function renderReferralLeaderboard(){
+    if(!$("referralLeaderboardTable") || !$("referralSearch")) return;
     const q = $("referralSearch").value.toLowerCase().trim();
     const list = referralAnalytics.filter(r => {
         const pool = `${r.name || ''} ${r.mobile || ''} ${r.referralCode || ''} ${r.referredUsers.map(x => x.mobile + ' ' + x.formattedDate).join(' ')}`.toLowerCase();
@@ -1209,8 +1241,9 @@ window.openReferralModal = (userId) => {
     const user = referralAnalytics.find(x => String(x.id) === String(userId));
     if (!user) return;
 
-    $("modalReferrerTitle").innerHTML = `👥 Referrals by: <b>${safe(user.name)} (${safe(user.mobile)})</b>`;
+    if($("modalReferrerTitle")) $("modalReferrerTitle").innerHTML = `👥 Referrals by: <b>${safe(user.name)} (${safe(user.mobile)})</b>`;
     const tbody = $("modalReferredUsersTable");
+    if(!tbody) return;
 
     if (!user.referredUsers.length) {
         tbody.innerHTML = `<tr><td colspan="4" class="empty">Is user ne abhi tak kisi ko refer nahi kiya.</td></tr>`;
@@ -1225,16 +1258,19 @@ window.openReferralModal = (userId) => {
             </tr>
         `).join("");
     }
-    $("referredUsersModal").style.display = "flex";
+    if($("referredUsersModal")) $("referredUsersModal").style.display = "flex";
 };
 
-window.closeReferralModal = () => { $("referredUsersModal").style.display = "none"; };
+window.closeReferralModal = () => { 
+    if($("referredUsersModal")) $("referredUsersModal").style.display = "none"; 
+};
 
-$("referralSearch").addEventListener("input", renderReferralLeaderboard);
-$("refreshReferrals").addEventListener("click", loadReferralAnalytics);
+if($("referralSearch")) $("referralSearch").addEventListener("input", renderReferralLeaderboard);
+if($("refreshReferrals")) $("refreshReferrals").addEventListener("click", loadReferralAnalytics);
 
 // ================= CUSTOMERS =================
 async function loadUsers(){
+    if(!$("userTable")) return;
     $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "customers"));
@@ -1258,11 +1294,12 @@ async function loadUsers(){
         renderLiveUsers();
         updateDashboard();
     } catch(e) {
-        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
+        if($("userTable")) $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
     }
 }
 
 function renderUsers(){
+    if(!$("userTable") || !$("userSearch")) return;
     const q = $("userSearch").value.toLowerCase().trim();
     const list = users.filter(u => {
         const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.kycStatus || ''} ${u.referredBy || ''}`.toLowerCase();
@@ -1289,43 +1326,52 @@ function renderUsers(){
     }).join("");
 }
 
-$("userSearch").addEventListener("input", renderUsers);
-$("refreshUsers").addEventListener("click", loadUsers);
+if($("userSearch")) $("userSearch").addEventListener("input", renderUsers);
+if($("refreshUsers")) $("refreshUsers").addEventListener("click", loadUsers);
 
 // ================= NOTIFICATIONS =================
-$("notifTarget").addEventListener("change", e => $("personalUidBox").style.display = e.target.value === "personal" ? "block" : "none");
+const notifTargetEl = $("notifTarget");
+if(notifTargetEl) {
+    notifTargetEl.addEventListener("change", e => {
+        const box = $("personalUidBox");
+        if(box) box.style.display = e.target.value === "personal" ? "block" : "none";
+    });
+}
 
-$("sendNotifBtn").addEventListener("click", async () => {
-    const t = $("notifTarget").value;
-    const u = $("notifUid").value.replace(/\D/g,"");
-    const title = $("notifTitle").value.trim();
-    const msg = $("notifMessage").value.trim();
+const sendNotifBtnEl = $("sendNotifBtn");
+if(sendNotifBtnEl) {
+    sendNotifBtnEl.addEventListener("click", async () => {
+        const t = $("notifTarget").value;
+        const u = $("notifUid").value.replace(/\D/g,"");
+        const title = $("notifTitle").value.trim();
+        const msg = $("notifMessage").value.trim();
 
-    if(!title || !msg) return alert("Title & Message bharna zaroori hai");
-    if(t === "personal" && !u) return alert("Personal notification ke liye User UID / Mobile zaroori hai");
+        if(!title || !msg) return alert("Title & Message bharna zaroori hai");
+        if(t === "personal" && !u) return alert("Personal notification ke liye User UID / Mobile zaroori hai");
 
-    const btn = $("sendNotifBtn");
-    btn.disabled = true;
-    btn.textContent = "Sending...";
+        sendNotifBtnEl.disabled = true;
+        sendNotifBtnEl.textContent = "Sending...";
 
-    try {
-        await addDoc(collection(db, "notifications"), { 
-            target: t, 
-            uid: t === "personal" ? (u.length === 10 ? "91" + u : u) : "all", 
-            title: title, 
-            message: msg, 
-            createdAt: serverTimestamp() 
-        });
-        alert("✅ Notification Sent Successfully!");
-        $("notifTitle").value = ""; 
-        $("notifMessage").value = "";
-        loadNotifications();
-    } catch(err) { alert("Error: " + err.message); }
-    btn.disabled = false;
-    btn.textContent = "🚀 Send Notification";
-});
+        try {
+            await addDoc(collection(db, "notifications"), { 
+                target: t, 
+                uid: t === "personal" ? (u.length === 10 ? "91" + u : u) : "all", 
+                title: title, 
+                message: msg, 
+                createdAt: serverTimestamp() 
+            });
+            alert("✅ Notification Sent Successfully!");
+            $("notifTitle").value = ""; 
+            $("notifMessage").value = "";
+            loadNotifications();
+        } catch(err) { alert("Error: " + err.message); }
+        sendNotifBtnEl.disabled = false;
+        sendNotifBtnEl.textContent = "🚀 Send Notification";
+    });
+}
 
 async function loadNotifications(){
+    if(!$("notifTable")) return;
     $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Loading notifications...</td></tr>`;
     try {
         const snap = await getDocs(collection(db, "notifications"));
@@ -1339,10 +1385,13 @@ async function loadNotifications(){
         list.sort((a, b) => b.timeObj - a.timeObj);
         notificationsList = list;
         renderNotifications();
-    } catch(e) { $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`; }
+    } catch(e) { 
+        if($("notifTable")) $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`; 
+    }
 }
 
 function renderNotifications(){
+    if(!$("notifTable")) return;
     if(!notificationsList.length){
         $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi tak koi notification nahi bheji gayi.</td></tr>`;
         return;
@@ -1390,8 +1439,8 @@ async function deleteAllNotifications() {
     } catch(e) { alert("Bulk delete error: " + e.message); }
 }
 
-$("refreshNotifs").addEventListener("click", loadNotifications);
-$("deleteAllNotifsBtn").addEventListener("click", deleteAllNotifications);
+if($("refreshNotifs")) $("refreshNotifs").addEventListener("click", loadNotifications);
+if($("deleteAllNotifsBtn")) $("deleteAllNotifsBtn").addEventListener("click", deleteAllNotifications);
 
 // ================= SETTINGS =================
 async function loadSettings(){
@@ -1399,13 +1448,13 @@ async function loadSettings(){
         const snap = await getDoc(paymentRef);
         if(snap.exists()){
             const d = snap.data();
-            $("upi").value = d.upiId || "";
-            $("holder").value = d.accountHolderName || "";
-            $("account").value = d.accountNumber || "";
-            $("ifsc").value = d.ifsc || "";
-            $("qr").value = d.qrCodeUrl || "";
-            $("rate").value = d.coinRate ?? 1;
-            $("minimum").value = d.minimumDeposit ?? 100;
+            if($("upi")) $("upi").value = d.upiId || "";
+            if($("holder")) $("holder").value = d.accountHolderName || "";
+            if($("account")) $("account").value = d.accountNumber || "";
+            if($("ifsc")) $("ifsc").value = d.ifsc || "";
+            if($("qr")) $("qr").value = d.qrCodeUrl || "";
+            if($("rate")) $("rate").value = d.coinRate ?? 1;
+            if($("minimum")) $("minimum").value = d.minimumDeposit ?? 100;
             if($("settingsStatus")) {
                 $("settingsStatus").textContent = "✅ Settings loaded.";
                 $("settingsStatus").className = "status ok";
@@ -1418,22 +1467,25 @@ async function loadSettings(){
     }
 }
 
-$("saveSettings").addEventListener("click", async () => {
-    try {
-        await setDoc(paymentRef, {
-            upiId: $("upi").value.trim(),
-            accountHolderName: $("holder").value.trim(),
-            accountNumber: $("account").value.trim(),
-            ifsc: $("ifsc").value.trim(),
-            qrCodeUrl: $("qr").value.trim(),
-            coinRate: Number($("rate").value),
-            minimumDeposit: Number($("minimum").value),
-            updatedAt: serverTimestamp()
-        }, { merge: true });
-        alert("✅ Payment Settings Saved!");
-        loadSettings();
-    } catch(e){ alert(e.message); }
-});
+const saveSettingsBtn = $("saveSettings");
+if(saveSettingsBtn) {
+    saveSettingsBtn.addEventListener("click", async () => {
+        try {
+            await setDoc(paymentRef, {
+                upiId: $("upi") ? $("upi").value.trim() : "",
+                accountHolderName: $("holder") ? $("holder").value.trim() : "",
+                accountNumber: $("account") ? $("account").value.trim() : "",
+                ifsc: $("ifsc") ? $("ifsc").value.trim() : "",
+                qrCodeUrl: $("qr") ? $("qr").value.trim() : "",
+                coinRate: Number($("rate") ? $("rate").value : 1),
+                minimumDeposit: Number($("minimum") ? $("minimum").value : 100),
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+            alert("✅ Payment Settings Saved!");
+            loadSettings();
+        } catch(e){ alert(e.message); }
+    });
+}
 
 function updateDashboard(){
     if($("totalUsers")) $("totalUsers").textContent = users.length;
