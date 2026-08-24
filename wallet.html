@@ -1,240 +1,1910 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>RDX LUDO - Wallet</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RDX LUDO Admin</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain: "rdx-ludo.firebaseapp.com",
-    projectId: "rdx-ludo",
-    storageBucket: "rdx-ludo.firebasestorage.app",
-    messagingSenderId: "928340814840",
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
-};
-let firebaseDB = null;
-try {
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    firebaseDB = firebase.firestore();
-} catch(error){ console.error(error); }
-</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{
-    width:100%;height:100dvh;overflow:hidden;position:fixed;inset:0;
+body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    color:#101a38;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+    color:#101a38;
+    min-height:100vh;
 }
-button{font:inherit;}
+button,input,select,textarea{font:inherit;}
+button{cursor:pointer;border:0;}
 
-/* HEADER */
-.top-header{position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
-.header-left{display:flex;align-items:center;gap:10px;}
-.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:#ffffff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(255,96,80,.22);cursor:pointer;}
-.logo{width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1.5px solid #bae6fd;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
-.logo img{width:100%;height:100%;object-fit:cover;}
-.header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{height:38px;border:0;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(0,0,0,.10);padding:0 12px;gap:5px;}
-.notification{width:38px;padding:0;border-radius:50%;background:linear-gradient(145deg,#6366f1,#818cf8);}
-.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);font-size:13px;font-weight:800;}
-.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);font-size:13px;font-weight:800;}
+/* LOGIN */
+#login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px 14px;}
+.login-box{width:100%;max-width:380px;background:#ffffff;padding:26px 20px;border-radius:24px;border:1.5px solid #7dd3fc;box-shadow:0 12px 30px rgba(2,132,199,0.12);}
+.logo-box{width:70px;height:70px;margin:0 auto 12px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:2.5px solid #93c5fd;box-shadow:0 6px 16px rgba(2,132,199,0.2);background:#fff;}
+.logo-box img{width:100%;height:100%;object-fit:cover;}
+h1{text-align:center;font-size:22px;color:#0c4a6e;font-weight:900;}
+.sub{text-align:center;color:#64748b;font-size:13px;margin-top:2px;margin-bottom:20px;font-weight:600;}
+label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin:10px 0 5px;letter-spacing:0.5px;}
+input,select,textarea{width:100%;padding:12px 14px;border:1.5px solid #bae6fd;border-radius:12px;outline:none;background:#f8fafc;color:#0f172a;font-size:14px;font-weight:600;}
+input:focus,select:focus,textarea:focus{border-color:#0284c7;background:#ffffff;}
+.login-btn{width:100%;margin-top:18px;padding:13px;border-radius:24px;background:linear-gradient(100deg,#0284c7,#0369a1);color:white;font-size:15px;font-weight:850;box-shadow:0 6px 18px rgba(2,132,199,0.3);}
+#error{color:#be123c;text-align:center;margin-top:12px;font-size:13px;font-weight:700;display:none;}
 
-/* CONTAINER */
-.container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
-.wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
-.wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
-.history-btn{border:1px solid #bae6fd;background:#ffffff;color:#0c4a6e;padding:6px 14px;border-radius:20px;font-weight:750;font-size:12px;cursor:pointer;}
-.balance-label{color:#64748b;font-size:14px;margin-bottom:2px;}
-.balance{color:#0c4a6e;font-size:42px;line-height:1;font-weight:900;letter-spacing:-1.5px;}
-.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
-.action-btn{height:48px;border-radius:24px;font-size:15px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
-.add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#0284c7,#0369a1);box-shadow:0 6px 16px rgba(2,132,199,.3);}
-.withdraw-btn{color:#0c4a6e;border:1.5px solid #7dd3fc;background:#ffffff;}
+/* ADMIN PANEL */
+#admin{display:none;}
+header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
+.brand{font-weight:900;font-size:18px;color:#0c4a6e;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.brand:active{transform:scale(0.98);}
+.brand .admin-logo-box{width:40px;height:40px;border-radius:50%;overflow:hidden;border:1.5px solid #93c5fd;display:flex;align-items:center;justify-content:center;background:#fff;}
+.brand .admin-logo-box img{width:100%;height:100%;object-fit:cover;}
+.brand span{color:#0284c7;}
+.logout{padding:8px 16px;border-radius:20px;background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c;font-weight:800;font-size:13px;cursor:pointer;}
 
-.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.balance-box{border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;padding:14px;box-shadow:0 4px 12px rgba(2,132,199,0.05);}
-.balance-icon{width:36px;height:36px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0284c7;}
-.balance-box h3{margin-top:8px;font-size:13px;color:#64748b;font-weight:800;}
-.balance-value{margin-top:3px;font-size:20px;font-weight:900;color:#0f172a;}
-.balance-note{display:block;margin-top:3px;color:#94a3b8;font-size:11px;}
+.layout{display:flex;}
+.sidebar{width:230px;min-height:calc(100vh - 66px);background:#ffffff;border-right:1.5px solid #bae6fd;padding:14px;}
+.nav{width:100%;padding:12px 14px;margin-bottom:6px;border-radius:14px;background:#ffffff;text-align:left;font-weight:800;font-size:13px;color:#64748b;border:1.5px solid transparent;transition:all 0.2s ease;}
+.nav.active, .nav:hover{background:#f0f9ff;color:#0284c7;border-color:#bae6fd;}
 
-.info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
-.info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
+main{flex:1;padding:20px 18px;max-width:1200px;}
+.page{display:none;}
+.page.active{display:block;}
+.title{font-size:22px;font-weight:900;color:#0c4a6e;margin-bottom:16px;}
 
-/* SIDE MENU */
-.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:2000;display:none;}
-.menu-overlay.show{display:block;}
-.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
-.menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
-.menu-brand{display:flex;align-items:center;gap:10px;}
-.menu-logo{width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;background:#ffffff;cursor:pointer;}
-.menu-logo img{width:100%;height:100%;object-fit:cover;}
-.menu-user h2{font-size:17px;font-weight:850;}
-.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
-.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
-.menu-list{margin-top:16px;}
-.menu-item{width:100%;min-height:52px;border:0;background:transparent;padding:6px 0;border-radius:14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left;color:#334155;cursor:pointer;}
-.menu-item-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-item-text{flex:1;font-size:15px;font-weight:750;}
-.menu-arrow{color:#94a3b8;font-size:20px;}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.stat{background:#ffffff;border:1.5px solid #bae6fd;border-radius:18px;padding:16px;box-shadow:0 4px 14px rgba(2,132,199,0.05);}
+.stat small{color:#64748b;font-size:11px;font-weight:800;text-transform:uppercase;}
+.stat h2{margin:6px 0 0;font-size:22px;font-weight:900;}
+.blue{color:#0284c7;} .green{color:#15803d;} .orange{color:#d97706;} .red{color:#be123c;} .purple{color:#7c3aed;}
 
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
-.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
-.nav-item.active{color:#101a38;font-weight:800;}
-.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#10b981;}
+.card{background:#ffffff;border:1.5px solid #bae6fd;border-radius:20px;padding:18px;margin-top:16px;box-shadow:0 4px 14px rgba(2,132,199,0.06);}
+.status{padding:10px 14px;border-radius:12px;margin-bottom:14px;font-weight:800;font-size:12px;}
+.ok{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.bad{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+
+.search{margin:12px 0;width:100%;height:44px;}
+.table{overflow:auto;border:1px solid #e2e8f0;border-radius:14px;}
+table{width:100%;border-collapse:collapse;min-width:850px;background:#fff;}
+th,td{padding:10px 12px;border-bottom:1px solid #edf0f5;text-align:left;font-size:13px;}
+th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transform:uppercase;}
+
+.badge{padding:4px 8px;border-radius:12px;font-size:10px;font-weight:850;text-transform:uppercase;}
+.pending{background:#fef3c7;color:#b45309;}
+.approved{background:#dcfce7;color:#15803d;}
+.rejected{background:#fee2e2;color:#be123c;}
+
+@keyframes liveDotBlink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.85); }
+}
+.live-online{background:#dcfce7;color:#15803d;border:1px solid #86efac;display:inline-flex;align-items:center;gap:5px;}
+.live-online::before{content:"";width:7px;height:7px;border-radius:50%;background:#16a34a;display:inline-block;animation: liveDotBlink 1.4s ease-in-out infinite;}
+
+.action{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;margin:2px;}
+.approve{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.reject{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+.edit-status-btn{background:#e0f2fe;color:#0284c7;border:1.5px solid #bae6fd;}
+.view-btn{background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;}
+.delete-btn{background:#fff1f2;color:#be123c;border:1.5px solid #fecdd3;}
+.delete-all-btn{background:linear-gradient(100deg,#e11d48,#be123c);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
+.refresh{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
+
+.save{padding:12px 20px;border-radius:14px;background:linear-gradient(100deg,#0284c7,#0369a1);color:white;font-weight:850;font-size:14px;margin-top:10px;box-shadow:0 4px 14px rgba(2,132,199,0.3);}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.full{grid-column:1/-1;}
+.empty{text-align:center;padding:25px;color:#64748b;font-size:13px;font-weight:600;}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;display:none;align-items:center;justify-content:center;padding:14px;}
+.modal-box{width:100%;max-width:750px;background:#ffffff;border-radius:24px;border:1.5px solid #bae6fd;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:hidden;display:flex;flex-direction:column;max-height:85vh;}
+.modal-header{padding:16px 20px;background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;}
+.modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
+.modal-close{width:32px;height:32px;border-radius:50%;background:#ffffff;border:1.5px solid #bae6fd;color:#0c4a6e;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.modal-body{padding:16px;overflow-y:auto;flex:1;}
+
+.kyc-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
+.kyc-preview-item{background:#f8fafc;border:1.5px solid #bae6fd;border-radius:14px;padding:10px;text-align:center;}
+.kyc-preview-item img{width:100%;height:160px;object-fit:contain;border-radius:8px;background:#fff;border:1.5px solid #e2e8f0;margin-top:6px;cursor:pointer;}
+
+@media(max-width:1000px){.stats{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr);}.sidebar{width:180px;}}
+@media(max-width:600px){.layout{display:block;}.sidebar{width:100%;min-height:auto;display:flex;overflow:auto;border-right:0;border-bottom:1.5px solid #bae6fd;padding:8px;}.nav{min-width:max-content;padding:8px 12px;margin-bottom:0;margin-right:6px;}main{padding:14px 10px;}.stats{grid-template-columns:1fr 1fr;}.form{grid-template-columns:1fr;}.full{grid-column:auto;}.kyc-preview-grid{grid-template-columns:1fr;}}
 </style>
 </head>
 
 <body>
 
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="openMenu()">☰</button>
-        <div class="logo" onclick="goHome()">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
+<section id="login" style="display:flex;">
+<div class="login-box">
+<div class="logo-box">
+    <img src="logo.png" alt="RDX Logo" onerror="this.src='https://i.ibb.co/vz6G1V7/logo.png'">
+</div>
+<h1>RDX LUDO</h1>
+<div class="sub">Admin Panel</div>
+<label>Admin Email</label>
+<input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
+<label>Password</label>
+<input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
+<button id="loginBtn" class="login-btn" type="button">Login</button>
+<div id="error"></div>
+</div>
+</section>
+
+<section id="admin" style="display:none;">
+<header>
+<div class="brand" onclick="refreshAdminDashboard()" title="Click to Refresh Admin Dashboard">
+    <div class="admin-logo-box">
+        <img src="logo.png" alt="RDX Logo" onerror="this.src='https://i.ibb.co/vz6G1V7/logo.png'">
     </div>
-    <div class="header-right">
-        <button class="header-icon notification" onclick="goNotifications()">🔔</button>
-        <button class="header-icon wallet-top" onclick="goWallet()">🪙 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
-    </div>
+    <div>RDX <span>LUDO</span> ADMIN</div>
+</div>
+<button id="logout" class="logout">Logout</button>
 </header>
 
-<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<div class="layout">
+<aside class="sidebar">
+<button class="nav active" data-page="dashboard"><i class="fa-solid fa-chart-pie"></i> &nbsp;Dashboard</button>
+<button class="nav" data-page="liveusers"><i class="fa-solid fa-tower-broadcast"></i> &nbsp;Live Users Monitor</button>
+<button class="nav" data-page="battles"><i class="fa-solid fa-gamepad"></i> &nbsp;Battles Management</button>
+<button class="nav" data-page="kycrequests"><i class="fa-solid fa-id-card"></i> &nbsp;KYC Requests</button>
+<button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
+<button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
+<button class="nav" data-page="userhistory"><i class="fa-solid fa-file-invoice-dollar"></i> &nbsp;User Complete History</button>
+<button class="nav" data-page="referrals"><i class="fa-solid fa-gift"></i> &nbsp;Referral Analytics</button>
+<button class="nav" data-page="users"><i class="fa-solid fa-users"></i> &nbsp;Customers</button>
+<button class="nav" data-page="notifications"><i class="fa-solid fa-bell"></i> &nbsp;Notifications</button>
+<button class="nav" data-page="settings"><i class="fa-solid fa-gear"></i> &nbsp;Payment Settings</button>
+</aside>
 
-<div class="menu-panel" id="menuPanel">
-    <div class="menu-title">
-        <div class="menu-brand">
-            <div class="menu-logo" onclick="goHome()">
-                <img src="logo.png" alt="RDX Logo">
-            </div>
-            <div class="menu-user">
-                <h2 id="menuUsername">RDX LUDO</h2>
-                <p>Play · Win · Earn</p>
-            </div>
-        </div>
-        <button class="close-menu" onclick="closeMenu()">×</button>
+<main>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+<div class="title">Dashboard</div>
+<div class="stats">
+<div class="stat"><small>Active Live Users</small><h2 class="green" id="activeLiveUsersCount">0 Live</h2></div>
+<div class="stat"><small>Live Matches</small><h2 class="orange" id="liveBattlesCount">0</h2></div>
+<div class="stat"><small>Pending KYC</small><h2 class="orange" id="pendingKycCount">0</h2></div>
+<div class="stat"><small>Total Customers</small><h2 class="blue" id="totalUsers">0</h2></div>
+<div class="stat"><small>Total Balance</small><h2 class="green" id="totalCoins">₹0</h2></div>
+<div class="stat"><small>Total Deposit Paid</small><h2 class="purple" id="totalApprovedDeposits">₹0</h2></div>
+<div class="stat"><small>Total Withdrawal Paid</small><h2 class="green" id="totalApprovedWithdrawals">₹0</h2></div>
+<div class="stat"><small>Pending Deposits</small><h2 class="orange" id="pendingDeposits">0</h2></div>
+<div class="stat"><small>Pending Withdrawals</small><h2 class="red" id="pendingWithdrawals">0</h2></div>
+<div class="stat"><small>Total Referrals</small><h2 class="blue" id="dashTotalRefs">0</h2></div>
+</div>
+
+<div class="card">
+<h3 style="font-size:16px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Firebase Status</h3>
+<div id="dashStatus" class="status bad">Connecting...</div>
+<p style="font-size:13px; color:#64748b;">Admin login Firebase Authentication se successful hua.</p>
+</div>
+</section>
+
+<!-- LIVE USERS MONITOR -->
+<section id="liveusers" class="page">
+<div class="title">🟢 Real-Time Live Users Monitor</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-signal"></i> Active Online Users (Screen Open)</h3>
+    <button id="refreshLiveUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<p style="font-size:12px; color:#64748b; margin-top:4px;">Jo users is waqt site kholkar phone par active hain, unka Mobile aur City/State yahan live dikhega.</p>
+<input id="liveSearch" class="search" placeholder="Search live users by Mobile, Name or Location...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Status</th><th>Mobile Number</th><th>Customer Name</th><th>Live Location</th><th>Wallet Balance</th><th>Last Active</th></tr>
+</thead>
+<tbody id="liveUsersTable"><tr><td colspan="6" class="empty">Scanning online users...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- BATTLES MANAGEMENT -->
+<section id="battles" class="page">
+<div class="title">⚔️ Battles & Disputes Management</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-gamepad"></i> Real-Time Ludo King Battles</h3>
+    <button id="refreshBattles" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="battleSearch" class="search" placeholder="Search by Battle ID, Player Name, Mobile, Status...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Battle ID</th><th>Player 1 (Creator)</th><th>Player 2 (Accepter)</th><th>Entry</th><th>Prize</th><th>Room Code</th><th>Status</th><th>Action</th></tr>
+</thead>
+<tbody id="battleTable"><tr><td colspan="8" class="empty">Loading battles...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- KYC REQUESTS -->
+<section id="kycrequests" class="page">
+<div class="title">📄 Document KYC Verification Requests</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-id-card"></i> Submitted KYC Documents (Front & Back)</h3>
+    <button id="refreshKyc" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="kycSearch" class="search" placeholder="Search by Mobile or ID Number...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Customer UID</th><th>Mobile</th><th>ID Number</th><th>Status</th><th>Date</th><th>Action</th></tr>
+</thead>
+<tbody id="kycTable"><tr><td colspan="6" class="empty">Loading KYC requests...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- DEPOSITS -->
+<section id="deposits" class="page">
+<div class="title">Deposit Requests</div>
+<div id="depositStatus" class="status bad">Loading...</div>
+<div class="card">
+<button id="refreshDeposits" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+<input id="depositSearch" class="search" placeholder="Search by Date, UID, Mobile, UTR, Request ID...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Request ID</th><th>Customer UID</th><th>Amount</th><th>UTR</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
+</thead>
+<tbody id="depositTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- WITHDRAWALS -->
+<section id="withdrawals" class="page">
+<div class="title">Withdrawal Requests</div>
+<div id="withdrawalStatus" class="status bad">Loading...</div>
+<div class="card">
+<button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+<input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
+</thead>
+<tbody id="withdrawalTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- USER COMPLETE HISTORY -->
+<section id="userhistory" class="page">
+<div class="title">📊 User Complete History & Analytics</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-user-clock"></i> Select User to View Total Deposit, Withdrawal & Battles History</h3>
+    <button id="refreshUserHistory" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="userHistorySearch" class="search" placeholder="Search customer by Name, Mobile or UID...">
+<div class="table">
+<table>
+<thead>
+<tr><th>UID</th><th>Customer Name</th><th>Mobile Number</th><th>Live Balance ID</th><th>Action</th></tr>
+</thead>
+<tbody id="userHistoryTable"><tr><td colspan="5" class="empty">Loading customers...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- REFERRAL ANALYTICS -->
+<section id="referrals" class="page">
+<div class="title">Referral Analytics & Leaderboard</div>
+<div class="stats" style="grid-template-columns:repeat(3,1fr); margin-bottom:14px;">
+<div class="stat"><small>Total Referrals Joined</small><h2 class="blue" id="totalReferralsCount">0</h2></div>
+<div class="stat"><small>Today's Referrals</small><h2 class="green" id="todayReferralsCount">0</h2></div>
+<div class="stat"><small>Total Referral Payouts</small><h2 class="purple" id="totalReferralEarnings">₹0</h2></div>
+</div>
+
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-ranking-star"></i> Top Referrers (Sorted by Most Referrals)</h3>
+    <button id="refreshReferrals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="referralSearch" class="search" placeholder="Search by Referrer Mobile, Code, Name or Date...">
+<div class="table">
+<table>
+<thead>
+<tr><th>Rank</th><th>Referrer Name</th><th>Referrer Mobile</th><th>Referral Code</th><th>Total Referrals</th><th>Referral Earnings</th><th>Action</th></tr>
+</thead>
+<tbody id="referralLeaderboardTable"><tr><td colspan="7" class="empty">Loading referral analytics...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- CUSTOMERS -->
+<section id="users" class="page">
+<div class="title">Customers</div>
+<div class="card">
+<button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+<input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
+<div class="table">
+<table>
+<thead>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Action / Edit Balance</th></tr>
+</thead>
+<tbody id="userTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- NOTIFICATIONS -->
+<section id="notifications" class="page">
+<div class="title">Notifications Management</div>
+<div class="card">
+<h3 style="font-size:16px; font-weight:850; color:#0c4a6e; margin-bottom:12px;"><i class="fa-solid fa-paper-plane"></i> Send New Notification</h3>
+<div class="form">
+<div class="full">
+<label>Target</label>
+<select id="notifTarget">
+<option value="all">📢 All Users</option>
+<option value="personal">👤 Personal User</option>
+</select>
+</div>
+<div class="full" id="personalUidBox" style="display:none;">
+<label>Customer Mobile / UID</label>
+<input id="notifUid" placeholder="e.g. 917878852370">
+</div>
+<div class="full"><label>Title</label><input id="notifTitle" placeholder="Notification Title..."></div>
+<div class="full"><label>Message</label><textarea id="notifMessage" rows="3" placeholder="Notification Message..."></textarea></div>
+<div class="full"><button id="sendNotifBtn" class="save" style="width:100%;">🚀 Send Notification</button></div>
+</div>
+</div>
+
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-list-check"></i> Sent Notifications History</h3>
+    <div style="display:flex; gap:6px;">
+        <button id="refreshNotifs" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+        <button id="deleteAllNotifsBtn" class="action delete-all-btn"><i class="fa-solid fa-trash-can"></i> Delete All Notifications</button>
     </div>
-    <div class="menu-list">
-        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
+</div>
+<div class="table">
+<table>
+<thead>
+<tr><th>Target</th><th>User / UID</th><th>Title</th><th>Message</th><th>Date & Time</th><th>Action</th></tr>
+</thead>
+<tbody id="notifTable"><tr><td colspan="6" class="empty">Loading notifications...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- SETTINGS -->
+<section id="settings" class="page">
+<div class="title">Payment Settings</div>
+<div id="settingsStatus" class="status bad">Loading...</div>
+<div class="card">
+<div class="form">
+<div><label>UPI ID</label><input id="upi"></div>
+<div><label>Account Holder</label><input id="holder"></div>
+<div><label>Account Number</label><input id="account"></div>
+<div><label>IFSC</label><input id="ifsc"></div>
+<div class="full"><label>QR Image URL</label><input id="qr"></div>
+<div><label>Coin Rate</label><input id="rate" type="number" value="1"></div>
+<div><label>Minimum Deposit</label><input id="minimum" type="number" value="100"></div>
+<div class="full"><button id="saveSettings" class="save">Save Settings</button></div>
+</div>
+</div>
+</section>
+
+</main>
+</div>
+</section>
+
+<!-- USER DETAILED COMPLETE HISTORY MODAL -->
+<div class="modal-overlay" id="userCompleteHistoryModal">
+    <div class="modal-box" style="max-width:850px;">
+        <div class="modal-header">
+            <h3 id="modalUserHistoryTitle">User Total History</h3>
+            <button class="modal-close" onclick="closeUserCompleteHistoryModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" id="modalUserHistoryContent"></div>
     </div>
 </div>
 
-<main class="container">
-    <section class="wallet-card">
-        <div class="wallet-top-row">
-            <div class="wallet-title">▣ MY WALLET</div>
-            <button class="history-btn" onclick="goHistory()">◷ &nbsp; History</button>
+<!-- REFERRAL BREAKDOWN MODAL -->
+<div class="modal-overlay" id="referredUsersModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalReferrerTitle">Referred Users List</h3>
+            <button class="modal-close" onclick="closeReferralModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="balance-label">Total Balance</div>
-        <div class="balance">₹<span id="mainBalance">0</span></div>
-        <div class="wallet-actions">
-            <button class="action-btn add-btn" onclick="goDeposit()">＋ Add Cash</button>
-            <button class="action-btn withdraw-btn" onclick="goWithdraw()">▣ Withdraw</button>
+        <div class="modal-body">
+            <div class="table">
+                <table>
+                    <thead><tr><th>#</th><th>Customer Mobile</th><th>Customer Name</th><th>Joined Date & Time</th></tr></thead>
+                    <tbody id="modalReferredUsersTable"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
+                </table>
+            </div>
         </div>
-    </section>
-
-    <section class="balance-grid">
-        <div class="balance-box">
-            <div class="balance-icon">▣</div>
-            <h3>DEPOSIT</h3>
-            <div class="balance-value">₹<span id="depositBalance">0</span></div>
-            <span class="balance-note">For battles only</span>
-        </div>
-        <div class="balance-box">
-            <div class="balance-icon">🏆</div>
-            <h3>WINNINGS</h3>
-            <div class="balance-value">₹<span id="winningBalance">0</span></div>
-            <span class="balance-note">Can withdraw</span>
-        </div>
-    </section>
-
-    <div class="info-box">
-        <div class="info-icon">i</div>
-        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI.</div>
     </div>
-</main>
+</div>
 
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
-</nav>
+<!-- KYC DOCUMENT PREVIEW MODAL -->
+<div class="modal-overlay" id="kycPreviewModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 id="modalKycTitle">KYC Document Preview</h3>
+            <button class="modal-close" onclick="closeKycPreviewModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" id="modalKycContent"></div>
+    </div>
+</div>
 
-<script>
-async function loadFirebaseCustomer(){
-    try{
-        if(!firebaseDB) return;
-        let mobile = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || localStorage.getItem("rdxUserMobile");
-        if(!mobile) return;
-        const cleanMobile = String(mobile).replace(/\D/g,"");
-        let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+<!-- BATTLE PROOF & RESOLVE MODAL -->
+<div class="modal-overlay" id="battleResolveModal">
+    <div class="modal-box" style="max-width:550px;">
+        <div class="modal-header">
+            <h3 id="modalBattleTitle">Match Proof & Dispute Resolve</h3>
+            <button class="modal-close" onclick="closeBattleModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" id="modalBattleContent"></div>
+    </div>
+</div>
 
-        const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
-        const snapshot = await userRef.get();
-        if(!snapshot.exists) return;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, deleteDoc, addDoc, runTransaction, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-        const data = snapshot.data();
-        const balance = Number(data.balance || 0);
-        document.getElementById("mainBalance").textContent = balance;
-        document.getElementById("topBalance").textContent = balance;
-        document.getElementById("depositBalance").textContent = Number(data.depositBalance || data.deposit || 0);
-        document.getElementById("winningBalance").textContent = Number(data.winnings || data.winningBalance || 0);
+const firebaseConfig = {
+apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+authDomain: "rdx-ludo.firebaseapp.com",
+projectId: "rdx-ludo",
+storageBucket: "rdx-ludo.firebasestorage.app",
+messagingSenderId: "928340814840",
+appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
 
-        let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + firebaseDocId.slice(-4));
-        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
-    } catch(error){ console.error(error); }
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const paymentRef = doc(db, "paymentSettings", "config");
+
+let deposits = [];
+let withdrawals = [];
+let users = [];
+let kycRequests = [];
+let battlesList = [];
+let notificationsList = [];
+let referralAnalytics = [];
+
+const $ = id => document.getElementById(id);
+const safe = v => String(v ?? "").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function parseItemTime(ts) {
+    if (!ts) return { dateObj: new Date(0), formatted: "—" };
+    let d;
+    if (typeof ts.toDate === "function") { d = ts.toDate(); }
+    else if (ts.seconds) { d = new Date(ts.seconds * 1000); }
+    else { d = new Date(ts); }
+
+    const formatted = isNaN(d.getTime()) ? "—" : d.toLocaleString("en-IN", {
+        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true
+    });
+    return { dateObj: d, formatted: formatted };
 }
 
-window.addEventListener("load", loadFirebaseCustomer);
+window.refreshAdminDashboard = async () => {
+    document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
+    document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+    document.querySelector('.nav[data-page="dashboard"]').classList.add("active");
+    $("dashboard").classList.add("active");
+    if($("dashStatus")) {
+        $("dashStatus").textContent = "🔄 Refreshing data...";
+        $("dashStatus").className = "status bad";
+    }
+    await loadAll();
+};
 
-function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
-function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
-function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
-function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
-function goDeposit(){ closeMenu(); window.location.href = "./deposit.html"; }
-function goWithdraw(){ closeMenu(); window.location.href = "./withdraw.html"; }
-function goProfile(){ closeMenu(); window.location.href = "./profile.html"; }
-function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
-function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
-function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
-function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
+async function handleLogin() {
+    const emailInput = $("email").value.trim().toLowerCase();
+    const passwordInput = $("password").value;
+    const errBox = $("error");
+    
+    if(errBox) errBox.style.display = "none";
+
+    if(!emailInput || !passwordInput) {
+        if(errBox) {
+            errBox.textContent = "Kripya Email aur Password dono bharein!";
+            errBox.style.display = "block";
+        }
+        return;
+    }
+
+    try { 
+        await signInWithEmailAndPassword(auth, emailInput, passwordInput);
+        if(errBox) errBox.style.display = "none";
+    } catch(e){ 
+        if(errBox) {
+            errBox.textContent = "Login Error: " + e.message;
+            errBox.style.display = "block";
+        }
+    }
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = $("loginBtn");
+    if(loginBtn) {
+        loginBtn.addEventListener("click", handleLogin);
+    }
+});
+
+onAuthStateChanged(auth, u => {
+    if(u && u.email){
+        if($("login")) $("login").style.display = "none";
+        if($("admin")) $("admin").style.display = "block";
+        loadAll();
+    } else {
+        if($("login")) $("login").style.display = "flex";
+        if($("admin")) $("admin").style.display = "none";
+    }
+});
+
+const logoutBtn = $("logout");
+if(logoutBtn) {
+    logoutBtn.addEventListener("click", () => signOut(auth));
+}
+
+document.querySelectorAll(".nav").forEach(btn => {
+    btn.addEventListener("click", async () => {
+        document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
+        document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
+        btn.classList.add("active");
+        const targetPage = $(btn.dataset.page);
+        if(targetPage) targetPage.classList.add("active");
+        
+        if(btn.dataset.page === "deposits") loadDeposits();
+        if(btn.dataset.page === "withdrawals") loadWithdrawals();
+        if(btn.dataset.page === "users") loadUsers();
+        if(btn.dataset.page === "battles") loadBattles();
+        if(btn.dataset.page === "kycrequests") loadKycRequests();
+        if(btn.dataset.page === "liveusers") renderLiveUsers();
+        if(btn.dataset.page === "userhistory") loadUserHistoryList();
+        if(btn.dataset.page === "referrals") loadReferralAnalytics();
+        if(btn.dataset.page === "notifications") loadNotifications();
+        if(btn.dataset.page === "settings") loadSettings();
+    });
+});
+
+// ================= CUSTOMERS & WALLET (WINNINGS & DEPOSIT LOGIC) =================
+async function loadUsers(){
+    if(!$("userTable")) return;
+    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "customers"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.joinedAt);
+            const lastSeenInfo = parseItemTime(data.lastSeenAt || data.lastLoginAt);
+            list.push({ 
+                id: d.id, 
+                ...data, 
+                timeObj: timeInfo.dateObj, 
+                formattedDate: timeInfo.formatted,
+                lastSeenObj: lastSeenInfo.dateObj
+            });
+        });
+
+        list.sort((a, b) => b.timeObj - a.timeObj);
+        users = list;
+        renderUsers();
+        renderLiveUsers();
+        updateDashboard();
+    } catch(e) {
+        if($("userTable")) $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderUsers(){
+    if(!$("userTable") || !$("userSearch")) return;
+    const q = $("userSearch").value.toLowerCase().trim();
+    const list = users.filter(u => {
+        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.kycStatus || ''} ${u.referredBy || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length){
+        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
+        return;
+    }
+
+    $("userTable").innerHTML = list.map(u => {
+        const kycBadge = u.kycStatus === 'verified' ? '<span class="badge approved">Verified</span>' : (u.kycStatus === 'pending' ? '<span class="badge pending">Under Review</span>' : '<span class="badge rejected">Not Done</span>');
+        const winBal = Number(u.winnings || u.winningBalance || 0);
+        const depBal = Number(u.depositBalance || u.balance || 0);
+        return `
+        <tr>
+            <td>${safe(u.id)}</td>
+            <td><b>${safe(u.name || 'User')}</b></td>
+            <td>${safe(u.mobile || u.id)}</td>
+            <td>
+                Total: <b style="color:#15803d;">₹${u.balance || 0}</b><br>
+                <small style="color:#0284c7;">Win: ₹${winBal} | Dep: ₹${depBal}</small>
+            </td>
+            <td>${kycBadge}</td>
+            <td><span class="badge ${u.referredBy && u.referredBy !== 'DIRECT' ? 'approved' : 'pending'}">${safe(u.referredBy || 'DIRECT')}</span></td>
+            <td>
+                <button class="action edit-status-btn" data-edit-balance="${safe(u.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit Wallet</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-edit-balance]").forEach(btn => {
+        btn.addEventListener("click", () => editUserWalletBalance(btn.dataset.editBalance));
+    });
+}
+
+window.editUserWalletBalance = async (uId) => {
+    const user = users.find(x => String(x.id) === String(uId));
+    if (!user) return;
+    const newBal = prompt(`User (${user.name || user.mobile}) ka Total Balance enter karein:`, user.balance || 0);
+    if (newBal === null || isNaN(newBal)) return;
+    const newWin = prompt(`Isme se Winnings (Withdrawalable) rashi kitni hai?:`, user.winnings || 0);
+    if (newWin === null || isNaN(newWin)) return;
+
+    try {
+        await setDoc(doc(db, "customers", uId), { 
+            balance: Number(newBal), 
+            winnings: Number(newWin),
+            winningBalance: Number(newWin)
+        }, { merge: true });
+        alert(`✅ Wallet successfully updated! Total: ₹${newBal}, Winnings: ₹${newWin}`);
+        loadUsers();
+    } catch(e) {
+        alert("Error updating wallet: " + e.message);
+    }
+};
+
+if($("userSearch")) $("userSearch").addEventListener("input", renderUsers);
+if($("refreshUsers")) $("refreshUsers").addEventListener("click", loadUsers);
+
+// ================= USER COMPLETE TOTAL HISTORY & BONUS / PENALTY =================
+async function loadUserHistoryList() {
+    if(!$("userHistoryTable")) return;
+    $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">Loading customers list...</td></tr>`;
+    try {
+        if (!users.length) await loadUsers();
+        renderUserHistoryList();
+    } catch(e) {
+        if($("userHistoryTable")) $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderUserHistoryList() {
+    if(!$("userHistoryTable") || !$("userHistorySearch")) return;
+    const q = $("userHistorySearch").value.toLowerCase().trim();
+    const list = users.filter(u => {
+        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length) {
+        $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">No customers found.</td></tr>`;
+        return;
+    }
+
+    $("userHistoryTable").innerHTML = list.map(u => `
+        <tr>
+            <td><b>${safe(u.id)}</b></td>
+            <td><b>${safe(u.name || 'User')}</b></td>
+            <td>${safe(u.mobile || u.id)}</td>
+            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td>
+                <button class="action view-btn" data-view-user-history="${safe(u.id)}"><i class="fa-solid fa-file-invoice-dollar"></i> View Total History</button>
+            </td>
+        </tr>
+    `).join("");
+
+    document.querySelectorAll("[data-view-user-history]").forEach(btn => {
+        btn.addEventListener("click", () => openUserCompleteHistory(btn.dataset.viewUserHistory));
+    });
+}
+
+window.openUserCompleteHistory = async (uId) => {
+    const user = users.find(x => String(x.id) === String(uId));
+    if (!user) return;
+
+    if($("modalUserHistoryTitle")) $("modalUserHistoryTitle").innerHTML = `📊 Complete History: <b>${safe(user.name || 'User')} (${safe(user.mobile || user.id)})</b>`;
+    const container = $("modalUserHistoryContent");
+    if(!container) return;
+
+    container.innerHTML = `<p style="text-align:center; padding:30px; color:#64748b;">Fetching total deposit, withdrawal & battle history...</p>`;
+    if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "flex";
+
+    try {
+        const depSnap = await getDocs(collection(db, "deposits"));
+        const userDeps = [];
+        let totalDepositAmount = 0;
+        depSnap.forEach(d => {
+            const data = d.data();
+            const cleanUid = String(data.uid || data.userId || "").replace(/\D/g, "");
+            if (cleanUid === String(user.id).replace(/\D/g, "")) {
+                const timeInfo = parseItemTime(data.createdAt || data.date);
+                userDeps.push({ ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+                if(String(data.status || "").toLowerCase() === "approved" || String(data.status || "").toLowerCase() === "success") {
+                    totalDepositAmount += Number(data.amount || 0);
+                }
+            }
+        });
+        userDeps.sort((a, b) => b.timeObj - a.timeObj);
+
+        const withSnap = await getDocs(collection(db, "withdrawals"));
+        const userWiths = [];
+        let totalWithdrawalAmount = 0;
+        withSnap.forEach(d => {
+            const data = d.data();
+            const cleanUid = String(data.uid || data.mobile || "").replace(/\D/g, "");
+            if (cleanUid === String(user.id).replace(/\D/g, "")) {
+                const timeInfo = parseItemTime(data.createdAt || data.date);
+                userWiths.push({ ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+                if(String(data.status || "").toLowerCase() === "approved" || String(data.status || "").toLowerCase() === "success") {
+                    totalWithdrawalAmount += Number(data.amount || 0);
+                }
+            }
+        });
+        userWiths.sort((a, b) => b.timeObj - a.timeObj);
+
+        const batSnap = await getDocs(collection(db, "battles"));
+        const userBats = [];
+        batSnap.forEach(d => {
+            const data = d.data();
+            const cleanUid = String(user.id).replace(/\D/g, "");
+            const creatorClean = String(data.creatorUid || "").replace(/\D/g, "");
+            const accepterClean = String(data.acceptedUid || "").replace(/\D/g, "");
+
+            const isCreator = creatorClean === cleanUid;
+            const isAccepter = accepterClean === cleanUid;
+
+            if (isCreator || isAccepter) {
+                const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
+                let opponentMobile = isCreator ? (data.acceptedMobile || data.acceptedName || data.acceptedUid || "Waiting...") : (data.creatorMobile || data.creatorName || data.creatorUid || "Creator");
+                
+                userBats.push({ 
+                    id: d.id, 
+                    ...data, 
+                    opponentMobile: opponentMobile,
+                    isCreator: isCreator,
+                    formattedDate: timeInfo.formatted, 
+                    timeObj: timeInfo.dateObj 
+                });
+            }
+        });
+        userBats.sort((a, b) => b.timeObj - a.timeObj);
+
+        let totalBattles = userBats.length;
+        let winBattles = 0;
+        let lossBattles = 0;
+        let cancelBattles = 0;
+
+        userBats.forEach(b => {
+            if (b.status === "completed") {
+                if (String(b.winnerUid || "").replace(/\D/g, "") === String(user.id).replace(/\D/g, "")) {
+                    winBattles++;
+                } else {
+                    lossBattles++;
+                }
+            } else if (b.status === "cancelled") {
+                cancelBattles++;
+            }
+        });
+
+        const winBal = Number(user.winnings || user.winningBalance || 0);
+
+        container.innerHTML = `
+            <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px;">
+                <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#64748b; font-weight:800; font-size:9px;">BALANCE / WIN</small>
+                    <h3 style="color:#0c4a6e; font-size:14px; font-weight:900; margin-top:2px;">₹${user.balance || 0}<br><small style="color:#15803d; font-size:10px;">W: ₹${winBal}</small></h3>
+                </div>
+                <div style="background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#15803d; font-weight:800; font-size:9px;">TOTAL DEPOSIT</small>
+                    <h3 style="color:#15803d; font-size:16px; font-weight:900; margin-top:2px;">₹${totalDepositAmount}</h3>
+                </div>
+                <div style="background:#fef2f2; border:1.5px solid #fecdd3; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#be123c; font-weight:800; font-size:9px;">TOTAL WITHDRAWAL</small>
+                    <h3 style="color:#be123c; font-size:16px; font-weight:900; margin-top:2px;">₹${totalWithdrawalAmount}</h3>
+                </div>
+                <div style="background:#fefce8; border:1.5px solid #fef08a; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#854d0e; font-weight:800; font-size:9px;">BATTLES (W/L)</small>
+                    <h3 style="color:#854d0e; font-size:14px; font-weight:900; margin-top:2px;">${totalBattles} (${winBattles}W/${lossBattles}L)</h3>
+                </div>
+                <div style="background:#faf5ff; border:1.5px solid #e9d5ff; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#7c3aed; font-weight:800; font-size:9px;">CANCELLED</small>
+                    <h3 style="color:#7c3aed; font-size:16px; font-weight:900; margin-top:2px;">${cancelBattles}</h3>
+                </div>
+            </div>
+
+            <!-- BONUS & PENALTY BUTTONS -->
+            <div style="background:#f8fafc; border:1.5px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <span style="font-size:13px; font-weight:850; color:#0c4a6e;">Wallet Adjustments:</span>
+                <div style="display:flex; gap:8px;">
+                    <button class="action approve" style="padding:8px 14px;" onclick="addBonusToUser('${user.id}')"><i class="fa-solid fa-gift"></i> Add Bonus</button>
+                    <button class="action reject" style="padding:8px 14px;" onclick="applyPenaltyToUser('${user.id}')"><i class="fa-solid fa-triangle-exclamation"></i> Apply Penalty</button>
+                </div>
+            </div>
+
+            <!-- TOTAL DEPOSIT HISTORY -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-credit-card"></i> Deposit History (${userDeps.length})</h4>
+            <div class="table" style="max-height:140px; margin-bottom:12px;">
+                <table>
+                    <thead><tr><th>Amount</th><th>UTR Number</th><th>Status</th><th>Date & Time</th></tr></thead>
+                    <tbody>
+                        ${userDeps.length ? userDeps.map(d => `<tr><td><b>₹${d.amount}</b></td><td>${safe(d.utr || '—')}</td><td><span class="badge ${safe(d.status)}">${safe(d.status)}</span></td><td>${d.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No deposit history found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TOTAL WITHDRAWAL HISTORY -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal History (${userWiths.length})</h4>
+            <div class="table" style="max-height:140px; margin-bottom:12px;">
+                <table>
+                    <thead><tr><th>Amount</th><th>Mode & Account Details</th><th>Status</th><th>Date & Time</th></tr></thead>
+                    <tbody>
+                        ${userWiths.length ? userWiths.map(w => `<tr><td><b>₹${w.amount}</b></td><td>${w.mode === 'BANK' ? 'Bank: ' + safe(w.accountNumber) : 'UPI: ' + safe(w.upiId)}</td><td><span class="badge ${safe(w.status)}">${safe(w.status)}</span></td><td>${w.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No withdrawal history found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TOTAL BATTLE HISTORY -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent Mobile & Bet History (${userBats.length})</h4>
+            <div class="table" style="max-height:160px;">
+                <table>
+                    <thead><tr><th>#</th><th>Opponent Mobile</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
+                    <tbody>
+                        ${userBats.length ? userBats.map((b, idx) => {
+                            let resTxt = b.status;
+                            let resBadge = 'pending';
+                            if(b.status === 'completed') {
+                                if(String(b.winnerUid || "").replace(/\D/g, "") === String(user.id).replace(/\D/g, "")) {
+                                    resTxt = `WIN (+₹${b.prize || 0}) with Bet ₹${b.amount || 0}`;
+                                    resBadge = 'approved';
+                                } else {
+                                    resTxt = `LOSS (-₹${b.amount || 0}) with Bet ₹${b.amount || 0}`;
+                                    resBadge = 'rejected';
+                                }
+                            } else if(b.status === 'cancelled') {
+                                resTxt = `CANCELLED (Refunded ₹${b.amount || 0})`;
+                                resBadge = 'pending';
+                            } else {
+                                resTxt = `LIVE / ACTIVE (Bet ₹${b.amount || 0})`;
+                                resBadge = 'pending';
+                            }
+                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentMobile)}</b></td><td><b style="color:#0284c7;">₹${b.amount || 0}</b></td><td>₹${b.prize || 0}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
+                        }).join("") : `<tr><td colspan="6" class="empty">No battle history found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } catch(e) {
+        container.innerHTML = `<p style="text-align:center; padding:30px; color:#be123c;">Error loading total history: ${safe(e.message)}</p>`;
+    }
+};
+
+window.closeUserCompleteHistoryModal = () => {
+    if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "none";
+};
+
+window.addBonusToUser = async (uId) => {
+    const amt = prompt("Kitna Bonus amount add karna hai? (e.g. 50):");
+    if(!amt || isNaN(amt)) return;
+    const bonusVal = Number(amt);
+    try {
+        await runTransaction(db, async t => {
+            const uRef = doc(db, "customers", uId);
+            const uSnap = await t.get(uRef);
+            const currentBal = Number(uSnap.data()?.balance || 0);
+            const currentWin = Number(uSnap.data()?.winnings || uSnap.data()?.winningBalance || 0);
+            t.update(uRef, { 
+                balance: currentBal + bonusVal,
+                winnings: currentWin + bonusVal,
+                winningBalance: currentWin + bonusVal
+            });
+        });
+        alert(`✅ Successfully added ₹${bonusVal} bonus to user winnings!`);
+        loadUsers();
+        closeUserCompleteHistoryModal();
+    } catch(e) { alert("Bonus Error: " + e.message); }
+};
+
+window.applyPenaltyToUser = async (uId) => {
+    const amt = prompt("Kitni Penalty kaatni hai? (e.g. 100):");
+    if(!amt || isNaN(amt)) return;
+    const penaltyVal = Number(amt);
+    try {
+        await runTransaction(db, async t => {
+            const uRef = doc(db, "customers", uId);
+            const uSnap = await t.get(uRef);
+            const currentBal = Number(uSnap.data()?.balance || 0);
+            const currentWin = Number(uSnap.data()?.winnings || uSnap.data()?.winningBalance || 0);
+            t.update(uRef, { 
+                balance: Math.max(0, currentBal - penaltyVal),
+                winnings: Math.max(0, currentWin - penaltyVal),
+                winningBalance: Math.max(0, currentWin - penaltyVal)
+            });
+        });
+        alert(`⚠️ Successfully deducted ₹${penaltyVal} penalty from user wallet!`);
+        loadUsers();
+        closeUserCompleteHistoryModal();
+    } catch(e) { alert("Penalty Error: " + e.message); }
+};
+
+if($("userHistorySearch")) $("userHistorySearch").addEventListener("input", renderUserHistoryList);
+if($("refreshUserHistory")) $("refreshUserHistory").addEventListener("click", loadUserHistoryList);
+
+// ================= BATTLES MANAGEMENT & DISPUTES (WITH WINNING & LOSS LOGIC) =================
+async function loadBattles() {
+    if(!$("battleTable")) return;
+    $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Loading battles...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "battles"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.startedAt);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => {
+            const aLive = a.status === "live" || a.status === "conflict";
+            const bLive = b.status === "live" || b.status === "conflict";
+            if (aLive && !bLive) return -1;
+            if (!aLive && bLive) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        battlesList = list;
+        renderBattles();
+        updateDashboard();
+    } catch(e) {
+        if($("battleTable")) $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderBattles() {
+    if(!$("battleTable") || !$("battleSearch")) return;
+    const q = $("battleSearch").value.toLowerCase().trim();
+    const list = battlesList.filter(b => {
+        const pool = `${b.id || ''} ${b.creatorName || ''} ${b.creatorMobile || ''} ${b.acceptedName || ''} ${b.acceptedMobile || ''} ${b.roomCode || ''} ${b.status || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length) {
+        $("battleTable").innerHTML = `<tr><td colspan="8" class="empty">No battles found.</td></tr>`;
+        return;
+    }
+
+    $("battleTable").innerHTML = list.map(b => {
+        let badgeClass = "pending";
+        if(b.status === "live") badgeClass = "approved";
+        else if(b.status === "conflict") badgeClass = "rejected";
+        else if(b.status === "completed") badgeClass = "approved";
+
+        return `
+        <tr>
+            <td><b>${safe(b.id)}</b></td>
+            <td><b>${safe(b.creatorName)}</b> <br><small style="color:#64748b;">${safe(b.creatorMobile)}</small></td>
+            <td><b>${safe(b.acceptedName || 'Waiting...')}</b> <br><small style="color:#64748b;">${safe(b.acceptedMobile || '')}</small></td>
+            <td><b style="color:#be123c;">₹${b.amount}</b></td>
+            <td><b style="color:#15803d;">₹${b.prize}</b></td>
+            <td><span class="badge approved" style="letter-spacing:1px;">${safe(b.roomCode || '—')}</span></td>
+            <td><span class="badge ${badgeClass}">${safe(b.status)}</span></td>
+            <td>
+                <button class="action view-btn" data-resolve-battle="${safe(b.id)}"><i class="fa-solid fa-shield"></i> View & Resolve</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-resolve-battle]").forEach(btn => {
+        btn.addEventListener("click", () => openBattleResolve(btn.dataset.resolveBattle));
+    });
+}
+
+window.openBattleResolve = (bId) => {
+    const b = battlesList.find(x => x.id === bId);
+    if (!b) return;
+
+    if($("modalBattleTitle")) $("modalBattleTitle").innerHTML = `⚔️ Match: <b>${safe(b.creatorName)} vs ${safe(b.acceptedName || 'Opponent')}</b>`;
+    const container = $("modalBattleContent");
+    if(!container) return;
+
+    const p1Proof = b[`proof_${b.creatorUid}`] || null;
+    const p2Proof = b.acceptedUid ? b[`proof_${b.acceptedUid}`] : null;
+
+    const p1Result = b[`result_${b.creatorUid}`] || "Not Submitted";
+    const p2Result = b.acceptedUid ? (b[`result_${b.acceptedUid}`] || "Not Submitted") : "N/A";
+
+    container.innerHTML = `
+        <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:800; color:#0c4a6e;">
+                <span>Entry Fee: ₹${b.amount}</span>
+                <span style="color:#15803d;">Prize: ₹${b.prize}</span>
+            </div>
+            <div style="font-size:12px; color:#64748b; margin-top:4px;">Room Code: <b>${safe(b.roomCode || 'Not Set')}</b> | Status: <b>${safe(b.status)}</b></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+            <div style="background:#fff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                <strong style="font-size:13px; color:#0c4a6e;">${safe(b.creatorName)}</strong>
+                <div style="font-size:11px; color:#64748b; margin:2px 0;">Claim: <b style="color:#0284c7;">${p1Result}</b></div>
+                ${p1Proof ? `<img src="${p1Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1.5px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p1Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
+            </div>
+
+            <div style="background:#fff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                <strong style="font-size:13px; color:#0c4a6e;">${safe(b.acceptedName || 'Opponent')}</strong>
+                <div style="font-size:11px; color:#64748b; margin:2px 0;">Claim: <b style="color:#0284c7;">${p2Result}</b></div>
+                ${p2Proof ? `<img src="${p2Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1.5px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p2Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
+            </div>
+        </div>
+
+        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement & Separate Penalty Actions:</h4>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+            <button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.creatorUid}', '${b.prize}')">🏆 Make ${safe(b.creatorName)} WINNER (Credit ₹${b.prize} to Winnings)</button>
+            ${b.acceptedUid ? `<button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.acceptedUid}', '${b.prize}')">🏆 Make ${safe(b.acceptedName)} WINNER (Credit ₹${b.prize} to Winnings)</button>` : ''}
+            <button class="action reject" style="padding:10px; font-size:13px;" onclick="refundBattle('${b.id}', '${b.creatorUid}', '${b.acceptedUid}', '${b.amount}')">↩️ Cancel Match & Refund Both (₹${b.amount})</button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:4px;">
+                <button class="action delete-btn" style="padding:8px; font-size:12px;" onclick="applyDisputePenalty('${b.id}', '${b.creatorUid}', '${safe(b.creatorName)}')">⚠️ Penalty on ${safe(b.creatorName)}</button>
+                ${b.acceptedUid ? `<button class="action delete-btn" style="padding:8px; font-size:12px;" onclick="applyDisputePenalty('${b.id}', '${b.acceptedUid}', '${safe(b.acceptedName)}')">⚠️ Penalty on ${safe(b.acceptedName)}</button>` : ''}
+            </div>
+        </div>
+    `;
+
+    if($("battleResolveModal")) $("battleResolveModal").style.display = "flex";
+};
+
+window.closeBattleModal = () => {
+    if($("battleResolveModal")) $("battleResolveModal").style.display = "none";
+};
+
+window.declareWinner = async (bId, winnerUid, prize) => {
+    if (!confirm(`Winner ko ₹${prize} prize winnings mein credit karein?`)) return;
+    try {
+        await runTransaction(db, async t => {
+            const userRef = doc(db, "customers", winnerUid);
+            const battleRef = doc(db, "battles", bId);
+
+            const userSnap = await t.get(userRef);
+            const currentBal = Number(userSnap.data()?.balance || 0);
+            const currentWin = Number(userSnap.data()?.winnings || userSnap.data()?.winningBalance || 0);
+            const currentPlayed = Number(userSnap.data()?.matchesPlayed || 0);
+
+            t.update(userRef, {
+                balance: currentBal + Number(prize),
+                winnings: currentWin + Number(prize),
+                winningBalance: currentWin + Number(prize),
+                matchesPlayed: currentPlayed + 1
+            });
+
+            t.update(battleRef, {
+                status: "completed",
+                winnerUid: winnerUid,
+                resolvedAt: serverTimestamp()
+            });
+        });
+
+        alert("✅ Match Resolved & Winnings Credited Successfully!");
+        closeBattleModal();
+        loadBattles();
+        loadUsers();
+    } catch(e) {
+        alert("Settlement Error: " + e.message);
+    }
+};
+
+window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
+    if (!confirm(`Match cancel karke dono players ko ₹${entryAmt} refund karein?`)) return;
+    try {
+        await runTransaction(db, async t => {
+            const p1Ref = doc(db, "customers", p1Uid);
+            const p1Snap = await t.get(p1Ref);
+            t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + Number(entryAmt) });
+
+            if (p2Uid) {
+                const p2Ref = doc(db, "customers", p2Uid);
+                const p2Snap = await t.get(p2Ref);
+                t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + Number(entryAmt) });
+            }
+
+            t.update(doc(db, "battles", bId), {
+                status: "cancelled",
+                refunded: true,
+                resolvedAt: serverTimestamp()
+            });
+        });
+
+        alert("✅ Match Cancelled & Refunded Successfully!");
+        closeBattleModal();
+        loadBattles();
+        loadUsers();
+    } catch(e) {
+        alert("Refund Error: " + e.message);
+    }
+};
+
+window.applyDisputePenalty = async (bId, targetUid, targetName) => {
+    const amt = prompt(`${targetName} par kitni penalty lagani hai? (e.g. 50):`);
+    if(!amt || isNaN(amt)) return;
+    const penaltyVal = Number(amt);
+
+    try {
+        await runTransaction(db, async t => {
+            const uRef = doc(db, "customers", targetUid);
+            const uSnap = await t.get(uRef);
+            const currentBal = Number(uSnap.data()?.balance || 0);
+            const currentWin = Number(uSnap.data()?.winnings || uSnap.data()?.winningBalance || 0);
+
+            t.update(uRef, { 
+                balance: Math.max(0, currentBal - penaltyVal),
+                winnings: Math.max(0, currentWin - penaltyVal),
+                winningBalance: Math.max(0, currentWin - penaltyVal)
+            });
+            t.update(doc(db, "battles", bId), {
+                status: "penalized",
+                penaltyAppliedTo: targetUid,
+                penaltyAmount: penaltyVal,
+                resolvedAt: serverTimestamp()
+            });
+        });
+
+        alert(`⚠️ Penalty of ₹${penaltyVal} successfully deducted from ${targetName}!`);
+        closeBattleModal();
+        loadBattles();
+        loadUsers();
+    } catch(e) { alert("Penalty Error: " + e.message); }
+};
+
+if($("battleSearch")) $("battleSearch").addEventListener("input", renderBattles);
+if($("refreshBattles")) $("refreshBattles").addEventListener("click", loadBattles);
+
+// ================= LIVE ACTIVE USERS MONITOR =================
+function renderLiveUsers() {
+    if(!$("liveUsersTable") || !$("liveSearch")) return;
+    const q = $("liveSearch").value.toLowerCase().trim();
+    const now = Date.now();
+    
+    const onlineList = users.filter(u => {
+        const lastTime = u.lastSeenObj ? u.lastSeenObj.getTime() : 0;
+        const diffSec = (now - lastTime) / 1000;
+        const isCurrentlyActive = u.isOnline === true && diffSec < 35;
+        if (!isCurrentlyActive) return false;
+        const pool = `${u.name || ''} ${u.mobile || ''} ${u.location || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if($("activeLiveUsersCount")) $("activeLiveUsersCount").textContent = onlineList.length + " Live";
+
+    if (!onlineList.length) {
+        $("liveUsersTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi koi user screen kholkar live nahi hai.</td></tr>`;
+        return;
+    }
+
+    $("liveUsersTable").innerHTML = onlineList.map(u => `
+        <tr>
+            <td><span class="badge live-online">Active Online</span></td>
+            <td><b>${safe(u.mobile)}</b></td>
+            <td>${safe(u.name)}</td>
+            <td>📍 <b>${safe(u.location || 'Unknown Location')}</b></td>
+            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td><i class="fa-regular fa-clock"></i> Just Now</td>
+        </tr>
+    `).join("");
+}
+
+if($("liveSearch")) $("liveSearch").addEventListener("input", renderLiveUsers);
+if($("refreshLiveUsers")) $("refreshLiveUsers").addEventListener("click", () => { loadUsers().then(renderLiveUsers); });
+
+// ================= KYC REQUESTS =================
+async function loadKycRequests() {
+    if(!$("kycTable")) return;
+    $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Loading KYC requests...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "kycRequests"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.submittedAt || data.date);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => {
+            const aPending = String(a.status || "").toLowerCase() === "pending";
+            const bPending = String(b.status || "").toLowerCase() === "pending";
+            if (aPending && !bPending) return -1;
+            if (!aPending && bPending) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        kycRequests = list;
+        renderKycRequests();
+        updateDashboard();
+    } catch(e) {
+        if($("kycTable")) $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderKycRequests() {
+    if(!$("kycTable") || !$("kycSearch")) return;
+    const q = $("kycSearch").value.toLowerCase().trim();
+    const list = kycRequests.filter(k => {
+        const pool = `${k.id || ''} ${k.mobile || ''} ${k.docNumber || ''} ${k.status || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if (!list.length) {
+        $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">No KYC requests found.</td></tr>`;
+        return;
+    }
+
+    $("kycTable").innerHTML = list.map(k => {
+        const s = String(k.status || "pending").toLowerCase();
+        return `
+        <tr>
+            <td><b>${safe(k.id)}</b></td>
+            <td><b>${safe(k.mobile)}</b></td>
+            <td><b>${safe(k.docNumber || '—')}</b></td>
+            <td><span class="badge ${s}">${s}</span></td>
+            <td><i class="fa-regular fa-clock"></i> ${k.formattedDate}</td>
+            <td>
+                <button class="action view-btn" data-view-kyc="${safe(k.id)}"><i class="fa-solid fa-eye"></i> View & Approve</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-view-kyc]").forEach(b => {
+        b.addEventListener("click", () => openKycPreview(b.dataset.viewKyc));
+    });
+}
+
+window.openKycPreview = (docId) => {
+    const item = kycRequests.find(x => x.id === docId);
+    if (!item) return;
+
+    if($("modalKycTitle")) $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
+    const container = $("modalKycContent");
+    if(!container) return;
+
+    container.innerHTML = `
+        <div class="kyc-preview-grid">
+            <div class="kyc-preview-item">
+                <strong style="font-size:12px; color:#0c4a6e;">Front Photo</strong>
+                <img src="${item.frontImage}" alt="Front" onclick="window.open('${item.frontImage}')">
+            </div>
+            <div class="kyc-preview-item">
+                <strong style="font-size:12px; color:#0c4a6e;">Back Photo</strong>
+                <img src="${item.backImage}" alt="Back" onclick="window.open('${item.backImage}')">
+            </div>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-top:16px;">
+            <button class="action approve" style="flex:1; padding:12px; font-size:13px;" onclick="approveKyc('${item.id}')">✅ Approve KYC</button>
+            <button class="action reject" style="flex:1; padding:12px; font-size:13px;" onclick="rejectKyc('${item.id}')">❌ Reject KYC</button>
+        </div>
+    `;
+
+    if($("kycPreviewModal")) $("kycPreviewModal").style.display = "flex";
+};
+
+window.closeKycPreviewModal = () => {
+    if($("kycPreviewModal")) $("kycPreviewModal").style.display = "none";
+};
+
+window.approveKyc = async (uid) => {
+    if (!confirm("Kya aap is user ka KYC Approve karna chahte hain?")) return;
+    try {
+        await setDoc(doc(db, "customers", uid), { kycStatus: "verified" }, { merge: true });
+        await setDoc(doc(db, "kycRequests", uid), { status: "approved" }, { merge: true });
+        alert("✅ KYC Successfully Approved!");
+        closeKycPreviewModal();
+        loadKycRequests();
+        loadUsers();
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+window.rejectKyc = async (uid) => {
+    const reason = prompt("Reject karne ka reason likhein:");
+    if (!reason) return;
+    try {
+        await setDoc(doc(db, "customers", uid), { kycStatus: "rejected", kycRejectReason: reason.trim() }, { merge: true });
+        await setDoc(doc(db, "kycRequests", uid), { status: "rejected", comment: reason.trim() }, { merge: true });
+        alert("❌ KYC Rejected!");
+        closeKycPreviewModal();
+        loadKycRequests();
+        loadUsers();
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+if($("kycSearch")) $("kycSearch").addEventListener("input", renderKycRequests);
+if($("refreshKyc")) $("refreshKyc").addEventListener("click", loadKycRequests);
+
+// ================= WITHDRAWALS =================
+async function loadWithdrawals(){
+    if(!$("withdrawalTable")) return;
+    $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "withdrawals"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.date);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => {
+            const aPending = String(a.status || "").toLowerCase() === "pending";
+            const bPending = String(b.status || "").toLowerCase() === "pending";
+            if (aPending && !bPending) return -1;
+            if (!aPending && bPending) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        withdrawals = list;
+        renderWithdrawals();
+        if($("withdrawalStatus")) {
+            $("withdrawalStatus").textContent = "✅ Withdrawals loaded.";
+            $("withdrawalStatus").className = "status ok";
+        }
+        updateDashboard();
+    } catch(e) { 
+        if($("withdrawalStatus")) {
+            $("withdrawalStatus").textContent = "❌ " + e.message; 
+            $("withdrawalStatus").className = "status bad";
+        }
+    }
+}
+
+function renderWithdrawals(){
+    if(!$("withdrawalTable") || !$("withdrawalSearch")) return;
+    const q = $("withdrawalSearch").value.toLowerCase().trim();
+    const list = withdrawals.filter(w => {
+        const pool = `${w.id || ''} ${w.uid || ''} ${w.mobile || ''} ${w.upiId || ''} ${w.holderName || ''} ${w.bankName || ''} ${w.accountNumber || ''} ${w.ifsc || ''} ${w.amount || ''} ${w.status || ''} ${w.formattedDate || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length){
+        $("withdrawalTable").innerHTML = `<tr><td colspan="7" class="empty">No requests found.</td></tr>`;
+        return;
+    }
+
+    $("withdrawalTable").innerHTML = list.map(w => {
+        const s = String(w.status || "pending").toLowerCase();
+        let details = w.mode === "BANK" ? `Bank: ${safe(w.bankName)} | A/C: ${safe(w.accountNumber)} | IFSC: ${safe(w.ifsc)}` : `UPI: ${safe(w.upiId)} (${safe(w.holderName)})`;
+        return `
+        <tr>
+            <td>${safe(w.id)}</td>
+            <td><b>${safe(w.uid || w.mobile || '—')}</b></td>
+            <td><b style="color:#be123c;">₹${w.amount}</b></td>
+            <td>${details}</td>
+            <td><span class="badge ${s}">${s}</span></td>
+            <td><i class="fa-regular fa-clock"></i> ${w.formattedDate}</td>
+            <td>${s === "pending" ? `<button class="action approve" data-with-app="${safe(w.id)}">✅ Paid</button><button class="action reject" data-with-rej="${safe(w.id)}">❌ Reject</button>` : `<button class="action edit-status-btn" data-with-edit="${safe(w.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`}</td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-with-app]").forEach(b => { b.addEventListener("click", () => approveWithdrawal(b.dataset.withApp)); });
+    document.querySelectorAll("[data-with-rej]").forEach(b => { b.addEventListener("click", () => rejectWithdrawal(b.dataset.withRej)); });
+    document.querySelectorAll("[data-with-edit]").forEach(b => { b.addEventListener("click", () => editWithdrawalStatus(b.dataset.withEdit)); });
+}
+
+async function approveWithdrawal(id) {
+    if(!confirm("Kya aapne user ko payment transfer kar di hai?")) return;
+    try {
+        await setDoc(doc(db, "withdrawals", id), { status: "approved", comment: "Payment transfer complete." }, { merge: true });
+        alert("✅ Withdrawal Approved!");
+        loadWithdrawals();
+    } catch(e) { alert(e.message); }
+}
+
+async function rejectWithdrawal(id) {
+    const reason = prompt("Reject karne ka reason / note likhein:");
+    if(!reason) return;
+    try {
+        await setDoc(doc(db, "withdrawals", id), { status: "rejected", comment: reason.trim() }, { merge: true });
+        alert("❌ Withdrawal Rejected");
+        loadWithdrawals();
+    } catch(e) { alert(e.message); }
+}
+
+async function editWithdrawalStatus(id) {
+    const w = withdrawals.find(x => x.id === id);
+    if (!w) return;
+    const newStatus = prompt(`Status change karein (Type: pending / approved / rejected):`, w.status);
+    if (!newStatus) return;
+    const clean = newStatus.trim().toLowerCase();
+    if (!["pending", "approved", "rejected"].includes(clean)) return alert("Galat status! Sirf 'pending', 'approved' ya 'rejected' daalein.");
+
+    try {
+        await setDoc(doc(db, "withdrawals", id), { status: clean, comment: `Status edited by admin to ${clean}` }, { merge: true });
+        alert(`✅ Status successfully changed to '${clean}'`);
+        loadWithdrawals();
+    } catch(e) { alert("Error: " + e.message); }
+}
+
+if($("withdrawalSearch")) $("withdrawalSearch").addEventListener("input", renderWithdrawals);
+if($("refreshWithdrawals")) $("refreshWithdrawals").addEventListener("click", loadWithdrawals);
+
+// ================= DEPOSITS =================
+async function loadDeposits(){
+    if(!$("depositTable")) return;
+    $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "deposits"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.date);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => {
+            const aPending = String(a.status || "").toLowerCase() === "pending";
+            const bPending = String(b.status || "").toLowerCase() === "pending";
+            if (aPending && !bPending) return -1;
+            if (!aPending && bPending) return 1;
+            return b.timeObj - a.timeObj;
+        });
+
+        deposits = list;
+        renderDeposits();
+        if($("depositStatus")) {
+            $("depositStatus").textContent = "✅ Deposits loaded.";
+            $("depositStatus").className = "status ok";
+        }
+        updateDashboard();
+    } catch(e) {
+        if($("depositStatus")) {
+            $("depositStatus").textContent = "❌ " + e.message;
+            $("depositStatus").className = "status bad";
+        }
+    }
+}
+
+function renderDeposits(){
+    if(!$("depositTable") || !$("depositSearch")) return;
+    const q = $("depositSearch").value.toLowerCase().trim();
+    const list = deposits.filter(d => {
+        const pool = `${d.id || ''} ${d.uid || ''} ${d.userId || ''} ${d.mobile || ''} ${d.utr || ''} ${d.amount || ''} ${d.status || ''} ${d.formattedDate || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length){
+        $("depositTable").innerHTML = `<tr><td colspan="7" class="empty">No deposits found.</td></tr>`;
+        return;
+    }
+
+    $("depositTable").innerHTML = list.map(d => {
+        const s = String(d.status || "pending").toLowerCase();
+        return `
+        <tr>
+            <td>${safe(d.id)}</td>
+            <td><b>${safe(d.uid || d.userId || d.mobile || '—')}</b></td>
+            <td><b style="color:#15803d;">₹${d.amount}</b></td>
+            <td><b>${safe(d.utr || '—')}</b></td>
+            <td><span class="badge ${s}">${s}</span></td>
+            <td><i class="fa-regular fa-clock"></i> ${d.formattedDate}</td>
+            <td>${s === "pending" ? `<button class="action approve" data-dep-app="${safe(d.id)}">Approve</button><button class="action reject" data-dep-rej="${safe(d.id)}">Reject</button>` : `<button class="action edit-status-btn" data-dep-edit="${safe(d.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit</button>`}</td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-dep-app]").forEach(b => { b.addEventListener("click", () => approveDeposit(b.dataset.depApp)); });
+    document.querySelectorAll("[data-dep-rej]").forEach(b => { b.addEventListener("click", () => rejectDeposit(b.dataset.depRej)); });
+    document.querySelectorAll("[data-dep-edit]").forEach(b => { b.addEventListener("click", () => editDepositStatus(b.dataset.depEdit)); });
+}
+
+async function approveDeposit(id) {
+    const d = deposits.find(x => x.id === id);
+    if(!d || !confirm(`₹${d.amount} approve karke customer wallet me add karein?`)) return;
+    const uid = String(d.uid || d.userId).replace(/\D/g, "");
+    try {
+        await runTransaction(db, async t => {
+            const cRef = doc(db, "customers", uid.length === 10 ? "91" + uid : uid);
+            const cSnap = await t.get(cRef);
+            const currentBal = Number(cSnap.data()?.balance || 0);
+            const currentDep = Number(cSnap.data()?.depositBalance || 0);
+            const amt = Number(d.amount);
+
+            t.update(cRef, { balance: currentBal + amt, depositBalance: currentDep + amt });
+            t.update(doc(db, "deposits", id), { status: "approved", comment: "Payment verify ho gaya." });
+        });
+        alert("✅ Deposit Approved & Wallet Updated!");
+        loadDeposits();
+        loadUsers();
+    } catch(e) { alert(e.message); }
+}
+
+async function rejectDeposit(id) {
+    const r = prompt("Reject karne ka reason daalein:");
+    if(!r) return;
+    try {
+        await setDoc(doc(db, "deposits", id), { status: "rejected", comment: r.trim() }, { merge: true });
+        alert("❌ Deposit Rejected");
+        loadDeposits();
+    } catch(e) { alert(e.message); }
+}
+
+async function editDepositStatus(id) {
+    const d = deposits.find(x => x.id === id);
+    if (!d) return;
+    const oldStatus = String(d.status || "").toLowerCase();
+    const newStatus = prompt(`Status change karein (Type: pending / approved / rejected):`, oldStatus);
+    if (!newStatus) return;
+    const clean = newStatus.trim().toLowerCase();
+    if (!["pending", "approved", "rejected"].includes(clean)) return alert("Galat status! Sirf 'pending', 'approved' ya 'rejected' daalein.");
+    if (clean === oldStatus) return;
+
+    const uid = String(d.uid || d.userId).replace(/\D/g, "");
+    const amt = Number(d.amount || 0);
+
+    try {
+        await runTransaction(db, async t => {
+            const cRef = doc(db, "customers", uid.length === 10 ? "91" + uid : uid);
+            const cSnap = await t.get(cRef);
+            let currentBal = Number(cSnap.data()?.balance || 0);
+            let currentDep = Number(cSnap.data()?.depositBalance || 0);
+
+            if (oldStatus === "approved" && (clean === "pending" || clean === "rejected")) {
+                currentBal = Math.max(0, currentBal - amt);
+                currentDep = Math.max(0, currentDep - amt);
+                t.update(cRef, { balance: currentBal, depositBalance: currentDep });
+            } else if (oldStatus !== "approved" && clean === "approved") {
+                t.update(cRef, { balance: currentBal + amt, depositBalance: currentDep + amt });
+            }
+
+            t.update(doc(db, "deposits", id), { status: clean, comment: `Status edited by admin from ${oldStatus} to ${clean}` });
+        });
+
+        alert(`✅ Deposit status updated to '${clean}' & Customer balance synced!`);
+        loadDeposits();
+        loadUsers();
+    } catch(e) { alert("Error: " + e.message); }
+}
+
+if($("depositSearch")) $("depositSearch").addEventListener("input", renderDeposits);
+if($("refreshDeposits")) $("refreshDeposits").addEventListener("click", loadDeposits);
+
+// ================= REFERRAL ANALYTICS =================
+async function loadReferralAnalytics(){
+    if(!$("referralLeaderboardTable")) return;
+    $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Loading referral analytics...</td></tr>`;
+    try {
+        if (!users.length) await loadUsers();
+
+        const refMap = {};
+        const todayStr = new Date().toLocaleDateString("en-IN");
+        let todayCount = 0;
+        let totalCount = 0;
+        let totalEarnings = 0;
+
+        users.forEach(u => {
+            const refCode = String(u.referredBy || "").trim().toUpperCase();
+            if (refCode && refCode !== "DIRECT" && refCode !== "") {
+                totalCount++;
+                if (u.formattedDate.includes(todayStr)) { todayCount++; }
+                if (!refMap[refCode]) { refMap[refCode] = []; }
+                refMap[refCode].push(u);
+            }
+        });
+
+        let board = users.map(u => {
+            const myCode = String(u.referralCode || ("RDX" + String(u.id).slice(-4))).toUpperCase();
+            const referredList = refMap[myCode] || [];
+            const earnings = Number(u.referralBalance || u.redeemBalance || 0);
+            totalEarnings += earnings;
+
+            return {
+                id: u.id,
+                name: u.name || ("User " + String(u.id).slice(-4)),
+                mobile: u.mobile || u.id,
+                referralCode: myCode,
+                referralCount: referredList.length,
+                referralEarnings: earnings,
+                referredUsers: referredList
+            };
+        });
+
+        board.sort((a, b) => b.referralCount - a.referralCount);
+        referralAnalytics = board;
+
+        if($("totalReferralsCount")) $("totalReferralsCount").textContent = totalCount;
+        if($("todayReferralsCount")) $("todayReferralsCount").textContent = todayCount;
+        if($("dashTotalRefs")) $("dashTotalRefs").textContent = totalCount;
+        if($("totalReferralEarnings")) $("totalReferralEarnings").textContent = "₹" + totalEarnings;
+
+        renderReferralLeaderboard();
+    } catch(e){ 
+        if($("referralLeaderboardTable")) $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">Error: ${safe(e.message)}</td></tr>`; 
+    }
+}
+
+function renderReferralLeaderboard(){
+    if(!$("referralLeaderboardTable") || !$("referralSearch")) return;
+    const q = $("referralSearch").value.toLowerCase().trim();
+    const list = referralAnalytics.filter(r => {
+        const pool = `${r.name || ''} ${r.mobile || ''} ${r.referralCode || ''} ${r.referredUsers.map(x => x.mobile + ' ' + x.formattedDate).join(' ')}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length){
+        $("referralLeaderboardTable").innerHTML = `<tr><td colspan="7" class="empty">No referral data found.</td></tr>`;
+        return;
+    }
+
+    $("referralLeaderboardTable").innerHTML = list.map((r, idx) => {
+        let rankBadge = `<span style="font-weight:900; color:#64748b;">#${idx + 1}</span>`;
+        if (idx === 0) rankBadge = `🥇 <span style="font-weight:900; color:#d97706;">#1 Top</span>`;
+        else if (idx === 1) rankBadge = `🥈 <span style="font-weight:900; color:#64748b;">#2</span>`;
+        else if (idx === 2) rankBadge = `🥉 <span style="font-weight:900; color:#b45309;">#3</span>`;
+
+        return `
+        <tr>
+            <td>${rankBadge}</td>
+            <td><b>${safe(r.name)}</b></td>
+            <td>${safe(r.mobile)}</td>
+            <td><span class="badge approved" style="letter-spacing:1px;">${safe(r.referralCode)}</span></td>
+            <td><b style="color:#0284c7; font-size:15px;">${r.referralCount} Users</b></td>
+            <td><b style="color:#15803d;">₹${r.referralEarnings}</b></td>
+            <td>
+                <button class="action view-btn" data-view-ref="${safe(r.id)}"><i class="fa-solid fa-users"></i> View (${r.referralCount})</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-view-ref]").forEach(b => {
+        b.addEventListener("click", () => openReferralModal(b.dataset.viewRef));
+    });
+}
+
+window.openReferralModal = (userId) => {
+    const user = referralAnalytics.find(x => String(x.id) === String(userId));
+    if (!user) return;
+
+    if($("modalReferrerTitle")) $("modalReferrerTitle").innerHTML = `👥 Referrals by: <b>${safe(user.name)} (${safe(user.mobile)})</b>`;
+    const tbody = $("modalReferredUsersTable");
+    if(!tbody) return;
+
+    if (!user.referredUsers.length) {
+        tbody.innerHTML = `<tr><td colspan="4" class="empty">Is user ne abhi tak kisi ko refer nahi kiya.</td></tr>`;
+    } else {
+        const sorted = [...user.referredUsers].sort((a, b) => b.timeObj - a.timeObj);
+        tbody.innerHTML = sorted.map((u, i) => `
+            <tr>
+                <td>${i + 1}</td>
+                <td><b>${safe(u.mobile || u.id)}</b></td>
+                <td>${safe(u.name || 'User')}</td>
+                <td><i class="fa-regular fa-clock"></i> ${u.formattedDate}</td>
+            </tr>
+        `).join("");
+    }
+    if($("referredUsersModal")) $("referredUsersModal").style.display = "flex";
+};
+
+window.closeReferralModal = () => { 
+    if($("referredUsersModal")) $("referredUsersModal").style.display = "none"; 
+};
+
+if($("referralSearch")) $("referralSearch").addEventListener("input", renderReferralLeaderboard);
+if($("refreshReferrals")) $("refreshReferrals").addEventListener("click", loadReferralAnalytics);
+
+// ================= NOTIFICATIONS =================
+const notifTargetEl = $("notifTarget");
+if(notifTargetEl) {
+    notifTargetEl.addEventListener("change", e => {
+        const box = $("personalUidBox");
+        if(box) box.style.display = e.target.value === "personal" ? "block" : "none";
+    });
+}
+
+const sendNotifBtnEl = $("sendNotifBtn");
+if(sendNotifBtnEl) {
+    sendNotifBtnEl.addEventListener("click", async () => {
+        const t = $("notifTarget").value;
+        const u = $("notifUid").value.replace(/\D/g,"");
+        const title = $("notifTitle").value.trim();
+        const msg = $("notifMessage").value.trim();
+
+        if(!title || !msg) return alert("Title & Message bharna zaroori hai");
+        if(t === "personal" && !u) return alert("Personal notification ke liye User UID / Mobile zaroori hai");
+
+        sendNotifBtnEl.disabled = true;
+        sendNotifBtnEl.textContent = "Sending...";
+
+        try {
+            await addDoc(collection(db, "notifications"), { 
+                target: t, 
+                uid: t === "personal" ? (u.length === 10 ? "91" + u : u) : "all", 
+                title: title, 
+                message: msg, 
+                createdAt: serverTimestamp() 
+            });
+            alert("✅ Notification Sent Successfully!");
+            $("notifTitle").value = ""; 
+            $("notifMessage").value = "";
+            loadNotifications();
+        } catch(err) { alert("Error: " + err.message); }
+        sendNotifBtnEl.disabled = false;
+        sendNotifBtnEl.textContent = "🚀 Send Notification";
+    });
+}
+
+async function loadNotifications(){
+    if(!$("notifTable")) return;
+    $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Loading notifications...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "notifications"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.date);
+            list.push({ id: d.id, ...data, timeObj: timeInfo.dateObj, formattedDate: timeInfo.formatted });
+        });
+
+        list.sort((a, b) => b.timeObj - a.timeObj);
+        notificationsList = list;
+        renderNotifications();
+    } catch(e) { 
+        if($("notifTable")) $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">${safe(e.message)}</td></tr>`; 
+    }
+}
+
+function renderNotifications(){
+    if(!$("notifTable")) return;
+    if(!notificationsList.length){
+        $("notifTable").innerHTML = `<tr><td colspan="6" class="empty">Abhi tak koi notification nahi bheji gayi.</td></tr>`;
+        return;
+    }
+
+    $("notifTable").innerHTML = notificationsList.map(n => {
+        const isAll = String(n.target || "").toLowerCase() === "all" || String(n.uid || "").toLowerCase() === "all";
+        return `
+        <tr>
+            <td><span class="badge ${isAll ? 'approved' : 'pending'}">${isAll ? '📢 All' : '👤 Personal'}</span></td>
+            <td><b>${safe(isAll ? 'All Users' : n.uid)}</b></td>
+            <td><b>${safe(n.title)}</b></td>
+            <td style="max-width:300px; word-break:break-word;">${safe(n.message)}</td>
+            <td><i class="fa-regular fa-clock"></i> ${n.formattedDate}</td>
+            <td>
+                <button class="action delete-btn" data-del-notif="${safe(n.id)}"><i class="fa-solid fa-trash-can"></i> Delete</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-del-notif]").forEach(b => {
+        b.addEventListener("click", () => deleteSingleNotification(b.dataset.delNotif));
+    });
+}
+
+async function deleteSingleNotification(notifId) {
+    if (!confirm("Kya aap is notification ko delete karna chahte hain?")) return;
+    try {
+        await deleteDoc(doc(db, "notifications", notifId));
+        alert("✅ Notification deleted!");
+        loadNotifications();
+    } catch(e) { alert("Delete error: " + e.message); }
+}
+
+async function deleteAllNotifications() {
+    if (!notificationsList.length) return alert("Delete karne ke liye koi notification nahi hai.");
+    if (!confirm(`⚠️ Kya aap sach mein sabhi (${notificationsList.length}) notifications ko permanently delete karna chahte hain?`)) return;
+
+    try {
+        const batch = writeBatch(db);
+        notificationsList.forEach(n => { batch.delete(doc(db, "notifications", n.id)); });
+        await batch.commit();
+        alert("✅ Sabhi notifications delete ho gayi hain.");
+        loadNotifications();
+    } catch(e) { alert("Bulk delete error: " + e.message); }
+}
+
+if($("refreshNotifs")) $("refreshNotifs").addEventListener("click", loadNotifications);
+if($("deleteAllNotifsBtn")) $("deleteAllNotifsBtn").addEventListener("click", deleteAllNotifications);
+
+// ================= SETTINGS =================
+async function loadSettings(){
+    try {
+        const snap = await getDoc(paymentRef);
+        if(snap.exists()){
+            const d = snap.data();
+            if($("upi")) $("upi").value = d.upiId || "";
+            if($("holder")) $("holder").value = d.accountHolderName || "";
+            if($("account")) $("account").value = d.accountNumber || "";
+            if($("ifsc")) $("ifsc").value = d.ifsc || "";
+            if($("qr")) $("qr").value = d.qrCodeUrl || "";
+            if($("rate")) $("rate").value = d.coinRate ?? 1;
+            if($("minimum")) $("minimum").value = d.minimumDeposit ?? 100;
+            if($("settingsStatus")) {
+                $("settingsStatus").textContent = "✅ Settings loaded.";
+                $("settingsStatus").className = "status ok";
+            }
+        }
+    } catch(e){ 
+        if($("settingsStatus")) {
+            $("settingsStatus").textContent = "❌ " + e.message; 
+        }
+    }
+}
+
+const saveSettingsBtn = $("saveSettings");
+if(saveSettingsBtn) {
+    saveSettingsBtn.addEventListener("click", async () => {
+        try {
+            await setDoc(paymentRef, {
+                upiId: $("upi") ? $("upi").value.trim() : "",
+                accountHolderName: $("holder") ? $("holder").value.trim() : "",
+                accountNumber: $("account") ? $("account").value.trim() : "",
+                ifsc: $("ifsc") ? $("ifsc").value.trim() : "",
+                qrCodeUrl: $("qr") ? $("qr").value.trim() : "",
+                coinRate: Number($("rate") ? $("rate").value : 1),
+                minimumDeposit: Number($("minimum") ? $("minimum").value : 100),
+                updatedAt: serverTimestamp()
+            }, { merge: true });
+            alert("✅ Payment Settings Saved!");
+            loadSettings();
+        } catch(e){ alert(e.message); }
+    });
+}
+
+function updateDashboard(){
+    if($("totalUsers")) $("totalUsers").textContent = users.length;
+    if($("totalCoins")) $("totalCoins").textContent = "₹" + users.reduce((sum, u) => sum + Number(u.balance || 0), 0);
+    
+    const approvedDepSum = deposits
+        .filter(d => String(d.status || "").toLowerCase() === "approved")
+        .reduce((sum, d) => sum + Number(d.amount || 0), 0);
+    if($("totalApprovedDeposits")) $("totalApprovedDeposits").textContent = "₹" + approvedDepSum;
+
+    const approvedWithSum = withdrawals
+        .filter(w => String(w.status || "").toLowerCase() === "approved")
+        .reduce((sum, w) => sum + Number(w.amount || 0), 0);
+    if($("totalApprovedWithdrawals")) $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
+
+    if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
+    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+    if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
+    
+    if($("dashStatus")) {
+        $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
+        $("dashStatus").className = "status ok";
+    }
+}
+
+async function loadAll(){
+    try {
+        await loadSettings();
+        await loadDeposits();
+        await loadWithdrawals();
+        await loadUsers();
+        await loadBattles();
+        await loadKycRequests();
+        await loadReferralAnalytics();
+        await loadNotifications();
+        updateDashboard();
+    } catch(e){
+        if($("dashStatus")) {
+            $("dashStatus").textContent = "❌ " + e.message;
+            $("dashStatus").className = "status bad";
+        }
+    }
+}
 </script>
 </body>
 </html>
