@@ -103,7 +103,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .modal-box{width:100%;max-width:650px;background:#ffffff;border-radius:24px;border:1.5px solid #bae6fd;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:hidden;display:flex;flex-direction:column;max-height:85vh;}
 .modal-header{padding:16px 20px;background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;}
 .modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
-.modal-close{width:32px;height:32px;border-radius:50%;background:#ffffff;border:1.5px solid #bae6fd;color:#0c4a6e;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.modal-close{width:32px;height:32px;border-radius:50%;background:#ffffff;border:1px solid #bae6fd;color:#0c4a6e;display:flex;align-items:center;justify-content:center;cursor:pointer;}
 .modal-body{padding:16px;overflow-y:auto;flex:1;}
 
 .kyc-preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px;}
@@ -126,7 +126,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <h1>RDX LUDO</h1>
 <div class="sub">Admin Panel</div>
 <label>Admin Email</label>
-<input id="email" type="email" value="nmbaar78@gmail.com" autocomplete="username">
+<input id="email" type="email" value="lm24261451@gmail.com" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
 <button id="loginBtn" class="login-btn">Login</button>
@@ -271,6 +271,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
+<table>
 <thead>
 <tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -441,12 +442,7 @@ messagingSenderId: "928340814840",
 appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
-// Dono admin emails jo ab direct Firebase Auth ke zariye login hongi
-const ADMIN_EMAILS = [
-    "nmbaar78@gmail.com",
-    "lm2461451@gmail.com"
-];
-
+const ADMIN_EMAIL = "lm24261451@gmail.com";
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -490,55 +486,19 @@ window.refreshAdminDashboard = async () => {
 };
 
 async function login(){
-    const emailInput = $("email").value.trim().toLowerCase();
-    const passwordInput = $("password").value;
-    const errBox = $("error");
-    
-    errBox.style.display = "none";
-
-    if(!emailInput || !passwordInput) {
-        errBox.textContent = "Kripya Email aur Password dono bharein!";
-        errBox.style.display = "block";
-        return;
-    }
-
-    // Direct Firebase Login without strict frontend block
-    try { 
-        const userCredential = await signInWithEmailAndPassword(auth, emailInput, passwordInput);
-        const loggedEmail = userCredential.user.email.toLowerCase();
-
-        // Check if the logged in email is in the admin list
-        const isAuthorized = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(loggedEmail);
-
-        if(!isAuthorized) {
-            await signOut(auth);
-            errBox.textContent = "Yeh email authorized admin list mein nahi hai!";
-            errBox.style.display = "block";
-            return;
-        }
-
-        errBox.style.display = "none";
-    } catch(e){ 
-        errBox.textContent = "Login Error: " + e.message;
-        errBox.style.display = "block";
-    }
+    const email = $("email").value.trim().toLowerCase();
+    const password = $("password").value;
+    if(email !== ADMIN_EMAIL || !password) return alert("Galat Email/Password");
+    try { await signInWithEmailAndPassword(auth, email, password); } catch(e){ alert(e.message); }
 }
 
-// Ensure click event attaches properly when DOM is ready
-window.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = $("loginBtn");
-    if(loginBtn) {
-        loginBtn.addEventListener("click", login);
-    }
-});
-
+$("loginBtn").addEventListener("click", login);
 onAuthStateChanged(auth, u => {
-    if(u && u.email && ADMIN_EMAILS.map(e => e.toLowerCase()).includes(u.email.trim().toLowerCase())){
+    if(u && u.email.toLowerCase() === ADMIN_EMAIL){
         $("login").style.display = "none";
         $("admin").style.display = "block";
         loadAll();
     } else {
-        if(u) { signOut(auth); }
         $("login").style.display = "flex";
         $("admin").style.display = "none";
     }
@@ -851,7 +811,6 @@ window.openKycPreview = (docId) => {
     $("modalKycTitle").innerHTML = `📄 KYC: <b>${safe(item.mobile)}</b> (ID: ${safe(item.docNumber)})`;
     const container = $("modalKycContent");
 
-    // ONLY FRONT & BACK PHOTO
     container.innerHTML = `
         <div class="kyc-preview-grid">
             <div class="kyc-preview-item">
