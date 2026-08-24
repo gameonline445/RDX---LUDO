@@ -413,30 +413,21 @@ try{
 <main class="page">
 
 <section class="brand">
-    <div class="logo" onclick="location.href='dashboard.html'">
+    <div class="logo">
         <img src="logo.png" alt="RDX Logo">
     </div>
-    <h1>
-        RDX LUDO
-    </h1>
-    <p>
-        Play · Win · Earn
-    </p>
+    <h1>RDX LUDO</h1>
+    <p>Play · Win · Earn</p>
 </section>
 
 <section class="login-card">
 
-<span class="step" id="stepLabel">
-    ✨ STEP 1
-</span>
+<span class="step" id="stepLabel">✨ STEP 1</span>
 
-<h2 id="titleText">
-    Mobile Login
-</h2>
+<h2 id="titleText">Mobile Login</h2>
 
 <p class="subtitle" id="subtitleText">
-    Enter your registered mobile number.
-    We will send you an OTP for secure login.
+    Enter your registered mobile number. We will send you an OTP for secure login.
 </p>
 
 <div class="form-group" id="mobileGroup">
@@ -516,9 +507,7 @@ try{
 <p class="info-text">
     Your mobile number is verified using secure OTP verification.
     <br>
-    <strong>
-        Use your registered mobile number to login.
-    </strong>
+    <strong>Use your registered mobile number to login.</strong>
 </p>
 
 </main>
@@ -571,7 +560,12 @@ let resendSeconds = 30;
 let resendTimer = null;
 let msg91Ready = false;
 
-// Catch & store Referral Code locally
+window.addEventListener("DOMContentLoaded", function(){
+    if (window.history.replaceState) {
+        window.history.replaceState(null, null, window.location.href);
+    }
+});
+
 const urlParams = new URLSearchParams(window.location.search);
 const refFromUrl = urlParams.get('ref');
 if (refFromUrl && refFromUrl.trim() !== "") {
@@ -615,7 +609,7 @@ function waitForMSG91(){
             msg91Ready = false;
             continueBtn.disabled = true;
             continueBtn.textContent = "OTP Service Unavailable";
-            showMessage("MSG91 OTP service load नहीं हुआ।");
+            showMessage("MSG91 OTP service load nahi hua.");
         }
     }, 100);
 }
@@ -640,7 +634,7 @@ function startLogin(){
         return;
     }
     if(typeof window.sendOtp !== "function"){
-        showMessage("MSG91 अभी ready नहीं हुआ।");
+        showMessage("MSG91 abhi ready nahi hua.");
         waitForMSG91();
         return;
     }
@@ -653,7 +647,7 @@ function startLogin(){
 
 function sendOTPNow(){
     if(typeof window.sendOtp !== "function"){
-        showMessage("MSG91 Send OTP method ready नहीं है।");
+        showMessage("MSG91 Send OTP method ready nahi hai.");
         return;
     }
 
@@ -661,7 +655,7 @@ function sendOTPNow(){
     continueBtn.textContent = "Sending OTP...";
     verifyBtn.disabled = true;
     resendBtn.disabled = true;
-    showMessage("OTP भेजा जा रहा है...");
+    showMessage("OTP bheja ja raha hai...");
 
     window.sendOtp(
         currentIdentifier,
@@ -680,7 +674,7 @@ function sendOTPNow(){
             subtitleText.textContent = "Enter the 4-digit OTP sent to your registered mobile number.";
             otpSection.style.display = "block";
             otpInput.value = "";
-            otpHint.textContent = "OTP आपके registered mobile number पर भेज दिया गया है।";
+            otpHint.textContent = "OTP aapke registered mobile number par bhej diya gaya hai.";
 
             verifyBtn.disabled = true;
             showMessage("OTP successfully sent.");
@@ -694,7 +688,7 @@ function sendOTPNow(){
             verifyBtn.disabled = true;
             resendBtn.disabled = false;
 
-            let errMsg = "OTP भेजने में समस्या हुई।";
+            let errMsg = "OTP bhejne mein samasya hui.";
             if (error) {
                 if (typeof error === "string") errMsg = error;
                 else if (error.message) errMsg = error.message;
@@ -708,12 +702,12 @@ function sendOTPNow(){
 function verifyOTP(){
     const otp = otpInput.value.replace(/\D/g,"").slice(0, 4);
     if(!/^\d{4}$/.test(otp)){
-        showMessage("कृपया सही 4-digit OTP डालें।");
+        showMessage("Kripya sahi 4-digit OTP daalein.");
         otpInput.focus();
         return;
     }
     if(typeof window.verifyOtp !== "function"){
-        showMessage("MSG91 verification method ready नहीं है।");
+        showMessage("MSG91 verification method ready nahi hai.");
         return;
     }
 
@@ -744,32 +738,31 @@ function verifyOTP(){
             clearInterval(resendTimer);
             showMessage("Login successful!");
             setTimeout(function(){
-                window.location.href = "./dashboard.html";
-            }, 1000);
+                window.location.replace("./dashboard.html");
+            }, 800);
         },
         function(error){
             console.error("MSG91 VERIFY ERROR:", error);
             verifyBtn.disabled = false;
             verifyBtn.textContent = "Verify OTP";
-            showMessage("OTP गलत है या expire हो गया है।");
+            showMessage("OTP galat hai ya expire ho gaya hai.");
             otpInput.focus();
         },
         currentReqId || undefined
     );
 }
 
-// PERMANENT LIFETIME REFERRAL LOCK DATABASE LOGIC
 async function saveCustomerToFirebase(mobile){
     try{
         if(!firebaseDB){
             console.error("Firebase DB not connected");
-            showMessage("Firebase database connect नहीं हुआ।");
+            showMessage("Firebase database connect nahi hua.");
             return false;
         }
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         if(!/^91[6-9]\d{9}$/.test(cleanMobile)){
-            showMessage("Mobile number invalid है।");
+            showMessage("Mobile number invalid hai.");
             return false;
         }
 
@@ -777,14 +770,12 @@ async function saveCustomerToFirebase(mobile){
         const userSnap = await userRef.get();
         const now = firebase.firestore.FieldValue.serverTimestamp();
 
-        // 1. Determine incoming referral
         const incomingRef = urlParams.get('ref') || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
         let finalReferredBy = "DIRECT";
         if (incomingRef && incomingRef.trim() !== "") {
             finalReferredBy = incomingRef.trim().toUpperCase();
         }
 
-        // 2. Existing database lock: agar pehle se koi valid referral tha toh kabhi overwrite nahi hoga
         if (userSnap.exists && userSnap.data().referredBy && userSnap.data().referredBy !== "DIRECT") {
             finalReferredBy = userSnap.data().referredBy;
         }
@@ -793,7 +784,6 @@ async function saveCustomerToFirebase(mobile){
         const defaultName = "User " + cleanMobile.slice(-4);
 
         if (!userSnap.exists) {
-            // New user registration
             await userRef.set({
                 mobile: "+" + cleanMobile,
                 name: defaultName,
@@ -808,12 +798,10 @@ async function saveCustomerToFirebase(mobile){
                 lastLoginAt: now
             });
         } else {
-            // Existing user login
             let updatePayload = {
                 status: "active",
                 lastLoginAt: now
             };
-            // Agar pehle direct tha aur ab referral link se aaya hai toh update kar do
             if ((!userSnap.data().referredBy || userSnap.data().referredBy === "DIRECT") && finalReferredBy !== "DIRECT") {
                 updatePayload.referredBy = finalReferredBy;
             }
@@ -827,7 +815,7 @@ async function saveCustomerToFirebase(mobile){
         return true;
     }catch(error){
         console.error("FIREBASE CUSTOMER SAVE ERROR", error);
-        showMessage("Firebase Error: " + (error.message || "Unknown Firebase error"));
+        showMessage("Firebase Error: " + (error.message || "Unknown error"));
         return false;
     }
 }
@@ -835,16 +823,16 @@ async function saveCustomerToFirebase(mobile){
 function resendOTP(){
     if(resendSeconds > 0) return;
     if(typeof window.retryOtp !== "function"){
-        showMessage("MSG91 Resend service ready नहीं है।");
+        showMessage("MSG91 Resend service ready nahi hai.");
         return;
     }
     if(!currentReqId){
-        showMessage("पहले OTP भेजें।");
+        showMessage("Pehle OTP bhejein.");
         return;
     }
 
     resendBtn.disabled = true;
-    showMessage("OTP फिर से भेजा जा रहा है...");
+    showMessage("OTP phir se bheja ja raha hai...");
 
     window.retryOtp(
         "11",
@@ -858,11 +846,11 @@ function resendOTP(){
             otpInput.focus();
             verifyBtn.disabled = true;
             startResendTimer();
-            showMessage("OTP फिर से भेज दिया गया।");
+            showMessage("OTP phir se bhej diya gaya.");
         },
         function(error){
             resendBtn.disabled = false;
-            showMessage("OTP resend नहीं हो पाया।");
+            showMessage("OTP resend nahi ho paya.");
         },
         currentReqId
     );
