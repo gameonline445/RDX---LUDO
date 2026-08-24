@@ -226,7 +226,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- KYC REQUESTS (FRONT & BACK ONLY) -->
+<!-- KYC REQUESTS -->
 <section id="kycrequests" class="page">
 <div class="title">📄 Document KYC Verification Requests</div>
 <div class="card">
@@ -335,6 +335,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
+<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -437,7 +438,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 
-<!-- KYC DOCUMENT PREVIEW MODAL (FRONT & BACK ONLY) -->
+<!-- KYC DOCUMENT PREVIEW MODAL -->
 <div class="modal-overlay" id="kycPreviewModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -666,7 +667,7 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userWiths.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch User Battles (Win, Loss, Cancel, Bet Amount, Opponent Mobile Number)
+        // Fetch User Battles with Opponent Mobile Number
         const batSnap = await getDocs(collection(db, "battles"));
         const userBats = [];
         batSnap.forEach(d => {
@@ -681,8 +682,8 @@ window.openUserCompleteHistory = async (uId) => {
             if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
                 
-                // Show Opponent Mobile Number if available, else fallback to Name
-                let opponentMobile = isCreator ? (data.acceptedMobile || data.acceptedName || "Waiting...") : (data.creatorMobile || data.creatorName || "Creator");
+                // Show Opponent Mobile Number if available, else Name, else UID
+                let opponentMobile = isCreator ? (data.acceptedMobile || data.acceptedName || data.acceptedUid || "Waiting...") : (data.creatorMobile || data.creatorName || data.creatorUid || "Creator");
                 
                 userBats.push({ 
                     id: d.id, 
@@ -696,7 +697,6 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userBats.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Calculate Battle Stats & Bet Amounts
         let totalBattles = userBats.length;
         let winBattles = 0;
         let lossBattles = 0;
@@ -714,7 +714,6 @@ window.openUserCompleteHistory = async (uId) => {
             }
         });
 
-        // Render Data Inside Modal
         container.innerHTML = `
             <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px;">
                 <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
@@ -765,7 +764,7 @@ window.openUserCompleteHistory = async (uId) => {
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent Mobile & Bet History (${userBats.length})</h4>
             <div class="table" style="max-height:180px;">
                 <table>
-                    <thead><tr><th>#</th><th>Opponent Mobile / User</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>#</th><th>Opponent Mobile</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
                         ${userBats.length ? userBats.map((b, idx) => {
                             let resTxt = b.status;
@@ -1776,7 +1775,7 @@ async function loadAll(){
     } catch(e){
         if($("dashStatus")) {
             $("dashStatus").textContent = "❌ " + e.message;
-            $("dashStatus").className = "status bad";
+            $("dashStatus.className") = "status bad";
         }
     }
 }
