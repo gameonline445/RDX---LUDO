@@ -100,7 +100,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 
 /* MODALS */
 .modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;display:none;align-items:center;justify-content:center;padding:14px;}
-.modal-box{width:100%;max-width:650px;background:#ffffff;border-radius:24px;border:1.5px solid #bae6fd;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:hidden;display:flex;flex-direction:column;max-height:85vh;}
+.modal-box{width:100%;max-width:750px;background:#ffffff;border-radius:24px;border:1.5px solid #bae6fd;box-shadow:0 20px 50px rgba(0,0,0,0.25);overflow:hidden;display:flex;flex-direction:column;max-height:85vh;}
 .modal-header{padding:16px 20px;background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;}
 .modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
 .modal-close{width:32px;height:32px;border-radius:50%;background:#ffffff;border:1.5px solid #bae6fd;color:#0c4a6e;display:flex;align-items:center;justify-content:center;cursor:pointer;}
@@ -153,7 +153,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button class="nav" data-page="kycrequests"><i class="fa-solid fa-id-card"></i> &nbsp;KYC Requests</button>
 <button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
 <button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
-<button class="nav" data-page="userhistory"><i class="fa-solid fa-file-lines"></i> &nbsp;User Detailed History</button>
+<button class="nav" data-page="userhistory"><i class="fa-solid fa-file-invoice-dollar"></i> &nbsp;User Complete History</button>
 <button class="nav" data-page="referrals"><i class="fa-solid fa-gift"></i> &nbsp;Referral Analytics</button>
 <button class="nav" data-page="users"><i class="fa-solid fa-users"></i> &nbsp;Customers</button>
 <button class="nav" data-page="notifications"><i class="fa-solid fa-bell"></i> &nbsp;Notifications</button>
@@ -236,7 +236,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 <input id="kycSearch" class="search" placeholder="Search by Mobile or ID Number...">
 <div class="table">
-<table>
 <thead>
 <tr><th>Customer UID</th><th>Mobile</th><th>ID Number</th><th>Status</th><th>Date</th><th>Action</th></tr>
 </thead>
@@ -282,19 +281,19 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- USER DETAILED HISTORY -->
+<!-- USER COMPLETE HISTORY -->
 <section id="userhistory" class="page">
-<div class="title">📊 User Detailed History & Analytics</div>
+<div class="title">📊 User Complete History & Analytics</div>
 <div class="card">
 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
-    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-user-clock"></i> Select User to View Complete History</h3>
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-user-clock"></i> Select User to View Total Deposit, Withdrawal & Battles History</h3>
     <button id="refreshUserHistory" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 </div>
 <input id="userHistorySearch" class="search" placeholder="Search customer by Name, Mobile or UID...">
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Customer Name</th><th>Mobile Number</th><th>Live Balance</th><th>Action</th></tr>
+<tr><th>UID</th><th>Customer Name</th><th>Mobile Number</th><th>Live Balance ID</th><th>Action</th></tr>
 </thead>
 <tbody id="userHistoryTable"><tr><td colspan="5" class="empty">Loading customers...</td></tr></tbody>
 </table>
@@ -335,7 +334,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
-<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -409,11 +407,11 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- USER COMPLETE DETAILED HISTORY MODAL -->
+<!-- USER DETAILED COMPLETE HISTORY MODAL -->
 <div class="modal-overlay" id="userCompleteHistoryModal">
-    <div class="modal-box" style="max-width:800px;">
+    <div class="modal-box" style="max-width:850px;">
         <div class="modal-header">
-            <h3 id="modalUserHistoryTitle">User Complete History</h3>
+            <h3 id="modalUserHistoryTitle">User Total History</h3>
             <button class="modal-close" onclick="closeUserCompleteHistoryModal()"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="modal-body" id="modalUserHistoryContent"></div>
@@ -586,7 +584,7 @@ document.querySelectorAll(".nav").forEach(btn => {
     });
 });
 
-// ================= USER DETAILED HISTORY =================
+// ================= USER COMPLETE TOTAL HISTORY =================
 async function loadUserHistoryList() {
     if(!$("userHistoryTable")) return;
     $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">Loading customers list...</td></tr>`;
@@ -618,7 +616,7 @@ function renderUserHistoryList() {
             <td>${safe(u.mobile || u.id)}</td>
             <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
             <td>
-                <button class="action view-btn" data-view-user-history="${safe(u.id)}"><i class="fa-solid fa-clock-rotate-left"></i> View Complete History</button>
+                <button class="action view-btn" data-view-user-history="${safe(u.id)}"><i class="fa-solid fa-file-invoice-dollar"></i> View Total History</button>
             </td>
         </tr>
     `).join("");
@@ -636,45 +634,63 @@ window.openUserCompleteHistory = async (uId) => {
     const container = $("modalUserHistoryContent");
     if(!container) return;
 
-    container.innerHTML = `<p style="text-align:center; padding:30px; color:#64748b;">Fetching complete user history...</p>`;
+    container.innerHTML = `<p style="text-align:center; padding:30px; color:#64748b;">Fetching total deposit, withdrawal & battle history...</p>`;
     if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "flex";
 
     try {
-        // Fetch user specific deposits
+        // Fetch User Deposits
         const depSnap = await getDocs(collection(db, "deposits"));
         const userDeps = [];
+        let totalDepositAmount = 0;
         depSnap.forEach(d => {
             const data = d.data();
             const cleanUid = String(data.uid || data.userId || "").replace(/\D/g, "");
             if (cleanUid === String(user.id).replace(/\D/g, "")) {
                 const timeInfo = parseItemTime(data.createdAt || data.date);
                 userDeps.push({ ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+                if(String(data.status || "").toLowerCase() === "approved" || String(data.status || "").toLowerCase() === "success") {
+                    totalDepositAmount += Number(data.amount || 0);
+                }
             }
         });
         userDeps.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch user specific withdrawals
+        // Fetch User Withdrawals
         const withSnap = await getDocs(collection(db, "withdrawals"));
         const userWiths = [];
+        let totalWithdrawalAmount = 0;
         withSnap.forEach(d => {
             const data = d.data();
             const cleanUid = String(data.uid || data.mobile || "").replace(/\D/g, "");
             if (cleanUid === String(user.id).replace(/\D/g, "")) {
                 const timeInfo = parseItemTime(data.createdAt || data.date);
                 userWiths.push({ ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+                if(String(data.status || "").toLowerCase() === "approved" || String(data.status || "").toLowerCase() === "success") {
+                    totalWithdrawalAmount += Number(data.amount || 0);
+                }
             }
         });
         userWiths.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch user specific battles
+        // Fetch User Battles
         const batSnap = await getDocs(collection(db, "battles"));
         const userBats = [];
         batSnap.forEach(d => {
             const data = d.data();
             const cleanUid = String(user.id).replace(/\D/g, "");
-            if (String(data.creatorUid || "").replace(/\D/g, "") === cleanUid || String(data.acceptedUid || "").replace(/\D/g, "") === cleanUid) {
+            const isCreator = String(data.creatorUid || "").replace(/\D/g, "") === cleanUid;
+            const isAccepter = String(data.acceptedUid || "").replace(/\D/g, "") === cleanUid;
+
+            if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
-                userBats.push({ id: d.id, ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+                const opponentName = isCreator ? (data.acceptedName || "Waiting / Opponent") : (data.creatorName || "Creator");
+                userBats.push({ 
+                    id: d.id, 
+                    ...data, 
+                    opponentName: opponentName,
+                    formattedDate: timeInfo.formatted, 
+                    timeObj: timeInfo.dateObj 
+                });
             }
         });
         userBats.sort((a, b) => b.timeObj - a.timeObj);
@@ -697,56 +713,60 @@ window.openUserCompleteHistory = async (uId) => {
             }
         });
 
-        // Render inside Modal
+        // Render Data Inside Modal
         container.innerHTML = `
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px;">
-                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:14px; padding:12px; text-align:center;">
-                    <small style="color:#64748b; font-weight:800; font-size:10px;">TOTAL BALANCE</small>
-                    <h3 style="color:#0c4a6e; font-size:18px; font-weight:900; margin-top:4px;">₹${user.balance || 0}</h3>
+            <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px;">
+                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#64748b; font-weight:800; font-size:9px;">BALANCE ID</small>
+                    <h3 style="color:#0c4a6e; font-size:16px; font-weight:900; margin-top:2px;">₹${user.balance || 0}</h3>
                 </div>
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:14px; padding:12px; text-align:center;">
-                    <small style="color:#15803d; font-weight:800; font-size:10px;">MATCHES PLAYED</small>
-                    <h3 style="color:#15803d; font-size:18px; font-weight:900; margin-top:4px;">${totalBattles}</h3>
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#15803d; font-weight:800; font-size:9px;">TOTAL DEPOSIT</small>
+                    <h3 style="color:#15803d; font-size:16px; font-weight:900; margin-top:2px;">₹${totalDepositAmount}</h3>
                 </div>
-                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:14px; padding:12px; text-align:center;">
-                    <small style="color:#854d0e; font-weight:800; font-size:10px;">WON / LOST</small>
-                    <h3 style="color:#854d0e; font-size:16px; font-weight:900; margin-top:4px;">${winBattles} W / ${lossBattles} L</h3>
+                <div style="background:#fef2f2; border:1px solid #fecdd3; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#be123c; font-weight:800; font-size:9px;">TOTAL WITHDRAWAL</small>
+                    <h3 style="color:#be123c; font-size:16px; font-weight:900; margin-top:2px;">₹${totalWithdrawalAmount}</h3>
                 </div>
-                <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:14px; padding:12px; text-align:center;">
-                    <small style="color:#be123c; font-weight:800; font-size:10px;">CANCELLED</small>
-                    <h3 style="color:#be123c; font-size:18px; font-weight:900; margin-top:4px;">${cancelBattles}</h3>
+                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#854d0e; font-weight:800; font-size:9px;">BATTLES (W/L)</small>
+                    <h3 style="color:#854d0e; font-size:14px; font-weight:900; margin-top:2px;">${totalBattles} (${winBattles}W/${lossBattles}L)</h3>
+                </div>
+                <div style="background:#faf5ff; border:1px solid #e9d5ff; border-radius:12px; padding:10px; text-align:center;">
+                    <small style="color:#7c3aed; font-weight:800; font-size:9px;">CANCELLED</small>
+                    <h3 style="color:#7c3aed; font-size:16px; font-weight:900; margin-top:2px;">${cancelBattles}</h3>
                 </div>
             </div>
 
-            <!-- DEPOSIT HISTORY -->
-            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e; margin:14px 0 6px;"><i class="fa-solid fa-credit-card"></i> Deposit History (${userDeps.length})</h4>
-            <div class="table" style="max-height:160px; margin-bottom:14px;">
+            <!-- TOTAL DEPOSIT HISTORY -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-credit-card"></i> Deposit History (${userDeps.length})</h4>
+            <div class="table" style="max-height:150px; margin-bottom:12px;">
                 <table>
-                    <thead><tr><th>Amount</th><th>UTR</th><th>Status</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>Amount</th><th>UTR Number</th><th>Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
-                        ${userDeps.length ? userDeps.map(d => `<tr><td><b>₹${d.amount}</b></td><td>${safe(d.utr || '—')}</td><td><span class="badge ${safe(d.status)}">${safe(d.status)}</span></td><td>${d.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No deposit records found.</td></tr>`}
+                        ${userDeps.length ? userDeps.map(d => `<tr><td><b>₹${d.amount}</b></td><td>${safe(d.utr || '—')}</td><td><span class="badge ${safe(d.status)}">${safe(d.status)}</span></td><td>${d.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No deposit history found.</td></tr>`}
                     </tbody>
                 </table>
             </div>
 
-            <!-- WITHDRAWAL HISTORY -->
-            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e; margin:14px 0 6px;"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal History (${userWiths.length})</h4>
-            <div class="table" style="max-height:160px; margin-bottom:14px;">
+            <!-- TOTAL WITHDRAWAL HISTORY -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal History (${userWiths.length})</h4>
+            <div class="table" style="max-height:150px; margin-bottom:12px;">
                 <table>
-                    <thead><tr><th>Amount</th><th>Mode Details</th><th>Status</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>Amount</th><th>Mode & Account Details</th><th>Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
-                        ${userWiths.length ? userWiths.map(w => `<tr><td><b>₹${w.amount}</b></td><td>${w.mode === 'BANK' ? 'Bank: ' + safe(w.accountNumber) : 'UPI: ' + safe(w.upiId)}</td><td><span class="badge ${safe(w.status)}">${safe(w.status)}</span></td><td>${w.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No withdrawal records found.</td></tr>`}
+                        ${userWiths.length ? userWiths.map(w => `<tr><td><b>₹${w.amount}</b></td><td>${w.mode === 'BANK' ? 'Bank: ' + safe(w.accountNumber) : 'UPI: ' + safe(w.upiId)}</td><td><span class="badge ${safe(w.status)}">${safe(w.status)}</span></td><td>${w.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No withdrawal history found.</td></tr>`}
                     </tbody>
                 </table>
             </div>
 
-            <!-- BATTLE HISTORY -->
-            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e; margin:14px 0 6px;"><i class="fa-solid fa-gamepad"></i> Battle History (${userBats.length})</h4>
+            <!-- TOTAL BATTLE HISTORY (OPPONENTS & SERIAL WISE) -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle & Opponent History (${userBats.length})</h4>
             <div class="table" style="max-height:180px;">
                 <table>
-                    <thead><tr><th>Battle ID</th><th>Entry & Prize</th><th>Room Code</th><th>Status / Result</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>#</th><th>Opponent Name</th><th>Entry & Prize</th><th>Room Code</th><th>Match Status / Result</th><th>Date & Time</th></tr></thead>
                     <tbody>
-                        ${userBats.length ? userBats.map(b => {
+                        ${userBats.length ? userBats.map((b, idx) => {
                             let resTxt = b.status;
                             let resBadge = 'pending';
                             if(b.status === 'completed') {
@@ -758,17 +778,17 @@ window.openUserCompleteHistory = async (uId) => {
                                     resBadge = 'rejected';
                                 }
                             } else if(b.status === 'cancelled') {
-                                resTxt = 'CANCELLED (Refunded)';
+                                resTxt = 'CANCELLED / REFUNDED';
                                 resBadge = 'pending';
                             }
-                            return `<tr><td><b>${safe(b.id)}</b></td><td>₹${b.amount} (Win: ₹${b.prize})</td><td>${safe(b.roomCode || '—')}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
-                        }).join("") : `<tr><td colspan="5" class="empty">No battle records found.</td></tr>`}
+                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentName)}</b></td><td>₹${b.amount} (Prize: ₹${b.prize})</td><td>${safe(b.roomCode || '—')}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
+                        }).join("") : `<tr><td colspan="6" class="empty">No battle history found.</td></tr>`}
                     </tbody>
                 </table>
             </div>
         `;
     } catch(e) {
-        container.innerHTML = `<p style="text-align:center; padding:30px; color:#be123c;">Error loading history: ${safe(e.message)}</p>`;
+        container.innerHTML = `<p style="text-align:center; padding:30px; color:#be123c;">Error loading total history: ${safe(e.message)}</p>`;
     }
 };
 
@@ -1752,7 +1772,7 @@ async function loadAll(){
     } catch(e){
         if($("dashStatus")) {
             $("dashStatus").textContent = "❌ " + e.message;
-            $("dashStatus").className = "status bad";
+            $("dashStatus.className") = "status bad";
         }
     }
 }
