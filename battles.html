@@ -300,15 +300,16 @@ button,input{font:inherit;}
     margin-bottom:6px;
 }
 
-/* 2-BUTTON ONLY (WON & LOST) */
-.status-update-grid-2{
+/* WIN, LOST, CANCEL BUTTONS */
+.status-update-grid-3{
     display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:8px;
     margin-top:10px;
 }
-.btn-won{background:#16a34a;color:white;border:0;padding:13px;border-radius:14px;font-weight:850;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
-.btn-lost{background:#dc2626;color:white;border:0;padding:13px;border-radius:14px;font-weight:850;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+.btn-won{background:#16a34a;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
+.btn-lost{background:#dc2626;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
+.btn-cancel{background:#64748b;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
 
 /* PROOF UPLOAD BOX */
 .proof-upload-box{
@@ -540,14 +541,15 @@ button,input{font:inherit;}
             <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
-        <!-- ONLY 2 OPTIONS: I WON OR I LOST -->
+        <!-- WIN, LOST, CANCEL OPTIONS -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
 
-            <div class="status-update-grid-2" id="resultBtnGrid">
+            <div class="status-update-grid-3" id="resultBtnGrid">
                 <button class="btn-won" onclick="openWonProofBox()"><i class="fa-solid fa-trophy"></i> I Won</button>
                 <button class="btn-lost" onclick="submitGameResult('lost')"><i class="fa-solid fa-face-frown"></i> I Lost</button>
+                <button class="btn-cancel" onclick="submitGameResult('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
             <!-- PROOF UPLOAD -->
@@ -686,7 +688,6 @@ function listenBattles() {
             const isCreator = b.creatorUid === docId;
             const isAccepter = b.acceptedUid === docId;
 
-            // Count active/pending/live battles for this user (Max limit = 2)
             if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 count++;
             }
@@ -971,7 +972,7 @@ async function submitGameResult(type) {
     }
 }
 
-// AUTOMATIC RESULT EVALUATION ENGINE
+// AUTOMATIC RESULT EVALUATION ENGINE (WITH CANCEL REFUND)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -983,6 +984,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 
         const p1Uid = b.creatorUid;
         const p2Uid = b.acceptedUid;
+        const entryAmt = Number(b.amount || 0);
         const prizeAmt = Number(b.prize || 0);
 
         const otherUid = (myUid === p1Uid) ? p2Uid : p1Uid;
@@ -996,9 +998,33 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // AUTO-DECISION CHECK
-        if(otherResult !== null) {
-            if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
+        // IF ANY PLAYER CLICKS CANCEL -> REFUND BOTH PLAYERS
+        if(myResult === "cancel") {
+            const p1Ref = firebaseDB.collection("customers").doc(p1Uid);
+            const p2Ref = firebaseDB.collection("customers").doc(p2Uid);
+            const p1Snap = await t.get(p1Ref);
+            const p2Snap = await t.get(p2Ref);
+
+            t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + entryAmt });
+            t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + entryAmt });
+
+            updates.status = "cancelled";
+            updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
+        else if(otherResult !== null) {
+            if(otherResult === "cancel") {
+                const p1Ref = firebaseDB.collection("customers").doc(p1Uid);
+                const p2Ref = firebaseDB.collection("customers").doc(p2Uid);
+                const p1Snap = await t.get(p1Ref);
+                const p2Snap = await t.get(p2Ref);
+
+                t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + entryAmt });
+                t.update(p2Ref, { balance: Number(p2Snap.data()?.balance || 0) + entryAmt });
+
+                updates.status = "cancelled";
+                updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+            else if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
                 const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
                 const winnerSnap = await t.get(winnerRef);
