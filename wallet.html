@@ -202,17 +202,13 @@ async function loadFirebaseCustomer(){
     try{
         if(!firebaseDB) return;
 
-        // Sabhi possible mobile storage keys check karein
         let mobile = localStorage.getItem("rdxFirebaseUserId") || 
                      localStorage.getItem("rdxVerifiedMobile") || 
                      localStorage.getItem("rdxUserMobile") || 
                      localStorage.getItem("rdxMobile") ||
                      localStorage.getItem("userMobile");
 
-        if(!mobile) {
-            console.log("No user session found in localStorage.");
-            return;
-        }
+        if(!mobile) return;
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
@@ -227,10 +223,12 @@ async function loadFirebaseCustomer(){
         if(snapshot && snapshot.exists) {
             const data = snapshot.data();
             
-            // Database se exact fields read karein
-            const totalBalance = Number(data.balance || 0);
+            // Database se 'depositBalance' (ya 'deposit') aur 'winnings' ko alag alag read karein
+            const deposit = Number(data.depositBalance || data.deposit || 0);
             const winnings = Number(data.winnings || data.winningBalance || 0);
-            const deposit = Number(data.depositBalance || data.deposit || Math.max(0, totalBalance - winnings));
+            
+            // Total balance hamesha deposit + winnings hona chahiye taaki mismatch na ho
+            const totalBalance = deposit + winnings;
 
             document.getElementById("mainBalance").textContent = totalBalance;
             document.getElementById("topBalance").textContent = totalBalance;
