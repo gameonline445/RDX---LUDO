@@ -279,7 +279,7 @@ button,input{font:inherit;}
     align-items:center;
     justify-content:center;
     gap:8px;
-    cursor:pointer;
+    cursor:default;
     margin-bottom:12px;
 }
 .rules-box{
@@ -603,7 +603,7 @@ button,input{font:inherit;}
                 <button class="btn-cancel" onclick="openProofBox('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
-            <!-- PROOF UPLOAD (FOR WIN & CANCEL) -->
+            <!-- PROOF UPLOAD (FOR WIN, LOST, CANCEL) -->
             <div class="proof-upload-box" id="proofUploadBox">
                 <label id="proofBoxLabel"><i class="fa-solid fa-image"></i> Upload Screenshot / Video Proof</label>
                 <input type="file" id="winProofFile" accept="image/*,video/*">
@@ -653,9 +653,14 @@ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
 function getCleanUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile"] || "";
-    return String(raw).replace(/\D/g, "");
+    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                 localStorage.getItem("rdxVerifiedMobile") || 
+                 localStorage.getItem("rdxUserMobile") || 
+                 localStorage.getItem("rdxMobile") ||
+                 localStorage.getItem("userMobile");
+    return String(mobile || "").replace(/\D/g, "");
 }
+
 const userId = getCleanUserId();
 let myCurrentBalance = 0;
 let myUserName = "User";
@@ -672,15 +677,23 @@ function closeErrorModal() {
 }
 
 async function loadUserData() {
-    if(!userId){ location.href = "login.html"; return; }
-    const docId = userId.length === 10 ? "91" + userId : userId;
-    firebaseDB.collection("customers").doc(docId).onSnapshot(snap => {
+    if(!userId){ 
+        console.log("No user session found.");
+        return; 
+    }
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+
+    firebaseDB.collection("customers").doc(firebaseDocId).onSnapshot(snap => {
         if(snap.exists){
             const d = snap.data();
             myCurrentBalance = Number(d.balance || 0);
-            myUserName = d.name || ("User " + userId.slice(-4));
+            myUserName = d.name || d.username || ("User " + cleanMobile.slice(-4));
+            
             document.getElementById("topBalance").textContent = myCurrentBalance;
-            document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
+            if(document.getElementById("topReferral")) {
+                document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
+            }
         }
     });
 }
@@ -727,7 +740,9 @@ async function createBattle() {
 
 // 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    if(!userId) return;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
@@ -737,8 +752,12 @@ function listenBattles() {
         snap.forEach(doc => {
             const b = doc.data();
             const bId = doc.id;
-            const isCreator = b.creatorUid === docId;
-            const isAccepter = b.acceptedUid === docId;
+            const creatorClean = String(b.creatorUid || "").replace(/\D/g, "");
+            const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "");
+            const myClean = String(docId).replace(/\D/g, "");
+
+            const isCreator = creatorClean === myClean;
+            const isAccepter = accepterClean === myClean;
 
             if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 count++;
@@ -812,7 +831,6 @@ function listenBattles() {
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
         
-        // Combine DB running battles + 4 fake interactive tables
         const fakeRunningHTML = `
             <div class="battle-card">
                 <span class="badge-tag tag-live">● LIVE</span>
@@ -884,7 +902,8 @@ async function requestPlayBattle(bId, amt) {
         showErrorModal("Insufficient balance");
         return;
     }
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
     await firebaseDB.collection("battles").doc(bId).update({
         status: "requested",
@@ -917,7 +936,8 @@ async function rejectBattleRequest(bId) {
 
 // START BATTLE (WALLET DEDUCT WHEN BOTH ACCEPT)
 async function startBattle(bId, amt, oppUid) {
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
     try {
         await firebaseDB.runTransaction(async t => {
@@ -962,7 +982,7 @@ function renderRoomView(b, isCreator) {
 
     if(b.status === "conflict") {
         document.getElementById("roomLiveBadge").className = "badge-tag tag-conflict";
-        document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT";
+        document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT (Under Admin Review)";
     } else {
         document.getElementById("roomLiveBadge").className = "badge-tag tag-live";
         document.getElementById("roomLiveBadge").textContent = "● LIVE MATCH";
@@ -1009,7 +1029,7 @@ function openProofBox(type) {
         label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof`;
         btn.textContent = "Submit Proof & Win Claim";
     } else if(type === 'lost') {
-        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional / Required for dispute)`;
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional / Dispute Proof)`;
         btn.textContent = "Submit Loss Claim";
     } else if(type === 'cancel') {
         label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Cancel / Dispute Proof Screenshot`;
@@ -1069,14 +1089,15 @@ async function uploadProofAndSubmit() {
         if(file) {
             proofBase64 = await compressImageFile(file);
         }
-        const docId = userId.length === 10 ? "91" + userId : userId;
+        const cleanMobile = String(userId).replace(/\D/g,"");
+        const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         await processResultWithAutoSettlement(docId, selectedResultType, proofBase64);
 
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
-        alert("✅ Claim & Proof Submitted Successfully!");
+        alert("✅ Claim & Proof Submitted! Admin ya auto-settlement se process hoga.");
     } catch(err) {
         alert("Error: " + err.message);
     }
@@ -1084,7 +1105,7 @@ async function uploadProofAndSubmit() {
     btn.textContent = "Submit Proof & Claim";
 }
 
-// AUTOMATIC RESULT EVALUATION ENGINE (WITH CANCEL CONFLICT/ADMIN APPROVAL)
+// AUTOMATIC RESULT EVALUATION ENGINE (WITH CANCEL/DISPUTE GOING TO ADMIN CONFLICT)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -1109,7 +1130,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // IF ANY PLAYER CLAIMS CANCEL OR CONFLICT -> GOES TO CONFLICT FOR ADMIN APPROVAL
+        // IF CANCEL OR CONFLICT -> SENDS TO ADMIN CONFLICT PANEL FOR REFUND/SETTLEMENT
         if(myResult === "cancel" || otherResult === "cancel") {
             updates.status = "conflict";
             updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -1136,12 +1157,11 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
                 updates.resolvedBy = "auto";
             }
-            else if(myResult === "won" && otherResult === "won" || myResult === otherResult) {
+            else {
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
             }
         } else {
-            // First person submitted, wait for opponent or admin check
             updates.status = "conflict";
         }
 
