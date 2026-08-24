@@ -356,7 +356,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 <div class="table">
-<table>
 <thead>
 <tr><th>Target</th><th>User / UID</th><th>Title</th><th>Message</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -399,7 +398,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
             <div class="table">
                 <table>
                     <thead><tr><th>#</th><th>Customer Mobile</th><th>Customer Name</th><th>Joined Date & Time</th></tr></thead>
-                    <div id="modalReferredUsersTable"></div>
+                    <tbody id="modalReferredUsersTable"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -442,7 +441,7 @@ messagingSenderId: "928340814840",
 appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
-// Yeh rahi aapki dono admin emails
+// Dono admin emails jo ab bilkul sahi tarike se check hongi
 const ADMIN_EMAILS = [
     "nmbaar78@gmail.com",
     "lm2461451@gmail.com"
@@ -495,20 +494,18 @@ async function login(){
     const password = $("password").value;
     const errBox = $("error");
     
-    // Yahan check hata diya gaya hai taaki code frontend restriction ki wajah se block na ho, 
-    // ab seedha Firebase Authentication check karega!
-    try { 
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const loggedEmail = userCredential.user.email.toLowerCase();
-        
-        // Agar Firebase se login ho gaya, par email list mein nahi hai toh sign out kar do
-        if(!ADMIN_EMAILS.includes(loggedEmail)){
-            await signOut(auth);
-            errBox.textContent = "Yeh email authorized admin list mein nahi hai!";
-            errBox.style.display = "block";
-            return;
-        }
+    // Check karein ki email array mein hai ya nahi
+    const cleanEmail = email.trim().toLowerCase();
+    const isAuthorized = ADMIN_EMAILS.map(e => e.toLowerCase()).includes(cleanEmail);
 
+    if(!isAuthorized) {
+        errBox.textContent = "Yeh email authorized admin list mein nahi hai!";
+        errBox.style.display = "block";
+        return;
+    }
+
+    try { 
+        await signInWithEmailAndPassword(auth, cleanEmail, password); 
         errBox.style.display = "none";
     } catch(e){ 
         errBox.textContent = "Login Error: " + e.message;
@@ -519,7 +516,7 @@ async function login(){
 $("loginBtn").addEventListener("click", login);
 
 onAuthStateChanged(auth, u => {
-    if(u && u.email && ADMIN_EMAILS.includes(u.email.toLowerCase())){
+    if(u && u.email && ADMIN_EMAILS.map(e => e.toLowerCase()).includes(u.email.trim().toLowerCase())){
         $("login").style.display = "none";
         $("admin").style.display = "block";
         loadAll();
@@ -1459,10 +1456,12 @@ function updateDashboard(){
     if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
     if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
     if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+    if($("liveBattlesCount")) $("liveBattlesCount").timestamp = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
     if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
     
     if($("dashStatus")) {
         $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
+        $("dashStatus.className") = "status ok";
         $("dashStatus").className = "status ok";
     }
 }
