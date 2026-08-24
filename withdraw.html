@@ -5,6 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RDX LUDO - Withdraw</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+    
+    <script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+        authDomain: "rdx-ludo.firebaseapp.com",
+        projectId: "rdx-ludo",
+        storageBucket: "rdx-ludo.firebasestorage.app",
+        messagingSenderId: "928340814840",
+        appId: "1:928340814840:web:6eca42a8b76138b268440d"
+    };
+    let firebaseDB = null;
+    try {
+        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        firebaseDB = firebase.firestore();
+    } catch(error){ console.error(error); }
+    </script>
+
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
         body{
@@ -106,23 +125,11 @@
         <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
     </nav>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-            authDomain: "rdx-ludo.firebaseapp.com",
-            projectId: "rdx-ludo",
-            storageBucket: "rdx-ludo.firebasestorage.app",
-            messagingSenderId: "928340814840",
-            appId: "1:928340814840:web:6eca42a8b76138b268440d"
-        };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
+    <script>
         let currentMode = "upi";
-        const userId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
+        let userDocId = "";
+        let currentWinnings = 0;
+        let currentTotalBalance = 0;
 
         window.switchMode = function(m) {
             currentMode = m;
@@ -134,33 +141,100 @@
 
         window.submitWithdrawal = async function() {
             const amount = Number(document.getElementById("withdrawAmount").value);
-            if (!amount || amount < 300) return alert("Min amount ₹300 hai");
-
-            let data = { uid: userId, amount, mode: currentMode.toUpperCase(), status: "pending", createdAt: serverTimestamp() };
-            if (currentMode === "upi") {
-                data.holderName = document.getElementById("upiHolderName").value.trim();
-                data.upiId = document.getElementById("upiId").value.trim();
-            } else {
-                data.holderName = document.getElementById("bankHolderName").value.trim();
-                data.bankName = document.getElementById("bankName").value.trim();
-                data.accountNumber = document.getElementById("accountNumber").value.trim();
-                data.ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
+            if (!amount || amount < 300) {
+                return alert("Minimum withdrawal amount ₹300 hai[span_0](start_span)[span_0](end_span)!");
+            }
+            if (amount > currentWinnings) {
+                return alert(`Aapke paas withdraw karne ke liye sirf ₹${currentWinnings} winnings balance hai!`);
             }
 
-            await addDoc(collection(db, "withdrawals"), data);
-            alert("Withdrawal request submit ho gayi!");
-            location.href = "history.html";
+            if (!firebaseDB || !userDocId) {
+                return alert("User session not found. Please login again.");
+            }
+
+            try {
+                // Instant deduction from user winnings and total balance
+                const userRef = firebaseDB.collection("customers").doc(userDocId);
+                
+                await firebaseDB.runTransaction(async (transaction) => {
+                    const snap = await transaction.get(userRef);
+                    if (!snap.exists) throw new Error("User does not exist!");
+                    
+                    const data = snap.data();
+                    const winNow = Number(data.winnings || data.winningBalance || 0);
+                    const balNow = Number(data.balance || 0);
+
+                    if (amount > winNow) {
+                        throw new Error("Insufficient winnings balance!");
+                    }
+
+                    const newWin = winNow - amount;
+                    const newBal = balNow - amount;
+
+                    transaction.update(userRef, {
+                        winnings: newWin,
+                        winningBalance: newWin,
+                        balance: newBal
+                    });
+                });
+
+                let data = { 
+                    uid: userDocId, 
+                    amount: amount, 
+                    mode: currentMode.toUpperCase(), 
+                    status: "pending", 
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+                };
+
+                if (currentMode === "upi") {
+                    data.holderName = document.getElementById("upiHolderName").value.trim();
+                    data.upiId = document.getElementById("upiId").value.trim();
+                } else {
+                    data.holderName = document.getElementById("bankHolderName").value.trim();
+                    data.bankName = document.getElementById("bankName").value.trim();
+                    data.accountNumber = document.getElementById("accountNumber").value.trim();
+                    data.ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
+                }
+
+                await firebaseDB.collection("withdrawals").add(data);
+                alert("✅ Withdrawal request successfully submit ho gayi hai aur rashi winnings se cut kar li gayi hai!");
+                location.href = "history.html";
+            } catch(e) {
+                alert("Withdrawal Error: " + e.message);
+            }
         };
 
         async function init() {
-            if (userId) {
-                const snap = await getDoc(doc(db, "customers", userId.length === 10 ? "91" + userId : userId));
-                if (snap.exists()) {
-                    document.getElementById("winningBalance").textContent = Number(snap.data().winnings || snap.data().balance || 0);
+            try {
+                if(!firebaseDB) return;
+                let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                             localStorage.getItem("rdxVerifiedMobile") || 
+                             localStorage.getItem("rdxUserMobile") || 
+                             localStorage.getItem("rdxMobile") ||
+                             localStorage.getItem("userMobile");
+
+                if(!mobile) return;
+                const cleanMobile = String(mobile).replace(/\D/g,"");
+                userDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+
+                const userRef = firebaseDB.collection("customers").doc(userDocId);
+                let snapshot = await userRef.get();
+                if(!snapshot.exists) {
+                    userDocId = cleanMobile;
+                    snapshot = await firebaseDB.collection("customers").doc(userDocId).get();
                 }
+
+                if(snapshot.exists) {
+                    const data = snapshot.data();
+                    currentWinnings = Number(data.winnings || data.winningBalance || 0);
+                    currentTotalBalance = Number(data.balance || 0);
+                    document.getElementById("winningBalance").textContent = currentWinnings;
+                }
+            } catch(err) {
+                console.error("Init Error:", err);
             }
         }
-        init();
+        window.addEventListener("load", init);
     </script>
 </body>
 </html>
