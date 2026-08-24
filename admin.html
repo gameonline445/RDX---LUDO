@@ -442,7 +442,12 @@ messagingSenderId: "928340814840",
 appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
-const ADMIN_EMAIL = "lm24261451@gmail.com";
+// DOO ADMIN EMAILS LIST
+const ADMIN_EMAILS = [
+    "nmbaar78@gmail.com",
+    "lm24261451@gmail.com"
+];
+
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -488,13 +493,21 @@ window.refreshAdminDashboard = async () => {
 async function login(){
     const email = $("email").value.trim().toLowerCase();
     const password = $("password").value;
-    if(email !== ADMIN_EMAIL || !password) return alert("Galat Email/Password");
-    try { await signInWithEmailAndPassword(auth, email, password); } catch(e){ alert(e.message); }
+    
+    if(!ADMIN_EMAILS.includes(email) || !password) {
+        return alert("Galat Email/Password ya yeh email admin list me nahi hai!");
+    }
+    
+    try { 
+        await signInWithEmailAndPassword(auth, email, password); 
+    } catch(e){ 
+        alert(e.message); 
+    }
 }
 
 $("loginBtn").addEventListener("click", login);
 onAuthStateChanged(auth, u => {
-    if(u && u.email.toLowerCase() === ADMIN_EMAIL){
+    if(u && ADMIN_EMAILS.includes(u.email.toLowerCase())){
         $("login").style.display = "none";
         $("admin").style.display = "block";
         loadAll();
