@@ -47,7 +47,7 @@ header{height:66px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#fff
 
 .layout{display:flex;}
 .sidebar{width:230px;min-height:calc(100vh - 66px);background:#ffffff;border-right:1.5px solid #bae6fd;padding:14px;}
-.nav{width:100%;padding:12px 14px;margin-bottom:6px;border-radius:14px;background:#ffffff;text-align:left;font-weight:800;font-size:13px;color:#64748b;border:1px solid transparent;transition:all 0.2s ease;}
+.nav{width:100%;padding:12px 14px;margin-bottom:6px;border-radius:14px;background:#ffffff;text-align:left;font-weight:800;font-size:13px;color:#64748b;border:1.5px solid transparent;transition:all 0.2s ease;}
 .nav.active, .nav:hover{background:#f0f9ff;color:#0284c7;border-color:#bae6fd;}
 
 main{flex:1;padding:20px 18px;max-width:1200px;}
@@ -118,7 +118,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 
 <body>
 
-<section id="login">
+<section id="login" style="display:flex;">
 <div class="login-box">
 <div class="logo-box">
     <img src="logo.png" alt="RDX Logo" onerror="this.src='https://i.ibb.co/vz6G1V7/logo.png'">
@@ -129,12 +129,12 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
-<button id="loginBtn" class="login-btn">Login</button>
+<button id="loginBtn" class="login-btn" type="button">Login</button>
 <div id="error"></div>
 </div>
 </section>
 
-<section id="admin">
+<section id="admin" style="display:none;">
 <header>
 <div class="brand" onclick="refreshAdminDashboard()" title="Click to Refresh Admin Dashboard">
     <div class="admin-logo-box">
@@ -515,8 +515,7 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-// Robust login handler bound via addEventListener and onclick both to guarantee response
-async function handleLoginAction() {
+async function handleLogin() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
     const errBox = $("error");
@@ -542,12 +541,10 @@ async function handleLoginAction() {
     }
 }
 
-window.executeAdminLogin = handleLoginAction;
-
 window.addEventListener("DOMContentLoaded", () => {
     const loginBtn = $("loginBtn");
     if(loginBtn) {
-        loginBtn.addEventListener("click", handleLoginAction);
+        loginBtn.addEventListener("click", handleLogin);
     }
 });
 
@@ -642,7 +639,6 @@ window.openUserCompleteHistory = async (uId) => {
     if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "flex";
 
     try {
-        // Fetch User Deposits
         const depSnap = await getDocs(collection(db, "deposits"));
         const userDeps = [];
         let totalDepositAmount = 0;
@@ -659,7 +655,6 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userDeps.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch User Withdrawals
         const withSnap = await getDocs(collection(db, "withdrawals"));
         const userWiths = [];
         let totalWithdrawalAmount = 0;
@@ -676,7 +671,6 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userWiths.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch User Battles with Opponent Mobile Number
         const batSnap = await getDocs(collection(db, "battles"));
         const userBats = [];
         batSnap.forEach(d => {
@@ -690,8 +684,6 @@ window.openUserCompleteHistory = async (uId) => {
 
             if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
-                
-                // Show Opponent Mobile Number if available, else Name, else UID
                 let opponentMobile = isCreator ? (data.acceptedMobile || data.acceptedName || data.acceptedUid || "Waiting...") : (data.creatorMobile || data.creatorName || data.creatorUid || "Creator");
                 
                 userBats.push({ 
