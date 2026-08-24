@@ -130,7 +130,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
 <button id="loginBtn" class="login-btn">Login</button>
-<div id="error" style="display:block;"></div>
+<div id="error"></div>
 </div>
 </section>
 
@@ -442,10 +442,10 @@ messagingSenderId: "928340814840",
 appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
-// Yahan aap jitni marzi chahein utni Admin Emails add kar sakte hain (2 ya 2 se zyada)
+// Yahan dono admin emails set hain jo aapne Firebase mein add ki hain
 const ADMIN_EMAILS = [
     "nmbaar78@gmail.com",
-    "secondadmin@gmail.com" // <--- Yahan apni doosri admin email daal dein
+    "lm2461451@gmail.com"
 ];
 
 const app = initializeApp(firebaseConfig);
@@ -493,10 +493,9 @@ window.refreshAdminDashboard = async () => {
 async function login(){
     const email = $("email").value.trim().toLowerCase();
     const password = $("password").value;
+    const errBox = $("error");
     
-    // Check karein ki email ADMIN_EMAILS list mein hai ya nahi
     if(!ADMIN_EMAILS.includes(email) || !password) {
-        const errBox = $("error");
         errBox.textContent = "Galat Admin Email ya Password!";
         errBox.style.display = "block";
         return;
@@ -504,8 +503,8 @@ async function login(){
 
     try { 
         await signInWithEmailAndPassword(auth, email, password); 
+        errBox.style.display = "none";
     } catch(e){ 
-        const errBox = $("error");
         errBox.textContent = e.message;
         errBox.style.display = "block";
     }
