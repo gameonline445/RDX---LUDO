@@ -87,9 +87,9 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 .action{padding:6px 10px;border-radius:8px;font-size:11px;font-weight:800;margin:2px;}
 .approve{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
 .reject{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
-.edit-status-btn{background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;}
-.view-btn{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
-.delete-btn{background:#fff1f2;color:#be123c;border:1px solid #fecdd3;}
+.edit-status-btn{background:#e0f2fe;color:#0284c7;border:1.5px solid #bae6fd;}
+.view-btn{background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0;}
+.delete-btn{background:#fff1f2;color:#be123c;border:1.5px solid #fecdd3;}
 .delete-all-btn{background:linear-gradient(100deg,#e11d48,#be123c);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
 .refresh{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;}
 
@@ -328,7 +328,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
-<!-- CUSTOMERS -->
+<!-- CUSTOMERS (WITH BALANCE EDIT FEATURE) -->
 <section id="users" class="page">
 <div class="title">Customers</div>
 <div class="card">
@@ -337,7 +337,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <div class="table">
 <table>
 <thead>
-<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
+<tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Action / Edit Balance</th></tr>
 </thead>
 <tbody id="userTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
 </table>
@@ -449,7 +449,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 
-<!-- BATTLE PROOF & RESOLVE MODAL (WITH PENALTY & BONUS ACTIONS) -->
+<!-- BATTLE PROOF & RESOLVE MODAL (WITH SEPARATE PENALTY & WIN/LOSS ACTIONS) -->
 <div class="modal-overlay" id="battleResolveModal">
     <div class="modal-box" style="max-width:550px;">
         <div class="modal-header">
@@ -516,7 +516,7 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-// Robust direct click login handler
+// 100% Robust Login Handler
 async function handleLogin() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
@@ -586,6 +586,89 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "settings") loadSettings();
     });
 });
+
+// ================= CUSTOMERS & BALANCE EDIT FEATURE =================
+async function loadUsers(){
+    if(!$("userTable")) return;
+    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
+    try {
+        const snap = await getDocs(collection(db, "customers"));
+        let list = [];
+        snap.forEach(d => {
+            const data = d.data();
+            const timeInfo = parseItemTime(data.createdAt || data.joinedAt);
+            const lastSeenInfo = parseItemTime(data.lastSeenAt || data.lastLoginAt);
+            list.push({ 
+                id: d.id, 
+                ...data, 
+                timeObj: timeInfo.dateObj, 
+                formattedDate: timeInfo.formatted,
+                lastSeenObj: lastSeenInfo.dateObj
+            });
+        });
+
+        list.sort((a, b) => b.timeObj - a.timeObj);
+        users = list;
+        renderUsers();
+        renderLiveUsers();
+        updateDashboard();
+    } catch(e) {
+        if($("userTable")) $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderUsers(){
+    if(!$("userTable") || !$("userSearch")) return;
+    const q = $("userSearch").value.toLowerCase().trim();
+    const list = users.filter(u => {
+        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.kycStatus || ''} ${u.referredBy || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length){
+        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
+        return;
+    }
+
+    $("userTable").innerHTML = list.map(u => {
+        const kycBadge = u.kycStatus === 'verified' ? '<span class="badge approved">Verified</span>' : (u.kycStatus === 'pending' ? '<span class="badge pending">Under Review</span>' : '<span class="badge rejected">Not Done</span>');
+        return `
+        <tr>
+            <td>${safe(u.id)}</td>
+            <td><b>${safe(u.name || 'User')}</b></td>
+            <td>${safe(u.mobile || u.id)}</td>
+            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td>${kycBadge}</td>
+            <td><span class="badge ${u.referredBy && u.referredBy !== 'DIRECT' ? 'approved' : 'pending'}">${safe(u.referredBy || 'DIRECT')}</span></td>
+            <td>
+                <button class="action edit-status-btn" data-edit-balance="${safe(u.id)}"><i class="fa-solid fa-pen-to-square"></i> Edit Balance</button>
+            </td>
+        </tr>`;
+    }).join("");
+
+    document.querySelectorAll("[data-edit-balance]").forEach(btn => {
+        btn.addEventListener("click", () => editUserWalletBalance(btn.dataset.editBalance));
+    });
+}
+
+window.editUserWalletBalance = async (uId) => {
+    const user = users.find(x => String(x.id) === String(uId));
+    if (!user) return;
+    const newAmt = prompt(`User (${user.name || user.mobile}) ka naya Balance enter karein (Current: ₹${user.balance || 0}):`, user.balance || 0);
+    if (newAmt === null || isNaN(newAmt)) return;
+    const targetBal = Number(newAmt);
+
+    try {
+        await setDoc(doc(db, "customers", uId), { balance: targetBal }, { merge: true });
+        alert(`✅ User balance successfully updated to ₹${targetBal}!`);
+        loadUsers();
+    } catch(e) {
+        alert("Error updating balance: " + e.message);
+    }
+};
+
+if($("userSearch")) $("userSearch").addEventListener("input", renderUsers);
+if($("refreshUsers")) $("refreshUsers").addEventListener("click", loadUsers);
 
 // ================= USER COMPLETE TOTAL HISTORY & BONUS / PENALTY =================
 async function loadUserHistoryList() {
@@ -741,7 +824,7 @@ window.openUserCompleteHistory = async (uId) => {
                 </div>
             </div>
 
-            <!-- BONUS & PENALTY ACTION BUTTONS FOR USER -->
+            <!-- BONUS & PENALTY BUTTONS -->
             <div style="background:#f8fafc; border:1.5px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <span style="font-size:13px; font-weight:850; color:#0c4a6e;">Wallet Adjustments:</span>
                 <div style="display:flex; gap:8px;">
@@ -811,7 +894,6 @@ window.closeUserCompleteHistoryModal = () => {
     if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "none";
 };
 
-// Add Bonus Function
 window.addBonusToUser = async (uId) => {
     const amt = prompt("Kitna Bonus amount add karna hai? (e.g. 50):");
     if(!amt || isNaN(amt)) return;
@@ -829,7 +911,6 @@ window.addBonusToUser = async (uId) => {
     } catch(e) { alert("Bonus Error: " + e.message); }
 };
 
-// Apply Penalty Function (for inactive / unresponsive users in battle)
 window.applyPenaltyToUser = async (uId) => {
     const amt = prompt("Kitni Penalty kaatni hai? (e.g. 100):");
     if(!amt || isNaN(amt)) return;
@@ -955,12 +1036,15 @@ window.openBattleResolve = (bId) => {
             </div>
         </div>
 
-        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement & Penalty Action:</h4>
+        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement & Separate Penalty Actions:</h4>
         <div style="display:flex; flex-direction:column; gap:8px;">
             <button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.creatorUid}', '${b.prize}')">🏆 Make ${safe(b.creatorName)} WINNER (Credit ₹${b.prize})</button>
             ${b.acceptedUid ? `<button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.acceptedUid}', '${b.prize}')">🏆 Make ${safe(b.acceptedName)} WINNER (Credit ₹${b.prize})</button>` : ''}
             <button class="action reject" style="padding:10px; font-size:13px;" onclick="refundBattle('${b.id}', '${b.creatorUid}', '${b.acceptedUid}', '${b.amount}')">↩️ Cancel Match & Refund Both (₹${b.amount})</button>
-            <button class="action delete-btn" style="padding:10px; font-size:13px;" onclick="applyDisputePenalty('${b.id}', '${b.creatorUid}', '${b.acceptedUid}', '${b.amount}')">⚠️ Apply Penalty (Non-responsive User)</button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:4px;">
+                <button class="action delete-btn" style="padding:8px; font-size:12px;" onclick="applyDisputePenalty('${b.id}', '${b.creatorUid}', '${safe(b.creatorName)}')">⚠️ Penalty on ${safe(b.creatorName)}</button>
+                ${b.acceptedUid ? `<button class="action delete-btn" style="padding:8px; font-size:12px;" onclick="applyDisputePenalty('${b.id}', '${b.acceptedUid}', '${safe(b.acceptedName)}')">⚠️ Penalty on ${safe(b.acceptedName)}</button>` : ''}
+            </div>
         </div>
     `;
 
@@ -1035,32 +1119,27 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
     }
 };
 
-window.applyDisputePenalty = async (bId, p1Uid, p2Uid, entryAmt) => {
-    const targetUid = prompt(`Kiski penalty kaatni hai? Enter UID/Mobile for Player 1 (${p1Uid}) ya Player 2 (${p2Uid || 'None'}):`);
-    if(!targetUid) return;
-    const cleanTarget = targetUid.trim();
-    if(cleanTarget !== String(p1Uid) && cleanTarget !== String(p2Uid)) return alert("Galat UID daali hai!");
-
-    const penaltyAmt = prompt("Kitni penalty kaatni hai? (e.g. 50):");
-    if(!penaltyAmt || isNaN(penaltyAmt)) return;
-    const cutVal = Number(penaltyAmt);
+window.applyDisputePenalty = async (bId, targetUid, targetName) => {
+    const amt = prompt(`${targetName} par kitni penalty lagani hai? (e.g. 50):`);
+    if(!amt || isNaN(amt)) return;
+    const penaltyVal = Number(amt);
 
     try {
         await runTransaction(db, async t => {
-            const uRef = doc(db, "customers", cleanTarget.length === 10 ? "91" + cleanTarget : cleanTarget);
+            const uRef = doc(db, "customers", targetUid);
             const uSnap = await t.get(uRef);
             const currentBal = Number(uSnap.data()?.balance || 0);
 
-            t.update(uRef, { balance: Math.max(0, currentBal - cutVal) });
+            t.update(uRef, { balance: Math.max(0, currentBal - penaltyVal) });
             t.update(doc(db, "battles", bId), {
                 status: "penalized",
-                penaltyAppliedTo: cleanTarget,
-                penaltyAmount: cutVal,
+                penaltyAppliedTo: targetUid,
+                penaltyAmount: penaltyVal,
                 resolvedAt: serverTimestamp()
             });
         });
 
-        alert(`⚠️ Penalty of ₹${cutVal} successfully applied to user!`);
+        alert(`⚠️ Penalty of ₹${penaltyVal} successfully deducted from ${targetName}!`);
         closeBattleModal();
         loadBattles();
         loadUsers();
@@ -1597,67 +1676,6 @@ window.closeReferralModal = () => {
 
 if($("referralSearch")) $("referralSearch").addEventListener("input", renderReferralLeaderboard);
 if($("refreshReferrals")) $("refreshReferrals").addEventListener("click", loadReferralAnalytics);
-
-// ================= CUSTOMERS =================
-async function loadUsers(){
-    if(!$("userTable")) return;
-    $("userTable").innerHTML = `<tr><td colspan="7" class="empty">Loading...</td></tr>`;
-    try {
-        const snap = await getDocs(collection(db, "customers"));
-        let list = [];
-        snap.forEach(d => {
-            const data = d.data();
-            const timeInfo = parseItemTime(data.createdAt || data.joinedAt);
-            const lastSeenInfo = parseItemTime(data.lastSeenAt || data.lastLoginAt);
-            list.push({ 
-                id: d.id, 
-                ...data, 
-                timeObj: timeInfo.dateObj, 
-                formattedDate: timeInfo.formatted,
-                lastSeenObj: lastSeenInfo.dateObj
-            });
-        });
-
-        list.sort((a, b) => b.timeObj - a.timeObj);
-        users = list;
-        renderUsers();
-        renderLiveUsers();
-        updateDashboard();
-    } catch(e) {
-        if($("userTable")) $("userTable").innerHTML = `<tr><td colspan="7" class="empty">${safe(e.message)}</td></tr>`;
-    }
-}
-
-function renderUsers(){
-    if(!$("userTable") || !$("userSearch")) return;
-    const q = $("userSearch").value.toLowerCase().trim();
-    const list = users.filter(u => {
-        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''} ${u.balance || ''} ${u.kycStatus || ''} ${u.referredBy || ''}`.toLowerCase();
-        return pool.includes(q);
-    });
-
-    if(!list.length){
-        $("userTable").innerHTML = `<tr><td colspan="7" class="empty">No customers found.</td></tr>`;
-        return;
-    }
-
-    $("userTable").innerHTML = list.map(u => {
-        const kycBadge = u.kycStatus === 'verified' ? '<span class="badge approved">Verified</span>' : (u.kycStatus === 'pending' ? '<span class="badge pending">Under Review</span>' : '<span class="badge rejected">Not Done</span>');
-        return `
-        <tr>
-            <td>${safe(u.id)}</td>
-            <td><b>${safe(u.name || 'User')}</b></td>
-            <td>${safe(u.mobile || u.id)}</td>
-            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
-            <td>${kycBadge}</td>
-            <td><span class="badge ${u.referredBy && u.referredBy !== 'DIRECT' ? 'approved' : 'pending'}">${safe(u.referredBy || 'DIRECT')}</span></td>
-            <td><span class="badge approved">Active</span></td>
-        </tr>`;
-    }).join("");
-}
-
-if($("userSearch")) $("userSearch").addEventListener("input", renderUsers);
-if($("refreshUsers")) $("refreshUsers").addEventListener("click", loadUsers);
 
 // ================= NOTIFICATIONS =================
 const notifTargetEl = $("notifTarget");
