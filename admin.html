@@ -751,7 +751,7 @@ async function rejectWithdrawal(id) {
     const w = withdrawals.find(x => x.id === id);
     if (!w) return;
     if (w.status === "rejected" || w.refundedToUser === true) {
-        alert("⚠️ Yeh withdrawal pehle hi reject ho chuki hai aur rashi refund ki ja chuki hai.");
+        alert("⚠️ Yeh withdrawal pehle hi reject ho chuki hai aur rashi refund ki ja chuki hai[span_0](start_span)[span_0](end_span).");
         return;
     }
 
@@ -801,7 +801,7 @@ async function rejectWithdrawal(id) {
             });
         });
 
-        alert("❌ Withdrawal Rejected & Amount Successfully Refunded to User!");
+        alert("❌ Withdrawal Rejected & Amount Successfully Refunded to User[span_1](start_span)[span_1](end_span)!");
         loadWithdrawals();
         loadUsers();
     } catch(e) { alert("Rejection Error: " + e.message); }
@@ -1029,7 +1029,6 @@ window.declareWinner = async (bId, winnerUid, prize) => {
             const battleRef = doc(db, "battles", bId);
             const userRef = doc(db, "customers", winnerUid);
 
-            // 1. ALL READS FIRST
             const battleSnap = await t.get(battleRef);
             const userSnap = await t.get(userRef);
 
@@ -1045,7 +1044,6 @@ window.declareWinner = async (bId, winnerUid, prize) => {
             const curWin = Number(userSnap.data()?.winnings || userSnap.data()?.winningBalance || 0);
             const currentPlayed = Number(userSnap.data()?.matchesPlayed || 0);
 
-            // 2. ALL WRITES AFTER
             t.update(userRef, {
                 balance: curBal + Number(prize),
                 winnings: curWin + Number(prize),
@@ -1077,7 +1075,6 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
             const p1Ref = doc(db, "customers", p1Uid);
             const p2Ref = p2Uid ? doc(db, "customers", p2Uid) : null;
 
-            // 1. ALL READS FIRST
             const battleSnap = await t.get(battleRef);
             const p1Snap = await t.get(p1Ref);
             const p2Snap = p2Ref ? await t.get(p2Ref) : null;
@@ -1091,7 +1088,6 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
 
             const amt = Number(entryAmt || 0);
 
-            // 2. ALL WRITES AFTER
             if (p1Snap.exists) {
                 t.update(p1Ref, { balance: Number(p1Snap.data()?.balance || 0) + amt });
             }
