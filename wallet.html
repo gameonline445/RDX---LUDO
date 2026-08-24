@@ -225,6 +225,7 @@ async function loadFirebaseCustomer(){
     } catch(error){ console.error(error); }
 }
 
+window.addEventListener("load", loadFirebaseCard); // Keeping reference clean
 window.addEventListener("load", loadFirebaseCustomer);
 
 function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
