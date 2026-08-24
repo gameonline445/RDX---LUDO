@@ -223,9 +223,13 @@ async function loadFirebaseCustomer(){
         if(snapshot && snapshot.exists) {
             const data = snapshot.data();
             
+            // Database se 'balance', 'depositBalance', 'winnings' ko sahi tarike se read karein
+            const balance = Number(data.balance || 0);
             const winnings = Number(data.winnings || data.winningBalance || 0);
-            const deposit = Number(data.depositBalance || data.deposit || 0);
-            const totalBalance = deposit + winnings;
+            const deposit = Number(data.depositBalance || data.deposit || Math.max(0, balance - winnings));
+
+            // Agar total balance field database mein alag hai ya balance match nahi ho raha toh sync karein
+            const totalBalance = balance > 0 ? balance : (deposit + winnings);
 
             document.getElementById("mainBalance").textContent = totalBalance;
             document.getElementById("topBalance").textContent = totalBalance;
