@@ -335,6 +335,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
+<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -448,7 +449,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
     </div>
 </div>
 
-<!-- BATTLE PROOF & RESOLVE MODAL -->
+<!-- BATTLE PROOF & RESOLVE MODAL (WITH PENALTY & BONUS ACTIONS) -->
 <div class="modal-overlay" id="battleResolveModal">
     <div class="modal-box" style="max-width:550px;">
         <div class="modal-header">
@@ -515,6 +516,7 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
+// Robust direct click login handler
 async function handleLogin() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
@@ -585,7 +587,7 @@ document.querySelectorAll(".nav").forEach(btn => {
     });
 });
 
-// ================= USER COMPLETE TOTAL HISTORY =================
+// ================= USER COMPLETE TOTAL HISTORY & BONUS / PENALTY =================
 async function loadUserHistoryList() {
     if(!$("userHistoryTable")) return;
     $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">Loading customers list...</td></tr>`;
@@ -717,31 +719,40 @@ window.openUserCompleteHistory = async (uId) => {
 
         container.innerHTML = `
             <div style="display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin-bottom:16px;">
-                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
+                <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
                     <small style="color:#64748b; font-weight:800; font-size:9px;">BALANCE ID</small>
                     <h3 style="color:#0c4a6e; font-size:16px; font-weight:900; margin-top:2px;">₹${user.balance || 0}</h3>
                 </div>
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:10px; text-align:center;">
+                <div style="background:#f0fdf4; border:1.5px solid #bbf7d0; border-radius:12px; padding:10px; text-align:center;">
                     <small style="color:#15803d; font-weight:800; font-size:9px;">TOTAL DEPOSIT</small>
                     <h3 style="color:#15803d; font-size:16px; font-weight:900; margin-top:2px;">₹${totalDepositAmount}</h3>
                 </div>
-                <div style="background:#fef2f2; border:1px solid #fecdd3; border-radius:12px; padding:10px; text-align:center;">
+                <div style="background:#fef2f2; border:1.5px solid #fecdd3; border-radius:12px; padding:10px; text-align:center;">
                     <small style="color:#be123c; font-weight:800; font-size:9px;">TOTAL WITHDRAWAL</small>
                     <h3 style="color:#be123c; font-size:16px; font-weight:900; margin-top:2px;">₹${totalWithdrawalAmount}</h3>
                 </div>
-                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:12px; padding:10px; text-align:center;">
+                <div style="background:#fefce8; border:1.5px solid #fef08a; border-radius:12px; padding:10px; text-align:center;">
                     <small style="color:#854d0e; font-weight:800; font-size:9px;">BATTLES (W/L)</small>
                     <h3 style="color:#854d0e; font-size:14px; font-weight:900; margin-top:2px;">${totalBattles} (${winBattles}W/${lossBattles}L)</h3>
                 </div>
-                <div style="background:#faf5ff; border:1px solid #e9d5ff; border-radius:12px; padding:10px; text-align:center;">
+                <div style="background:#faf5ff; border:1.5px solid #e9d5ff; border-radius:12px; padding:10px; text-align:center;">
                     <small style="color:#7c3aed; font-weight:800; font-size:9px;">CANCELLED</small>
                     <h3 style="color:#7c3aed; font-size:16px; font-weight:900; margin-top:2px;">${cancelBattles}</h3>
                 </div>
             </div>
 
+            <!-- BONUS & PENALTY ACTION BUTTONS FOR USER -->
+            <div style="background:#f8fafc; border:1.5px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <span style="font-size:13px; font-weight:850; color:#0c4a6e;">Wallet Adjustments:</span>
+                <div style="display:flex; gap:8px;">
+                    <button class="action approve" style="padding:8px 14px;" onclick="addBonusToUser('${user.id}')"><i class="fa-solid fa-gift"></i> Add Bonus</button>
+                    <button class="action reject" style="padding:8px 14px;" onclick="applyPenaltyToUser('${user.id}')"><i class="fa-solid fa-triangle-exclamation"></i> Apply Penalty</button>
+                </div>
+            </div>
+
             <!-- TOTAL DEPOSIT HISTORY -->
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-credit-card"></i> Deposit History (${userDeps.length})</h4>
-            <div class="table" style="max-height:150px; margin-bottom:12px;">
+            <div class="table" style="max-height:140px; margin-bottom:12px;">
                 <table>
                     <thead><tr><th>Amount</th><th>UTR Number</th><th>Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
@@ -752,7 +763,7 @@ window.openUserCompleteHistory = async (uId) => {
 
             <!-- TOTAL WITHDRAWAL HISTORY -->
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal History (${userWiths.length})</h4>
-            <div class="table" style="max-height:150px; margin-bottom:12px;">
+            <div class="table" style="max-height:140px; margin-bottom:12px;">
                 <table>
                     <thead><tr><th>Amount</th><th>Mode & Account Details</th><th>Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
@@ -761,9 +772,9 @@ window.openUserCompleteHistory = async (uId) => {
                 </table>
             </div>
 
-            <!-- TOTAL BATTLE HISTORY (WITH OPPONENT MOBILE NUMBER & BET AMOUNT) -->
+            <!-- TOTAL BATTLE HISTORY -->
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent Mobile & Bet History (${userBats.length})</h4>
-            <div class="table" style="max-height:180px;">
+            <div class="table" style="max-height:160px;">
                 <table>
                     <thead><tr><th>#</th><th>Opponent Mobile</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
@@ -798,6 +809,42 @@ window.openUserCompleteHistory = async (uId) => {
 
 window.closeUserCompleteHistoryModal = () => {
     if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "none";
+};
+
+// Add Bonus Function
+window.addBonusToUser = async (uId) => {
+    const amt = prompt("Kitna Bonus amount add karna hai? (e.g. 50):");
+    if(!amt || isNaN(amt)) return;
+    const bonusVal = Number(amt);
+    try {
+        await runTransaction(db, async t => {
+            const uRef = doc(db, "customers", uId);
+            const uSnap = await t.get(uRef);
+            const currentBal = Number(uSnap.data()?.balance || 0);
+            t.update(uRef, { balance: currentBal + bonusVal });
+        });
+        alert(`✅ Successfully added ₹${bonusVal} bonus to user wallet!`);
+        loadUsers();
+        closeUserCompleteHistoryModal();
+    } catch(e) { alert("Bonus Error: " + e.message); }
+};
+
+// Apply Penalty Function (for inactive / unresponsive users in battle)
+window.applyPenaltyToUser = async (uId) => {
+    const amt = prompt("Kitni Penalty kaatni hai? (e.g. 100):");
+    if(!amt || isNaN(amt)) return;
+    const penaltyVal = Number(amt);
+    try {
+        await runTransaction(db, async t => {
+            const uRef = doc(db, "customers", uId);
+            const uSnap = await t.get(uRef);
+            const currentBal = Number(uSnap.data()?.balance || 0);
+            t.update(uRef, { balance: Math.max(0, currentBal - penaltyVal) });
+        });
+        alert(`⚠️ Successfully deducted ₹${penaltyVal} penalty from user wallet!`);
+        loadUsers();
+        closeUserCompleteHistoryModal();
+    } catch(e) { alert("Penalty Error: " + e.message); }
 };
 
 if($("userHistorySearch")) $("userHistorySearch").addEventListener("input", renderUserHistoryList);
@@ -886,7 +933,7 @@ window.openBattleResolve = (bId) => {
     const p2Result = b.acceptedUid ? (b[`result_${b.acceptedUid}`] || "Not Submitted") : "N/A";
 
     container.innerHTML = `
-        <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:12px;">
+        <div style="background:#f0f9ff; border:1.5px solid #bae6fd; border-radius:14px; padding:12px; margin-bottom:12px;">
             <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:800; color:#0c4a6e;">
                 <span>Entry Fee: ₹${b.amount}</span>
                 <span style="color:#15803d;">Prize: ₹${b.prize}</span>
@@ -898,21 +945,22 @@ window.openBattleResolve = (bId) => {
             <div style="background:#fff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
                 <strong style="font-size:13px; color:#0c4a6e;">${safe(b.creatorName)}</strong>
                 <div style="font-size:11px; color:#64748b; margin:2px 0;">Claim: <b style="color:#0284c7;">${p1Result}</b></div>
-                ${p1Proof ? `<img src="${p1Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p1Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
+                ${p1Proof ? `<img src="${p1Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1.5px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p1Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
             </div>
 
             <div style="background:#fff; border:1.5px solid #bae6fd; border-radius:12px; padding:10px; text-align:center;">
                 <strong style="font-size:13px; color:#0c4a6e;">${safe(b.acceptedName || 'Opponent')}</strong>
                 <div style="font-size:11px; color:#64748b; margin:2px 0;">Claim: <b style="color:#0284c7;">${p2Result}</b></div>
-                ${p2Proof ? `<img src="${p2Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p2Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
+                ${p2Proof ? `<img src="${p2Proof}" style="width:100%; height:140px; object-fit:contain; border-radius:8px; border:1.5px solid #e2e8f0; margin-top:4px; cursor:pointer;" onclick="window.open('${p2Proof}')">` : `<div style="padding:40px 0; color:#94a3b8; font-size:11px;">No Proof Uploaded</div>`}
             </div>
         </div>
 
-        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement Action:</h4>
+        <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;">Admin Settlement & Penalty Action:</h4>
         <div style="display:flex; flex-direction:column; gap:8px;">
             <button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.creatorUid}', '${b.prize}')">🏆 Make ${safe(b.creatorName)} WINNER (Credit ₹${b.prize})</button>
             ${b.acceptedUid ? `<button class="action approve" style="padding:10px; font-size:13px;" onclick="declareWinner('${b.id}', '${b.acceptedUid}', '${b.prize}')">🏆 Make ${safe(b.acceptedName)} WINNER (Credit ₹${b.prize})</button>` : ''}
             <button class="action reject" style="padding:10px; font-size:13px;" onclick="refundBattle('${b.id}', '${b.creatorUid}', '${b.acceptedUid}', '${b.amount}')">↩️ Cancel Match & Refund Both (₹${b.amount})</button>
+            <button class="action delete-btn" style="padding:10px; font-size:13px;" onclick="applyDisputePenalty('${b.id}', '${b.creatorUid}', '${b.acceptedUid}', '${b.amount}')">⚠️ Apply Penalty (Non-responsive User)</button>
         </div>
     `;
 
@@ -987,6 +1035,38 @@ window.refundBattle = async (bId, p1Uid, p2Uid, entryAmt) => {
     }
 };
 
+window.applyDisputePenalty = async (bId, p1Uid, p2Uid, entryAmt) => {
+    const targetUid = prompt(`Kiski penalty kaatni hai? Enter UID/Mobile for Player 1 (${p1Uid}) ya Player 2 (${p2Uid || 'None'}):`);
+    if(!targetUid) return;
+    const cleanTarget = targetUid.trim();
+    if(cleanTarget !== String(p1Uid) && cleanTarget !== String(p2Uid)) return alert("Galat UID daali hai!");
+
+    const penaltyAmt = prompt("Kitni penalty kaatni hai? (e.g. 50):");
+    if(!penaltyAmt || isNaN(penaltyAmt)) return;
+    const cutVal = Number(penaltyAmt);
+
+    try {
+        await runTransaction(db, async t => {
+            const uRef = doc(db, "customers", cleanTarget.length === 10 ? "91" + cleanTarget : cleanTarget);
+            const uSnap = await t.get(uRef);
+            const currentBal = Number(uSnap.data()?.balance || 0);
+
+            t.update(uRef, { balance: Math.max(0, currentBal - cutVal) });
+            t.update(doc(db, "battles", bId), {
+                status: "penalized",
+                penaltyAppliedTo: cleanTarget,
+                penaltyAmount: cutVal,
+                resolvedAt: serverTimestamp()
+            });
+        });
+
+        alert(`⚠️ Penalty of ₹${cutVal} successfully applied to user!`);
+        closeBattleModal();
+        loadBattles();
+        loadUsers();
+    } catch(e) { alert("Penalty Error: " + e.message); }
+};
+
 if($("battleSearch")) $("battleSearch").addEventListener("input", renderBattles);
 if($("refreshBattles")) $("refreshBattles").addEventListener("click", loadBattles);
 
@@ -1027,7 +1107,7 @@ function renderLiveUsers() {
 if($("liveSearch")) $("liveSearch").addEventListener("input", renderLiveUsers);
 if($("refreshLiveUsers")) $("refreshLiveUsers").addEventListener("click", () => { loadUsers().then(renderLiveUsers); });
 
-// ================= KYC REQUESTS (FRONT & BACK ONLY) =================
+// ================= KYC REQUESTS =================
 async function loadKycRequests() {
     if(!$("kycTable")) return;
     $("kycTable").innerHTML = `<tr><td colspan="6" class="empty">Loading KYC requests...</td></tr>`;
