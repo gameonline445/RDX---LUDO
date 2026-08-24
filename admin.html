@@ -129,7 +129,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
-<button id="loginBtn" class="login-btn" onclick="executeAdminLogin()">Login</button>
+<button id="loginBtn" class="login-btn">Login</button>
 <div id="error"></div>
 </div>
 </section>
@@ -515,7 +515,8 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-window.executeAdminLogin = async function() {
+// Robust login handler bound via addEventListener and onclick both to guarantee response
+async function handleLoginAction() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
     const errBox = $("error");
@@ -539,7 +540,16 @@ window.executeAdminLogin = async function() {
             errBox.style.display = "block";
         }
     }
-};
+}
+
+window.executeAdminLogin = handleLoginAction;
+
+window.addEventListener("DOMContentLoaded", () => {
+    const loginBtn = $("loginBtn");
+    if(loginBtn) {
+        loginBtn.addEventListener("click", handleLoginAction);
+    }
+});
 
 onAuthStateChanged(auth, u => {
     if(u && u.email){
@@ -1774,7 +1784,7 @@ async function loadAll(){
     } catch(e){
         if($("dashStatus")) {
             $("dashStatus").textContent = "❌ " + e.message;
-            $("dashStatus.className") = "status bad";
+            $("dashStatus").className = "status bad";
         }
     }
 }
