@@ -264,7 +264,7 @@ body{
     color:#0f172a;
     font-size:22px;
     font-weight:900;
-    letter-spacing:6px;
+    letter-spacing:8px;
     text-align:center;
     padding:0 12px;
     outline:none;
@@ -470,10 +470,10 @@ try{
         class="otp-input"
         type="tel"
         id="otp"
-        placeholder="------"
+        placeholder="----"
         inputmode="numeric"
         autocomplete="one-time-code"
-        maxlength="6"
+        maxlength="4"
     >
     <p class="otp-hint" id="otpHint">
         OTP will be sent to your registered mobile number.
@@ -677,7 +677,7 @@ function sendOTPNow(){
             continueBtn.style.display = "none";
             stepLabel.textContent = "✨ STEP 2";
             titleText.textContent = "Verify Mobile Number";
-            subtitleText.textContent = "Enter the OTP sent to your registered mobile number.";
+            subtitleText.textContent = "Enter the 4-digit OTP sent to your registered mobile number.";
             otpSection.style.display = "block";
             otpInput.value = "";
             otpHint.textContent = "OTP आपके registered mobile number पर भेज दिया गया है।";
@@ -706,9 +706,9 @@ function sendOTPNow(){
 }
 
 function verifyOTP(){
-    const otp = otpInput.value.replace(/\D/g,"").slice(0, 6);
-    if(!/^\d{4,6}$/.test(otp)){
-        showMessage("कृपया सही OTP डालें।");
+    const otp = otpInput.value.replace(/\D/g,"").slice(0, 4);
+    if(!/^\d{4}$/.test(otp)){
+        showMessage("कृपया सही 4-digit OTP डालें।");
         otpInput.focus();
         return;
     }
@@ -731,13 +731,13 @@ function verifyOTP(){
                 localStorage.setItem("rdxAccessToken", data.accessToken);
             }
 
-            showMessage("OTP verify हो गया। Firebase में login save हो रहा है...");
+            showMessage("OTP verify ho gaya. Database me profile sync ho rahi hai...");
             const saved = await saveCustomerToFirebase(currentIdentifier);
 
             if(!saved){
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = "Verify OTP";
-                showMessage("OTP verify हो गया, लेकिन Firebase में login save नहीं हुआ।");
+                showMessage("OTP verify ho gaya, lekin database sync fail ho gaya.");
                 return;
             }
 
@@ -890,8 +890,8 @@ mobileInput.addEventListener("input", function(){
 });
 
 otpInput.addEventListener("input", function(){
-    otpInput.value = otpInput.value.replace(/\D/g,"").slice(0, 6);
-    if(/^\d{4,6}$/.test(otpInput.value)){
+    otpInput.value = otpInput.value.replace(/\D/g,"").slice(0, 4);
+    if(/^\d{4}$/.test(otpInput.value)){
         verifyBtn.disabled = false;
     }else{
         verifyBtn.disabled = true;
