@@ -1,240 +1,274 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RDX LUDO - Withdraw</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-    
-    <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-        authDomain: "rdx-ludo.firebaseapp.com",
-        projectId: "rdx-ludo",
-        storageBucket: "rdx-ludo.firebasestorage.app",
-        messagingSenderId: "928340814840",
-        appId: "1:928340814840:web:6eca42a8b76138b268440d"
-    };
-    let firebaseDB = null;
-    try {
-        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-        firebaseDB = firebase.firestore();
-    } catch(error){ console.error(error); }
-    </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>RDX LUDO - Wallet</title>
 
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
-        body{
-            background:
-                radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
-                radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
-                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
-                linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-            color:#101a38;
-            min-height:100vh;
-            padding-bottom:85px;
-        }
-        .top-bar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
-        .header-left{display:flex;align-items:center;gap:10px;}
-        .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#ffffff;border:1px solid #bae6fd;color:#0284c7;cursor:pointer;}
-        .logo{width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1.5px solid #bae6fd;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
-        .logo img{width:100%;height:100%;object-fit:cover;}
-        .header-icons{display:flex;gap:6px;}
-        .topicon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:15px;color:#ffffff;cursor:pointer;}
-        .icon-bell{background:#6366f1;} .icon-cash{background:#16a34a;} .icon-gift{background:#ea580c;}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
-        .container{width:100%;max-width:560px;margin:auto;padding:16px 14px;}
-        .balance-card{border:1.5px solid #7dd3fc;border-radius:20px;padding:16px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);margin-bottom:14px;}
-        .balance-label{font-size:11px;font-weight:800;color:#0284c7;text-transform:uppercase;}
-        .balance-amount{font-size:28px;font-weight:900;color:#0c4a6e;margin-top:2px;}
-        .balance-note{font-size:11px;color:#0284c7;margin-top:4px;font-weight:600;}
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+let firebaseDB = null;
+try {
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebaseDB = firebase.firestore();
+} catch(error){ console.error(error); }
+</script>
 
-        .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
-        .tab{height:42px;border:1px solid #bae6fd;border-radius:12px;background:#ffffff;color:#64748b;font-weight:800;font-size:12px;cursor:pointer;}
-        .tab.active{background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;border-color:#0284c7;}
-        .form-card{border:1.5px solid #bae6fd;border-radius:18px;padding:16px;background:#ffffff;margin-bottom:14px;}
-        label{display:block;font-size:11px;font-weight:800;color:#64748b;margin-bottom:4px;margin-top:8px;}
-        input{width:100%;height:44px;border:1px solid #cbd5e1;border-radius:12px;background:#f8fafc;padding:0 12px;font-size:14px;outline:none;}
-        .withdraw-btn{width:100%;height:46px;border:0;border-radius:23px;background:linear-gradient(100deg,#0284c7,#0369a1);color:#fff;font-weight:900;font-size:15px;margin-top:14px;cursor:pointer;}
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{
+    width:100%;height:100dvh;overflow:hidden;position:fixed;inset:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    color:#101a38;
+    background:
+        radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+        radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+        linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+}
+button{font:inherit;}
 
-        /* BOTTOM NAV */
-        .bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
-        .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
-        .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
-        .nav-item:active .nav-icon-box{transform:scale(0.92);}
-        .icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-        .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-        .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-        .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
-    </style>
+/* HEADER */
+.top-header{position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:#ffffff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(255,96,80,.22);cursor:pointer;}
+.logo{width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1.5px solid #bae6fd;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
+.logo img{width:100%;height:100%;object-fit:cover;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{height:38px;border:0;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(0,0,0,.10);padding:0 12px;gap:5px;}
+.notification{width:38px;padding:0;border-radius:50%;background:linear-gradient(145deg,#6366f1,#818cf8);}
+.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);font-size:13px;font-weight:800;}
+.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);font-size:13px;font-weight:800;}
+
+/* CONTAINER */
+.container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+.wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
+.wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
+.history-btn{border:1px solid #bae6fd;background:#ffffff;color:#0c4a6e;padding:6px 14px;border-radius:20px;font-weight:750;font-size:12px;cursor:pointer;}
+.balance-label{color:#64748b;font-size:14px;margin-bottom:2px;}
+.balance{color:#0c4a6e;font-size:42px;line-height:1;font-weight:900;letter-spacing:-1.5px;}
+.wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
+.action-btn{height:48px;border-radius:24px;font-size:15px;font-weight:850;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;}
+.add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#0284c7,#0369a1);box-shadow:0 6px 16px rgba(2,132,199,.3);}
+.withdraw-btn{color:#0c4a6e;border:1.5px solid #7dd3fc;background:#ffffff;}
+
+.balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.balance-box{border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;padding:14px;box-shadow:0 4px 12px rgba(2,132,199,0.05);}
+.balance-icon{width:36px;height:36px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0284c7;}
+.balance-box h3{margin-top:8px;font-size:13px;color:#64748b;font-weight:800;}
+.balance-value{margin-top:3px;font-size:20px;font-weight:900;color:#0f172a;}
+.balance-note{display:block;margin-top:3px;color:#94a3b8;font-size:11px;}
+
+.info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
+.info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
+
+/* SIDE MENU */
+.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:2000;display:none;}
+.menu-overlay.show{display:block;}
+.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
+.menu-panel.open{left:0;}
+.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
+.menu-brand{display:flex;align-items:center;gap:10px;}
+.menu-logo{width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;background:#ffffff;cursor:pointer;}
+.menu-logo img{width:100%;height:100%;object-fit:cover;}
+.menu-user h2{font-size:17px;font-weight:850;}
+.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
+.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
+.menu-list{margin-top:16px;}
+.menu-item{width:100%;min-height:52px;border:0;background:transparent;padding:6px 0;border-radius:14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left;color:#334155;cursor:pointer;}
+.menu-item-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.menu-item-text{flex:1;font-size:15px;font-weight:750;}
+.menu-arrow{color:#94a3b8;font-size:20px;}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
+.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
+.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
+.nav-item:active .nav-icon-box{transform:scale(0.92);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.nav-item.active{color:#101a38;font-weight:800;}
+.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#10b981;}
+</style>
 </head>
+
 <body>
 
-    <header class="top-bar">
-        <div class="header-left">
-            <button class="back-btn" onclick="location.href='wallet.html'"><i class="fa-solid fa-chevron-left"></i></button>
-            <div class="logo" onclick="location.href='dashboard.html'">
+<header class="top-header">
+    <div class="header-left">
+        <button class="menu-btn" onclick="openMenu()">☰</button>
+        <div class="logo" onclick="goHome()">
+            <img src="logo.png" alt="RDX Logo">
+        </div>
+    </div>
+    <div class="header-right">
+        <button class="header-icon notification" onclick="goNotifications()">🔔</button>
+        <button class="header-icon wallet-top" onclick="goWallet()">🪙 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
+    </div>
+</header>
+
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+
+<div class="menu-panel" id="menuPanel">
+    <div class="menu-title">
+        <div class="menu-brand">
+            <div class="menu-logo" onclick="goHome()">
                 <img src="logo.png" alt="RDX Logo">
             </div>
-        </div>
-        <div class="header-icons">
-            <div class="topicon icon-bell" onclick="location.href='notification.html'">🔔</div>
-            <div class="topicon icon-cash" onclick="location.href='wallet.html'">💵</div>
-            <div class="topicon icon-gift" onclick="location.href='referral.html'">🎁</div>
-        </div>
-    </header>
-
-    <main class="container">
-        <div class="balance-card">
-            <div class="balance-label">Withdrawable Winnings</div>
-            <div class="balance-amount">₹<span id="winningBalance">0</span></div>
-            <div class="balance-note">Min: ₹300 | Max: ₹1,00,000</div>
-        </div>
-
-        <div class="tabs">
-            <button class="tab active" id="tabUpi" onclick="switchMode('upi')"><i class="fa-solid fa-mobile-screen-button"></i> UPI</button>
-            <button class="tab" id="tabBank" onclick="switchMode('bank')"><i class="fa-solid fa-building-columns"></i> Bank</button>
-        </div>
-
-        <div class="form-card">
-            <label>ENTER AMOUNT (₹)</label>
-            <input type="number" id="withdrawAmount" placeholder="Min ₹300">
-
-            <div id="upiContainer">
-                <label>HOLDER NAME</label><input type="text" id="upiHolderName">
-                <label>UPI ID (VPA)</label><input type="text" id="upiId" placeholder="mobile@upi">
+            <div class="menu-user">
+                <h2 id="menuUsername">RDX LUDO</h2>
+                <p>Play · Win · Earn</p>
             </div>
-
-            <div id="bankContainer" style="display: none;">
-                <label>ACCOUNT HOLDER</label><input type="text" id="bankHolderName">
-                <label>BANK NAME</label><input type="text" id="bankName">
-                <label>ACCOUNT NUMBER</label><input type="text" id="accountNumber">
-                <label>IFSC CODE</label><input type="text" id="ifscCode">
-            </div>
-
-            <button class="withdraw-btn" onclick="submitWithdrawal()">Withdraw Money</button>
         </div>
-    </main>
+        <button class="close-menu" onclick="closeMenu()">×</button>
+    </div>
+    <div class="menu-list">
+        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
+    </div>
+</div>
 
-    <nav class="bottom-nav">
-        <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-        <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
-    </nav>
+<main class="container">
+    <section class="wallet-card">
+        <div class="wallet-top-row">
+            <div class="wallet-title">▣ MY WALLET</div>
+            <button class="history-btn" onclick="goHistory()">◷ &nbsp; History</button>
+        </div>
+        <div class="balance-label">Total Balance</div>
+        <div class="balance">₹<span id="mainBalance">0</span></div>
+        <div class="wallet-actions">
+            <button class="action-btn add-btn" onclick="goDeposit()">＋ Add Cash</button>
+            <button class="action-btn withdraw-btn" onclick="goWithdraw()">▣ Withdraw</button>
+        </div>
+    </section>
 
-    <script>
-        let currentMode = "upi";
-        let userDocId = "";
-        let currentWinnings = 0;
-        let currentTotalBalance = 0;
+    <section class="balance-grid">
+        <div class="balance-box">
+            <div class="balance-icon">▣</div>
+            <h3>DEPOSIT</h3>
+            <div class="balance-value">₹<span id="depositBalance">0</span></div>
+            <span class="balance-note">For battles only</span>
+        </div>
+        <div class="balance-box">
+            <div class="balance-icon">🏆</div>
+            <h3>WINNINGS</h3>
+            <div class="balance-value">₹<span id="winningBalance">0</span></div>
+            <span class="balance-note">Can withdraw</span>
+        </div>
+    </section>
 
-        window.switchMode = function(m) {
-            currentMode = m;
-            document.getElementById("tabUpi").classList.toggle("active", m === "upi");
-            document.getElementById("tabBank").classList.toggle("active", m === "bank");
-            document.getElementById("upiContainer").style.display = m === "upi" ? "block" : "none";
-            document.getElementById("bankContainer").style.display = m === "bank" ? "block" : "none";
-        };
+    <div class="info-box">
+        <div class="info-icon">i</div>
+        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI[span_4](start_span)[span_4](end_span).</div>
+    </div>
+</main>
 
-        window.submitWithdrawal = async function() {
-            const amount = Number(document.getElementById("withdrawAmount").value);
-            if (!amount || amount < 300) {
-                return alert("Minimum withdrawal amount ₹300 hai[span_0](start_span)[span_0](end_span)!");
-            }
-            if (amount > currentWinnings) {
-                return alert(`Aapke paas withdraw karne ke liye sirf ₹${currentWinnings} winnings balance hai!`);
-            }
+<nav class="bottom-nav">
+    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+</nav>
 
-            if (!firebaseDB || !userDocId) {
-                return alert("User session not found. Please login again.");
-            }
+<script>
+async function loadFirebaseCustomer(){
+    try{
+        if(!firebaseDB) return;
 
-            try {
-                // Instant deduction from user winnings and total balance
-                const userRef = firebaseDB.collection("customers").doc(userDocId);
-                
-                await firebaseDB.runTransaction(async (transaction) => {
-                    const snap = await transaction.get(userRef);
-                    if (!snap.exists) throw new Error("User does not exist!");
-                    
-                    const data = snap.data();
-                    const winNow = Number(data.winnings || data.winningBalance || 0);
-                    const balNow = Number(data.balance || 0);
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                     localStorage.getItem("rdxVerifiedMobile") || 
+                     localStorage.getItem("rdxUserMobile") || 
+                     localStorage.getItem("rdxMobile") ||
+                     localStorage.getItem("userMobile");
 
-                    if (amount > winNow) {
-                        throw new Error("Insufficient winnings balance!");
-                    }
+        if(!mobile) {
+            console.log("No mobile found in localStorage.");
+            return;
+        }
 
-                    const newWin = winNow - amount;
-                    const newBal = balNow - amount;
+        const cleanMobile = String(mobile).replace(/\D/g,"");
+        let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
-                    transaction.update(userRef, {
-                        winnings: newWin,
-                        winningBalance: newWin,
-                        balance: newBal
-                    });
-                });
-
-                let data = { 
-                    uid: userDocId, 
-                    amount: amount, 
-                    mode: currentMode.toUpperCase(), 
-                    status: "pending", 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-                };
-
-                if (currentMode === "upi") {
-                    data.holderName = document.getElementById("upiHolderName").value.trim();
-                    data.upiId = document.getElementById("upiId").value.trim();
+        const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
+        let snapshot = await userRef.get();
+        
+        if(!snapshot.exists) {
+            const altRef = firebaseDB.collection("customers").doc(cleanMobile);
+            snapshot = await altRef.get();
+            if(!snapshot.exists) {
+                const querySnap = await firebaseDB.collection("customers").where("mobile", "==", cleanMobile).get();
+                if(!querySnap.empty) {
+                    snapshot = querySnap.docs[0];
                 } else {
-                    data.holderName = document.getElementById("bankHolderName").value.trim();
-                    data.bankName = document.getElementById("bankName").value.trim();
-                    data.accountNumber = document.getElementById("accountNumber").value.trim();
-                    data.ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
+                    const querySnap91 = await firebaseDB.collection("customers").where("mobile", "==", "91" + cleanMobile).get();
+                    if(!querySnap91.empty) {
+                        snapshot = querySnap91.docs[0];
+                    }
                 }
-
-                await firebaseDB.collection("withdrawals").add(data);
-                alert("✅ Withdrawal request successfully submit ho gayi hai aur rashi winnings se cut kar li gayi hai!");
-                location.href = "history.html";
-            } catch(e) {
-                alert("Withdrawal Error: " + e.message);
-            }
-        };
-
-        async function init() {
-            try {
-                if(!firebaseDB) return;
-                let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                             localStorage.getItem("rdxVerifiedMobile") || 
-                             localStorage.getItem("rdxUserMobile") || 
-                             localStorage.getItem("rdxMobile") ||
-                             localStorage.getItem("userMobile");
-
-                if(!mobile) return;
-                const cleanMobile = String(mobile).replace(/\D/g,"");
-                userDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
-
-                const userRef = firebaseDB.collection("customers").doc(userDocId);
-                let snapshot = await userRef.get();
-                if(!snapshot.exists) {
-                    userDocId = cleanMobile;
-                    snapshot = await firebaseDB.collection("customers").doc(userDocId).get();
-                }
-
-                if(snapshot.exists) {
-                    const data = snapshot.data();
-                    currentWinnings = Number(data.winnings || data.winningBalance || 0);
-                    currentTotalBalance = Number(data.balance || 0);
-                    document.getElementById("winningBalance").textContent = currentWinnings;
-                }
-            } catch(err) {
-                console.error("Init Error:", err);
             }
         }
-        window.addEventListener("load", init);
-    </script>
+
+        if(snapshot && snapshot.exists) {
+            const data = snapshot.data();
+            
+            // Winning aur Deposit balance properly sync karein
+            const winnings = Number(data.winnings || data.winningBalance || 0);
+            const deposit = Number(data.depositBalance || data.deposit || data.balance || 0);
+            const totalBalance = deposit + winnings;
+
+            document.getElementById("mainBalance").textContent = totalBalance;
+            document.getElementById("topBalance").textContent = totalBalance;
+            document.getElementById("depositBalance").textContent = deposit;
+            document.getElementById("winningBalance").textContent = winnings;
+
+            let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(snapshot.id).slice(-4));
+            if(document.getElementById("menuUsername")) {
+                document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+            }
+        }
+    } catch(error){ console.error("Wallet Load Error:", error); }
+}
+
+window.addEventListener("load", loadFirebaseCustomer);
+
+function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
+function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
+function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
+function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
+function goDeposit(){ closeMenu(); window.location.href = "./deposit.html"; }
+function goWithdraw(){ closeMenu(); window.location.href = "./withdraw.html"; }
+function goProfile(){ closeMenu(); window.location.href = "./profile.html"; }
+function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
+function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
+function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
+function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
+</script>
 </body>
 </html>
