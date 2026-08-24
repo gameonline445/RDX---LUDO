@@ -236,7 +236,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 <input id="kycSearch" class="search" placeholder="Search by Mobile or ID Number...">
 <div class="table">
-<table>
 <thead>
 <tr><th>Customer UID</th><th>Mobile</th><th>ID Number</th><th>Status</th><th>Date</th><th>Action</th></tr>
 </thead>
@@ -272,7 +271,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
-<table>
 <thead>
 <tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -335,7 +333,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshUsers" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="userSearch" class="search" placeholder="Search by UID, Name, Mobile, Date, Referred By...">
 <div class="table">
-<table>
 <thead>
 <tr><th>UID</th><th>Name</th><th>Mobile</th><th>Balance</th><th>KYC Status</th><th>Referred By</th><th>Status</th></tr>
 </thead>
@@ -516,7 +513,6 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-// Global login function attached directly to HTML onclick attribute
 window.executeAdminLogin = async function() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
@@ -668,22 +664,28 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userWiths.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Fetch User Battles
+        // Fetch User Battles (Win, Loss, Cancel, Bet Amount, Opponent Name)
         const batSnap = await getDocs(collection(db, "battles"));
         const userBats = [];
         batSnap.forEach(d => {
             const data = d.data();
             const cleanUid = String(user.id).replace(/\D/g, "");
-            const isCreator = String(data.creatorUid || "").replace(/\D/g, "") === cleanUid;
-            const isAccepter = String(data.acceptedUid || "").replace(/\D/g, "") === cleanUid;
+            const creatorClean = String(data.creatorUid || "").replace(/\D/g, "");
+            const accepterClean = String(data.acceptedUid || "").replace(/\D/g, "");
+
+            const isCreator = creatorClean === cleanUid;
+            const isAccepter = accepterClean === cleanUid;
 
             if (isCreator || isAccepter) {
                 const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
-                const opponentName = isCreator ? (data.acceptedName || "Waiting / Opponent") : (data.creatorName || "Creator");
+                // Determine opponent name and opponent mobile/UID if available
+                let opponentInfo = isCreator ? (data.acceptedName || data.acceptedMobile || "Waiting...") : (data.creatorName || data.creatorMobile || "Creator");
+                
                 userBats.push({ 
                     id: d.id, 
                     ...data, 
-                    opponentName: opponentName,
+                    opponentInfo: opponentInfo,
+                    isCreator: isCreator,
                     formattedDate: timeInfo.formatted, 
                     timeObj: timeInfo.dateObj 
                 });
@@ -691,7 +693,7 @@ window.openUserCompleteHistory = async (uId) => {
         });
         userBats.sort((a, b) => b.timeObj - a.timeObj);
 
-        // Calculate Battle Stats
+        // Calculate Battle Stats & Bet Amounts
         let totalBattles = userBats.length;
         let winBattles = 0;
         let lossBattles = 0;
@@ -756,28 +758,34 @@ window.openUserCompleteHistory = async (uId) => {
                 </table>
             </div>
 
-            <!-- TOTAL BATTLE HISTORY (OPPONENTS & SERIAL WISE) -->
-            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle & Opponent History (${userBats.length})</h4>
+            <!-- TOTAL BATTLE HISTORY (WITH OPPONENT & BET AMOUNT DETAILS) -->
+            <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin:12px 0 6px;"><i class="fa-solid fa-gamepad"></i> Total Battle, Opponent & Bet History (${userBats.length})</h4>
             <div class="table" style="max-height:180px;">
                 <table>
-                    <thead><tr><th>#</th><th>Opponent Name</th><th>Entry & Prize</th><th>Room Code</th><th>Match Status / Result</th><th>Date & Time</th></tr></thead>
+                    <thead><tr><th>#</th><th>Opponent</th><th>Bet (Entry) Amount</th><th>Prize Amount</th><th>Match Result / Bet Status</th><th>Date & Time</th></tr></thead>
                     <tbody>
                         ${userBats.length ? userBats.map((b, idx) => {
                             let resTxt = b.status;
                             let resBadge = 'pending';
+                            let betDisplay = `₹${b.amount || 0}`;
+                            let prizeDisplay = `₹${b.prize || 0}`;
+
                             if(b.status === 'completed') {
                                 if(String(b.winnerUid || "").replace(/\D/g, "") === String(user.id).replace(/\D/g, "")) {
-                                    resTxt = 'WON (+₹' + b.prize + ')';
+                                    resTxt = `WIN (+₹${b.prize || 0}) with Bet ₹${b.amount || 0}`;
                                     resBadge = 'approved';
                                 } else {
-                                    resTxt = 'LOST (-₹' + b.amount + ')';
+                                    resTxt = `LOSS (-₹${b.amount || 0}) with Bet ₹${b.amount || 0}`;
                                     resBadge = 'rejected';
                                 }
                             } else if(b.status === 'cancelled') {
-                                resTxt = 'CANCELLED / REFUNDED';
+                                resTxt = `CANCELLED (Refunded ₹${b.amount || 0})`;
+                                resBadge = 'pending';
+                            } else {
+                                resTxt = `LIVE / ACTIVE (Bet ₹${b.amount || 0})`;
                                 resBadge = 'pending';
                             }
-                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentName)}</b></td><td>₹${b.amount} (Prize: ₹${b.prize})</td><td>${safe(b.roomCode || '—')}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
+                            return `<tr><td>${idx + 1}</td><td><b>vs ${safe(b.opponentInfo)}</b></td><td><b style="color:#0284c7;">₹${b.amount || 0}</b></td><td>₹${b.prize || 0}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
                         }).join("") : `<tr><td colspan="6" class="empty">No battle history found.</td></tr>`}
                     </tbody>
                 </table>
