@@ -129,7 +129,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <input id="email" type="email" placeholder="Enter admin email" autocomplete="username">
 <label>Password</label>
 <input id="password" type="password" placeholder="Admin password" autocomplete="current-password">
-<button id="loginBtn" class="login-btn">Login</button>
+<button id="loginBtn" class="login-btn" onclick="triggerLogin()">Login</button>
 <div id="error"></div>
 </div>
 </section>
@@ -271,7 +271,6 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button id="refreshWithdrawals" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
 <input id="withdrawalSearch" class="search" placeholder="Search by Date, UID, Mobile, UPI, Bank, A/C...">
 <div class="table">
-<table>
 <thead>
 <tr><th>Request ID</th><th>UID / Mobile</th><th>Amount</th><th>Mode & Details</th><th>Status</th><th>Date & Time</th><th>Action</th></tr>
 </thead>
@@ -514,7 +513,8 @@ window.refreshAdminDashboard = async () => {
     await loadAll();
 };
 
-async function login(){
+// Global login function attached directly to HTML onclick attribute
+window.triggerLogin = async function() {
     const emailInput = $("email").value.trim().toLowerCase();
     const passwordInput = $("password").value;
     const errBox = $("error");
@@ -538,14 +538,7 @@ async function login(){
             errBox.style.display = "block";
         }
     }
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-    const loginBtn = $("loginBtn");
-    if(loginBtn) {
-        loginBtn.addEventListener("click", login);
-    }
-});
+};
 
 onAuthStateChanged(auth, u => {
     if(u && u.email){
