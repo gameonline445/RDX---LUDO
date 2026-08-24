@@ -399,7 +399,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
             <div class="table">
                 <table>
                     <thead><tr><th>#</th><th>Customer Mobile</th><th>Customer Name</th><th>Joined Date & Time</th></tr></thead>
-                    <tbody id="modalReferredUsersTable"><tr><td colspan="4" class="empty">Loading...</td></tr></tbody>
+                    <div id="modalReferredUsersTable"></div>
                 </table>
             </div>
         </div>
@@ -442,6 +442,7 @@ messagingSenderId: "928340814840",
 appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
+// Yeh rahi aapki dono admin emails
 const ADMIN_EMAILS = [
     "nmbaar78@gmail.com",
     "lm2461451@gmail.com"
@@ -494,15 +495,20 @@ async function login(){
     const password = $("password").value;
     const errBox = $("error");
     
-    // Check if entered email exists in ADMIN_EMAILS array
-    if(!ADMIN_EMAILS.includes(email)) {
-        errBox.textContent = "Yeh email authorized admin list mein nahi hai!";
-        errBox.style.display = "block";
-        return;
-    }
-
+    // Yahan check hata diya gaya hai taaki code frontend restriction ki wajah se block na ho, 
+    // ab seedha Firebase Authentication check karega!
     try { 
-        await signInWithEmailAndPassword(auth, email, password); 
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const loggedEmail = userCredential.user.email.toLowerCase();
+        
+        // Agar Firebase se login ho gaya, par email list mein nahi hai toh sign out kar do
+        if(!ADMIN_EMAILS.includes(loggedEmail)){
+            await signOut(auth);
+            errBox.textContent = "Yeh email authorized admin list mein nahi hai!";
+            errBox.style.display = "block";
+            return;
+        }
+
         errBox.style.display = "none";
     } catch(e){ 
         errBox.textContent = "Login Error: " + e.message;
