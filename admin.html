@@ -153,6 +153,7 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 <button class="nav" data-page="kycrequests"><i class="fa-solid fa-id-card"></i> &nbsp;KYC Requests</button>
 <button class="nav" data-page="deposits"><i class="fa-solid fa-credit-card"></i> &nbsp;Deposits</button>
 <button class="nav" data-page="withdrawals"><i class="fa-solid fa-money-bill-transfer"></i> &nbsp;Withdrawals</button>
+<button class="nav" data-page="userhistory"><i class="fa-solid fa-file-lines"></i> &nbsp;User Detailed History</button>
 <button class="nav" data-page="referrals"><i class="fa-solid fa-gift"></i> &nbsp;Referral Analytics</button>
 <button class="nav" data-page="users"><i class="fa-solid fa-users"></i> &nbsp;Customers</button>
 <button class="nav" data-page="notifications"><i class="fa-solid fa-bell"></i> &nbsp;Notifications</button>
@@ -281,6 +282,26 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </div>
 </section>
 
+<!-- USER DETAILED HISTORY -->
+<section id="userhistory" class="page">
+<div class="title">📊 User Detailed History & Analytics</div>
+<div class="card">
+<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+    <h3 style="font-size:16px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-user-clock"></i> Select User to View Complete History</h3>
+    <button id="refreshUserHistory" class="action refresh"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
+</div>
+<input id="userHistorySearch" class="search" placeholder="Search customer by Name, Mobile or UID...">
+<div class="table">
+<table>
+<thead>
+<tr><th>UID</th><th>Customer Name</th><th>Mobile Number</th><th>Live Balance</th><th>Action</th></tr>
+</thead>
+<tbody id="userHistoryTable"><tr><td colspan="5" class="empty">Loading customers...</td></tr></tbody>
+</table>
+</div>
+</div>
+</section>
+
 <!-- REFERRAL ANALYTICS -->
 <section id="referrals" class="page">
 <div class="title">Referral Analytics & Leaderboard</div>
@@ -387,6 +408,17 @@ th{font-size:11px;color:#64748b;font-weight:800;background:#f8fafc;text-transfor
 </main>
 </div>
 </section>
+
+<!-- USER COMPLETE DETAILED HISTORY MODAL -->
+<div class="modal-overlay" id="userCompleteHistoryModal">
+    <div class="modal-box" style="max-width:800px;">
+        <div class="modal-header">
+            <h3 id="modalUserHistoryTitle">User Complete History</h3>
+            <button class="modal-close" onclick="closeUserCompleteHistoryModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body" id="modalUserHistoryContent"></div>
+    </div>
+</div>
 
 <!-- REFERRAL BREAKDOWN MODAL -->
 <div class="modal-overlay" id="referredUsersModal">
@@ -547,11 +579,205 @@ document.querySelectorAll(".nav").forEach(btn => {
         if(btn.dataset.page === "battles") loadBattles();
         if(btn.dataset.page === "kycrequests") loadKycRequests();
         if(btn.dataset.page === "liveusers") renderLiveUsers();
+        if(btn.dataset.page === "userhistory") loadUserHistoryList();
         if(btn.dataset.page === "referrals") loadReferralAnalytics();
         if(btn.dataset.page === "notifications") loadNotifications();
         if(btn.dataset.page === "settings") loadSettings();
     });
 });
+
+// ================= USER DETAILED HISTORY =================
+async function loadUserHistoryList() {
+    if(!$("userHistoryTable")) return;
+    $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">Loading customers list...</td></tr>`;
+    try {
+        if (!users.length) await loadUsers();
+        renderUserHistoryList();
+    } catch(e) {
+        if($("userHistoryTable")) $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">Error: ${safe(e.message)}</td></tr>`;
+    }
+}
+
+function renderUserHistoryList() {
+    if(!$("userHistoryTable") || !$("userHistorySearch")) return;
+    const q = $("userHistorySearch").value.toLowerCase().trim();
+    const list = users.filter(u => {
+        const pool = `${u.id || ''} ${u.name || ''} ${u.mobile || ''}`.toLowerCase();
+        return pool.includes(q);
+    });
+
+    if(!list.length) {
+        $("userHistoryTable").innerHTML = `<tr><td colspan="5" class="empty">No customers found.</td></tr>`;
+        return;
+    }
+
+    $("userHistoryTable").innerHTML = list.map(u => `
+        <tr>
+            <td><b>${safe(u.id)}</b></td>
+            <td><b>${safe(u.name || 'User')}</b></td>
+            <td>${safe(u.mobile || u.id)}</td>
+            <td><b style="color:#15803d;">₹${u.balance || 0}</b></td>
+            <td>
+                <button class="action view-btn" data-view-user-history="${safe(u.id)}"><i class="fa-solid fa-clock-rotate-left"></i> View Complete History</button>
+            </td>
+        </tr>
+    `).join("");
+
+    document.querySelectorAll("[data-view-user-history]").forEach(btn => {
+        btn.addEventListener("click", () => openUserCompleteHistory(btn.dataset.viewUserHistory));
+    });
+}
+
+window.openUserCompleteHistory = async (uId) => {
+    const user = users.find(x => String(x.id) === String(uId));
+    if (!user) return;
+
+    if($("modalUserHistoryTitle")) $("modalUserHistoryTitle").innerHTML = `📊 Complete History: <b>${safe(user.name || 'User')} (${safe(user.mobile || user.id)})</b>`;
+    const container = $("modalUserHistoryContent");
+    if(!container) return;
+
+    container.innerHTML = `<p style="text-align:center; padding:30px; color:#64748b;">Fetching complete user history...</p>`;
+    if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "flex";
+
+    try {
+        // Fetch user specific deposits
+        const depSnap = await getDocs(collection(db, "deposits"));
+        const userDeps = [];
+        depSnap.forEach(d => {
+            const data = d.data();
+            const cleanUid = String(data.uid || data.userId || "").replace(/\D/g, "");
+            if (cleanUid === String(user.id).replace(/\D/g, "")) {
+                const timeInfo = parseItemTime(data.createdAt || data.date);
+                userDeps.push({ ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+            }
+        });
+        userDeps.sort((a, b) => b.timeObj - a.timeObj);
+
+        // Fetch user specific withdrawals
+        const withSnap = await getDocs(collection(db, "withdrawals"));
+        const userWiths = [];
+        withSnap.forEach(d => {
+            const data = d.data();
+            const cleanUid = String(data.uid || data.mobile || "").replace(/\D/g, "");
+            if (cleanUid === String(user.id).replace(/\D/g, "")) {
+                const timeInfo = parseItemTime(data.createdAt || data.date);
+                userWiths.push({ ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+            }
+        });
+        userWiths.sort((a, b) => b.timeObj - a.timeObj);
+
+        // Fetch user specific battles
+        const batSnap = await getDocs(collection(db, "battles"));
+        const userBats = [];
+        batSnap.forEach(d => {
+            const data = d.data();
+            const cleanUid = String(user.id).replace(/\D/g, "");
+            if (String(data.creatorUid || "").replace(/\D/g, "") === cleanUid || String(data.acceptedUid || "").replace(/\D/g, "") === cleanUid) {
+                const timeInfo = parseItemTime(data.resolvedAt || data.startedAt || data.createdAt);
+                userBats.push({ id: d.id, ...data, formattedDate: timeInfo.formatted, timeObj: timeInfo.dateObj });
+            }
+        });
+        userBats.sort((a, b) => b.timeObj - a.timeObj);
+
+        // Calculate Battle Stats
+        let totalBattles = userBats.length;
+        let winBattles = 0;
+        let lossBattles = 0;
+        let cancelBattles = 0;
+
+        userBats.forEach(b => {
+            if (b.status === "completed") {
+                if (String(b.winnerUid || "").replace(/\D/g, "") === String(user.id).replace(/\D/g, "")) {
+                    winBattles++;
+                } else {
+                    lossBattles++;
+                }
+            } else if (b.status === "cancelled") {
+                cancelBattles++;
+            }
+        });
+
+        // Render inside Modal
+        container.innerHTML = `
+            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:16px;">
+                <div style="background:#f0f9ff; border:1px solid #bae6fd; border-radius:14px; padding:12px; text-align:center;">
+                    <small style="color:#64748b; font-weight:800; font-size:10px;">TOTAL BALANCE</small>
+                    <h3 style="color:#0c4a6e; font-size:18px; font-weight:900; margin-top:4px;">₹${user.balance || 0}</h3>
+                </div>
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:14px; padding:12px; text-align:center;">
+                    <small style="color:#15803d; font-weight:800; font-size:10px;">MATCHES PLAYED</small>
+                    <h3 style="color:#15803d; font-size:18px; font-weight:900; margin-top:4px;">${totalBattles}</h3>
+                </div>
+                <div style="background:#fefce8; border:1px solid #fef08a; border-radius:14px; padding:12px; text-align:center;">
+                    <small style="color:#854d0e; font-weight:800; font-size:10px;">WON / LOST</small>
+                    <h3 style="color:#854d0e; font-size:16px; font-weight:900; margin-top:4px;">${winBattles} W / ${lossBattles} L</h3>
+                </div>
+                <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:14px; padding:12px; text-align:center;">
+                    <small style="color:#be123c; font-weight:800; font-size:10px;">CANCELLED</small>
+                    <h3 style="color:#be123c; font-size:18px; font-weight:900; margin-top:4px;">${cancelBattles}</h3>
+                </div>
+            </div>
+
+            <!-- DEPOSIT HISTORY -->
+            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e; margin:14px 0 6px;"><i class="fa-solid fa-credit-card"></i> Deposit History (${userDeps.length})</h4>
+            <div class="table" style="max-height:160px; margin-bottom:14px;">
+                <table>
+                    <thead><tr><th>Amount</th><th>UTR</th><th>Status</th><th>Date & Time</th></tr></thead>
+                    <tbody>
+                        ${userDeps.length ? userDeps.map(d => `<tr><td><b>₹${d.amount}</b></td><td>${safe(d.utr || '—')}</td><td><span class="badge ${safe(d.status)}">${safe(d.status)}</span></td><td>${d.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No deposit records found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- WITHDRAWAL HISTORY -->
+            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e; margin:14px 0 6px;"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawal History (${userWiths.length})</h4>
+            <div class="table" style="max-height:160px; margin-bottom:14px;">
+                <table>
+                    <thead><tr><th>Amount</th><th>Mode Details</th><th>Status</th><th>Date & Time</th></tr></thead>
+                    <tbody>
+                        ${userWiths.length ? userWiths.map(w => `<tr><td><b>₹${w.amount}</b></td><td>${w.mode === 'BANK' ? 'Bank: ' + safe(w.accountNumber) : 'UPI: ' + safe(w.upiId)}</td><td><span class="badge ${safe(w.status)}">${safe(w.status)}</span></td><td>${w.formattedDate}</td></tr>`).join("") : `<tr><td colspan="4" class="empty">No withdrawal records found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- BATTLE HISTORY -->
+            <h4 style="font-size:14px; font-weight:850; color:#0c4a6e; margin:14px 0 6px;"><i class="fa-solid fa-gamepad"></i> Battle History (${userBats.length})</h4>
+            <div class="table" style="max-height:180px;">
+                <table>
+                    <thead><tr><th>Battle ID</th><th>Entry & Prize</th><th>Room Code</th><th>Status / Result</th><th>Date & Time</th></tr></thead>
+                    <tbody>
+                        ${userBats.length ? userBats.map(b => {
+                            let resTxt = b.status;
+                            let resBadge = 'pending';
+                            if(b.status === 'completed') {
+                                if(String(b.winnerUid || "").replace(/\D/g, "") === String(user.id).replace(/\D/g, "")) {
+                                    resTxt = 'WON (+₹' + b.prize + ')';
+                                    resBadge = 'approved';
+                                } else {
+                                    resTxt = 'LOST (-₹' + b.amount + ')';
+                                    resBadge = 'rejected';
+                                }
+                            } else if(b.status === 'cancelled') {
+                                resTxt = 'CANCELLED (Refunded)';
+                                resBadge = 'pending';
+                            }
+                            return `<tr><td><b>${safe(b.id)}</b></td><td>₹${b.amount} (Win: ₹${b.prize})</td><td>${safe(b.roomCode || '—')}</td><td><span class="badge ${resBadge}">${resTxt}</span></td><td>${b.formattedDate}</td></tr>`;
+                        }).join("") : `<tr><td colspan="5" class="empty">No battle records found.</td></tr>`}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } catch(e) {
+        container.innerHTML = `<p style="text-align:center; padding:30px; color:#be123c;">Error loading history: ${safe(e.message)}</p>`;
+    }
+};
+
+window.closeUserCompleteHistoryModal = () => {
+    if($("userCompleteHistoryModal")) $("userCompleteHistoryModal").style.display = "none";
+};
+
+if($("userHistorySearch")) $("userHistorySearch").addEventListener("input", renderUserHistoryList);
+if($("refreshUserHistory")) $("refreshUserHistory").addEventListener("click", loadUserHistoryList);
 
 // ================= BATTLES MANAGEMENT & DISPUTES =================
 async function loadBattles() {
