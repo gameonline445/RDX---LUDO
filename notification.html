@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>RDX LUDO - Notifications</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <script>
+    // Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+    if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+        window.location.replace("login.html");
+    }
+    </script>
+
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
         body{background:linear-gradient(180deg,#f8faff 0%,#eef4ff 50%,#f1f5f9 100%);color:#101a38;min-height:100vh;padding-bottom:85px;}
@@ -17,7 +25,7 @@
         .topicon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;font-size:16px;color:#ffffff;cursor:pointer;}
         .icon-bell{background:#7368ef;} .icon-cash{background:#35bf71;} .icon-gift{background:#ff933c;}
         .page-heading{padding:16px 18px 8px;display:flex;justify-content:space-between;align-items:center;}
-        .notif-card{background:#ffffff;border-radius:20px;padding:16px;margin:0 18px 12px;border:1.5px solid #bdd0f0;display:flex;flex-direction:column;gap:6px;}
+        .notif-card{background:#ffffff;border-radius:20px;padding:16px;margin:0 18px 12px;border:1.5px solid #bdd0f0;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 14px rgba(2,132,199,0.04);}
         .bottom{height:64px;display:grid;grid-template-columns:repeat(4,1fr);background:#ffffff;border-top:1px solid #d5deed;position:fixed;bottom:0;left:0;right:0;z-index:100;}
         .nav{border:0;background:#ffffff;color:#6d7890;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:12px;text-decoration:none;cursor:pointer;}
         .nav.active{color:#18213a;font-weight:900;}
@@ -27,15 +35,15 @@
 
     <header class="top-bar">
         <div class="header-left">
-            <button class="back-btn" onclick="history.back()"><i class="fa-solid fa-chevron-left"></i></button>
-            <div class="logo" onclick="location.href='dashboard.html'">
+            <button class="back-btn" onclick="window.location.replace('dashboard.html')"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="logo" onclick="window.location.replace('dashboard.html')">
                 <img src="logo.png" alt="RDX Logo">
             </div>
         </div>
         <div class="header-icons">
-            <div class="topicon icon-bell" onclick="location.href='notification.html'">🔔</div>
-            <div class="topicon icon-cash" onclick="location.href='wallet.html'">💵</div>
-            <div class="topicon icon-gift" onclick="location.href='referral.html'">🎁</div>
+            <div class="topicon icon-bell" onclick="window.location.replace('notification.html')">🔔</div>
+            <div class="topicon icon-cash" onclick="window.location.replace('wallet.html')">💵</div>
+            <div class="topicon icon-gift" onclick="window.location.replace('referral.html')">🎁</div>
         </div>
     </header>
 
@@ -48,10 +56,10 @@
     </section>
 
     <nav class="bottom">
-        <a class="nav" href="dashboard.html"><b>🏠</b>Home</a>
-        <a class="nav" href="wallet.html"><b>💰</b>Wallet</a>
-        <a class="nav" href="support.html"><b>🎧</b>Support</a>
-        <a class="nav" href="profile.html"><b>👤</b>Profile</a>
+        <button class="nav" onclick="window.location.replace('dashboard.html')"><b>🏠</b>Home</button>
+        <button class="nav" onclick="window.location.replace('wallet.html')"><b>💰</b>Wallet</button>
+        <button class="nav" onclick="window.location.replace('support.html')"><b>🎧</b>Support</button>
+        <button class="nav" onclick="window.location.replace('profile.html')"><b>👤</b>Profile</button>
     </nav>
 
     <script type="module">
@@ -72,22 +80,36 @@
         const currentUserId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
 
         async function loadNotifs() {
-            const snap = await getDocs(collection(db, "notifications"));
-            let list = [];
-            snap.forEach(d => {
-                const data = d.data();
-                if(data.target === 'all' || String(data.uid).includes(currentUserId)) list.push(data);
-            });
+            try {
+                const snap = await getDocs(collection(db, "notifications"));
+                let list = [];
+                snap.forEach(d => {
+                    const data = d.data();
+                    const targetStr = String(data.target || "").toLowerCase();
+                    const notifUid = String(data.uid || "").replace(/\D/g, "");
 
-            const container = document.getElementById("notif-list");
-            if(!list.length) { container.innerHTML = "<div style='text-align:center;padding:40px;'>Koi notification nahi hai.</div>"; return; }
+                    // Agar target 'all' hai ya user ka mobile/uid match karta hai
+                    if(targetStr === 'all' || targetStr === '' || notifUid === "" || notifUid.includes(currentUserId) || currentUserId.includes(notifUid)) {
+                        list.push(data);
+                    }
+                });
 
-            container.innerHTML = list.map(n => `
-                <div class="notif-card">
-                    <b style="color:#2563eb;">${n.title}</b>
-                    <p style="font-size:13px;color:#475569;">${n.message}</p>
-                </div>
-            `).join("");
+                const container = document.getElementById("notif-list");
+                if(!list.length) { 
+                    container.innerHTML = "<div style='text-align:center;padding:40px;color:#7a879f;'>Koi notification nahi hai.</div>"; 
+                    return; 
+                }
+
+                container.innerHTML = list.map(n => `
+                    <div class="notif-card">
+                        <b style="color:#2563eb;font-size:15px;">${n.title || 'Notification'}</b>
+                        <p style="font-size:13px;color:#475569;line-height:1.4;">${n.message || ''}</p>
+                    </div>
+                `).join("");
+            } catch(e) {
+                console.error("Error loading notifications:", e);
+                document.getElementById("notif-list").innerHTML = "<div style='text-align:center;padding:40px;color:#ef4444;'>Notifications load karne mein error aayi.</div>";
+            }
         }
         loadNotifs();
     </script>
