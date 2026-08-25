@@ -9,6 +9,11 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     
     <script>
+    // Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+    if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+        window.location.replace("login.html");
+    }
+
     const firebaseConfig = {
         apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
         authDomain: "rdx-ludo.firebaseapp.com",
@@ -142,7 +147,7 @@
         window.submitWithdrawal = async function() {
             const amount = Number(document.getElementById("withdrawAmount").value);
             if (!amount || amount < 300) {
-                return alert("Minimum withdrawal amount ₹300 hai[span_0](start_span)[span_0](end_span)!");
+                return alert("Minimum withdrawal amount ₹300 hai!");
             }
             if (amount > currentWinnings) {
                 return alert(`Aapke paas withdraw karne ke liye sirf ₹${currentWinnings} winnings balance hai!`);
@@ -153,7 +158,6 @@
             }
 
             try {
-                // Instant deduction from user winnings and total balance
                 const userRef = firebaseDB.collection("customers").doc(userDocId);
                 
                 await firebaseDB.runTransaction(async (transaction) => {
@@ -213,7 +217,10 @@
                              localStorage.getItem("rdxMobile") ||
                              localStorage.getItem("userMobile");
 
-                if(!mobile) return;
+                if(!mobile) {
+                    window.location.replace("login.html");
+                    return;
+                }
                 const cleanMobile = String(mobile).replace(/\D/g,"");
                 userDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
