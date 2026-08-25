@@ -12,6 +12,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+</script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
@@ -423,28 +430,28 @@ button,input{font:inherit;}
     </div>
 
     <div class="drawer-links">
-        <button class="drawer-item" onclick="location.href='dashboard.html'"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="location.href='profile.html'"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="location.href='wallet.html'"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="location.href='deposit.html'"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
-        <button class="drawer-item" onclick="location.href='withdraw.html'"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
-        <button class="drawer-item" onclick="location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
-        <button class="drawer-item" onclick="location.href='referral.html'"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
-        <button class="drawer-item" onclick="location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
+        <button class="drawer-item" onclick="location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="drawer-item" onclick="location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
+        <button class="drawer-item" onclick="location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
+        <button class="drawer-item" onclick="location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
+        <button class="drawer-item" onclick="location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
+        <button class="drawer-item" onclick="location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
+        <button class="drawer-item" onclick="location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
+        <button class="drawer-item" onclick="location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
     </div>
 </div>
 
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="location.href='dashboard.html'">
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification icon-only" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
     </div>
 </header>
 
@@ -476,10 +483,10 @@ button,input{font:inherit;}
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
@@ -525,7 +532,7 @@ function parseItemTime(ts) {
 }
 
 async function loadHeaderUserData() {
-    if (!userId) { location.href = "login.html"; return; }
+    if (!userId) { window.location.replace("login.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
@@ -663,12 +670,10 @@ function renderLogs() {
 
     let filtered = allLogs;
 
-    // Filter by Tab
     if (activeTab === "battles") filtered = allLogs.filter(x => x.type === "battle");
     else if (activeTab === "deposits") filtered = allLogs.filter(x => x.type === "deposit");
     else if (activeTab === "withdrawals") filtered = allLogs.filter(x => x.type === "withdrawal");
 
-    // Filter by Search Query (Date, UTR, Amount, Status, Opponent Name)
     if (searchVal !== "") {
         filtered = filtered.filter(item => (item.searchKey || "").toLowerCase().includes(searchVal));
     }
@@ -774,7 +779,6 @@ function renderLogs() {
     }).join("");
 }
 
-// Search Bar Real-Time Trigger
 document.getElementById("historySearchInput").addEventListener("input", renderLogs);
 
 function setFilter(type, btnEl) {
