@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RDX LUDO - Battles</title>
 
 <!-- FontAwesome for Icons -->
@@ -11,6 +11,27 @@
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+let firebaseDB = null;
+try {
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebaseDB = firebase.firestore();
+} catch(error){ console.error(error); }
+</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -480,7 +501,6 @@ button,input{font:inherit;}
 
         <div class="section-head"><i class="fa-solid fa-fire-flame-curved" style="color:#ea580c;"></i> Running Battles</div>
         <div id="runningBattlesList">
-            <!-- 4 FAKE ACTIVE DUMMY RUNNING BATTLES (₹300, ₹500, ₹1000, ₹2000) -->
             <div class="battle-card">
                 <span class="badge-tag tag-live">● LIVE</span>
                 <div class="battle-meta" style="margin-top:6px;">
@@ -641,17 +661,6 @@ button,input{font:inherit;}
 </nav>
 
 <script>
-const firebaseConfig = {
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain: "rdx-ludo.firebaseapp.com",
-    projectId: "rdx-ludo",
-    storageBucket: "rdx-ludo.firebasestorage.app",
-    messagingSenderId: "928340814840",
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
-};
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const firebaseDB = firebase.firestore();
-
 function getCleanUserId() {
     let mobile = localStorage.getItem("rdxFirebaseUserId") || 
                  localStorage.getItem("rdxVerifiedMobile") || 
@@ -698,7 +707,7 @@ async function loadUserData() {
     });
 }
 
-// 1. CREATE BATTLE (Maximum 2 battles allowed simultaneously)
+// 1. CREATE BATTLE
 async function createBattle() {
     if(activeBattlesCount >= 2) {
         alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain. Pehle ek match complete karein.");
@@ -886,13 +895,11 @@ function listenBattles() {
     });
 }
 
-// DELETE BATTLE
 async function deleteBattle(bId) {
     if(!confirm("Battle delete karein?")) return;
     await firebaseDB.collection("battles").doc(bId).delete();
 }
 
-// REQUEST TO PLAY
 async function requestPlayBattle(bId, amt) {
     if(activeBattlesCount >= 2) {
         alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain.");
@@ -913,7 +920,6 @@ async function requestPlayBattle(bId, amt) {
     });
 }
 
-// CANCEL PLAY REQUEST
 async function cancelMyPlayRequest(bId) {
     if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
     await firebaseDB.collection("battles").doc(bId).update({
@@ -924,7 +930,6 @@ async function cancelMyPlayRequest(bId) {
     });
 }
 
-// REJECT BATTLE
 async function rejectBattleRequest(bId) {
     await firebaseDB.collection("battles").doc(bId).update({
         status: "open",
@@ -934,7 +939,6 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-// START BATTLE (WALLET DEDUCT WHEN BOTH ACCEPT)
 async function startBattle(bId, amt, oppUid) {
     const cleanMobile = String(userId).replace(/\D/g,"");
     const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
@@ -968,7 +972,6 @@ async function startBattle(bId, amt, oppUid) {
     }
 }
 
-// RENDER ACTIVE ROOM VIEW
 function renderRoomView(b, isCreator) {
     document.getElementById("lobbyView").style.display = "none";
     document.getElementById("roomView").style.display = "block";
@@ -1018,7 +1021,6 @@ function copyRoomCode() {
     alert("Room Code Copied: " + code);
 }
 
-// PROOF COMPRESSION
 function openProofBox(type) {
     selectedResultType = type;
     document.getElementById("proofUploadBox").style.display = "block";
@@ -1072,7 +1074,6 @@ function compressImageFile(file) {
     });
 }
 
-// UPLOAD PROOF & SUBMIT RESULT
 async function uploadProofAndSubmit() {
     const file = document.getElementById("winProofFile").files[0];
     if(selectedResultType === 'won' && !file) {
@@ -1105,7 +1106,6 @@ async function uploadProofAndSubmit() {
     btn.textContent = "Submit Proof & Claim";
 }
 
-// AUTOMATIC RESULT EVALUATION ENGINE (WITH CANCEL/DISPUTE GOING TO ADMIN CONFLICT)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -1130,7 +1130,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // IF CANCEL OR CONFLICT -> SENDS TO ADMIN CONFLICT PANEL FOR REFUND/SETTLEMENT
         if(myResult === "cancel" || otherResult === "cancel") {
             updates.status = "conflict";
             updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
