@@ -9,9 +9,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
     
     <script>
-    // Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+    // Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
     if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-        window.location.replace("login.html");
+        window.location.replace("index.html");
     }
 
     const firebaseConfig = {
@@ -79,15 +79,15 @@
 
     <header class="top-bar">
         <div class="header-left">
-            <button class="back-btn" onclick="location.href='wallet.html'"><i class="fa-solid fa-chevron-left"></i></button>
-            <div class="logo" onclick="location.href='dashboard.html'">
+            <button class="back-btn" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-chevron-left"></i></button>
+            <div class="logo" onclick="window.location.replace('dashboard.html')">
                 <img src="logo.png" alt="RDX Logo">
             </div>
         </div>
         <div class="header-icons">
-            <div class="topicon icon-bell" onclick="location.href='notification.html'">🔔</div>
-            <div class="topicon icon-cash" onclick="location.href='wallet.html'">💵</div>
-            <div class="topicon icon-gift" onclick="location.href='referral.html'">🎁</div>
+            <div class="topicon icon-bell" onclick="window.location.replace('notification.html')">🔔</div>
+            <div class="topicon icon-cash" onclick="window.location.replace('wallet.html')">💵</div>
+            <div class="topicon icon-gift" onclick="window.location.replace('referral.html')">🎁</div>
         </div>
     </header>
 
@@ -124,10 +124,10 @@
     </main>
 
     <nav class="bottom-nav">
-        <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-        <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+        <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+        <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+        <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
     </nav>
 
     <script>
@@ -202,7 +202,7 @@
 
                 await firebaseDB.collection("withdrawals").add(data);
                 alert("✅ Withdrawal request successfully submit ho gayi hai aur rashi winnings se cut kar li gayi hai!");
-                location.href = "history.html";
+                window.location.replace("history.html");
             } catch(e) {
                 alert("Withdrawal Error: " + e.message);
             }
@@ -218,7 +218,7 @@
                              localStorage.getItem("userMobile");
 
                 if(!mobile) {
-                    window.location.replace("login.html");
+                    window.location.replace("index.html");
                     return;
                 }
                 const cleanMobile = String(mobile).replace(/\D/g,"");
