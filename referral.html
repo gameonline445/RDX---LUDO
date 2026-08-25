@@ -10,9 +10,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("login.html");
+    window.location.replace("index.html");
 }
 </script>
 
@@ -149,7 +149,7 @@ function getUserId() {
 const currentUserId = getUserId();
 
 async function loadReferralData() {
-    if (!currentUserId) { window.location.replace("login.html"); return; }
+    if (!currentUserId) { window.location.replace("index.html"); return; }
     let docId = currentUserId.length === 10 ? "91" + currentUserId : currentUserId;
     myReferralCode = localStorage.getItem("rdxReferral") || ("RDX" + currentUserId.slice(-4));
     document.getElementById("referralCode").textContent = myReferralCode;
