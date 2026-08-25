@@ -13,9 +13,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("login.html");
+    window.location.replace("index.html");
 }
 </script>
 
@@ -430,14 +430,14 @@ button,input{font:inherit;}
     </div>
 
     <div class="drawer-links">
-        <button class="drawer-item" onclick="location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
-        <button class="drawer-item" onclick="location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
-        <button class="drawer-item" onclick="location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
-        <button class="drawer-item" onclick="location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
-        <button class="drawer-item" onclick="location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
+        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
+        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
+        <button class="drawer-item" onclick="window.location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
+        <button class="drawer-item" onclick="window.location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
+        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
+        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
+        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
     </div>
 </div>
 
@@ -532,7 +532,7 @@ function parseItemTime(ts) {
 }
 
 async function loadHeaderUserData() {
-    if (!userId) { window.location.replace("login.html"); return; }
+    if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
