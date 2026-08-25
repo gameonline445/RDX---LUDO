@@ -316,8 +316,7 @@ button{font:inherit;}
 .menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
 .menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-
-.drawer-footer{padding:14px;border-top:1px solid #e2e8f0;display:none;}
+.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -373,6 +372,13 @@ button{font:inherit;}
 
 <body>
 
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+</script>
+
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
@@ -396,6 +402,7 @@ button{font:inherit;}
         <button class="drawer-item" onclick="location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
         <button class="drawer-item" onclick="location.href='notification.html'"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
         <button class="drawer-item" onclick="location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
     </div>
 </div>
 
@@ -488,7 +495,7 @@ function toggleMenu() {
 }
 
 async function loadDashboardData() {
-    if (!userId) { location.href = "login.html"; return; }
+    if (!userId) { window.location.replace("login.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
@@ -557,7 +564,9 @@ function logout() {
     localStorage.removeItem("rdxFirebaseUserId");
     localStorage.removeItem("rdxVerifiedMobile");
     localStorage.removeItem("rdxAccessToken");
-    location.href = "login.html";
+    
+    // window.location.replace ka use karein taaki back button se wapas dashboard par na aa sake
+    window.location.replace("login.html");
 }
 
 window.addEventListener("load", () => {
