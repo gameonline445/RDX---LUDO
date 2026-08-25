@@ -340,7 +340,7 @@ button{font:inherit;}
     width:34px;
     height:34px;
     border-radius:50%;
-    border:1px solid #bae6fd;
+    border:1.5px solid #bae6fd;
     background:#ffffff;
     color:#0c4a6e;
     font-size:16px;
@@ -478,7 +478,7 @@ button{font:inherit;}
     height:32px;
     border-radius:50%;
     background:#ffffff;
-    border:1px solid #bae6fd;
+    border:1.5px solid #bae6fd;
     color:#0c4a6e;
     display:flex;
     align-items:center;
@@ -528,9 +528,9 @@ button{font:inherit;}
 <body>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("login.html");
+    window.location.replace("index.html");
 }
 </script>
 
@@ -551,13 +551,13 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </div>
 
     <div class="drawer-links">
-        <button class="drawer-item" onclick="location.href='dashboard.html'"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="location.href='profile.html'"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="location.href='wallet.html'"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="location.href='referral.html'"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
-        <button class="drawer-item" onclick="location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
-        <button class="drawer-item" onclick="location.href='notification.html'"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
-        <button class="drawer-item" onclick="location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
+        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
+        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
+        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
+        <button class="drawer-item" onclick="window.location.replace('notification.html')"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
+        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
         <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
     </div>
 </div>
@@ -565,14 +565,14 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="location.href='dashboard.html'">
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰</button>
-        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁</button>
+        <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰</button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁</button>
     </div>
 </header>
 
@@ -633,7 +633,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     <!-- ACTIONS -->
     <div class="section-label">QUICK ACTIONS</div>
     <div class="action-grid">
-        <div class="action-card" onclick="location.href='history.html'">
+        <div class="action-card" onclick="window.location.replace('history.html')">
             <div class="action-left">
                 <div class="action-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                 <div class="action-text">
@@ -644,7 +644,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
             <i class="fa-solid fa-angle-right" style="color:#94a3b8; font-size:12px;"></i>
         </div>
 
-        <div class="action-card" onclick="location.href='support.html'">
+        <div class="action-card" onclick="window.location.replace('support.html')">
             <div class="action-left">
                 <div class="action-icon"><i class="fa-solid fa-headset"></i></div>
                 <div class="action-text">
@@ -663,10 +663,10 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item active" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item active" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <!-- MANUAL DOCUMENT KYC MODAL -->
@@ -678,7 +678,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
         <div class="modal-body">
             <label>ENTER 12-DIGIT ID NUMBER</label>
-            <input type="text" id="kycDocNumber" placeholder="XXXX XXXX XXXX" maxlength="12" inputmode="numeric">
+            <input type="text" id="kycDocNumber" placeholder="[Aadhaar Redacted]" maxlength="12" inputmode="numeric">
 
             <label>ID FRONT PHOTO</label>
             <input type="file" id="kycFrontFile" accept="image/*">
@@ -720,7 +720,7 @@ function toggleMenu() {
 
 async function loadUserProfile() {
     if (!userId) {
-        window.location.replace("login.html");
+        window.location.replace("index.html");
         return;
     }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -882,8 +882,8 @@ async function logout() {
     }
     localStorage.clear();
     sessionStorage.clear();
-    // window.location.replace ka use kiya gaya hai taaki back button se wapas profile page par na aa sake
-    window.location.replace("login.html");
+    // Logout hone par seedha index.html par redirect karega aur back history disable karega
+    window.location.replace("index.html");
 }
 
 window.addEventListener("load", loadUserProfile);
