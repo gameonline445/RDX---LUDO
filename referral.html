@@ -9,6 +9,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+</script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{
@@ -68,15 +75,15 @@ button{font:inherit;}
 
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
-        <div class="logo" onclick="location.href='dashboard.html'">
+        <button class="menu-btn" onclick="window.location.replace('dashboard.html')">☰</button>
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="location.href='notification.html'">🔔</button>
-        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰</button>
-        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁</button>
+        <button class="header-icon notification" onclick="window.location.replace('notification.html')">🔔</button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰</button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁</button>
     </div>
 </header>
 
@@ -105,10 +112,10 @@ button{font:inherit;}
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <div class="toast" id="toast"></div>
@@ -142,7 +149,7 @@ function getUserId() {
 const currentUserId = getUserId();
 
 async function loadReferralData() {
-    if (!currentUserId) return;
+    if (!currentUserId) { window.location.replace("login.html"); return; }
     let docId = currentUserId.length === 10 ? "91" + currentUserId : currentUserId;
     myReferralCode = localStorage.getItem("rdxReferral") || ("RDX" + currentUserId.slice(-4));
     document.getElementById("referralCode").textContent = myReferralCode;
