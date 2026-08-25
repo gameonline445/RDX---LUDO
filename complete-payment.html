@@ -2,11 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Complete Payment</title>
 
 <!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -255,10 +262,10 @@ input:focus{
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item active" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item active" onclick="location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 </div>
 
@@ -279,7 +286,6 @@ const db = getFirestore(app);
 
 const userId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
 
-// Read amount from URL or LocalStorage
 const urlParams = new URLSearchParams(window.location.search);
 const amt = urlParams.get('amount') || localStorage.getItem("rdxDepositAmount") || 100;
 document.getElementById("amount").value = amt;
@@ -300,7 +306,6 @@ window.copyUPI = () => {
     alert("UPI ID Copied!");
 };
 
-// SUBMIT DEPOSIT WITH DUPLICATE UTR PROTECTION
 window.submitDeposit = async () => {
     const utr = document.getElementById("utr").value.trim();
     if(utr.length < 6) return alert("Kripya valid UTR number bharein");
@@ -310,7 +315,6 @@ window.submitDeposit = async () => {
     btn.textContent = "Checking UTR...";
 
     try {
-        // 1. Database check: Kya yeh UTR pehle se kisi request me hai?
         const q = query(collection(db, "deposits"), where("utr", "==", utr));
         const duplicateSnap = await getDocs(q);
 
@@ -321,7 +325,6 @@ window.submitDeposit = async () => {
             return;
         }
 
-        // 2. Agar UTR unique hai tabhi request submit hogi
         btn.textContent = "Submitting...";
         await addDoc(collection(db, "deposits"), {
             uid: userId,
@@ -333,7 +336,7 @@ window.submitDeposit = async () => {
         });
 
         alert("✅ Deposit Request Submit Ho Gayi!");
-        location.href = "history.html";
+        window.location.replace("history.html");
     } catch(err) {
         alert("Error: " + err.message);
         btn.disabled = false;
