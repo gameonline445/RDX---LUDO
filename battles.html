@@ -13,9 +13,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("login.html");
+    window.location.replace("index.html");
 }
 
 const firebaseConfig = {
@@ -473,15 +473,15 @@ button,input{font:inherit;}
 
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="location.href='dashboard.html'">☰</button>
-        <div class="logo" onclick="location.href='dashboard.html'">
+        <button class="menu-btn" onclick="window.location.replace('dashboard.html')">☰</button>
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification icon-only" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
     </div>
 </header>
 
@@ -654,10 +654,10 @@ button,input{font:inherit;}
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item active" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
@@ -687,7 +687,7 @@ function closeErrorModal() {
 
 async function loadUserData() {
     if(!userId){ 
-        console.log("No user session found.");
+        window.location.replace("index.html");
         return; 
     }
     const cleanMobile = String(userId).replace(/\D/g,"");
