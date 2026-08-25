@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -10,6 +10,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -208,7 +213,10 @@ async function loadFirebaseCustomer(){
                      localStorage.getItem("rdxMobile") ||
                      localStorage.getItem("userMobile");
 
-        if(!mobile) return;
+        if(!mobile) {
+            window.location.replace("login.html");
+            return;
+        }
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
@@ -226,8 +234,6 @@ async function loadFirebaseCustomer(){
             const totalBalance = Number(data.balance || 0);
             const winnings = Number(data.winnings || data.winningBalance || 0);
             
-            // Deposit balance ko strictly total balance aur winnings ke anusaar limit karein
-            // Taaki agar total balance 240 ho toh deposit 1000 na dikhe, balki 240 - winnings ho
             let deposit = Number(data.depositBalance || data.deposit || 0);
             if (deposit > totalBalance || (deposit + winnings !== totalBalance)) {
                 deposit = Math.max(0, totalBalance - winnings);
@@ -250,15 +256,15 @@ window.addEventListener("load", loadFirebaseCustomer);
 
 function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
 function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
-function goHome(){ closeMenu(); window.location.href = "./dashboard.html"; }
-function goWallet(){ closeMenu(); window.location.href = "./wallet.html"; }
-function goDeposit(){ closeMenu(); window.location.href = "./deposit.html"; }
-function goWithdraw(){ closeMenu(); window.location.href = "./withdraw.html"; }
-function goProfile(){ closeMenu(); window.location.href = "./profile.html"; }
-function goSupport(){ closeMenu(); window.location.href = "./support.html"; }
-function goRedeem(){ closeMenu(); window.location.href = "./referral.html"; }
-function goHistory(){ closeMenu(); window.location.href = "./history.html"; }
-function goNotifications(){ closeMenu(); window.location.href = "./notification.html"; }
+function goHome(){ closeMenu(); window.location.replace("./dashboard.html"); }
+function goWallet(){ closeMenu(); window.location.replace("./wallet.html"); }
+function goDeposit(){ closeMenu(); window.location.replace("./deposit.html"); }
+function goWithdraw(){ closeMenu(); window.location.replace("./withdraw.html"); }
+function goProfile(){ closeMenu(); window.location.replace("./profile.html"); }
+function goSupport(){ closeMenu(); window.location.replace("./support.html"); }
+function goRedeem(){ closeMenu(); window.location.replace("./referral.html"); }
+function goHistory(){ closeMenu(); window.location.replace("./history.html"); }
+function goNotifications(){ closeMenu(); window.location.replace("./notification.html"); }
 </script>
 </body>
 </html>
