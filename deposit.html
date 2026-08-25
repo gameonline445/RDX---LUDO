@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>RDX LUDO - Add Cash</title>
 
 <!-- FontAwesome for clean icons -->
@@ -11,6 +11,13 @@
 <!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha login page par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("login.html");
+}
+</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -315,14 +322,14 @@ button{font:inherit;}
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="location.href='dashboard.html'">
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification icon-only" onclick="location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="location.href='wallet.html'">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="location.href='referral.html'">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
     </div>
 </header>
 
@@ -356,10 +363,10 @@ button{font:inherit;}
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item active" onclick="location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item active" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
@@ -411,7 +418,6 @@ amountInput.addEventListener("input", () => {
 function proceedToPayment() {
     const amt = Number(amountInput.value);
 
-    // MIN ₹100 & MAX ₹10,000 STRICT VALIDATION
     if (isNaN(amt) || amt < 100) {
         alert("⚠️ Kam se kam (Minimum) deposit ₹100 hona chahiye.");
         amountInput.focus();
@@ -424,18 +430,17 @@ function proceedToPayment() {
     }
 
     localStorage.setItem("rdxDepositAmount", amt);
-    window.location.href = `./complete-payment.html?amount=${amt}`;
+    window.location.replace(`./complete-payment.html?amount=${amt}`);
 }
 
 async function loadUserData() {
-    if (!userId) { location.href = "login.html"; return; }
+    if (!userId) { window.location.replace("login.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
         const snap = await firebaseDB.collection("customers").doc(docId).get();
         if (snap.exists) {
             const d = snap.data();
-            const displayName = d.name || ("User " + userId.slice(-4));
             document.getElementById("topBalance").textContent = Number(d.balance || 0);
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
@@ -443,6 +448,14 @@ async function loadUserData() {
 }
 
 window.addEventListener("load", loadUserData);
+
+function goHome(){ closeMenu(); window.location.replace("dashboard.html"); }
+function goProfile(){ closeMenu(); window.location.replace("profile.html"); }
+function goWallet(){ closeMenu(); window.location.replace("wallet.html"); }
+function goRedeem(){ closeMenu(); window.location.replace("referral.html"); }
+function goHistory(){ closeMenu(); window.location.replace("history.html"); }
+function goNotifications(){ closeMenu(); window.location.replace("notification.html"); }
+function goSupport(){ closeMenu(); window.location.replace("support.html"); }
 </script>
 
 </body>
