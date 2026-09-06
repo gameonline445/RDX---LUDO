@@ -490,6 +490,12 @@ button,input{font:inherit;}
 </nav>
 
 <script>
+// Mobile Back Button Override: Directly redirect to dashboard on back button press
+history.pushState({ page: 1 }, "", "");
+window.addEventListener("popstate", function (event) {
+    window.location.href = "dashboard.html";
+});
+
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
