@@ -79,7 +79,7 @@
 
     <header class="top-bar">
         <div class="header-left">
-            <button class="back-btn" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="back-btn" onclick="window.history.back()"><i class="fa-solid fa-chevron-left"></i></button>
             <div class="logo" onclick="window.location.replace('dashboard.html')">
                 <img src="logo.png" alt="RDX Logo">
             </div>
@@ -108,15 +108,15 @@
             <input type="number" id="withdrawAmount" placeholder="Min ₹300">
 
             <div id="upiContainer">
-                <label>HOLDER NAME</label><input type="text" id="upiHolderName">
+                <label>HOLDER NAME</label><input type="text" id="upiHolderName" placeholder="Enter Account Holder Name">
                 <label>UPI ID (VPA)</label><input type="text" id="upiId" placeholder="mobile@upi">
             </div>
 
             <div id="bankContainer" style="display: none;">
-                <label>ACCOUNT HOLDER</label><input type="text" id="bankHolderName">
-                <label>BANK NAME</label><input type="text" id="bankName">
-                <label>ACCOUNT NUMBER</label><input type="text" id="accountNumber">
-                <label>IFSC CODE</label><input type="text" id="ifscCode">
+                <label>ACCOUNT HOLDER</label><input type="text" id="bankHolderName" placeholder="Enter Account Holder Name">
+                <label>BANK NAME</label><input type="text" id="bankName" placeholder="Enter Bank Name">
+                <label>ACCOUNT NUMBER</label><input type="text" id="accountNumber" placeholder="Enter Account Number">
+                <label>IFSC CODE</label><input type="text" id="ifscCode" placeholder="Enter IFSC Code">
             </div>
 
             <button class="withdraw-btn" onclick="submitWithdrawal()">Withdraw Money</button>
@@ -157,6 +157,39 @@
                 return alert("User session not found. Please login again.");
             }
 
+            let payload = { 
+                uid: userDocId, 
+                amount: amount, 
+                mode: currentMode.toUpperCase(), 
+                status: "pending", 
+                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+            };
+
+            if (currentMode === "upi") {
+                const holderName = document.getElementById("upiHolderName").value.trim();
+                const upiId = document.getElementById("upiId").value.trim();
+                
+                if(!holderName || !upiId) {
+                    return alert("Kripya Holder Name aur UPI ID dono bharein!");
+                }
+                payload.holderName = holderName;
+                payload.upiId = upiId;
+            } else {
+                const holderName = document.getElementById("bankHolderName").value.trim();
+                const bankName = document.getElementById("bankName").value.trim();
+                const accountNumber = document.getElementById("accountNumber").value.trim();
+                const ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
+
+                if(!holderName || !bankName || !accountNumber || !ifsc) {
+                    return alert("Kripya Bank ki sabhi details dhyan se bharein!");
+                }
+
+                payload.holderName = holderName;
+                payload.bankName = bankName;
+                payload.accountNumber = accountNumber;
+                payload.ifsc = ifsc;
+            }
+
             try {
                 const userRef = firebaseDB.collection("customers").doc(userDocId);
                 
@@ -173,7 +206,7 @@
                     }
 
                     const newWin = winNow - amount;
-                    const newBal = balNow - amount;
+                    const newBal = balNow >= amount ? balNow - amount : 0;
 
                     transaction.update(userRef, {
                         winnings: newWin,
@@ -182,25 +215,7 @@
                     });
                 });
 
-                let data = { 
-                    uid: userDocId, 
-                    amount: amount, 
-                    mode: currentMode.toUpperCase(), 
-                    status: "pending", 
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp() 
-                };
-
-                if (currentMode === "upi") {
-                    data.holderName = document.getElementById("upiHolderName").value.trim();
-                    data.upiId = document.getElementById("upiId").value.trim();
-                } else {
-                    data.holderName = document.getElementById("bankHolderName").value.trim();
-                    data.bankName = document.getElementById("bankName").value.trim();
-                    data.accountNumber = document.getElementById("accountNumber").value.trim();
-                    data.ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
-                }
-
-                await firebaseDB.collection("withdrawals").add(data);
+                await firebaseDB.collection("withdrawals").add(payload);
                 alert("✅ Withdrawal request successfully submit ho gayi hai aur rashi winnings se cut kar li gayi hai!");
                 window.location.replace("history.html");
             } catch(e) {
