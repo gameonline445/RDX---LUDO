@@ -50,14 +50,14 @@ body{
     border-radius:14px;
     background:linear-gradient(145deg,#ff7165,#ff8a70);
     color:#fff;
-    font-size:22px;
+    font-size:20px;
     cursor:pointer;
     display:flex;
     align-items:center;
     justify-content:center;
 }
 
-/* BRAND 3D LOGO */
+/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -92,7 +92,7 @@ body{
 .cash{background:linear-gradient(145deg,#16a34a,#22c55e);}
 .gift{background:linear-gradient(145deg,#ea580c,#f97316);}
 
-/* MAIN */
+/* MAIN CONTENT */
 main{padding:14px;}
 .wrap{width:100%;max-width:560px;margin:auto;}
 .page-title{font-size:18px;font-weight:850;color:#0c4a6e;margin-bottom:12px;}
@@ -174,6 +174,109 @@ input:focus{
     box-shadow:0 6px 16px rgba(2,132,199,0.3);
 }
 
+/* SIDE DRAWER */
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+    backdrop-filter:blur(4px);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+}
+.drawer-overlay.active{opacity:1;pointer-events:auto;}
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:280px;
+    height:100%;
+    background:#ffffff;
+    z-index:1000;
+    box-shadow:4px 0 25px rgba(2,132,199,0.15);
+    transform:translateX(-100%);
+    transition:transform 0.2s cubic-bezier(0.4,0,0.2,1);
+    display:flex;
+    flex-direction:column;
+}
+.drawer.active{transform:translateX(0);}
+.drawer-header{
+    padding:20px 16px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.drawer-user{display:flex;align-items:center;gap:10px;}
+.drawer-avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.drawer-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+.drawer-close{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1px solid #bae6fd;
+    background:#ffffff;
+    color:#0c4a6e;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.drawer-links{flex:1;overflow-y:auto;padding:12px;}
+.drawer-item{
+    width:100%;
+    padding:10px 14px;
+    border:0;
+    border-radius:14px;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    font-weight:750;
+    color:#334155;
+    cursor:pointer;
+    margin-bottom:6px;
+    transition:background 0.2s ease;
+}
+.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-deposit{background:linear-gradient(145deg,#0284c7,#0369a1);}
+.menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+
 /* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
@@ -230,15 +333,44 @@ input:focus{
 
 <body>
 <div class="app">
+
+<!-- SIDE DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
+<div class="drawer" id="sideDrawer">
+    <div class="drawer-header">
+        <div class="drawer-user">
+            <div class="drawer-avatar">
+                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
+            </div>
+            <div>
+                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
+                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
+            </div>
+        </div>
+        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="drawer-links">
+        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
+        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
+        <button class="drawer-item" onclick="window.location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
+        <button class="drawer-item" onclick="window.location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
+        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
+        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
+        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
+    </div>
+</div>
+
 <header class="top">
-    <button class="menu" onclick="window.location.replace('deposit.html')">☰</button>
+    <button class="menu" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
     <div class="logo" onclick="window.location.replace('dashboard.html')">
         <img src="logo.png" alt="RDX Logo">
     </div>
     <div class="spacer"></div>
-    <div class="topicon bell" onclick="window.location.replace('notification.html')">🔔</div>
-    <div class="topicon cash" onclick="window.location.replace('wallet.html')">💵</div>
-    <div class="topicon gift" onclick="window.location.replace('referral.html')">🎁</div>
+    <div class="topicon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></div>
+    <div class="topicon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></div>
+    <div class="topicon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></div>
 </header>
 
 <main>
@@ -268,6 +400,19 @@ input:focus{
 </nav>
 </div>
 
+<script>
+// Mobile Back Button Override: Direct redirect to deposit.html or dashboard.html on back press
+history.pushState({ page: 1 }, "", "");
+window.addEventListener("popstate", function (event) {
+    window.location.href = "deposit.html";
+});
+
+function toggleMenu() {
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
@@ -296,6 +441,17 @@ async function loadSettings() {
             const d = snap.data();
             document.getElementById("upiText").textContent = d.upiId || "rdxpayment@upi";
             if (d.qrCodeUrl) document.getElementById("qrImage").src = d.qrCodeUrl;
+        }
+
+        // Set user info in drawer if available
+        if (userId) {
+            let docId = userId.length === 10 ? "91" + userId : userId;
+            const userSnap = await getDoc(doc(db, "customers", docId));
+            if (userSnap.exists()) {
+                const uData = userSnap.data();
+                document.getElementById("drawerName").textContent = uData.name || ("User " + userId.slice(-4));
+                document.getElementById("drawerMobile").textContent = "+" + userId;
+            }
         }
     } catch(e){ console.error(e); }
 }
