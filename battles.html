@@ -8,15 +8,18 @@
 <!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE SDKs -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check
-if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("index.html");
-}
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+(function checkAuth() {
+    const isLoggedIn = localStorage.getItem("rdxLoggedIn");
+    if (!isLoggedIn || isLoggedIn !== "true") {
+        window.location.replace("index.html");
+    }
+})();
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -26,14 +29,11 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-
 let firebaseDB = null;
 try {
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     firebaseDB = firebase.firestore();
-} catch(error) { 
-    console.error("Firebase init error:", error); 
-}
+} catch(error){ console.error(error); }
 </script>
 
 <style>
@@ -73,7 +73,7 @@ button,input{font:inherit;}
     border-radius:14px;
     background:linear-gradient(145deg,#ff7165,#ff8a70);
     color:white;
-    font-size:20px;
+    font-size:18px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -94,7 +94,12 @@ button,input{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-.logo img{width:100%;height:100%;object-fit:cover;}
+
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
 
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
@@ -298,9 +303,8 @@ button,input{font:inherit;}
     align-items:center;
     justify-content:center;
     gap:8px;
-    cursor:pointer;
+    cursor:default;
     margin-bottom:12px;
-    text-decoration:none;
 }
 .rules-box{
     background:#ffffff;
@@ -320,7 +324,7 @@ button,input{font:inherit;}
     margin-bottom:6px;
 }
 
-/* ACTIONS GRID */
+/* WIN, LOST, CANCEL BUTTONS */
 .status-update-grid-3{
     display:grid;
     grid-template-columns:1fr 1fr 1fr;
@@ -472,15 +476,18 @@ button,input{font:inherit;}
 
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="window.location.replace('dashboard.html')">☰</button>
-        <div class="logo" onclick="window.location.replace('dashboard.html')">
-            <img src="logo.png" alt="RDX Logo" onerror="this.src='https://via.placeholder.com/46?text=RDX'">
+        <!-- Back Button fixed to replace window to index.html -->
+        <button class="menu-btn" onclick="window.location.replace('index.html')">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div class="logo" onclick="window.location.replace('index.html')">
+            <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon notification icon-only" onclick="window.location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.href='wallet.html'">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="window.location.href='referral.html'">🎁 <span id="topReferral">0</span></button>
     </div>
 </header>
 
@@ -500,19 +507,69 @@ button,input{font:inherit;}
 
         <div class="section-head"><i class="fa-solid fa-fire-flame-curved" style="color:#ea580c;"></i> Running Battles</div>
         <div id="runningBattlesList">
-            <p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No active running battles.</p>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹300</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹570</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Rahul_99</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Aman_King</span></div>
+                </div>
+            </div>
+
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹500</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹950</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Karan_007</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">RDX_Pro</span></div>
+                </div>
+            </div>
+
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹1000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹1900</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Vikash_Yadav</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Desi_Gamer</span></div>
+                </div>
+            </div>
+
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹2000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹3800</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Royal_Ludo</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Badshah_77</span></div>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- VIEW 2: ACTIVE MATCH ROOM -->
     <div id="roomView">
-        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back to Lobby</button>
+        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back</button>
 
         <div class="battle-card" style="margin-bottom:12px;">
             <span class="badge-tag tag-live" id="roomLiveBadge">● LIVE MATCH</span>
             <div class="battle-meta" style="margin-top:8px;">
-                <div class="meta-col"><small>ENTRY</small><strong id="roomEntryFee">₹0</strong></div>
-                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong id="roomPrizeFee" style="color:#16a34a;">₹0</strong></div>
+                <div class="meta-col"><small>ENTRY</small><strong id="roomEntryFee">₹100</strong></div>
+                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong id="roomPrizeFee" style="color:#16a34a;">₹190</strong></div>
             </div>
             <div class="vs-row">
                 <div class="player-box">
@@ -534,7 +591,7 @@ button,input{font:inherit;}
 
             <div id="setRoomCodeWrap" style="display:none; margin-top:10px;">
                 <div style="display:flex; gap:8px;">
-                    <input type="text" id="manualRoomCodeInput" class="bet-input" placeholder="Enter Ludo King Code">
+                    <input type="text" id="manualRoomCodeInput" class="bet-input" placeholder="Create room in Ludo King & paste code">
                     <button class="btn-set" onclick="submitRoomCode()">SET</button>
                 </div>
             </div>
@@ -545,26 +602,26 @@ button,input{font:inherit;}
             </div>
 
             <div id="waitingForCodeWrap" style="display:none; text-align:center; padding:12px 0;">
-                <p style="color:#64748b; font-size:12px; font-weight:700;">Waiting for host to update room code...</p>
+                <p style="color:#64748b; font-size:12px; font-weight:700;">Waiting for opponent to create room code...</p>
             </div>
         </div>
 
-        <a href="https://ludoking.com" target="_blank" class="btn-open-ludo">
-            <i class="fa-solid fa-gamepad"></i> Open Ludo King App
-        </a>
+        <button class="btn-open-ludo">
+            Play game in Ludo King App
+        </button>
 
         <div class="rules-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-shield"></i> Match Rules</h4>
-            <div class="rule-item">• Record every game during playback</div>
-            <div class="rule-item">• Video/Screenshot proof required for disputes</div>
-            <div class="rule-item">• Submitting false results leads to account ban</div>
-            <div class="rule-item">• Delaying result updates carries a ₹25 penalty</div>
+            <div class="rule-item">• Record every game</div>
+            <div class="rule-item">• Video proof required for dispute</div>
+            <div class="rule-item">• Wrong result = Penalty on account</div>
+            <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
         <!-- WIN, LOST, CANCEL OPTIONS -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
-            <small style="color:#64748b; font-weight:600;">Submit final match result</small>
+            <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
 
             <div class="status-update-grid-3" id="resultBtnGrid">
                 <button class="btn-won" onclick="openProofBox('won')"><i class="fa-solid fa-trophy"></i> I Won</button>
@@ -572,17 +629,17 @@ button,input{font:inherit;}
                 <button class="btn-cancel" onclick="openProofBox('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
-            <!-- PROOF UPLOAD BOX -->
+            <!-- PROOF UPLOAD (FOR WIN, LOST, CANCEL) -->
             <div class="proof-upload-box" id="proofUploadBox">
-                <label id="proofBoxLabel"><i class="fa-solid fa-image"></i> Upload Screenshot Proof</label>
-                <input type="file" id="winProofFile" accept="image/*">
+                <label id="proofBoxLabel"><i class="fa-solid fa-image"></i> Upload Screenshot / Video Proof</label>
+                <input type="file" id="winProofFile" accept="image/*,video/*">
                 <button class="btn-submit-proof" id="btnSubmitProof" onclick="uploadProofAndSubmit()">
                     Submit Proof & Claim
                 </button>
             </div>
 
             <div id="resultSubmittedMsg" style="display:none; text-align:center; padding:12px 0; color:#0284c7; font-weight:800; font-size:13px;">
-                Result Submitted. Waiting for settlement...
+                Result Submitted. Processing outcome...
             </div>
         </div>
     </div>
@@ -594,8 +651,8 @@ button,input{font:inherit;}
     <div class="modal-box">
         <button class="modal-close-btn" onclick="closeErrorModal()"><i class="fa-solid fa-xmark"></i></button>
         <div class="error-icon-box"><i class="fa-solid fa-circle-xmark"></i></div>
-        <small style="font-size:11px; font-weight:850; color:#ef4444; letter-spacing:1px;">NOTICE</small>
-        <h3 style="font-size:18px; font-weight:900; color:#0f172a; margin:4px 0;">Alert</h3>
+        <small style="font-size:11px; font-weight:850; color:#ef4444; letter-spacing:1px;">ERROR</small>
+        <h3 style="font-size:18px; font-weight:900; color:#0f172a; margin:4px 0;">Error</h3>
         <p style="font-size:13px; color:#64748b; font-weight:600;" id="errorModalMsg">Insufficient balance</p>
         <button class="btn-modal-ok" onclick="closeErrorModal()">OK</button>
     </div>
@@ -603,10 +660,10 @@ button,input{font:inherit;}
 
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item active" onclick="window.location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
@@ -630,48 +687,52 @@ function showErrorModal(msg) {
     document.getElementById("errorModalMsg").textContent = msg;
     document.getElementById("errorModal").style.display = "flex";
 }
-
 function closeErrorModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
 async function loadUserData() {
-    if (!userId) { 
+    if(!userId){ 
         window.location.replace("index.html");
         return; 
     }
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
-    firebaseDB.collection("customers").doc(docId).onSnapshot(snap => {
-        if (snap.exists) {
+    firebaseDB.collection("customers").doc(firebaseDocId).onSnapshot(snap => {
+        if(snap.exists){
             const d = snap.data();
             myCurrentBalance = Number(d.balance || 0);
-            myUserName = d.name || d.username || ("User " + userId.slice(-4));
+            myUserName = d.name || d.username || ("User " + cleanMobile.slice(-4));
             
             document.getElementById("topBalance").textContent = myCurrentBalance;
-            if (document.getElementById("topReferral")) {
+            if(document.getElementById("topReferral")) {
                 document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
             }
+        } else {
+            // Document null milne par auto safety redirect
+            localStorage.clear();
+            window.location.replace("index.html");
         }
-    }, err => console.error("Error loading user context:", err));
+    }, err => {
+        console.error("Firestore read error:", err);
+    });
 }
 
 // 1. CREATE BATTLE
 async function createBattle() {
-    if (activeBattlesCount >= 2) {
-        showErrorModal("Maximum 2 open or active battles allowed simultaneously.");
+    if(activeBattlesCount >= 2) {
+        alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain. Pehle ek match complete karein.");
         return;
     }
 
-    const inputVal = document.getElementById("battleAmountInput").value;
-    const amt = Number(inputVal);
-
-    if (!inputVal || isNaN(amt) || amt < 100) {
-        showErrorModal("Please enter a valid match amount (Minimum ₹100).");
+    const amt = Number(document.getElementById("battleAmountInput").value);
+    if(isNaN(amt) || amt < 100){
+        alert("Kam se kam ₹100 ka match set karein.");
         return;
     }
-    if (myCurrentBalance < amt) {
-        showErrorModal("Insufficient wallet balance.");
+    if(myCurrentBalance < amt){
+        showErrorModal("Insufficient balance");
         return;
     }
 
@@ -694,24 +755,24 @@ async function createBattle() {
         });
         document.getElementById("battleAmountInput").value = "";
     } catch(err) {
-        showErrorModal("Failed to set battle: " + err.message);
+        alert("Error: " + err.message);
     }
 }
 
-// 2. REAL-TIME LOBBY LISTENER
+// 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
-    if (!userId) return;
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    if(!userId) return;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
-        let runningHTML = "";
-        let userActiveCount = 0;
+        let dbRunningHTML = "";
+        let count = 0;
 
         snap.forEach(doc => {
             const b = doc.data();
             const bId = doc.id;
-            
             const creatorClean = String(b.creatorUid || "").replace(/\D/g, "");
             const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "");
             const myClean = String(docId).replace(/\D/g, "");
@@ -719,19 +780,17 @@ function listenBattles() {
             const isCreator = creatorClean === myClean;
             const isAccepter = accepterClean === myClean;
 
-            if ((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
-                userActiveCount++;
+            if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+                count++;
             }
 
-            if ((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
-                if (!activeBattleId || activeBattleId === bId) {
-                    activeBattleId = bId;
-                    renderRoomView(b, isCreator);
-                }
+            if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+                activeBattleId = bId;
+                renderRoomView(b, isCreator);
             }
 
-            if (b.status === "open" || b.status === "requested") {
-                if (b.status === "open") {
+            if(b.status === "open" || b.status === "requested"){
+                if(b.status === "open"){
                     openHTML += `
                         <div class="battle-card">
                             <div class="card-top">
@@ -747,12 +806,12 @@ function listenBattles() {
                             </div>
                         </div>
                     `;
-                } else if (b.status === "requested") {
+                } else if(b.status === "requested"){
                     openHTML += `
                         <div class="battle-card">
                             <div class="card-top">
                                 <span class="badge-tag tag-req">⚔ REQUESTED</span>
-                                <span class="user-tag">HOST: <strong>${b.creatorName}</strong> | OPPONENT: <strong>${b.acceptedName}</strong></span>
+                                <span class="user-tag">FROM <strong>${b.creatorName}</strong> ACCEPTED <strong>${b.acceptedName}</strong></span>
                             </div>
                             <div class="battle-meta">
                                 <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
@@ -760,19 +819,19 @@ function listenBattles() {
                             </div>
                             <div class="card-actions">
                                 ${isCreator ? `
-                                    <button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Accept & Start</button>
-                                    <button class="btn-reject" onclick="rejectBattleRequest('${bId}')">Declined</button>
+                                    <button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Start</button>
+                                    <button class="btn-reject" onclick="rejectBattleRequest('${bId}')">✕ Reject</button>
                                 ` : (isAccepter ? `
-                                    <button class="btn-cancel-req" onclick="cancelMyPlayRequest('${bId}')">Withdraw Request</button>
-                                ` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Pending Host Approval...</span>`)}
+                                    <button class="btn-cancel-req" onclick="cancelMyPlayRequest('${bId}')">Cancel Request</button>
+                                ` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Waiting for Creator...</span>`)}
                             </div>
                         </div>
                     `;
                 }
             }
 
-            if (b.status === "live" || b.status === "conflict") {
-                runningHTML += `
+            if(b.status === "live" || b.status === "conflict"){
+                dbRunningHTML += `
                     <div class="battle-card" onclick="openRunningMatch('${bId}')" style="cursor:pointer;">
                         <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
                         <div class="battle-meta" style="margin-top:6px;">
@@ -782,80 +841,119 @@ function listenBattles() {
                         <div class="vs-row">
                             <div class="player-box"><span class="player-name">${b.creatorName}</span></div>
                             <div class="vs-circle">VS</div>
-                            <div class="player-box"><span class="player-name">${b.acceptedName || 'Opponent'}</span></div>
+                            <div class="player-box"><span class="player-name">${b.acceptedName}</span></div>
                         </div>
                     </div>
                 `;
             }
         });
 
-        activeBattlesCount = userActiveCount;
+        activeBattlesCount = count;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live running battles.</p>`;
-    }, err => console.error("Firestore real-time sync failure:", err));
+        
+        const fakeRunningHTML = `
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹300</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹570</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Rahul_99</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Aman_King</span></div>
+                </div>
+            </div>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹500</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹950</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Karan_007</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">RDX_Pro</span></div>
+                </div>
+            </div>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹1000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹1900</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Vikash_Yadav</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Desi_Gamer</span></div>
+                </div>
+            </div>
+            <div class="battle-card">
+                <span class="badge-tag tag-live">● LIVE</span>
+                <div class="battle-meta" style="margin-top:6px;">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹2000</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹3800</strong></div>
+                </div>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">Royal_Ludo</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">Badshah_77</span></div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById("runningBattlesList").innerHTML = dbRunningHTML + fakeRunningHTML;
+    });
 }
 
 async function deleteBattle(bId) {
-    if (!confirm("Are you sure you want to delete this battle?")) return;
-    try {
-        await firebaseDB.collection("battles").doc(bId).delete();
-    } catch(err) {
-        showErrorModal("Error deleting battle: " + err.message);
-    }
+    if(!confirm("Battle delete karein?")) return;
+    await firebaseDB.collection("battles").doc(bId).delete();
 }
 
 async function requestPlayBattle(bId, amt) {
-    if (activeBattlesCount >= 2) {
-        showErrorModal("You cannot join more than 2 active/pending battles.");
+    if(activeBattlesCount >= 2) {
+        alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain.");
         return;
     }
-    if (myCurrentBalance < amt) {
-        showErrorModal("Insufficient balance to join match.");
+    if(myCurrentBalance < amt){
+        showErrorModal("Insufficient balance");
         return;
     }
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
-    try {
-        await firebaseDB.collection("battles").doc(bId).update({
-            status: "requested",
-            acceptedUid: docId,
-            acceptedName: myUserName,
-            requestTime: firebase.firestore.FieldValue.serverTimestamp()
-        });
-    } catch(err) {
-        showErrorModal("Unable to request match: " + err.message);
-    }
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "requested",
+        acceptedUid: docId,
+        acceptedName: myUserName,
+        requestTime: firebase.firestore.FieldValue.serverTimestamp()
+    });
 }
 
 async function cancelMyPlayRequest(bId) {
-    try {
-        await firebaseDB.collection("battles").doc(bId).update({
-            status: "open",
-            acceptedUid: null,
-            acceptedName: null,
-            requestTime: null
-        });
-    } catch(err) {
-        showErrorModal("Failed to cancel request: " + err.message);
-    }
+    if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "open",
+        acceptedUid: null,
+        acceptedName: null,
+        requestTime: null
+    });
 }
 
 async function rejectBattleRequest(bId) {
-    try {
-        await firebaseDB.collection("battles").doc(bId).update({
-            status: "open",
-            acceptedUid: null,
-            acceptedName: null,
-            requestTime: null
-        });
-    } catch(err) {
-        showErrorModal("Failed to decline request: " + err.message);
-    }
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "open",
+        acceptedUid: null,
+        acceptedName: null,
+        requestTime: null
+    });
 }
 
 async function startBattle(bId, amt, oppUid) {
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
     try {
         await firebaseDB.runTransaction(async t => {
@@ -869,8 +967,8 @@ async function startBattle(bId, amt, oppUid) {
             const p1Bal = Number(p1Snap.data()?.balance || 0);
             const p2Bal = Number(p2Snap.data()?.balance || 0);
 
-            if (p1Bal < amt || p2Bal < amt) {
-                throw new Error("One or both players have insufficient balance.");
+            if(p1Bal < amt || p2Bal < amt){
+                throw new Error("Kisi player ke pass balance kam hai.");
             }
 
             t.update(p1Ref, { balance: p1Bal - amt });
@@ -882,7 +980,7 @@ async function startBattle(bId, amt, oppUid) {
             });
         });
     } catch(err) {
-        showErrorModal(err.message);
+        alert(err.message);
     }
 }
 
@@ -893,25 +991,25 @@ function renderRoomView(b, isCreator) {
     document.getElementById("roomEntryFee").textContent = "₹" + b.amount;
     document.getElementById("roomPrizeFee").textContent = "₹" + b.prize;
     document.getElementById("roomP1Name").textContent = b.creatorName;
-    document.getElementById("roomP2Name").textContent = b.acceptedName || "Opponent";
-    document.getElementById("roomP1Avatar").textContent = (b.creatorName || "P1").charAt(0).toUpperCase();
-    document.getElementById("roomP2Avatar").textContent = (b.acceptedName || "P2").charAt(0).toUpperCase();
+    document.getElementById("roomP2Name").textContent = b.acceptedName;
+    document.getElementById("roomP1Avatar").textContent = b.creatorName.charAt(0).toUpperCase();
+    document.getElementById("roomP2Avatar").textContent = b.acceptedName.charAt(0).toUpperCase();
 
-    if (b.status === "conflict") {
+    if(b.status === "conflict") {
         document.getElementById("roomLiveBadge").className = "badge-tag tag-conflict";
-        document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT";
+        document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT (Under Admin Review)";
     } else {
         document.getElementById("roomLiveBadge").className = "badge-tag tag-live";
         document.getElementById("roomLiveBadge").textContent = "● LIVE MATCH";
     }
 
-    if (b.roomCode) {
+    if(b.roomCode){
         document.getElementById("setRoomCodeWrap").style.display = "none";
         document.getElementById("waitingForCodeWrap").style.display = "none";
         document.getElementById("showRoomCodeWrap").style.display = "flex";
         document.getElementById("displayRoomCode").textContent = b.roomCode;
     } else {
-        if (isCreator) {
+        if(isCreator){
             document.getElementById("setRoomCodeWrap").style.display = "block";
             document.getElementById("waitingForCodeWrap").style.display = "none";
             document.getElementById("showRoomCodeWrap").style.display = "none";
@@ -921,35 +1019,18 @@ function renderRoomView(b, isCreator) {
             document.getElementById("showRoomCodeWrap").style.display = "none";
         }
     }
-
-    const docId = userId.length === 10 ? "91" + userId : userId;
-    if (b[`result_${docId}`]) {
-        document.getElementById("resultBtnGrid").style.display = "none";
-        document.getElementById("proofUploadBox").style.display = "none";
-        document.getElementById("resultSubmittedMsg").style.display = "block";
-    } else {
-        document.getElementById("resultBtnGrid").style.display = "grid";
-        document.getElementById("resultSubmittedMsg").style.display = "none";
-    }
 }
 
 async function submitRoomCode() {
     const code = document.getElementById("manualRoomCodeInput").value.trim();
-    if (!code) { showErrorModal("Please enter a room code."); return; }
-    try {
-        await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
-        document.getElementById("manualRoomCodeInput").value = "";
-    } catch(err) {
-        showErrorModal("Failed to set room code: " + err.message);
-    }
+    if(!code){ alert("Room code likhein."); return; }
+    await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
 }
 
 function copyRoomCode() {
     const code = document.getElementById("displayRoomCode").textContent;
-    if (code && code !== "--------") {
-        navigator.clipboard.writeText(code);
-        alert("Room Code copied to clipboard: " + code);
-    }
+    navigator.clipboard.writeText(code);
+    alert("Room Code Copied: " + code);
 }
 
 function openProofBox(type) {
@@ -958,15 +1039,15 @@ function openProofBox(type) {
     const label = document.getElementById("proofBoxLabel");
     const btn = document.getElementById("btnSubmitProof");
 
-    if (type === 'won') {
-        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Victory Screenshot Proof`;
-        btn.textContent = "Submit Proof & Claim Win";
-    } else if (type === 'lost') {
-        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional)`;
-        btn.textContent = "Confirm Loss";
-    } else if (type === 'cancel') {
-        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Dispute / Technical Issue Proof`;
-        btn.textContent = "Submit Cancellation Claim";
+    if(type === 'won') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof`;
+        btn.textContent = "Submit Proof & Win Claim";
+    } else if(type === 'lost') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional / Dispute Proof)`;
+        btn.textContent = "Submit Loss Claim";
+    } else if(type === 'cancel') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Cancel / Dispute Proof Screenshot`;
+        btn.textContent = "Submit Cancel Claim";
     }
 }
 
@@ -996,7 +1077,8 @@ function compressImageFile(file) {
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, width, height);
 
-                resolve(canvas.toDataURL("image/jpeg", 0.6));
+                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+                resolve(compressedBase64);
             };
             img.onerror = err => reject(err);
         };
@@ -1006,8 +1088,8 @@ function compressImageFile(file) {
 
 async function uploadProofAndSubmit() {
     const file = document.getElementById("winProofFile").files[0];
-    if (selectedResultType === 'won' && !file) {
-        showErrorModal("Please attach a screenshot proof for winning matches.");
+    if(selectedResultType === 'won' && !file) {
+        alert("Kripya winning screenshot upload karein.");
         return;
     }
 
@@ -1017,34 +1099,33 @@ async function uploadProofAndSubmit() {
 
     try {
         let proofBase64 = null;
-        if (file) {
+        if(file) {
             proofBase64 = await compressImageFile(file);
         }
-        const docId = userId.length === 10 ? "91" + userId : userId;
+        const cleanMobile = String(userId).replace(/\D/g,"");
+        const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         await processResultWithAutoSettlement(docId, selectedResultType, proofBase64);
 
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
+        alert("✅ Claim & Proof Submitted! Admin ya auto-settlement se process hoga.");
     } catch(err) {
-        showErrorModal("Submission failed: " + err.message);
-    } finally {
-        btn.disabled = false;
-        btn.textContent = "Submit Proof & Claim";
+        alert("Error: " + err.message);
     }
+    btn.disabled = false;
+    btn.textContent = "Submit Proof & Claim";
 }
 
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
-    if (!activeBattleId) return;
-
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
         const battleDoc = await t.get(battleRef);
-        if (!battleDoc.exists) return;
+        if(!battleDoc.exists) return;
 
         const b = battleDoc.data();
-        if (b.status === "completed" || b.status === "cancelled") return;
+        if(b.status === "completed" || b.status === "cancelled") return;
 
         const p1Uid = b.creatorUid;
         const p2Uid = b.acceptedUid;
@@ -1057,49 +1138,42 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
         let updates = {
             [`result_${myUid}`]: myResult
         };
-
-        if (proofBase64) {
+        if(proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        if (otherResult === null) {
-            if (myResult === "cancel") {
-                updates.status = "conflict";
-                updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
-            } else {
-                updates.status = "pending_verification";
-            }
-        } else {
-            if (myResult === "cancel" || otherResult === "cancel") {
-                updates.status = "conflict";
-                updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
-            }
-            else if ((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
+        if(myResult === "cancel" || otherResult === "cancel") {
+            updates.status = "conflict";
+            updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
+        else if(otherResult !== null) {
+            if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
                 const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
                 const winnerSnap = await t.get(winnerRef);
 
-                if (winnerSnap.exists) {
-                    const currentBal = Number(winnerSnap.data()?.balance || 0);
-                    const currentWin = Number(winnerSnap.data()?.winnings || winnerSnap.data()?.winningBalance || 0);
-                    const currentPlayed = Number(winnerSnap.data()?.matchesPlayed || 0);
+                const currentBal = Number(winnerSnap.data()?.balance || 0);
+                const currentWin = Number(winnerSnap.data()?.winnings || winnerSnap.data()?.winningBalance || 0);
+                const currentPlayed = Number(winnerSnap.data()?.matchesPlayed || 0);
 
-                    t.update(winnerRef, {
-                        balance: currentBal + prizeAmt,
-                        winnings: currentWin + prizeAmt,
-                        winningBalance: currentWin + prizeAmt,
-                        matchesPlayed: currentPlayed + 1
-                    });
-                }
+                t.update(winnerRef, {
+                    balance: currentBal + prizeAmt,
+                    winnings: currentWin + prizeAmt,
+                    winningBalance: currentWin + prizeAmt,
+                    matchesPlayed: currentPlayed + 1
+                });
 
                 updates.status = "completed";
                 updates.winnerUid = winnerUid;
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
                 updates.resolvedBy = "auto";
-            } else {
+            }
+            else {
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
             }
+        } else {
+            updates.status = "conflict";
         }
 
         t.update(battleRef, updates);
@@ -1107,19 +1181,14 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 }
 
 function showLobbyView() {
-    activeBattleId = null;
     document.getElementById("roomView").style.display = "none";
     document.getElementById("lobbyView").style.display = "block";
 }
 
 function openRunningMatch(bId) {
     activeBattleId = bId;
-    firebaseDB.collection("battles").doc(bId).get().then(doc => {
-        if (doc.exists) {
-            const docId = userId.length === 10 ? "91" + userId : userId;
-            renderRoomView(doc.data(), doc.data().creatorUid === docId);
-        }
-    });
+    document.getElementById("lobbyView").style.display = "none";
+    document.getElementById("roomView").style.display = "block";
 }
 
 window.addEventListener("load", () => {
