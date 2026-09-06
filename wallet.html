@@ -203,6 +203,8 @@ button{font:inherit;}
 </nav>
 
 <script>
+let unsubscribeWalletListener = null;
+
 async function loadFirebaseCustomer(){
     try{
         if(!firebaseDB) return;
@@ -221,34 +223,43 @@ async function loadFirebaseCustomer(){
         const cleanMobile = String(mobile).replace(/\D/g,"");
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
-        const userRef = firebaseDB.collection("customers").doc(firebaseDocId);
+        let userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         let snapshot = await userRef.get();
         
         if(!snapshot.exists) {
-            snapshot = await firebaseDB.collection("customers").doc(cleanMobile).get();
+            firebaseDocId = cleanMobile;
+            userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         }
 
-        if(snapshot && snapshot.exists) {
-            const data = snapshot.data();
-            
-            const totalBalance = Number(data.balance || 0);
-            const winnings = Number(data.winnings || data.winningBalance || 0);
-            
-            let deposit = Number(data.depositBalance || data.deposit || 0);
-            if (deposit > totalBalance || (deposit + winnings !== totalBalance)) {
-                deposit = Math.max(0, totalBalance - winnings);
-            }
+        // Real-time Firestore Listener
+        if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-            document.getElementById("mainBalance").textContent = totalBalance;
-            document.getElementById("topBalance").textContent = totalBalance;
-            document.getElementById("depositBalance").textContent = deposit;
-            document.getElementById("winningBalance").textContent = winnings;
+        unsubscribeWalletListener = userRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                
+                const totalBalance = Number(data.balance || 0);
+                const winnings = Number(data.winnings || data.winningBalance || 0);
+                
+                let deposit = Number(data.depositBalance || data.deposit || 0);
+                if (deposit > totalBalance || (deposit + winnings !== totalBalance)) {
+                    deposit = Math.max(0, totalBalance - winnings);
+                }
 
-            let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(snapshot.id).slice(-4));
-            if(document.getElementById("menuUsername")) {
-                document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                document.getElementById("mainBalance").textContent = totalBalance;
+                document.getElementById("topBalance").textContent = totalBalance;
+                document.getElementById("depositBalance").textContent = deposit;
+                document.getElementById("winningBalance").textContent = winnings;
+
+                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(doc.id).slice(-4));
+                if(document.getElementById("menuUsername")) {
+                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                }
             }
-        }
+        }, (error) => {
+            console.error("Real-time Wallet Sync Error:", error);
+        });
+
     } catch(error){ console.error("Wallet Load Error:", error); }
 }
 
