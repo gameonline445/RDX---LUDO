@@ -8,9 +8,12 @@
 <!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("index.html");
+}
+</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -387,8 +390,6 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-.drawer-footer{display:none;}
-
 /* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
@@ -527,13 +528,6 @@ button{font:inherit;}
 
 <body>
 
-<script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
-if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("index.html");
-}
-</script>
-
 <!-- SIDE DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
@@ -571,8 +565,8 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </div>
     <div class="header-right">
         <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰</button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁</button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -678,7 +672,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
         <div class="modal-body">
             <label>ENTER 12-DIGIT ID NUMBER</label>
-            <input type="text" id="kycDocNumber" placeholder="[Aadhaar Redacted]" maxlength="12" inputmode="numeric">
+            <input type="text" id="kycDocNumber" placeholder="Enter 12-Digit Number" maxlength="12" inputmode="numeric">
 
             <label>ID FRONT PHOTO</label>
             <input type="file" id="kycFrontFile" accept="image/*">
@@ -696,6 +690,33 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 </div>
 
 <script>
+// Mobile Back Button Override: Direct redirect to dashboard.html on back press
+history.pushState({ page: 1 }, "", "");
+window.addEventListener("popstate", function (event) {
+    window.location.href = "dashboard.html";
+});
+
+function toggleMenu() {
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
+
+function openKycModal() {
+    document.getElementById("kycDocNumber").value = "";
+    document.getElementById("kycFrontFile").value = "";
+    document.getElementById("kycBackFile").value = "";
+    document.getElementById("kycModal").style.display = "flex";
+}
+
+function closeKycModal() {
+    document.getElementById("kycModal").style.display = "none";
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -704,19 +725,15 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const firebaseDB = firebase.firestore();
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 function getCleanUserId() {
     const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
-
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
 
 async function loadUserProfile() {
     if (!userId) {
@@ -726,8 +743,10 @@ async function loadUserProfile() {
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
-        const snap = await firebaseDB.collection("customers").doc(docId).get();
-        if (snap.exists) {
+        const userRef = doc(db, "customers", docId);
+        const snap = await getDoc(userRef);
+
+        if (snap.exists()) {
             const d = snap.data();
             const userName = d.name || ("User " + userId.slice(-4));
             document.getElementById("profileName").textContent = userName;
@@ -745,9 +764,9 @@ async function loadUserProfile() {
             document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
 
             const myRefCode = String(d.referralCode || ("RDX" + userId.slice(-4))).toUpperCase();
-            const refQuerySnap = await firebaseDB.collection("customers").where("referredBy", "==", myRefCode).get();
-            const actualReferralsCount = refQuerySnap.size;
-            document.getElementById("totalReferrals").textContent = actualReferralsCount;
+            const q = query(collection(db, "customers"), where("referredBy", "==", myRefCode));
+            const refQuerySnap = await getDocs(q);
+            document.getElementById("totalReferrals").textContent = refQuerySnap.size;
 
             const kycContainer = document.getElementById("kycContainer");
             if (d.kycStatus === "verified") {
@@ -761,17 +780,6 @@ async function loadUserProfile() {
     } catch(err) {
         console.error("Profile load error:", err);
     }
-}
-
-function openKycModal() {
-    document.getElementById("kycDocNumber").value = "";
-    document.getElementById("kycFrontFile").value = "";
-    document.getElementById("kycBackFile").value = "";
-    document.getElementById("kycModal").style.display = "flex";
-}
-
-function closeKycModal() {
-    document.getElementById("kycModal").style.display = "none";
 }
 
 function compressImageFile(file) {
@@ -809,7 +817,7 @@ function compressImageFile(file) {
     });
 }
 
-async function submitManualKyc() {
+window.submitManualKyc = async () => {
     const docNumber = document.getElementById("kycDocNumber").value.replace(/\D/g, "");
     const frontFile = document.getElementById("kycFrontFile").files[0];
     const backFile = document.getElementById("kycBackFile").files[0];
@@ -832,22 +840,21 @@ async function submitManualKyc() {
         const backBase64 = await compressImageFile(backFile);
 
         const docId = userId.length === 10 ? "91" + userId : userId;
-        const now = firebase.firestore.FieldValue.serverTimestamp();
 
-        await firebaseDB.collection("kycRequests").doc(docId).set({
+        await setDoc(doc(db, "kycRequests", docId), {
             uid: docId,
             mobile: "+" + userId,
             docNumber: docNumber,
             frontImage: frontBase64,
             backImage: backBase64,
             status: "pending",
-            submittedAt: now
+            submittedAt: serverTimestamp()
         });
 
-        await firebaseDB.collection("customers").doc(docId).set({
+        await setDoc(doc(db, "customers", docId), {
             kycStatus: "pending",
             kycDocNumber: docNumber,
-            kycSubmittedAt: now
+            kycSubmittedAt: serverTimestamp()
         }, { merge: true });
 
         alert("✅ KYC Documents successfully submit ho gaye hain! Admin dwara check hote hi verify ho jayega.");
@@ -858,35 +865,34 @@ async function submitManualKyc() {
     }
     btn.disabled = false;
     btn.textContent = "Submit Document For Verification";
-}
+};
 
-async function editName() {
+window.editName = async () => {
     const newName = prompt("Apna Naya Naam Likhein:");
     if (!newName || !newName.trim()) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
     
     try {
-        await firebaseDB.collection("customers").doc(docId).set({ name: newName.trim() }, { merge: true });
+        await setDoc(doc(db, "customers", docId), { name: newName.trim() }, { merge: true });
         alert("✅ Naam Update Ho Gaya!");
         loadUserProfile();
     } catch(e) { alert("Error: " + e.message); }
-}
+};
 
-async function logout() {
+window.logout = async () => {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
     if (userId) {
         const docId = userId.length === 10 ? "91" + userId : userId;
         try {
-            await firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+            await setDoc(doc(db, "customers", docId), { isOnline: false }, { merge: true });
         } catch(e) { console.error(e); }
     }
     localStorage.clear();
     sessionStorage.clear();
-    // Logout hone par seedha index.html par redirect karega aur back history disable karega
     window.location.replace("index.html");
-}
+};
 
-window.addEventListener("load", loadUserProfile);
+loadUserProfile();
 </script>
 
 </body>
