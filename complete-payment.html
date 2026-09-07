@@ -161,6 +161,32 @@ input:focus{
     border-color:#0284c7;
     background:#ffffff;
 }
+
+/* SCREENSHOT UPLOAD BOX STYLES */
+.file-upload-wrapper {
+    margin-bottom: 14px;
+}
+.file-upload-box {
+    border: 2px dashed #38bdf8;
+    background: #f0f9ff;
+    border-radius: 12px;
+    padding: 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.file-upload-box:active { background: #e0f2fe; }
+.file-upload-box i { font-size: 22px; color: #0284c7; margin-bottom: 4px; }
+.file-upload-box p { font-size: 12px; font-weight: 750; color: #0c4a6e; }
+.preview-img {
+    max-width: 100%;
+    max-height: 150px;
+    border-radius: 8px;
+    margin-top: 8px;
+    display: none;
+    border: 1px solid #cbd5e1;
+}
+
 .deposit{
     width:100%;
     height:46px;
@@ -385,8 +411,20 @@ input:focus{
     <section class="form">
         <label>AMOUNT (₹)</label>
         <input id="amount" type="number" readonly value="100">
+        
         <label>ENTER 12-DIGIT UTR NUMBER</label>
         <input id="utr" type="text" placeholder="e.g. 423589124578" maxlength="22">
+
+        <label>UPLOAD PAYMENT SCREENSHOT</label>
+        <div class="file-upload-wrapper">
+            <div class="file-upload-box" onclick="document.getElementById('ssFile').click()">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                <p id="uploadStatusText">Tap to Select Payment Screenshot</p>
+            </div>
+            <input type="file" id="ssFile" accept="image/*" style="display:none;" onchange="handleFilePreview(event)">
+            <img id="ssPreview" class="preview-img" alt="Screenshot Preview">
+        </div>
+
         <button class="deposit" id="depositButton" onclick="submitDeposit()">Deposit</button>
     </section>
 </div>
@@ -401,7 +439,7 @@ input:focus{
 </div>
 
 <script>
-// Mobile Back Button Override: Direct redirect to deposit.html or dashboard.html on back press
+// Mobile Back Button Override
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "deposit.html";
@@ -411,11 +449,26 @@ function toggleMenu() {
     document.getElementById("sideDrawer").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
+
+function handleFilePreview(e) {
+    const file = e.target.files[0];
+    if (file) {
+        document.getElementById("uploadStatusText").textContent = file.name;
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+            const preview = document.getElementById("ssPreview");
+            preview.src = evt.target.result;
+            preview.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+}
 </script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-storage.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -427,8 +480,12 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 const userId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
+
+let cachedUserName = "";
+let cachedUserMobile = "";
 
 const urlParams = new URLSearchParams(window.location.search);
 const amt = urlParams.get('amount') || localStorage.getItem("rdxDepositAmount") || 100;
@@ -443,14 +500,16 @@ async function loadSettings() {
             if (d.qrCodeUrl) document.getElementById("qrImage").src = d.qrCodeUrl;
         }
 
-        // Set user info in drawer if available
+        // Fetch User's Real Data from Firestore
         if (userId) {
             let docId = userId.length === 10 ? "91" + userId : userId;
-            const userSnap = await getDoc(doc(db, "customers", docId));
+            const userSnap = await getDoc(doc(doc(db, "customers", docId)));
             if (userSnap.exists()) {
                 const uData = userSnap.data();
-                document.getElementById("drawerName").textContent = uData.name || ("User " + userId.slice(-4));
-                document.getElementById("drawerMobile").textContent = "+" + userId;
+                cachedUserName = uData.name || ("User " + userId.slice(-4));
+                cachedUserMobile = "+" + userId;
+                document.getElementById("drawerName").textContent = cachedUserName;
+                document.getElementById("drawerMobile").textContent = cachedUserMobile;
             }
         }
     } catch(e){ console.error(e); }
@@ -463,13 +522,18 @@ window.copyUPI = () => {
 
 window.submitDeposit = async () => {
     const utr = document.getElementById("utr").value.trim();
+    const fileInput = document.getElementById("ssFile");
+    const file = fileInput.files[0];
+
     if(utr.length < 6) return alert("Kripya valid UTR number bharein");
+    if(!file) return alert("Kripya payment ka Screenshot (SS) upload karein");
     
     const btn = document.getElementById("depositButton");
     btn.disabled = true;
     btn.textContent = "Checking UTR...";
 
     try {
+        // 1. Duplicate UTR check
         const q = query(collection(db, "deposits"), where("utr", "==", utr));
         const duplicateSnap = await getDocs(q);
 
@@ -480,17 +544,28 @@ window.submitDeposit = async () => {
             return;
         }
 
+        // 2. Upload Screenshot image to Firebase Storage
+        btn.textContent = "Uploading Screenshot...";
+        const fileExt = file.name.split('.').pop();
+        const storageRef = ref(storage, `payment_screenshots/${userId}_${Date.now()}.${fileExt}`);
+        const uploadResult = await uploadBytes(storageRef, file);
+        const screenshotUrl = await getDownloadURL(uploadResult.ref);
+
+        // 3. Save User Data + Screenshot + UTR to Firestore for Admin Panel
         btn.textContent = "Submitting...";
         await addDoc(collection(db, "deposits"), {
             uid: userId,
             userId: userId,
+            userName: cachedUserName || "User " + userId.slice(-4),
+            userMobile: cachedUserMobile || "+" + userId,
             amount: Number(document.getElementById("amount").value),
             utr: utr,
+            screenshotUrl: screenshotUrl,
             status: "pending",
             createdAt: serverTimestamp()
         });
 
-        alert("✅ Deposit Request Submit Ho Gayi!");
+        alert("✅ Payment Screenshot aur UTR Submit Ho Gaya!");
         window.location.replace("history.html");
     } catch(err) {
         alert("Error: " + err.message);
