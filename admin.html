@@ -751,7 +751,7 @@ async function rejectWithdrawal(id) {
     const w = withdrawals.find(x => x.id === id);
     if (!w) return;
     if (w.status === "rejected" || w.refundedToUser === true) {
-        alert("⚠️ Yeh withdrawal pehle hi reject ho chuki hai aur rashi refund ki ja chuki hai[span_1](start_span)[span_1](end_span).");
+        alert("⚠️ Yeh withdrawal pehle hi reject ho chuki hai aur rashi refund ki ja chuki hai.");
         return;
     }
 
@@ -801,7 +801,7 @@ async function rejectWithdrawal(id) {
             });
         });
 
-        alert("❌ Withdrawal Rejected & Amount Successfully Refunded to User[span_2](start_span)[span_2](end_span)!");
+        alert("❌ Withdrawal Rejected & Amount Successfully Refunded to User!");
         loadWithdrawals();
         loadUsers();
     } catch(e) { alert("Rejection Error: " + e.message); }
@@ -1939,17 +1939,15 @@ function updateDashboard(){
 async function loadAll(){
     try {
         await loadSettings();
+        await loadUsers();
         await loadDeposits();
         await loadWithdrawals();
-        await loadUsers();
         await loadBattles();
         await loadKycRequests();
-        await loadReferralAnalytics();
         await loadNotifications();
-        updateDashboard();
-    } catch(e){
+    } catch(e) {
         if($("dashStatus")) {
-            $("dashStatus").textContent = "❌ " + e.message;
+            $("dashStatus").textContent = "❌ Error: " + e.message;
             $("dashStatus").className = "status bad";
         }
     }
