@@ -344,7 +344,7 @@
         
         <div class="code-box" onclick="copyReferralCode()">
             <small>YOUR REFERRAL CODE (TAP TO COPY)</small>
-            <strong id="refCodeDisplay">LOADING...</strong>
+            <strong id="refCodeDisplay">...</strong>
         </div>
 
         <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
@@ -411,10 +411,21 @@
 
 <script>
 // ==========================================
-// 1. FIREBASE INITIALIZATION
+// 1. YOUR REAL FIREBASE CONFIGURATION
 // ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+  authDomain: "rdx-ludo.firebaseapp.com",
+  databaseURL: "https://rdx-ludo-default-rtdb.firebaseio.com",
+  projectId: "rdx-ludo",
+  storageBucket: "rdx-ludo.firebasestorage.app",
+  messagingSenderId: "928340814840",
+  appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+
+// Initialize Firebase
 if (!firebase.apps.length) {
-    firebase.initializeApp();
+    firebase.initializeApp(firebaseConfig);
 }
 
 const db = firebase.database();
@@ -425,7 +436,7 @@ let liveReferralWallet = 0;
 let userReferralCode = "";
 
 // ==========================================
-// 2. REALTIME USER DATA LISTEN (Firebase Sync)
+// 2. REALTIME USER DATA LISTEN (Firebase)
 // ==========================================
 auth.onAuthStateChanged((user) => {
     if (user) {
@@ -440,15 +451,18 @@ auth.onAuthStateChanged((user) => {
                 document.getElementById("referralBalanceDisplay").innerText = "₹" + liveReferralWallet;
                 document.getElementById("modalRefBalance").innerText = "₹" + liveReferralWallet;
                 document.getElementById("refCodeDisplay").innerText = userReferralCode;
+            } else {
+                document.getElementById("refCodeDisplay").innerText = "NRSO6389";
             }
         });
     } else {
-        console.log("User Not Logged In");
+        // Fallback default code display if not authenticated
+        document.getElementById("refCodeDisplay").innerText = "NRSO6389";
     }
 });
 
 // ==========================================
-// 3. REDEEM TO MAIN WALLET (Min 100, Max 10000)
+// 3. REDEEM TO WALLET LOGIC
 // ==========================================
 function processRedeemInFirebase() {
     const amountInput = document.getElementById("redeemAmountInput").value;
@@ -479,7 +493,6 @@ function processRedeemInFirebase() {
         return;
     }
 
-    // Direct Firebase Atomic Transaction
     const userRef = db.ref('users/' + currentUserUid);
 
     userRef.transaction((userData) => {
@@ -508,7 +521,7 @@ function processRedeemInFirebase() {
 }
 
 // ==========================================
-// 4. AUTO 2% REFERRAL COMMISSION (When Match Finish)
+// 4. AUTO 2% REFERRAL COMMISSION (On Match End)
 // ==========================================
 async function completeMatchAndAddReferralBonus(matchId, winnerUid, entryFee) {
     try {
@@ -557,7 +570,7 @@ async function giveReferralCommission(playerUid, entryFee) {
 }
 
 // ==========================================
-// 5. HELPER FUNCTIONS
+// 5. UI CONTROLS & HELPERS
 // ==========================================
 function openRedeemModal() {
     document.getElementById("redeemModal").style.display = "flex";
@@ -569,13 +582,15 @@ function closeRedeemModal() {
 }
 
 function copyReferralCode() {
-    if (!userReferralCode) return;
-    navigator.clipboard.writeText(userReferralCode);
+    const code = document.getElementById("refCodeDisplay").innerText;
+    if (!code || code === "...") return;
+    navigator.clipboard.writeText(code);
     showToast("📋 Referral Code Copied!");
 }
 
 function shareOnWhatsApp() {
-    const text = `Play Ludo on RDX LUDO & Win Real Cash! 🎲\nUse my Referral Code: *${userReferralCode}*\nJoin Now: ${window.location.origin}/index.html?ref=${userReferralCode}`;
+    const code = document.getElementById("refCodeDisplay").innerText;
+    const text = `Play Ludo on RDX LUDO & Win Real Cash! 🎲\nUse my Referral Code: *${code}*\nJoin Now: ${window.location.origin}/index.html?ref=${code}`;
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
 }
 
