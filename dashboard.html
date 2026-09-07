@@ -373,30 +373,28 @@ button{font:inherit;}
 <body>
 
 <script>
-// Browser Cache (BFCache) ko bypass karne ke liye security handler
+// 🔴 BFCache Bypass: Back button dabane par agar purana page cache se khulta h toh auto reload hoga
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
         window.location.reload();
     }
 });
 
-// Authentication Security Check
+// 🔴 Security Check: User Logged In hai ya nahi
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
 
-// Back Button Lock System (Prevent Going Back to index.html)
+// 🔴 Strict Back Button Lock: Back button press karne par index.html nahi khulega
 (function() {
     history.pushState(null, null, location.href);
 
     window.addEventListener("popstate", function(event) {
         const drawer = document.getElementById("sideDrawer");
-        
         if (drawer && drawer.classList.contains("active")) {
             drawer.classList.remove("active");
             document.getElementById("drawerOverlay").classList.remove("active");
         }
-        
         history.pushState(null, null, location.href);
     });
 })();
@@ -588,7 +586,7 @@ function logout() {
     localStorage.removeItem("rdxVerifiedMobile");
     localStorage.removeItem("rdxAccessToken");
     
-    // Logout hone par seedha index.html par redirect karega
+    // 🔴 Logout hone par hi index.html par bhejega
     window.location.replace("index.html");
 }
 
