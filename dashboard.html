@@ -378,18 +378,22 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     window.location.replace("index.html");
 }
 
-// Mobile Back Button Trap (Sidemenu close karne ke liye)
+// Back Button Lock System (Prevent Going Back to index.html)
 (function() {
-    window.history.pushState({ page: "dashboard" }, "", window.location.href);
-    window.addEventListener("popstate", function() {
+    // History stack lock karne ke liye state push karte hain
+    history.pushState(null, null, location.href);
+
+    window.addEventListener("popstate", function(event) {
         const drawer = document.getElementById("sideDrawer");
+        
+        // Agar Side Drawer khula hai toh pehle use close karein
         if (drawer && drawer.classList.contains("active")) {
             drawer.classList.remove("active");
             document.getElementById("drawerOverlay").classList.remove("active");
-            window.history.pushState({ page: "dashboard" }, "", window.location.href);
-        } else {
-            window.history.pushState({ page: "dashboard" }, "", window.location.href);
         }
+        
+        // User ko Dashboard par hi lock rakhen (index.html nahi khulne dega)
+        history.pushState(null, null, location.href);
     });
 })();
 </script>
