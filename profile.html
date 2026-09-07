@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -61,7 +61,6 @@ button{font:inherit;}
 }
 .menu-btn:active{transform:scale(0.95);}
 
-/* BRAND 3D LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -75,12 +74,7 @@ button{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-
-.logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.logo img{width:100%;height:100%;object-fit:cover;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
@@ -206,7 +200,7 @@ button{font:inherit;}
     cursor:pointer;
 }
 
-/* REFERRAL LOCKED STATUS */
+/* REFERRAL BOX */
 .ref-box{
     margin-top:16px;
     background:#ffffff;
@@ -348,11 +342,7 @@ button{font:inherit;}
     align-items:center;
     justify-content:center;
 }
-.drawer-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
 .drawer-close{
     width:34px;
     height:34px;
@@ -381,7 +371,6 @@ button{font:inherit;}
     color:#334155;
     cursor:pointer;
     margin-bottom:6px;
-    transition:background 0.2s ease;
 }
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
 .drawer-item-icon{
@@ -448,10 +437,10 @@ button{font:inherit;}
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 .nav-item.active{color:#101a38;font-weight:800;}
 .nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#f97316;}
 
@@ -502,7 +491,7 @@ button{font:inherit;}
 }
 .modal-body{padding:18px 20px;overflow-y:auto;flex:1;}
 .modal-body label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin:10px 0 5px;letter-spacing:0.5px;}
-.modal-body input[type="text"], .modal-body input[type="tel"]{
+.modal-body input[type="text"]{
     width:100%;
     height:44px;
     border-radius:12px;
@@ -597,13 +586,13 @@ button{font:inherit;}
                 <h2 id="profileName">Loading...</h2>
                 <p><i class="fa-solid fa-phone" style="font-size:11px;"></i> <span id="profileMobile">+91**********</span></p>
                 <div id="kycContainer">
-                    <button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>
+                    <!-- Default State rendered dynamically -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- REFERRAL LOCKED STATUS -->
+    <!-- REFERRAL BOX -->
     <div class="ref-box">
         <div class="ref-title-row">
             <div style="font-size:16px;">🎟️</div>
@@ -677,7 +666,7 @@ button{font:inherit;}
     <button class="nav-item active" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
-<!-- MANUAL DOCUMENT KYC MODAL -->
+<!-- DOCUMENT KYC MODAL -->
 <div class="modal-overlay" id="kycModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -704,7 +693,6 @@ button{font:inherit;}
 </div>
 
 <script>
-// Mobile Back Button Override: Direct redirect to dashboard.html on back press
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
@@ -725,6 +713,27 @@ function openKycModal() {
 function closeKycModal() {
     document.getElementById("kycModal").style.display = "none";
 }
+
+// Function to render UI Badge immediately
+function renderKycBadge(status) {
+    const kycContainer = document.getElementById("kycContainer");
+    if(!kycContainer) return;
+    const cleanStatus = String(status || "").toLowerCase();
+
+    if (cleanStatus === "verified") {
+        kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
+    } else if (cleanStatus === "pending") {
+        kycContainer.innerHTML = `<span class="kyc-pending-badge"><i class="fa-solid fa-clock"></i> KYC Under Review</span>`;
+    } else if (cleanStatus === "rejected") {
+        kycContainer.innerHTML = `<button class="kyc-rejected-badge" onclick="openKycModal()"><i class="fa-solid fa-circle-xmark"></i> KYC Rejected (Resubmit)</button>`;
+    } else {
+        kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
+    }
+}
+
+// Render Local Cache status immediately on page startup
+const cachedKycStatus = localStorage.getItem("rdxCachedKycStatus") || "";
+renderKycBadge(cachedKycStatus);
 </script>
 
 <script type="module">
@@ -749,7 +758,6 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
-// Global handle for live snapshot listener
 let userSnapshotUnsubscribe = null;
 
 function listenUserProfile() {
@@ -762,7 +770,6 @@ function listenUserProfile() {
     try {
         const userRef = doc(db, "customers", docId);
         
-        // REALTIME LISTENER: Page Refresh hone par bhi live status fetch hoga
         userSnapshotUnsubscribe = onSnapshot(userRef, async (snap) => {
             if (snap.exists()) {
                 const d = snap.data();
@@ -786,19 +793,10 @@ function listenUserProfile() {
                 const refQuerySnap = await getDocs(q);
                 document.getElementById("totalReferrals").textContent = refQuerySnap.size;
 
-                // KYC STATUS CHECK LOGIC (Case Insensitive)
-                const kycContainer = document.getElementById("kycContainer");
-                const currentStatus = String(d.kycStatus || "").toLowerCase();
-
-                if (currentStatus === "verified") {
-                    kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
-                } else if (currentStatus === "pending") {
-                    kycContainer.innerHTML = `<span class="kyc-pending-badge"><i class="fa-solid fa-clock"></i> KYC Under Review</span>`;
-                } else if (currentStatus === "rejected") {
-                    kycContainer.innerHTML = `<button class="kyc-rejected-badge" onclick="openKycModal()"><i class="fa-solid fa-circle-xmark"></i> KYC Rejected (Resubmit)</button>`;
-                } else {
-                    kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
-                }
+                // UPDATE STATUS IN CACHE AND RENDER
+                const realKycStatus = d.kycStatus || "unverified";
+                localStorage.setItem("rdxCachedKycStatus", realKycStatus);
+                renderKycBadge(realKycStatus);
             }
         }, (error) => {
             console.error("Realtime Listen Error:", error);
@@ -883,6 +881,9 @@ window.submitManualKyc = async () => {
             kycSubmittedAt: serverTimestamp()
         }, { merge: true });
 
+        localStorage.setItem("rdxCachedKycStatus", "pending");
+        renderKycBadge("pending");
+
         alert("✅ KYC Documents successfully submit ho gaye hain! Admin dwara check hote hi verify ho jayega.");
         closeKycModal();
     } catch(err) {
@@ -917,7 +918,6 @@ window.logout = async () => {
     window.location.replace("index.html");
 };
 
-// Start listening profile updates on page load
 listenUserProfile();
 </script>
 
