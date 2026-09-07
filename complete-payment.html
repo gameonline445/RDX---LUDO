@@ -500,10 +500,9 @@ async function loadSettings() {
             if (d.qrCodeUrl) document.getElementById("qrImage").src = d.qrCodeUrl;
         }
 
-        // Fetch User's Real Data from Firestore
         if (userId) {
             let docId = userId.length === 10 ? "91" + userId : userId;
-            const userSnap = await getDoc(doc(doc(db, "customers", docId)));
+            const userSnap = await getDoc(doc(db, "customers", docId));
             if (userSnap.exists()) {
                 const uData = userSnap.data();
                 cachedUserName = uData.name || ("User " + userId.slice(-4));
@@ -512,13 +511,23 @@ async function loadSettings() {
                 document.getElementById("drawerMobile").textContent = cachedUserMobile;
             }
         }
-    } catch(e){ console.error(e); }
+    } catch(e){ console.error("Setting load error:", e); }
 }
 
 window.copyUPI = () => {
     navigator.clipboard.writeText(document.getElementById("upiText").textContent);
     alert("UPI ID Copied!");
 };
+
+// Fallback Helper Function (Storage fail hone par Base64 use hoga)
+function convertFileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+}
 
 window.submitDeposit = async () => {
     const utr = document.getElementById("utr").value.trim();
@@ -533,31 +542,38 @@ window.submitDeposit = async () => {
     btn.textContent = "Checking UTR...";
 
     try {
-        // 1. Duplicate UTR check
+        // 1. Check duplicate UTR
         const q = query(collection(db, "deposits"), where("utr", "==", utr));
         const duplicateSnap = await getDocs(q);
 
         if (!duplicateSnap.empty) {
             btn.disabled = false;
             btn.textContent = "Deposit";
-            alert("⚠️ Yeh UTR number pehle se submit kiya ja chuka hai! Kripya naya/sahi UTR daalein.");
+            alert("⚠️ Yeh UTR number pehle se submit kiya ja chuka hai!");
             return;
         }
 
-        // 2. Upload Screenshot image to Firebase Storage
+        // 2. Upload Image (Storage / Base64 Fallback)
         btn.textContent = "Uploading Screenshot...";
-        const fileExt = file.name.split('.').pop();
-        const storageRef = ref(storage, `payment_screenshots/${userId}_${Date.now()}.${fileExt}`);
-        const uploadResult = await uploadBytes(storageRef, file);
-        const screenshotUrl = await getDownloadURL(uploadResult.ref);
+        let screenshotUrl = "";
 
-        // 3. Save User Data + Screenshot + UTR to Firestore for Admin Panel
+        try {
+            const fileExt = file.name.split('.').pop();
+            const storageRef = ref(storage, `payment_screenshots/${userId || 'guest'}_${Date.now()}.${fileExt}`);
+            const uploadResult = await uploadBytes(storageRef, file);
+            screenshotUrl = await getDownloadURL(uploadResult.ref);
+        } catch(storageErr) {
+            console.warn("Storage upload failed, fallback to Base64:", storageErr);
+            screenshotUrl = await convertFileToBase64(file);
+        }
+
+        // 3. Save User Data + Screenshot URL in Firestore
         btn.textContent = "Submitting...";
         await addDoc(collection(db, "deposits"), {
-            uid: userId,
-            userId: userId,
-            userName: cachedUserName || "User " + userId.slice(-4),
-            userMobile: cachedUserMobile || "+" + userId,
+            uid: userId || "N/A",
+            userId: userId || "N/A",
+            userName: cachedUserName || "User " + (userId ? userId.slice(-4) : "Guest"),
+            userMobile: cachedUserMobile || (userId ? "+" + userId : "N/A"),
             amount: Number(document.getElementById("amount").value),
             utr: utr,
             screenshotUrl: screenshotUrl,
@@ -565,10 +581,12 @@ window.submitDeposit = async () => {
             createdAt: serverTimestamp()
         });
 
-        alert("✅ Payment Screenshot aur UTR Submit Ho Gaya!");
+        alert("✅ Deposit Request successfully submit ho gayi!");
         window.location.replace("history.html");
+
     } catch(err) {
-        alert("Error: " + err.message);
+        console.error("Submit Error:", err);
+        alert("Error: " + (err.message || "Something went wrong"));
         btn.disabled = false;
         btn.textContent = "Deposit";
     }
