@@ -191,6 +191,20 @@ button{font:inherit;}
     align-items:center;
     gap:4px;
 }
+.kyc-rejected-badge{
+    margin-top:8px;
+    background:#fee2e2;
+    color:#b91c1c;
+    border:1px solid #fca5a5;
+    padding:5px 12px;
+    border-radius:14px;
+    font-size:11px;
+    font-weight:850;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    cursor:pointer;
+}
 
 /* REFERRAL LOCKED STATUS */
 .ref-box{
@@ -715,7 +729,7 @@ function closeKycModal() {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, doc, getDoc, setDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, doc, onSnapshot, setDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -735,7 +749,10 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
-async function loadUserProfile() {
+// Global handle for live snapshot listener
+let userSnapshotUnsubscribe = null;
+
+function listenUserProfile() {
     if (!userId) {
         window.location.replace("index.html");
         return;
@@ -744,39 +761,48 @@ async function loadUserProfile() {
 
     try {
         const userRef = doc(db, "customers", docId);
-        const snap = await getDoc(userRef);
+        
+        // REALTIME LISTENER: Page Refresh hone par bhi live status fetch hoga
+        userSnapshotUnsubscribe = onSnapshot(userRef, async (snap) => {
+            if (snap.exists()) {
+                const d = snap.data();
+                const userName = d.name || ("User " + userId.slice(-4));
+                document.getElementById("profileName").textContent = userName;
+                document.getElementById("avatarText").textContent = userName.charAt(0).toUpperCase();
+                document.getElementById("profileMobile").textContent = "+" + userId;
+                
+                document.getElementById("drawerName").textContent = userName;
+                document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
+                document.getElementById("drawerMobile").textContent = "+" + userId;
+                
+                const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
+                document.getElementById("referredByCode").textContent = refCode;
 
-        if (snap.exists()) {
-            const d = snap.data();
-            const userName = d.name || ("User " + userId.slice(-4));
-            document.getElementById("profileName").textContent = userName;
-            document.getElementById("avatarText").textContent = userName.charAt(0).toUpperCase();
-            document.getElementById("profileMobile").textContent = "+" + userId;
-            
-            document.getElementById("drawerName").textContent = userName;
-            document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
-            document.getElementById("drawerMobile").textContent = "+" + userId;
-            
-            const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
-            document.getElementById("referredByCode").textContent = refCode;
+                document.getElementById("winnings").textContent = "₹" + (d.winnings || 0);
+                document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
 
-            document.getElementById("winnings").textContent = "₹" + (d.winnings || 0);
-            document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
+                const myRefCode = String(d.referralCode || ("RDX" + userId.slice(-4))).toUpperCase();
+                const q = query(collection(db, "customers"), where("referredBy", "==", myRefCode));
+                const refQuerySnap = await getDocs(q);
+                document.getElementById("totalReferrals").textContent = refQuerySnap.size;
 
-            const myRefCode = String(d.referralCode || ("RDX" + userId.slice(-4))).toUpperCase();
-            const q = query(collection(db, "customers"), where("referredBy", "==", myRefCode));
-            const refQuerySnap = await getDocs(q);
-            document.getElementById("totalReferrals").textContent = refQuerySnap.size;
+                // KYC STATUS CHECK LOGIC (Case Insensitive)
+                const kycContainer = document.getElementById("kycContainer");
+                const currentStatus = String(d.kycStatus || "").toLowerCase();
 
-            const kycContainer = document.getElementById("kycContainer");
-            if (d.kycStatus === "verified") {
-                kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
-            } else if (d.kycStatus === "pending") {
-                kycContainer.innerHTML = `<span class="kyc-pending-badge"><i class="fa-solid fa-clock"></i> KYC Under Review</span>`;
-            } else {
-                kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
+                if (currentStatus === "verified") {
+                    kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
+                } else if (currentStatus === "pending") {
+                    kycContainer.innerHTML = `<span class="kyc-pending-badge"><i class="fa-solid fa-clock"></i> KYC Under Review</span>`;
+                } else if (currentStatus === "rejected") {
+                    kycContainer.innerHTML = `<button class="kyc-rejected-badge" onclick="openKycModal()"><i class="fa-solid fa-circle-xmark"></i> KYC Rejected (Resubmit)</button>`;
+                } else {
+                    kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
+                }
             }
-        }
+        }, (error) => {
+            console.error("Realtime Listen Error:", error);
+        });
     } catch(err) {
         console.error("Profile load error:", err);
     }
@@ -859,7 +885,6 @@ window.submitManualKyc = async () => {
 
         alert("✅ KYC Documents successfully submit ho gaye hain! Admin dwara check hote hi verify ho jayega.");
         closeKycModal();
-        loadUserProfile();
     } catch(err) {
         alert("Upload error: " + err.message);
     }
@@ -875,7 +900,6 @@ window.editName = async () => {
     try {
         await setDoc(doc(db, "customers", docId), { name: newName.trim() }, { merge: true });
         alert("✅ Naam Update Ho Gaya!");
-        loadUserProfile();
     } catch(e) { alert("Error: " + e.message); }
 };
 
@@ -887,12 +911,14 @@ window.logout = async () => {
             await setDoc(doc(db, "customers", docId), { isOnline: false }, { merge: true });
         } catch(e) { console.error(e); }
     }
+    if (userSnapshotUnsubscribe) userSnapshotUnsubscribe();
     localStorage.clear();
     sessionStorage.clear();
     window.location.replace("index.html");
 };
 
-loadUserProfile();
+// Start listening profile updates on page load
+listenUserProfile();
 </script>
 
 </body>
