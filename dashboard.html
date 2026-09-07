@@ -373,26 +373,30 @@ button{font:inherit;}
 <body>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+// Browser Cache (BFCache) ko bypass karne ke liye security handler
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (performance && performance.navigation.type === 2)) {
+        window.location.reload();
+    }
+});
+
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
 
 // Back Button Lock System (Prevent Going Back to index.html)
 (function() {
-    // History stack lock karne ke liye state push karte hain
     history.pushState(null, null, location.href);
 
     window.addEventListener("popstate", function(event) {
         const drawer = document.getElementById("sideDrawer");
         
-        // Agar Side Drawer khula hai toh pehle use close karein
         if (drawer && drawer.classList.contains("active")) {
             drawer.classList.remove("active");
             document.getElementById("drawerOverlay").classList.remove("active");
         }
         
-        // User ko Dashboard par hi lock rakhen (index.html nahi khulne dega)
         history.pushState(null, null, location.href);
     });
 })();
