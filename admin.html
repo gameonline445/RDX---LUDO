@@ -1944,9 +1944,8 @@ async function loadAll(){
         await loadWithdrawals();
         await loadBattles();
         await loadKycRequests();
-        await loadNotifications();
-    } catch (e) {
-        console.error("Initialization error:", e);
+    } catch(e) {
+        console.error("Initialization Error:", e);
     }
 }
 </script>
