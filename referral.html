@@ -25,6 +25,45 @@
             color: #101a38;
             min-height: 100vh;
             padding: 16px;
+            padding-top: 70px; /* Space for top header */
+            padding-bottom: 80px; /* Space for bottom nav */
+        }
+
+        /* TOP NAVIGATION HEADER */
+        .top-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            color: #0284c7;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .header-title {
+            font-size: 16px;
+            font-weight: 900;
+            color: #0c4a6e;
         }
 
         /* REFERRAL CARD */
@@ -133,6 +172,41 @@
 
         .transfer-btn:active {
             transform: scale(0.96);
+        }
+
+        /* BOTTOM NAVIGATION BAR */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 65px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #e2e8f0;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 700;
+            gap: 4px;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        .nav-item.active {
+            color: #0284c7;
         }
 
         /* REDEEM POPUP MODAL */
@@ -319,7 +393,7 @@
             position: fixed;
             z-index: 2000;
             left: 50%;
-            bottom: 30px;
+            bottom: 80px;
             transform: translateX(-50%);
             font-size: 13px;
             font-weight: 700;
@@ -331,11 +405,20 @@
             animation: fadein 0.4s, fadeout 0.4s 2.6s;
         }
 
-        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
+        @keyframes fadein { from {bottom: 60px; opacity: 0;} to {bottom: 80px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 80px; opacity: 1;} to {bottom: 60px; opacity: 0;} }
     </style>
 </head>
 <body>
+
+    <!-- TOP HEADER WITH BACK BUTTON -->
+    <div class="top-header">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a>
+        <div class="header-title">Refer & Earn</div>
+        <div style="width: 38px;"></div> <!-- Spacer for alignment -->
+    </div>
 
     <!-- REFERRAL BOX -->
     <div class="refer-card">
@@ -344,7 +427,7 @@
         
         <div class="code-box" onclick="copyReferralCode()">
             <small>YOUR REFERRAL CODE (TAP TO COPY)</small>
-            <strong id="refCodeDisplay">...</strong>
+            <strong id="refCodeDisplay">RDX...</strong>
         </div>
 
         <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
@@ -407,6 +490,30 @@
         </div>
     </div>
 
+    <!-- BOTTOM NAVIGATION BAR -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="battles.html" class="nav-item">
+            <i class="fa-solid fa-gamepad"></i>
+            <span>Battles</span>
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+        <a href="refer.html" class="nav-item active">
+            <i class="fa-solid fa-users"></i>
+            <span>Refer</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </div>
+
     <div id="toast"></div>
 
 <script>
@@ -423,7 +530,6 @@ const firebaseConfig = {
   appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
 
-// Initialize Firebase
 if (!firebase.apps.length) {
     firebase.initializeApp(firebaseConfig);
 }
@@ -435,30 +541,24 @@ let currentUserUid = null;
 let liveReferralWallet = 0;
 let userReferralCode = "";
 
-// Random referral code generator helper function
 function generateRandomReferralCode() {
     return "RDX" + Math.floor(100000 + Math.random() * 900000);
 }
 
 // ==========================================
-// 2. REALTIME USER DATA LISTEN (Updated for 'customers')
+// 2. REALTIME USER DATA LISTEN (CUSTOMERS)
 // ==========================================
 auth.onAuthStateChanged((user) => {
     if (user) {
         currentUserUid = user.uid;
-        
-        // Target 'customers/' node instead of 'users/'
         const userRef = db.ref('customers/' + currentUserUid);
 
         userRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 liveReferralWallet = parseFloat(data.referralWallet) || 0;
-                
-                // Read possible referral code keys
                 userReferralCode = data.referralCode || data.myReferralCode || data.referCode;
 
-                // Auto-generate code if missing in database
                 if (!userReferralCode) {
                     userReferralCode = generateRandomReferralCode();
                     userRef.update({ referralCode: userReferralCode });
@@ -468,7 +568,6 @@ auth.onAuthStateChanged((user) => {
                 document.getElementById("modalRefBalance").innerText = "₹" + liveReferralWallet;
                 document.getElementById("refCodeDisplay").innerText = userReferralCode;
             } else {
-                // Initialize default profile if user node is missing
                 const newCode = generateRandomReferralCode();
                 userRef.set({
                     referralCode: newCode,
@@ -479,7 +578,8 @@ auth.onAuthStateChanged((user) => {
             }
         });
     } else {
-        document.getElementById("refCodeDisplay").innerText = "PLEASE LOGIN";
+        document.getElementById("refCodeDisplay").innerText = "LOGIN REQUIRED";
+        showToast("⚠️ Kripya Pehle Login Karein!");
     }
 });
 
@@ -543,34 +643,7 @@ function processRedeemInFirebase() {
 }
 
 // ==========================================
-// 4. AUTO 2% REFERRAL COMMISSION
-// ==========================================
-async function giveReferralCommission(playerUid, entryFee) {
-    if (!playerUid) return;
-
-    const userSnap = await db.ref('customers/' + playerUid).once('value');
-    const userData = userSnap.val();
-
-    if (userData && userData.referredBy) {
-        const parentCode = userData.referredBy;
-        const commission = (entryFee * 2) / 100;
-
-        const referrerQuery = await db.ref('customers').orderByChild('referralCode').equalTo(parentCode).once('value');
-
-        if (referrerQuery.exists()) {
-            referrerQuery.forEach((child) => {
-                const referrerUid = child.key;
-                
-                db.ref('customers/' + referrerUid + '/referralWallet').transaction((bal) => {
-                    return (parseFloat(bal) || 0) + commission;
-                });
-            });
-        }
-    }
-}
-
-// ==========================================
-// 5. UI CONTROLS & HELPERS
+// 4. UI CONTROLS & HELPERS
 // ==========================================
 function openRedeemModal() {
     document.getElementById("redeemModal").style.display = "flex";
@@ -583,14 +656,14 @@ function closeRedeemModal() {
 
 function copyReferralCode() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (!code || code === "..." || code === "PLEASE LOGIN") return;
+    if (!code || code.includes("...") || code === "LOGIN REQUIRED") return;
     navigator.clipboard.writeText(code);
     showToast("📋 Referral Code Copied!");
 }
 
 function shareOnWhatsApp() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (code === "..." || code === "PLEASE LOGIN") {
+    if (!code || code.includes("...") || code === "LOGIN REQUIRED") {
         showToast("⚠️ Kripya Pehle Login Karein!");
         return;
     }
