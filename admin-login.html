@@ -181,8 +181,7 @@
     <main class="main-content">
         <div class="top-bar">
             <h1 class="page-header-title">Dashboard</h1>
-            <!-- LOGOUT BUTTON WITH onclick EVENT -->
-            <button class="logout-btn" id="logoutBtn" onclick="handleLogout()">Logout</button>
+            <button class="logout-btn" id="logoutBtn">Logout</button>
         </div>
 
         <div class="dashboard-grid">
@@ -205,23 +204,22 @@
         </div>
     </main>
 
-    <!-- LOGOUT JAVASCRIPT LOGIC -->
     <script>
-        function handleLogout() {
-            // 1. Storage clear karein (agar token/session save ho)
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            // 1. Session clear
             localStorage.clear();
             sessionStorage.clear();
 
-            // 2. Firebase auth logout (agar aap firebase use kar rahe hain)
-            /* 
-            if (typeof firebase !== 'undefined' && firebase.auth) {
-                firebase.auth().signOut();
+            // 2. Firebase Signout (if initialized)
+            if (window.firebase && firebase.auth) {
+                firebase.auth().signOut().catch(function(error) {
+                    console.log("Firebase Logout Error:", error);
+                });
             }
-            */
 
-            // 3. User ko login page par redirect karein
-            window.location.href = "login.html"; // Aapke login page ka URL (jaise index.html ya admin-login.html)
-        }
+            // 3. Login Redirect
+            window.location.replace("index.html"); 
+        });
     </script>
 </body>
 </html>
