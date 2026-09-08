@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Refer & Earn</title>
 
-<!-- FontAwesome for clean icons -->
+<!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE SDKs (Matching Dashboard Firestore Setup) -->
+<!-- FIREBASE SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
-/* EXACT BACKGROUND COLOR & RADIAL GRADIENT FROM DASHBOARD */
+/* DASHBOARD MATCHING COLOR GRADIENT */
 body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     background:
@@ -30,7 +30,7 @@ body{
 
 button{font:inherit;}
 
-/* TOP HEADER (EXACT MATCHING DASHBOARD TOP HEADER) */
+/* TOP HEADER */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -76,11 +76,7 @@ button{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-.logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.logo img{width:100%;height:100%;object-fit:cover;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
@@ -215,7 +211,7 @@ button{font:inherit;}
 }
 .transfer-btn:active { transform: scale(0.96); }
 
-/* SIDE DRAWER (EXACT DASHBOARD DRAWER) */
+/* SIDE DRAWER */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -316,7 +312,7 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV (100% DASHBOARD BUTTONS & COLORS MATCH) */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -327,7 +323,7 @@ button{font:inherit;}
     backdrop-filter:blur(12px);
     border-top:1.5px solid #e2e8f0;
     display:flex;
-    justify-content:space-around;
+    justify-style:space-around;
     align-items:center;
     z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
@@ -463,7 +459,6 @@ button{font:inherit;}
 <body>
 
 <script>
-// Security Check: Login Status Verification
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -515,8 +510,8 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 <main class="container">
     <!-- REFERRAL CARD -->
     <section class="refer-card">
-        <h2>🎁 Refer & Earn 2%</h2>
-        <p>Apne dosto ko invite karein aur unke matches par 2% lifetime reward payein!</p>
+        <h2>🎁 Refer & Earn 2% Net Profit</h2>
+        <p>Apne dosto ko invite karein aur unke har game WIN karne par net winning profit ka 2% instant bonus payein!</p>
         
         <div class="code-box" onclick="copyReferralCode()">
             <small>YOUR REFERRAL CODE (TAP TO COPY)</small>
@@ -558,7 +553,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
 
         <div class="input-group">
-            <input type="number" id="redeemAmountInput" placeholder="Enter amount (Min ₹100)">
+            <input type="number" id="redeemAmountInput" placeholder="Enter amount">
         </div>
 
         <button class="redeem-now-btn" onclick="processRedeemInFirestore()">
@@ -567,7 +562,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </div>
 </div>
 
-<!-- BOTTOM NAV (MATCHING DASHBOARD) -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.href='dashboard.html'">
         <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
@@ -590,7 +585,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 <div id="toast"></div>
 
 <script>
-// FIREBASE FIRESTORE CONFIGURATION (DASHBOARD MATCH)
+// FIREBASE CONFIGURATION
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -628,7 +623,7 @@ function loadReferralDataRealtime() {
             document.getElementById("drawerName").textContent = fullName;
             document.getElementById("drawerMobile").textContent = "+" + userId;
 
-            // Balance Calculations
+            // Main Wallet Balance Calculation
             let realTotalBalance = 0;
             if (data.balance !== undefined && data.balance !== null) {
                 realTotalBalance = Number(data.balance);
@@ -638,13 +633,14 @@ function loadReferralDataRealtime() {
                 realTotalBalance = deposit + winnings;
             }
 
-            currentReferralBalance = Number(data.referralBalance || data.referralWallet || data.redeemBalance || data.referralEarnings || 0);
+            // Referral Wallet Balance
+            currentReferralBalance = Number(data.referralBalance || data.referralWallet || 0);
 
             // Top Header Sync
             document.getElementById("topBalance").textContent = realTotalBalance;
             document.getElementById("topReferral").textContent = currentReferralBalance;
 
-            // Referral Code Logic
+            // Referral Code Setup
             let refCode = data.referralCode || data.myReferralCode || data.referCode;
             if (!refCode) {
                 refCode = "RDX" + Math.floor(100000 + Math.random() * 900000);
@@ -652,14 +648,15 @@ function loadReferralDataRealtime() {
             }
 
             document.getElementById("refCodeDisplay").textContent = refCode;
-            document.getElementById("referralBalanceDisplay").textContent = "₹" + currentReferralBalance;
-            document.getElementById("modalRefBalance").textContent = "₹" + currentReferralBalance;
+            document.getElementById("referralBalanceDisplay").textContent = "₹" + currentReferralBalance.toFixed(2);
+            document.getElementById("modalRefBalance").textContent = "₹" + currentReferralBalance.toFixed(2);
         }
     }, (err) => {
         console.error("Firestore Error:", err);
     });
 }
 
+// INSTANT TRANSFER FROM REFERRAL WALLET TO MAIN WALLET
 function processRedeemInFirestore() {
     const amountInput = document.getElementById("redeemAmountInput").value;
     const amount = parseFloat(amountInput);
@@ -671,11 +668,6 @@ function processRedeemInFirestore() {
 
     if (!amountInput || isNaN(amount) || amount <= 0) {
         showToast("⚠️ Sahi amount darj karein!");
-        return;
-    }
-
-    if (amount < 100) {
-        showToast("❌ Minimum ₹100 redeem kar sakte hain!");
         return;
     }
 
@@ -706,10 +698,57 @@ function processRedeemInFirestore() {
         }
     }).then(() => {
         closeRedeemModal();
-        showToast(`🎉 ₹${amount} Main Wallet me Transfer ho gaye!`);
+        showToast(`🎉 ₹${amount} Instant Main Wallet me Add ho gaye!`);
     }).catch((err) => {
         showToast("❌ Transaction Fail Ho Gaya!");
     });
+}
+
+// GAME WIN HONEY PAR REFERRAL KO 2% NET PROFIT ADD KARNE KA AUTOMATIC LOGIC
+async function processReferralBonusOnWin(winnerUserId, entryFee, totalPrize) {
+    try {
+        const cleanWinnerId = String(winnerUserId).replace(/\D/g, "");
+        const winnerDocId = cleanWinnerId.length === 10 ? "91" + cleanWinnerId : cleanWinnerId;
+
+        const winnerDoc = await firebaseDB.collection("customers").doc(winnerDocId).get();
+        if (!winnerDoc.exists) return;
+
+        const winnerData = winnerDoc.data();
+        const referrerCode = winnerData.referredBy;
+
+        if (!referrerCode) return;
+
+        const netProfit = totalPrize - entryFee;
+        if (netProfit <= 0) return;
+
+        const referralBonus = (netProfit * 2) / 100;
+
+        const referrerQuery = await firebaseDB.collection("customers")
+            .where("referralCode", "==", referrerCode)
+            .limit(1)
+            .get();
+
+        if (referrerQuery.empty) return;
+
+        const referrerDoc = referrerQuery.docs[0];
+        const referrerRef = firebaseDB.collection("customers").doc(referrerDoc.id);
+
+        await firebaseDB.runTransaction(async (transaction) => {
+            const rDoc = await transaction.get(referrerRef);
+            if (!rDoc.exists) return;
+
+            const rData = rDoc.data();
+            const currentRefBal = Number(rData.referralBalance || rData.referralWallet || 0);
+            const newRefBal = currentRefBal + referralBonus;
+
+            transaction.update(referrerRef, {
+                referralBalance: newRefBal,
+                referralWallet: newRefBal
+            });
+        });
+    } catch (err) {
+        console.error("Error processing referral bonus:", err);
+    }
 }
 
 function openRedeemModal() {
@@ -741,10 +780,7 @@ function logout() {
         const docId = userId.length === 10 ? "91" + userId : userId;
         firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
     }
-    localStorage.removeItem("rdxLoggedIn");
-    localStorage.removeItem("rdxFirebaseUserId");
-    localStorage.removeItem("rdxVerifiedMobile");
-    localStorage.removeItem("rdxAccessToken");
+    localStorage.clear();
     window.location.replace("index.html");
 }
 
