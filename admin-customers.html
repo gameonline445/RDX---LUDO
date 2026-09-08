@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customers - RDX LUDO ADMIN</title>
+    <title>Customers Management - RDX LUDO ADMIN</title>
     <style>
         * {
             box-sizing: border-box;
@@ -20,497 +20,188 @@
             overflow-x: hidden;
         }
 
-        .admin-layout {
+        /* Main Single Layout Structure */
+        .admin-container {
             display: flex;
             width: 100%;
             min-height: 100vh;
             background-color: #f4f7fe;
+            position: relative;
         }
 
-        /* Sidebar hamesha left me fix rahega */
+        /* ONLY ONE Sidebar Styling */
         .sidebar {
-            width: 240px;
+            width: 250px;
             background: #ffffff;
             padding: 20px 15px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.04);
             flex-shrink: 0;
             position: sticky;
             top: 0;
             height: 100vh;
             overflow-y: auto;
+            z-index: 100;
         }
 
-        .brand-logo {
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-weight: bold;
             font-size: 16px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
             color: #2b3674;
-            text-align: center;
+            padding: 0 10px;
         }
 
-        .nav-link {
-            display: block;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            border-radius: 10px;
+        .brand-logo-img {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
             text-decoration: none;
             color: #5d6978;
             font-weight: 500;
             font-size: 14px;
+            transition: all 0.2s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
+        .nav-item:hover {
+            background-color: #f4f7fe;
+            color: #4318ff;
+        }
+
+        .nav-item.active {
             background-color: #e9f0ff;
             color: #4318ff;
             font-weight: bold;
         }
 
-        /* Main Content wrapper */
-        .main-wrapper {
+        /* Main Content Wrapper */
+        .main-content {
             flex-grow: 1;
-            padding: 20px;
+            padding: 24px;
             background-color: #f4f7fe !important;
-            width: calc(100% - 240px);
+            width: calc(100% - 250px);
             overflow-x: auto;
         }
 
-        .top-bar {
+        .top-navbar {
             display: flex;
             justify-content: flex-end;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
-        .logout-btn {
+        .btn-logout {
             background-color: #ff7666;
             color: white;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 20px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
             font-size: 13px;
         }
 
-        .summary-cards {
-            display: flex;
-            gap: 15px;
+        .content-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .page-header {
             margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .card {
-            background: #ffffff;
-            padding: 18px;
-            border-radius: 15px;
-            flex: 1;
-            min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-
-        .card-title {
-            font-size: 12px;
-            color: #707ebe;
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .card-value {
-            font-size: 22px;
-            font-weight: bold;
-            color: #2b3674;
-        }
-
-        .card-container {
-            background: #ffffff;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
         .page-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             color: #2b3674;
-            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        .page-desc {
+        .page-subtitle {
             color: #707ebe;
             font-size: 13px;
-            margin-bottom: 20px;
+            margin-top: 4px;
         }
 
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-
-        .filter-input {
-            padding: 8px 12px;
-            border: 1px solid #e0e5f2;
-            border-radius: 8px;
-            outline: none;
-            font-size: 13px;
-            color: #2b3674;
-        }
-
-        .filter-input:focus {
-            border-color: #4318ff;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            min-width: 600px;
-        }
-
-        th {
-            background-color: #f8f9fa;
-            color: #5d6978;
-            font-size: 11px;
-            text-transform: uppercase;
-            padding: 10px 12px;
-            border-bottom: 2px solid #edf2f7;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #edf2f7;
-            font-size: 13px;
-            color: #2b3674;
-        }
-
-        .edit-btn {
-            background: #4318ff;
-            color: #ffffff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 12px;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #ffffff;
-            width: 90%;
-            max-width: 400px;
-            border-radius: 15px;
-            padding: 20px;
-            position: relative;
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 22px;
-            cursor: pointer;
-            color: #888;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 8px 10px;
-            border: 1px solid #e0e5f2;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        .save-btn {
-            width: 100%;
-            background: #059669;
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        /* Mobile Adjustments: Column collapse ko hata diya gaya hai */
         @media (max-width: 768px) {
-            .sidebar {
-                width: 180px;
-                padding: 15px 8px;
-            }
-            .brand-logo {
-                font-size: 14px;
-            }
-            .nav-link {
-                font-size: 12px;
-                padding: 8px 10px;
-            }
-            .main-wrapper {
-                width: calc(100% - 180px);
-                padding: 12px;
-            }
+            .sidebar { width: 200px; padding: 15px 10px; }
+            .main-content { width: calc(100% - 200px); padding: 15px; }
         }
     </style>
 </head>
 <body>
 
-<div class="admin-layout">
-    <div class="sidebar">
-        <div class="brand-logo">RDX LUDO ADMIN</div>
-        <nav>
-            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="admin-battles.html" class="nav-link">Battles Management</a>
-            <a href="admin-customers.html" class="nav-link active">Customers</a>
-            <a href="admin-withdrawals.html" class="nav-link">Withdrawals</a>
-            <a href="admin-payment-settings.html" class="nav-link">Payment Settings</a>
-        </nav>
-    </div>
-
-    <div class="main-wrapper">
-        <div class="top-bar">
-            <button class="logout-btn">Logout</button>
+<div class="admin-container">
+    <!-- ONLY ONE SIDEBAR HERE -->
+    <aside class="sidebar">
+        <div class="brand-header">
+            <img src="logo.png" alt="Logo" class="brand-logo-img" onerror="this.style.display='none'">
+            <span>RDX LUDO ADMIN</span>
         </div>
-
-        <div class="summary-cards">
-            <div class="card">
-                <div class="card-title">TOTAL REAL USERS</div>
-                <div class="card-value" id="totalUsersCount">0</div>
-            </div>
-            <div class="card">
-                <div class="card-title">TOTAL USERS BALANCE</div>
-                <div class="card-value" id="totalUsersBalance">₹0</div>
-            </div>
-        </div>
-
-        <div class="card-container">
-            <h1 class="page-title">👥 Customers Management</h1>
-            <p class="page-desc">Search users by Name/Mobile, Filter by Date, and Manage Wallet Balance.</p>
-
-            <div class="filter-container">
-                <input type="text" id="searchKeyword" class="filter-input" placeholder="Search Name/Mobile..." onkeyup="filterUsers()">
-                <input type="date" id="searchDate" class="filter-input" onchange="filterUsers()">
-            </div>
-
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>USER ID / NAME</th>
-                            <th>PHONE</th>
-                            <th>JOIN DATE</th>
-                            <th>MAIN BALANCE</th>
-                            <th>BONUS</th>
-                            <th>TOTAL BALANCE</th>
-                            <th>ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usersTableBody">
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 20px;">Fetching customers...</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="walletModal">
-    <div class="modal-content">
-        <span class="close-modal" onclick="closeWalletModal()">&times;</span>
-        <h3>Edit User Wallet</h3>
-        <br>
-        <p><strong>User:</strong> <span id="modalUserName"></span></p>
-        <p style="margin-bottom: 15px;"><small id="modalUserId" style="color: #707ebe;"></small></p>
-
-        <div class="form-group">
-            <label>Main / Deposit Balance (₹)</label>
-            <input type="number" id="inputMainBalance" placeholder="0">
-        </div>
-
-        <div class="form-group">
-            <label>Bonus Balance (₹)</label>
-            <input type="number" id="inputBonusBalance" placeholder="0">
-        </div>
-
-        <button class="save-btn" onclick="saveWalletChanges()">Save Changes</button>
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-        authDomain: "rdx-ludo.firebaseapp.com",
-        projectId: "rdx-ludo",
-        storageBucket: "rdx-ludo.firebasestorage.app",
-        messagingSenderId: "928340814840",
-        appId: "1:928340814840:web:6eca42a8b76138b268440d"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let allUsers = [];
-    let selectedUserId = null;
-
-    function renderTable(usersList) {
-        const tbody = document.getElementById("usersTableBody");
-        if (!tbody) return;
-
-        if (usersList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:15px;">Koi customer account nahi mila.</td></tr>`;
-            return;
-        }
-
-        tbody.innerHTML = usersList.map(u => {
-            const mainBal = Number(u.balance || u.wallet || u.deposit || 0);
-            const bonusBal = Number(u.bonus || 0);
-            const totalBal = mainBal + bonusBal;
-            
-            let createdDate = 'N/A';
-            if (u.createdAt) {
-                createdDate = u.createdAt.seconds ? new Date(u.createdAt.seconds * 1000).toLocaleDateString() : new Date(u.createdAt).toLocaleDateString();
-            }
-
-            return `
-                <tr>
-                    <td><b>${u.name || u.displayName || u.username || 'User'}</b><br><small style="color:#707ebe;">${u.id}</small></td>
-                    <td>${u.phone || u.mobile || u.phoneNumber || 'N/A'}</td>
-                    <td>${createdDate}</td>
-                    <td>₹${mainBal}</td>
-                    <td>₹${bonusBal}</td>
-                    <td><b>₹${totalBal}</b></td>
-                    <td><button class="edit-btn" onclick="openWalletModal('${u.id}')">Edit Wallet</button></td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    function updateSummaryCards() {
-        document.getElementById("totalUsersCount").innerText = allUsers.length;
         
-        const grandTotal = allUsers.reduce((sum, u) => {
-            const main = Number(u.balance || u.wallet || u.deposit || 0);
-            const bonus = Number(u.bonus || 0);
-            return sum + main + bonus;
-        }, 0);
+        <nav class="nav-menu">
+            <a href="admin-dashboard.html" class="nav-item">
+                <span>Dashboard</span>
+            </a>
+            <a href="admin-battles.html" class="nav-item">
+                <span>Battles Management</span>
+            </a>
+            <a href="admin-customers.html" class="nav-item active">
+                <span>Customers</span>
+            </a>
+            <a href="admin-deposits.html" class="nav-item">
+                <span>Deposits</span>
+            </a>
+            <a href="admin-withdrawals.html" class="nav-item">
+                <span>Withdrawals</span>
+            </a>
+            <a href="admin-history.html" class="nav-item">
+                <span>User History</span>
+            </a>
+            <a href="admin-referrals.html" class="nav-item">
+                <span>Referral Analytics</span>
+            </a>
+            <a href="admin-settings.html" class="nav-item">
+                <span>Payment Settings</span>
+            </a>
+        </nav>
+    </aside>
 
-        document.getElementById("totalUsersBalance").innerText = `₹${grandTotal}`;
-    }
+    <!-- MAIN CONTENT AREA -->
+    <main class="main-content">
+        <header class="top-navbar">
+            <button class="btn-logout">Logout</button>
+        </header>
 
-    window.filterUsers = function() {
-        const keyword = document.getElementById("searchKeyword").value.trim().toLowerCase();
-        const selectedDate = document.getElementById("searchDate").value;
+        <section class="content-card">
+            <div class="page-header">
+                <h1 class="page-title">👥 Customers Management</h1>
+                <p class="page-subtitle">Search users by Name/Mobile, Filter by Date, and Manage Wallet Balance.</p>
+            </div>
 
-        const filtered = allUsers.filter(u => {
-            const name = (u.name || u.displayName || u.username || '').toLowerCase();
-            const phone = (u.phone || u.mobile || u.phoneNumber || '').toLowerCase();
-            
-            const matchesKeyword = name.includes(keyword) || phone.includes(keyword);
-            
-            let matchesDate = true;
-            if (selectedDate && u.createdAt) {
-                const rawDate = u.createdAt.seconds ? new Date(u.createdAt.seconds * 1000) : new Date(u.createdAt);
-                const userDate = rawDate.toISOString().split('T')[0];
-                matchesDate = (userDate === selectedDate);
-            }
+            <!-- Dashboard/Table Content Here -->
+        </section>
+    </main>
+</div>
 
-            return matchesKeyword && matchesDate;
-        });
-
-        renderTable(filtered);
-    };
-
-    window.openWalletModal = function(id) {
-        const user = allUsers.find(u => u.id === id);
-        if (!user) return;
-
-        selectedUserId = id;
-        document.getElementById("modalUserName").innerText = user.name || user.displayName || 'User';
-        document.getElementById("modalUserId").innerText = `ID: ${user.id}`;
-        document.getElementById("inputMainBalance").value = user.balance || user.wallet || 0;
-        document.getElementById("inputBonusBalance").value = user.bonus || 0;
-
-        document.getElementById("walletModal").style.display = "flex";
-    };
-
-    window.closeWalletModal = function() {
-        document.getElementById("walletModal").style.display = "none";
-        selectedUserId = null;
-    };
-
-    window.saveWalletChanges = async function() {
-        if (!selectedUserId) return;
-
-        const newMainBal = Number(document.getElementById("inputMainBalance").value) || 0;
-        const newBonusBal = Number(document.getElementById("inputBonusBalance").value) || 0;
-
-        try {
-            const userRef = doc(db, "customers", selectedUserId);
-            await updateDoc(userRef, {
-                balance: newMainBal,
-                bonus: newBonusBal
-            });
-            alert("Wallet Balance Updated!");
-            closeWalletModal();
-        } catch (error) {
-            alert("Error: " + error.message);
-        }
-    };
-
-    function loadUsersData() {
-        try {
-            const usersCollection = collection(db, "customers");
-            onSnapshot(usersCollection, (snapshot) => {
-                allUsers = [];
-                snapshot.forEach((doc) => {
-                    allUsers.push({ id: doc.id, ...doc.data() });
-                });
-                updateSummaryCards();
-                filterUsers();
-            }, (error) => {
-                const tbody = document.getElementById("usersTableBody");
-                if (tbody) {
-                    tbody.innerHTML = `<tr><td colspan="7" style="color:red; text-align:center; padding:15px;">Error: ${error.message}</td></tr>`;
-                }
-            });
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    loadUsersData();
-</script>
 </body>
 </html>
