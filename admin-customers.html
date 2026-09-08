@@ -17,6 +17,7 @@
             height: 100%;
             background-color: #f4f7fe !important;
             color: #2b3674;
+            overflow-x: hidden;
         }
 
         .admin-layout {
@@ -26,29 +27,36 @@
             background-color: #f4f7fe;
         }
 
+        /* Sidebar hamesha left me fix rahega */
         .sidebar {
-            width: 260px;
+            width: 240px;
             background: #ffffff;
-            padding: 20px;
+            padding: 20px 15px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.05);
             flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .brand-logo {
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 25px;
             color: #2b3674;
+            text-align: center;
         }
 
         .nav-link {
             display: block;
-            padding: 12px 15px;
+            padding: 10px 12px;
             margin-bottom: 8px;
             border-radius: 10px;
             text-decoration: none;
             color: #5d6978;
             font-weight: 500;
+            font-size: 14px;
         }
 
         .nav-link:hover, .nav-link.active {
@@ -57,10 +65,12 @@
             font-weight: bold;
         }
 
+        /* Main Content wrapper */
         .main-wrapper {
             flex-grow: 1;
-            padding: 25px;
+            padding: 20px;
             background-color: #f4f7fe !important;
+            width: calc(100% - 240px);
             overflow-x: auto;
         }
 
@@ -74,37 +84,38 @@
             background-color: #ff7666;
             color: white;
             border: none;
-            padding: 8px 20px;
+            padding: 8px 18px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 13px;
         }
 
         .summary-cards {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .card {
             background: #ffffff;
-            padding: 20px;
+            padding: 18px;
             border-radius: 15px;
             flex: 1;
-            min-width: 200px;
+            min-width: 180px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
         .card-title {
-            font-size: 14px;
+            font-size: 12px;
             color: #707ebe;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .card-value {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             color: #2b3674;
         }
@@ -117,7 +128,7 @@
         }
 
         .page-title {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: bold;
             color: #2b3674;
             margin-bottom: 5px;
@@ -125,23 +136,23 @@
 
         .page-desc {
             color: #707ebe;
-            font-size: 14px;
+            font-size: 13px;
             margin-bottom: 20px;
         }
 
         .filter-container {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .filter-input {
-            padding: 10px 15px;
+            padding: 8px 12px;
             border: 1px solid #e0e5f2;
-            border-radius: 10px;
+            border-radius: 8px;
             outline: none;
-            font-size: 14px;
+            font-size: 13px;
             color: #2b3674;
         }
 
@@ -158,21 +169,22 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            min-width: 600px;
         }
 
         th {
             background-color: #f8f9fa;
             color: #5d6978;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            padding: 12px 15px;
+            padding: 10px 12px;
             border-bottom: 2px solid #edf2f7;
         }
 
         td {
-            padding: 14px 15px;
+            padding: 12px;
             border-bottom: 1px solid #edf2f7;
-            font-size: 14px;
+            font-size: 13px;
             color: #2b3674;
         }
 
@@ -180,10 +192,11 @@
             background: #4318ff;
             color: #ffffff;
             border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: 500;
+            font-size: 12px;
         }
 
         .modal-overlay {
@@ -202,9 +215,9 @@
         .modal-content {
             background: #ffffff;
             width: 90%;
-            max-width: 450px;
+            max-width: 400px;
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             position: relative;
         }
 
@@ -223,14 +236,14 @@
 
         .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
+            padding: 8px 10px;
             border: 1px solid #e0e5f2;
             border-radius: 8px;
             outline: none;
@@ -241,15 +254,29 @@
             background: #059669;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
         }
 
+        /* Mobile Adjustments: Column collapse ko hata diya gaya hai */
         @media (max-width: 768px) {
-            .admin-layout { flex-direction: column; }
-            .sidebar { width: 100%; }
+            .sidebar {
+                width: 180px;
+                padding: 15px 8px;
+            }
+            .brand-logo {
+                font-size: 14px;
+            }
+            .nav-link {
+                font-size: 12px;
+                padding: 8px 10px;
+            }
+            .main-wrapper {
+                width: calc(100% - 180px);
+                padding: 12px;
+            }
         }
     </style>
 </head>
@@ -288,7 +315,7 @@
             <p class="page-desc">Search users by Name/Mobile, Filter by Date, and Manage Wallet Balance.</p>
 
             <div class="filter-container">
-                <input type="text" id="searchKeyword" class="filter-input" placeholder="Search by Name or Mobile..." onkeyup="filterUsers()">
+                <input type="text" id="searchKeyword" class="filter-input" placeholder="Search Name/Mobile..." onkeyup="filterUsers()">
                 <input type="date" id="searchDate" class="filter-input" onchange="filterUsers()">
             </div>
 
@@ -450,7 +477,6 @@
         const newBonusBal = Number(document.getElementById("inputBonusBalance").value) || 0;
 
         try {
-            // Collection path set to 'customers' based on Firebase database schema
             const userRef = doc(db, "customers", selectedUserId);
             await updateDoc(userRef, {
                 balance: newMainBal,
@@ -465,7 +491,6 @@
 
     function loadUsersData() {
         try {
-            // Collection path changed to 'customers'
             const usersCollection = collection(db, "customers");
             onSnapshot(usersCollection, (snapshot) => {
                 allUsers = [];
