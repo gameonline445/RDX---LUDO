@@ -21,7 +21,10 @@
     }
     
     body { 
-      background: #0f172a; /* Main Website Dark Theme */
+      background: radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+                  radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+                  linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+      color: #101a38;
       display: flex; 
       align-items: center; 
       justify-content: center; 
@@ -30,30 +33,34 @@
     }
     
     .login-card {
-      background: #1e293b;
+      background: #ffffff;
       width: 100%;
-      max-width: 400px;
+      max-width: 380px;
       padding: 35px 25px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border-radius: 22px;
+      box-shadow: 0 8px 22px rgba(2, 132, 199, 0.12);
+      border: 1.5px solid #bae6fd;
       text-align: center;
-      border: 1px solid #334155;
     }
 
     .brand-logo {
-      width: 75px;
-      height: 75px;
-      margin-bottom: 10px;
-      object-fit: contain;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border: 1.5px solid #bae6fd;
+      background: #ffffff;
+      padding: 2px;
+      box-shadow: 0 4px 12px rgba(2,132,199,0.15);
+      margin-bottom: 12px;
+      object-fit: cover;
     }
 
     .brand-title { 
-      font-size: 22px; 
-      font-weight: 800; 
-      color: #fbbf24; /* Main Gold Color */
-      margin-bottom: 25px; 
+      font-size: 20px; 
+      font-weight: 850; 
+      color: #0c4a6e; 
+      margin-bottom: 22px; 
       letter-spacing: 0.5px;
-      text-transform: uppercase;
     }
     
     .form-group { 
@@ -65,52 +72,53 @@
       display: block; 
       font-size: 13px; 
       font-weight: 700; 
-      color: #94a3b8; 
+      color: #0284c7; 
       margin-bottom: 6px; 
     }
     
     .form-group input {
       width: 100%;
       padding: 12px 14px;
-      background: #0f172a;
-      border: 1px solid #334155;
-      color: #ffffff;
-      border-radius: 8px;
+      background: #f8fafc;
+      border: 1.5px solid #bae6fd;
+      color: #101a38;
+      border-radius: 12px;
       font-size: 14px;
       outline: none;
       transition: all 0.2s;
     }
     
     .form-group input:focus { 
-      border-color: #f59e0b; 
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); 
+      border-color: #0284c7; 
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15); 
     }
 
     .login-btn {
       width: 100%;
-      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); /* Gold/Yellow Theme Gradient */
-      color: #0f172a;
+      background: linear-gradient(145deg, #06b6d4, #0284c7);
+      color: #ffffff;
       border: none;
       padding: 12px;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 15px;
       font-weight: 800;
       cursor: pointer;
-      transition: all 0.2s;
+      box-shadow: 0 4px 14px rgba(6,182,212,0.35);
+      transition: transform 0.2s;
       margin-top: 10px;
     }
     
-    .login-btn:hover { 
-      opacity: 0.9;
-      transform: translateY(-1px);
+    .login-btn:active { 
+      transform: scale(0.98);
     }
 
     .error-msg {
-      color: #f87171;
-      background: rgba(239, 68, 68, 0.1);
-      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #dc2626;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 13px;
       margin-bottom: 15px;
       display: none;
@@ -122,8 +130,7 @@
 <body>
 
   <div class="login-card">
-    <!-- Main Logo -->
-    <img src="logo.png" alt="RDX LUDO" class="brand-logo" onerror="this.src='https://via.placeholder.com/75/f59e0b/0f172a?text=RDX'">
+    <img src="logo.png" alt="RDX Logo" class="brand-logo" onerror="this.src='https://via.placeholder.com/65/bae6fd/0284c7?text=RDX'">
     <h2 class="brand-title">RDX LUDO ADMIN</h2>
 
     <div class="error-msg" id="errorBox"></div>
@@ -144,7 +151,6 @@
   </div>
 
   <script>
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
       authDomain: "rdx-ludo.firebaseapp.com",
@@ -159,14 +165,12 @@
     }
     const auth = firebase.auth();
 
-    // Auto Redirect agar pehle se login ho
     auth.onAuthStateChanged((user) => {
       if (user) {
         window.location.replace("admin.html");
       }
     });
 
-    // Login Function
     function handleLogin(e) {
       e.preventDefault();
       const email = document.getElementById('adminEmail').value.trim();
