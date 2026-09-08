@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>RDX LUDO - Refer & Redeem System</title>
+    <title>RDX LUDO - Refer & Earn</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Firebase SDKs (v9 Compat Mode) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -17,19 +17,19 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-            background: linear-gradient(180deg, #eaf4ff 0%, #ffffff 50%, #eaf4ff 100%);
-            color: #101a38;
+            background-color: #f4f6f9;
+            color: #333;
             min-height: 100vh;
             padding: 16px;
-            padding-top: 70px; /* Space for top header */
-            padding-bottom: 80px; /* Space for bottom nav */
+            padding-top: 70px;
+            padding-bottom: 80px;
         }
 
-        /* TOP NAVIGATION HEADER */
+        /* HEADER NAV */
         .top-header {
             position: fixed;
             top: 0;
@@ -41,14 +41,13 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
             z-index: 100;
         }
 
         .back-btn {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            color: #0284c7;
+            background: #f0f4f8;
+            color: #1e293b;
             width: 38px;
             height: 38px;
             border-radius: 50%;
@@ -56,31 +55,31 @@
             align-items: center;
             justify-content: center;
             font-size: 16px;
-            cursor: pointer;
             text-decoration: none;
+            border: none;
         }
 
         .header-title {
             font-size: 16px;
-            font-weight: 900;
-            color: #0c4a6e;
+            font-weight: 800;
+            color: #0f172a;
         }
 
         /* REFERRAL CARD */
         .refer-card {
             background: #ffffff;
-            border: 1.5px solid #bae6fd;
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 8px 20px rgba(2,132,199,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
         }
 
         .refer-card h2 {
-            font-size: 20px;
-            color: #0c4a6e;
-            font-weight: 900;
+            font-size: 18px;
+            color: #0f172a;
+            font-weight: 800;
             margin-bottom: 6px;
         }
 
@@ -94,8 +93,8 @@
         .code-box {
             border: 2px dashed #0284c7;
             background: #f0f9ff;
-            padding: 12px;
-            border-radius: 14px;
+            padding: 14px;
+            border-radius: 12px;
             cursor: pointer;
             margin-bottom: 16px;
         }
@@ -105,22 +104,24 @@
             font-size: 10px;
             color: #64748b;
             font-weight: 800;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
         }
 
         .code-box strong {
-            font-size: 22px;
+            font-size: 20px;
             color: #0284c7;
-            letter-spacing: 2px;
+            letter-spacing: 1.5px;
+            word-break: break-all;
         }
 
         .whatsapp-btn {
             width: 100%;
-            background: #16a34a;
+            background: #25d366;
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 15px;
             font-weight: 800;
             cursor: pointer;
@@ -128,53 +129,47 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(22,163,74,0.25);
+            box-shadow: 0 4px 12px rgba(37,211,102,0.2);
         }
 
         /* EARNING CARD */
         .earning-card {
             background: #ffffff;
-            border: 1.5px solid #bae6fd;
-            border-radius: 20px;
+            border-radius: 16px;
             padding: 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 6px 16px rgba(2,132,199,0.06);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
         }
 
         .earning-info small {
-            font-size: 11px;
+            font-size: 10px;
             color: #64748b;
             font-weight: 800;
             letter-spacing: 0.5px;
         }
 
         .earning-info h3 {
-            font-size: 24px;
+            font-size: 22px;
             color: #16a34a;
-            font-weight: 900;
+            font-weight: 800;
             margin-top: 2px;
         }
 
         .transfer-btn {
-            background: linear-gradient(100deg,#0284c7,#0369a1);
+            background: #2563eb;
             color: white;
             border: none;
             padding: 10px 16px;
-            border-radius: 12px;
+            border-radius: 10px;
             font-size: 13px;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(2,132,199,0.3);
-            transition: transform 0.1s ease;
         }
 
-        .transfer-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* BOTTOM NAVIGATION BAR */
+        /* BOTTOM NAV */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -186,7 +181,6 @@
             justify-content: space-around;
             align-items: center;
             border-top: 1px solid #e2e8f0;
-            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
             z-index: 100;
         }
 
@@ -201,20 +195,16 @@
             gap: 4px;
         }
 
-        .nav-item i {
-            font-size: 18px;
-        }
-
         .nav-item.active {
-            color: #0284c7;
+            color: #2563eb;
         }
 
-        /* REDEEM POPUP MODAL */
+        /* MODAL POPUP */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.5);
+            background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             z-index: 999;
             align-items: center;
@@ -224,18 +214,11 @@
 
         .redeem-box {
             background: #ffffff;
-            border-radius: 24px;
+            border-radius: 20px;
             padding: 20px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
-            animation: popUp 0.25s ease-out;
-        }
-
-        @keyframes popUp {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
         }
 
         .close-btn {
@@ -247,149 +230,55 @@
             cursor: pointer;
         }
 
-        .redeem-header small {
-            color: #0284c7;
-            font-size: 11px;
-            font-weight: 850;
-            letter-spacing: 1px;
-        }
-
         .redeem-header h3 {
-            font-size: 22px;
+            font-size: 20px;
             color: #0f172a;
-            font-weight: 900;
-            margin-top: 2px;
-        }
-
-        .redeem-sub {
-            font-size: 12px;
-            color: #64748b;
-            margin-top: 2px;
-            margin-bottom: 16px;
+            font-weight: 800;
         }
 
         .wallet-display {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 14px;
+            border-radius: 12px;
+            padding: 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .wallet-display small {
-            font-size: 10px;
-            color: #64748b;
-            font-weight: 800;
-        }
-
-        .wallet-display h4 {
-            font-size: 20px;
-            color: #0f172a;
-            font-weight: 900;
-        }
-
-        .tds-notice {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            padding: 10px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            color: #0369a1;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 16px;
-        }
-
-        .input-label {
-            font-size: 11px;
-            color: #64748b;
-            font-weight: 800;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 6px;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 28px;
-            height: 28px;
-            background: #0284c7;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: 800;
+            margin: 14px 0;
         }
 
         .input-group input {
             width: 100%;
-            height: 48px;
-            padding-left: 50px;
-            padding-right: 14px;
-            border-radius: 14px;
-            border: 1.5px solid #bae6fd;
-            background: #f8fafc;
+            height: 46px;
+            padding: 0 14px;
+            border-radius: 10px;
+            border: 1.5px solid #cbd5e1;
             font-size: 16px;
             font-weight: 700;
-            outline: none;
-        }
-
-        .input-limits {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #ef4444;
-            font-weight: 700;
             margin-bottom: 12px;
-        }
-
-        .info-note {
-            font-size: 11px;
-            color: #64748b;
-            text-align: center;
-            margin-bottom: 16px;
+            outline: none;
         }
 
         .redeem-now-btn {
             width: 100%;
-            height: 48px;
-            background: linear-gradient(100deg,#2563eb,#1d4ed8);
+            height: 46px;
+            background: #2563eb;
             color: white;
             border: none;
-            border-radius: 24px;
+            border-radius: 10px;
             font-size: 15px;
-            font-weight: 850;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 18px rgba(37,99,235,0.3);
-            transition: transform 0.1s ease;
         }
 
-        .redeem-now-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* TOAST NOTIFICATION */
         #toast {
             visibility: hidden;
-            min-width: 260px;
+            min-width: 250px;
             background-color: #0f172a;
             color: #fff;
             text-align: center;
-            border-radius: 12px;
-            padding: 12px 16px;
+            border-radius: 10px;
+            padding: 12px;
             position: fixed;
             z-index: 2000;
             left: 50%;
@@ -397,37 +286,32 @@
             transform: translateX(-50%);
             font-size: 13px;
             font-weight: 700;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
         }
 
         #toast.show {
             visibility: visible;
-            animation: fadein 0.4s, fadeout 0.4s 2.6s;
         }
-
-        @keyframes fadein { from {bottom: 60px; opacity: 0;} to {bottom: 80px; opacity: 1;} }
-        @keyframes fadeout { from {bottom: 80px; opacity: 1;} to {bottom: 60px; opacity: 0;} }
     </style>
 </head>
 <body>
 
-    <!-- TOP HEADER WITH BACK BUTTON -->
+    <!-- TOP HEADER -->
     <div class="top-header">
         <a href="javascript:history.back()" class="back-btn">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <div class="header-title">Refer & Earn</div>
-        <div style="width: 38px;"></div> <!-- Spacer for alignment -->
+        <div style="width: 38px;"></div>
     </div>
 
-    <!-- REFERRAL BOX -->
+    <!-- REFERRAL CARD -->
     <div class="refer-card">
         <h2>🎁 Refer & Earn 2%</h2>
         <p>Apne dosto ko invite karein aur unke matches par 2% lifetime reward payein!</p>
         
         <div class="code-box" onclick="copyReferralCode()">
             <small>YOUR REFERRAL CODE (TAP TO COPY)</small>
-            <strong id="refCodeDisplay">RDX...</strong>
+            <strong id="refCodeDisplay">LOADING...</strong>
         </div>
 
         <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
@@ -435,7 +319,7 @@
         </button>
     </div>
 
-    <!-- REFERRAL EARNINGS -->
+    <!-- EARNING CARD -->
     <div class="earning-card">
         <div class="earning-info">
             <small>REFERRAL EARNINGS</small>
@@ -446,42 +330,25 @@
         </button>
     </div>
 
-    <!-- REDEEM REFERRAL POPUP -->
+    <!-- REDEEM POPUP -->
     <div class="modal-overlay" id="redeemModal">
         <div class="redeem-box">
             <i class="fa-solid fa-xmark close-btn" onclick="closeRedeemModal()"></i>
 
             <div class="redeem-header">
-                <small>REFERRAL</small>
                 <h3>Redeem Referral</h3>
             </div>
-            <p class="redeem-sub">Convert your referral earnings into coins</p>
 
             <div class="wallet-display">
                 <div>
-                    <small>REFERRAL WALLET</small>
-                    <h4 id="modalRefBalance">₹0</h4>
+                    <small style="color:#64748b; font-weight:700;">REFERRAL WALLET</small>
+                    <h4 id="modalRefBalance" style="font-size:18px; color:#0f172a;">₹0</h4>
                 </div>
-                <i class="fa-solid fa-wallet" style="font-size:24px; color:#0284c7;"></i>
+                <i class="fa-solid fa-wallet" style="font-size:22px; color:#2563eb;"></i>
             </div>
 
-            <div class="tds-notice">
-                🎁 5% TDS applicable after ₹15,000 yearly earning
-            </div>
-
-            <label class="input-label">ENTER AMOUNT</label>
             <div class="input-group">
-                <div class="input-icon">₹</div>
-                <input type="number" id="redeemAmountInput" placeholder="Enter amount">
-            </div>
-
-            <div class="input-limits">
-                <span>Min: ₹100</span>
-                <span style="color:#0284c7;">Max: ₹10000</span>
-            </div>
-
-            <div class="info-note">
-                🔗 Amount will be converted into Coins
+                <input type="number" id="redeemAmountInput" placeholder="Enter amount (Min ₹100)">
             </div>
 
             <button class="redeem-now-btn" onclick="processRedeemInFirebase()">
@@ -490,7 +357,7 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAVIGATION BAR -->
+    <!-- BOTTOM NAV -->
     <div class="bottom-nav">
         <a href="index.html" class="nav-item">
             <i class="fa-solid fa-house"></i>
@@ -517,9 +384,6 @@
     <div id="toast"></div>
 
 <script>
-// ==========================================
-// 1. FIREBASE CONFIGURATION
-// ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
   authDomain: "rdx-ludo.firebaseapp.com",
@@ -545,47 +409,61 @@ function generateRandomReferralCode() {
     return "RDX" + Math.floor(100000 + Math.random() * 900000);
 }
 
-// ==========================================
-// 2. REALTIME USER DATA LISTEN (CUSTOMERS)
-// ==========================================
+// Session Check
+const localCode = localStorage.getItem("userReferralCode");
+if(localCode) {
+    document.getElementById("refCodeDisplay").innerText = localCode;
+}
+
 auth.onAuthStateChanged((user) => {
     if (user) {
         currentUserUid = user.uid;
-        const userRef = db.ref('customers/' + currentUserUid);
-
-        userRef.on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                liveReferralWallet = parseFloat(data.referralWallet) || 0;
-                userReferralCode = data.referralCode || data.myReferralCode || data.referCode;
-
-                if (!userReferralCode) {
-                    userReferralCode = generateRandomReferralCode();
-                    userRef.update({ referralCode: userReferralCode });
-                }
-
-                document.getElementById("referralBalanceDisplay").innerText = "₹" + liveReferralWallet;
-                document.getElementById("modalRefBalance").innerText = "₹" + liveReferralWallet;
-                document.getElementById("refCodeDisplay").innerText = userReferralCode;
-            } else {
-                const newCode = generateRandomReferralCode();
-                userRef.set({
-                    referralCode: newCode,
-                    referralWallet: 0,
-                    mainWallet: 0
-                });
-                document.getElementById("refCodeDisplay").innerText = newCode;
-            }
-        });
+        fetchUserData(currentUserUid);
     } else {
-        document.getElementById("refCodeDisplay").innerText = "LOGIN REQUIRED";
-        showToast("⚠️ Kripya Pehle Login Karein!");
+        // Fallback: Check if user data exists in local storage or auto login session
+        const savedUid = localStorage.getItem("loggedInUid");
+        if(savedUid) {
+            currentUserUid = savedUid;
+            fetchUserData(currentUserUid);
+        } else {
+            document.getElementById("refCodeDisplay").innerText = "PLEASE LOGIN";
+            showToast("⚠️ Kripya Pehle Login Karein!");
+        }
     }
 });
 
-// ==========================================
-// 3. REDEEM TO WALLET LOGIC
-// ==========================================
+function fetchUserData(uid) {
+    const userRef = db.ref('customers/' + uid);
+
+    userRef.on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            liveReferralWallet = parseFloat(data.referralWallet) || 0;
+            userReferralCode = data.referralCode || data.myReferralCode || data.referCode;
+
+            if (!userReferralCode) {
+                userReferralCode = generateRandomReferralCode();
+                userRef.update({ referralCode: userReferralCode });
+            }
+
+            localStorage.setItem("userReferralCode", userReferralCode);
+            localStorage.setItem("loggedInUid", uid);
+
+            document.getElementById("referralBalanceDisplay").innerText = "₹" + liveReferralWallet;
+            document.getElementById("modalRefBalance").innerText = "₹" + liveReferralWallet;
+            document.getElementById("refCodeDisplay").innerText = userReferralCode;
+        } else {
+            const newCode = generateRandomReferralCode();
+            userRef.set({
+                referralCode: newCode,
+                referralWallet: 0,
+                mainWallet: 0
+            });
+            document.getElementById("refCodeDisplay").innerText = newCode;
+        }
+    });
+}
+
 function processRedeemInFirebase() {
     const amountInput = document.getElementById("redeemAmountInput").value;
     const amount = parseFloat(amountInput);
@@ -596,22 +474,17 @@ function processRedeemInFirebase() {
     }
 
     if (!amountInput || isNaN(amount) || amount <= 0) {
-        showToast("⚠️ Kripya sahi amount darj karein!");
+        showToast("⚠️ Sahi amount darj karein!");
         return;
     }
 
     if (amount < 100) {
-        showToast("❌ Kam se kam ₹100 redeem kar sakte hain!");
-        return;
-    }
-
-    if (amount > 10000) {
-        showToast("❌ Ek baar me max ₹10,000 hi redeem kar sakte hain!");
+        showToast("❌ Minimum ₹100 redeem kar sakte hain!");
         return;
     }
 
     if (amount > liveReferralWallet) {
-        showToast("❌ Apke referral wallet me itna balance nahi hai!");
+        showToast("❌ Wallet me paryapt balance nahi hai!");
         return;
     }
 
@@ -631,20 +504,15 @@ function processRedeemInFirebase() {
         }
         return userData;
     }, (error, committed) => {
-        if (error) {
+        if (error || !committed) {
             showToast("❌ Transaction Fail Ho Gaya!");
-        } else if (!committed) {
-            showToast("❌ Balance Kam Padh Gaya!");
         } else {
             closeRedeemModal();
-            showToast(`🎉 ₹${amount} Safaltapurvak Main Wallet me Transfer ho gaye!`);
+            showToast(`🎉 ₹${amount} Main Wallet me Transfer ho gaye!`);
         }
     });
 }
 
-// ==========================================
-// 4. UI CONTROLS & HELPERS
-// ==========================================
 function openRedeemModal() {
     document.getElementById("redeemModal").style.display = "flex";
 }
@@ -656,14 +524,14 @@ function closeRedeemModal() {
 
 function copyReferralCode() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (!code || code.includes("...") || code === "LOGIN REQUIRED") return;
+    if (!code || code === "LOADING..." || code === "PLEASE LOGIN") return;
     navigator.clipboard.writeText(code);
     showToast("📋 Referral Code Copied!");
 }
 
 function shareOnWhatsApp() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (!code || code.includes("...") || code === "LOGIN REQUIRED") {
+    if (!code || code === "LOADING..." || code === "PLEASE LOGIN") {
         showToast("⚠️ Kripya Pehle Login Karein!");
         return;
     }
