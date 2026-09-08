@@ -411,7 +411,7 @@
 
 <script>
 // ==========================================
-// 1. YOUR REAL FIREBASE CONFIGURATION
+// 1. FIREBASE CONFIGURATION
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -435,29 +435,51 @@ let currentUserUid = null;
 let liveReferralWallet = 0;
 let userReferralCode = "";
 
+// Random referral code generator helper function
+function generateRandomReferralCode() {
+    return "RDX" + Math.floor(100000 + Math.random() * 900000);
+}
+
 // ==========================================
-// 2. REALTIME USER DATA LISTEN (Firebase)
+// 2. REALTIME USER DATA LISTEN (Updated for 'customers')
 // ==========================================
 auth.onAuthStateChanged((user) => {
     if (user) {
         currentUserUid = user.uid;
         
-        db.ref('users/' + currentUserUid).on('value', (snapshot) => {
+        // Target 'customers/' node instead of 'users/'
+        const userRef = db.ref('customers/' + currentUserUid);
+
+        userRef.on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 liveReferralWallet = parseFloat(data.referralWallet) || 0;
-                userReferralCode = data.myReferralCode || "NRSO6389";
+                
+                // Read possible referral code keys
+                userReferralCode = data.referralCode || data.myReferralCode || data.referCode;
+
+                // Auto-generate code if missing in database
+                if (!userReferralCode) {
+                    userReferralCode = generateRandomReferralCode();
+                    userRef.update({ referralCode: userReferralCode });
+                }
 
                 document.getElementById("referralBalanceDisplay").innerText = "₹" + liveReferralWallet;
                 document.getElementById("modalRefBalance").innerText = "₹" + liveReferralWallet;
                 document.getElementById("refCodeDisplay").innerText = userReferralCode;
             } else {
-                document.getElementById("refCodeDisplay").innerText = "NRSO6389";
+                // Initialize default profile if user node is missing
+                const newCode = generateRandomReferralCode();
+                userRef.set({
+                    referralCode: newCode,
+                    referralWallet: 0,
+                    mainWallet: 0
+                });
+                document.getElementById("refCodeDisplay").innerText = newCode;
             }
         });
     } else {
-        // Fallback default code display if not authenticated
-        document.getElementById("refCodeDisplay").innerText = "NRSO6389";
+        document.getElementById("refCodeDisplay").innerText = "PLEASE LOGIN";
     }
 });
 
@@ -493,7 +515,7 @@ function processRedeemInFirebase() {
         return;
     }
 
-    const userRef = db.ref('users/' + currentUserUid);
+    const userRef = db.ref('customers/' + currentUserUid);
 
     userRef.transaction((userData) => {
         if (userData) {
@@ -521,47 +543,25 @@ function processRedeemInFirebase() {
 }
 
 // ==========================================
-// 4. AUTO 2% REFERRAL COMMISSION (On Match End)
+// 4. AUTO 2% REFERRAL COMMISSION
 // ==========================================
-async function completeMatchAndAddReferralBonus(matchId, winnerUid, entryFee) {
-    try {
-        const matchRef = db.ref('matches/' + matchId);
-        const snapshot = await matchRef.once('value');
-        const matchData = snapshot.val();
-
-        if (!matchData || matchData.status === "COMPLETED") return;
-
-        await matchRef.update({
-            status: "COMPLETED",
-            winner: winnerUid,
-            completedAt: firebase.database.ServerValue.TIMESTAMP
-        });
-
-        await giveReferralCommission(matchData.player1, entryFee);
-        await giveReferralCommission(matchData.player2, entryFee);
-
-    } catch (err) {
-        console.error("Match Completion Error:", err);
-    }
-}
-
 async function giveReferralCommission(playerUid, entryFee) {
     if (!playerUid) return;
 
-    const userSnap = await db.ref('users/' + playerUid).once('value');
+    const userSnap = await db.ref('customers/' + playerUid).once('value');
     const userData = userSnap.val();
 
     if (userData && userData.referredBy) {
         const parentCode = userData.referredBy;
         const commission = (entryFee * 2) / 100;
 
-        const referrerQuery = await db.ref('users').orderByChild('myReferralCode').equalTo(parentCode).once('value');
+        const referrerQuery = await db.ref('customers').orderByChild('referralCode').equalTo(parentCode).once('value');
 
         if (referrerQuery.exists()) {
             referrerQuery.forEach((child) => {
                 const referrerUid = child.key;
                 
-                db.ref('users/' + referrerUid + '/referralWallet').transaction((bal) => {
+                db.ref('customers/' + referrerUid + '/referralWallet').transaction((bal) => {
                     return (parseFloat(bal) || 0) + commission;
                 });
             });
@@ -583,13 +583,17 @@ function closeRedeemModal() {
 
 function copyReferralCode() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (!code || code === "...") return;
+    if (!code || code === "..." || code === "PLEASE LOGIN") return;
     navigator.clipboard.writeText(code);
     showToast("📋 Referral Code Copied!");
 }
 
 function shareOnWhatsApp() {
     const code = document.getElementById("refCodeDisplay").innerText;
+    if (code === "..." || code === "PLEASE LOGIN") {
+        showToast("⚠️ Kripya Pehle Login Karein!");
+        return;
+    }
     const text = `Play Ludo on RDX LUDO & Win Real Cash! 🎲\nUse my Referral Code: *${code}*\nJoin Now: ${window.location.origin}/index.html?ref=${code}`;
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
 }
