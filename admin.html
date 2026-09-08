@@ -24,7 +24,7 @@
       background-color: #000000; 
       color: #333; 
       overflow: hidden; 
-      display: none; /* Login check hone tak page hide rahega */
+      display: none; /* Login check hone tak hide rahega */
     }
 
     /* Top Bar Header */
@@ -165,15 +165,14 @@
   </div>
 
   <script>
-    // Apni Firebase Config keys yahan dalein
+    // Aapki actual Firebase Keys
     const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
+      apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+      authDomain: "rdx-ludo.firebaseapp.com",
+      projectId: "rdx-ludo",
+      storageBucket: "rdx-ludo.firebasestorage.app",
+      messagingSenderId: "928340814840",
+      appId: "1:928340814840:web:6eca42a8b76138b268440d"
     };
 
     if (!firebase.apps.length) {
@@ -181,12 +180,12 @@
     }
     const auth = firebase.auth();
 
-    // Login Guard: Check karein agar logged in nahi hai to login screen par bhej de
+    // Login Guard
     auth.onAuthStateChanged((user) => {
       if (!user) {
         window.location.replace("admin-login.html");
       } else {
-        document.body.style.display = "block"; // Authenticated hone par panel dikhao
+        document.body.style.display = "block";
       }
     });
 
