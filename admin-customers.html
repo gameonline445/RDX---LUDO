@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customers - RDX LUDO ADMIN</title>
     <style>
-        /* CSS Reset & Black Screen Fix */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -16,11 +15,10 @@
         html, body {
             width: 100%;
             height: 100%;
-            background-color: #f4f7fe !important; /* Forces light background */
+            background-color: #f4f7fe !important;
             color: #2b3674;
         }
 
-        /* Responsive Layout */
         .admin-layout {
             display: flex;
             width: 100%;
@@ -28,7 +26,6 @@
             background-color: #f4f7fe;
         }
 
-        /* Sidebar Styles */
         .sidebar {
             width: 260px;
             background: #ffffff;
@@ -50,7 +47,7 @@
             margin-bottom: 8px;
             border-radius: 10px;
             text-decoration: none;
-            color: #a3edcc;
+            color: #5d6978;
             font-weight: 500;
         }
 
@@ -60,7 +57,6 @@
             font-weight: bold;
         }
 
-        /* Main Workspace Area */
         .main-wrapper {
             flex-grow: 1;
             padding: 25px;
@@ -84,7 +80,6 @@
             font-weight: bold;
         }
 
-        /* Card Container */
         .card-container {
             background: #ffffff;
             border-radius: 15px;
@@ -100,12 +95,11 @@
         }
 
         .page-desc {
-            color: #707ebe;
+            color: #a3edcc;
             font-size: 14px;
             margin-bottom: 20px;
         }
 
-        /* Table Styling */
         .table-responsive {
             width: 100%;
             overflow-x: auto;
@@ -119,7 +113,7 @@
 
         th {
             background-color: #f8f9fa;
-            color: #a3edcc;
+            color: #5d6978;
             font-size: 12px;
             text-transform: uppercase;
             padding: 12px 15px;
@@ -144,19 +138,14 @@
         }
 
         @media (max-width: 768px) {
-            .admin-layout {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-            }
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
         }
     </style>
 </head>
 <body>
 
 <div class="admin-layout">
-    <!-- Sidebar Navigation -->
     <div class="sidebar">
         <div class="brand-logo">RDX LUDO ADMIN</div>
         <nav>
@@ -168,7 +157,6 @@
         </nav>
     </div>
 
-    <!-- Main Content Area -->
     <div class="main-wrapper">
         <div class="top-bar">
             <button class="logout-btn">Logout</button>
@@ -199,19 +187,17 @@
     </div>
 </div>
 
-<!-- Firebase Script Section -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // AAPKI FIREBASE CONFIG (Sahi credentials daalein)
     const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_AUTH_DOMAIN",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_STORAGE_BUCKET",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
+        apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+        authDomain: "rdx-ludo.firebaseapp.com",
+        projectId: "rdx-ludo",
+        storageBucket: "rdx-ludo.firebasestorage.app",
+        messagingSenderId: "928340814840",
+        appId: "1:928340814840:web:6eca42a8b76138b268440d"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -256,7 +242,6 @@
         }
     }
 
-    // Load data on start
     loadUsers();
 </script>
 </body>
