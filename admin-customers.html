@@ -80,6 +80,37 @@
             font-weight: bold;
         }
 
+        /* Analytics / Summary Cards */
+        .summary-cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            flex: 1;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .card-title {
+            font-size: 14px;
+            color: #a3edcc;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2b3674;
+        }
+
+        /* Container & Table */
         .card-container {
             background: #ffffff;
             border-radius: 15px;
@@ -98,6 +129,27 @@
             color: #a3edcc;
             font-size: 14px;
             margin-bottom: 20px;
+        }
+
+        /* Filters */
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-input {
+            padding: 10px 15px;
+            border: 1px solid #e0e5f2;
+            border-radius: 10px;
+            outline: none;
+            font-size: 14px;
+            color: #2b3674;
+        }
+
+        .filter-input:focus {
+            border-color: #4318ff;
         }
 
         .table-responsive {
@@ -131,10 +183,79 @@
             background: #4318ff;
             color: #ffffff;
             border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
+            padding: 8px 14px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: 500;
+        }
+
+        .edit-btn:hover {
+            background: #3311cc;
+        }
+
+        /* Modal / Popup Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #888;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #2b3674;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e5f2;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .save-btn {
+            width: 100%;
+            background: #059669;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -162,9 +283,27 @@
             <button class="logout-btn">Logout</button>
         </div>
 
+        <!-- Dashboard Top Summary Stats -->
+        <div class="summary-cards">
+            <div class="card">
+                <div class="card-title">TOTAL REAL USERS</div>
+                <div class="card-value" id="totalUsersCount">0</div>
+            </div>
+            <div class="card">
+                <div class="card-title">TOTAL USERS BALANCE</div>
+                <div class="card-value" id="totalUsersBalance">₹0</div>
+            </div>
+        </div>
+
         <div class="card-container">
-            <h1 class="page-title">Customers</h1>
-            <p class="page-desc">User accounts list and wallet edit options.</p>
+            <h1 class="page-title">👥 Customers Management</h1>
+            <p class="page-desc">Search users, filter by account date, and manage balances.</p>
+
+            <!-- Search Bars -->
+            <div class="filter-container">
+                <input type="text" id="searchKeyword" class="filter-input" placeholder="Search by Name or Mobile..." onkeyup="filterUsers()">
+                <input type="date" id="searchDate" class="filter-input" onchange="filterUsers()">
+            </div>
 
             <div class="table-responsive">
                 <table>
@@ -172,13 +311,16 @@
                         <tr>
                             <th>USER ID / NAME</th>
                             <th>PHONE</th>
-                            <th>BALANCE</th>
+                            <th>JOIN DATE</th>
+                            <th>MAIN BALANCE</th>
+                            <th>BONUS</th>
+                            <th>TOTAL BALANCE</th>
                             <th>ACTIONS</th>
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
                         <tr>
-                            <td colspan="4" style="text-align: center; padding: 20px;">Firebase se data load ho raha hai...</td>
+                            <td colspan="7" style="text-align: center; padding: 20px;">Firebase se data load ho raha hai...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -187,9 +329,32 @@
     </div>
 </div>
 
+<!-- Edit Wallet & Bonus Modal -->
+<div class="modal-overlay" id="walletModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeWalletModal()">&times;</span>
+        <h3>Edit User Wallet</h3>
+        <br>
+        <p><strong>User:</strong> <span id="modalUserName"></span></p>
+        <p style="margin-bottom: 15px;"><small id="modalUserId" style="color: #a3edcc;"></small></p>
+
+        <div class="form-group">
+            <label>Main / Deposit Balance (₹)</label>
+            <input type="number" id="inputMainBalance" placeholder="0">
+        </div>
+
+        <div class="form-group">
+            <label>Bonus Balance (₹)</label>
+            <input type="number" id="inputBonusBalance" placeholder="0">
+        </div>
+
+        <button class="save-btn" onclick="saveWalletChanges()">Save Changes</button>
+    </div>
+</div>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, collection, onSnapshot, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -203,46 +368,129 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let users = [];
+    let allUsers = [];
+    let selectedUserId = null;
 
-    function renderUsersTable() {
+    function renderTable(usersList) {
         const tbody = document.getElementById("usersTableBody");
         if (!tbody) return;
 
-        if (users.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px;">Koi customer account nahi mila.</td></tr>`;
+        if (usersList.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:15px;">Koi user nahi mila.</td></tr>`;
             return;
         }
 
-        tbody.innerHTML = users.map(u => `
-            <tr>
-                <td><b>${u.name || u.displayName || 'User'}</b><br><small style="color:#707ebe;">${u.id}</small></td>
-                <td>${u.phone || u.mobile || 'N/A'}</td>
-                <td>₹${u.balance ?? 0}</td>
-                <td><button class="edit-btn">Edit Wallet</button></td>
-            </tr>
-        `).join('');
+        tbody.innerHTML = usersList.map(u => {
+            const mainBal = Number(u.balance ?? 0);
+            const bonusBal = Number(u.bonus ?? 0);
+            const totalBal = mainBal + bonusBal;
+            const createdDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A';
+
+            return `
+                <tr>
+                    <td><b>${u.name || u.displayName || 'User'}</b><br><small style="color:#a3edcc;">${u.id}</small></td>
+                    <td>${u.phone || u.mobile || 'N/A'}</td>
+                    <td>${createdDate}</td>
+                    <td>₹${mainBal}</td>
+                    <td>₹${bonusBal}</td>
+                    <td><b>₹${totalBal}</b></td>
+                    <td><button class="edit-btn" onclick="openWalletModal('${u.id}')">Edit Wallet</button></td>
+                </tr>
+            `;
+        }).join('');
     }
 
-    function loadUsers() {
+    function updateSummaryCards() {
+        document.getElementById("totalUsersCount").innerText = allUsers.length;
+        
+        const grandTotal = allUsers.reduce((sum, u) => {
+            const main = Number(u.balance ?? 0);
+            const bonus = Number(u.bonus ?? 0);
+            return sum + main + bonus;
+        }, 0);
+
+        document.getElementById("totalUsersBalance").innerText = `₹${grandTotal}`;
+    }
+
+    window.filterUsers = function() {
+        const keyword = document.getElementById("searchKeyword").value.trim().toLowerCase();
+        const selectedDate = document.getElementById("searchDate").value;
+
+        const filtered = allUsers.filter(u => {
+            const name = (u.name || u.displayName || '').toLowerCase();
+            const phone = (u.phone || u.mobile || '').toLowerCase();
+            
+            const matchesKeyword = name.includes(keyword) || phone.includes(keyword);
+            
+            let matchesDate = true;
+            if (selectedDate && u.createdAt) {
+                const userDate = new Date(u.createdAt).toISOString().split('T')[0];
+                matchesDate = (userDate === selectedDate);
+            }
+
+            return matchesKeyword && matchesDate;
+        });
+
+        renderTable(filtered);
+    };
+
+    window.openWalletModal = function(id) {
+        const user = allUsers.find(u => u.id === id);
+        if (!user) return;
+
+        selectedUserId = id;
+        document.getElementById("modalUserName").innerText = user.name || user.displayName || 'User';
+        document.getElementById("modalUserId").innerText = `ID: ${user.id}`;
+        document.getElementById("inputMainBalance").value = user.balance ?? 0;
+        document.getElementById("inputBonusBalance").value = user.bonus ?? 0;
+
+        document.getElementById("walletModal").style.display = "flex";
+    };
+
+    window.closeWalletModal = function() {
+        document.getElementById("walletModal").style.display = "none";
+        selectedUserId = null;
+    };
+
+    window.saveWalletChanges = async function() {
+        if (!selectedUserId) return;
+
+        const newMainBal = Number(document.getElementById("inputMainBalance").value) || 0;
+        const newBonusBal = Number(document.getElementById("inputBonusBalance").value) || 0;
+
         try {
-            const usersRef = collection(db, "users");
-            onSnapshot(usersRef, (snapshot) => {
-                users = [];
+            const userRef = doc(db, "users", selectedUserId);
+            await updateDoc(userRef, {
+                balance: newMainBal,
+                bonus: newBonusBal
+            });
+            alert("Wallet Balance Updated Successfully!");
+            closeWalletModal();
+        } catch (error) {
+            alert("Error updating wallet: " + error.message);
+        }
+    };
+
+    function loadUsersData() {
+        try {
+            const usersCollection = collection(db, "users");
+            onSnapshot(usersCollection, (snapshot) => {
+                allUsers = [];
                 snapshot.forEach((doc) => {
-                    users.push({ id: doc.id, ...doc.data() });
+                    allUsers.push({ id: doc.id, ...doc.data() });
                 });
-                renderUsersTable();
+                updateSummaryCards();
+                filterUsers();
             }, (error) => {
                 const tbody = document.getElementById("usersTableBody");
-                if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Firebase Error: ${error.message}</td></tr>`;
+                if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="color:red; text-align:center;">Firebase Error: ${error.message}</td></tr>`;
             });
         } catch (e) {
             console.error(e);
         }
     }
 
-    loadUsers();
+    loadUsersData();
 </script>
 </body>
 </html>
