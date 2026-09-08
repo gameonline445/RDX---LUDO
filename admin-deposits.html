@@ -12,26 +12,19 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            background-color: #f4f7fe !important;
-            color: #2b3674;
-            overflow-x: hidden;
-        }
-
-        .admin-layout {
-            display: flex;
-            width: 100%;
-            min-height: 100vh;
+        body {
             background-color: #f4f7fe;
+            color: #2b3674;
+            display: flex;
+            min-height: 100vh;
         }
 
+        /* SINGLE SIDEBAR STYLING */
         .sidebar {
-            width: 240px;
+            width: 260px;
             background: #ffffff;
             padding: 20px 15px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
             flex-shrink: 0;
             position: sticky;
             top: 0;
@@ -39,23 +32,34 @@
             overflow-y: auto;
         }
 
-        .brand-logo {
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             font-weight: bold;
             font-size: 16px;
             margin-bottom: 25px;
+            padding: 0 10px;
             color: #2b3674;
-            text-align: center;
+        }
+
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
 
         .nav-link {
-            display: block;
-            padding: 10px 12px;
-            margin-bottom: 8px;
-            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 12px;
             text-decoration: none;
             color: #5d6978;
             font-weight: 500;
             font-size: 14px;
+            transition: 0.2s;
         }
 
         .nav-link:hover, .nav-link.active {
@@ -64,11 +68,10 @@
             font-weight: bold;
         }
 
-        .main-wrapper {
-            flex-grow: 1;
-            padding: 20px;
-            background-color: #f4f7fe !important;
-            width: calc(100% - 240px);
+        /* MAIN CONTENT AREA */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
             overflow-x: auto;
         }
 
@@ -82,27 +85,26 @@
             background-color: #ff7666;
             color: white;
             border: none;
-            padding: 8px 18px;
+            padding: 8px 22px;
             border-radius: 20px;
             cursor: pointer;
             font-weight: bold;
             font-size: 13px;
         }
 
+        /* SUMMARY CARDS */
         .summary-cards {
-            display: flex;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
+            margin-bottom: 25px;
         }
 
         .card {
             background: #ffffff;
-            padding: 18px;
-            border-radius: 15px;
-            flex: 1;
-            min-width: 180px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
 
         .card-title {
@@ -113,69 +115,44 @@
         }
 
         .card-value {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
-            color: #2b3674;
         }
 
-        .card-container {
+        /* DATA TABLE CONTAINER */
+        .panel-container {
             background: #ffffff;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
 
-        .page-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #2b3674;
-            margin-bottom: 5px;
-        }
-
-        .page-desc {
-            color: #707ebe;
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        .filter-container {
+        .filter-box {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
+            margin: 15px 0 20px 0;
             flex-wrap: wrap;
         }
 
         .filter-input {
-            padding: 8px 12px;
+            padding: 10px 14px;
             border: 1px solid #e0e5f2;
-            border-radius: 8px;
-            outline: none;
+            border-radius: 10px;
             font-size: 13px;
-            color: #2b3674;
-        }
-
-        .filter-input:focus {
-            border-color: #4318ff;
-        }
-
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
+            outline: none;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            min-width: 800px;
         }
 
         th {
-            background-color: #f8f9fa;
+            background: #f8f9fa;
             color: #5d6978;
             font-size: 11px;
-            text-transform: uppercase;
-            padding: 10px 12px;
+            padding: 12px;
             border-bottom: 2px solid #edf2f7;
         }
 
@@ -183,104 +160,61 @@
             padding: 12px;
             border-bottom: 1px solid #edf2f7;
             font-size: 13px;
-            color: #2b3674;
-        }
-
-        .ss-thumb {
-            width: 45px;
-            height: 45px;
-            object-fit: cover;
-            border-radius: 6px;
-            cursor: pointer;
-            border: 1px solid #e0e5f2;
         }
 
         .btn-approve {
             background: #059669;
-            color: white;
+            color: #fff;
             border: none;
             padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
-            margin-right: 5px;
+            font-weight: 600;
         }
 
         .btn-reject {
             background: #dc2626;
-            color: white;
+            color: #fff;
             border: none;
             padding: 6px 12px;
             border-radius: 6px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 12px;
+            font-weight: 600;
         }
 
-        .badge {
-            padding: 4px 8px;
+        .ss-img {
+            width: 40px;
+            height: 40px;
             border-radius: 6px;
-            font-size: 11px;
-            font-weight: bold;
-            text-transform: capitalize;
-        }
-
-        .badge-pending { background: #fff7ed; color: #c2410c; }
-        .badge-approved { background: #f0fdf4; color: #15803d; }
-        .badge-rejected { background: #fef2f2; color: #b91c1c; }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .modal-content {
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 12px;
-            max-width: 90%;
-            max-height: 90vh;
-            text-align: center;
-        }
-
-        .modal-content img {
-            max-width: 100%;
-            max-height: 80vh;
-            border-radius: 8px;
+            object-fit: cover;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            .sidebar { width: 180px; padding: 15px 8px; }
-            .brand-logo { font-size: 14px; }
-            .nav-link { font-size: 12px; padding: 8px 10px; }
-            .main-wrapper { width: calc(100% - 180px); padding: 12px; }
+            body { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; position: relative; }
         }
     </style>
 </head>
 <body>
 
-<div class="admin-layout">
-    <div class="sidebar">
-        <div class="brand-logo">RDX LUDO ADMIN</div>
-        <nav>
+    <!-- SIRF EK MAIN SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">RDX LUDO ADMIN</div>
+        <nav class="nav-menu">
             <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
             <a href="admin-battles.html" class="nav-link">Battles Management</a>
             <a href="admin-customers.html" class="nav-link">Customers</a>
             <a href="admin-deposits.html" class="nav-link active">Deposits</a>
             <a href="admin-withdrawals.html" class="nav-link">Withdrawals</a>
+            <a href="admin-history.html" class="nav-link">User History</a>
+            <a href="admin-referrals.html" class="nav-link">Referral Analytics</a>
+            <a href="admin-settings.html" class="nav-link">Payment Settings</a>
         </nav>
-    </div>
+    </aside>
 
-    <div class="main-wrapper">
+    <!-- MAIN PANEL CONTENT -->
+    <main class="main-content">
         <div class="top-bar">
             <button class="logout-btn">Logout</button>
         </div>
@@ -300,16 +234,15 @@
             </div>
         </div>
 
-        <div class="card-container">
-            <h1 class="page-title">💳 Deposits Request Panel</h1>
-            <p class="page-desc">Search by UTR, Mobile, Name or Date. Pending requests are prioritized at top.</p>
-
-            <div class="filter-container">
+        <div class="panel-container">
+            <h2>💳 Deposits Management</h2>
+            
+            <div class="filter-box">
                 <input type="text" id="searchInput" class="filter-input" placeholder="Search UTR / Mobile / Name..." onkeyup="applyFilters()">
                 <input type="date" id="dateInput" class="filter-input" onchange="applyFilters()">
             </div>
 
-            <div class="table-responsive">
+            <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
@@ -324,223 +257,12 @@
                         </tr>
                     </thead>
                     <tbody id="depositsTableBody">
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 20px;">Loading Deposit Requests...</td>
-                        </tr>
+                        <tr><td colspan="8" style="text-align:center;">Loading...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
-</div>
+    </main>
 
-<div class="modal-overlay" id="imgModal" onclick="closeImgModal()">
-    <div class="modal-content">
-        <img id="fullImg" src="" alt="Payment Screenshot">
-    </div>
-</div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, doc, updateDoc, getDoc, increment } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-        authDomain: "rdx-ludo.firebaseapp.com",
-        projectId: "rdx-ludo",
-        storageBucket: "rdx-ludo.firebasestorage.app",
-        messagingSenderId: "928340814840",
-        appId: "1:928340814840:web:6eca42a8b76138b268440d"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let rawDeposits = [];
-
-    function processAndRenderTable(deposits) {
-        const tbody = document.getElementById("depositsTableBody");
-        if (!tbody) return;
-
-        if (deposits.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:15px;">Koi Deposit Request nahi mili.</td></tr>`;
-            return;
-        }
-
-        // Sorting: Pending Requests On Top
-        deposits.sort((a, b) => {
-            const statusA = (a.status || 'pending').toLowerCase();
-            const statusB = (b.status || 'pending').toLowerCase();
-            if (statusA === 'pending' && statusB !== 'pending') return -1;
-            if (statusA !== 'pending' && statusB === 'pending') return 1;
-            
-            const timeA = a.createdAt?.seconds || 0;
-            const timeB = b.createdAt?.seconds || 0;
-            return timeB - timeA;
-        });
-
-        tbody.innerHTML = deposits.map((d, index) => {
-            const status = (d.status || 'pending').toLowerCase();
-            const amount = Number(d.amount || 0);
-            
-            let dateTimeStr = 'N/A';
-            if (d.createdAt) {
-                const dateObj = d.createdAt.seconds ? new Date(d.createdAt.seconds * 1000) : new Date(d.createdAt);
-                dateTimeStr = dateObj.toLocaleDateString() + ' ' + dateObj.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            }
-
-            const ssUrl = d.screenshot || d.ssUrl || d.proof || '';
-
-            return `
-                <tr>
-                    <td><b>${index + 1}</b></td>
-                    <td><b>${d.userName || d.name || 'User'}</b><br><small style="color:#707ebe;">${d.userMobile || d.phone || 'N/A'}</small></td>
-                    <td><b>₹${amount}</b></td>
-                    <td><code style="background:#edf2f7; padding:2px 6px; border-radius:4px;">${d.utr || d.txnId || 'N/A'}</code></td>
-                    <td>${dateTimeStr}</td>
-                    <td>
-                        ${ssUrl ? `<img src="${ssUrl}" class="ss-thumb" onclick="openImgModal('${ssUrl}')" alt="SS">` : 'No SS'}
-                    </td>
-                    <td><span class="badge badge-${status}">${status}</span></td>
-                    <td>
-                        ${status === 'pending' ? `
-                            <button class="btn-approve" onclick="handleDepositApproval('${d.id}', '${d.userId}', ${amount}, '${d.isProcessed}')">Approve</button>
-                            <button class="btn-reject" onclick="handleDepositReject('${d.id}')">Reject</button>
-                        ` : `
-                            <small style="color:#707ebe;">Processed</small>
-                        `}
-                    </td>
-                </tr>
-            `;
-        }).join('');
-    }
-
-    function calculateSummaryCards(deposits) {
-        let total = 0;
-        let today = 0;
-        let pending = 0;
-
-        const todayStr = new Date().toISOString().split('T')[0];
-
-        deposits.forEach(d => {
-            const amt = Number(d.amount || 0);
-            const status = (d.status || 'pending').toLowerCase();
-            
-            let dateStr = '';
-            if (d.createdAt) {
-                const rawDate = d.createdAt.seconds ? new Date(d.createdAt.seconds * 1000) : new Date(d.createdAt);
-                dateStr = rawDate.toISOString().split('T')[0];
-            }
-
-            if (status === 'approved') {
-                total += amt;
-                if (dateStr === todayStr) {
-                    today += amt;
-                }
-            } else if (status === 'pending') {
-                pending += amt;
-            }
-        });
-
-        document.getElementById("totalDepositVal").innerText = `₹${total}`;
-        document.getElementById("todayDepositVal").innerText = `₹${today}`;
-        document.getElementById("pendingDepositVal").innerText = `₹${pending}`;
-    }
-
-    window.applyFilters = function() {
-        const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-        const dateVal = document.getElementById("dateInput").value;
-
-        const filtered = rawDeposits.filter(d => {
-            const name = (d.userName || d.name || '').toLowerCase();
-            const phone = (d.userMobile || d.phone || '').toLowerCase();
-            const utr = (d.utr || d.txnId || '').toLowerCase();
-
-            const matchesKeyword = name.includes(keyword) || phone.includes(keyword) || utr.includes(keyword);
-
-            let matchesDate = true;
-            if (dateVal && d.createdAt) {
-                const rawDate = d.createdAt.seconds ? new Date(d.createdAt.seconds * 1000) : new Date(d.createdAt);
-                const dStr = rawDate.toISOString().split('T')[0];
-                matchesDate = (dStr === dateVal);
-            }
-
-            return matchesKeyword && matchesDate;
-        });
-
-        processAndRenderTable(filtered);
-    };
-
-    // Double-Credit Prevention Logic
-    window.handleDepositApproval = async function(depositId, userId, amount, isProcessed) {
-        if (!confirm(`₹${amount} Approve karna chahte hain?`)) return;
-
-        try {
-            const depositRef = doc(db, "deposits", depositId);
-
-            // Agar pehle credit NAHI hua hai, tabhi balance add hoga
-            if (isProcessed !== "true" && isProcessed !== true) {
-                const userRef = doc(db, "customers", userId);
-                await updateDoc(userRef, {
-                    balance: increment(amount)
-                });
-            }
-
-            // Mark deposit as approved and processed
-            await updateDoc(depositRef, {
-                status: "approved",
-                isProcessed: true
-            });
-
-            alert("Deposit Approved and Balance Added Successfully!");
-        } catch (error) {
-            alert("Error: " + error.message);
-        }
-    };
-
-    window.handleDepositReject = async function(depositId) {
-        if (!confirm("Is deposit request ko Reject karna chahte hain?")) return;
-
-        try {
-            const depositRef = doc(db, "deposits", depositId);
-            await updateDoc(depositRef, {
-                status: "rejected"
-            });
-            alert("Deposit Request Rejected!");
-        } catch (error) {
-            alert("Error: " + error.message);
-        }
-    };
-
-    window.openImgModal = function(url) {
-        document.getElementById("fullImg").src = url;
-        document.getElementById("imgModal").style.display = "flex";
-    };
-
-    window.closeImgModal = function() {
-        document.getElementById("imgModal").style.display = "none";
-    };
-
-    function loadDeposits() {
-        try {
-            const depositsCol = collection(db, "deposits");
-            onSnapshot(depositsCol, (snapshot) => {
-                rawDeposits = [];
-                snapshot.forEach((doc) => {
-                    rawDeposits.push({ id: doc.id, ...doc.data() });
-                });
-                calculateSummaryCards(rawDeposits);
-                applyFilters();
-            }, (err) => {
-                const tbody = document.getElementById("depositsTableBody");
-                if(tbody) tbody.innerHTML = `<tr><td colspan="8" style="color:red; text-align:center;">Error: ${err.message}</td></tr>`;
-            });
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    loadDeposits();
-</script>
 </body>
 </html>
