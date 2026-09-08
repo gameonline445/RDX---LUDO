@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: #000; color: #fff; padding: 20px; }
+    .page-title { font-size: 26px; color: #3b82f6; margin-bottom: 20px; font-weight: 800; }
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 25px; }
+    .card { background: #fff; border-radius: 14px; padding: 20px; min-height: 100px; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-title { font-size: 11px; font-weight: 800; color: #5f6368; }
+    .card-value { font-size: 24px; font-weight: 800; margin-top: 8px; }
+    .text-green { color: #2e7d32; } .text-orange { color: #d97706; }
+    .text-blue { color: #1a73e8; } .text-purple { color: #8e24aa; }
+    .status-card { background: #fff; border-radius: 14px; padding: 20px; color: #333; }
+    .status-box { background: #e8f5e9; color: #2e7d32; padding: 12px; border-radius: 8px; font-weight: bold; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">Dashboard</h1>
+  <div class="cards-grid">
+    <div class="card"><span class="card-title">ACTIVE LIVE USERS</span><div class="card-value text-green">0 Live</div></div>
+    <div class="card"><span class="card-title">LIVE MATCHES</span><div class="card-value text-orange">0</div></div>
+    <div class="card"><span class="card-title">PENDING KYC</span><div class="card-value text-orange">0</div></div>
+    <div class="card"><span class="card-title">TOTAL CUSTOMERS</span><div class="card-value text-blue">60</div></div>
+    <div class="card"><span class="card-title">TOTAL BALANCE</span><div class="card-value text-green">₹5350</div></div>
+    <div class="card"><span class="card-title">TOTAL DEPOSIT PAID</span><div class="card-value text-purple">₹7100</div></div>
+    <div class="card"><span class="card-title">TOTAL WITHDRAWAL PAID</span><div class="card-value text-green">₹570</div></div>
+    <div class="card"><span class="card-title">PENDING DEPOSITS</span><div class="card-value text-orange">4</div></div>
+    <div class="card"><span class="card-title">PENDING WITHDRAWALS</span><div class="card-value text-orange">0</div></div>
+    <div class="card"><span class="card-title">TOTAL REFERRALS</span><div class="card-value text-blue">0</div></div>
+  </div>
+  <div class="status-card">
+    <h2>Firebase Status</h2>
+    <div class="status-box"><i class="fa-solid fa-square-check"></i> Firebase Connected (All Data Loaded)</div>
+    <p style="color:#666; font-size: 13px;">Admin login Firebase Authentication se successful hua.</p>
+  </div>
+</body>
+</html>
