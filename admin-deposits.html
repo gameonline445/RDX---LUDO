@@ -7,9 +7,9 @@
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE SDK LIBRARIES -->
+    <!-- FIREBASE FIRESTORE SDK LIBRARIES -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -119,7 +119,7 @@
                         </tr>
                     </thead>
                     <tbody id="realDepositBody">
-                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Connecting to Firebase...</td></tr>
+                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Connecting to Firestore Database...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -135,11 +135,10 @@
     </div>
 
     <script>
-        // AAPKI FIREBASE CONFIG KEYS CONNECT KAR DI GAYI HAIN
+        // FIREBASE FIRESTORE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
-            databaseURL: "https://rdx-ludo-default-rtdb.firebaseio.com",
             projectId: "rdx-ludo",
             storageBucket: "rdx-ludo.firebasestorage.app",
             messagingSenderId: "928340814840",
@@ -149,10 +148,10 @@
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
-        const db = firebase.database();
+        const db = firebase.firestore();
 
-        // REALTIME FETCH FROM FIREBASE DATABASE
-        db.ref("deposits").on("value", (snapshot) => {
+        // REAL-TIME FIRESTORE DATA SYNC
+        db.collection("deposits").onSnapshot((snapshot) => {
             const tableBody = document.getElementById("realDepositBody");
             tableBody.innerHTML = "";
 
@@ -161,8 +160,8 @@
             let pendingCount = 0;
             const todayStr = new Date().toISOString().split('T')[0];
 
-            if (!snapshot.exists()) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Data Found in Database ("deposits" Node)</td></tr>';
+            if (snapshot.empty) {
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found in Firestore Collection ("deposits")</td></tr>';
                 document.getElementById("totalDepositVal").innerText = "₹0";
                 document.getElementById("todayDepositVal").innerText = "₹0";
                 document.getElementById("pendingCountVal").innerText = "0 Pending";
@@ -170,13 +169,13 @@
             }
 
             let depositList = [];
-            snapshot.forEach((childSnap) => {
-                let data = childSnap.val();
-                data.id = childSnap.key;
+            snapshot.forEach((doc) => {
+                let data = doc.data();
+                data.id = doc.id;
                 depositList.push(data);
             });
 
-            // Serial Sorting: Pending Requests On Top
+            // Sorting: Pending First, then Latest Date First
             depositList.sort((a, b) => {
                 if (a.status === 'Pending' && b.status !== 'Pending') return -1;
                 if (a.status !== 'Pending' && b.status === 'Pending') return 1;
@@ -203,11 +202,11 @@
 
                 let row = `<tr>
                     <td>${data.date || "N/A"}</td>
-                    <td><strong>${data.name || "User"}</strong></td>
-                    <td>${data.mobile || "N/A"}</td>
+                    <td><strong>${data.name || data.userName || "User"}</strong></td>
+                    <td>${data.mobile || data.userPhone || "N/A"}</td>
                     <td style="color:#2e7d32; font-weight:800;">₹${amt}</td>
-                    <td><strong>${data.utr || "N/A"}</strong></td>
-                    <td><button class="btn-ss" onclick="viewSS('${data.ssUrl}')">View SS</button></td>
+                    <td><strong>${data.utr || data.utrNumber || "N/A"}</strong></td>
+                    <td><button class="btn-ss" onclick="viewSS('${data.ssUrl || data.screenshot}')">View SS</button></td>
                     <td><span class="${badgeClass}">${status.toUpperCase()}</span></td>
                     <td>${actionHTML}</td>
                 </tr>`;
@@ -218,22 +217,32 @@
             document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
             document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
             document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
+        }, (error) => {
+            console.error("Firestore Error:", error);
+            document.getElementById("realDepositBody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#ef4444;">Error loading data: ${error.message}</td></tr>`;
         });
 
-        // APPROVE & REJECT FIREBASE FUNCTION
+        // APPROVE & REJECT ACTION IN FIRESTORE
         function actionDeposit(depId, userId, amount, newStatus) {
             if (confirm(`Kya aap is payment ko ${newStatus} karna chahte hain?`)) {
-                db.ref("deposits/" + depId).update({ status: newStatus }).then(() => {
+                db.collection("deposits").doc(depId).update({
+                    status: newStatus
+                }).then(() => {
                     if (newStatus === "Approved" && userId) {
-                        db.ref("users/" + userId + "/wallet").transaction((curr) => (curr || 0) + amount);
+                        // User wallet field update
+                        db.collection("users").doc(userId).update({
+                            wallet: firebase.firestore.FieldValue.increment(amount)
+                        });
                     }
-                    alert("Status successfully update ho gaya!");
+                    alert("Deposit status successfully updated!");
+                }).catch((err) => {
+                    alert("Error updating deposit: " + err.message);
                 });
             }
         }
 
         function viewSS(url) {
-            if (!url) return alert("Screenshot Not Available");
+            if (!url || url === "undefined") return alert("Screenshot Available Nahi Hai!");
             document.getElementById("ssImage").src = url;
             document.getElementById("ssModal").style.display = "flex";
         }
