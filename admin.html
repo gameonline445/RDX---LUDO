@@ -504,6 +504,17 @@ function parseItemTime(ts) {
     return { dateObj: d, formatted: formatted };
 }
 
+async function loadAll() {
+    await Promise.all([
+        loadUsers(),
+        loadDeposits(),
+        loadWithdrawals(),
+        loadBattles(),
+        loadKycRequests(),
+        loadSettings()
+    ]);
+}
+
 window.refreshAdminDashboard = async () => {
     document.querySelectorAll(".nav").forEach(x => x.classList.remove("active"));
     document.querySelectorAll(".page").forEach(x => x.classList.remove("active"));
@@ -1961,33 +1972,21 @@ function updateDashboard(){
         .reduce((sum, w) => sum + Number(w.amount || 0), 0);
     if($("totalApprovedWithdrawals")) $("totalApprovedWithdrawals").textContent = "₹" + approvedWithSum;
 
-    if($("pendingDeposits")) $("pendingDeposits").textContent = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
-    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
-    if($("pendingKycCount")) $("pendingKycCount").textContent = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
-    if($("liveBattlesCount")) $("liveBattlesCount").textContent = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
-    
-    if($("dashStatus")) {
-        $("dashStatus").textContent = "✅ Firebase Connected (All Data Loaded)";
-        $("dashStatus").className = "status ok";
-    }
-}
+    const pendingDepCount = deposits.filter(d => String(d.status || "").toLowerCase() === "pending").length;
+    if($("pendingDeposits")) $("pendingDeposits").textContent = pendingDepCount;
 
-async function loadAll(){
-    try {
-        await loadSettings();
-        await loadDeposits();
-        await loadWithdrawals();
-        await loadUsers();
-        await loadBattles();
-        await loadKycRequests();
-        await loadReferralAnalytics();
-        await loadNotifications();
-        updateDashboard();
-    } catch(e){
-        if($("dashStatus")) {
-            $("dashStatus").textContent = "❌ " + e.message;
-            $("dashStatus").className = "status bad";
-        }
+    const pendingWithCount = withdrawals.filter(w => String(w.status || "").toLowerCase() === "pending").length;
+    if($("pendingWithdrawals")) $("pendingWithdrawals").textContent = pendingWithCount;
+
+    const pendingKycCount = kycRequests.filter(k => String(k.status || "").toLowerCase() === "pending").length;
+    if($("pendingKycCount")) $("pendingKycCount").textContent = pendingKycCount;
+
+    const liveMatchCount = battlesList.filter(b => b.status === "live" || b.status === "conflict").length;
+    if($("liveBattlesCount")) $("liveBattlesCount").textContent = liveMatchCount;
+
+    if($("dashStatus")) {
+        $("dashStatus").textContent = "✅ Connected & Live Synced";
+        $("dashStatus").className = "status ok";
     }
 }
 </script>
