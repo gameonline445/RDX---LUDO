@@ -80,7 +80,6 @@
             font-weight: bold;
         }
 
-        /* Analytics / Summary Cards */
         .summary-cards {
             display: flex;
             gap: 20px;
@@ -99,7 +98,7 @@
 
         .card-title {
             font-size: 14px;
-            color: #a3edcc;
+            color: #707ebe;
             font-weight: 600;
             margin-bottom: 8px;
         }
@@ -110,7 +109,6 @@
             color: #2b3674;
         }
 
-        /* Container & Table */
         .card-container {
             background: #ffffff;
             border-radius: 15px;
@@ -126,12 +124,11 @@
         }
 
         .page-desc {
-            color: #a3edcc;
+            color: #707ebe;
             font-size: 14px;
             margin-bottom: 20px;
         }
 
-        /* Filters */
         .filter-container {
             display: flex;
             gap: 15px;
@@ -189,11 +186,6 @@
             font-weight: 500;
         }
 
-        .edit-btn:hover {
-            background: #3311cc;
-        }
-
-        /* Modal / Popup Styling */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -213,7 +205,6 @@
             max-width: 450px;
             border-radius: 15px;
             padding: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             position: relative;
         }
 
@@ -235,7 +226,6 @@
             font-size: 13px;
             font-weight: bold;
             margin-bottom: 5px;
-            color: #2b3674;
         }
 
         .form-group input {
@@ -255,7 +245,6 @@
             border-radius: 8px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
@@ -283,7 +272,6 @@
             <button class="logout-btn">Logout</button>
         </div>
 
-        <!-- Dashboard Top Summary Stats -->
         <div class="summary-cards">
             <div class="card">
                 <div class="card-title">TOTAL REAL USERS</div>
@@ -297,9 +285,8 @@
 
         <div class="card-container">
             <h1 class="page-title">👥 Customers Management</h1>
-            <p class="page-desc">Search users, filter by account date, and manage balances.</p>
+            <p class="page-desc">Search users by Name/Mobile, Filter by Date, and Manage Wallet Balance.</p>
 
-            <!-- Search Bars -->
             <div class="filter-container">
                 <input type="text" id="searchKeyword" class="filter-input" placeholder="Search by Name or Mobile..." onkeyup="filterUsers()">
                 <input type="date" id="searchDate" class="filter-input" onchange="filterUsers()">
@@ -320,7 +307,7 @@
                     </thead>
                     <tbody id="usersTableBody">
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 20px;">Firebase se data load ho raha hai...</td>
+                            <td colspan="7" style="text-align: center; padding: 20px;">Fetching customers...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -329,14 +316,13 @@
     </div>
 </div>
 
-<!-- Edit Wallet & Bonus Modal -->
 <div class="modal-overlay" id="walletModal">
     <div class="modal-content">
         <span class="close-modal" onclick="closeWalletModal()">&times;</span>
         <h3>Edit User Wallet</h3>
         <br>
         <p><strong>User:</strong> <span id="modalUserName"></span></p>
-        <p style="margin-bottom: 15px;"><small id="modalUserId" style="color: #a3edcc;"></small></p>
+        <p style="margin-bottom: 15px;"><small id="modalUserId" style="color: #707ebe;"></small></p>
 
         <div class="form-group">
             <label>Main / Deposit Balance (₹)</label>
@@ -376,20 +362,24 @@
         if (!tbody) return;
 
         if (usersList.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:15px;">Koi user nahi mila.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:15px;">Koi customer account nahi mila.</td></tr>`;
             return;
         }
 
         tbody.innerHTML = usersList.map(u => {
-            const mainBal = Number(u.balance ?? 0);
-            const bonusBal = Number(u.bonus ?? 0);
+            const mainBal = Number(u.balance || u.wallet || u.deposit || 0);
+            const bonusBal = Number(u.bonus || 0);
             const totalBal = mainBal + bonusBal;
-            const createdDate = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : 'N/A';
+            
+            let createdDate = 'N/A';
+            if (u.createdAt) {
+                createdDate = u.createdAt.seconds ? new Date(u.createdAt.seconds * 1000).toLocaleDateString() : new Date(u.createdAt).toLocaleDateString();
+            }
 
             return `
                 <tr>
-                    <td><b>${u.name || u.displayName || 'User'}</b><br><small style="color:#a3edcc;">${u.id}</small></td>
-                    <td>${u.phone || u.mobile || 'N/A'}</td>
+                    <td><b>${u.name || u.displayName || u.username || 'User'}</b><br><small style="color:#707ebe;">${u.id}</small></td>
+                    <td>${u.phone || u.mobile || u.phoneNumber || 'N/A'}</td>
                     <td>${createdDate}</td>
                     <td>₹${mainBal}</td>
                     <td>₹${bonusBal}</td>
@@ -404,8 +394,8 @@
         document.getElementById("totalUsersCount").innerText = allUsers.length;
         
         const grandTotal = allUsers.reduce((sum, u) => {
-            const main = Number(u.balance ?? 0);
-            const bonus = Number(u.bonus ?? 0);
+            const main = Number(u.balance || u.wallet || u.deposit || 0);
+            const bonus = Number(u.bonus || 0);
             return sum + main + bonus;
         }, 0);
 
@@ -417,14 +407,15 @@
         const selectedDate = document.getElementById("searchDate").value;
 
         const filtered = allUsers.filter(u => {
-            const name = (u.name || u.displayName || '').toLowerCase();
-            const phone = (u.phone || u.mobile || '').toLowerCase();
+            const name = (u.name || u.displayName || u.username || '').toLowerCase();
+            const phone = (u.phone || u.mobile || u.phoneNumber || '').toLowerCase();
             
             const matchesKeyword = name.includes(keyword) || phone.includes(keyword);
             
             let matchesDate = true;
             if (selectedDate && u.createdAt) {
-                const userDate = new Date(u.createdAt).toISOString().split('T')[0];
+                const rawDate = u.createdAt.seconds ? new Date(u.createdAt.seconds * 1000) : new Date(u.createdAt);
+                const userDate = rawDate.toISOString().split('T')[0];
                 matchesDate = (userDate === selectedDate);
             }
 
@@ -441,8 +432,8 @@
         selectedUserId = id;
         document.getElementById("modalUserName").innerText = user.name || user.displayName || 'User';
         document.getElementById("modalUserId").innerText = `ID: ${user.id}`;
-        document.getElementById("inputMainBalance").value = user.balance ?? 0;
-        document.getElementById("inputBonusBalance").value = user.bonus ?? 0;
+        document.getElementById("inputMainBalance").value = user.balance || user.wallet || 0;
+        document.getElementById("inputBonusBalance").value = user.bonus || 0;
 
         document.getElementById("walletModal").style.display = "flex";
     };
@@ -459,21 +450,23 @@
         const newBonusBal = Number(document.getElementById("inputBonusBalance").value) || 0;
 
         try {
-            const userRef = doc(db, "users", selectedUserId);
+            // Collection path set to 'customers' based on Firebase database schema
+            const userRef = doc(db, "customers", selectedUserId);
             await updateDoc(userRef, {
                 balance: newMainBal,
                 bonus: newBonusBal
             });
-            alert("Wallet Balance Updated Successfully!");
+            alert("Wallet Balance Updated!");
             closeWalletModal();
         } catch (error) {
-            alert("Error updating wallet: " + error.message);
+            alert("Error: " + error.message);
         }
     };
 
     function loadUsersData() {
         try {
-            const usersCollection = collection(db, "users");
+            // Collection path changed to 'customers'
+            const usersCollection = collection(db, "customers");
             onSnapshot(usersCollection, (snapshot) => {
                 allUsers = [];
                 snapshot.forEach((doc) => {
@@ -483,7 +476,9 @@
                 filterUsers();
             }, (error) => {
                 const tbody = document.getElementById("usersTableBody");
-                if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="color:red; text-align:center;">Firebase Error: ${error.message}</td></tr>`;
+                if (tbody) {
+                    tbody.innerHTML = `<tr><td colspan="7" style="color:red; text-align:center; padding:15px;">Error: ${error.message}</td></tr>`;
+                }
             });
         } catch (e) {
             console.error(e);
