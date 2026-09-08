@@ -21,7 +21,7 @@
     }
     
     body { 
-      background-color: #000000; 
+      background: #0f172a; /* Main Website Dark Theme */
       display: flex; 
       align-items: center; 
       justify-content: center; 
@@ -30,21 +30,30 @@
     }
     
     .login-card {
-      background: #ffffff;
+      background: #1e293b;
       width: 100%;
-      max-width: 380px;
+      max-width: 400px;
       padding: 35px 25px;
       border-radius: 16px;
-      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
       text-align: center;
+      border: 1px solid #334155;
+    }
+
+    .brand-logo {
+      width: 75px;
+      height: 75px;
+      margin-bottom: 10px;
+      object-fit: contain;
     }
 
     .brand-title { 
       font-size: 22px; 
       font-weight: 800; 
-      color: #1a2b4c; 
+      color: #fbbf24; /* Main Gold Color */
       margin-bottom: 25px; 
-      letter-spacing: -0.3px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
     
     .form-group { 
@@ -56,14 +65,16 @@
       display: block; 
       font-size: 13px; 
       font-weight: 700; 
-      color: #4a5568; 
+      color: #94a3b8; 
       margin-bottom: 6px; 
     }
     
     .form-group input {
       width: 100%;
       padding: 12px 14px;
-      border: 1px solid #cbd5e1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #ffffff;
       border-radius: 8px;
       font-size: 14px;
       outline: none;
@@ -71,43 +82,48 @@
     }
     
     .form-group input:focus { 
-      border-color: #3b82f6; 
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
+      border-color: #f59e0b; 
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); 
     }
 
     .login-btn {
       width: 100%;
-      background: #1a73e8;
-      color: #ffffff;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); /* Gold/Yellow Theme Gradient */
+      color: #0f172a;
       border: none;
       padding: 12px;
       border-radius: 8px;
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: all 0.2s;
       margin-top: 10px;
     }
     
     .login-btn:hover { 
-      background: #1557b0; 
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
 
     .error-msg {
-      color: #d93025;
-      background: #ffebee;
-      border: 1px solid #ffcdd2;
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
       padding: 10px;
       border-radius: 8px;
       font-size: 13px;
       margin-bottom: 15px;
       display: none;
+      text-align: left;
+      word-break: break-word;
     }
   </style>
 </head>
 <body>
 
   <div class="login-card">
+    <!-- Main Logo -->
+    <img src="logo.png" alt="RDX LUDO" class="brand-logo" onerror="this.src='https://via.placeholder.com/75/f59e0b/0f172a?text=RDX'">
     <h2 class="brand-title">RDX LUDO ADMIN</h2>
 
     <div class="error-msg" id="errorBox"></div>
@@ -128,7 +144,7 @@
   </div>
 
   <script>
-    // Aapki actual Firebase Keys
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
       authDomain: "rdx-ludo.firebaseapp.com",
