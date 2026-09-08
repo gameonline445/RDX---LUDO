@@ -3,67 +3,95 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customers Management - RDX LUDO ADMIN</title>
+    <title>RDX LUDO ADMIN - Customers</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        html, body {
-            width: 100%;
-            height: 100%;
-            background-color: #f4f7fe !important;
-            color: #2b3674;
-            overflow-x: hidden;
-        }
-
-        /* Main Single Layout Structure */
-        .admin-container {
-            display: flex;
-            width: 100%;
+        body {
+            background-color: #000000;
+            color: #ffffff;
             min-height: 100vh;
-            background-color: #f4f7fe;
-            position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* ONLY ONE Sidebar Styling */
-        .sidebar {
-            width: 250px;
-            background: #ffffff;
-            padding: 20px 15px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.04);
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-
-        .brand-header {
+        /* SINGLE TOP HEADER (NO DOUBLE NAVIGATION) */
+        .top-header {
+            background-color: #ebf3fa;
+            height: 60px;
+            padding: 0 24px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 30px;
-            color: #2b3674;
-            padding: 0 10px;
+            justify-content: space-between;
+            border-bottom: 1px solid #d0e1f9;
+        }
+
+        .brand-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .brand-logo-img {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 14px;
         }
 
-        .nav-menu {
+        .brand-title {
+            color: #1a365d;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-link {
+            background-color: #fde8e8;
+            color: #e53e3e;
+            padding: 8px 22px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid #fbb6b6;
+            transition: all 0.2s ease;
+        }
+
+        .logout-link:hover {
+            background-color: #e53e3e;
+            color: #ffffff;
+        }
+
+        /* MAIN LAYOUT */
+        .admin-layout {
+            display: flex;
+            flex: 1;
+        }
+
+        /* SIDEBAR (Customers Active) */
+        .sidebar {
+            width: 260px;
+            background-color: #ffffff;
+            padding: 20px 14px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
+            flex-shrink: 0;
+            border-right: 1px solid #e2e8f0;
         }
 
         .nav-item {
@@ -73,135 +101,418 @@
             padding: 12px 16px;
             border-radius: 12px;
             text-decoration: none;
-            color: #5d6978;
-            font-weight: 500;
+            color: #4a5568;
+            font-weight: 700;
             font-size: 14px;
             transition: all 0.2s ease;
         }
 
-        .nav-item:hover {
-            background-color: #f4f7fe;
-            color: #4318ff;
+        .nav-item i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
         }
 
         .nav-item.active {
-            background-color: #e9f0ff;
-            color: #4318ff;
-            font-weight: bold;
+            background-color: #ebf8ff;
+            color: #3182ce;
+            border: 1px solid #bee3f8;
         }
 
-        /* Main Content Wrapper */
+        .nav-item:hover:not(.active) {
+            background-color: #f7fafc;
+            color: #2b6cb0;
+        }
+
+        /* MAIN CONTENT AREA */
         .main-content {
-            flex-grow: 1;
+            flex: 1;
+            background-color: #000000;
             padding: 24px;
-            background-color: #f4f7fe !important;
-            width: calc(100% - 250px);
-            overflow-x: auto;
-        }
-
-        .top-navbar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 24px;
-        }
-
-        .btn-logout {
-            background-color: #ff7666;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .content-card {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            overflow-y: auto;
         }
 
         .page-header {
-            margin-bottom: 20px;
-        }
-
-        .page-title {
-            font-size: 22px;
-            font-weight: bold;
-            color: #2b3674;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .page-subtitle {
-            color: #707ebe;
+        .dashboard-title {
+            color: #3182ce;
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        /* SEARCH AND FILTER BAR */
+        .filter-card {
+            background-color: #151921;
+            padding: 16px 20px;
+            border-radius: 16px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            border: 1px solid #232936;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b949e;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            border-radius: 10px;
+            border: 1px solid #232936;
+            background-color: #0b0e14;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .date-picker {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #232936;
+            background-color: #0b0e14;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* CUSTOMERS TABLE */
+        .table-container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow-x: auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        .cust-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            color: #333333;
+        }
+
+        .cust-table th {
+            background-color: #f7fafc;
+            color: #4a5568;
+            padding: 16px;
             font-size: 13px;
-            margin-top: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .cust-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-weight: 700;
+            color: #1a202c;
+        }
+
+        .user-phone {
+            color: #2b6cb0;
+        }
+
+        .val-balance {
+            color: #2e7d32;
+            font-weight: 800;
+        }
+
+        .btn-edit {
+            background-color: #3182ce;
+            color: #ffffff;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.2s;
+        }
+
+        .btn-edit:hover {
+            background-color: #2b6cb0;
+        }
+
+        /* BALANCE EDIT MODAL (POPUP) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            color: #333;
+            width: 90%;
+            max-width: 400px;
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: #1a365d;
+        }
+
+        .modal-field {
+            margin-bottom: 14px;
+        }
+
+        .modal-field label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: #4a5568;
+        }
+
+        .modal-field input, .modal-field select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background-color: #38a169;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background-color: #e53e3e;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            .sidebar { width: 200px; padding: 15px 10px; }
-            .main-content { width: calc(100% - 200px); padding: 15px; }
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
         }
     </style>
 </head>
 <body>
 
-<div class="admin-container">
-    <!-- ONLY ONE SIDEBAR HERE -->
-    <aside class="sidebar">
-        <div class="brand-header">
-            <img src="logo.png" alt="Logo" class="brand-logo-img" onerror="this.style.display='none'">
-            <span>RDX LUDO ADMIN</span>
+    <!-- SINGLE TOP HEADER -->
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
-        
-        <nav class="nav-menu">
-            <a href="admin-dashboard.html" class="nav-item">
-                <span>Dashboard</span>
-            </a>
-            <a href="admin-battles.html" class="nav-item">
-                <span>Battles Management</span>
-            </a>
-            <a href="admin-customers.html" class="nav-item active">
-                <span>Customers</span>
-            </a>
-            <a href="admin-deposits.html" class="nav-item">
-                <span>Deposits</span>
-            </a>
-            <a href="admin-withdrawals.html" class="nav-item">
-                <span>Withdrawals</span>
-            </a>
-            <a href="admin-history.html" class="nav-item">
-                <span>User History</span>
-            </a>
-            <a href="admin-referrals.html" class="nav-item">
-                <span>Referral Analytics</span>
-            </a>
-            <a href="admin-settings.html" class="nav-item">
-                <span>Payment Settings</span>
-            </a>
-        </nav>
-    </aside>
+        <a href="admin-login.html" id="logoutBtn" class="logout-link">Logout</a>
+    </header>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="main-content">
-        <header class="top-navbar">
-            <button class="btn-logout">Logout</button>
-        </header>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item active"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
 
-        <section class="content-card">
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
             <div class="page-header">
-                <h1 class="page-title">👥 Customers Management</h1>
-                <p class="page-subtitle">Search users by Name/Mobile, Filter by Date, and Manage Wallet Balance.</p>
+                <h1 class="dashboard-title">Customers List</h1>
             </div>
 
-            <!-- Dashboard/Table Content Here -->
-        </section>
-    </main>
-</div>
+            <!-- SEARCH & DATE FILTER -->
+            <div class="filter-card">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search by Name or Mobile Number..." onkeyup="filterCustomers()">
+                </div>
+                <div>
+                    <input type="date" id="dateInput" class="date-picker" onchange="filterCustomers()">
+                </div>
+            </div>
 
+            <!-- CUSTOMERS TABLE -->
+            <div class="table-container">
+                <table class="cust-table">
+                    <thead>
+                        <tr>
+                            <th>Joined Date</th>
+                            <th>Customer Name</th>
+                            <th>Mobile Number</th>
+                            <th>Real Balance</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customerTableBody">
+                        <!-- REAL / SYNC DATA DEMO ROWS -->
+                        <tr>
+                            <td>2026-09-08</td>
+                            <td class="user-name">Neeraj Kumar</td>
+                            <td class="user-phone">9876543210</td>
+                            <td class="val-balance">₹<span id="bal-1">500</span></td>
+                            <td><button class="btn-edit" onclick="openBalanceModal('Neeraj Kumar', 1)">Edit Balance</button></td>
+                        </tr>
+                        <tr>
+                            <td>2026-09-09</td>
+                            <td class="user-name">Rohan Sharma</td>
+                            <td class="user-phone">9123456789</td>
+                            <td class="val-balance">₹<span id="bal-2">1200</span></td>
+                            <td><button class="btn-edit" onclick="openBalanceModal('Rohan Sharma', 2)">Edit Balance</button></td>
+                        </tr>
+                        <tr>
+                            <td>2026-09-09</td>
+                            <td class="user-name">Amit Verma</td>
+                            <td class="user-phone">9988776655</td>
+                            <td class="val-balance">₹<span id="bal-3">350</span></td>
+                            <td><button class="btn-edit" onclick="openBalanceModal('Amit Verma', 3)">Edit Balance</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- BALANCE EDIT MODAL (POPUP) -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal-card">
+            <h3 class="modal-title">Edit Customer Balance</h3>
+            <div class="modal-field">
+                <label>Customer Name</label>
+                <input type="text" id="modalName" disabled>
+            </div>
+            <div class="modal-field">
+                <label>Action Type</label>
+                <select id="actionType">
+                    <option value="add">Add Money (+)</option>
+                    <option value="deduct">Deduct Money (-)</option>
+                </select>
+            </div>
+            <div class="modal-field">
+                <label>Enter Amount (₹)</label>
+                <input type="number" id="modalAmount" placeholder="e.g. 100">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-save" onclick="saveBalance()">Update Balance</button>
+                <button class="btn-cancel" onclick="closeBalanceModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FOR SEARCH, FILTER & BALANCE EDIT -->
+    <script>
+        let currentUserId = null;
+
+        // SEARCH & DATE FILTER FUNCTION
+        function filterCustomers() {
+            let searchVal = document.getElementById('searchInput').value.toLowerCase();
+            let dateVal = document.getElementById('dateInput').value;
+            let rows = document.querySelectorAll('#customerTableBody tr');
+
+            rows.forEach(row => {
+                let dateCell = row.cells[0].innerText;
+                let nameCell = row.cells[1].innerText.toLowerCase();
+                let phoneCell = row.cells[2].innerText.toLowerCase();
+
+                let matchesSearch = nameCell.includes(searchVal) || phoneCell.includes(searchVal);
+                let matchesDate = dateVal === "" || dateCell === dateVal;
+
+                if (matchesSearch && matchesDate) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        // EDIT BALANCE MODAL LOGIC
+        function openBalanceModal(name, userId) {
+            currentUserId = userId;
+            document.getElementById('modalName').value = name;
+            document.getElementById('modalAmount').value = '';
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        function closeBalanceModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        function saveBalance() {
+            let amount = parseFloat(document.getElementById('modalAmount').value);
+            let action = document.getElementById('actionType').value;
+            
+            if (isNaN(amount) || amount <= 0) {
+                alert("Kripya valid amount dalein!");
+                return;
+            }
+
+            let balElement = document.getElementById('bal-' + currentUserId);
+            let currentBal = parseFloat(balElement.innerText);
+
+            if (action === 'add') {
+                balElement.innerText = currentBal + amount;
+            } else {
+                balElement.innerText = Math.max(0, currentBal - amount);
+            }
+
+            alert("Balance successfully update ho gaya!");
+            closeBalanceModal();
+        }
+
+        // LOGOUT LOGIC
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+    </script>
 </body>
 </html>
