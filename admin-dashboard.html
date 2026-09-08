@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - RDX Ludo Admin</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { width: 260px; min-height: 100vh; background: #ffffff; border-right: 1px solid #e2e8f0; }
+        .sidebar .nav-link { color: #475569; font-weight: 600; padding: 12px 16px; border-radius: 8px; margin-bottom: 4px; display: flex; align-items: center; gap: 12px; }
+        .sidebar .nav-link.active { background-color: #e0f2fe; color: #0284c7; }
+        .sidebar .nav-link:hover:not(.active) { background-color: #f1f5f9; color: #0f172a; }
+        .main-content { background-color: #0f172a; min-height: 100vh; padding: 24px; border-radius: 20px 0 0 0; }
+        .stat-card { background: #ffffff; border-radius: 16px; padding: 20px; border: none; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); height: 100%; }
+        .stat-card small { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; color: #64748b; text-transform: uppercase; }
+        .stat-card h2 { font-size: 28px; font-weight: 800; margin-top: 8px; }
+        .top-navbar { background: #ffffff; padding: 12px 24px; border-bottom: 1px solid #e2e8f0; }
+    </style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<div class="top-navbar d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center gap-2">
+        <img src="logo.png" alt="Logo" height="35" onerror="this.style.display='none'">
+        <h4 class="fw-bold mb-0 text-primary">RDX LUDO ADMIN</h4>
+    </div>
+    <button class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="logoutAdmin()">Logout</button>
+</div>
+
+<div class="d-flex">
+    <!-- Sidebar Menu -->
+    <div class="sidebar p-3 shadow-sm">
+        <nav class="nav flex-column">
+            <a href="admin-dashboard.html" class="nav-link active"><i class="fa-solid fa-chart-pie"></i> Dashboard</a>
+            <a href="live-users.html" class="nav-link"><i class="fa-solid fa-users"></i> Live Users Monitor</a>
+            <a href="battles.html" class="nav-link"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="kyc-requests.html" class="nav-link"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="deposits.html" class="nav-link"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="withdrawals.html" class="nav-link"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="user-history.html" class="nav-link"><i class="fa-solid fa-clock-rotate-left"></i> User Complete History</a>
+            <a href="referral-analytics.html" class="nav-link"><i class="fa-solid fa-gift"></i> Referral Analytics</a>
+            <a href="customers.html" class="nav-link"><i class="fa-solid fa-user-gear"></i> Customers</a>
+            <a href="notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="payment-settings.html" class="nav-link"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </nav>
+    </div>
+
+    <!-- Main Content Panel -->
+    <div class="main-content w-100">
+        <h3 class="fw-bold text-white mb-4">Dashboard</h3>
+
+        <!-- Statistics Grid -->
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Active Live Users</small>
+                    <h2 class="text-success" id="activeUsers">0 Live</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Live Matches</small>
+                    <h2 class="text-warning" id="liveMatches">0</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Pending KYC</small>
+                    <h2 class="text-warning" id="pendingKyc">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Total Customers</small>
+                    <h2 class="text-primary" id="totalCustomers">60</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Total Balance</small>
+                    <h2 class="text-success" id="totalBalance">₹5350</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Total Deposit Paid</small>
+                    <h2 style="color: #8b5cf6;" id="totalDeposit">₹7100</h2>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Total Withdrawal Paid</small>
+                    <h2 class="text-success" id="totalWithdrawal">₹570</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Pending Deposits</small>
+                    <h2 class="text-warning" id="pendingDeposits">4</h2>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Pending Withdrawals</small>
+                    <h2 class="text-danger" id="pendingWithdrawals">0</h2>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="stat-card">
+                    <small>Total Referrals</small>
+                    <h2 class="text-primary" id="totalReferrals">0</h2>
+                </div>
+            </div>
+        </div>
+
+        <!-- Firebase Connection Status Box -->
+        <div class="stat-card mt-4">
+            <h5 class="fw-bold mb-3">Firebase Status</h5>
+            <div class="alert alert-success d-flex align-items-center mb-2" role="alert">
+                <i class="fa-solid fa-circle-check me-2"></i>
+                <div>Firebase Connected (All Data Loaded)</div>
+            </div>
+            <small class="text-muted d-block mt-2">Admin login Firebase Authentication se successful hua.</small>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+<script>
+    // Firebase Config Placeholder (Apna Firebase Config Yaha Dalein)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        databaseURL: "YOUR_DATABASE_URL",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    // Firebase Initialize
+    if (!firebase.apps.length) {
+        firebase.initializeApp(firebaseConfig);
+    }
+
+    function logoutAdmin() {
+        firebase.auth().signOut().then(() => {
+            window.location.href = "login.html";
+        });
+    }
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
