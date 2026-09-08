@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDX LUDO ADMIN - Login</title>
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Firebase Core and Auth SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+    }
+    
+    body { 
+      background-color: #000000; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      min-height: 100vh; 
+      padding: 20px;
+    }
+    
+    .login-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      padding: 35px 25px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+      text-align: center;
+    }
+
+    .brand-title { 
+      font-size: 22px; 
+      font-weight: 800; 
+      color: #1a2b4c; 
+      margin-bottom: 25px; 
+      letter-spacing: -0.3px;
+    }
+    
+    .form-group { 
+      margin-bottom: 18px; 
+      text-align: left; 
+    }
+    
+    .form-group label { 
+      display: block; 
+      font-size: 13px; 
+      font-weight: 700; 
+      color: #4a5568; 
+      margin-bottom: 6px; 
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+    
+    .form-group input:focus { 
+      border-color: #3b82f6; 
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); 
+    }
+
+    .login-btn {
+      width: 100%;
+      background: #1a73e8;
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+    
+    .login-btn:hover { 
+      background: #1557b0; 
+    }
+
+    .error-msg {
+      color: #d93025;
+      background: #ffebee;
+      border: 1px solid #ffcdd2;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      margin-bottom: 15px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card">
+    <h2 class="brand-title">RDX LUDO ADMIN</h2>
+
+    <div class="error-msg" id="errorBox"></div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label for="adminEmail">Admin Email</label>
+        <input type="email" id="adminEmail" placeholder="admin@rdxludo.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword">Password</label>
+        <input type="password" id="adminPassword" placeholder="••••••••" required>
+      </div>
+
+      <button type="submit" class="login-btn" id="loginBtn">Login to Panel</button>
+    </form>
+  </div>
+
+  <script>
+    // Firebase Config (Apne project details se replace karein)
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+
+    // Auto Redirect agar pehle se login ho
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        window.location.href = "admin.html";
+      }
+    });
+
+    // Login Function
+    function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('adminEmail').value.trim();
+      const password = document.getElementById('adminPassword').value.trim();
+      const errorBox = document.getElementById('errorBox');
+      const loginBtn = document.getElementById('loginBtn');
+
+      errorBox.style.display = "none";
+      loginBtn.innerText = "Logging in...";
+      loginBtn.disabled = true;
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+          window.location.href = "admin.html";
+        })
+        .catch((error) => {
+          loginBtn.innerText = "Login to Panel";
+          loginBtn.disabled = false;
+          errorBox.innerText = error.message;
+          errorBox.style.display = "block";
+        });
+    }
+  </script>
+</body>
+</html>
