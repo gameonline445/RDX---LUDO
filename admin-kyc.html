@@ -1,4 +1,266 @@
 <!DOCTYPE html>
-<html><head><style>body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; }</style></head>
-<body><h1 style="color: #3b82f6;">KYC Requests</h1><p>Pending ID and document approval list.</p></body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYC Requests</title>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.15) 0%, transparent 35%),
+                  radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.12) 0%, transparent 32%),
+                  linear-gradient(180deg, #f0f7ff 0%, #ffffff 50%, #eaf4ff 100%);
+      color: #101a38;
+      padding: 24px 20px;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      margin-bottom: 20px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 850;
+      color: #0c4a6e;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .page-title i {
+      color: #8b5cf6;
+    }
+
+    .page-subtitle {
+      color: #64748b;
+      font-size: 14px;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .table-card {
+      background: #ffffff;
+      border: 1.5px solid #bae6fd;
+      border-radius: 20px;
+      box-shadow: 0 8px 22px rgba(2, 132, 199, 0.08);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 700px;
+    }
+
+    th {
+      background: #e0f2fe;
+      color: #0c4a6e;
+      font-size: 13px;
+      font-weight: 800;
+      padding: 14px 18px;
+      border-bottom: 1px solid #bae6fd;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 14px 18px;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f9ff;
+      color: #334155;
+      font-weight: 600;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .badge-pending {
+      background: #fef3c7;
+      color: #d97706;
+      border: 1px solid #fde68a;
+    }
+
+    .badge-approved {
+      background: #dcfce7;
+      color: #15803d;
+      border: 1px solid #86efac;
+    }
+
+    .badge-rejected {
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+    }
+
+    .btn-action {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: none;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-right: 4px;
+      transition: transform 0.1s;
+    }
+
+    .btn-approve {
+      background: #22c55e;
+      color: white;
+    }
+
+    .btn-reject {
+      background: #ef4444;
+      color: white;
+    }
+
+    .btn-action:active {
+      transform: scale(0.95);
+    }
+
+    .doc-link {
+      color: #0284c7;
+      text-decoration: underline;
+      font-weight: 700;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 30px;
+      color: #64748b;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="page-header">
+    <h1 class="page-title"><i class="fa-solid fa-address-card"></i> KYC Requests</h1>
+    <p class="page-subtitle">Pending ID and document approval list.</p>
+  </div>
+
+  <div class="table-card">
+    <table>
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Doc Type</th>
+          <th>Doc Number</th>
+          <th>Document</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="kycTableBody">
+        <tr>
+          <td colspan="6" class="no-data"><i class="fa-solid fa-spinner fa-spin"></i> Loading KYC Requests...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+      authDomain: "rdx-ludo.firebaseapp.com",
+      projectId: "rdx-ludo",
+      storageBucket: "rdx-ludo.firebasestorage.app",
+      messagingSenderId: "928340814840",
+      appId: "1:928340814840:web:6eca42a8b76138b268440d",
+      databaseURL: "https://rdx-ludo-default-rtdb.firebaseio.com"
+    };
+
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const db = firebase.database();
+
+    const kycRef = db.ref('kyc_requests');
+
+    kycRef.on('value', (snapshot) => {
+      const tableBody = document.getElementById('kycTableBody');
+      tableBody.innerHTML = '';
+
+      if (snapshot.exists()) {
+        const kycData = snapshot.val();
+        let hasData = false;
+
+        Object.keys(kycData).forEach((key) => {
+          hasData = true;
+          const kyc = kycData[key];
+
+          const userName = kyc.userName || kyc.phone || 'User';
+          const docType = kyc.docType || 'Aadhaar Card';
+          const docNum = kyc.docNumber || 'N/A';
+          const docImg = kyc.docImage ? `<a href="${kyc.docImage}" target="_blank" class="doc-link">View Doc</a>` : 'No Attachment';
+          const status = kyc.status || 'Pending';
+
+          let badgeClass = 'badge-pending';
+          if (status.toLowerCase() === 'approved') badgeClass = 'badge-approved';
+          if (status.toLowerCase() === 'rejected') badgeClass = 'badge-rejected';
+
+          const actions = status.toLowerCase() === 'pending' ? `
+            <button class="btn-action btn-approve" onclick="updateKycStatus('${key}', 'Approved')">Approve</button>
+            <button class="btn-action btn-reject" onclick="updateKycStatus('${key}', 'Rejected')">Reject</button>
+          ` : '-';
+
+          const rowHTML = `
+            <tr>
+              <td><strong>${userName}</strong></td>
+              <td>${docType}</td>
+              <td>${docNum}</td>
+              <td>${docImg}</td>
+              <td><span class="badge ${badgeClass}">${status}</span></td>
+              <td>${actions}</td>
+            </tr>
+          `;
+          tableBody.innerHTML += rowHTML;
+        });
+
+        if (!hasData) {
+          tableBody.innerHTML = '<tr><td colspan="6" class="no-data">Koi pending KYC request nahi hai.</td></tr>';
+        }
+      } else {
+        tableBody.innerHTML = '<tr><td colspan="6" class="no-data">Database me koi KYC request nahi hai.</td></tr>';
+      }
+    });
+
+    function updateKycStatus(kycId, newStatus) {
+      if (confirm(`Kya aap is KYC ko ${newStatus} karna chahte hain?`)) {
+        db.ref('kyc_requests/' + kycId).update({
+          status: newStatus
+        });
+      }
+    }
+  </script>
+
+</body>
 </html>
