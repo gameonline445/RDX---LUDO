@@ -181,10 +181,7 @@
     <main class="main-content">
         <div class="top-bar">
             <h1 class="page-header-title">Dashboard</h1>
-            <!-- DIRECT HYPERLINK FOR ADMIN LOGOUT -->
-            <a href="admin-login.html" onclick="doLogout(event)" style="text-decoration: none;">
-                <button class="logout-btn">Logout</button>
-            </a>
+            <button class="logout-btn" onclick="logoutAdmin()">Logout</button>
         </div>
 
         <div class="dashboard-grid">
@@ -208,17 +205,13 @@
     </main>
 
     <script>
-        function doLogout(event) {
-            // Safe Session Clean
-            try {
-                localStorage.clear();
-                sessionStorage.clear();
-            } catch(e) {
-                console.log(e);
-            }
+        function logoutAdmin() {
+            // Local Data Clean
+            localStorage.clear();
+            sessionStorage.clear();
 
-            // Direct Redirect Force Execution
-            window.location.href = "admin-login.html";
+            // Direct Redirect
+            window.location.assign("admin-login.html");
         }
     </script>
 </body>
