@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RDX LUDO ADMIN</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: #000; color: #333; overflow: hidden; }
+
+    /* Top Bar */
+    .top-header {
+      height: 60px;
+      background: #ffffff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 20px;
+      border-bottom: 1px solid #e0e0e0;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+    }
+    .brand-section { display: flex; align-items: center; gap: 10px; }
+    .brand-name { font-size: 18px; font-weight: 800; color: #1a2b4c; }
+    .logout-btn {
+      background: #fff0f0; color: #d93025; border: 1px solid #ffcdd2;
+      padding: 6px 18px; border-radius: 20px; font-weight: 700; font-size: 14px; cursor: pointer;
+    }
+
+    /* Container Layout */
+    .app-container { display: flex; margin-top: 60px; height: calc(100vh - 60px); }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px; background: #ffffff; padding: 15px 10px;
+      border-right: 1px solid #e0e0e0; overflow-y: auto; flex-shrink: 0;
+    }
+    .menu-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+    .menu-item a {
+      display: flex; align-items: center; gap: 12px; padding: 11px 15px;
+      color: #4a5568; text-decoration: none; font-size: 14px; font-weight: 600;
+      border-radius: 8px; transition: all 0.2s;
+    }
+    .menu-item a.active, .menu-item a:hover { background-color: #e8f0fe; color: #1a73e8; }
+
+    /* Main Content Area */
+    .main-content { flex: 1; background: #000000; }
+    iframe { width: 100%; height: 100%; border: none; }
+  </style>
+</head>
+<body>
+
+  <header class="top-header">
+    <div class="brand-section">
+      <span class="brand-name">RDX LUDO ADMIN</span>
+    </div>
+    <button class="logout-btn">Logout</button>
+  </header>
+
+  <div class="app-container">
+    <aside class="sidebar">
+      <ul class="menu-list">
+        <li class="menu-item"><a href="admin-dashboard.html" target="adminFrame" class="active" onclick="setActive(this)"><i class="fa-solid fa-globe"></i> Dashboard</a></li>
+        <li class="menu-item"><a href="admin-live-users.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a></li>
+        <li class="menu-item"><a href="admin-battles.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-gamepad"></i> Battles Management</a></li>
+        <li class="menu-item"><a href="admin-kyc.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-address-card"></i> KYC Requests</a></li>
+        <li class="menu-item"><a href="admin-deposits.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-wallet"></i> Deposits</a></li>
+        <li class="menu-item"><a href="admin-withdrawals.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a></li>
+        <li class="menu-item"><a href="admin-user-history.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-receipt"></i> User Complete History</a></li>
+        <li class="menu-item"><a href="admin-referrals.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-gift"></i> Referral Analytics</a></li>
+        <li class="menu-item"><a href="admin-customers.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-users"></i> Customers</a></li>
+        <li class="menu-item"><a href="admin-notifications.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-bell"></i> Notifications</a></li>
+        <li class="menu-item"><a href="admin-payment-settings.html" target="adminFrame" onclick="setActive(this)"><i class="fa-solid fa-gear"></i> Payment Settings</a></li>
+      </ul>
+    </aside>
+
+    <main class="main-content">
+      <iframe name="adminFrame" src="admin-dashboard.html"></iframe>
+    </main>
+  </div>
+
+  <script>
+    function setActive(el) {
+      document.querySelectorAll('.menu-item a').forEach(a => a.classList.remove('active'));
+      el.classList.add('active');
+    }
+  </script>
+</body>
+</html>
