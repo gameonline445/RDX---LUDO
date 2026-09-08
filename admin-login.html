@@ -181,7 +181,10 @@
     <main class="main-content">
         <div class="top-bar">
             <h1 class="page-header-title">Dashboard</h1>
-            <button class="logout-btn" id="logoutBtn">Logout</button>
+            <!-- DIRECT HYPERLINK FOR ADMIN LOGOUT -->
+            <a href="admin-login.html" onclick="doLogout(event)" style="text-decoration: none;">
+                <button class="logout-btn">Logout</button>
+            </a>
         </div>
 
         <div class="dashboard-grid">
@@ -205,21 +208,18 @@
     </main>
 
     <script>
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            // 1. Session clear
-            localStorage.clear();
-            sessionStorage.clear();
-
-            // 2. Firebase Signout (if initialized)
-            if (window.firebase && firebase.auth) {
-                firebase.auth().signOut().catch(function(error) {
-                    console.log("Firebase Logout Error:", error);
-                });
+        function doLogout(event) {
+            // Safe Session Clean
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch(e) {
+                console.log(e);
             }
 
-            // 3. Login Redirect
-            window.location.replace("index.html"); 
-        });
+            // Direct Redirect Force Execution
+            window.location.href = "admin-login.html";
+        }
     </script>
 </body>
 </html>
