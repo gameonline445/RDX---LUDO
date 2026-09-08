@@ -119,7 +119,7 @@
                         </tr>
                     </thead>
                     <tbody id="realDepositBody">
-                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Loading Real Data from Database...</td></tr>
+                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Connecting to Firebase...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -135,24 +135,23 @@
     </div>
 
     <script>
-        // 1. APNA FIREBASE CONFIG YAHAN REPLACE KAREIN
+        // AAPKI FIREBASE CONFIG KEYS CONNECT KAR DI GAYI HAIN
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            databaseURL: "https://rdx-ludo-default-rtdb.firebaseio.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
         };
 
-        // Firebase Initialize
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const db = firebase.database();
 
-        // 2. REAL-TIME DATA SYNC FROM FIREBASE
+        // REALTIME FETCH FROM FIREBASE DATABASE
         db.ref("deposits").on("value", (snapshot) => {
             const tableBody = document.getElementById("realDepositBody");
             tableBody.innerHTML = "";
@@ -160,11 +159,13 @@
             let totalDeposit = 0;
             let todayDeposit = 0;
             let pendingCount = 0;
-
             const todayStr = new Date().toISOString().split('T')[0];
 
             if (!snapshot.exists()) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px;">No Deposit Requests Found.</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Data Found in Database ("deposits" Node)</td></tr>';
+                document.getElementById("totalDepositVal").innerText = "₹0";
+                document.getElementById("todayDepositVal").innerText = "₹0";
+                document.getElementById("pendingCountVal").innerText = "0 Pending";
                 return;
             }
 
@@ -175,8 +176,12 @@
                 depositList.push(data);
             });
 
-            // Sorting: Pending requests first, then by date newest
-            depositList.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+            // Serial Sorting: Pending Requests On Top
+            depositList.sort((a, b) => {
+                if (a.status === 'Pending' && b.status !== 'Pending') return -1;
+                if (a.status !== 'Pending' && b.status === 'Pending') return 1;
+                return (b.timestamp || 0) - (a.timestamp || 0);
+            });
 
             depositList.forEach((data) => {
                 let amt = Number(data.amount || 0);
@@ -184,9 +189,7 @@
 
                 if (status === "Approved") {
                     totalDeposit += amt;
-                    if (data.date && data.date.includes(todayStr)) {
-                        todayDeposit += amt;
-                    }
+                    if (data.date && data.date.includes(todayStr)) todayDeposit += amt;
                 } else if (status === "Pending") {
                     pendingCount++;
                 }
@@ -212,28 +215,25 @@
                 tableBody.innerHTML += row;
             });
 
-            // Metrics Update
             document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
             document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
             document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
         });
 
-        // 3. APPROVE / REJECT REAL ACTION
+        // APPROVE & REJECT FIREBASE FUNCTION
         function actionDeposit(depId, userId, amount, newStatus) {
-            if (confirm(`Kya aap is request ko ${newStatus} karna chahte hain?`)) {
-                // Deposit status update
+            if (confirm(`Kya aap is payment ko ${newStatus} karna chahte hain?`)) {
                 db.ref("deposits/" + depId).update({ status: newStatus }).then(() => {
-                    // Agar Approved hai toh User wallet me money add karein
                     if (newStatus === "Approved" && userId) {
                         db.ref("users/" + userId + "/wallet").transaction((curr) => (curr || 0) + amount);
                     }
-                    alert("Status Successfully Updated!");
+                    alert("Status successfully update ho gaya!");
                 });
             }
         }
 
         function viewSS(url) {
-            if (!url) return alert("Screenshot link missing!");
+            if (!url) return alert("Screenshot Not Available");
             document.getElementById("ssImage").src = url;
             document.getElementById("ssModal").style.display = "flex";
         }
