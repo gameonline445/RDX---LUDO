@@ -1,4 +1,263 @@
 <!DOCTYPE html>
-<html><head><style>body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; }</style></head>
-<body><h1 style="color: #3b82f6;">Customers</h1><p>User accounts list and wallet edit options.</p></body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers - RDX LUDO ADMIN</title>
+    <style>
+        /* CSS Reset & Black Screen Fix */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            background-color: #f4f7fe !important; /* Forces light background */
+            color: #2b3674;
+        }
+
+        /* Responsive Layout */
+        .admin-layout {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f4f7fe;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: #ffffff;
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .brand-logo {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 25px;
+            color: #2b3674;
+        }
+
+        .nav-link {
+            display: block;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #a3edcc;
+            font-weight: 500;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: #e9f0ff;
+            color: #4318ff;
+            font-weight: bold;
+        }
+
+        /* Main Workspace Area */
+        .main-wrapper {
+            flex-grow: 1;
+            padding: 25px;
+            background-color: #f4f7fe !important;
+            overflow-x: auto;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .logout-btn {
+            background-color: #ff7666;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Card Container */
+        .card-container {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2b3674;
+            margin-bottom: 5px;
+        }
+
+        .page-desc {
+            color: #707ebe;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #a3edcc;
+            font-size: 12px;
+            text-transform: uppercase;
+            padding: 12px 15px;
+            border-bottom: 2px solid #edf2f7;
+        }
+
+        td {
+            padding: 14px 15px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 14px;
+            color: #2b3674;
+        }
+
+        .edit-btn {
+            background: #4318ff;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .admin-layout {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="admin-layout">
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="brand-logo">RDX LUDO ADMIN</div>
+        <nav>
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-battles.html" class="nav-link">Battles Management</a>
+            <a href="admin-customers.html" class="nav-link active">Customers</a>
+            <a href="admin-withdrawals.html" class="nav-link">Withdrawals</a>
+            <a href="admin-payment-settings.html" class="nav-link">Payment Settings</a>
+        </nav>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <div class="top-bar">
+            <button class="logout-btn">Logout</button>
+        </div>
+
+        <div class="card-container">
+            <h1 class="page-title">Customers</h1>
+            <p class="page-desc">User accounts list and wallet edit options.</p>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>USER ID / NAME</th>
+                            <th>PHONE</th>
+                            <th>BALANCE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center; padding: 20px;">Firebase se data load ho raha hai...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Firebase Script Section -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    // AAPKI FIREBASE CONFIG (Sahi credentials daalein)
+    const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_STORAGE_BUCKET",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    let users = [];
+
+    function renderUsersTable() {
+        const tbody = document.getElementById("usersTableBody");
+        if (!tbody) return;
+
+        if (users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:15px;">Koi customer account nahi mila.</td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = users.map(u => `
+            <tr>
+                <td><b>${u.name || u.displayName || 'User'}</b><br><small style="color:#707ebe;">${u.id}</small></td>
+                <td>${u.phone || u.mobile || 'N/A'}</td>
+                <td>₹${u.balance ?? 0}</td>
+                <td><button class="edit-btn">Edit Wallet</button></td>
+            </tr>
+        `).join('');
+    }
+
+    function loadUsers() {
+        try {
+            const usersRef = collection(db, "users");
+            onSnapshot(usersRef, (snapshot) => {
+                users = [];
+                snapshot.forEach((doc) => {
+                    users.push({ id: doc.id, ...doc.data() });
+                });
+                renderUsersTable();
+            }, (error) => {
+                const tbody = document.getElementById("usersTableBody");
+                if (tbody) tbody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Firebase Error: ${error.message}</td></tr>`;
+            });
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    // Load data on start
+    loadUsers();
+</script>
+</body>
 </html>
