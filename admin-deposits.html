@@ -3,266 +3,566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deposits Management - RDX LUDO ADMIN</title>
+    <title>RDX LUDO ADMIN - Deposits</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background-color: #f4f7fe;
-            color: #2b3674;
-            display: flex;
+            background-color: #000000;
+            color: #ffffff;
             min-height: 100vh;
-        }
-
-        /* SINGLE SIDEBAR STYLING */
-        .sidebar {
-            width: 260px;
-            background: #ffffff;
-            padding: 20px 15px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 25px;
-            padding: 0 10px;
-            color: #2b3674;
-        }
-
-        .nav-menu {
             display: flex;
             flex-direction: column;
-            gap: 4px;
         }
 
-        .nav-link {
+        /* SINGLE TOP HEADER */
+        .top-header {
+            background-color: #ebf3fa;
+            height: 60px;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #d0e1f9;
+        }
+
+        .brand-logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 14px;
+        }
+
+        .brand-title {
+            color: #1a365d;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-link {
+            background-color: #fde8e8;
+            color: #e53e3e;
+            padding: 8px 22px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            border: 1px solid #fbb6b6;
+            transition: all 0.2s ease;
+        }
+
+        .logout-link:hover {
+            background-color: #e53e3e;
+            color: #ffffff;
+        }
+
+        /* MAIN LAYOUT */
+        .admin-layout {
+            display: flex;
+            flex: 1;
+        }
+
+        /* SIDEBAR (Deposits Active) */
+        .sidebar {
+            width: 260px;
+            background-color: #ffffff;
+            padding: 20px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex-shrink: 0;
+            border-right: 1px solid #e2e8f0;
+        }
+
+        .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px 16px;
             border-radius: 12px;
             text-decoration: none;
-            color: #5d6978;
-            font-weight: 500;
+            color: #4a5568;
+            font-weight: 700;
             font-size: 14px;
-            transition: 0.2s;
+            transition: all 0.2s ease;
         }
 
-        .nav-link:hover, .nav-link.active {
-            background-color: #e9f0ff;
-            color: #4318ff;
-            font-weight: bold;
+        .nav-item i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-item.active {
+            background-color: #ebf8ff;
+            color: #3182ce;
+            border: 1px solid #bee3f8;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: #f7fafc;
+            color: #2b6cb0;
         }
 
         /* MAIN CONTENT AREA */
         .main-content {
             flex: 1;
-            padding: 20px 30px;
-            overflow-x: auto;
+            background-color: #000000;
+            padding: 24px;
+            overflow-y: auto;
         }
 
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
+        .dashboard-title {
+            color: #3182ce;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 24px;
         }
 
-        .logout-btn {
-            background-color: #ff7666;
-            color: white;
-            border: none;
-            padding: 8px 22px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        /* SUMMARY CARDS */
-        .summary-cards {
+        /* TOP METRIC CARDS */
+        .cards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
         }
 
-        .card {
-            background: #ffffff;
-            padding: 20px;
+        .metric-card {
+            background-color: #ffffff;
+            padding: 20px 22px;
             border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .card-title {
-            font-size: 12px;
-            color: #707ebe;
-            font-weight: 600;
-            margin-bottom: 6px;
+        .card-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
         }
 
         .card-value {
-            font-size: 24px;
-            font-weight: bold;
+            font-size: 26px;
+            font-weight: 900;
+            margin-top: 8px;
         }
 
-        /* DATA TABLE CONTAINER */
-        .panel-container {
-            background: #ffffff;
+        .val-purple { color: #7c3aed; }
+        .val-blue { color: #2563eb; }
+        .val-orange { color: #d97706; }
+
+        /* SEARCH AND FILTER BAR */
+        .filter-card {
+            background-color: #151921;
+            padding: 16px 20px;
             border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-
-        .filter-box {
             display: flex;
-            gap: 10px;
-            margin: 15px 0 20px 0;
+            gap: 15px;
             flex-wrap: wrap;
+            margin-bottom: 24px;
+            border: 1px solid #232936;
         }
 
-        .filter-input {
-            padding: 10px 14px;
-            border: 1px solid #e0e5f2;
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #8b949e;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
             border-radius: 10px;
-            font-size: 13px;
+            border: 1px solid #232936;
+            background-color: #0b0e14;
+            color: #ffffff;
+            font-size: 14px;
             outline: none;
         }
 
-        table {
+        .date-picker {
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid #232936;
+            background-color: #0b0e14;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* TABLE STYLING */
+        .table-container {
+            background-color: #ffffff;
+            border-radius: 16px;
+            overflow-x: auto;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+        }
+
+        .dep-table {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
+            color: #333333;
         }
 
-        th {
-            background: #f8f9fa;
-            color: #5d6978;
-            font-size: 11px;
-            padding: 12px;
-            border-bottom: 2px solid #edf2f7;
+        .dep-table th {
+            background-color: #f7fafc;
+            color: #4a5568;
+            padding: 16px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 2px solid #e2e8f0;
         }
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #edf2f7;
+        .dep-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
             font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-pending {
+            background-color: #fef3c7;
+            color: #b45309;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge-approved {
+            background-color: #d1fae5;
+            color: #047857;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .badge-rejected {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .btn-ss {
+            background-color: #4a5568;
+            color: #ffffff;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 11px;
         }
 
         .btn-approve {
-            background: #059669;
-            color: #fff;
+            background-color: #10b981;
+            color: #ffffff;
             border: none;
             padding: 6px 12px;
             border-radius: 6px;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 12px;
+            margin-right: 4px;
         }
 
         .btn-reject {
-            background: #dc2626;
-            color: #fff;
+            background-color: #ef4444;
+            color: #ffffff;
             border: none;
             padding: 6px 12px;
             border-radius: 6px;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 12px;
         }
 
-        .ss-img {
-            width: 40px;
-            height: 40px;
-            border-radius: 6px;
-            object-fit: cover;
+        /* MODAL FOR SCREENSHOT VIEW */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-card {
+            background: #ffffff;
+            color: #333;
+            width: 90%;
+            max-width: 420px;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .modal-card img {
+            width: 100%;
+            max-height: 380px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid #cbd5e0;
+            margin-bottom: 15px;
+        }
+
+        .btn-close {
+            background-color: #1a202c;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 700;
             cursor: pointer;
         }
 
         @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
+            .admin-layout { flex-direction: column; }
+            .sidebar { width: 100%; }
+            .cards-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <!-- SIRF EK MAIN SIDEBAR -->
-    <aside class="sidebar">
-        <div class="brand">RDX LUDO ADMIN</div>
-        <nav class="nav-menu">
-            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="admin-battles.html" class="nav-link">Battles Management</a>
-            <a href="admin-customers.html" class="nav-link">Customers</a>
-            <a href="admin-deposits.html" class="nav-link active">Deposits</a>
-            <a href="admin-withdrawals.html" class="nav-link">Withdrawals</a>
-            <a href="admin-history.html" class="nav-link">User History</a>
-            <a href="admin-referrals.html" class="nav-link">Referral Analytics</a>
-            <a href="admin-settings.html" class="nav-link">Payment Settings</a>
-        </nav>
-    </aside>
-
-    <!-- MAIN PANEL CONTENT -->
-    <main class="main-content">
-        <div class="top-bar">
-            <button class="logout-btn">Logout</button>
+    <!-- TOP HEADER -->
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
+        <a href="admin-login.html" id="logoutBtn" class="logout-link">Logout</a>
+    </header>
 
-        <div class="summary-cards">
-            <div class="card">
-                <div class="card-title">TOTAL DEPOSIT</div>
-                <div class="card-value" id="totalDepositVal">₹0</div>
-            </div>
-            <div class="card">
-                <div class="card-title">TODAY DEPOSIT</div>
-                <div class="card-value" id="todayDepositVal">₹0</div>
-            </div>
-            <div class="card">
-                <div class="card-title">PENDING DEPOSIT</div>
-                <div class="card-value" id="pendingDepositVal">₹0</div>
-            </div>
-        </div>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item active"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
 
-        <div class="panel-container">
-            <h2>💳 Deposits Management</h2>
-            
-            <div class="filter-box">
-                <input type="text" id="searchInput" class="filter-input" placeholder="Search UTR / Mobile / Name..." onkeyup="applyFilters()">
-                <input type="date" id="dateInput" class="filter-input" onchange="applyFilters()">
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            <h1 class="dashboard-title">Deposits Management</h1>
+
+            <!-- DEPOSIT STATS CARDS -->
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <span class="card-label">Total Real Deposit</span>
+                    <span class="card-value val-purple">₹7100</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Today's Deposit</span>
+                    <span class="card-value val-blue">₹1500</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Total Pending Requests</span>
+                    <span class="card-value val-orange">3 Pending</span>
+                </div>
             </div>
 
-            <div style="overflow-x: auto;">
-                <table>
+            <!-- SEARCH BAR (Name, Mobile, UTR & Date Filter) -->
+            <div class="filter-card">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search Name, Phone, or UTR Number..." onkeyup="filterDeposits()">
+                </div>
+                <div>
+                    <input type="date" id="dateInput" class="date-picker" onchange="filterDeposits()">
+                </div>
+            </div>
+
+            <!-- DEPOSITS LIST TABLE (Pending Requests First) -->
+            <div class="table-container">
+                <table class="dep-table">
                     <thead>
                         <tr>
-                            <th>#</th>
-                            <th>USER INFO</th>
-                            <th>AMOUNT</th>
-                            <th>UTR / TXN ID</th>
-                            <th>DATE & TIME</th>
-                            <th>SCREENSHOT</th>
-                            <th>STATUS</th>
-                            <th>ACTIONS</th>
+                            <th>Date & Time</th>
+                            <th>Customer Name</th>
+                            <th>Mobile No.</th>
+                            <th>Amount</th>
+                            <th>UTR / Ref No.</th>
+                            <th>Screenshot</th>
+                            <th>Status</th>
+                            <th>Admin Action</th>
                         </tr>
                     </thead>
-                    <tbody id="depositsTableBody">
-                        <tr><td colspan="8" style="text-align:center;">Loading...</td></tr>
+                    <tbody id="depositTableBody">
+                        <!-- PENDING SERIAL TOP REQUESTS -->
+                        <tr id="row-101">
+                            <td>2026-09-09 00:05 AM</td>
+                            <td><strong>Neeraj Kumar</strong></td>
+                            <td>9876543210</td>
+                            <td style="color:#2e7d32; font-weight:800;">₹500</td>
+                            <td><strong>423891023941</strong></td>
+                            <td><button class="btn-ss" onclick="viewScreenshot('https://via.placeholder.com/300x500?text=Payment+Screenshot+500')"><i class="fa-solid fa-image"></i> View SS</button></td>
+                            <td><span class="badge-pending" id="status-101">PENDING</span></td>
+                            <td id="action-101">
+                                <button class="btn-approve" onclick="updateDeposit('101', 'Approved', 500)">Approve</button>
+                                <button class="btn-reject" onclick="updateDeposit('101', 'Rejected', 500)">Reject</button>
+                            </td>
+                        </tr>
+                        <tr id="row-102">
+                            <td>2026-09-09 00:02 AM</td>
+                            <td><strong>Rohan Sharma</strong></td>
+                            <td>9123456789</td>
+                            <td style="color:#2e7d32; font-weight:800;">₹1000</td>
+                            <td><strong>423891023942</strong></td>
+                            <td><button class="btn-ss" onclick="viewScreenshot('https://via.placeholder.com/300x500?text=Payment+Screenshot+1000')"><i class="fa-solid fa-image"></i> View SS</button></td>
+                            <td><span class="badge-pending" id="status-102">PENDING</span></td>
+                            <td id="action-102">
+                                <button class="btn-approve" onclick="updateDeposit('102', 'Approved', 1000)">Approve</button>
+                                <button class="btn-reject" onclick="updateDeposit('102', 'Rejected', 1000)">Reject</button>
+                            </td>
+                        </tr>
+                        <tr id="row-103">
+                            <td>2026-09-08 11:45 PM</td>
+                            <td><strong>Amit Verma</strong></td>
+                            <td>9988776655</td>
+                            <td style="color:#2e7d32; font-weight:800;">₹300</td>
+                            <td><strong>423891023943</strong></td>
+                            <td><button class="btn-ss" onclick="viewScreenshot('https://via.placeholder.com/300x500?text=Payment+Screenshot+300')"><i class="fa-solid fa-image"></i> View SS</button></td>
+                            <td><span class="badge-pending" id="status-103">PENDING</span></td>
+                            <td id="action-103">
+                                <button class="btn-approve" onclick="updateDeposit('103', 'Approved', 300)">Approve</button>
+                                <button class="btn-reject" onclick="updateDeposit('103', 'Rejected', 300)">Reject</button>
+                            </td>
+                        </tr>
+                        
+                        <!-- PAST COMPLETED REQUESTS -->
+                        <tr id="row-100">
+                            <td>2026-09-08 08:20 PM</td>
+                            <td><strong>Suresh Patel</strong></td>
+                            <td>9811223344</td>
+                            <td style="color:#2e7d32; font-weight:800;">₹2000</td>
+                            <td><strong>423891023888</strong></td>
+                            <td><button class="btn-ss" onclick="viewScreenshot('https://via.placeholder.com/300x500?text=Payment+Screenshot+2000')"><i class="fa-solid fa-image"></i> View SS</button></td>
+                            <td><span class="badge-approved">APPROVED</span></td>
+                            <td><span style="font-size:12px; color:#8b949e;">Done</span></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
+    <!-- SCREENSHOT POPUP MODAL -->
+    <div class="modal-overlay" id="ssModal">
+        <div class="modal-card">
+            <h3 style="margin-bottom:12px;">Payment Proof Screenshot</h3>
+            <img id="ssImage" src="" alt="Payment Screenshot">
+            <div>
+                <button class="btn-close" onclick="closeSSModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT FOR FILTERS, APPROVAL & REJECTION LOGIC -->
+    <script>
+        // REAL-TIME SEARCH & DATE FILTER
+        function filterDeposits() {
+            let searchVal = document.getElementById('searchInput').value.toLowerCase();
+            let dateVal = document.getElementById('dateInput').value;
+            let rows = document.querySelectorAll('#depositTableBody tr');
+
+            rows.forEach(row => {
+                let dateCell = row.cells[0].innerText;
+                let nameCell = row.cells[1].innerText.toLowerCase();
+                let phoneCell = row.cells[2].innerText.toLowerCase();
+                let utrCell = row.cells[4].innerText.toLowerCase();
+
+                let matchesSearch = nameCell.includes(searchVal) || phoneCell.includes(searchVal) || utrCell.includes(searchVal);
+                let matchesDate = dateVal === "" || dateCell.includes(dateVal);
+
+                if (matchesSearch && matchesDate) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        }
+
+        // VIEW SCREENSHOT MODAL
+        function viewScreenshot(imgUrl) {
+            document.getElementById('ssImage').src = imgUrl;
+            document.getElementById('ssModal').style.display = 'flex';
+        }
+
+        function closeSSModal() {
+            document.getElementById('ssModal').style.display = 'none';
+        }
+
+        // APPROVE / REJECT ACTION SYSTEM
+        function updateDeposit(reqId, status, amount) {
+            let statusBadge = document.getElementById('status-' + reqId);
+            let actionCell = document.getElementById('action-' + reqId);
+
+            if (status === 'Approved') {
+                statusBadge.className = 'badge-approved';
+                statusBadge.innerText = 'APPROVED';
+                actionCell.innerHTML = '<span style="font-size:12px; color:#10b981; font-weight:bold;">Approved (₹' + amount + ' Added)</span>';
+                alert('Payment Approved! Customer account me ₹' + amount + ' add kar diye gaye hain.');
+            } else if (status === 'Rejected') {
+                statusBadge.className = 'badge-rejected';
+                statusBadge.innerText = 'REJECTED';
+                actionCell.innerHTML = '<span style="font-size:12px; color:#ef4444; font-weight:bold;">Rejected</span>';
+                alert('Payment Request Reject kar di gayi hai.');
+            }
+        }
+
+        // LOGOUT LOGIC
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            localStorage.clear();
+            sessionStorage.clear();
+        });
+    </script>
 </body>
 </html>
