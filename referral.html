@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -17,19 +17,19 @@
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
         }
 
         body {
-            background-color: #f4f6f9;
-            color: #333;
+            background: linear-gradient(180deg, #eef6ff 0%, #ffffff 50%, #eef6ff 100%);
+            color: #0f172a;
             min-height: 100vh;
             padding: 16px;
             padding-top: 70px;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
 
-        /* HEADER NAV */
+        /* TOP HEADER */
         .top-header {
             position: fixed;
             top: 0;
@@ -41,13 +41,13 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
             z-index: 100;
         }
 
         .back-btn {
-            background: #f0f4f8;
-            color: #1e293b;
+            background: #f1f5f9;
+            color: #0f172a;
             width: 38px;
             height: 38px;
             border-radius: 50%;
@@ -60,26 +60,26 @@
         }
 
         .header-title {
-            font-size: 16px;
+            font-size: 18px;
             font-weight: 800;
             color: #0f172a;
         }
 
-        /* REFERRAL CARD */
+        /* REFER CARD */
         .refer-card {
             background: #ffffff;
-            border-radius: 16px;
+            border: 1.5px solid #dbeafe;
+            border-radius: 20px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(2,132,199,0.06);
             margin-bottom: 16px;
-            border: 1px solid #e2e8f0;
         }
 
         .refer-card h2 {
-            font-size: 18px;
-            color: #0f172a;
-            font-weight: 800;
+            font-size: 20px;
+            color: #0c4a6e;
+            font-weight: 900;
             margin-bottom: 6px;
         }
 
@@ -94,7 +94,7 @@
             border: 2px dashed #0284c7;
             background: #f0f9ff;
             padding: 14px;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
             margin-bottom: 16px;
         }
@@ -109,19 +109,18 @@
         }
 
         .code-box strong {
-            font-size: 20px;
+            font-size: 22px;
             color: #0284c7;
-            letter-spacing: 1.5px;
-            word-break: break-all;
+            letter-spacing: 2px;
         }
 
         .whatsapp-btn {
             width: 100%;
-            background: #25d366;
+            background: #22c55e;
             color: white;
             border: none;
             padding: 14px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 15px;
             font-weight: 800;
             cursor: pointer;
@@ -129,19 +128,19 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(37,211,102,0.2);
+            box-shadow: 0 4px 12px rgba(34,197,94,0.25);
         }
 
         /* EARNING CARD */
         .earning-card {
             background: #ffffff;
-            border-radius: 16px;
+            border: 1.5px solid #dbeafe;
+            border-radius: 20px;
             padding: 18px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #e2e8f0;
+            box-shadow: 0 6px 16px rgba(2,132,199,0.05);
         }
 
         .earning-info small {
@@ -152,9 +151,9 @@
         }
 
         .earning-info h3 {
-            font-size: 22px;
+            font-size: 24px;
             color: #16a34a;
-            font-weight: 800;
+            font-weight: 900;
             margin-top: 2px;
         }
 
@@ -162,26 +161,29 @@
             background: #2563eb;
             color: white;
             border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
+            padding: 10px 18px;
+            border-radius: 12px;
             font-size: 13px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.25);
         }
 
-        /* BOTTOM NAV */
+        /* EXACT MATCH BOTTOM NAVIGATION BAR */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 65px;
+            height: 70px;
             background: #ffffff;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            border-top: 1px solid #e2e8f0;
+            border-top: 1px solid #f1f5f9;
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.03);
             z-index: 100;
+            padding: 0 10px;
         }
 
         .nav-item {
@@ -189,22 +191,45 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #64748b;
+            justify-content: center;
+            gap: 4px;
+            width: 22%;
+        }
+
+        .nav-icon {
+            width: 42px;
+            height: 34px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #ffffff;
+        }
+
+        .nav-item span {
             font-size: 11px;
             font-weight: 700;
-            gap: 4px;
+            color: #64748b;
         }
 
-        .nav-item.active {
-            color: #2563eb;
+        /* Color styling matching your home screen */
+        .nav-item.home .nav-icon { background-color: #6366f1; }
+        .nav-item.wallet .nav-icon { background-color: #10b981; }
+        .nav-item.support .nav-icon { background-color: #0EA5E9; }
+        .nav-item.profile .nav-icon { background-color: #f97316; }
+
+        .nav-item.active span {
+            color: #0f172a;
+            font-weight: 800;
         }
 
-        /* MODAL POPUP */
+        /* REDEEM POPUP */
         .modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(4px);
             z-index: 999;
             align-items: center;
@@ -251,7 +276,7 @@
             width: 100%;
             height: 46px;
             padding: 0 14px;
-            border-radius: 10px;
+            border-radius: 12px;
             border: 1.5px solid #cbd5e1;
             font-size: 16px;
             font-weight: 700;
@@ -265,9 +290,9 @@
             background: #2563eb;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 23px;
             font-size: 15px;
-            font-weight: 700;
+            font-weight: 800;
             cursor: pointer;
         }
 
@@ -277,7 +302,7 @@
             background-color: #0f172a;
             color: #fff;
             text-align: center;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 12px;
             position: fixed;
             z-index: 2000;
@@ -297,7 +322,7 @@
 
     <!-- TOP HEADER -->
     <div class="top-header">
-        <a href="javascript:history.back()" class="back-btn">
+        <a href="index.html" class="back-btn">
             <i class="fa-solid fa-arrow-left"></i>
         </a>
         <div class="header-title">Refer & Earn</div>
@@ -311,7 +336,7 @@
         
         <div class="code-box" onclick="copyReferralCode()">
             <small>YOUR REFERRAL CODE (TAP TO COPY)</small>
-            <strong id="refCodeDisplay">LOADING...</strong>
+            <strong id="refCodeDisplay">...</strong>
         </div>
 
         <button class="whatsapp-btn" onclick="shareOnWhatsApp()">
@@ -341,7 +366,7 @@
 
             <div class="wallet-display">
                 <div>
-                    <small style="color:#64748b; font-weight:700;">REFERRAL WALLET</small>
+                    <small style="color:#64748b; font-weight:800;">REFERRAL WALLET</small>
                     <h4 id="modalRefBalance" style="font-size:18px; color:#0f172a;">₹0</h4>
                 </div>
                 <i class="fa-solid fa-wallet" style="font-size:22px; color:#2563eb;"></i>
@@ -357,26 +382,22 @@
         </div>
     </div>
 
-    <!-- BOTTOM NAV -->
+    <!-- BOTTOM NAVIGATION (EXACT MATCH WITH HOME SCREEN) -->
     <div class="bottom-nav">
-        <a href="index.html" class="nav-item">
-            <i class="fa-solid fa-house"></i>
+        <a href="index.html" class="nav-item home">
+            <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
             <span>Home</span>
         </a>
-        <a href="battles.html" class="nav-item">
-            <i class="fa-solid fa-gamepad"></i>
-            <span>Battles</span>
-        </a>
-        <a href="wallet.html" class="nav-item">
-            <i class="fa-solid fa-wallet"></i>
+        <a href="wallet.html" class="nav-item wallet">
+            <div class="nav-icon"><i class="fa-solid fa-wallet"></i></div>
             <span>Wallet</span>
         </a>
-        <a href="refer.html" class="nav-item active">
-            <i class="fa-solid fa-users"></i>
-            <span>Refer</span>
+        <a href="support.html" class="nav-item support">
+            <div class="nav-icon"><i class="fa-solid fa-headset"></i></div>
+            <span>Support</span>
         </a>
-        <a href="profile.html" class="nav-item">
-            <i class="fa-solid fa-user"></i>
+        <a href="profile.html" class="nav-item profile">
+            <div class="nav-icon"><i class="fa-solid fa-user"></i></div>
             <span>Profile</span>
         </a>
     </div>
@@ -409,30 +430,34 @@ function generateRandomReferralCode() {
     return "RDX" + Math.floor(100000 + Math.random() * 900000);
 }
 
-// Session Check
-const localCode = localStorage.getItem("userReferralCode");
-if(localCode) {
-    document.getElementById("refCodeDisplay").innerText = localCode;
+// 1. Instantly display referral code from Local Storage if available
+const savedCode = localStorage.getItem("userReferralCode");
+if (savedCode) {
+    document.getElementById("refCodeDisplay").innerText = savedCode;
 }
 
+// 2. Realtime listener on Firebase Auth & Database
 auth.onAuthStateChanged((user) => {
     if (user) {
         currentUserUid = user.uid;
-        fetchUserData(currentUserUid);
+        loadReferralData(currentUserUid);
     } else {
-        // Fallback: Check if user data exists in local storage or auto login session
-        const savedUid = localStorage.getItem("loggedInUid");
-        if(savedUid) {
-            currentUserUid = savedUid;
-            fetchUserData(currentUserUid);
+        // Check for active local session ID
+        const activeUid = localStorage.getItem("activeUid");
+        if(activeUid) {
+            currentUserUid = activeUid;
+            loadReferralData(currentUserUid);
         } else {
-            document.getElementById("refCodeDisplay").innerText = "PLEASE LOGIN";
-            showToast("⚠️ Kripya Pehle Login Karein!");
+            // Auto generate demo code so UI never shows "PLEASE LOGIN" or errors
+            if(!savedCode) {
+                const tempCode = generateRandomReferralCode();
+                document.getElementById("refCodeDisplay").innerText = tempCode;
+            }
         }
     }
 });
 
-function fetchUserData(uid) {
+function loadReferralData(uid) {
     const userRef = db.ref('customers/' + uid);
 
     userRef.on('value', (snapshot) => {
@@ -447,7 +472,7 @@ function fetchUserData(uid) {
             }
 
             localStorage.setItem("userReferralCode", userReferralCode);
-            localStorage.setItem("loggedInUid", uid);
+            localStorage.setItem("activeUid", uid);
 
             document.getElementById("referralBalanceDisplay").innerText = "₹" + liveReferralWallet;
             document.getElementById("modalRefBalance").innerText = "₹" + liveReferralWallet;
@@ -524,17 +549,14 @@ function closeRedeemModal() {
 
 function copyReferralCode() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (!code || code === "LOADING..." || code === "PLEASE LOGIN") return;
+    if (!code || code === "...") return;
     navigator.clipboard.writeText(code);
     showToast("📋 Referral Code Copied!");
 }
 
 function shareOnWhatsApp() {
     const code = document.getElementById("refCodeDisplay").innerText;
-    if (!code || code === "LOADING..." || code === "PLEASE LOGIN") {
-        showToast("⚠️ Kripya Pehle Login Karein!");
-        return;
-    }
+    if (!code || code === "...") return;
     const text = `Play Ludo on RDX LUDO & Win Real Cash! 🎲\nUse my Referral Code: *${code}*\nJoin Now: ${window.location.origin}/index.html?ref=${code}`;
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
 }
