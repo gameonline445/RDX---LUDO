@@ -119,7 +119,6 @@
             background-color: #e04848;
         }
 
-        /* DASHBOARD METRICS GRID */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -153,42 +152,6 @@
         .text-blue { color: #58a6ff; }
         .text-orange { color: #f0883e; }
 
-        /* PANEL CONTAINER */
-        .panel-container {
-            background: #151921;
-            border-radius: 14px;
-            padding: 24px;
-            border: 1px solid #232936;
-        }
-
-        .panel-title {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            color: #ffffff;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background: #1c212c;
-            color: #8b949e;
-            font-size: 12px;
-            padding: 12px;
-            border-bottom: 1px solid #232936;
-        }
-
-        td {
-            padding: 14px 12px;
-            border-bottom: 1px solid #232936;
-            font-size: 14px;
-            color: #c9d1d9;
-        }
-
         @media (max-width: 768px) {
             body { flex-direction: column; }
             .sidebar { width: 100%; height: auto; position: relative; }
@@ -218,15 +181,13 @@
         </nav>
     </aside>
 
-    <!-- MAIN CONTENT AREA -->
+    <!-- MAIN CONTENT -->
     <main class="main-content">
-        <!-- ONLY ONE TOP BAR -->
         <div class="top-bar">
             <h1 class="page-header-title">Dashboard</h1>
-            <button class="logout-btn">Logout</button>
+            <button class="logout-btn" id="btnAdminLogout">Logout</button>
         </div>
 
-        <!-- STATS CARDS -->
         <div class="dashboard-grid">
             <div class="card">
                 <div class="card-title">Active Live Users</div>
@@ -245,33 +206,26 @@
                 <div class="card-value text-orange">0</div>
             </div>
         </div>
-
-        <!-- SYSTEM STATUS PANEL -->
-        <div class="panel-container">
-            <h2 class="panel-title">System Overview</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>SERVICE</th>
-                        <th>STATUS</th>
-                        <th>DETAILS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Firebase Realtime DB</td>
-                        <td><span class="text-green">Connected</span></td>
-                        <td>Operational</td>
-                    </tr>
-                    <tr>
-                        <td>Payment Gateway API</td>
-                        <td><span class="text-green">Active</span></td>
-                        <td>Ready for Transactions</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
     </main>
+
+    <!-- LOGOUT LOGIC SCRIPT -->
+    <script>
+        document.getElementById('btnAdminLogout').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 1. Storage & Session Clean
+            localStorage.clear();
+            sessionStorage.clear();
+            
+            // 2. Cookie Clean (If any login token stored in cookies)
+            document.cookie.split(";").forEach(function(c) { 
+                document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+            });
+
+            // 3. Force Redirect to admin-login.html
+            window.location.href = "admin-login.html";
+        });
+    </script>
 
 </body>
 </html>
