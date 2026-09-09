@@ -233,7 +233,6 @@ async function loadFirebaseCustomer(){
             userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         }
 
-        // Real-time Firestore Listener
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
@@ -267,8 +266,14 @@ async function loadFirebaseCustomer(){
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.show ? document.getElementById("menuOverlay").classList.add("show") : document.getElementById("menuOverlay").style.display="block"; }
-function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").style.display="none"; }
+function openMenu(){ 
+    document.getElementById("menuPanel").classList.add("open"); 
+    document.getElementById("menuOverlay").classList.add("show");
+}
+function closeMenu(){ 
+    document.getElementById("menuPanel").classList.remove("open"); 
+    document.getElementById("menuOverlay").classList.remove("show");
+}
 function goBack(){ window.location.replace("./dashboard.html"); }
 function goHome(){ closeMenu(); window.location.replace("./dashboard.html"); }
 function goWallet(){ closeMenu(); window.location.replace("./wallet.html"); }
