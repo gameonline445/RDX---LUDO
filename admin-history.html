@@ -39,10 +39,11 @@
         .kyc-yes { background: rgba(72, 187, 120, 0.2); color: #68d391; border: 1px solid #48bb78; }
         .kyc-no { background: rgba(229, 62, 62, 0.2); color: #fc8181; border: 1px solid #e53e3e; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
         .stat-card { background-color: #151921; padding: 16px; border-radius: 12px; border: 1px solid #232936; }
         .stat-card .title { font-size: 12px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
-        .stat-card .value { font-size: 22px; font-weight: 800; }
+        .stat-card .value { font-size: 20px; font-weight: 800; }
+        .stat-card .sub-text { font-size: 11px; color: #a0aec0; margin-top: 4px; line-height: 1.4; }
 
         .section-title { font-size: 18px; color: #63b3ed; margin: 24px 0 12px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; margin-bottom: 24px; }
@@ -140,40 +141,50 @@
                     </div>
                 </div>
 
-                <!-- Financial Statistics Grid -->
-                <div class="section-title"><i class="fa-solid fa-wallet"></i> Deposits & Withdrawals Summary</div>
+                <!-- Financial Deep Statistics Grid -->
+                <div class="section-title"><i class="fa-solid fa-wallet"></i> Deposits & Withdrawals Status Summary</div>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="title">Total Deposit Amount</div>
-                        <div class="value" id="stTotalDepAmt" style="color: #38a169;">₹0</div>
-                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Approved: <span id="stDepCount">0</span></div>
+                        <div class="title">Total Approved Deposit</div>
+                        <div class="value" id="stDepApprovedAmt" style="color: #38a169;">₹0</div>
+                        <div class="sub-text">
+                            Count: <span id="stDepApprovedCount">0</span><br>
+                            Pending: <span id="stDepPending" style="color:#f6ad55;">₹0 (0)</span><br>
+                            Rejected: <span id="stDepRejected" style="color:#fc8181;">₹0 (0)</span>
+                        </div>
                     </div>
                     <div class="stat-card">
-                        <div class="title">Total Withdrawal Amount</div>
-                        <div class="value" id="stTotalWithAmt" style="color: #e53e3e;">₹0</div>
-                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Approved: <span id="stWithCount">0</span></div>
+                        <div class="title">Total Approved Withdrawal</div>
+                        <div class="value" id="stWithApprovedAmt" style="color: #e53e3e;">₹0</div>
+                        <div class="sub-text">
+                            Count: <span id="stWithApprovedCount">0</span><br>
+                            Pending: <span id="stWithPending" style="color:#f6ad55;">₹0 (0)</span><br>
+                            Rejected/Cancel: <span id="stWithRejected" style="color:#fc8181;">₹0 (0)</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Opponent Analysis Table -->
-                <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head History</div>
+                <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head Breakdown (Kiske Sath Kitna Khela/Jeeta/Haara/Running)</div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>Opponent Mobile / User</th>
-                                <th>Matches Played</th>
-                                <th>Matches Won</th>
-                                <th>Matches Lost</th>
+                                <th>Opponent Mobile</th>
+                                <th>Total Matches</th>
+                                <th>Won</th>
+                                <th>Lost</th>
+                                <th>Running</th>
+                                <th>Cancelled</th>
                             </tr>
                         </thead>
                         <tbody id="opponentTableBody">
-                            <tr><td colspan="4" style="text-align: center; color: #a0aec0;">No opponent history found.</td></tr>
+                            <tr><td colspan="6" style="text-align: center; color: #a0aec0;">No opponent history found.</td></tr>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Detailed Match Logs -->
+                <!-- Complete Match Logs -->
                 <div class="section-title"><i class="fa-solid fa-list"></i> Complete Match Logs</div>
                 <div class="table-container">
                     <table>
@@ -189,6 +200,25 @@
                         </thead>
                         <tbody id="matchLogsTableBody">
                             <tr><td colspan="6" style="text-align: center; color: #a0aec0;">No matches found.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Wallet Deposit & Withdrawal Journey Table -->
+                <div class="section-title"><i class="fa-solid fa-receipt"></i> Wallet Transaction History Journey (Web History)</div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date & Time</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Payment Method / UPI</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="walletJourneyTableBody">
+                            <tr><td colspan="5" style="text-align: center; color: #a0aec0;">No wallet transactions found.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -216,6 +246,8 @@
         let activeBattlesUnsubscribe = null;
         let activeDepUnsubscribe = null;
         let activeWithUnsubscribe = null;
+
+        let globalWalletJourney = [];
 
         async function startSyncUserHistory() {
             const queryVal = document.getElementById("userSearchInput").value.trim();
@@ -291,32 +323,120 @@
         }
 
         function listenUserFinancials(uid) {
+            globalWalletJourney = [];
+
+            // Deposits realtime tracking
             activeDepUnsubscribe = db.collection("deposits").where("uid", "==", uid).onSnapshot(snap => {
-                let totalDep = 0, depCount = 0;
+                let appAmt = 0, appCnt = 0;
+                let pendAmt = 0, pendCnt = 0;
+                let rejAmt = 0, rejCnt = 0;
+
                 snap.forEach(doc => {
                     const d = doc.data();
-                    const st = (d.status || "").toLowerCase();
+                    const amt = parseFloat(d.amount || 0);
+                    const st = (d.status || "pending").toLowerCase();
+
                     if (st === "approved" || st === "success") {
-                        totalDep += parseFloat(d.amount || 0);
-                        depCount++;
+                        appAmt += amt; appCnt++;
+                    } else if (st === "pending") {
+                        pendAmt += amt; pendCnt++;
+                    } else {
+                        rejAmt += amt; rejCnt++;
                     }
+
+                    let dtStr = "N/A";
+                    if (d.createdAt) {
+                        let dt = d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt);
+                        dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                    }
+
+                    globalWalletJourney.push({
+                        date: dtStr,
+                        type: `<span style="color:#38a169; font-weight:700;">DEPOSIT</span>`,
+                        amount: "₹" + amt,
+                        method: d.paymentMethod || d.upiId || "UPI",
+                        status: st.toUpperCase(),
+                        rawDate: d.createdAt ? (d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt)) : new Date(0)
+                    });
                 });
-                document.getElementById("stTotalDepAmt").innerText = "₹" + totalDep;
-                document.getElementById("stDepCount").innerText = depCount;
+
+                document.getElementById("stDepApprovedAmt").innerText = "₹" + appAmt;
+                document.getElementById("stDepApprovedCount").innerText = appCnt;
+                document.getElementById("stDepPending").innerText = "₹" + pendAmt + " (" + pendCnt + ")";
+                document.getElementById("stDepRejected").innerText = "₹" + rejAmt + " (" + rejCnt + ")";
+
+                renderWalletJourneyTable();
             });
 
+            // Withdrawals realtime tracking
             activeWithUnsubscribe = db.collection("withdrawals").where("uid", "==", uid).onSnapshot(snap => {
-                let totalWith = 0, withCount = 0;
+                let appAmt = 0, appCnt = 0;
+                let pendAmt = 0, pendCnt = 0;
+                let rejAmt = 0, rejCnt = 0;
+
                 snap.forEach(doc => {
                     const w = doc.data();
-                    const st = (w.status || "").toLowerCase();
+                    const amt = parseFloat(w.amount || 0);
+                    const st = (w.status || "pending").toLowerCase();
+
                     if (st === "approved" || st === "success") {
-                        totalWith += parseFloat(w.amount || 0);
-                        withCount++;
+                        appAmt += amt; appCnt++;
+                    } else if (st === "pending") {
+                        pendAmt += amt; pendCnt++;
+                    } else {
+                        rejAmt += amt; rejCnt++;
                     }
+
+                    let dtStr = "N/A";
+                    if (w.createdAt) {
+                        let dt = w.createdAt.toDate ? w.createdAt.toDate() : new Date(w.createdAt);
+                        dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                    }
+
+                    globalWalletJourney.push({
+                        date: dtStr,
+                        type: `<span style="color:#e53e3e; font-weight:700;">WITHDRAWAL</span>`,
+                        amount: "₹" + amt,
+                        method: w.upiId || w.bankDetails || "UPI/Bank",
+                        status: st.toUpperCase(),
+                        rawDate: w.createdAt ? (w.createdAt.toDate ? w.createdAt.toDate() : new Date(w.createdAt)) : new Date(0)
+                    });
                 });
-                document.getElementById("stTotalWithAmt").innerText = "₹" + totalWith;
-                document.getElementById("stWithCount").innerText = withCount;
+
+                document.getElementById("stWithApprovedAmt").innerText = "₹" + appAmt;
+                document.getElementById("stWithApprovedCount").innerText = appCnt;
+                document.getElementById("stWithPending").innerText = "₹" + pendAmt + " (" + pendCnt + ")";
+                document.getElementById("stWithRejected").innerText = "₹" + rejAmt + " (" + rejCnt + ")";
+
+                renderWalletJourneyTable();
+            });
+        }
+
+        function renderWalletJourneyTable() {
+            const tbody = document.getElementById("walletJourneyTableBody");
+            tbody.innerHTML = "";
+
+            if (globalWalletJourney.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #a0aec0;">No deposit/withdrawal transactions found.</td></tr>`;
+                return;
+            }
+
+            globalWalletJourney.sort((a, b) => b.rawDate - a.rawDate);
+
+            globalWalletJourney.forEach(item => {
+                let stClass = "text-pending";
+                if (item.status === "APPROVED" || item.status === "SUCCESS") stClass = "text-win";
+                else if (item.status === "REJECTED" || item.status === "CANCELLED") stClass = "text-loss";
+
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="font-size:11px; color:#a0aec0;">${item.date}</td>
+                    <td>${item.type}</td>
+                    <td><strong>${item.amount}</strong></td>
+                    <td style="color:#63b3ed;">${item.method}</td>
+                    <td class="${stClass}">${item.status}</td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
@@ -349,6 +469,13 @@
 
                         let outcome = `<span class="text-pending">PENDING</span>`;
 
+                        if (opponentMobile && opponentMobile !== "Waiting...") {
+                            if (!opponentStats[opponentMobile]) {
+                                opponentStats[opponentMobile] = { total: 0, won: 0, lost: 0, running: 0, cancelled: 0 };
+                            }
+                            opponentStats[opponentMobile].total++;
+                        }
+
                         if (status === "completed") {
                             played++;
                             const isWinner = (winner === uid || (winner && winner.toString().includes(cleanUserMobile)));
@@ -356,23 +483,17 @@
                             if (isWinner) {
                                 won++;
                                 outcome = `<span class="text-win">WON</span>`;
+                                if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].won++;
                             } else {
                                 lost++;
                                 outcome = `<span class="text-loss">LOST</span>`;
-                            }
-
-                            if (opponentMobile && opponentMobile !== "Waiting...") {
-                                if (!opponentStats[opponentMobile]) {
-                                    opponentStats[opponentMobile] = { total: 0, won: 0, lost: 0 };
-                                }
-                                opponentStats[opponentMobile].total++;
-                                if (isWinner) opponentStats[opponentMobile].won++;
-                                else opponentStats[opponentMobile].lost++;
+                                if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].lost++;
                             }
 
                         } else if (status === "running" || status === "in_progress" || status === "pending") {
                             running++;
                             outcome = `<span class="text-pending">RUNNING</span>`;
+                            if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].running++;
                         } else if (status === "cancelled") {
                             if (joinerUid || joinerMobile) {
                                 cancelRunning++;
@@ -380,6 +501,7 @@
                                 cancelOpen++;
                             }
                             outcome = `<span class="text-cancel">CANCELLED</span>`;
+                            if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].cancelled++;
                         }
 
                         let dtStr = "N/A";
@@ -412,7 +534,7 @@
                 const oppKeys = Object.keys(opponentStats);
 
                 if (oppKeys.length === 0) {
-                    oppTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #a0aec0;">No completed opponent records found.</td></tr>`;
+                    oppTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No opponent history records found.</td></tr>`;
                 } else {
                     oppKeys.forEach(oppKey => {
                         const opp = opponentStats[oppKey];
@@ -422,6 +544,8 @@
                             <td><strong>${opp.total}</strong></td>
                             <td class="text-win">${opp.won}</td>
                             <td class="text-loss">${opp.lost}</td>
+                            <td class="text-pending">${opp.running}</td>
+                            <td class="text-cancel">${opp.cancelled}</td>
                         `;
                         oppTbody.appendChild(tr);
                     });
