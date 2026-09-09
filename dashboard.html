@@ -515,7 +515,7 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME FIRESTORE LISTENER
+// REALTIME FIRESTORE LISTENER & INSTANT BLOCK CHECK
 function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -523,6 +523,23 @@ function loadDashboardDataRealtime() {
     firebaseDB.collection("customers").doc(docId).onSnapshot((snap) => {
         if (snap.exists) {
             const d = snap.data();
+
+            // ⚡ ADMIN BLOCK CHECK (ADMIN SE BLOCK KARTE HI INSTANT LOGOUT HOGA)
+            const isUserBlocked = d.isBlocked === true || 
+                                  d.isBlock === true || 
+                                  d.blocked === true || 
+                                  String(d.status).toLowerCase() === 'blocked';
+
+            if (isUserBlocked) {
+                // Clear all stored credentials
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                alert("Aapka account admin dwara block kar diya gaya hai.");
+                window.location.replace("index.html");
+                return;
+            }
+
             const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
             const firstName = fullName.split(" ")[0] || "User";
 
