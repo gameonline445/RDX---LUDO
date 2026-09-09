@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Blocked Users Management</title>
+<title>RDX LUDO - User Block & Unblock Management</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -149,7 +149,7 @@ body {
     color:#0284c7;
 }
 
-/* MAIN CONTENT CONTAINER */
+/* MAIN CONTENT AREA */
 .main-content{
     padding:16px;
 }
@@ -160,17 +160,14 @@ body {
     margin-bottom:16px;
 }
 
-/* SEARCH & FILTER BAR */
+/* SEARCH BAR */
 .search-box-container {
-    display: flex;
-    gap: 10px;
     margin-bottom: 20px;
-    flex-wrap: wrap;
 }
 .search-input-wrapper {
     position: relative;
-    flex: 1;
-    min-width: 240px;
+    width: 100%;
+    max-width: 500px;
 }
 .search-input-wrapper i {
     position: absolute;
@@ -192,17 +189,8 @@ body {
 .search-input:focus {
     border-color: #ef4444;
 }
-.date-picker {
-    padding: 12px;
-    background: #1e293b;
-    border: 1px solid #334155;
-    border-radius: 12px;
-    color: #ffffff;
-    font-size: 14px;
-    outline: none;
-}
 
-/* TABLE CONTAINER */
+/* TABLE STYLING */
 .table-card {
     background: #1e293b;
     border-radius: 16px;
@@ -229,19 +217,30 @@ td {
     color: #f8fafc;
     white-space: nowrap;
 }
-.unblock-btn {
-    background: #22c55e;
-    color: #ffffff;
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.status-active { background: #166534; color: #86efac; }
+.status-blocked { background: #991b1b; color: #fca5a5; }
+
+.action-btn {
     border: none;
     padding: 8px 16px;
     border-radius: 8px;
     font-weight: 700;
     cursor: pointer;
     transition: 0.2s;
+    font-size: 13px;
 }
-.unblock-btn:hover {
-    background: #16a34a;
-}
+.btn-block { background: #ef4444; color: #ffffff; }
+.btn-block:hover { background: #dc2626; }
+
+.btn-unblock { background: #22c55e; color: #ffffff; }
+.btn-unblock:hover { background: #16a34a; }
+
 .no-data {
     text-align: center;
     padding: 30px;
@@ -292,18 +291,17 @@ td {
 
 <!-- MAIN PAGE CONTENT -->
 <div class="main-content">
-    <h1 class="page-title"><i class="fa-solid fa-user-lock"></i> Blocked Users List</h1>
+    <h1 class="page-title"><i class="fa-solid fa-user-slash"></i> Block & Unblock Management</h1>
 
-    <!-- SEARCH BAR SECTION -->
+    <!-- ONLY MOBILE NUMBER SEARCH BAR -->
     <div class="search-box-container">
         <div class="search-input-wrapper">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="searchInput" class="search-input" placeholder="Search by Mobile Number, Name or Date..." onkeyup="filterBlockedUsers()">
+            <i class="fa-solid fa-phone"></i>
+            <input type="text" id="mobileSearchInput" class="search-input" placeholder="Search by Mobile Number only..." onkeyup="filterByMobile()">
         </div>
-        <input type="date" id="dateFilter" class="date-picker" onchange="filterBlockedUsers()">
     </div>
 
-    <!-- BLOCKED USERS TABLE -->
+    <!-- USERS DATA TABLE -->
     <div class="table-card">
         <table>
             <thead>
@@ -312,13 +310,13 @@ td {
                     <th>User Name</th>
                     <th>Mobile Number</th>
                     <th>Wallet Balance</th>
-                    <th>Blocked Date</th>
+                    <th>Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody id="blockedTableBody">
+            <tbody id="usersTableBody">
                 <tr>
-                    <td colspan="6" class="no-data">Fetching blocked users data...</td>
+                    <td colspan="6" class="no-data">Fetching real users data from Firestore...</td>
                 </tr>
             </tbody>
         </table>
@@ -337,15 +335,16 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
-let allBlockedUsers = [];
+let allRealUsers = [];
+let targetCollection = "customers";
 
-// AUTHENTICATION GUARD
+// 🔒 STRICT SECURITY AUTH GUARD
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
         window.location.href = "admin-login.html";
     } else {
         document.body.style.display = "block";
-        loadBlockedUsers();
+        loadRealUsers();
     }
 });
 
@@ -360,116 +359,116 @@ function adminLogout() {
     });
 }
 
-// FORMAT DATE HELPERS
-function formatDate(timestamp) {
-    if (!timestamp) return 'N/A';
-    let d;
-    if (timestamp.toDate) d = timestamp.toDate();
-    else if (timestamp.seconds) d = new Date(timestamp.seconds * 1000);
-    else d = new Date(timestamp);
-    if (isNaN(d.getTime())) return 'N/A';
-    
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' });
-}
-
-// FETCH REAL-TIME ONLY BLOCKED USERS FROM FIREBASE
-function loadBlockedUsers() {
-    const handleSnapshot = (snapshot) => {
-        allBlockedUsers = [];
+// FETCH REAL USERS LIVE FROM FIREBASE
+function loadRealUsers() {
+    const handleSnapshot = (snapshot, collectionName) => {
+        targetCollection = collectionName;
+        allRealUsers = [];
+        
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Check if account is blocked
-            const isBlocked = data.isBlocked === true || String(data.status).toLowerCase() === 'blocked';
-            
-            if (isBlocked) {
-                allBlockedUsers.push({
-                    id: doc.id,
-                    name: data.name || data.userName || 'User',
-                    phone: data.phone || data.mobile || data.phoneNumber || 'N/A',
-                    balance: data.balance !== undefined ? data.balance : ((Number(data.deposit || 0) + Number(data.winnings || 0))),
-                    blockedDate: formatDate(data.blockedAt || data.updatedAt || data.createdAt),
-                    rawDate: data.blockedAt || data.updatedAt || data.createdAt
-                });
-            }
+            // Auto detect if user is blocked across all standard database formats
+            const isBlocked = data.isBlocked === true || 
+                              data.isBlock === true || 
+                              data.blocked === true || 
+                              String(data.status).toLowerCase() === 'blocked';
+
+            const mobileNum = String(data.phone || data.mobile || data.phoneNumber || data.mobileNo || doc.id || 'N/A');
+            const userName = data.name || data.userName || data.username || 'User';
+            const balanceVal = data.balance !== undefined ? data.balance : (Number(data.deposit || 0) + Number(data.winnings || 0));
+
+            allRealUsers.push({
+                id: doc.id,
+                name: userName,
+                phone: mobileNum,
+                balance: balanceVal,
+                isBlocked: isBlocked
+            });
         });
-        renderTable(allBlockedUsers);
+
+        renderTable(allRealUsers);
     };
 
-    // Listen to customers or users collection
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
-        if (!snapshot.empty) handleSnapshot(snapshot);
-        else firebaseDB.collection("users").onSnapshot(handleSnapshot);
+        if (!snapshot.empty) {
+            handleSnapshot(snapshot, "customers");
+        } else {
+            firebaseDB.collection("users").onSnapshot((snap2) => {
+                handleSnapshot(snap2, "users");
+            });
+        }
     });
 }
 
-// RENDER BLOCKED USERS TABLE
+// RENDER USERS TABLE
 function renderTable(users) {
-    const tbody = document.getElementById("blockedTableBody");
+    const tbody = document.getElementById("usersTableBody");
     tbody.innerHTML = "";
 
     if (users.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="no-data">No blocked users found!</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="no-data">No matching users found!</td></tr>`;
         return;
     }
 
     users.forEach((user, index) => {
         const tr = document.createElement("tr");
+        
+        const statusTag = user.isBlocked 
+            ? `<span class="badge-status status-blocked">Blocked</span>`
+            : `<span class="badge-status status-active">Active</span>`;
+
+        const actionButton = user.isBlocked
+            ? `<button class="action-btn btn-unblock" onclick="toggleUserBlock('${user.id}', false)">
+                 <i class="fa-solid fa-lock-open"></i> Unblock User
+               </button>`
+            : `<button class="action-btn btn-block" onclick="toggleUserBlock('${user.id}', true)">
+                 <i class="fa-solid fa-user-slash"></i> Block User
+               </button>`;
+
         tr.innerHTML = `
             <td>${index + 1}</td>
             <td><strong>${user.name}</strong></td>
             <td>${user.phone}</td>
             <td style="color:#22c55e; font-weight:700;">₹${user.balance}</td>
-            <td>${user.blockedDate}</td>
-            <td>
-                <button class="unblock-btn" onclick="unblockUser('${user.id}')">
-                    <i class="fa-solid fa-lock-open"></i> Unblock
-                </button>
-            </td>
+            <td>${statusTag}</td>
+            <td>${actionButton}</td>
         `;
         tbody.appendChild(tr);
     });
 }
 
-// SEARCH FILTER FUNCTION (MOBILE & DATE)
-function filterBlockedUsers() {
-    const textQuery = document.getElementById("searchInput").value.trim().toLowerCase();
-    const dateQuery = document.getElementById("dateFilter").value;
-
-    let formattedSelectedDate = "";
-    if (dateQuery) {
-        const parts = dateQuery.split("-");
-        formattedSelectedDate = `${parts[2]}/${parts[1]}/${parts[0]}`; // Convert YYYY-MM-DD to DD/MM/YYYY
+// STRICTLY FILTER BY MOBILE NUMBER ONLY
+function filterByMobile() {
+    const searchMobile = document.getElementById("mobileSearchInput").value.trim().toLowerCase();
+    
+    if (!searchMobile) {
+        renderTable(allRealUsers);
+        return;
     }
 
-    const filtered = allBlockedUsers.filter((user) => {
-        const matchesText = user.phone.toLowerCase().includes(textQuery) ||
-                            user.name.toLowerCase().includes(textQuery) ||
-                            user.blockedDate.toLowerCase().includes(textQuery);
-
-        const matchesDate = !dateQuery || user.blockedDate === formattedSelectedDate;
-
-        return matchesText && matchesDate;
-    });
-
+    const filtered = allRealUsers.filter(user => user.phone.toLowerCase().includes(searchMobile));
     renderTable(filtered);
 }
 
-// UNBLOCK USER IN FIREBASE
-function unblockUser(userId) {
-    if (confirm("Kya aap is user ko unblock karna chahte hain?")) {
+// TOGGLE BLOCK AND UNBLOCK STATUS IN FIREBASE
+function toggleUserBlock(userId, blockAction) {
+    const actionText = blockAction ? "BLOCK" : "UNBLOCK";
+    
+    if (confirm(`Are you sure you want to ${actionText} this user?`)) {
         const updateData = {
-            isBlocked: false,
-            status: 'active',
-            unblockedAt: firebase.firestore.FieldValue.serverTimestamp()
+            isBlocked: blockAction,
+            isBlock: blockAction,
+            status: blockAction ? 'blocked' : 'active',
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        firebaseDB.collection("customers").doc(userId).update(updateData)
-        .catch(() => {
-            firebaseDB.collection("users").doc(userId).update(updateData);
-        })
+        firebaseDB.collection(targetCollection).doc(userId).update(updateData)
         .then(() => {
-            alert("User safaltapurvak unblock ho gaya hai!");
+            alert(`User has been ${actionText}ED successfully!`);
+        })
+        .catch((error) => {
+            alert("Firebase Update Error: " + error.message);
         });
     }
 }
