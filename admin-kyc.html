@@ -3,156 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KYC Requests - RDX LUDO ADMIN</title>
+    <title>RDX LUDO ADMIN - KYC Requests</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE FIRESTORE SDK LIBRARIES -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
-        body {
-            background-color: #f4f7fe;
-            color: #2b3674;
-            display: flex;
-            min-height: 100vh;
-        }
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
-        /* SIRF EK MAIN SIDEBAR */
-        .sidebar {
-            width: 260px;
-            background: #ffffff;
-            padding: 20px 15px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 10;
-        }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 24px; }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 25px;
-            padding: 0 10px;
-            color: #2b3674;
-        }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px; }
+        .metric-card { background-color: #ffffff; padding: 20px 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; }
+        .card-value { font-size: 26px; font-weight: 900; margin-top: 8px; }
 
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .filter-card { background-color: #151921; padding: 16px 20px; border-radius: 16px; display: flex; gap: 15px; margin-bottom: 24px; border: 1px solid #232936; }
+        .search-input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #232936; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #5d6978;
-            font-weight: 500;
-            font-size: 14px;
-            transition: 0.2s;
-        }
+        .table-container { background-color: #ffffff; border-radius: 16px; overflow-x: auto; }
+        .kyc-table { width: 100%; border-collapse: collapse; text-align: left; color: #333333; }
+        .kyc-table th { background-color: #f7fafc; color: #4a5568; padding: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        .kyc-table td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; font-weight: 600; vertical-align: middle; }
 
-        .nav-link:hover, .nav-link.active {
-            background-color: #e9f0ff;
-            color: #4318ff;
-            font-weight: bold;
-        }
+        .badge-pending { background-color: #feebc8; color: #c05621; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .badge-approved { background-color: #c6f6d5; color: #22543d; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
+        .badge-rejected { background-color: #fed7d7; color: #9b2c2c; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 800; text-transform: uppercase; }
 
-        /* MAIN CONTENT AREA */
-        .main-content {
-            flex: 1;
-            padding: 20px 30px;
-            overflow-x: auto;
-        }
+        .doc-thumb { width: 45px; height: 35px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e0; cursor: pointer; transition: transform 0.2s; }
+        .doc-thumb:hover { transform: scale(1.1); }
 
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
+        .btn-approve { background-color: #38a169; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 6px; }
+        .btn-approve:hover { background-color: #2f855a; }
 
-        .logout-btn {
-            background-color: #ff7666;
-            color: white;
-            border: none;
-            padding: 8px 22px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-        }
+        .btn-reject { background-color: #e53e3e; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-reject:hover { background-color: #c53030; }
 
-        .panel-container {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-
-        .page-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .page-subtitle {
-            color: #707ebe;
-            font-size: 13px;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-        }
+        /* IMAGE PREVIEW MODAL */
+        .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
+        .modal-img { max-width: 90%; max-height: 85%; border-radius: 12px; border: 2px solid #ffffff; }
     </style>
 </head>
 <body>
 
-    <!-- ONLY ONE SIDEBAR -->
-    <aside class="sidebar">
-        <div class="brand">RDX LUDO ADMIN</div>
-        <nav class="nav-menu">
-            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="admin-battles.html" class="nav-link">Battles Management</a>
-            <a href="admin-kyc.html" class="nav-link active">KYC Requests</a>
-            <a href="admin-customers.html" class="nav-link">Customers</a>
-            <a href="admin-deposits.html" class="nav-link">Deposits</a>
-            <a href="admin-withdrawals.html" class="nav-link">Withdrawals</a>
-            <a href="admin-history.html" class="nav-link">User History</a>
-            <a href="admin-referrals.html" class="nav-link">Referral Analytics</a>
-            <a href="admin-settings.html" class="nav-link">Payment Settings</a>
-        </nav>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- ONLY ONE LOGOUT BUTTON HERE -->
-        <div class="top-bar">
-            <button class="logout-btn">Logout</button>
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
+        <a href="admin-login.html" class="logout-link">Logout</a>
+    </header>
 
-        <div class="panel-container">
-            <h1 class="page-title">🪪 KYC Requests</h1>
-            <p class="page-subtitle">Pending ID and document approval list.</p>
-            
-            <!-- Apka KYC Request Table aur content yahan rahega -->
-            <div id="kycContent">
-                <p>Loading KYC Requests...</p>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item active"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="dashboard-title">KYC Requests</h1>
+
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <span class="card-label">Pending Reviews</span>
+                    <span class="card-value" style="color: #d69e2e;" id="pendingKycVal">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Approved KYC</span>
+                    <span class="card-value" style="color: #38a169;" id="approvedKycVal">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Rejected KYC</span>
+                    <span class="card-value" style="color: #e53e3e;" id="rejectedKycVal">0</span>
+                </div>
             </div>
-        </div>
-    </main>
 
+            <div class="filter-card">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by Name, Mobile or Document Number..." onkeyup="filterKYC()">
+            </div>
+
+            <div class="table-container">
+                <table class="kyc-table">
+                    <thead>
+                        <tr>
+                            <th>S.NO.</th>
+                            <th>USER / MOBILE</th>
+                            <th>DOCUMENT NO.</th>
+                            <th>FRONT PHOTO</th>
+                            <th>BACK PHOTO</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="kycTableBody">
+                        <tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Loading KYC Requests...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- PREVIEW IMAGE MODAL -->
+    <div id="imageModal" class="modal" onclick="closePreview()">
+        <img id="modalImg" class="modal-img">
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        function loadKycRequests() {
+            // First listening in 'kyc' collection, fallback to 'users' collection
+            db.collection("kyc").onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    db.collection("users").where("kycSubmitted", "==", true).onSnapshot((userSnap) => {
+                        renderKycList(userSnap, "users");
+                    });
+                } else {
+                    renderKycList(snapshot, "kyc");
+                }
+            }, (err) => {
+                console.error("KYC Fetch Error:", err);
+            });
+        }
+
+        function renderKycList(snapshot, collectionName) {
+            const tbody = document.getElementById("kycTableBody");
+            tbody.innerHTML = "";
+
+            let pendingCount = 0;
+            let approvedCount = 0;
+            let rejectedCount = 0;
+
+            if (snapshot.empty) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">No KYC Requests Found</td></tr>';
+                document.getElementById("pendingKycVal").innerText = "0";
+                document.getElementById("approvedKycVal").innerText = "0";
+                document.getElementById("rejectedKycVal").innerText = "0";
+                return;
+            }
+
+            let kycList = [];
+            snapshot.forEach(doc => {
+                let data = doc.data();
+                data.docId = doc.id;
+                kycList.push(data);
+            });
+
+            // CRITICAL SORTING: Pending requests top par aayengi, uske baad Approved/Rejected
+            kycList.sort((a, b) => {
+                let statusA = (a.status || a.kycStatus || 'pending').toLowerCase();
+                let statusB = (b.status || b.kycStatus || 'pending').toLowerCase();
+
+                if (statusA === 'pending' && statusB !== 'pending') return -1;
+                if (statusA !== 'pending' && statusB === 'pending') return 1;
+
+                let timeA = a.timestamp || a.createdAt || 0;
+                let timeB = b.timestamp || b.createdAt || 0;
+                if (timeA.toDate) timeA = timeA.toDate().getTime();
+                if (timeB.toDate) timeB = timeB.toDate().getTime();
+                return timeB - timeA;
+            });
+
+            let serialNo = 1;
+            kycList.forEach(item => {
+                let status = (item.status || item.kycStatus || "PENDING").toUpperCase();
+                
+                if (status === "PENDING") pendingCount++;
+                else if (status === "APPROVED") approvedCount++;
+                else if (status === "REJECTED") rejectedCount++;
+
+                let userName = item.userName || item.name || "User";
+                let mobile = item.mobile || item.userPhone || item.phone || "N/A";
+                let docNumber = item.aadhaarNo || item.docNumber || item.documentNo || item.aadhaarNumber || "N/A";
+                
+                let frontImg = item.frontPhoto || item.aadhaarFront || item.frontImage || "";
+                let backImg = item.backPhoto || item.aadhaarBack || item.backImage || "";
+
+                let statusBadge = `<span class="badge-pending">PENDING</span>`;
+                if (status === "APPROVED") statusBadge = `<span class="badge-approved">APPROVED</span>`;
+                if (status === "REJECTED") statusBadge = `<span class="badge-rejected">REJECTED</span>`;
+
+                let actionBtns = "";
+                if (status === "PENDING") {
+                    actionBtns = `
+                        <button class="btn-approve" onclick="updateKycStatus('${collectionName}', '${item.docId}', 'APPROVED')">Approve</button>
+                        <button class="btn-reject" onclick="updateKycStatus('${collectionName}', '${item.docId}', 'REJECTED')">Reject</button>
+                    `;
+                } else {
+                    actionBtns = `<span style="color:#718096; font-size:12px;">Completed</span>`;
+                }
+
+                let frontHtml = frontImg ? `<img src="${frontImg}" class="doc-thumb" onclick="previewImage('${frontImg}')" alt="Front">` : `<span style="color:#999;">No Image</span>`;
+                let backHtml = backImg ? `<img src="${backImg}" class="doc-thumb" onclick="previewImage('${backImg}')" alt="Back">` : `<span style="color:#999;">No Image</span>`;
+
+                let row = `<tr>
+                    <td>${serialNo++}</td>
+                    <td>
+                        <strong>${userName}</strong><br>
+                        <span style="color:#3182ce;">${mobile}</span>
+                    </td>
+                    <td style="font-weight:700; letter-spacing:0.5px;">${docNumber}</td>
+                    <td>${frontHtml}</td>
+                    <td>${backHtml}</td>
+                    <td>${statusBadge}</td>
+                    <td>${actionBtns}</td>
+                </tr>`;
+
+                tbody.innerHTML += row;
+            });
+
+            document.getElementById("pendingKycVal").innerText = pendingCount;
+            document.getElementById("approvedKycVal").innerText = approvedCount;
+            document.getElementById("rejectedKycVal").innerText = rejectedCount;
+        }
+
+        function updateKycStatus(collectionName, docId, newStatus) {
+            if (confirm(`Kkya aap is KYC request ko ${newStatus} karna chahte hain?`)) {
+                db.collection(collectionName).doc(docId).update({
+                    status: newStatus,
+                    kycStatus: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    // Update user main collection status as well if using separate kyc table
+                    if (collectionName === "kyc") {
+                        db.collection("users").doc(docId).update({
+                            kycStatus: newStatus,
+                            isKycVerified: newStatus === "APPROVED"
+                        }).catch(() => {});
+                    }
+                    alert(`KYC Status successfully set to ${newStatus}`);
+                }).catch((err) => {
+                    alert("Error: " + err.message);
+                });
+            }
+        }
+
+        function previewImage(url) {
+            document.getElementById("modalImg").src = url;
+            document.getElementById("imageModal").style.display = "flex";
+        }
+
+        function closePreview() {
+            document.getElementById("imageModal").style.display = "none";
+        }
+
+        function filterKYC() {
+            let filter = document.getElementById("searchInput").value.toLowerCase();
+            let rows = document.querySelectorAll("#kycTableBody tr");
+
+            rows.forEach(row => {
+                let text = row.innerText.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        }
+
+        window.onload = loadKycRequests;
+    </script>
 </body>
 </html>
