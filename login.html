@@ -783,7 +783,6 @@ function sendOTPNow(isResend = false){
     }
     verifyBtn.disabled = true;
     resendBtn.disabled = true;
-    showMessage("OTP bheja ja raha hai...");
 
     window.sendOtp(
         currentIdentifier,
@@ -809,7 +808,6 @@ function sendOTPNow(isResend = false){
             otpHint.textContent = "OTP aapke registered mobile number par bhej diya gaya hai.";
 
             verifyBtn.disabled = true;
-            showMessage(isResend ? "OTP phir se bhej diya gaya." : "OTP successfully sent.");
             startResendTimer();
             setTimeout(function(){ otpInput.focus(); }, 300);
         },
@@ -976,10 +974,9 @@ async function saveCustomerToFirebase(mobile){
 function resendOTP(){
     if(resendSeconds > 0) return;
 
-    if(typeof window.retryOtp === "function" && currentReqId){
-        resendBtn.disabled = true;
-        showMessage("OTP phir se bheja ja raha hai...");
+    resendBtn.disabled = true;
 
+    if(typeof window.retryOtp === "function" && currentReqId){
         window.retryOtp(
             "11",
             function(data){
@@ -992,16 +989,13 @@ function resendOTP(){
                 otpInput.focus();
                 verifyBtn.disabled = true;
                 startResendTimer();
-                showMessage("OTP phir se bhej diya gaya.");
             },
             function(error){
-                // Fallback to sendOTPNow if retryOtp fails
                 sendOTPNow(true);
             },
             currentReqId
         );
     } else {
-        // Fallback for seamless Resend OTP
         sendOTPNow(true);
     }
 }
