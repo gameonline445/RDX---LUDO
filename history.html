@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - Profile</title>
+<title>RDX LUDO - History</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -73,7 +73,7 @@ button, input{font:inherit;}
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
-/* RIGHT SIDE BUTTONS (EXACT 1:1 MATCH WITH BOTTOM NAV SHAPE & RADIUS) */
+/* RIGHT SIDE 3 BUTTONS (EXACT IMAGE SHAPE & RADIUS MATCH) */
 .header-right{
     display:flex;
     align-items:center;
@@ -84,7 +84,7 @@ button, input{font:inherit;}
     width:42px;
     height:42px;
     border:0;
-    border-radius:14px; /* Exact same rounded-square shape as bottom nav */
+    border-radius:14px; /* Matches exact squircle button shape */
     display:flex;
     align-items:center;
     justify-content:center;
@@ -104,192 +104,117 @@ button, input{font:inherit;}
 /* MAIN CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
-/* PROFILE CARD */
-.profile-card{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:24px;
-    padding:20px;
-    margin-bottom:16px;
-    box-shadow:0 6px 20px rgba(2,132,199,0.06);
-    position:relative;
-}
-.profile-header-tag{
-    display:inline-block;
-    background:#e0f2fe;
-    color:#0284c7;
-    font-size:10px;
-    font-weight:900;
-    letter-spacing:0.8px;
-    padding:4px 10px;
-    border-radius:12px;
+.page-title-box{
+    display:flex;
+    align-items:center;
+    gap:8px;
     margin-bottom:14px;
-    text-transform:uppercase;
 }
-.edit-btn{
+.page-title-box i{font-size:22px;color:#0284c7;}
+.page-title-box h1{font-size:22px;font-weight:900;color:#0c4a6e;}
+
+/* SEARCH BAR */
+.search-box{
+    position:relative;
+    margin-bottom:14px;
+}
+.search-box i{
     position:absolute;
-    top:18px;
-    right:18px;
-    background:#f0f9ff;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#94a3b8;
+    font-size:15px;
+}
+.search-box input{
+    width:100%;
+    padding:12px 14px 12px 42px;
+    border-radius:14px;
     border:1.5px solid #bae6fd;
+    background:#ffffff;
+    font-size:13px;
+    font-weight:600;
+    color:#0f172a;
+    outline:none;
+    box-shadow:0 4px 12px rgba(2,132,199,0.04);
+}
+.search-box input::placeholder{color:#94a3b8;}
+
+/* FILTER TABS */
+.filter-tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:6px;
+    margin-bottom:16px;
+    scrollbar-width:none;
+}
+.filter-tabs::-webkit-scrollbar{display:none;}
+.tab-btn{
+    white-space:nowrap;
+    padding:8px 16px;
+    border-radius:20px;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
     color:#0284c7;
-    padding:6px 14px;
-    border-radius:12px;
     font-size:12px;
     font-weight:800;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:6px;
+    transition:all 0.2s ease;
 }
-.user-main-info{
-    display:flex;
-    align-items:center;
-    gap:16px;
-}
-.avatar-circle{
-    width:64px;
-    height:64px;
-    border-radius:50%;
-    background:linear-gradient(135deg,#0284c7,#0369a1);
-    color:white;
-    font-size:26px;
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 4px 14px rgba(2,132,199,0.3);
-}
-.user-details h2{font-size:20px;font-weight:900;color:#0f172a;}
-.user-details p{font-size:13px;font-weight:700;color:#64748b;margin-top:2px;}
-.kyc-badge{
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    background:#dcfce7;
-    color:#15803d;
-    padding:3px 10px;
-    border-radius:10px;
-    font-size:11px;
-    font-weight:850;
-    margin-top:6px;
-}
-
-/* REFERRAL BOX */
-.referral-card{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:20px;
-    padding:16px;
-    margin-bottom:20px;
-    box-shadow:0 4px 14px rgba(2,132,199,0.05);
-}
-.referral-card h4{font-size:14px;font-weight:850;color:#0f172a;}
-.referral-card p{font-size:11px;color:#64748b;font-weight:600;margin-top:2px;}
-.refer-code-box{
-    margin-top:10px;
-    background:#f8fafc;
-    border:1.5px dashed #0284c7;
-    padding:10px 14px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-.code-text{font-size:16px;font-weight:900;color:#0284c7;letter-spacing:1px;}
-.copy-btn{
+.tab-btn.active{
     background:#0284c7;
-    color:white;
-    border:0;
-    padding:6px 12px;
-    border-radius:8px;
-    font-size:11px;
-    font-weight:800;
-    cursor:pointer;
+    color:#ffffff;
+    border-color:#0284c7;
+    box-shadow:0 4px 12px rgba(2,132,199,0.25);
 }
 
-/* STATS GRID */
-.section-title{font-size:11px;font-weight:900;color:#64748b;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
-.stats-grid{
-    display:grid;
-    grid-template-columns:repeat(3, 1fr);
-    gap:10px;
-    margin-bottom:20px;
-}
-.stat-card{
+/* HISTORY LIST & CARDS */
+.history-list{display:flex;flex-direction:column;gap:12px;}
+
+.history-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
     border-radius:18px;
-    padding:14px 8px;
-    text-align:center;
-    box-shadow:0 4px 12px rgba(2,132,199,0.04);
-}
-.stat-icon{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    background:#e0f2fe;
-    color:#0284c7;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0 auto 8px auto;
-    font-size:14px;
-}
-.stat-card label{display:block;font-size:10px;font-weight:850;color:#64748b;text-transform:uppercase;}
-.stat-card span{display:block;font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;}
-
-/* QUICK ACTIONS */
-.action-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-    margin-bottom:20px;
-}
-.action-card{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:16px;
     padding:14px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(2,132,199,0.04);
+    box-shadow:0 4px 14px rgba(2,132,199,0.06);
 }
-.action-left{display:flex;align-items:center;gap:10px;}
-.action-icon{
-    width:36px;
-    height:36px;
+.card-left{display:flex;align-items:center;gap:12px;}
+.card-icon-box{
+    width:42px;
+    height:42px;
     border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
     background:#e0f2fe;
     color:#0284c7;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
 }
-.action-info h5{font-size:13px;font-weight:850;color:#0f172a;}
-.action-info p{font-size:10px;color:#64748b;font-weight:600;}
+.card-info h4{font-size:14px;font-weight:850;color:#0f172a;}
+.card-info p{font-size:11px;font-weight:600;color:#64748b;margin-top:2px;}
+.card-info small{font-size:11px;font-weight:700;color:#0284c7;display:block;margin-top:2px;}
 
-/* LOGOUT BUTTON */
-.logout-btn{
-    width:100%;
-    padding:14px;
-    border:1.5px solid #fecaca;
-    background:#fef2f2;
-    color:#dc2626;
-    border-radius:18px;
-    font-size:14px;
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(220,38,38,0.08);
+.card-right{text-align:right;}
+.amount{font-size:16px;font-weight:900;}
+.amount.plus{color:#16a34a;}
+.amount.minus{color:#dc2626;}
+
+.status-tag{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:8px;
+    font-size:10px;
+    font-weight:850;
+    margin-top:4px;
+    text-transform:uppercase;
 }
-.logout-btn:active{transform:scale(0.98);}
+.status-success{background:#dcfce7;color:#15803d;}
+.status-pending{background:#fef3c7;color:#b45309;}
+.status-failed{background:#fee2e2;color:#b91c1c;}
 
 /* SIDE DRAWER */
 .drawer-overlay{
@@ -388,7 +313,7 @@ button, input{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAVIGATION (EXACT MATCHING 4 BUTTONS) */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -485,7 +410,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
     </div>
     
-    <!-- 3 BUTTONS EXACTLY MATCHED TO BOTTOM NAV -->
+    <!-- 3 HEADER BUTTONS WITH MATCHED DESIGN -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -494,74 +419,26 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 </header>
 
 <main class="container">
-    <section class="profile-card">
-        <span class="profile-header-tag">MY PROFILE</span>
-        <button class="edit-btn" onclick="editProfileName()"><i class="fa-solid fa-pen"></i> Edit</button>
-        
-        <div class="user-main-info">
-            <div class="avatar-circle" id="userInitial">U</div>
-            <div class="user-details">
-                <h2 id="profileName">Loading...</h2>
-                <p id="profileMobile">+91**********</p>
-                <div class="kyc-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</div>
-            </div>
-        </div>
-    </section>
+    <div class="page-title-box">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <h1>History & Activity Logs</h1>
+    </div>
 
-    <section class="referral-card">
-        <h4>Referral Applied</h4>
-        <p>Locked to your account</p>
-        <div class="refer-code-box">
-            <span class="code-text" id="referralCode">NRSO6389</span>
-            <button class="copy-btn" onclick="copyReferral()"><i class="fa-solid fa-copy"></i> Copy</button>
-        </div>
-    </section>
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" oninput="filterLogs()" placeholder="Search by Date, UTR, Amount, Status, Opponent...">
+    </div>
 
-    <div class="section-title">YOUR STATS</div>
-    <section class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
-            <label>Coin Won</label>
-            <span id="statWon">₹0</span>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
-            <label>Played</label>
-            <span id="statPlayed">0</span>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-            <label>Referral</label>
-            <span id="statReferrals">0</span>
-        </div>
-    </section>
+    <div class="filter-tabs">
+        <button class="tab-btn active" onclick="switchTab('all', this)">All Activity</button>
+        <button class="tab-btn" onclick="switchTab('battles', this)"><i class="fa-solid fa-swords"></i> Battles History</button>
+        <button class="tab-btn" onclick="switchTab('deposits', this)"><i class="fa-solid fa-money-bill-wave"></i> Deposits</button>
+        <button class="tab-btn" onclick="switchTab('withdrawals', this)"><i class="fa-solid fa-building-columns"></i> Withdrawals</button>
+    </div>
 
-    <div class="section-title">QUICK ACTIONS</div>
-    <section class="action-grid">
-        <div class="action-card" onclick="window.location.replace('history.html')">
-            <div class="action-left">
-                <div class="action-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                <div class="action-info">
-                    <h5>History</h5>
-                    <p>Battles & logs</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="color:#cbd5e1; font-size:12px;"></i>
-        </div>
-
-        <div class="action-card" onclick="window.location.replace('support.html')">
-            <div class="action-left">
-                <div class="action-icon"><i class="fa-solid fa-headset"></i></div>
-                <div class="action-info">
-                    <h5>Support</h5>
-                    <p>Chat & help</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-chevron-right" style="color:#cbd5e1; font-size:12px;"></i>
-        </div>
-    </section>
-
-    <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    <div class="history-list" id="historyList">
+        <p style="text-align:center; color:#64748b; font-weight:600; padding:20px 0;">Loading history...</p>
+    </div>
 </main>
 
 <!-- BOTTOM NAVIGATION -->
@@ -589,70 +466,112 @@ function getCleanUserId() {
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
+let allHistoryData = [];
+let currentFilter = 'all';
 
 function toggleMenu() {
     document.getElementById("sideDrawer").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-function loadProfileData() {
+function loadUserData() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
-
-    firebaseDB.collection("customers").doc(docId).onSnapshot((doc) => {
+    firebaseDB.collection("customers").doc(docId).get().then(doc => {
         if (doc.exists) {
             const d = doc.data();
             const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
-
-            document.getElementById("profileName").textContent = fullName;
             document.getElementById("drawerName").textContent = fullName;
-            document.getElementById("profileMobile").textContent = "+" + userId;
             document.getElementById("drawerMobile").textContent = "+" + userId;
-
-            document.getElementById("userInitial").textContent = fullName.charAt(0).toUpperCase() || "U";
-            document.getElementById("referralCode").textContent = d.referralCode || ("NRSO" + userId.slice(-4));
-
-            document.getElementById("statWon").textContent = "₹" + (d.totalWon || 0);
-            document.getElementById("statPlayed").textContent = d.totalPlayed || 0;
-            document.getElementById("statReferrals").textContent = d.referralCount || 0;
         }
     });
 }
 
-function editProfileName() {
-    const currentName = document.getElementById("profileName").textContent;
-    const newName = prompt("Apna naya naam darj karein:", currentName);
-    if (newName && newName.trim() !== "") {
-        const docId = userId.length === 10 ? "91" + userId : userId;
-        firebaseDB.collection("customers").doc(docId).update({
-            name: newName.trim()
-        }).then(() => {
-            alert("Naam update ho gaya!");
-        }).catch(err => {
-            alert("Error: " + err.message);
+function loadHistoryRealtime() {
+    if (!userId) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    firebaseDB.collection("customers").doc(docId).collection("history").orderBy("timestamp", "desc").onSnapshot(snap => {
+        allHistoryData = [];
+        snap.forEach(doc => {
+            allHistoryData.push({ id: doc.id, ...doc.data() });
         });
-    }
+        renderHistory();
+    }, err => {
+        console.error("Error loading history:", err);
+        document.getElementById("historyList").innerHTML = `<p style="text-align:center; color:#ef4444; font-weight:700;">Error loading transactions.</p>`;
+    });
 }
 
-function copyReferral() {
-    const code = document.getElementById("referralCode").textContent;
-    navigator.clipboard.writeText(code);
-    alert("Referral Code Copied: " + code);
+function renderHistory() {
+    const listEl = document.getElementById("historyList");
+    const searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
+
+    let filtered = allHistoryData.filter(item => {
+        if (currentFilter !== 'all' && item.type !== currentFilter) return false;
+
+        if (searchVal !== '') {
+            const str = JSON.stringify(item).toLowerCase();
+            return str.includes(searchVal);
+        }
+        return true;
+    });
+
+    if (filtered.length === 0) {
+        listEl.innerHTML = `<p style="text-align:center; color:#64748b; font-weight:700; padding:30px 0;">No history logs found.</p>`;
+        return;
+    }
+
+    listEl.innerHTML = filtered.map(item => {
+        let isPlus = item.isCredit || item.type === 'deposits' || item.type === 'win';
+        let amountText = `${isPlus ? '+' : '-'} ₹${item.amount || 0}`;
+        let statusClass = item.status === 'success' || item.status === 'SUCCESS' ? 'status-success' : 
+                         (item.status === 'failed' ? 'status-failed' : 'status-pending');
+
+        let icon = 'fa-money-bill-wave';
+        if (item.type === 'battles') icon = 'fa-swords';
+        if (item.type === 'withdrawals') icon = 'fa-building-columns';
+
+        return `
+            <div class="history-card">
+                <div class="card-left">
+                    <div class="card-icon-box"><i class="fa-solid ${icon}"></i></div>
+                    <div class="card-info">
+                        <h4>${item.title || 'Transaction Log'}</h4>
+                        <p><i class="fa-regular fa-clock"></i> ${item.date || 'Recent'}</p>
+                        ${item.utr ? `<small>UTR: ${item.utr}</small>` : ''}
+                    </div>
+                </div>
+                <div class="card-right">
+                    <div class="amount ${isPlus ? 'plus' : 'minus'}">${amountText}</div>
+                    <span class="status-tag ${statusClass}">${item.status || 'SUCCESS'}</span>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function switchTab(type, btn) {
+    currentFilter = type;
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderHistory();
+}
+
+function filterLogs() {
+    renderHistory();
 }
 
 function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
-    if (userId) {
-        const docId = userId.length === 10 ? "91" + userId : userId;
-        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
-    }
     localStorage.clear();
     sessionStorage.clear();
     window.location.replace("index.html");
 }
 
 window.addEventListener("load", () => {
-    loadProfileData();
+    loadUserData();
+    loadHistoryRealtime();
 });
 </script>
 
