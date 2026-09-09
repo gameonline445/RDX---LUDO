@@ -515,7 +515,7 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME FIRESTORE LISTENER & INSTANT ACCURATE BALANCE SYNC
+// REALTIME FIRESTORE LISTENER WITH AUTO FIELD SYNC
 function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -546,24 +546,25 @@ function loadDashboardDataRealtime() {
             document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
 
-            // ⚡ REAL-TIME TOTAL BALANCE CALCULATION FIX
-            const mainBal = Number(d.balance || 0);
-            const depBal = Number(d.deposit || d.depositAmount || d.depositBalance || 0);
-            const winBal = Number(d.winnings || d.winningAmount || d.winningBalance || 0);
+            // ⚡ COMPREHENSIVE REAL-TIME BALANCE CALCULATION
+            const b1 = Number(d.balance || 0);
+            const b2 = Number(d.wallet || 0);
+            const b3 = Number(d.totalBalance || 0);
+            const deposit = Number(d.deposit || d.depositAmount || d.depositBalance || 0);
+            const winnings = Number(d.winnings || d.winningAmount || d.winningBalance || 0);
 
-            // Calculate exact total amount to match History/Wallet
-            let realTotalBalance = 0;
-            if (d.balance !== undefined && d.balance !== null && Number(d.balance) > (depBal + winBal)) {
-                realTotalBalance = mainBal;
-            } else {
-                realTotalBalance = (depBal + winBal) > 0 ? (depBal + winBal) : mainBal;
-            }
+            // Fetch the maximum available accurate balance from database
+            const calculatedSum = deposit + winnings;
+            const realTotalBalance = Math.max(b1, b2, b3, calculatedSum);
 
             const realReferral = Number(d.referralBalance || d.referralWallet || d.redeemBalance || d.referralEarnings || 0);
 
-            // Update top bar balance dynamically
-            document.getElementById("topBalance").textContent = realTotalBalance;
-            document.getElementById("topReferral").textContent = realReferral;
+            // Update top bar balance
+            const topBalEl = document.getElementById("topBalance");
+            if (topBalEl) topBalEl.textContent = realTotalBalance;
+
+            const topRefEl = document.getElementById("topReferral");
+            if (topRefEl) topRefEl.textContent = realReferral;
         }
     }, (err) => {
         console.error("Realtime balance update error:", err);
@@ -604,10 +605,10 @@ async function startPresenceHeartbeat() {
         userRef.set(payload, { merge: true }).catch(err => console.error("Presence error:", err));
     };
 
-    // User page par aate hi ONLINE mark karo
+    // Mark online when entering page
     sendHeartbeat(true);
 
-    // Continuous Heartbeat Every 5 Seconds (Jab tak user active tab me hai)
+    // Continuous Heartbeat Every 5 Seconds
     setInterval(() => {
         if (!document.hidden) {
             sendHeartbeat(true);
@@ -616,7 +617,7 @@ async function startPresenceHeartbeat() {
         }
     }, 5000);
 
-    // Instant Offline Triggers (Tab switch, backgrounding, browser close)
+    // Instant Offline Triggers
     document.addEventListener("visibilitychange", () => {
         sendHeartbeat(!document.hidden);
     });
