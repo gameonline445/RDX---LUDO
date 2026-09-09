@@ -30,7 +30,7 @@ body{
 }
 button,input{font:inherit;}
 
-/* UNIFIED TOP HEADER STYLING */
+/* TOP HEADER - Matches Image 15 */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -50,18 +50,17 @@ button,input{font:inherit;}
     height:42px;
     border:0;
     border-radius:14px;
-    background:linear-gradient(145deg,#ff7165,#ff8a70);
+    background:#f87171;
     color:white;
-    font-size:20px;
+    font-size:18px;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 4px 12px rgba(255,113,101,0.25);
+    box-shadow:0 4px 10px rgba(248,113,113,0.3);
 }
 .menu-btn:active{transform:scale(0.95);}
 
-/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -83,42 +82,25 @@ button,input{font:inherit;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
+    width:38px;
     height:38px;
     border:0;
-    border-radius:20px;
+    border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:15px;
     color:white;
     cursor:pointer;
-    padding:0 12px;
-    gap:6px;
-    font-weight:800;
-}
-.bell{
-    width:38px;
-    height:38px;
     padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#6366f1,#818cf8);
-    box-shadow:0 3px 10px rgba(99,102,241,0.25);
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    transition:transform 0.15s ease;
 }
-.cash{
-    background:linear-gradient(145deg,#22c55e,#16a34a);
-    box-shadow:0 3px 10px rgba(22,163,74,0.25);
-    border-radius:20px;
-    padding:0 14px;
-    font-size:14px;
-}
-.gift{
-    width:38px;
-    height:38px;
-    padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ea580c,#f97316);
-    box-shadow:0 3px 10px rgba(234,88,12,0.25);
-}
+.header-icon:active{transform:scale(0.95);}
+
+.bell{background:#6366f1;}
+.cash{background:#22c55e;}
+.gift{background:#f97316;}
 
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
@@ -374,21 +356,19 @@ button,input{font:inherit;}
 .menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 
-/* BOTTOM NAV */
+/* BOTTOM NAV - Matches Image 16 */
 .bottom-nav{
     position:fixed;
     bottom:0;
     left:0;
     width:100%;
     height:74px;
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(12px);
-    border-top:1.5px solid #e2e8f0;
+    background:#ffffff;
+    border-top:1px solid #e2e8f0;
     display:flex;
-    justify-content:space-around;
+    justify-style:space-around;
     align-items:center;
     z-index:200;
-    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
 }
 .nav-item{
     width:25%;
@@ -400,11 +380,10 @@ button,input{font:inherit;}
     align-items:center;
     justify-content:center;
     gap:4px;
-    color:#64748b;
-    font-size:11px;
+    color:#1e293b;
+    font-size:12px;
     font-weight:700;
     cursor:pointer;
-    position:relative;
 }
 .nav-icon-box{
     width:42px;
@@ -415,12 +394,13 @@ button,input{font:inherit;}
     justify-content:center;
     font-size:18px;
     color:#ffffff;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    transition:transform 0.2s ease;
 }
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.nav-item:active .nav-icon-box{transform:scale(0.92);}
+.icon-home{background:#6366f1;}
+.icon-wallet{background:#22c55e;}
+.icon-support{background:#38bdf8;}
+.icon-profile{background:#f97316;}
 </style>
 </head>
 
@@ -454,7 +434,7 @@ button,input{font:inherit;}
     </div>
 </div>
 
-<!-- UNIFIED TOP HEADER -->
+<!-- TOP HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -464,7 +444,7 @@ button,input{font:inherit;}
     </div>
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-sack-dollar"></i> ₹<span id="topBalance">0</span></button>
+        <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
         <button class="header-icon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
@@ -557,7 +537,7 @@ function parseItemTime(ts) {
     return { dateObj: d, formatted: formatted };
 }
 
-// REALTIME LISTENER FOR USER BALANCE & PROFILE DATA
+// REALTIME LISTENER FOR USER PROFILE DATA
 function startRealtimeUserListener() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -568,12 +548,6 @@ function startRealtimeUserListener() {
             const displayName = d.name || ("User " + userId.slice(-4));
             document.getElementById("drawerName").textContent = displayName;
             document.getElementById("drawerMobile").textContent = "+" + userId;
-            
-            const depBal = Number(d.depositBalance || d.deposit || 0);
-            const winBal = Number(d.winnings || d.winningBalance || 0);
-            const totalWallet = depBal + winBal;
-
-            document.getElementById("topBalance").textContent = totalWallet;
         }
     }, err => console.error("User listener error:", err));
 }
