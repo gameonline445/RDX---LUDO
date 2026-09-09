@@ -28,6 +28,12 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 24px; }
 
+        /* METRIC CARDS FOR TOTAL USER & NEW USER TODAY */
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px; }
+        .metric-card { background-color: #ffffff; padding: 20px 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; }
+        .card-value { font-size: 26px; font-weight: 900; margin-top: 8px; }
+
         .filter-card { background-color: #151921; padding: 16px 20px; border-radius: 16px; display: flex; gap: 15px; margin-bottom: 24px; border: 1px solid #232936; }
         .search-input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #232936; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
 
@@ -68,6 +74,22 @@
         <main class="main-content">
             <h1 class="dashboard-title">Customers Management</h1>
 
+            <!-- CARDS DISPLAY FOR TOTAL & TODAY USERS -->
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <span class="card-label">Total Customers</span>
+                    <span class="card-value" style="color: #2563eb;" id="totalUsersVal">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">New Joined Today</span>
+                    <span class="card-value" style="color: #10b981;" id="todayUsersVal">0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Total Users Balance</span>
+                    <span class="card-value" style="color: #7c3aed;" id="totalUserBalVal">₹0</span>
+                </div>
+            </div>
+
             <div class="filter-card">
                 <input type="text" id="searchInput" class="search-input" placeholder="Search by Name or Mobile Number..." onkeyup="filterCustomers()">
             </div>
@@ -107,14 +129,9 @@
         }
         const db = firebase.firestore();
 
-        // REAL-TIME CUSTOMERS LISTENER FROM FIRESTORE
         function loadRealCustomers() {
-            // Checks 'users' collection first, fallback to 'customers'
-            let collectionName = "users";
-
-            db.collection(collectionName).onSnapshot((snapshot) => {
+            db.collection("users").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
-                    // Try alternative collection 'customers' if 'users' is empty
                     db.collection("customers").onSnapshot((custSnapshot) => {
                         renderUserList(custSnapshot, "customers");
                     });
@@ -131,8 +148,24 @@
             const tbody = document.getElementById("customerTableBody");
             tbody.innerHTML = "";
 
+            let totalUsersCount = 0;
+            let todayUsersCount = 0;
+            let sumUserWallet = 0;
+
+            const todayObj = new Date();
+            const todayFormatted = todayObj.toLocaleDateString('en-IN');
+            
+            // Format 9/9/2026 check format (D/M/YYYY)
+            const day = todayObj.getDate();
+            const month = todayObj.getMonth() + 1;
+            const year = todayObj.getFullYear();
+            const altTodayStr = `${day}/${month}/${year}`;
+
             if (snapshot.empty) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#e53e3e;">No Registered Users Found</td></tr>';
+                document.getElementById("totalUsersVal").innerText = "0";
+                document.getElementById("todayUsersVal").innerText = "0";
+                document.getElementById("totalUserBalVal").innerText = "₹0";
                 return;
             }
 
@@ -143,7 +176,7 @@
                 userList.push(data);
             });
 
-            // Sorting: Latest joined users first
+            // Sorting: Latest registered users top pe show honge
             userList.sort((a, b) => {
                 let timeA = a.createdAt || a.timestamp || a.joinedDate || 0;
                 let timeB = b.createdAt || b.timestamp || b.joinedDate || 0;
@@ -152,22 +185,36 @@
                 return timeB - timeA;
             });
 
+            totalUsersCount = userList.length;
+
             let serialNo = 1;
             userList.forEach((user) => {
                 let name = user.name || user.userName || user.customerName || "User";
                 let mobile = user.mobile || user.phone || user.userPhone || user.mobileNo || "N/A";
                 let balance = Number(user.wallet || user.balance || user.realBalance || 0);
 
-                // Date Parsing
+                sumUserWallet += balance;
+
+                // Date Parsing & Today Check
                 let dateStr = "N/A";
+                let rawDateFormatted = "";
+
                 if (user.joinedDate || user.date) {
                     dateStr = user.joinedDate || user.date;
+                    rawDateFormatted = dateStr;
                 } else if (user.createdAt) {
                     let d = user.createdAt.toDate ? user.createdAt.toDate() : new Date(user.createdAt);
                     dateStr = d.toLocaleDateString('en-IN');
+                    rawDateFormatted = dateStr;
                 } else if (user.timestamp) {
                     let d = new Date(user.timestamp);
                     dateStr = d.toLocaleDateString('en-IN');
+                    rawDateFormatted = dateStr;
+                }
+
+                // Match with today's date
+                if (rawDateFormatted.includes(todayFormatted) || rawDateFormatted.includes(altTodayStr)) {
+                    todayUsersCount++;
                 }
 
                 let row = `<tr>
@@ -183,9 +230,13 @@
 
                 tbody.innerHTML += row;
             });
+
+            // Update Metric Cards
+            document.getElementById("totalUsersVal").innerText = totalUsersCount;
+            document.getElementById("todayUsersVal").innerText = todayUsersCount;
+            document.getElementById("totalUserBalVal").innerText = "₹" + sumUserWallet;
         }
 
-        // REAL-TIME BALANCE EDIT FUNCTION
         function editUserBalance(collectionName, userId, currentBalance, userName) {
             let newBalance = prompt(`${userName} Ka New Wallet Balance Enter Karein (₹):`, currentBalance);
             if (newBalance !== null && newBalance !== "") {
