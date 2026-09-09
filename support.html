@@ -44,7 +44,7 @@ body{
 }
 button{font:inherit;}
 
-/* UNIFIED TOP HEADER STYLING */
+/* TOP HEADER WITH 3 ROUND ICON BUTTONS */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -90,37 +90,26 @@ button{font:inherit;}
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
-.header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{
-    height:38px;
+.header-right{display:flex;align-items:center;gap:10px;}
+.header-icon-btn{
+    width:42px;
+    height:42px;
     border:0;
-    border-radius:20px;
+    border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:15px;
+    font-size:18px;
     color:white;
     cursor:pointer;
-    padding:0 12px;
-    gap:6px;
-    font-weight:800;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+    transition:transform 0.15s ease;
 }
-.notification{
-    width:38px;
-    padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#6366f1,#818cf8);
-}
-.wallet-top{
-    background:linear-gradient(145deg,#16a34a,#22c55e);
-    box-shadow:0 3px 10px rgba(22,163,74,0.2);
-}
-.redeem-top{
-    width:38px;
-    padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ea580c,#f97316);
-}
+.header-icon-btn:active{transform:scale(0.92);}
+
+.btn-notif{background:linear-gradient(145deg,#6366f1,#818cf8);}
+.btn-wallet{background:linear-gradient(145deg,#22c55e,#16a34a);}
+.btn-refer{background:linear-gradient(145deg,#f97316,#ea580c);}
 
 /* SIDE DRAWER */
 .drawer-overlay{
@@ -283,13 +272,13 @@ button{font:inherit;}
     color:#0284c7;
 }
 
-/* BOTTOM NAV */
+/* BOTTOM NAV BAR */
 .bottom-nav{
     position:fixed;
     bottom:0;
     left:0;
     width:100%;
-    height:74px;
+    height:76px;
     background:rgba(255,255,255,0.96);
     backdrop-filter:blur(12px);
     border-top:1.5px solid #e2e8f0;
@@ -308,31 +297,42 @@ button{font:inherit;}
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    gap:4px;
+    gap:5px;
     color:#64748b;
-    font-size:11px;
+    font-size:12px;
     font-weight:700;
     cursor:pointer;
     position:relative;
 }
 .nav-icon-box{
-    width:42px;
-    height:42px;
-    border-radius:14px;
+    width:44px;
+    height:44px;
+    border-radius:16px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:18px;
+    font-size:19px;
     color:#ffffff;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    transition:transform 0.15s ease;
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
+
 .icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
 .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
 .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.nav-item.active{color:#101a38;font-weight:800;}
-.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#0284c7;}
+
+.nav-item.active{color:#101a38;font-weight:900;}
+.nav-item.active::after{
+    content:"";
+    position:absolute;
+    bottom:4px;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#ea580c;
+}
 </style>
 </head>
 
@@ -366,7 +366,7 @@ button{font:inherit;}
     </div>
 </div>
 
-<!-- TOP HEADER -->
+<!-- TOP HEADER WITH 3 ROUND ICON BUTTONS -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -375,9 +375,9 @@ button{font:inherit;}
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
+        <button class="header-icon-btn btn-notif" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon-btn btn-wallet" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon-btn btn-refer" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -408,7 +408,7 @@ button{font:inherit;}
     </div>
 </main>
 
-<!-- BOTTOM NAV -->
+<!-- BOTTOM NAV BAR -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -453,7 +453,7 @@ function getCleanUserId() {
 const userId = getCleanUserId();
 let userSnapshotUnsubscribe = null;
 
-// Fetch Live User Profile & Total Balance
+// Fetch Live User Profile
 function listenUserData() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -464,11 +464,6 @@ function listenUserData() {
             if (snap.exists()) {
                 const d = snap.data();
                 const userName = d.name || ("User " + userId.slice(-4));
-                const depBal = Number(d.depositBalance || d.deposit || 0);
-                const winBal = Number(d.winningBalance || d.winnings || 0);
-                const realTotalBalance = depBal + winBal;
-
-                document.getElementById("topBalance").textContent = "₹" + realTotalBalance;
                 document.getElementById("drawerName").textContent = userName;
                 document.getElementById("drawerMobile").textContent = "+" + userId;
             }
