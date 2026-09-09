@@ -30,7 +30,7 @@
     </script>
 
     <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
+        *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent;}
         body{
             background:
                 radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
@@ -41,14 +41,70 @@
             min-height:100vh;
             padding-bottom:85px;
         }
-        .top-bar{height:66px;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;position:sticky;top:0;z-index:100;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
+        .top-bar{
+            height:66px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:0 14px;
+            background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+            border-bottom:1.5px solid #bae6fd;
+            position:sticky;
+            top:0;
+            z-index:100;
+            box-shadow:0 4px 18px rgba(2,132,199,0.08);
+        }
         .header-left{display:flex;align-items:center;gap:10px;}
-        .back-btn{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border-radius:14px;background:#ffffff;border:1px solid #bae6fd;color:#0284c7;cursor:pointer;}
-        .logo{width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1.5px solid #bae6fd;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
+        .back-btn{
+            width:40px;
+            height:40px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border-radius:14px;
+            background:#ffffff;
+            border:1px solid #bae6fd;
+            color:#0284c7;
+            cursor:pointer;
+        }
+        .logo{
+            width:46px;
+            height:46px;
+            border-radius:50%;
+            overflow:hidden;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            border:1.5px solid #bae6fd;
+            background:#ffffff;
+            box-shadow:0 4px 12px rgba(2,132,199,0.15);
+            cursor:pointer;
+        }
         .logo img{width:100%;height:100%;object-fit:cover;}
-        .header-icons{display:flex;gap:6px;}
-        .topicon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:15px;color:#ffffff;cursor:pointer;}
-        .icon-bell{background:#6366f1;} .icon-cash{background:#16a34a;} .icon-gift{background:#ea580c;}
+        
+        .header-icons{display:flex;align-items:center;gap:8px;}
+        
+        /* THREE HEADER ICONS (Same size 38px x 38px, rounded & matching style) */
+        .header-icon{
+            width:38px;
+            height:38px;
+            border:0;
+            border-radius:50%;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:15px;
+            color:white;
+            cursor:pointer;
+            padding:0;
+            box-shadow:0 4px 10px rgba(0,0,0,0.1);
+            transition:transform 0.15s ease;
+        }
+        .header-icon:active{transform:scale(0.95);}
+
+        .icon-bell{background:linear-gradient(145deg,#6366f1,#818cf8);}
+        .icon-cash{background:linear-gradient(145deg,#16a34a,#22c55e);}
+        .icon-gift{background:linear-gradient(145deg,#ea580c,#f97316);}
 
         .container{width:100%;max-width:560px;margin:auto;padding:16px 14px;}
         .balance-card{border:1.5px solid #7dd3fc;border-radius:20px;padding:16px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);margin-bottom:14px;}
@@ -85,9 +141,15 @@
             </div>
         </div>
         <div class="header-icons">
-            <div class="topicon icon-bell" onclick="window.location.replace('notification.html')">🔔</div>
-            <div class="topicon icon-cash" onclick="window.location.replace('wallet.html')">💵</div>
-            <div class="topicon icon-gift" onclick="window.location.replace('referral.html')">🎁</div>
+            <button class="header-icon icon-bell" onclick="window.location.replace('notification.html')">
+                <i class="fa-solid fa-bell"></i>
+            </button>
+            <button class="header-icon icon-cash" onclick="window.location.replace('wallet.html')">
+                <i class="fa-solid fa-wallet"></i>
+            </button>
+            <button class="header-icon icon-gift" onclick="window.location.replace('referral.html')">
+                <i class="fa-solid fa-gift"></i>
+            </button>
         </div>
     </header>
 
