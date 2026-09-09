@@ -40,10 +40,10 @@ body{
     display:inline-block;
 }
 
-/* STATS COUNTER */
+/* STATS COUNTER - GRID OF 4 BOXES */
 .stats-grid{
     display:grid;
-    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
     gap:16px;
     margin-bottom:24px;
 }
@@ -56,9 +56,10 @@ body{
     flex-direction:column;
     gap:6px;
 }
-.stat-card small{color:#94a3b8;font-size:12px;font-weight:700;}
+.stat-card small{color:#94a3b8;font-size:11px;font-weight:800;letter-spacing:0.5px;}
 .stat-card .val{font-size:28px;font-weight:900;}
 .stat-online .val{color:#22c55e;}
+.stat-loggedin .val{color:#f59e0b;}
 .stat-offline .val{color:#ef4444;}
 .stat-total .val{color:#38bdf8;}
 
@@ -153,6 +154,10 @@ tr:hover{background:#26334d;}
         <small>ACTIVE ONLINE USERS</small>
         <div class="val" id="countOnline">0</div>
     </div>
+    <div class="stat-card stat-loggedin">
+        <small>LOGGED IN USERS</small>
+        <div class="val" id="countLoggedIn">0</div>
+    </div>
     <div class="stat-card stat-offline">
         <small>OFFLINE USERS</small>
         <div class="val" id="countOffline">0</div>
@@ -208,19 +213,20 @@ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
 let allUsersData = [];
-let currentFilter = 'online'; // Default Online Only filter
+let currentFilter = 'online';
 
 function listenToUserPresence() {
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         allUsersData = [];
         let onlineCount = 0;
+        let loggedInCount = 0;
         let offlineCount = 0;
         const now = Date.now();
 
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Clean up Mobile Number (Fix Double ++)
+            // Mobile Number Fix
             let cleanMobile = String(data.mobile || doc.id).replace(/\D/g, "");
             if (cleanMobile.startsWith("91") && cleanMobile.length > 10) {
                 cleanMobile = "+" + cleanMobile;
@@ -230,7 +236,7 @@ function listenToUserPresence() {
                 cleanMobile = "+" + cleanMobile;
             }
 
-            // Strict Ping Check: Heartbeat must be within 15 seconds
+            // Strict Ping Check (15 Seconds Cutoff)
             let lastPingMs = 0;
             if (data.lastPing && data.lastPing.toDate) {
                 lastPingMs = data.lastPing.toDate().getTime();
@@ -238,8 +244,11 @@ function listenToUserPresence() {
                 lastPingMs = data.lastSeenAt.toDate().getTime();
             }
 
-            const isPingActive = (now - lastPingMs) < 15000; // 15 Seconds cutoff
+            const isPingActive = (now - lastPingMs) < 15000;
             const isOnline = data.isOnline === true && isPingActive;
+            
+            // Logged in check (User who hasn't explicitly logged out)
+            const isLoggedIn = data.isLoggedIn === true || data.isOnline === true || (now - lastPingMs) < 86400000;
 
             if (isOnline) {
                 onlineCount++;
@@ -247,11 +256,16 @@ function listenToUserPresence() {
                 offlineCount++;
             }
 
+            if (isLoggedIn) {
+                loggedInCount++;
+            }
+
             allUsersData.push({
                 id: doc.id,
                 name: data.name || ("User " + cleanMobile.slice(-4)),
                 mobile: cleanMobile,
                 isOnline: isOnline,
+                isLoggedIn: isLoggedIn,
                 city: data.city || "-",
                 state: data.state || "-",
                 balance: Number(data.balance || (Number(data.deposit || 0) + Number(data.winnings || 0))),
@@ -260,6 +274,7 @@ function listenToUserPresence() {
         });
 
         document.getElementById("countOnline").textContent = onlineCount;
+        document.getElementById("countLoggedIn").textContent = loggedInCount;
         document.getElementById("countOffline").textContent = offlineCount;
         document.getElementById("countTotal").textContent = snapshot.size;
         document.getElementById("lastUpdated").textContent = "Last sync: " + new Date().toLocaleTimeString();
