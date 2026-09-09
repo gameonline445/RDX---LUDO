@@ -38,9 +38,13 @@
         .btn-send { background-color: #3182ce; color: #ffffff; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 8px; }
         .btn-send:hover { background-color: #2b6cb0; }
 
-        .search-box { position: relative; margin-bottom: 20px; max-width: 500px; }
+        .controls-row { display: flex; justify-content: space-between; align-items: center; max-width: 100%; margin-bottom: 20px; gap: 15px; flex-wrap: wrap; }
+        .search-box { position: relative; flex: 1; max-width: 500px; }
         .search-box input { width: 100%; padding: 12px 16px 12px 42px; border-radius: 10px; border: 1px solid #2d3748; background-color: #151921; color: #ffffff; font-size: 14px; outline: none; }
         .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #718096; }
+
+        .btn-delete-all { background-color: #e53e3e; color: #ffffff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-delete-all:hover { background-color: #c53030; }
 
         .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
@@ -49,7 +53,7 @@
         tr:last-child td { border-bottom: none; }
 
         .badge-all { background-color: #2b6cb0; color: #bee3f8; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
-        .badge-single { background-color: #742a2a; color: #fed7d7; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
+        .badge-single { background-color: #2c7a7b; color: #e6fffa; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; }
 
         .btn-delete { background-color: #e53e3e; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; }
         .btn-delete:hover { background-color: #c53030; }
@@ -93,15 +97,13 @@
                     <label>Target Recipients</label>
                     <select id="targetType" onchange="toggleRecipientSelect()">
                         <option value="all">All Customers (Broadcast)</option>
-                        <option value="single">Single Customer (Specific Mobile)</option>
+                        <option value="single">Single Customer (Manual Mobile Number)</option>
                     </select>
                 </div>
 
-                <div class="form-group" id="userSelectGroup" style="display: none;">
-                    <label>Select Customer</label>
-                    <select id="userSelect">
-                        <option value="">Loading users list...</option>
-                    </select>
+                <div class="form-group" id="userMobileGroup" style="display: none;">
+                    <label>Customer Mobile Number</label>
+                    <input type="text" id="manualPhone" placeholder="Enter 10-digit mobile number (e.g. 9876543210)">
                 </div>
 
                 <div class="form-group">
@@ -117,9 +119,12 @@
                 <button class="btn-send" onclick="sendNotification()"><i class="fa-solid fa-paper-plane"></i> Send Notification</button>
             </div>
 
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" onkeyup="filterNotifications()" placeholder="Search by Title, Message or Phone Number...">
+            <div class="controls-row">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" onkeyup="filterNotifications()" placeholder="Search by Title, Message or Phone Number...">
+                </div>
+                <button class="btn-delete-all" onclick="deleteAllNotifications()"><i class="fa-solid fa-trash-can"></i> Delete All Notifications</button>
             </div>
 
             <!-- SENT NOTIFICATIONS TABLE -->
@@ -160,7 +165,6 @@
         const db = firebase.firestore();
 
         let allNotifications = [];
-        let usersList = [];
 
         function showToast(msg, isError = false) {
             const toast = document.getElementById("toastMsg");
@@ -172,35 +176,12 @@
 
         function toggleRecipientSelect() {
             const type = document.getElementById("targetType").value;
-            document.getElementById("userSelectGroup").style.display = (type === "single") ? "block" : "none";
-        }
-
-        async function loadCustomers() {
-            try {
-                const snap = await db.collection("customers").get();
-                const select = document.getElementById("userSelect");
-                select.innerHTML = `<option value="">-- Select Customer --</option>`;
-                usersList = [];
-
-                snap.forEach(doc => {
-                    const data = doc.data();
-                    const phone = data.phone || data.userId || doc.id;
-                    const name = data.name || data.userName || "User";
-                    usersList.push({ id: doc.id, phone, name });
-
-                    const option = document.createElement("option");
-                    option.value = phone;
-                    option.innerText = `${name} (${phone})`;
-                    select.appendChild(option);
-                });
-            } catch (err) {
-                console.error("Error loading customers", err);
-            }
+            document.getElementById("userMobileGroup").style.display = (type === "single") ? "block" : "none";
         }
 
         async function sendNotification() {
             const type = document.getElementById("targetType").value;
-            const targetUser = document.getElementById("userSelect").value;
+            const manualPhone = document.getElementById("manualPhone").value.trim();
             const title = document.getElementById("notifTitle").value.trim();
             const message = document.getElementById("notifMessage").value.trim();
 
@@ -209,15 +190,15 @@
                 return;
             }
 
-            if (type === "single" && !targetUser) {
-                showToast("Please select a customer!", true);
+            if (type === "single" && !manualPhone) {
+                showToast("Please enter customer's mobile number!", true);
                 return;
             }
 
             try {
                 await db.collection("notifications").add({
                     targetType: type,
-                    targetUser: type === "single" ? targetUser : "ALL",
+                    targetUser: type === "single" ? manualPhone : "ALL",
                     title: title,
                     message: message,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -225,6 +206,7 @@
 
                 document.getElementById("notifTitle").value = "";
                 document.getElementById("notifMessage").value = "";
+                document.getElementById("manualPhone").value = "";
                 showToast("Notification Sent Successfully!");
             } catch (err) {
                 showToast("Error: " + err.message, true);
@@ -261,7 +243,7 @@
 
                 const recipientBadge = item.targetType === "all" 
                     ? `<span class="badge-all"><i class="fa-solid fa-users"></i> All Users</span>` 
-                    : `<span class="badge-single"><i class="fa-solid fa-user"></i> ${item.targetUser}</span>`;
+                    : `<span class="badge-single"><i class="fa-solid fa-phone"></i> ${item.targetUser}</span>`;
 
                 tr.innerHTML = `
                     <td>${recipientBadge}</td>
@@ -292,14 +274,34 @@
 
             try {
                 await db.collection("notifications").doc(id).delete();
-                showToast("Notification deleted from database!");
+                showToast("Notification deleted!");
             } catch (err) {
                 showToast("Delete Error: " + err.message, true);
             }
         }
 
+        async function deleteAllNotifications() {
+            if (allNotifications.length === 0) {
+                showToast("No notifications to delete!", true);
+                return;
+            }
+
+            if (!confirm("Are you sure you want to delete ALL sent notifications? This cannot be undone.")) return;
+
+            try {
+                const batch = db.batch();
+                allNotifications.forEach(item => {
+                    const ref = db.collection("notifications").doc(item.id);
+                    batch.delete(ref);
+                });
+                await batch.commit();
+                showToast("All notifications deleted successfully!");
+            } catch (err) {
+                showToast("Error deleting all: " + err.message, true);
+            }
+        }
+
         window.onload = () => {
-            loadCustomers();
             listenNotifications();
         };
     </script>
