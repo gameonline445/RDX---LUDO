@@ -53,7 +53,6 @@
         .btn-win { background: #38a169; color: #ffffff; }
         .btn-cancel { background: #e53e3e; color: #ffffff; }
         .btn-view { background: #3182ce; color: #ffffff; }
-        .btn-penalty { background: #dd6b20; color: #ffffff; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
         .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 480px; padding: 20px; position: relative; }
@@ -103,7 +102,7 @@
                     <div class="value" id="statRunningBattles" style="color: #f6ad55;">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="title">Completed / Disputed</div>
+                    <div class="title">Completed / Review</div>
                     <div class="value" id="statReviewBattles" style="color: #68d391;">0</div>
                 </div>
             </div>
@@ -115,7 +114,7 @@
                     <option value="all">All Status</option>
                     <option value="open">Open</option>
                     <option value="running">Running</option>
-                    <option value="completed">Completed</option>
+                    <option value="under_review">Under Review / Completed</option>
                     <option value="cancelled">Cancelled</option>
                 </select>
             </div>
@@ -134,7 +133,7 @@
                         </tr>
                     </thead>
                     <tbody id="battlesTableBody">
-                        <tr><td colspan="7" style="text-align: center;">Loading battles data...</td></tr>
+                        <tr><td colspan="7" style="text-align: center;">Loading real firebase data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -146,7 +145,7 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
             <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Select Battle Winner</h3>
-            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Selected winner's wallet balance will be auto-credited.</p>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Prize will be credited to winner's wallet instantly in Firebase.</p>
             <div id="winnerOptionsContainer"></div>
         </div>
     </div>
@@ -178,60 +177,57 @@
         let allBattles = [];
         let userCache = {};
 
-        // Helper function to extract user mobile phone cleanly from multiple possibilities
-        async function getPhoneForUser(userId, fallbackPhone) {
-            if (fallbackPhone && fallbackPhone !== "N/A" && fallbackPhone !== "" && fallbackPhone.length >= 10) {
-                return fallbackPhone;
-            }
-            if (!userId) return "N/A";
-            if (userCache[userId]) return userCache[userId];
+        // Sync and fetch real mobile numbers from Firestore 'customers' collection
+        async function fetchUserDetails(uid, defaultName, defaultMobile) {
+            if (!uid) return { name: defaultName || "User", mobile: defaultMobile || "N/A" };
+            if (userCache[uid]) return userCache[uid];
 
             try {
-                // Try finding in customers collection first, then users collection
-                let doc = await db.collection("customers").doc(userId).get();
-                if (!doc.exists) {
-                    doc = await db.collection("users").doc(userId).get();
-                }
+                const doc = await db.collection("customers").doc(uid).get();
                 if (doc.exists) {
-                    const uData = doc.data();
-                    const phone = uData.phone || uData.mobile || uData.phoneNumber || userId;
-                    userCache[userId] = phone;
-                    return phone;
+                    const data = doc.data();
+                    const userInfo = {
+                        name: data.name || defaultName || "User",
+                        mobile: data.mobile || uid
+                    };
+                    userCache[uid] = userInfo;
+                    return userInfo;
                 }
             } catch (e) {
-                console.log("Error fetching user phone", e);
+                console.log("Error fetching user details", e);
             }
-            return userId; // return user ID if phone field not found
+
+            return { name: defaultName || "User", mobile: uid };
         }
 
         function listenBattles() {
             db.collection("battles").onSnapshot(async snapshot => {
                 allBattles = [];
-                let open = 0, running = 0, completed = 0;
+                let open = 0, running = 0, review = 0;
 
                 for (let doc of snapshot.docs) {
                     const data = doc.data();
                     data.id = doc.id;
 
-                    // Resolve creator and joiner real mobile numbers dynamically
-                    const rawCreatorPhone = data.creatorPhone || data.creatorMobile || data.createdBy || data.creatorId || "";
-                    const rawJoinerPhone = data.joinerPhone || data.joinerMobile || data.joinedBy || data.joinerId || "";
+                    const creatorUid = data.creatorUid || data.hostId || "";
+                    const joinerUid = data.acceptedUid || data.joinerUid || "";
 
-                    data.realCreatorPhone = await getPhoneForUser(data.creatorId || data.createdBy, rawCreatorPhone);
-                    data.realJoinerPhone = rawJoinerPhone ? await getPhoneForUser(data.joinerId || data.joinedBy, rawJoinerPhone) : "Waiting...";
+                    // Fetch Real Details from Firestore customers
+                    data.creatorDetails = await fetchUserDetails(creatorUid, data.creatorName || data.hostName, data.creatorMobile);
+                    data.joinerDetails = joinerUid ? await fetchUserDetails(joinerUid, data.acceptedName, "") : null;
 
                     allBattles.push(data);
 
                     const st = (data.status || "").toLowerCase();
                     if (st === "open") open++;
-                    else if (st === "running") running++;
-                    else if (st === "completed") completed++;
+                    else if (st === "running" || st === "in_progress") running++;
+                    else if (st === "completed" || st === "under_review") review++;
                 }
 
                 document.getElementById("statTotalBattles").innerText = snapshot.size;
                 document.getElementById("statOpenBattles").innerText = open;
                 document.getElementById("statRunningBattles").innerText = running;
-                document.getElementById("statReviewBattles").innerText = completed;
+                document.getElementById("statReviewBattles").innerText = review;
 
                 applyFilters();
             });
@@ -255,28 +251,29 @@
             battles.forEach(b => {
                 const tr = document.createElement("tr");
 
-                const creatorName = b.creatorName || "Creator";
-                const creatorPhone = b.realCreatorPhone || "N/A";
-                const joinerName = b.joinerName || "Joiner";
-                const joinerPhone = b.realJoinerPhone || "Waiting...";
+                const creatorName = b.creatorDetails.name;
+                const creatorMobile = b.creatorDetails.mobile;
+                
+                const joinerName = b.joinerDetails ? b.joinerDetails.name : "N/A";
+                const joinerMobile = b.joinerDetails ? b.joinerDetails.mobile : null;
 
-                const amount = b.entryFee || b.amount || 0;
+                const amount = b.amount || b.entry || 0;
                 const prize = b.prize || (amount * 1.8);
                 const roomCode = b.roomCode || "Not Set";
                 const status = (b.status || "open").toLowerCase();
                 const dateTimeStr = formatDateTime(b.createdAt);
 
                 let statusBadge = `<span class="badge badge-open">OPEN</span>`;
-                if (status === "running") statusBadge = `<span class="badge badge-running">RUNNING</span>`;
-                else if (status === "completed") statusBadge = `<span class="badge badge-completed">COMPLETED</span>`;
+                if (status === "running" || status === "in_progress") statusBadge = `<span class="badge badge-running">RUNNING</span>`;
+                else if (status === "completed" || status === "under_review") statusBadge = `<span class="badge badge-completed">${status.toUpperCase()}</span>`;
                 else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
 
-                // Proof Logic: ONLY show in Running or Completed battles if proof uploaded
+                // Proof Logic
                 let proofBtnHTML = `<span style="color:#718096; font-size:11px;">N/A</span>`;
                 if (status !== "open") {
-                    if (b.proofUrl || b.screenshot || b.videoProof) {
-                        const url = b.proofUrl || b.screenshot || b.videoProof;
-                        proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
+                    const proofUrl = b.proofUrl || b.screenshot || b.proof;
+                    if (proofUrl) {
+                        proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${proofUrl}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
                     } else {
                         proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof Uploaded</span>`;
                     }
@@ -286,13 +283,11 @@
                 let actionsHTML = `<div class="btn-group">`;
 
                 if (status === "open") {
-                    // Open Battle -> Only Cancel Button
-                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creatorPhone}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
-                } else if (status === "running") {
-                    // Running Battle -> Win/Loss, Cancel, and Penalty Buttons
-                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${creatorPhone}', '${joinerName}', '${joinerPhone}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
-                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creatorPhone}', ${amount}, '${joinerPhone}')"><i class="fa-solid fa-ban"></i> Cancel</button>`;
-                    actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creatorPhone}', '${joinerPhone}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button>`;
+                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', null, ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
+                } else if (status === "running" || status === "in_progress" || status === "under_review") {
+                    // Running / Disputed Battles -> Win/Loss & Cancel Available
+                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
+                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', '${b.acceptedUid || joinerMobile}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                 } else {
                     actionsHTML += `<span style="color:#718096; font-size:12px;">Completed</span>`;
                 }
@@ -302,11 +297,11 @@
                     <td style="font-size:11px; color:#a0aec0;">${dateTimeStr}</td>
                     <td>
                         <div style="margin-bottom:4px;">
-                            <strong style="color:#63b3ed;">${creatorName}</strong> <br><span style="font-size:11px; color:#a0aec0;">📱 ${creatorPhone}</span>
+                            <strong style="color:#63b3ed;">${creatorName}</strong> <br><span style="font-size:11px; color:#a0aec0;">📱 ${creatorMobile}</span>
                         </div>
-                        ${joinerPhone !== 'Waiting...' ? `
+                        ${joinerMobile ? `
                         <div style="margin-top:6px;">
-                            <strong style="color:#48bb78;">${joinerName}</strong> <br><span style="font-size:11px; color:#a0aec0;">📱 ${joinerPhone}</span>
+                            <strong style="color:#48bb78;">${joinerName}</strong> <br><span style="font-size:11px; color:#a0aec0;">📱 ${joinerMobile}</span>
                         </div>` : '<span style="color:#718096; font-size:11px;">(Waiting for Joiner)</span>'}
                     </td>
                     <td>
@@ -329,8 +324,8 @@
             const statusVal = document.getElementById("statusFilter").value;
 
             const filtered = allBattles.filter(b => {
-                const creator = ((b.creatorName || '') + " " + (b.realCreatorPhone || '')).toLowerCase();
-                const joiner = ((b.joinerName || '') + " " + (b.realJoinerPhone || '')).toLowerCase();
+                const creator = ((b.creatorDetails.name || '') + " " + (b.creatorDetails.mobile || '')).toLowerCase();
+                const joiner = b.joinerDetails ? ((b.joinerDetails.name || '') + " " + (b.joinerDetails.mobile || '')).toLowerCase() : '';
                 const status = (b.status || "").toLowerCase();
 
                 const matchSearch = creator.includes(search) || joiner.includes(search);
@@ -349,44 +344,53 @@
             renderBattles(filtered);
         }
 
-        function openWinnerModal(battleId, creatorName, creatorPhone, joinerName, joinerPhone, prize) {
+        function openWinnerModal(battleId, creatorName, creatorKey, joinerName, joinerKey, prize) {
             const container = document.getElementById("winnerOptionsContainer");
-            container.innerHTML = `
-                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorPhone}', ${prize})">
+            let optionsHTML = `
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorKey}', '${joinerKey}', ${prize})">
                     <div>
-                        <strong style="color:#63b3ed;">${creatorName}</strong> (${creatorPhone})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
+                        <strong style="color:#63b3ed;">${creatorName}</strong> (${creatorKey})<br>
+                        <span style="font-size:12px; color:#a0aec0;">Winner (Credit ₹${prize} to Winnings)</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
                 </div>
-                ${joinerPhone !== 'Waiting...' ? `
-                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerPhone}', ${prize})">
-                    <div>
-                        <strong style="color:#48bb78;">${joinerName}</strong> (${joinerPhone})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
-                    </div>
-                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
-                </div>
-                ` : ''}
             `;
+
+            if (joinerKey && joinerKey !== 'null') {
+                optionsHTML += `
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerKey}', '${creatorKey}', ${prize})">
+                    <div>
+                        <strong style="color:#48bb78;">${joinerName}</strong> (${joinerKey})<br>
+                        <span style="font-size:12px; color:#a0aec0;">Winner (Credit ₹${prize} to Winnings)</span>
+                    </div>
+                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
+                </div>
+                `;
+            }
+
+            container.innerHTML = optionsHTML;
             document.getElementById("winnerModal").style.display = "flex";
         }
 
-        async function confirmDeclareWinner(battleId, winnerPhone, prize) {
-            if (confirm(`Declare ${winnerPhone} as Winner? ₹${prize} will be credited to wallet.`)) {
+        async function confirmDeclareWinner(battleId, winnerKey, loserKey, prize) {
+            if (confirm(`Confirm ${winnerKey} as Winner? ₹${prize} will be added directly to Firebase Wallet.`)) {
                 try {
+                    // Update Battle in Firestore
                     await db.collection("battles").doc(battleId).update({
                         status: "completed",
-                        winner: winnerPhone,
+                        winnerUid: winnerKey,
+                        loserUid: loserKey,
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // Add Prize Money directly to Winner Wallet
-                    await db.collection("customers").doc(winnerPhone).update({
-                        wallet: firebase.firestore.FieldValue.increment(parseFloat(prize))
-                    });
+                    // Add Prize to Winner Customer Document in Firestore
+                    const winnerRef = db.collection("customers").doc(winnerKey);
+                    await winnerRef.set({
+                        winnings: firebase.firestore.FieldValue.increment(parseFloat(prize)),
+                        depositBalance: firebase.firestore.FieldValue.increment(0)
+                    }, { merge: true });
 
-                    alert(`Success! ₹${prize} credited to ${winnerPhone}.`);
+                    alert(`Success! ₹${prize} credited to ${winnerKey}.`);
                     closeModal('winnerModal');
                 } catch(e) {
                     alert("Error: " + e.message);
@@ -394,48 +398,32 @@
             }
         }
 
-        async function cancelBattle(battleId, creatorPhone, entryFee, joinerPhone = null) {
-            if (confirm("Cancel this battle and refund entry fee to user wallet?")) {
+        async function cancelBattle(battleId, creatorKey, joinerKey, entryFee) {
+            if (confirm("Cancel this running battle and refund entry fee to both users in Firebase?")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
                         cancelledBy: "admin"
                     });
 
-                    if (creatorPhone && creatorPhone !== "N/A") {
-                        await db.collection("customers").doc(creatorPhone).update({
-                            wallet: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
-                        });
+                    // Refund Creator
+                    if (creatorKey) {
+                        await db.collection("customers").doc(creatorKey).set({
+                            depositBalance: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
+                        }, { merge: true });
                     }
 
-                    if (joinerPhone && joinerPhone !== "Waiting..." && joinerPhone !== "N/A") {
-                        await db.collection("customers").doc(joinerPhone).update({
-                            wallet: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
-                        });
+                    // Refund Joiner
+                    if (joinerKey && joinerKey !== "null") {
+                        await db.collection("customers").doc(joinerKey).set({
+                            depositBalance: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
+                        }, { merge: true });
                     }
 
-                    alert("Battle cancelled and entry fee refunded successfully.");
+                    alert("Battle cancelled & entry fee refunded to user wallets.");
                 } catch(e) {
                     alert("Cancel Error: " + e.message);
                 }
-            }
-        }
-
-        function applyPenalty(creatorPhone, joinerPhone) {
-            const userPhone = prompt(`Enter Mobile Number for Penalty:\nCreator: ${creatorPhone}\nJoiner: ${joinerPhone}`);
-            if (!userPhone) return;
-
-            const amount = prompt(`Enter Penalty Amount (₹) to deduct:`, "50");
-            if (!amount || isNaN(amount)) return;
-
-            if (confirm(`Deduct ₹${amount} penalty from ${userPhone}?`)) {
-                db.collection("customers").doc(userPhone).update({
-                    wallet: firebase.firestore.FieldValue.increment(-parseFloat(amount))
-                }).then(() => {
-                    alert(`Penalty of ₹${amount} applied to ${userPhone}.`);
-                }).catch(e => {
-                    alert("Penalty Error: " + e.message);
-                });
             }
         }
 
