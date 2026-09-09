@@ -48,11 +48,14 @@
         .doc-thumb { width: 50px; height: 40px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e0; cursor: pointer; transition: transform 0.2s; }
         .doc-thumb:hover { transform: scale(1.1); }
 
-        .btn-approve { background-color: #38a169; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 6px; }
+        .btn-approve { background-color: #38a169; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; margin-bottom: 4px; }
         .btn-approve:hover { background-color: #2f855a; }
 
-        .btn-reject { background-color: #e53e3e; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-reject { background-color: #e53e3e; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-bottom: 4px; }
         .btn-reject:hover { background-color: #c53030; }
+
+        .btn-edit { background-color: #3182ce; color: #ffffff; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; font-size: 11px; }
+        .btn-edit:hover { background-color: #2b6cb0; }
 
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
         .modal-img { max-width: 90%; max-height: 85%; border-radius: 12px; border: 2px solid #ffffff; }
@@ -112,6 +115,7 @@
                             <th>S.NO.</th>
                             <th>USER / MOBILE</th>
                             <th>DOCUMENT NO.</th>
+                            <th>DATE & TIME</th>
                             <th>FRONT PHOTO</th>
                             <th>BACK PHOTO</th>
                             <th>STATUS</th>
@@ -119,7 +123,7 @@
                         </tr>
                     </thead>
                     <tbody id="kycTableBody">
-                        <tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Connecting to kycRequests collection...</td></tr>
+                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Loading KYC records...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -146,13 +150,12 @@
         const db = firebase.firestore();
 
         function loadKycRequests() {
-            // Direct Realtime listener on 'kycRequests' collection
             db.collection("kycRequests").onSnapshot((snapshot) => {
                 const tbody = document.getElementById("kycTableBody");
                 tbody.innerHTML = "";
 
                 if (snapshot.empty) {
-                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">No KYC Requests found in kycRequests collection.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e;">No KYC Requests found.</td></tr>';
                     document.getElementById("pendingKycVal").innerText = "0";
                     document.getElementById("approvedKycVal").innerText = "0";
                     document.getElementById("rejectedKycVal").innerText = "0";
@@ -170,7 +173,6 @@
                     listData.push(data);
                 });
 
-                // Pending requests show first
                 listData.sort((a, b) => {
                     let stA = (a.status || "pending").toLowerCase();
                     let stB = (b.status || "pending").toLowerCase();
@@ -196,6 +198,19 @@
                     let frontImg = item.frontImage || item.frontPhoto || "";
                     let backImg = item.backImage || item.backPhoto || "";
 
+                    // Timestamp parsing
+                    let dateTimeStr = "N/A";
+                    let ts = item.submittedAt || item.timestamp || item.createdAt || item.date;
+                    if (ts) {
+                        if (ts.toDate) {
+                            dateTimeStr = ts.toDate().toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' });
+                        } else if (typeof ts === 'number') {
+                            dateTimeStr = new Date(ts).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' });
+                        } else {
+                            dateTimeStr = String(ts);
+                        }
+                    }
+
                     let statusBadge = `<span class="badge-pending">PENDING</span>`;
                     if (rawStatus === "approved" || rawStatus === "verified") {
                         statusBadge = `<span class="badge-approved">APPROVED</span>`;
@@ -210,7 +225,9 @@
                             <button class="btn-reject" onclick="updateKycStatus('${item.docId}', 'rejected')">Reject</button>
                         `;
                     } else {
-                        actionBtns = `<span style="color:#718096; font-size:12px;">Completed</span>`;
+                        actionBtns = `
+                            <button class="btn-edit" onclick="reEditKycStatus('${item.docId}', '${rawStatus}')"><i class="fa-solid fa-pen-to-square"></i> Change Status</button>
+                        `;
                     }
 
                     let frontHtml = frontImg ? `<img src="${frontImg}" class="doc-thumb" onclick="previewImage('${frontImg}')" alt="Front">` : `<span style="color:#999; font-size:11px;">No Image</span>`;
@@ -223,6 +240,7 @@
                             <span style="color:#3182ce;">${mobile}</span>
                         </td>
                         <td style="font-weight:700;">${docNumber}</td>
+                        <td style="font-size:12px; color:#4a5568;">${dateTimeStr}</td>
                         <td>${frontHtml}</td>
                         <td>${backHtml}</td>
                         <td>${statusBadge}</td>
@@ -237,12 +255,12 @@
                 document.getElementById("rejectedKycVal").innerText = rejectedCount;
 
             }, (err) => {
-                document.getElementById("kycTableBody").innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">Firebase Error: ${err.message}</td></tr>`;
+                document.getElementById("kycTableBody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e;">Firebase Error: ${err.message}</td></tr>`;
             });
         }
 
         function updateKycStatus(docId, newStatus) {
-            if (confirm(`Aap is request ko ${newStatus.toUpperCase()} karna chahte hain?`)) {
+            if (confirm(`Aap status ko ${newStatus.toUpperCase()} karna chahte hain?`)) {
                 db.collection("kycRequests").doc(docId).update({
                     status: newStatus
                 }).then(() => {
@@ -250,6 +268,13 @@
                 }).catch((err) => {
                     alert("Update Error: " + err.message);
                 });
+            }
+        }
+
+        function reEditKycStatus(docId, currentStatus) {
+            let nextStatus = currentStatus === "approved" ? "rejected" : "approved";
+            if (confirm(`Aap status ko Change karke ${nextStatus.toUpperCase()} karna chahte hain?`)) {
+                updateKycStatus(docId, nextStatus);
             }
         }
 
