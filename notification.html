@@ -29,7 +29,16 @@
 
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent;}
-        body{background:linear-gradient(180deg,#f8faff 0%,#eef4ff 50%,#f1f5f9 100%);color:#101a38;min-height:100vh;padding-bottom:95px;}
+        body{
+            background:
+                radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
+                radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+                radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
+                linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
+            color:#101a38;
+            min-height:100vh;
+            padding-bottom:95px;
+        }
         button{font:inherit;}
 
         /* UNIFIED TOP HEADER */
@@ -355,7 +364,7 @@ function toggleMenu() {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, collection, doc, onSnapshot, query, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -387,7 +396,7 @@ function listenUserData() {
             if (snap.exists()) {
                 const d = snap.data();
                 const userName = d.name || ("User " + userId.slice(-4));
-                const depBal = Number(d.depositBalance || 0);
+                const depBal = Number(d.depositBalance || d.deposit || 0);
                 const winBal = Number(d.winningBalance || d.winnings || 0);
                 const realTotalBalance = depBal + winBal;
 
@@ -433,6 +442,9 @@ function listenNotifs() {
             let timeStr = "";
             if (n.createdAt) {
                 const dateVal = n.createdAt.toDate ? n.createdAt.toDate() : new Date(n.createdAt);
+                timeStr = dateVal.toLocaleDateString("en-IN", { day:'numeric', month:'short' });
+            } else if (n.timestamp) {
+                const dateVal = new Date(n.timestamp);
                 timeStr = dateVal.toLocaleDateString("en-IN", { day:'numeric', month:'short' });
             }
             return `
