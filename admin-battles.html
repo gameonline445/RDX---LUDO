@@ -3,148 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Battles Management - RDX LUDO ADMIN</title>
+    <title>RDX LUDO ADMIN - Battles Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
-        body {
-            background-color: #f4f7fe;
-            color: #2b3674;
-            display: flex;
-            min-height: 100vh;
-        }
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
-        /* SIRF EK SIDEBAR STYLING */
-        .sidebar {
-            width: 260px;
-            background: #ffffff;
-            padding: 20px 15px;
-            box-shadow: 2px 0 10px rgba(0,0,0,0.03);
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
-            z-index: 10;
-        }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 16px;
-            margin-bottom: 25px;
-            padding: 0 10px;
-            color: #2b3674;
-        }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
+        .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
+        .stat-card .value { font-size: 26px; font-weight: 800; }
 
-        .nav-menu {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .filter-card input, .filter-card select { padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+        .filter-card input[type="text"] { flex: 1; min-width: 220px; }
+        .filter-card input:focus, .filter-card select:focus { border-color: #3182ce; }
 
-        .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #5d6978;
-            font-weight: 500;
-            font-size: 14px;
-            transition: 0.2s;
-        }
+        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+        td { padding: 12px 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
 
-        .nav-link:hover, .nav-link.active {
-            background-color: #e9f0ff;
-            color: #4318ff;
-            font-weight: bold;
-        }
+        .badge { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 11px; display: inline-block; }
+        .badge-open { background: rgba(49, 130, 206, 0.15); color: #63b3ed; border: 1px solid rgba(49, 130, 206, 0.3); }
+        .badge-running { background: rgba(236, 201, 75, 0.15); color: #f6ad55; border: 1px solid rgba(236, 201, 75, 0.3); }
+        .badge-completed { background: rgba(72, 187, 120, 0.15); color: #68d391; border: 1px solid rgba(72, 187, 120, 0.3); }
+        .badge-cancelled { background: rgba(229, 62, 62, 0.15); color: #fc8181; border: 1px solid rgba(229, 62, 62, 0.3); }
 
-        /* MAIN CONTENT AREA */
-        .main-content {
-            flex: 1;
-            padding: 20px 30px;
-            overflow-x: auto;
-        }
+        .btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-cancel { background: #e53e3e; color: #ffffff; }
+        .btn-cancel:hover { background: #c53030; }
+        .btn-view { background: #3182ce; color: #ffffff; }
+        .btn-view:hover { background: #2b6cb0; }
+        .btn-penalty { background: #dd6b20; color: #ffffff; }
+        .btn-penalty:hover { background: #c05621; }
 
-        .top-bar {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 20px;
-        }
-
-        .logout-btn {
-            background-color: #ff7666;
-            color: white;
-            border: none;
-            padding: 8px 22px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 13px;
-        }
-
-        .panel-container {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
-
-        .page-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-
-        @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: 100%; height: auto; position: relative; }
-        }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
+        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 550px; padding: 20px; position: relative; }
+        .modal-close { position: absolute; right: 16px; top: 16px; color: #a0aec0; font-size: 20px; cursor: pointer; }
+        .proof-media { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-top: 14px; background: #000; }
     </style>
 </head>
 <body>
 
-    <!-- ONLY ONE SIDEBAR -->
-    <aside class="sidebar">
-        <div class="brand">RDX LUDO ADMIN</div>
-        <nav class="nav-menu">
-            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
-            <a href="admin-battles.html" class="nav-link active">Battles Management</a>
-            <a href="admin-customers.html" class="nav-link">Customers</a>
-            <a href="admin-deposits.html" class="nav-link">Deposits</a>
-            <a href="admin-withdrawals.html" class="nav-link">Withdrawals</a>
-            <a href="admin-history.html" class="nav-link">User History</a>
-            <a href="admin-referrals.html" class="nav-link">Referral Analytics</a>
-            <a href="admin-settings.html" class="nav-link">Payment Settings</a>
-        </nav>
-    </aside>
-
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- ONLY ONE LOGOUT BUTTON HERE -->
-        <div class="top-bar">
-            <button class="logout-btn">Logout</button>
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
+        <a href="admin-login.html" class="logout-link">Logout</a>
+    </header>
 
-        <div class="panel-container">
-            <h1 class="page-title">🎮 Battles Management</h1>
-            
-            <!-- Apka Battles Table aur Logic Content Yahan Aayega -->
-            <div id="battlesContent">
-                <p>Loading Battles Data...</p>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item active"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="dashboard-title">Battles Management</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">Total Live Battles</div>
+                    <div class="value" id="statTotalBattles" style="color: #63b3ed;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Open Battles</div>
+                    <div class="value" id="statOpenBattles" style="color: #4299e1;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Running Battles</div>
+                    <div class="value" id="statRunningBattles" style="color: #f6ad55;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Review / Disputed</div>
+                    <div class="value" id="statReviewBattles" style="color: #fc8181;">0</div>
+                </div>
             </div>
-        </div>
-    </main>
 
+            <div class="filter-card">
+                <input type="text" id="searchInput" placeholder="Search by Battle ID, Mobile, or Room Code..." onkeyup="applyFilters()">
+                <input type="date" id="dateFilter" onchange="applyFilters()">
+                <select id="statusFilter" onchange="applyFilters()">
+                    <option value="all">All Status</option>
+                    <option value="open">Open</option>
+                    <option value="running">Running</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Battle ID & Date</th>
+                            <th>Players (Creator / Joiner)</th>
+                            <th>Entry Fee & Prize</th>
+                            <th>Room Code</th>
+                            <th>Status</th>
+                            <th>Proof Screenshot / Video</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="battlesTableBody">
+                        <tr><td colspan="7" style="text-align: center;">Loading battles data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- Proof View Modal -->
+    <div id="proofModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Proof</h3>
+            <div id="proofContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let allBattles = [];
+
+        function listenBattles() {
+            db.collection("battles").onSnapshot(snapshot => {
+                allBattles = [];
+                let open = 0, running = 0, review = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    allBattles.push(data);
+
+                    const st = (data.status || "").toLowerCase();
+                    if (st === "open") open++;
+                    else if (st === "running") running++;
+                    else if (st === "review" || st === "dispute") review++;
+                });
+
+                document.getElementById("statTotalBattles").innerText = snapshot.size;
+                document.getElementById("statOpenBattles").innerText = open;
+                document.getElementById("statRunningBattles").innerText = running;
+                document.getElementById("statReviewBattles").innerText = review;
+
+                applyFilters();
+            });
+        }
+
+        function renderBattles(battles) {
+            const tbody = document.getElementById("battlesTableBody");
+            tbody.innerHTML = "";
+
+            if (battles.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #a0aec0;">No matching battles found.</td></tr>`;
+                return;
+            }
+
+            battles.forEach(b => {
+                const tr = document.createElement("tr");
+
+                const creator = b.createdBy || b.creatorPhone || "N/A";
+                const joiner = b.joinedBy || b.joinerPhone || "Waiting...";
+                const amount = b.entryFee || b.amount || 0;
+                const prize = b.prize || (amount * 1.8);
+                const roomCode = b.roomCode || "Not Set";
+                const status = (b.status || "open").toLowerCase();
+
+                let statusBadge = `<span class="badge badge-open">OPEN</span>`;
+                if (status === "running") statusBadge = `<span class="badge badge-running">RUNNING</span>`;
+                else if (status === "completed") statusBadge = `<span class="badge badge-completed">COMPLETED</span>`;
+                else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
+
+                let dateStr = "N/A";
+                if (b.createdAt) {
+                    const dt = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+                    dateStr = dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+
+                // Proof button logic
+                let proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof</span>`;
+                if (b.proofUrl || b.screenshot) {
+                    const url = b.proofUrl || b.screenshot;
+                    proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
+                }
+
+                // Action buttons
+                let actionsHTML = "";
+                if (status === "open" || status === "running") {
+                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}')"><i class="fa-solid fa-ban"></i> Cancel</button> `;
+                }
+                actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creator}', '${joiner}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button>`;
+
+                tr.innerHTML = `
+                    <td>
+                        <strong style="color:#63b3ed;">#${b.id.substring(0,8)}</strong><br>
+                        <span style="font-size:11px; color:#a0aec0;">${dateStr}</span>
+                    </td>
+                    <td>
+                        <i class="fa-solid fa-user" style="color:#4299e1;"></i> ${creator}<br>
+                        <i class="fa-solid fa-user-check" style="color:#48bb78;"></i> ${joiner}
+                    </td>
+                    <td>
+                        Entry: <strong>₹${amount}</strong><br>
+                        Prize: <strong style="color:#48bb78;">₹${prize}</strong>
+                    </td>
+                    <td><span style="background:#2d3748; padding:3px 8px; border-radius:4px; font-weight:700;">${roomCode}</span></td>
+                    <td>${statusBadge}</td>
+                    <td>${proofBtnHTML}</td>
+                    <td>${actionsHTML}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function applyFilters() {
+            const search = document.getElementById("searchInput").value.toLowerCase().trim();
+            const dateVal = document.getElementById("dateFilter").value;
+            const statusVal = document.getElementById("statusFilter").value;
+
+            const filtered = allBattles.filter(b => {
+                const bId = b.id.toLowerCase();
+                const creator = (b.createdBy || "").toLowerCase();
+                const joiner = (b.joinedBy || "").toLowerCase();
+                const roomCode = (b.roomCode || "").toLowerCase();
+                const status = (b.status || "").toLowerCase();
+
+                const matchSearch = bId.includes(search) || creator.includes(search) || joiner.includes(search) || roomCode.includes(search);
+                const matchStatus = (statusVal === "all") || (status === statusVal);
+
+                let matchDate = true;
+                if (dateVal && b.createdAt) {
+                    const dt = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+                    const formattedDt = dt.toISOString().split('T')[0];
+                    matchDate = (formattedDt === dateVal);
+                }
+
+                return matchSearch && matchStatus && matchDate;
+            });
+
+            renderBattles(filtered);
+        }
+
+        async function cancelBattle(battleId) {
+            if (confirm("Are you sure you want to cancel this battle? Entry fee will be refunded.")) {
+                try {
+                    await db.collection("battles").doc(battleId).update({
+                        status: "cancelled",
+                        cancelledBy: "admin",
+                        cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    alert("Battle cancelled successfully.");
+                } catch(e) {
+                    alert("Error cancelling battle: " + e.message);
+                }
+            }
+        }
+
+        function applyPenalty(creator, joiner) {
+            const userPhone = prompt(`Enter User Mobile Number to apply penalty:\nOption 1: ${creator}\nOption 2: ${joiner}`);
+            if (!userPhone) return;
+
+            const amount = prompt(`Enter Penalty Amount to deduct from ${userPhone}:`, "50");
+            if (!amount || isNaN(amount)) return;
+
+            if (confirm(`Deduct ₹${amount} penalty from user ${userPhone}?`)) {
+                db.collection("customers").doc(userPhone).update({
+                    wallet: firebase.firestore.FieldValue.increment(-parseFloat(amount))
+                }).then(() => {
+                    alert(`₹${amount} penalty applied successfully to ${userPhone}.`);
+                }).catch(e => {
+                    alert("Penalty Error: " + e.message);
+                });
+            }
+        }
+
+        function viewProof(url) {
+            const container = document.getElementById("proofContainer");
+            const isVideo = url.endsWith(".mp4") || url.includes("video");
+
+            if (isVideo) {
+                container.innerHTML = `<video src="${url}" controls class="proof-media" autoplay></video>`;
+            } else {
+                container.innerHTML = `<img src="${url}" class="proof-media" alt="Battle Proof" />`;
+            }
+
+            document.getElementById("proofModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("proofModal").style.display = "none";
+            document.getElementById("proofContainer").innerHTML = "";
+        }
+
+        window.onload = () => {
+            listenBattles();
+        };
+    </script>
 </body>
 </html>
