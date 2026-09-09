@@ -48,16 +48,17 @@
         .badge-completed { background: rgba(72, 187, 120, 0.15); color: #68d391; border: 1px solid rgba(72, 187, 120, 0.3); }
         .badge-cancelled { background: rgba(229, 62, 62, 0.15); color: #fc8181; border: 1px solid rgba(229, 62, 62, 0.3); }
 
-        .btn-group { display: flex; flex-direction: column; gap: 6px; width: 120px; }
+        .btn-group { display: flex; flex-direction: column; gap: 6px; width: 125px; }
         .btn { padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; text-align: center; }
         .btn-win { background: #38a169; color: #ffffff; }
         .btn-cancel { background: #e53e3e; color: #ffffff; }
         .btn-view { background: #3182ce; color: #ffffff; }
+        .btn-edit { background: #d69e2e; color: #ffffff; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
-        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 480px; padding: 20px; position: relative; }
+        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 500px; padding: 20px; position: relative; max-height: 90vh; overflow-y: auto; }
         .modal-close { position: absolute; right: 16px; top: 16px; color: #a0aec0; font-size: 20px; cursor: pointer; }
-        .proof-media { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-top: 14px; background: #000; }
+        .proof-media { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-top: 10px; background: #000; border: 1px solid #2d3748; }
         .winner-option { background: #1a202c; border: 1px solid #2d3748; padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .winner-option:hover { border-color: #38a169; background: #222c3a; }
     </style>
@@ -129,7 +130,7 @@
                             <th>Room Code</th>
                             <th>Status</th>
                             <th>Proof Screenshot / Video</th>
-                            <th>Actions</th>
+                            <th>Actions / Edit</th>
                         </tr>
                     </thead>
                     <tbody id="battlesTableBody">
@@ -140,12 +141,12 @@
         </main>
     </div>
 
-    <!-- Win / Loss Decision Modal -->
+    <!-- Win / Loss / Re-Edit Decision Modal -->
     <div id="winnerModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
-            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Declare Battle Result</h3>
-            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select the Winner. Prize will be credited to winner's wallet instantly.</p>
+            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Set / Edit Battle Winner</h3>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select the winner or change decision. Wallet balances will automatically re-adjust.</p>
             <div id="winnerOptionsContainer"></div>
         </div>
     </div>
@@ -154,7 +155,7 @@
     <div id="proofModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('proofModal')">&times;</span>
-            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Screenshot / Video Proof</h3>
+            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Screenshot / Video Proofs</h3>
             <div id="proofContainer"></div>
         </div>
     </div>
@@ -177,7 +178,6 @@
         let allBattles = [];
         let userCache = {};
 
-        // Helper to get real mobile number & name from customer collection
         async function fetchUserDetails(uid, defaultName, defaultMobile) {
             if (!uid) return { name: defaultName || "User", mobile: defaultMobile || "N/A" };
             if (userCache[uid]) return userCache[uid];
@@ -200,25 +200,29 @@
             return { name: defaultName || "User", mobile: uid };
         }
 
-        // Helper to extract Screenshot or Video Proof from any possible field in Firebase document
-        function extractProofUrl(data) {
-            if (!data) return null;
-            if (data.proofUrl) return data.proofUrl;
-            if (data.screenshot) return data.screenshot;
-            if (data.screenshotUrl) return data.screenshotUrl;
-            if (data.videoProof) return data.videoProof;
-            if (data.video) return data.video;
-            if (data.proof) return data.proof;
+        // Deep Search for all Media Screenshots/Videos in Battle Document
+        function extractAllProofs(data) {
+            let proofs = [];
+            if (!data) return proofs;
 
-            // Check dynamic fields like result_917878852370
+            const checkAndAdd = (val) => {
+                if (typeof val === "string" && (val.startsWith("http://") || val.startsWith("https://"))) {
+                    if (!proofs.includes(val)) proofs.push(val);
+                }
+            };
+
             for (let key in data) {
-                if (key.startsWith("result_") || key.toLowerCase().includes("proof") || key.toLowerCase().includes("screenshot")) {
-                    if (typeof data[key] === "string" && (data[key].startsWith("http://") || data[key].startsWith("https://"))) {
-                        return data[key];
+                if (typeof data[key] === "string") {
+                    checkAndAdd(data[key]);
+                } else if (typeof data[key] === "object" && data[key] !== null) {
+                    for (let subKey in data[key]) {
+                        if (typeof data[key][subKey] === "string") {
+                            checkAndAdd(data[key][subKey]);
+                        }
                     }
                 }
             }
-            return null;
+            return proofs;
         }
 
         function listenBattles() {
@@ -233,10 +237,9 @@
                     const creatorUid = data.creatorUid || data.hostId || "";
                     const joinerUid = data.acceptedUid || data.joinerUid || "";
 
-                    // Sync Creator and Joiner Details
                     data.creatorDetails = await fetchUserDetails(creatorUid, data.creatorName || data.hostName, data.creatorMobile);
                     data.joinerDetails = joinerUid ? await fetchUserDetails(joinerUid, data.acceptedName, "") : null;
-                    data.proofMediaUrl = extractProofUrl(data);
+                    data.proofMediaUrls = extractAllProofs(data);
 
                     allBattles.push(data);
 
@@ -290,26 +293,25 @@
                 else if (status === "completed" || status === "under_review") statusBadge = `<span class="badge badge-completed">${status.toUpperCase()}</span>`;
                 else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
 
-                // Proof Screenshot/Video Button Logic
+                // Proof Screenshot/Video Button
                 let proofBtnHTML = `<span style="color:#718096; font-size:11px;">N/A</span>`;
-                if (status !== "open") {
-                    if (b.proofMediaUrl) {
-                        proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${b.proofMediaUrl}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
-                    } else {
-                        proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof Uploaded</span>`;
-                    }
+                if (b.proofMediaUrls && b.proofMediaUrls.length > 0) {
+                    proofBtnHTML = `<button class="btn btn-view" onclick='viewProofs(${JSON.stringify(b.proofMediaUrls)})'><i class="fa-solid fa-eye"></i> View (${b.proofMediaUrls.length}) Proofs</button>`;
+                } else if (status !== "open") {
+                    proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof Uploaded</span>`;
                 }
 
-                // Action Options Logic (Win / Loss / Cancel)
+                // Actions & Edit Logic
                 let actionsHTML = `<div class="btn-group">`;
 
                 if (status === "open") {
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', null, ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                 } else if (status === "running" || status === "in_progress" || status === "pending" || status === "under_review") {
-                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize})"><i class="fa-solid fa-trophy"></i> Win/Loss</button>`;
+                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize}, '${b.winnerUid || ''}')"><i class="fa-solid fa-trophy"></i> Win/Loss</button>`;
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', '${b.acceptedUid || joinerMobile}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                 } else {
-                    actionsHTML += `<span style="color:#718096; font-size:12px;">Completed</span>`;
+                    // Re-Edit Completed / Cancelled Battle
+                    actionsHTML += `<button class="btn btn-edit" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize}, '${b.winnerUid || ''}')"><i class="fa-solid fa-pen-to-square"></i> Edit Result</button>`;
                 }
                 actionsHTML += `</div>`;
 
@@ -364,13 +366,13 @@
             renderBattles(filtered);
         }
 
-        function openWinnerModal(battleId, creatorName, creatorKey, joinerName, joinerKey, prize) {
+        function openWinnerModal(battleId, creatorName, creatorKey, joinerName, joinerKey, prize, currentWinner) {
             const container = document.getElementById("winnerOptionsContainer");
             let optionsHTML = `
-                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorKey}', '${joinerKey}', ${prize})">
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorKey}', '${joinerKey}', ${prize}, '${currentWinner}')">
                     <div>
                         <strong style="color:#63b3ed;">${creatorName}</strong> (${creatorKey})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Set Winner (Credit ₹${prize} to Wallet Winnings)</span>
+                        <span style="font-size:12px; color:#a0aec0;">Declare Winner (Credit ₹${prize} Winnings)</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:22px;"></i>
                 </div>
@@ -378,10 +380,10 @@
 
             if (joinerKey && joinerKey !== 'null' && joinerKey !== 'undefined') {
                 optionsHTML += `
-                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerKey}', '${creatorKey}', ${prize})">
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerKey}', '${creatorKey}', ${prize}, '${currentWinner}')">
                     <div>
                         <strong style="color:#48bb78;">${joinerName}</strong> (${joinerKey})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Set Winner (Credit ₹${prize} to Wallet Winnings)</span>
+                        <span style="font-size:12px; color:#a0aec0;">Declare Winner (Credit ₹${prize} Winnings)</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:22px;"></i>
                 </div>
@@ -392,10 +394,17 @@
             document.getElementById("winnerModal").style.display = "flex";
         }
 
-        async function confirmDeclareWinner(battleId, winnerKey, loserKey, prize) {
-            if (confirm(`Declare ${winnerKey} as Winner? ₹${prize} will be credited to user wallet in Firebase.`)) {
+        async function confirmDeclareWinner(battleId, winnerKey, loserKey, prize, prevWinnerKey) {
+            if (confirm(`Declare ${winnerKey} as Winner? Wallet will be updated.`)) {
                 try {
-                    // Update Battle status in Firestore
+                    // Re-adjust previous winner wallet if editing
+                    if (prevWinnerKey && prevWinnerKey !== winnerKey) {
+                        await db.collection("customers").doc(prevWinnerKey).set({
+                            winnings: firebase.firestore.FieldValue.increment(-parseFloat(prize))
+                        }, { merge: true });
+                    }
+
+                    // Update Battle in Firestore
                     await db.collection("battles").doc(battleId).update({
                         status: "completed",
                         winnerUid: winnerKey,
@@ -403,9 +412,8 @@
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // Add Prize money directly to Winner Customer Document
-                    const winnerRef = db.collection("customers").doc(winnerKey);
-                    await winnerRef.set({
+                    // Credit new Winner
+                    await db.collection("customers").doc(winnerKey).set({
                         winnings: firebase.firestore.FieldValue.increment(parseFloat(prize))
                     }, { merge: true });
 
@@ -418,7 +426,7 @@
         }
 
         async function cancelBattle(battleId, creatorKey, joinerKey, entryFee) {
-            if (confirm("Cancel this battle and refund entry fee to both users in Firebase?")) {
+            if (confirm("Cancel battle and refund entry fee to both users in Firebase?")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
@@ -439,23 +447,27 @@
                         }, { merge: true });
                     }
 
-                    alert("Battle cancelled and entry fee refunded to user wallets.");
+                    alert("Battle cancelled & refunded successfully.");
                 } catch(e) {
                     alert("Cancel Error: " + e.message);
                 }
             }
         }
 
-        function viewProof(url) {
+        function viewProofs(urls) {
             const container = document.getElementById("proofContainer");
-            const lowerUrl = url.toLowerCase();
-            const isVideo = lowerUrl.includes(".mp4") || lowerUrl.includes(".webm") || lowerUrl.includes("video");
+            container.innerHTML = "";
 
-            if (isVideo) {
-                container.innerHTML = `<video src="${url}" controls class="proof-media" autoplay></video>`;
-            } else {
-                container.innerHTML = `<img src="${url}" class="proof-media" alt="Proof Screenshot" />`;
-            }
+            urls.forEach((url, idx) => {
+                const lowerUrl = url.toLowerCase();
+                const isVideo = lowerUrl.includes(".mp4") || lowerUrl.includes(".webm") || lowerUrl.includes("video");
+
+                if (isVideo) {
+                    container.innerHTML += `<div style="margin-bottom:12px;"><span style="font-size:12px; color:#a0aec0;">Proof #${idx+1} (Video)</span><video src="${url}" controls class="proof-media"></video></div>`;
+                } else {
+                    container.innerHTML += `<div style="margin-bottom:12px;"><span style="font-size:12px; color:#a0aec0;">Proof #${idx+1} (Image)</span><img src="${url}" class="proof-media" alt="Proof Screenshot" /></div>`;
+                }
+            });
 
             document.getElementById("proofModal").style.display = "flex";
         }
