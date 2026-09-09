@@ -84,25 +84,34 @@ button,input{font:inherit;}
     object-fit:cover;
 }
 
-.header-right{display:flex;align-items:center;gap:8px;}
+/* HEADER RIGHT - EXACT MATCH TO SCREENSHOT */
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
 .header-icon{
-    height:38px;
-    padding:0 10px;
+    width:42px;
+    height:42px;
     border:0;
-    border-radius:20px;
+    border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:5px;
-    font-size:13px;
-    font-weight:800;
+    font-size:18px;
     color:white;
     cursor:pointer;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    transition: transform 0.1s ease;
 }
-.icon-only{width:38px;padding:0;border-radius:50%;}
-.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
-.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);}
-.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);}
+.header-icon:active{
+    transform: scale(0.95);
+}
+
+/* EXACT ICON COLORS */
+.notification{ background: #5c67f2; } /* Purple/Blue */
+.wallet-top{ background: #42be65; }   /* Green */
+.redeem-top{ background: #e86a2c; }   /* Orange */
 
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
@@ -448,10 +457,11 @@ button,input{font:inherit;}
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
+    <!-- 3 ICONS: EXACT SAME TO SCREENSHOT -->
     <div class="header-right">
-        <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -549,8 +559,6 @@ async function loadHeaderUserData() {
             document.getElementById("drawerName").textContent = displayName;
             document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
-            document.getElementById("topBalance").textContent = Number(d.balance || 0);
-            document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
     } catch(err) { console.error(err); }
 }
