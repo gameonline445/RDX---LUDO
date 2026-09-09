@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - Dashboard</title>
+<title>RDX LUDO - Profile</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -73,7 +73,7 @@ button, input{font:inherit;}
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
-/* RIGHT SIDE 3 BUTTONS (EXACT PROFILE DESIGN MATCH) */
+/* RIGHT SIDE BUTTONS (EXACT 1:1 MATCH WITH BOTTOM NAV SHAPE & RADIUS) */
 .header-right{
     display:flex;
     align-items:center;
@@ -84,7 +84,7 @@ button, input{font:inherit;}
     width:42px;
     height:42px;
     border:0;
-    border-radius:14px;
+    border-radius:14px; /* Exact same rounded-square shape as bottom nav */
     display:flex;
     align-items:center;
     justify-content:center;
@@ -104,94 +104,192 @@ button, input{font:inherit;}
 /* MAIN CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
-/* BANNER */
-.banner-card{
-    background:linear-gradient(135deg,#0284c7,#0369a1);
-    border-radius:20px;
-    padding:20px;
-    color:white;
-    margin-bottom:20px;
-    box-shadow:0 8px 20px rgba(2,132,199,0.25);
-    display:flex;
-    align-items:center;
-    justify-style:space-between;
-}
-.banner-text h2{font-size:20px;font-weight:900;}
-.banner-text p{font-size:12px;opacity:0.9;margin-top:4px;font-weight:600;}
-.banner-btn{
-    background:#ffffff;
-    color:#0284c7;
-    border:0;
-    padding:10px 16px;
-    border-radius:12px;
-    font-weight:900;
-    font-size:12px;
-    cursor:pointer;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-
-/* WALLET CARD SUMMARY */
-.wallet-summary{
+/* PROFILE CARD */
+.profile-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
-    border-radius:20px;
-    padding:16px;
-    display:flex;
-    align-items:center;
-    justify-style:space-between;
-    margin-bottom:20px;
-    box-shadow:0 4px 14px rgba(2,132,199,0.05);
+    border-radius:24px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 6px 20px rgba(2,132,199,0.06);
+    position:relative;
 }
-.wallet-info label{font-size:11px;font-weight:850;color:#64748b;text-transform:uppercase;}
-.wallet-info h3{font-size:22px;font-weight:900;color:#0f172a;margin-top:2px;}
-.add-cash-btn{
-    background:#22c55e;
-    color:white;
-    border:0;
-    padding:10px 18px;
+.profile-header-tag{
+    display:inline-block;
+    background:#e0f2fe;
+    color:#0284c7;
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:0.8px;
+    padding:4px 10px;
     border-radius:12px;
+    margin-bottom:14px;
+    text-transform:uppercase;
+}
+.edit-btn{
+    position:absolute;
+    top:18px;
+    right:18px;
+    background:#f0f9ff;
+    border:1.5px solid #bae6fd;
+    color:#0284c7;
+    padding:6px 14px;
+    border-radius:12px;
+    font-size:12px;
     font-weight:800;
-    font-size:13px;
     cursor:pointer;
     display:flex;
     align-items:center;
     gap:6px;
-    box-shadow:0 4px 12px rgba(34,197,94,0.25);
+}
+.user-main-info{
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+.avatar-circle{
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#0284c7,#0369a1);
+    color:white;
+    font-size:26px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 4px 14px rgba(2,132,199,0.3);
+}
+.user-details h2{font-size:20px;font-weight:900;color:#0f172a;}
+.user-details p{font-size:13px;font-weight:700;color:#64748b;margin-top:2px;}
+.kyc-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    background:#dcfce7;
+    color:#15803d;
+    padding:3px 10px;
+    border-radius:10px;
+    font-size:11px;
+    font-weight:850;
+    margin-top:6px;
 }
 
-/* GAME MODES GRID */
-.section-title{font-size:12px;font-weight:900;color:#64748b;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
-.games-grid{
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:14px;
-    margin-bottom:20px;
-}
-.game-card{
+/* REFERRAL BOX */
+.referral-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
     border-radius:20px;
-    padding:18px 14px;
-    text-align:center;
-    cursor:pointer;
+    padding:16px;
+    margin-bottom:20px;
     box-shadow:0 4px 14px rgba(2,132,199,0.05);
-    transition:transform 0.15s ease;
 }
-.game-card:active{transform:scale(0.97);}
-.game-card-icon{
-    width:50px;
-    height:50px;
-    border-radius:16px;
+.referral-card h4{font-size:14px;font-weight:850;color:#0f172a;}
+.referral-card p{font-size:11px;color:#64748b;font-weight:600;margin-top:2px;}
+.refer-code-box{
+    margin-top:10px;
+    background:#f8fafc;
+    border:1.5px dashed #0284c7;
+    padding:10px 14px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.code-text{font-size:16px;font-weight:900;color:#0284c7;letter-spacing:1px;}
+.copy-btn{
+    background:#0284c7;
+    color:white;
+    border:0;
+    padding:6px 12px;
+    border-radius:8px;
+    font-size:11px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+/* STATS GRID */
+.section-title{font-size:11px;font-weight:900;color:#64748b;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase;}
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+    margin-bottom:20px;
+}
+.stat-card{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:18px;
+    padding:14px 8px;
+    text-align:center;
+    box-shadow:0 4px 12px rgba(2,132,199,0.04);
+}
+.stat-icon{
+    width:34px;
+    height:34px;
+    border-radius:10px;
     background:#e0f2fe;
     color:#0284c7;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:24px;
-    margin:0 auto 12px auto;
+    margin:0 auto 8px auto;
+    font-size:14px;
 }
-.game-card h3{font-size:15px;font-weight:900;color:#0f172a;}
-.game-card p{font-size:11px;font-weight:600;color:#64748b;margin-top:2px;}
+.stat-card label{display:block;font-size:10px;font-weight:850;color:#64748b;text-transform:uppercase;}
+.stat-card span{display:block;font-size:16px;font-weight:900;color:#0f172a;margin-top:2px;}
+
+/* QUICK ACTIONS */
+.action-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:20px;
+}
+.action-card{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:16px;
+    padding:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(2,132,199,0.04);
+}
+.action-left{display:flex;align-items:center;gap:10px;}
+.action-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    background:#e0f2fe;
+    color:#0284c7;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+}
+.action-info h5{font-size:13px;font-weight:850;color:#0f172a;}
+.action-info p{font-size:10px;color:#64748b;font-weight:600;}
+
+/* LOGOUT BUTTON */
+.logout-btn{
+    width:100%;
+    padding:14px;
+    border:1.5px solid #fecaca;
+    background:#fef2f2;
+    color:#dc2626;
+    border-radius:18px;
+    font-size:14px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(220,38,38,0.08);
+}
+.logout-btn:active{transform:scale(0.98);}
 
 /* SIDE DRAWER */
 .drawer-overlay{
@@ -290,7 +388,7 @@ button, input{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAVIGATION (EXACT 4-BUTTON BAR) */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -387,7 +485,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
     </div>
     
-    <!-- 3 HEADER BUTTONS (EXACTLY MATCHES PROFILE HTML) -->
+    <!-- 3 BUTTONS EXACTLY MATCHED TO BOTTOM NAV -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -396,48 +494,74 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 </header>
 
 <main class="container">
-    <div class="banner-card">
-        <div class="banner-text">
-            <h2>Play & Earn Cash!</h2>
-            <p>Join live Ludo battles & win instant rewards.</p>
+    <section class="profile-card">
+        <span class="profile-header-tag">MY PROFILE</span>
+        <button class="edit-btn" onclick="editProfileName()"><i class="fa-solid fa-pen"></i> Edit</button>
+        
+        <div class="user-main-info">
+            <div class="avatar-circle" id="userInitial">U</div>
+            <div class="user-details">
+                <h2 id="profileName">Loading...</h2>
+                <p id="profileMobile">+91**********</p>
+                <div class="kyc-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</div>
+            </div>
         </div>
-        <button class="banner-btn" onclick="window.location.replace('referral.html')">Refer Now</button>
-    </div>
+    </section>
 
-    <div class="wallet-summary">
-        <div class="wallet-info">
-            <label>Total Balance</label>
-            <h3 id="dashBalance">₹0.00</h3>
+    <section class="referral-card">
+        <h4>Referral Applied</h4>
+        <p>Locked to your account</p>
+        <div class="refer-code-box">
+            <span class="code-text" id="referralCode">NRSO6389</span>
+            <button class="copy-btn" onclick="copyReferral()"><i class="fa-solid fa-copy"></i> Copy</button>
         </div>
-        <button class="add-cash-btn" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-plus"></i> Add Cash</button>
-    </div>
+    </section>
 
-    <div class="section-title">CHOOSE GAME MODE</div>
-    <div class="games-grid">
-        <div class="game-card" onclick="window.location.replace('classic.html')">
-            <div class="game-card-icon"><i class="fa-solid fa-dice"></i></div>
-            <h3>Classic Ludo</h3>
-            <p>Traditional 4-pawn game</p>
+    <div class="section-title">YOUR STATS</div>
+    <section class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
+            <label>Coin Won</label>
+            <span id="statWon">₹0</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
+            <label>Played</label>
+            <span id="statPlayed">0</span>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+            <label>Referral</label>
+            <span id="statReferrals">0</span>
+        </div>
+    </section>
+
+    <div class="section-title">QUICK ACTIONS</div>
+    <section class="action-grid">
+        <div class="action-card" onclick="window.location.replace('history.html')">
+            <div class="action-left">
+                <div class="action-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <div class="action-info">
+                    <h5>History</h5>
+                    <p>Battles & logs</p>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color:#cbd5e1; font-size:12px;"></i>
         </div>
 
-        <div class="game-card" onclick="window.location.replace('quick.html')">
-            <div class="game-card-icon"><i class="fa-solid fa-bolt"></i></div>
-            <h3>Quick Ludo</h3>
-            <p>Fast 1-pawn battle</p>
+        <div class="action-card" onclick="window.location.replace('support.html')">
+            <div class="action-left">
+                <div class="action-icon"><i class="fa-solid fa-headset"></i></div>
+                <div class="action-info">
+                    <h5>Support</h5>
+                    <p>Chat & help</p>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right" style="color:#cbd5e1; font-size:12px;"></i>
         </div>
+    </section>
 
-        <div class="game-card" onclick="window.location.replace('tournaments.html')">
-            <div class="game-card-icon"><i class="fa-solid fa-trophy"></i></div>
-            <h3>Tournaments</h3>
-            <p>Big prize pools</p>
-        </div>
-
-        <div class="game-card" onclick="window.location.replace('private.html')">
-            <div class="game-card-icon"><i class="fa-solid fa-users"></i></div>
-            <h3>Private Room</h3>
-            <p>Play with friends</p>
-        </div>
-    </div>
+    <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
 </main>
 
 <!-- BOTTOM NAVIGATION -->
@@ -471,7 +595,7 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-function loadDashboardData() {
+function loadProfileData() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
 
@@ -479,13 +603,41 @@ function loadDashboardData() {
         if (doc.exists) {
             const d = doc.data();
             const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
-            const walletBal = parseFloat(d.wallet || d.balance || 0).toFixed(2);
 
+            document.getElementById("profileName").textContent = fullName;
             document.getElementById("drawerName").textContent = fullName;
+            document.getElementById("profileMobile").textContent = "+" + userId;
             document.getElementById("drawerMobile").textContent = "+" + userId;
-            document.getElementById("dashBalance").textContent = "₹" + walletBal;
+
+            document.getElementById("userInitial").textContent = fullName.charAt(0).toUpperCase() || "U";
+            document.getElementById("referralCode").textContent = d.referralCode || ("NRSO" + userId.slice(-4));
+
+            document.getElementById("statWon").textContent = "₹" + (d.totalWon || 0);
+            document.getElementById("statPlayed").textContent = d.totalPlayed || 0;
+            document.getElementById("statReferrals").textContent = d.referralCount || 0;
         }
     });
+}
+
+function editProfileName() {
+    const currentName = document.getElementById("profileName").textContent;
+    const newName = prompt("Apna naya naam darj karein:", currentName);
+    if (newName && newName.trim() !== "") {
+        const docId = userId.length === 10 ? "91" + userId : userId;
+        firebaseDB.collection("customers").doc(docId).update({
+            name: newName.trim()
+        }).then(() => {
+            alert("Naam update ho gaya!");
+        }).catch(err => {
+            alert("Error: " + err.message);
+        });
+    }
+}
+
+function copyReferral() {
+    const code = document.getElementById("referralCode").textContent;
+    navigator.clipboard.writeText(code);
+    alert("Referral Code Copied: " + code);
 }
 
 function logout() {
@@ -500,7 +652,7 @@ function logout() {
 }
 
 window.addEventListener("load", () => {
-    loadDashboardData();
+    loadProfileData();
 });
 </script>
 
