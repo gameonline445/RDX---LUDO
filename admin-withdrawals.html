@@ -49,11 +49,7 @@
         .badge.rejected { background-color: #9b2c2c; color: #feb2b2; }
         .badge.pending { background-color: #975a16; color: #fbd38d; animation: pulse 2s infinite; }
 
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.6; } 100% { opacity: 1; } }
 
         .btn-action { border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; margin-right: 4px; }
         .btn-approve { background-color: #38a169; color: #ffffff; }
@@ -64,6 +60,19 @@
         .copy-btn:hover { background: #4a5568; color: #ffffff; }
         .payment-info { font-size: 13px; color: #cbd5e0; line-height: 1.6; }
         .reject-reason { font-size: 11px; color: #feb2b2; margin-top: 4px; display: block; }
+
+        /* CUSTOM MODAL OVERLAY */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-card { background: #151921; width: 100%; max-width: 420px; border-radius: 16px; border: 1px solid #2d3748; padding: 24px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        .modal-card h3 { color: #63b3ed; font-size: 18px; margin-bottom: 16px; font-weight: 700; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #3182ce; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-modal-cancel { background: #2d3748; color: #ffffff; padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-modal-submit { background: #3182ce; color: #ffffff; padding: 8px 18px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
+        .toast-msg { position: fixed; bottom: 20px; right: 20px; background: #276749; color: #ffffff; padding: 12px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; z-index: 10000; display: none; }
     </style>
 </head>
 <body>
@@ -131,6 +140,39 @@
         </main>
     </div>
 
+    <!-- CUSTOM ACTION MODAL -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-card">
+            <h3 id="modalTitle">Update Withdrawal Request</h3>
+            
+            <div class="form-group" id="statusGroup">
+                <label>Status</label>
+                <select id="modalStatus" onchange="toggleModalFields()">
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="utrGroup">
+                <label>UTR Number / Transaction ID</label>
+                <input type="text" id="modalUtr" placeholder="Enter UTR Number">
+            </div>
+
+            <div class="form-group" id="reasonGroup">
+                <label>Rejection Reason / Comment</label>
+                <textarea id="modalReason" rows="3" placeholder="Enter rejection reason..."></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-modal-submit" onclick="submitModalAction()">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-msg" id="toastMsg">Action updated successfully!</div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -148,10 +190,19 @@
 
         let allWithdrawals = [];
         let usersMap = {};
+        let activeItem = null;
+
+        function showToast(msg, isError = false) {
+            const toast = document.getElementById("toastMsg");
+            toast.innerText = msg;
+            toast.style.background = isError ? "#9b2c2c" : "#276749";
+            toast.style.display = "block";
+            setTimeout(() => { toast.style.display = "none"; }, 3000);
+        }
 
         function copyText(text) {
             navigator.clipboard.writeText(text);
-            alert("Copied: " + text);
+            showToast("Copied to clipboard!");
         }
 
         async function loadUsersMap() {
@@ -202,7 +253,7 @@
                     }
                 });
 
-                // Pending Top Ordering Logic
+                // Pending Status On Top Sorting
                 allWithdrawals.sort((a, b) => {
                     const statusA = (a.status || "pending").toLowerCase();
                     const statusB = (b.status || "pending").toLowerCase();
@@ -257,6 +308,8 @@
                     paymentDetail = item.paymentMethod || "N/A";
                 }
 
+                const itemJson = JSON.stringify(item).replace(/'/g, "&apos;");
+
                 tr.innerHTML = `
                     <td>
                         <strong>${name}</strong><br>
@@ -272,10 +325,10 @@
                     </td>
                     <td>
                         ${status === 'pending' ? `
-                            <button class="btn-action btn-approve" onclick="approveRequest('${item.id}')">Approve</button>
-                            <button class="btn-action btn-reject" onclick="rejectRequest('${item.id}', '${phone}', ${item.amount || 0})">Reject</button>
+                            <button class="btn-action btn-approve" onclick='openActionModal(${itemJson}, "approved")'>Approve</button>
+                            <button class="btn-action btn-reject" onclick='openActionModal(${itemJson}, "rejected")'>Reject</button>
                         ` : ''}
-                        <button class="btn-action btn-edit" onclick="editRequest('${item.id}', '${phone}', ${item.amount || 0}, '${utr}', '${status}', '${rejectReason}')">Edit</button>
+                        <button class="btn-action btn-edit" onclick='openActionModal(${itemJson}, "edit")'>Edit</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -293,89 +346,88 @@
             renderTable(filtered);
         }
 
-        async function approveRequest(id) {
-            const utr = prompt("Enter UTR / Transaction Reference Number:");
-            if (!utr || utr.trim() === "") {
-                alert("UTR Number is required to approve withdrawal!");
+        /* MODAL DIALOGUE LOGIC */
+        function openActionModal(item, mode) {
+            activeItem = item;
+            document.getElementById("actionModal").style.display = "flex";
+            document.getElementById("modalUtr").value = item.utr || "";
+            document.getElementById("modalReason").value = item.rejectReason || item.comment || "";
+
+            if (mode === "approved") {
+                document.getElementById("modalTitle").innerText = "Approve Withdrawal";
+                document.getElementById("modalStatus").value = "approved";
+                document.getElementById("statusGroup").style.display = "none";
+            } else if (mode === "rejected") {
+                document.getElementById("modalTitle").innerText = "Reject Withdrawal";
+                document.getElementById("modalStatus").value = "rejected";
+                document.getElementById("statusGroup").style.display = "none";
+            } else {
+                document.getElementById("modalTitle").innerText = "Edit Withdrawal Request";
+                document.getElementById("modalStatus").value = (item.status || "pending").toLowerCase();
+                document.getElementById("statusGroup").style.display = "block";
+            }
+
+            toggleModalFields();
+        }
+
+        function toggleModalFields() {
+            const st = document.getElementById("modalStatus").value;
+            document.getElementById("utrGroup").style.display = (st === "approved") ? "block" : "none";
+            document.getElementById("reasonGroup").style.display = (st === "rejected") ? "block" : "none";
+        }
+
+        function closeModal() {
+            document.getElementById("actionModal").style.display = "none";
+            activeItem = null;
+        }
+
+        async function submitModalAction() {
+            if (!activeItem) return;
+
+            const targetStatus = document.getElementById("modalStatus").value;
+            const utrVal = document.getElementById("modalUtr").value.trim();
+            const reasonVal = document.getElementById("modalReason").value.trim();
+            const userId = activeItem.userId || activeItem.phone || activeItem.uid;
+            const amount = Number(activeItem.amount) || 0;
+            const currentStatus = (activeItem.status || "pending").toLowerCase();
+
+            if (targetStatus === "approved" && !utrVal) {
+                showToast("Please enter UTR Number!", true);
                 return;
             }
 
             try {
-                await db.collection("withdrawals").doc(id).update({
-                    status: "approved",
-                    utr: utr.trim(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                alert("Withdrawal Approved Successfully!");
-            } catch (err) {
-                alert("Error: " + err.message);
-            }
-        }
-
-        async function rejectRequest(id, userId, amount) {
-            const reason = prompt("Enter Rejection Reason / Comment (e.g. Invalid UPI ID / Wrong Bank Details):");
-            if (reason === null) return; // User cancelled
-
-            try {
                 const batch = db.batch();
-                const wRef = db.collection("withdrawals").doc(id);
-                const userRef = db.collection("customers").doc(userId);
+                const wRef = db.collection("withdrawals").doc(activeItem.id);
 
-                batch.update(wRef, {
-                    status: "rejected",
-                    rejectReason: reason.trim() || "Rejected by Admin",
+                let updateObj = {
+                    status: targetStatus,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                };
 
-                // Refund Balance back to User
-                batch.update(userRef, {
-                    wallet: firebase.firestore.FieldValue.increment(Number(amount)),
-                    balance: firebase.firestore.FieldValue.increment(Number(amount))
-                });
+                if (targetStatus === "approved") {
+                    updateObj.utr = utrVal;
+                    updateObj.rejectReason = "";
+                } else if (targetStatus === "rejected") {
+                    updateObj.rejectReason = reasonVal || "Rejected by Admin";
+                }
 
-                await batch.commit();
-                alert("Withdrawal Rejected & ₹" + amount + " Refunded to User Wallet!");
-            } catch (err) {
-                alert("Error: " + err.message);
-            }
-        }
+                batch.update(wRef, updateObj);
 
-        async function editRequest(id, userId, amount, currentUtr, currentStatus, currentReason) {
-            const newUtr = prompt("Edit UTR Number:", currentUtr !== '-' ? currentUtr : '');
-            const newStatus = prompt("Edit Status (pending / approved / rejected):", currentStatus);
-            if (!newStatus) return;
-
-            const formattedStatus = newStatus.toLowerCase().trim();
-            let newReason = currentReason;
-
-            if (formattedStatus === "rejected") {
-                newReason = prompt("Enter Rejection Comment / Reason:", currentReason) || "Rejected by Admin";
-            }
-
-            try {
-                const batch = db.batch();
-                const wRef = db.collection("withdrawals").doc(id);
-
-                batch.update(wRef, {
-                    utr: newUtr || "-",
-                    status: formattedStatus,
-                    rejectReason: formattedStatus === "rejected" ? newReason : "",
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                });
-
-                // If changing status to rejected for first time
-                if (formattedStatus === "rejected" && currentStatus !== "rejected") {
+                // Refund balance if changing status to REJECTED for the first time
+                if (targetStatus === "rejected" && currentStatus !== "rejected") {
                     const userRef = db.collection("customers").doc(userId);
                     batch.update(userRef, {
-                        wallet: firebase.firestore.FieldValue.increment(Number(amount)),
-                        balance: firebase.firestore.FieldValue.increment(Number(amount))
+                        wallet: firebase.firestore.FieldValue.increment(amount),
+                        balance: firebase.firestore.FieldValue.increment(amount)
                     });
                 }
 
                 await batch.commit();
-                alert("Updated Successfully!");
+                closeModal();
+                showToast("Withdrawal updated successfully!");
             } catch (err) {
-                alert("Update Error: " + err.message);
+                showToast("Error: " + err.message, true);
             }
         }
 
