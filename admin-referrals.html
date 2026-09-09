@@ -28,6 +28,12 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
 
+        /* STATS CARDS GRID */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
+        .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
+        .stat-card .value { font-size: 26px; font-weight: 800; color: #3182ce; }
+
         /* FILTER BAR */
         .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; }
         .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 180px; }
@@ -89,6 +95,22 @@
 
         <main class="main-content">
             <h1 class="dashboard-title">Referral Leaderboard & Analytics</h1>
+
+            <!-- TOP STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">Total Active Referrers</div>
+                    <div class="value" id="statTotalReferrers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Total Successful Referrals</div>
+                    <div class="value" id="statTotalReferrals" style="color: #48bb78;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Today's Total Referrals</div>
+                    <div class="value" id="statTodayReferrals" style="color: #ed8936;">0</div>
+                </div>
+            </div>
 
             <!-- FILTERS -->
             <div class="filter-card">
@@ -192,6 +214,9 @@
 
         function processLeaderboard() {
             const referrerMap = {};
+            let totalReferralCount = 0;
+            let todayReferralCount = 0;
+            const todayStr = new Date().toDateString();
 
             // Map each customer
             rawCustomers.forEach(cust => {
@@ -209,21 +234,34 @@
                 }
             });
 
-            // Find who used whose code
+            // Find who used whose code and calculate Today's count
             rawCustomers.forEach(cust => {
                 const referredBy = cust.referredBy || cust.usedReferralCode;
                 if (referredBy && referrerMap[referredBy]) {
                     referrerMap[referredBy].count += 1;
+                    totalReferralCount++;
+
+                    const joinDateObj = cust.createdAt ? (cust.createdAt.toDate ? cust.createdAt.toDate() : new Date(cust.createdAt)) : null;
+                    if (joinDateObj && joinDateObj.toDateString() === todayStr) {
+                        todayReferralCount++;
+                    }
+
                     referrerMap[referredBy].invitedUsers.push({
                         name: cust.name || cust.userName || "User",
                         phone: cust.phone || cust.userId || cust.id,
-                        date: cust.createdAt ? (cust.createdAt.toDate ? cust.createdAt.toDate().toLocaleDateString() : new Date(cust.createdAt).toLocaleDateString()) : "N/A"
+                        date: joinDateObj ? joinDateObj.toLocaleDateString() : "N/A"
                     });
                 }
             });
 
             // Convert to array and sort by TOP invites first
             processedReferrers = Object.values(referrerMap).sort((a, b) => b.count - a.count);
+            
+            // Update Stats Cards
+            document.getElementById("statTotalReferrers").innerText = processedReferrers.filter(r => r.count > 0).length;
+            document.getElementById("statTotalReferrals").innerText = totalReferralCount;
+            document.getElementById("statTodayReferrals").innerText = todayReferralCount;
+
             renderTable(processedReferrers);
         }
 
