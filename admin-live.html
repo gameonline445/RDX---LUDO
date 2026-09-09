@@ -144,8 +144,8 @@ tr:hover{background:#26334d;}
 <body>
 
 <div class="header">
-    <h1><span class="live-indicator"></span> Realtime User Monitor</h1>
-    <span style="font-size:13px; color:#94a3b8;" id="lastUpdated">Updating live...</span>
+    <h1><span class="live-indicator"></span> Strict Realtime User Monitor</h1>
+    <span style="font-size:13px; color:#94a3b8;" id="lastUpdated">Syncing...</span>
 </div>
 
 <div class="stats-grid">
@@ -165,8 +165,8 @@ tr:hover{background:#26334d;}
 
 <div class="controls">
     <div class="tabs">
-        <button class="tab-btn active" onclick="switchFilter('all')" id="tabAll">All Users</button>
-        <button class="tab-btn" onclick="switchFilter('online')" id="tabOnline">Online Only</button>
+        <button class="tab-btn" onclick="switchFilter('all')" id="tabAll">All Users</button>
+        <button class="tab-btn active" onclick="switchFilter('online')" id="tabOnline">Online Only</button>
         <button class="tab-btn" onclick="switchFilter('offline')" id="tabOffline">Offline Only</button>
     </div>
     <div class="search-box">
@@ -208,35 +208,57 @@ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
 let allUsersData = [];
-let currentFilter = 'all';
+let currentFilter = 'online'; // Default Online Only filter
 
-// REALTIME LISTENER FOR ALL CUSTOMERS
 function listenToUserPresence() {
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         allUsersData = [];
         let onlineCount = 0;
         let offlineCount = 0;
+        const now = Date.now();
 
         snapshot.forEach((doc) => {
             const data = doc.data();
-            const isOnline = data.isOnline === true;
+            
+            // Clean up Mobile Number (Fix Double ++)
+            let cleanMobile = String(data.mobile || doc.id).replace(/\D/g, "");
+            if (cleanMobile.startsWith("91") && cleanMobile.length > 10) {
+                cleanMobile = "+" + cleanMobile;
+            } else if (cleanMobile.length === 10) {
+                cleanMobile = "+91" + cleanMobile;
+            } else {
+                cleanMobile = "+" + cleanMobile;
+            }
 
-            if (isOnline) onlineCount++;
-            else offlineCount++;
+            // Strict Ping Check: Heartbeat must be within 15 seconds
+            let lastPingMs = 0;
+            if (data.lastPing && data.lastPing.toDate) {
+                lastPingMs = data.lastPing.toDate().getTime();
+            } else if (data.lastSeenAt && data.lastSeenAt.toDate) {
+                lastPingMs = data.lastSeenAt.toDate().getTime();
+            }
+
+            const isPingActive = (now - lastPingMs) < 15000; // 15 Seconds cutoff
+            const isOnline = data.isOnline === true && isPingActive;
+
+            if (isOnline) {
+                onlineCount++;
+            } else {
+                offlineCount++;
+            }
 
             allUsersData.push({
                 id: doc.id,
-                name: data.name || "Unnamed User",
-                mobile: data.mobile || doc.id.replace(/\D/g, ""),
+                name: data.name || ("User " + cleanMobile.slice(-4)),
+                mobile: cleanMobile,
                 isOnline: isOnline,
                 city: data.city || "-",
                 state: data.state || "-",
                 balance: Number(data.balance || (Number(data.deposit || 0) + Number(data.winnings || 0))),
-                lastSeen: data.lastSeenAt ? data.lastSeenAt.toDate() : null
+                lastSeen: lastPingMs ? new Date(lastPingMs) : null
             });
         });
 
-        // Update Statistics Counters
         document.getElementById("countOnline").textContent = onlineCount;
         document.getElementById("countOffline").textContent = offlineCount;
         document.getElementById("countTotal").textContent = snapshot.size;
@@ -247,6 +269,11 @@ function listenToUserPresence() {
         console.error("Firestore Listen Error:", error);
     });
 }
+
+// Auto Refresh every 5 seconds to clear stale connections
+setInterval(() => {
+    if (allUsersData.length > 0) renderTable();
+}, 5000);
 
 function renderTable() {
     const tbody = document.getElementById("userTableBody");
@@ -268,14 +295,14 @@ function renderTable() {
     }
 
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">No users found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">No users currently active on the site.</td></tr>`;
         return;
     }
 
     tbody.innerHTML = filtered.map(u => `
         <tr>
             <td style="font-weight:700;">${escapeHtml(u.name)}</td>
-            <td>+${escapeHtml(u.mobile)}</td>
+            <td>${escapeHtml(u.mobile)}</td>
             <td>
                 ${u.isOnline 
                     ? `<span class="status-badge status-online"><span class="dot"></span> ONLINE</span>` 
@@ -285,7 +312,7 @@ function renderTable() {
             <td><strong style="color:#e2e8f0;">${escapeHtml(u.city)}</strong></td>
             <td><span style="color:#94a3b8;">${escapeHtml(u.state)}</span></td>
             <td style="color:#22c55e; font-weight:800;">₹${u.balance}</td>
-            <td style="color:#94a3b8; font-size:12px;">${u.lastSeen ? u.lastSeen.toLocaleString() : 'N/A'}</td>
+            <td style="color:#94a3b8; font-size:12px;">${u.lastSeen ? u.lastSeen.toLocaleTimeString() : 'N/A'}</td>
         </tr>
     `).join('');
 }
