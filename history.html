@@ -3,14 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - History</title>
+<title>RDX LUDO - History & Logs</title>
 
-<!-- FontAwesome Icons -->
+<!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE SDK (Compat) -->
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
+
+<script>
+// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("index.html");
+}
+</script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -25,19 +32,7 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
-button, input{font:inherit;}
-
-/* STATUS ALERT BOX */
-.status-box {
-    margin: 12px 14px 0 14px;
-    padding: 10px 14px;
-    border-radius: 12px;
-    background: #e0f2fe;
-    border: 1px solid #bae6fd;
-    color: #0369a1;
-    font-size: 12px;
-    font-weight: 700;
-}
+button,input{font:inherit;}
 
 /* TOP HEADER */
 .top-header{
@@ -59,15 +54,16 @@ button, input{font:inherit;}
     height:42px;
     border:0;
     border-radius:14px;
-    background:#f87171;
+    background:linear-gradient(145deg,#ff7165,#ff8a70);
     color:white;
-    font-size:18px;
+    font-size:20px;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
 }
 
+/* BRAND 3D LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -76,126 +72,294 @@ button, input{font:inherit;}
     display:flex;
     align-items:center;
     justify-content:center;
+    cursor:pointer;
     border:1.5px solid #bae6fd;
     background:#ffffff;
+    box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-.logo img{width:100%;height:100%;object-fit:cover;}
 
-.header-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
+.logo img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
-    width:42px;
-    height:42px;
+    height:38px;
+    padding:0 10px;
     border:0;
-    border-radius:14px;
+    border-radius:20px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:18px;
+    gap:5px;
+    font-size:13px;
+    font-weight:800;
     color:white;
     cursor:pointer;
 }
-.bell{background:#6366f1;}
-.cash{background:#22c55e;}
-.gift{background:#f97316;}
+.icon-only{width:38px;padding:0;border-radius:50%;}
+.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
+.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);}
+.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);}
 
-/* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
 .page-title{
+    font-size:20px;
+    font-weight:900;
+    color:#0c4a6e;
+    margin-bottom:12px;
     display:flex;
     align-items:center;
-    gap:10px;
-    font-size:22px;
-    font-weight:900;
-    color:#0369a1;
+    gap:8px;
+}
+
+/* SEARCH BAR */
+.search-box-wrap{
+    position:relative;
+    margin-bottom:12px;
+}
+.search-icon{
+    position:absolute;
+    left:14px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#0284c7;
+    font-size:14px;
+}
+.search-input{
+    width:100%;
+    height:46px;
+    border-radius:14px;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    padding:0 14px 0 38px;
+    font-size:13px;
+    font-weight:700;
+    color:#0f172a;
+    outline:none;
+    box-shadow:0 4px 14px rgba(2,132,199,0.04);
+}
+.search-input:focus{
+    border-color:#0284c7;
+}
+
+/* FILTER TABS */
+.filter-scroll{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    scrollbar-width:none;
     margin-bottom:16px;
 }
-.page-title i{
-    font-size:20px;
-    color:#0284c7;
-    background:#e0f2fe;
-    padding:10px;
-    border-radius:14px;
-    border:1px solid #bae6fd;
-}
-
-/* SEARCH */
-.search-box{position:relative;margin-bottom:16px;}
-.search-box i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#64748b;}
-.search-box input{
-    width:100%;
-    padding:14px 16px 14px 45px;
-    border-radius:16px;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    font-size:13px;
-    font-weight:600;
-    outline:none;
-}
-
-/* TABS */
-.tabs-wrapper{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;}
+.filter-scroll::-webkit-scrollbar{display:none;}
 .tab-btn{
-    white-space:nowrap;
-    padding:10px 18px;
-    border-radius:20px;
+    padding:8px 16px;
+    border-radius:18px;
     border:1.5px solid #bae6fd;
     background:#ffffff;
-    color:#0284c7;
-    font-size:13px;
-    font-weight:800;
+    color:#64748b;
+    font-weight:850;
+    font-size:12px;
     cursor:pointer;
+    white-space:nowrap;
+    transition:all 0.2s ease;
 }
-.tab-btn.active{background:#0284c7;color:#ffffff;border-color:#0284c7;}
+.tab-btn.active{
+    background:#0284c7;
+    color:#ffffff;
+    border-color:#0284c7;
+    box-shadow:0 4px 12px rgba(2,132,199,0.25);
+}
 
-/* LIST */
-.history-list{display:flex;flex-direction:column;gap:12px;}
-.history-item{
+/* HISTORY CARDS */
+.history-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
     border-radius:18px;
     padding:14px 16px;
+    margin-bottom:10px;
+    box-shadow:0 4px 12px rgba(2,132,199,0.04);
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
 }
-.item-left{display:flex;align-items:center;gap:12px;}
-.item-icon{
-    width:44px;
-    height:44px;
-    border-radius:14px;
+.history-left{display:flex;align-items:center;gap:12px;}
+.history-icon{
+    width:42px;
+    height:42px;
+    border-radius:12px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:18px;
-    color:white;
-    flex-shrink:0;
 }
-.type-deposit{background:#22c55e;}
-.type-withdraw{background:#ef4444;}
-.type-battle{background:#6366f1;}
+.icon-win{background:#dcfce7;color:#15803d;}
+.icon-lost{background:#fee2e2;color:#be123c;}
+.icon-cancel{background:#f1f5f9;color:#64748b;}
+.icon-dep{background:#e0f2fe;color:#0284c7;}
+.icon-with{background:#fef3c7;color:#b45309;}
 
-.item-details h4{font-size:14px;font-weight:850;color:#0f172a;}
-.item-details p{font-size:11px;font-weight:600;color:#64748b;}
-.item-details small{font-size:10px;font-weight:700;color:#94a3b8;display:block;}
+.history-details h4{
+    font-size:14px;
+    font-weight:850;
+    color:#0c4a6e;
+}
+.history-details p{
+    font-size:11px;
+    color:#64748b;
+    font-weight:600;
+    margin-top:2px;
+}
+.history-details .utr-tag{
+    display:inline-block;
+    font-size:11px;
+    color:#0369a1;
+    font-weight:750;
+    margin-top:2px;
+}
+.history-details .reason-tag{
+    display:block;
+    font-size:10px;
+    color:#be123c;
+    font-weight:750;
+    margin-top:2px;
+}
 
-.item-right{text-align:right;}
-.amount{font-size:15px;font-weight:900;}
-.amount.plus{color:#16a34a;}
-.amount.minus{color:#dc2626;}
-.status-badge{
+.history-right{text-align:right;}
+.amount-win{font-size:16px;font-weight:900;color:#15803d;}
+.amount-loss{font-size:16px;font-weight:900;color:#be123c;}
+.amount-cancel{font-size:16px;font-weight:900;color:#64748b;}
+
+/* BADGES */
+.badge-status{
     display:inline-block;
     padding:3px 8px;
     border-radius:8px;
     font-size:10px;
-    font-weight:800;
+    font-weight:850;
     text-transform:uppercase;
+    margin-top:4px;
 }
-.badge-success{background:#dcfce7;color:#15803d;}
-.badge-pending{background:#fef3c7;color:#b45309;}
-.badge-failed{background:#fee2e2;color:#b91c1c;}
+.status-approved, .status-success, .status-won{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.status-rejected, .status-lost{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
+.status-pending{background:#fef3c7;color:#b45309;border:1px solid #fde68a;}
+.status-cancelled{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;}
 
-.empty-state{text-align:center;padding:40px 20px;color:#64748b;font-weight:700;}
+.empty-state{
+    text-align:center;
+    padding:40px 14px;
+    color:#64748b;
+}
+.empty-state i{font-size:36px;color:#bae6fd;margin-bottom:10px;}
+
+/* SIDE DRAWER */
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+    backdrop-filter:blur(4px);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+}
+.drawer-overlay.active{opacity:1;pointer-events:auto;}
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:280px;
+    height:100%;
+    background:#ffffff;
+    z-index:1000;
+    box-shadow:4px 0 25px rgba(2,132,199,0.15);
+    transform:translateX(-100%);
+    transition:transform 0.2s cubic-bezier(0.4,0,0.2,1);
+    display:flex;
+    flex-direction:column;
+}
+.drawer.active{transform:translateX(0);}
+.drawer-header{
+    padding:20px 16px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.drawer-user{display:flex;align-items:center;gap:10px;}
+.drawer-avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.drawer-avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+.drawer-close{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1px solid #bae6fd;
+    background:#ffffff;
+    color:#0c4a6e;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.drawer-links{flex:1;overflow-y:auto;padding:12px;}
+.drawer-item{
+    width:100%;
+    padding:10px 14px;
+    border:0;
+    border-radius:14px;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    font-weight:750;
+    color:#334155;
+    cursor:pointer;
+    margin-bottom:6px;
+    transition:background 0.2s ease;
+}
+.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-deposit{background:linear-gradient(145deg,#0284c7,#0369a1);}
+.menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+
+.drawer-footer{display:none;}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -204,12 +368,14 @@ button, input{font:inherit;}
     left:0;
     width:100%;
     height:74px;
-    background:#ffffff;
-    border-top:1px solid #e2e8f0;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(12px);
+    border-top:1.5px solid #e2e8f0;
     display:flex;
-    justify-space:around;
+    justify-content:space-around;
     align-items:center;
     z-index:200;
+    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
 }
 .nav-item{
     width:25%;
@@ -221,9 +387,11 @@ button, input{font:inherit;}
     align-items:center;
     justify-content:center;
     gap:4px;
-    color:#1e293b;
-    font-size:12px;
+    color:#64748b;
+    font-size:11px;
     font-weight:700;
+    cursor:pointer;
+    position:relative;
 }
 .nav-icon-box{
     width:42px;
@@ -234,61 +402,100 @@ button, input{font:inherit;}
     justify-content:center;
     font-size:18px;
     color:#ffffff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
-.icon-home{background:#6366f1;}
-.icon-wallet{background:#22c55e;}
-.icon-support{background:#38bdf8;}
-.icon-profile{background:#f97316;}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 </style>
 </head>
 
 <body>
 
+<!-- SIDE DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
+<div class="drawer" id="sideDrawer">
+    <div class="drawer-header">
+        <div class="drawer-user">
+            <div class="drawer-avatar" id="drawerAvatar">
+                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
+            </div>
+            <div>
+                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
+                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
+            </div>
+        </div>
+        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <div class="drawer-links">
+        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
+        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
+        <button class="drawer-item" onclick="window.location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
+        <button class="drawer-item" onclick="window.location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
+        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
+        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
+        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
+    </div>
+</div>
+
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo"><img src="logo.png" alt="RDX"></div>
+        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
+            <img src="logo.png" alt="RDX Logo">
+        </div>
     </div>
     <div class="header-right">
-        <button class="header-icon bell" onclick="window.location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon cash" onclick="window.location.href='wallet.html'"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon gift" onclick="window.location.href='referral.html'"><i class="fa-solid fa-gift"></i></button>
+        <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
     </div>
 </header>
 
-<div class="status-box" id="userStatusInfo">Connecting to server...</div>
-
 <main class="container">
+
     <div class="page-title">
-        <i class="fa-solid fa-clock-rotate-left"></i>
-        <span>History & Activity Logs</span>
+        <i class="fa-solid fa-clock-rotate-left" style="color:#0284c7;"></i> History & Activity Logs
     </div>
 
-    <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Search by Date, UTR, Amount..." oninput="filterLogs()">
+    <!-- SEARCH BAR -->
+    <div class="search-box-wrap">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="historySearchInput" class="search-input" placeholder="Search by Date, UTR, Amount, Status, Opponent...">
     </div>
 
-    <div class="tabs-wrapper">
-        <button class="tab-btn active" onclick="switchTab('all', this)">All Activity</button>
-        <button class="tab-btn" onclick="switchTab('battle', this)">Battles History</button>
-        <button class="tab-btn" onclick="switchTab('deposit', this)">Deposits</button>
-        <button class="tab-btn" onclick="switchTab('withdraw', this)">Withdrawals</button>
+    <!-- TABS -->
+    <div class="filter-scroll">
+        <button class="tab-btn active" onclick="setFilter('all', this)">All Activity</button>
+        <button class="tab-btn" onclick="setFilter('battles', this)">⚔️ Battles History</button>
+        <button class="tab-btn" onclick="setFilter('deposits', this)">💰 Deposits</button>
+        <button class="tab-btn" onclick="setFilter('withdrawals', this)">💳 Withdrawals</button>
     </div>
 
-    <div class="history-list" id="historyList">
-        <div class="empty-state">Loading history logs...</div>
+    <!-- LOGS LIST -->
+    <div id="logsContainer">
+        <p style="text-align:center; color:#64748b; font-size:13px; padding:30px;">Loading history records...</p>
     </div>
+
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
+// Mobile Back Button Override: Directly redirect to dashboard on back button press
+history.pushState({ page: 1 }, "", "");
+window.addEventListener("popstate", function (event) {
+    window.location.href = "dashboard.html";
+});
+
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -300,149 +507,296 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
-let allLogsData = [];
-let currentCategory = 'all';
-
-function getMobileFromStorage() {
-    let raw = localStorage.getItem("rdxFirebaseUserId") || 
-              localStorage.getItem("rdxVerifiedMobile") || 
-              localStorage.getItem("userMobile") || 
-              localStorage.getItem("mobile") || "";
+function getCleanUserId() {
+    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
+const userId = getCleanUserId();
+let allLogs = [];
+let activeTab = "all";
 
-async function loadUserHistory() {
-    const rawMobile = getMobileFromStorage();
-    const statusBox = document.getElementById("userStatusInfo");
+let battlesData = [];
+let depositsData = [];
+let withdrawalsData = [];
 
-    if(!rawMobile || rawMobile.length < 10) {
-        statusBox.style.background = "#fee2e2";
-        statusBox.style.color = "#991b1b";
-        statusBox.textContent = "Error: Mobile number missing in session. Please log in again.";
-        document.getElementById("historyList").innerHTML = `<div class="empty-state">Please log in to view history.</div>`;
-        return;
-    }
+function toggleMenu() {
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
 
-    const tenDigit = rawMobile.slice(-10);
-    const countryDigit = "91" + tenDigit;
-    statusBox.textContent = `Account: +${countryDigit} | Fetching records...`;
+function parseItemTime(ts) {
+    if (!ts) return { dateObj: new Date(0), formatted: "—" };
+    let d;
+    if (typeof ts.toDate === "function") { d = ts.toDate(); }
+    else if (ts.seconds) { d = new Date(ts.seconds * 1000); }
+    else { d = new Date(ts); }
 
-    let records = [];
+    const formatted = isNaN(d.getTime()) ? "—" : d.toLocaleString("en-IN", {
+        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true
+    });
+    return { dateObj: d, formatted: formatted };
+}
+
+async function loadHeaderUserData() {
+    if (!userId) { window.location.replace("index.html"); return; }
+    const docId = userId.length === 10 ? "91" + userId : userId;
 
     try {
-        // Query 1: Direct subcollection (customers -> history)
-        const sub1 = await firebaseDB.collection("customers").doc(countryDigit).collection("history").get();
-        sub1.forEach(d => records.push({ id: d.id, ...d.data() }));
+        const snap = await firebaseDB.collection("customers").doc(docId).get();
+        if (snap.exists) {
+            const d = snap.data();
+            const displayName = d.name || ("User " + userId.slice(-4));
+            document.getElementById("drawerName").textContent = displayName;
+            document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
+            document.getElementById("drawerMobile").textContent = "+" + userId;
+            document.getElementById("topBalance").textContent = Number(d.balance || 0);
+            document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
+        }
+    } catch(err) { console.error(err); }
+}
 
-        const sub2 = await firebaseDB.collection("customers").doc(tenDigit).collection("history").get();
-        sub2.forEach(d => records.push({ id: d.id, ...d.data() }));
+// REAL-TIME LISTENER FOR ALL LOGS
+function startRealtimeLogsListener() {
+    if (!userId) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
 
-        // Query 2: All root level transactions matching mobile
-        const txSnap = await firebaseDB.collection("transactions").get();
-        txSnap.forEach(d => {
-            let data = d.data();
-            let str = JSON.stringify(data);
-            if(str.includes(tenDigit) || str.includes(countryDigit)) {
-                records.push({ id: d.id, ...data });
-            }
-        });
+    // 1. Battles Real-Time Listener
+    firebaseDB.collection("battles").onSnapshot(snap => {
+        let list = [];
+        snap.forEach(doc => {
+            const b = doc.data();
+            if (b.creatorUid === docId || b.acceptedUid === docId) {
+                const timeInfo = parseItemTime(b.resolvedAt || b.startedAt || b.createdAt);
+                const isCreator = b.creatorUid === docId;
+                const oppName = isCreator ? (b.acceptedName || "Opponent") : (b.creatorName || "Creator");
 
-        // Query 3: All battles matching user
-        const battleSnap = await firebaseDB.collection("battles").get();
-        battleSnap.forEach(d => {
-            let data = d.data();
-            let str = JSON.stringify(data);
-            if(str.includes(tenDigit) || str.includes(countryDigit)) {
-                records.push({
-                    id: d.id,
-                    type: 'battle',
-                    title: 'Ludo Battle',
-                    description: `Game ID: ${d.id}`,
-                    amount: data.amount || data.entryFee || 0,
-                    status: data.status || 'Completed',
-                    date: data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'Recent'
+                let battleStatus = "Live";
+                let isWon = false;
+                let isCancelled = false;
+
+                if (b.status === "completed") {
+                    if (b.winnerUid === docId) {
+                        battleStatus = "Won";
+                        isWon = true;
+                    } else {
+                        battleStatus = "Lost";
+                    }
+                } else if (b.status === "cancelled") {
+                    battleStatus = "Cancelled";
+                    isCancelled = true;
+                }
+
+                list.push({
+                    type: "battle",
+                    id: doc.id,
+                    title: `Battle vs ${oppName}`,
+                    dateStr: timeInfo.formatted,
+                    timeObj: timeInfo.dateObj,
+                    amount: b.amount,
+                    prize: b.prize,
+                    status: battleStatus,
+                    isWon: isWon,
+                    isCancelled: isCancelled,
+                    searchKey: `battle vs ${oppName} ${timeInfo.formatted} ${b.amount} ${b.prize} ${battleStatus} ${doc.id}`
                 });
             }
         });
+        battlesData = list;
+        mergeAndRenderLogs();
+    });
 
-    } catch (e) {
-        console.error("Firestore Error:", e);
-        statusBox.textContent = "Database Error: " + e.message;
-    }
+    // 2. Deposits Real-Time Listener
+    firebaseDB.collection("deposits").onSnapshot(snap => {
+        let list = [];
+        snap.forEach(doc => {
+            const d = doc.data();
+            const cleanUid = String(d.uid || d.userId).replace(/\D/g, "");
+            if (cleanUid === userId) {
+                const timeInfo = parseItemTime(d.createdAt || d.date);
+                const rawStatus = String(d.status || "pending").toLowerCase();
+                const utrVal = d.utr ? String(d.utr).trim() : "";
 
-    // Filter duplicates
-    const uniqueMap = new Map();
-    records.forEach(r => uniqueMap.set(r.id, r));
-    allLogsData = Array.from(uniqueMap.values());
+                list.push({
+                    type: "deposit",
+                    id: doc.id,
+                    title: "Deposit Amount",
+                    dateStr: timeInfo.formatted,
+                    timeObj: timeInfo.dateObj,
+                    amount: d.amount,
+                    status: rawStatus,
+                    utr: utrVal,
+                    comment: d.comment || "",
+                    searchKey: `deposit amount ${timeInfo.formatted} ${d.amount} ${utrVal} ${rawStatus} ${d.comment || ''} ${doc.id}`
+                });
+            }
+        });
+        depositsData = list;
+        mergeAndRenderLogs();
+    });
 
-    statusBox.textContent = `Account: +${countryDigit} | Total records found: ${allLogsData.length}`;
+    // 3. Withdrawals Real-Time Listener
+    firebaseDB.collection("withdrawals").onSnapshot(snap => {
+        let list = [];
+        snap.forEach(doc => {
+            const w = doc.data();
+            const cleanUid = String(w.uid || w.mobile).replace(/\D/g, "");
+            if (cleanUid === userId) {
+                const timeInfo = parseItemTime(w.createdAt || w.date);
+                const rawStatus = String(w.status || "pending").toLowerCase();
+                const modeVal = w.mode === "BANK" ? `Bank: ${w.accountNumber || ''}` : `UPI: ${w.upiId || ''}`;
+
+                list.push({
+                    type: "withdrawal",
+                    id: doc.id,
+                    title: "Withdrawal Cash",
+                    dateStr: timeInfo.formatted,
+                    timeObj: timeInfo.dateObj,
+                    amount: w.amount,
+                    status: rawStatus,
+                    modeInfo: modeVal,
+                    comment: w.comment || "",
+                    searchKey: `withdrawal cash ${timeInfo.formatted} ${w.amount} ${modeVal} ${rawStatus} ${w.comment || ''} ${doc.id}`
+                });
+            }
+        });
+        withdrawalsData = list;
+        mergeAndRenderLogs();
+    });
+}
+
+function mergeAndRenderLogs() {
+    allLogs = [...battlesData, ...depositsData, ...withdrawalsData];
+    allLogs.sort((a, b) => b.timeObj - a.timeObj);
     renderLogs();
 }
 
 function renderLogs() {
-    const container = document.getElementById("historyList");
-    const query = document.getElementById("searchInput").value.toLowerCase().trim();
+    const container = document.getElementById("logsContainer");
+    const searchVal = document.getElementById("historySearchInput").value.toLowerCase().trim();
 
-    let filtered = allLogsData.filter(item => {
-        let type = (item.type || '').toLowerCase();
-        let matchesCategory = true;
-        
-        if(currentCategory === 'battle') matchesCategory = type.includes('battle') || type.includes('game');
-        else if(currentCategory === 'deposit') matchesCategory = type.includes('deposit') || type.includes('add');
-        else if(currentCategory === 'withdraw') matchesCategory = type.includes('withdraw');
+    let filtered = allLogs;
 
-        let fullText = JSON.stringify(item).toLowerCase();
-        let matchesSearch = fullText.includes(query);
+    if (activeTab === "battles") filtered = allLogs.filter(x => x.type === "battle");
+    else if (activeTab === "deposits") filtered = allLogs.filter(x => x.type === "deposit");
+    else if (activeTab === "withdrawals") filtered = allLogs.filter(x => x.type === "withdrawal");
 
-        return matchesCategory && matchesSearch;
-    });
+    if (searchVal !== "") {
+        filtered = filtered.filter(item => (item.searchKey || "").toLowerCase().includes(searchVal));
+    }
 
-    if (filtered.length === 0) {
-        container.innerHTML = `<div class="empty-state">No records found.</div>`;
+    if (!filtered.length) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fa-solid fa-folder-open"></i>
+                <h4 style="color:#0c4a6e; font-size:15px; font-weight:850;">No Records Found</h4>
+                <p style="font-size:12px; margin-top:4px;">Aapki search ya selected tab ke hisab se koi data nahi mila.</p>
+            </div>
+        `;
         return;
     }
 
-    let html = '';
-    filtered.forEach(item => {
-        let type = (item.type || 'transaction').toLowerCase();
-        let isPlus = item.isCredit || type.includes('deposit') || type.includes('win');
-        let dateStr = item.date || 'Recent';
+    container.innerHTML = filtered.map(item => {
+        if (item.type === "battle") {
+            let iconBox = `<div class="history-icon icon-lost"><i class="fa-solid fa-gamepad"></i></div>`;
+            let amtClass = "amount-loss";
+            let amtSign = `- ₹${item.amount}`;
+            let statusBadge = `<span class="badge-status status-lost">Lost</span>`;
 
-        html += `
-        <div class="history-item">
-            <div class="item-left">
-                <div class="item-icon ${type.includes('deposit') ? 'type-deposit' : type.includes('withdraw') ? 'type-withdraw' : 'type-battle'}">
-                    <i class="fa-solid ${type.includes('deposit') ? 'fa-wallet' : type.includes('withdraw') ? 'fa-building-columns' : 'fa-dice'}"></i>
-                </div>
-                <div class="item-details">
-                    <h4>${item.title || item.type || 'Transaction'}</h4>
-                    <p>${item.description || item.utr || 'Activity'}</p>
-                    <small>${dateStr}</small>
-                </div>
-            </div>
-            <div class="item-right">
-                <div class="amount ${isPlus ? 'plus' : 'minus'}">${isPlus ? '+' : '-'}₹${parseFloat(item.amount || 0).toFixed(2)}</div>
-                <span class="status-badge badge-success">${item.status || 'Success'}</span>
-            </div>
-        </div>`;
-    });
+            if (item.isWon) {
+                iconBox = `<div class="history-icon icon-win"><i class="fa-solid fa-trophy"></i></div>`;
+                amtClass = "amount-win";
+                amtSign = `+ ₹${item.prize}`;
+                statusBadge = `<span class="badge-status status-won">Won</span>`;
+            } else if (item.isCancelled) {
+                iconBox = `<div class="history-icon icon-cancel"><i class="fa-solid fa-ban"></i></div>`;
+                amtClass = "amount-cancel";
+                amtSign = `Refund ₹${item.amount}`;
+                statusBadge = `<span class="badge-status status-cancelled">Cancelled</span>`;
+            }
 
-    container.innerHTML = html;
+            return `
+                <div class="history-card">
+                    <div class="history-left">
+                        ${iconBox}
+                        <div class="history-details">
+                            <h4>${item.title}</h4>
+                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="${amtClass}">${amtSign}</div>
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        } else if (item.type === "deposit") {
+            const s = item.status;
+            let statusBadge = `<span class="badge-status status-pending">Pending</span>`;
+            if (s === "approved" || s === "success") {
+                statusBadge = `<span class="badge-status status-approved">Success</span>`;
+            } else if (s === "rejected" || s === "failed") {
+                statusBadge = `<span class="badge-status status-rejected">Rejected</span>`;
+            }
+
+            return `
+                <div class="history-card">
+                    <div class="history-left">
+                        <div class="history-icon icon-dep"><i class="fa-solid fa-money-bill-wave"></i></div>
+                        <div class="history-details">
+                            <h4>Deposit Amount</h4>
+                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                            ${item.utr ? `<span class="utr-tag"><i class="fa-solid fa-receipt"></i> UTR: ${item.utr}</span>` : ''}
+                            ${item.comment && s === 'rejected' ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="amount-win">+ ₹${item.amount}</div>
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        } else if (item.type === "withdrawal") {
+            const s = item.status;
+            let statusBadge = `<span class="badge-status status-pending">Pending</span>`;
+            if (s === "approved" || s === "success") {
+                statusBadge = `<span class="badge-status status-approved">Success</span>`;
+            } else if (s === "rejected" || s === "failed") {
+                statusBadge = `<span class="badge-status status-rejected">Rejected</span>`;
+            }
+
+            return `
+                <div class="history-card">
+                    <div class="history-left">
+                        <div class="history-icon icon-with"><i class="fa-solid fa-money-bill-transfer"></i></div>
+                        <div class="history-details">
+                            <h4>Withdrawal Cash</h4>
+                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
+                            ${item.modeInfo ? `<span class="utr-tag" style="color:#64748b;">${item.modeInfo}</span>` : ''}
+                            ${item.comment && s === 'rejected' ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
+                        </div>
+                    </div>
+                    <div class="history-right">
+                        <div class="amount-loss">- ₹${item.amount}</div>
+                        ${statusBadge}
+                    </div>
+                </div>
+            `;
+        }
+    }).join("");
 }
 
-function switchTab(cat, btn) {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentCategory = cat;
-    renderLogs();
-}
+document.getElementById("historySearchInput").addEventListener("input", renderLogs);
 
-function filterLogs() {
+function setFilter(type, btnEl) {
+    activeTab = type;
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+    btnEl.classList.add("active");
     renderLogs();
 }
 
 window.addEventListener("load", () => {
-    loadUserHistory();
+    loadHeaderUserData();
+    startRealtimeLogsListener();
 });
 </script>
 
