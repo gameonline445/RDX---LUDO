@@ -48,7 +48,7 @@
         .badge-completed { background: rgba(72, 187, 120, 0.15); color: #68d391; border: 1px solid rgba(72, 187, 120, 0.3); }
         .badge-cancelled { background: rgba(229, 62, 62, 0.15); color: #fc8181; border: 1px solid rgba(229, 62, 62, 0.3); }
 
-        .btn-group { display: flex; flex-direction: column; gap: 6px; width: 110px; }
+        .btn-group { display: flex; flex-direction: column; gap: 6px; width: 120px; }
         .btn { padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; text-align: center; }
         .btn-win { background: #38a169; color: #ffffff; }
         .btn-cancel { background: #e53e3e; color: #ffffff; }
@@ -133,7 +133,7 @@
                         </tr>
                     </thead>
                     <tbody id="battlesTableBody">
-                        <tr><td colspan="7" style="text-align: center;">Loading real firebase data...</td></tr>
+                        <tr><td colspan="7" style="text-align: center;">Syncing real Firebase battles...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -144,8 +144,8 @@
     <div id="winnerModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
-            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Select Battle Winner</h3>
-            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Prize will be credited to winner's wallet instantly in Firebase.</p>
+            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Declare Battle Result</h3>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select the Winner. Prize will be credited to winner's wallet instantly.</p>
             <div id="winnerOptionsContainer"></div>
         </div>
     </div>
@@ -177,7 +177,7 @@
         let allBattles = [];
         let userCache = {};
 
-        // Sync and fetch real mobile numbers from Firestore 'customers' collection
+        // Helper to get real mobile number & name from customer collection
         async function fetchUserDetails(uid, defaultName, defaultMobile) {
             if (!uid) return { name: defaultName || "User", mobile: defaultMobile || "N/A" };
             if (userCache[uid]) return userCache[uid];
@@ -200,6 +200,27 @@
             return { name: defaultName || "User", mobile: uid };
         }
 
+        // Helper to extract Screenshot or Video Proof from any possible field in Firebase document
+        function extractProofUrl(data) {
+            if (!data) return null;
+            if (data.proofUrl) return data.proofUrl;
+            if (data.screenshot) return data.screenshot;
+            if (data.screenshotUrl) return data.screenshotUrl;
+            if (data.videoProof) return data.videoProof;
+            if (data.video) return data.video;
+            if (data.proof) return data.proof;
+
+            // Check dynamic fields like result_917878852370
+            for (let key in data) {
+                if (key.startsWith("result_") || key.toLowerCase().includes("proof") || key.toLowerCase().includes("screenshot")) {
+                    if (typeof data[key] === "string" && (data[key].startsWith("http://") || data[key].startsWith("https://"))) {
+                        return data[key];
+                    }
+                }
+            }
+            return null;
+        }
+
         function listenBattles() {
             db.collection("battles").onSnapshot(async snapshot => {
                 allBattles = [];
@@ -212,15 +233,16 @@
                     const creatorUid = data.creatorUid || data.hostId || "";
                     const joinerUid = data.acceptedUid || data.joinerUid || "";
 
-                    // Fetch Real Details from Firestore customers
+                    // Sync Creator and Joiner Details
                     data.creatorDetails = await fetchUserDetails(creatorUid, data.creatorName || data.hostName, data.creatorMobile);
                     data.joinerDetails = joinerUid ? await fetchUserDetails(joinerUid, data.acceptedName, "") : null;
+                    data.proofMediaUrl = extractProofUrl(data);
 
                     allBattles.push(data);
 
                     const st = (data.status || "").toLowerCase();
                     if (st === "open") open++;
-                    else if (st === "running" || st === "in_progress") running++;
+                    else if (st === "running" || st === "in_progress" || st === "pending") running++;
                     else if (st === "completed" || st === "under_review") review++;
                 }
 
@@ -264,29 +286,27 @@
                 const dateTimeStr = formatDateTime(b.createdAt);
 
                 let statusBadge = `<span class="badge badge-open">OPEN</span>`;
-                if (status === "running" || status === "in_progress") statusBadge = `<span class="badge badge-running">RUNNING</span>`;
+                if (status === "running" || status === "in_progress" || status === "pending") statusBadge = `<span class="badge badge-running">RUNNING</span>`;
                 else if (status === "completed" || status === "under_review") statusBadge = `<span class="badge badge-completed">${status.toUpperCase()}</span>`;
                 else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
 
-                // Proof Logic
+                // Proof Screenshot/Video Button Logic
                 let proofBtnHTML = `<span style="color:#718096; font-size:11px;">N/A</span>`;
                 if (status !== "open") {
-                    const proofUrl = b.proofUrl || b.screenshot || b.proof;
-                    if (proofUrl) {
-                        proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${proofUrl}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
+                    if (b.proofMediaUrl) {
+                        proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${b.proofMediaUrl}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
                     } else {
                         proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof Uploaded</span>`;
                     }
                 }
 
-                // Actions Logic
+                // Action Options Logic (Win / Loss / Cancel)
                 let actionsHTML = `<div class="btn-group">`;
 
                 if (status === "open") {
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', null, ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
-                } else if (status === "running" || status === "in_progress" || status === "under_review") {
-                    // Running / Disputed Battles -> Win/Loss & Cancel Available
-                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
+                } else if (status === "running" || status === "in_progress" || status === "pending" || status === "under_review") {
+                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize})"><i class="fa-solid fa-trophy"></i> Win/Loss</button>`;
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', '${b.acceptedUid || joinerMobile}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                 } else {
                     actionsHTML += `<span style="color:#718096; font-size:12px;">Completed</span>`;
@@ -350,20 +370,20 @@
                 <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorKey}', '${joinerKey}', ${prize})">
                     <div>
                         <strong style="color:#63b3ed;">${creatorName}</strong> (${creatorKey})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Winner (Credit ₹${prize} to Winnings)</span>
+                        <span style="font-size:12px; color:#a0aec0;">Set Winner (Credit ₹${prize} to Wallet Winnings)</span>
                     </div>
-                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
+                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:22px;"></i>
                 </div>
             `;
 
-            if (joinerKey && joinerKey !== 'null') {
+            if (joinerKey && joinerKey !== 'null' && joinerKey !== 'undefined') {
                 optionsHTML += `
                 <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerKey}', '${creatorKey}', ${prize})">
                     <div>
                         <strong style="color:#48bb78;">${joinerName}</strong> (${joinerKey})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Winner (Credit ₹${prize} to Winnings)</span>
+                        <span style="font-size:12px; color:#a0aec0;">Set Winner (Credit ₹${prize} to Wallet Winnings)</span>
                     </div>
-                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
+                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:22px;"></i>
                 </div>
                 `;
             }
@@ -373,9 +393,9 @@
         }
 
         async function confirmDeclareWinner(battleId, winnerKey, loserKey, prize) {
-            if (confirm(`Confirm ${winnerKey} as Winner? ₹${prize} will be added directly to Firebase Wallet.`)) {
+            if (confirm(`Declare ${winnerKey} as Winner? ₹${prize} will be credited to user wallet in Firebase.`)) {
                 try {
-                    // Update Battle in Firestore
+                    // Update Battle status in Firestore
                     await db.collection("battles").doc(battleId).update({
                         status: "completed",
                         winnerUid: winnerKey,
@@ -383,11 +403,10 @@
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // Add Prize to Winner Customer Document in Firestore
+                    // Add Prize money directly to Winner Customer Document
                     const winnerRef = db.collection("customers").doc(winnerKey);
                     await winnerRef.set({
-                        winnings: firebase.firestore.FieldValue.increment(parseFloat(prize)),
-                        depositBalance: firebase.firestore.FieldValue.increment(0)
+                        winnings: firebase.firestore.FieldValue.increment(parseFloat(prize))
                     }, { merge: true });
 
                     alert(`Success! ₹${prize} credited to ${winnerKey}.`);
@@ -399,7 +418,7 @@
         }
 
         async function cancelBattle(battleId, creatorKey, joinerKey, entryFee) {
-            if (confirm("Cancel this running battle and refund entry fee to both users in Firebase?")) {
+            if (confirm("Cancel this battle and refund entry fee to both users in Firebase?")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
@@ -414,13 +433,13 @@
                     }
 
                     // Refund Joiner
-                    if (joinerKey && joinerKey !== "null") {
+                    if (joinerKey && joinerKey !== "null" && joinerKey !== "undefined") {
                         await db.collection("customers").doc(joinerKey).set({
                             depositBalance: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
                         }, { merge: true });
                     }
 
-                    alert("Battle cancelled & entry fee refunded to user wallets.");
+                    alert("Battle cancelled and entry fee refunded to user wallets.");
                 } catch(e) {
                     alert("Cancel Error: " + e.message);
                 }
@@ -429,7 +448,8 @@
 
         function viewProof(url) {
             const container = document.getElementById("proofContainer");
-            const isVideo = url.endsWith(".mp4") || url.includes("video");
+            const lowerUrl = url.toLowerCase();
+            const isVideo = lowerUrl.includes(".mp4") || lowerUrl.includes(".webm") || lowerUrl.includes("video");
 
             if (isVideo) {
                 container.innerHTML = `<video src="${url}" controls class="proof-media" autoplay></video>`;
