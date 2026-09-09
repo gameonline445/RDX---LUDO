@@ -29,7 +29,6 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; height: 100%; display: flex; flex-direction: column; gap: 16px; }
         .dashboard-title { color: #3182ce; font-size: 28px; font-weight: 800; margin-bottom: 8px; flex-shrink: 0; }
 
-        /* Updated 2-Column Grid Container matching screenshot */
         .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 700px; }
         .dash-card { background: #ffffff; border-radius: 16px; padding: 20px 22px; color: #1a202c; border: 1px solid #e2e8f0; min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
         .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
@@ -42,7 +41,9 @@
 
         .status-card { background: #ffffff; border-radius: 16px; padding: 20px; color: #1a202c; max-width: 700px; margin-top: 10px; }
         .status-title { font-size: 18px; font-weight: 800; color: #1a202c; margin-bottom: 12px; }
-        .status-badge { background: #c6f6d5; color: #22543d; font-weight: 800; font-size: 14px; padding: 10px 16px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #9ae6b4; }
+        .status-badge { background: #feebc8; color: #7b341e; font-weight: 800; font-size: 14px; padding: 10px 16px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #fbd38d; }
+        .status-badge.success { background: #c6f6d5; color: #22543d; border-color: #9ae6b4; }
+        .status-badge.error { background: #fed7d7; color: #742a2a; border-color: #feb2b2; }
         .status-sub { font-size: 13px; color: #718096; margin-top: 10px; font-weight: 600; }
     </style>
 </head>
@@ -74,7 +75,6 @@
         <main class="main-content">
             <h1 class="dashboard-title">Dashboard</h1>
 
-            <!-- 2-Column Grid Layout -->
             <div class="cards-grid">
                 <div class="dash-card">
                     <div class="card-label">ACTIVE LIVE USERS</div>
@@ -130,9 +130,9 @@
             <div class="status-card">
                 <div class="status-title">Firebase Status</div>
                 <div class="status-badge" id="statusBadge">
-                    <i class="fa-solid fa-square-check"></i> <span id="statusText">Connecting...</span>
+                    <i class="fa-solid fa-spinner fa-spin" id="statusIcon"></i> <span id="statusText">Connecting to Realtime Database...</span>
                 </div>
-                <div class="status-sub">Admin login Firebase Authentication se successful hua.</div>
+                <div class="status-sub">Realtime sync configured with Firestore.</div>
             </div>
         </main>
     </div>
@@ -152,22 +152,41 @@
         }
         const db = firebase.firestore();
 
-        function initRealtimeDashboard() {
-            // Customers Fetch
-            db.collection("customers").onSnapshot(snapshot => {
-                let totalCust = snapshot.size;
-                let activeUsers = 0, pendingKycCount = 0, sumBalance = 0, totalRef = 0;
+        function updateStatus(message, isSuccess = true) {
+            const badge = document.getElementById("statusBadge");
+            const text = document.getElementById("statusText");
+            const icon = document.getElementById("statusIcon");
+            
+            text.innerText = message;
+            if(isSuccess) {
+                badge.className = "status-badge success";
+                icon.className = "fa-solid fa-square-check";
+            } else {
+                badge.className = "status-badge error";
+                icon.className = "fa-solid fa-triangle-exclamation";
+            }
+        }
 
-                snapshot.forEach(doc => {
+        function loadRealtimeData() {
+            // 1. Customers Collection
+            db.collection("customers").onSnapshot((snapshot) => {
+                let totalCust = snapshot.size;
+                let activeUsers = 0;
+                let pendingKycCount = 0;
+                let sumBalance = 0;
+                let totalRef = 0;
+
+                snapshot.forEach((doc) => {
                     const data = doc.data();
+                    
                     if (data.isOnline === true || data.status === "online") activeUsers++;
                     if (data.kycStatus === "pending") pendingKycCount++;
                     
-                    const depBal = parseFloat(data.depositBalance || 0);
-                    const winBal = parseFloat(data.winnings || 0);
+                    const depBal = parseFloat(data.depositBalance || data.wallet || 0);
+                    const winBal = parseFloat(data.winnings || data.winningBalance || 0);
                     sumBalance += (depBal + winBal);
 
-                    if (data.referredBy || data.referredByUid) totalRef++;
+                    if (data.referredBy || data.referredByUid || data.referralCode) totalRef++;
                 });
 
                 document.getElementById("totalCustomers").innerText = totalCust;
@@ -175,22 +194,29 @@
                 document.getElementById("pendingKyc").innerText = pendingKycCount;
                 document.getElementById("totalBalance").innerText = sumBalance;
                 document.getElementById("totalReferrals").innerText = totalRef;
+
+                updateStatus("Firebase Realtime Sync Active");
+            }, (error) => {
+                console.error("Customers error:", error);
+                updateStatus("Customers Collection Read Error: " + error.message, false);
             });
 
-            // Battles Fetch
-            db.collection("battles").onSnapshot(snapshot => {
+            // 2. Battles Collection
+            db.collection("battles").onSnapshot((snapshot) => {
                 let liveMatchesCount = 0;
-                snapshot.forEach(doc => {
-                    const status = (doc.data().status || "").toLowerCase();
-                    if (status === "running" || status === "in_progress") liveMatchesCount++;
+                snapshot.forEach((doc) => {
+                    const st = (doc.data().status || "").toLowerCase();
+                    if (st === "running" || st === "in_progress" || st === "playing") liveMatchesCount++;
                 });
                 document.getElementById("liveMatches").innerText = liveMatchesCount;
-            });
+            }, (err) => console.error("Battles Error:", err));
 
-            // Deposits Fetch
-            db.collection("deposits").onSnapshot(snapshot => {
-                let pendingDepCount = 0, totalApprovedDepSum = 0;
-                snapshot.forEach(doc => {
+            // 3. Deposits Collection
+            db.collection("deposits").onSnapshot((snapshot) => {
+                let pendingDepCount = 0;
+                let totalApprovedDepSum = 0;
+
+                snapshot.forEach((doc) => {
                     const d = doc.data();
                     const st = (d.status || "").toLowerCase();
                     const amt = parseFloat(d.amount || 0);
@@ -201,12 +227,14 @@
 
                 document.getElementById("pendingDeposits").innerText = pendingDepCount;
                 document.getElementById("totalDepositPaid").innerText = totalApprovedDepSum;
-            });
+            }, (err) => console.error("Deposits Error:", err));
 
-            // Withdrawals Fetch
-            db.collection("withdrawals").onSnapshot(snapshot => {
-                let pendingWithCount = 0, totalApprovedWithSum = 0;
-                snapshot.forEach(doc => {
+            // 4. Withdrawals Collection
+            db.collection("withdrawals").onSnapshot((snapshot) => {
+                let pendingWithCount = 0;
+                let totalApprovedWithSum = 0;
+
+                snapshot.forEach((doc) => {
                     const w = doc.data();
                     const st = (w.status || "").toLowerCase();
                     const amt = parseFloat(w.amount || 0);
@@ -217,13 +245,11 @@
 
                 document.getElementById("pendingWithdrawals").innerText = pendingWithCount;
                 document.getElementById("totalWithdrawalPaid").innerText = totalApprovedWithSum;
-            });
-
-            document.getElementById("statusText").innerText = "Firebase Connected (All Data Loaded)";
+            }, (err) => console.error("Withdrawals Error:", err));
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            initRealtimeDashboard();
+            loadRealtimeData();
         });
     </script>
 </body>
