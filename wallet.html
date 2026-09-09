@@ -261,8 +261,9 @@ async function loadFirebaseCustomer(){
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         let userRef = firebaseDB.collection("customers").doc(firebaseDocId);
+
+        // Check if Document Exists with prefix 91 or without prefix
         let snapshot = await userRef.get();
-        
         if(!snapshot.exists) {
             firebaseDocId = cleanMobile;
             userRef = firebaseDB.collection("customers").doc(firebaseDocId);
@@ -270,18 +271,24 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
+        // LIVE REAL-TIME SYNC LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
                 
-                // Real-Time Balance Calculation
+                // Fetch All Sub-Balances
                 const deposit = Number(data.depositBalance || data.deposit || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
-                const realTotalBalance = deposit + winnings;
+                
+                // If total 'balance' exists in DB use it, otherwise calculate live sum
+                let total = Number(data.balance || 0);
+                if(total === 0 || total !== (deposit + winnings)) {
+                    total = deposit + winnings;
+                }
 
-                // Sync UI Elements
-                document.getElementById("mainBalance").textContent = realTotalBalance;
-                document.getElementById("topBalance").textContent = "₹" + realTotalBalance;
+                // Sync UI Elements Instantly
+                document.getElementById("mainBalance").textContent = total;
+                document.getElementById("topBalance").textContent = "₹" + total;
                 document.getElementById("depositBalance").textContent = deposit;
                 document.getElementById("winningBalance").textContent = winnings;
 
