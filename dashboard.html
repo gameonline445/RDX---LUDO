@@ -27,21 +27,25 @@ body{
 }
 button{font:inherit;}
 
-/* TOP HEADER - Matches Image 17 */
+/* TOP HEADER - RIGHT ALIGNED ICONS */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
-    justify-style:space-between;
+    justify-content:space-between; /* Left & Right split */
     padding:0 14px;
     position:sticky;
     top:0;
     z-index:100;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
-.header-left{display:flex;align-items:center;gap:10px;}
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
 .menu-btn{
     width:42px;
     height:42px;
@@ -78,7 +82,13 @@ button{font:inherit;}
     object-fit:cover;
 }
 
-.header-right{display:flex;align-items:center;gap:8px;}
+/* RIGHT SIDE BUTTONS CONTAINER */
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:auto; /* Ensures extreme right alignment */
+}
 .header-icon{
     width:38px;
     height:38px;
@@ -181,7 +191,7 @@ button{font:inherit;}
 .game-card-bottom{
     display:flex;
     align-items:flex-end;
-    justify-style:space-between;
+    justify-content:space-between;
 }
 .game-card-bottom h2{font-size:22px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,0.6);}
 .game-card-bottom p{font-size:12px;color:#cbd5e1;}
@@ -317,7 +327,7 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV - Matches Image 18 */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -429,6 +439,8 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
+    
+    <!-- 3 BUTTONS RIGHT ALIGNED -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -511,7 +523,6 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME FIRESTORE DATA SYNC
 function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -520,7 +531,6 @@ function loadDashboardDataRealtime() {
         if (snap.exists) {
             const d = snap.data();
 
-            // ADMIN BLOCK CHECK
             const isUserBlocked = d.isBlocked === true || 
                                   d.isBlock === true || 
                                   d.blocked === true || 
@@ -546,7 +556,6 @@ function loadDashboardDataRealtime() {
     });
 }
 
-// HEARTBEAT & PRESENCE TRACKER
 async function startPresenceHeartbeat() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
