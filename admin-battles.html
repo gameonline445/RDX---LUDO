@@ -12,34 +12,37 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        html, body { height: 100%; overflow: hidden; background-color: #000000; color: #ffffff; }
+        body { display: flex; flex-direction: column; }
         
-        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; flex-shrink: 0; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
         .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
         .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
         .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
-        .admin-layout { display: flex; flex: 1; }
-        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 20px; color: #1a365d; cursor: pointer; }
+
+        .admin-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; position: relative; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; overflow-y: auto; transition: left 0.3s ease; z-index: 99; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
         .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
-        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
-        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; height: 100%; display: flex; flex-direction: column; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; flex-shrink: 0; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; flex-shrink: 0; }
         .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
         .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
         .stat-card .value { font-size: 26px; font-weight: 800; }
 
-        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0; }
         .filter-card input, .filter-card select { padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
         .filter-card input[type="text"] { flex: 1; min-width: 220px; }
 
-        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
+        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; overflow-y: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; position: sticky; top: 0; z-index: 5; }
         td { padding: 12px 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
 
         .badge { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 11px; display: inline-block; }
@@ -68,12 +71,22 @@
 
         .cancel-box { background: rgba(229, 62, 62, 0.1); border: 1px solid rgba(229, 62, 62, 0.3); padding: 12px; border-radius: 10px; margin-top: 16px; text-align: center; }
         .proof-media { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-top: 10px; background: #000; border: 1px solid #2d3748; }
+
+        /* Mobile Responsiveness Improvements */
+        @media screen and (max-width: 768px) {
+            .mobile-menu-btn { display: block; }
+            .top-header { padding: 0 12px; }
+            .sidebar { position: absolute; top: 0; left: -260px; height: 100%; box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); }
+            .sidebar.mobile-open { left: 0; }
+            .main-content { padding: 12px; width: 100%; }
+        }
     </style>
 </head>
 <body>
 
     <header class="top-header">
         <div class="brand-logo-container">
+            <button class="mobile-menu-btn" onclick="toggleMobileSidebar()"><i class="fa-solid fa-bars"></i></button>
             <div class="brand-logo-img">RDX</div>
             <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
@@ -88,6 +101,8 @@
             <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
             <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
             <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <!-- Added User Complete History link below -->
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book-bookmark"></i> User Complete History</a>
             <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
             <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
             <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
@@ -185,6 +200,10 @@
 
         let allBattles = [];
         let userCache = {};
+
+        function toggleMobileSidebar() {
+            document.querySelector('.sidebar').classList.toggle('mobile-open');
+        }
 
         async function fetchUserDetails(uid, defaultName, defaultMobile) {
             if (!uid) return { name: defaultName || "User", mobile: defaultMobile || "N/A" };
@@ -371,12 +390,10 @@
             renderBattles(filtered);
         }
 
-        // Open Decision Modal with BOTH users visible + Penalty + Cancel
         function openDecisionModal(battleId, creatorName, creatorKey, joinerName, joinerKey, prize, entryFee, currentWinner) {
             const container = document.getElementById("winnerOptionsContainer");
             
             let html = `
-                <!-- Player 1 Option (Creator) -->
                 <div class="action-card">
                     <div class="action-card-header">
                         <div>
@@ -393,7 +410,6 @@
 
             if (joinerKey && joinerKey !== 'null' && joinerKey !== 'undefined') {
                 html += `
-                <!-- Player 2 Option (Joiner) -->
                 <div class="action-card">
                     <div class="action-card-header">
                         <div>
@@ -409,7 +425,6 @@
                 `;
             }
 
-            // Cancel Battle Option inside Modal
             html += `
                 <div class="cancel-box">
                     <p style="font-size:12px; color:#fc8181; margin-bottom:8px;">Need to cancel this match and refund both players?</p>
