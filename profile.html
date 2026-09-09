@@ -76,37 +76,25 @@ button{font:inherit;}
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
+/* 3 CIRCULAR ICONS ON RIGHT SIDE (NO REAL BALANCE) */
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
     height:38px;
+    width:38px;
     border:0;
-    border-radius:20px;
+    border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:15px;
+    font-size:16px;
     color:white;
     cursor:pointer;
-    padding:0 12px;
-    gap:6px;
-    font-weight:800;
-}
-.notification{
-    width:38px;
     padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#6366f1,#818cf8);
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
 }
-.wallet-top{
-    background:linear-gradient(145deg,#16a34a,#22c55e);
-    box-shadow:0 3px 10px rgba(22,163,74,0.2);
-}
-.redeem-top{
-    width:38px;
-    padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ea580c,#f97316);
-}
+.notification-icon{ background:linear-gradient(145deg,#6366f1,#818cf8); }
+.wallet-icon{ background:linear-gradient(145deg,#16a34a,#22c55e); }
+.gift-icon{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
@@ -574,7 +562,7 @@ button{font:inherit;}
     </div>
 </div>
 
-<!-- UNIFIED TOP HEADER -->
+<!-- HEADER WITH EXACT 3 ICONS (NO REAL BALANCE) -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -583,9 +571,9 @@ button{font:inherit;}
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
+        <button class="header-icon notification-icon" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-icon" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon gift-icon" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -789,14 +777,7 @@ function listenUserProfile() {
                 const d = snap.data();
                 const userName = d.name || ("User " + userId.slice(-4));
                 
-                // Real-Time Total Balance Calculation
-                const depBal = Number(d.depositBalance || 0);
                 const winBal = Number(d.winningBalance || d.winnings || 0);
-                const realTotalBalance = depBal + winBal;
-
-                // Sync Total Balance to Top Header
-                const topBalEl = document.getElementById("topBalance");
-                if (topBalEl) topBalEl.textContent = "₹" + realTotalBalance;
 
                 document.getElementById("profileName").textContent = userName;
                 document.getElementById("avatarText").textContent = userName.charAt(0).toUpperCase();
