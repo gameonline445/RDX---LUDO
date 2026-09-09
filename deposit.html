@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>RDX LUDO - Add Cash</title>
 
-<!-- FontAwesome for clean icons -->
+<!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <!-- FIREBASE -->
@@ -13,7 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -65,7 +65,7 @@ button{font:inherit;}
 }
 .menu-btn:active{transform:scale(0.95);}
 
-/* BRAND 3D LOGO */
+/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -79,7 +79,6 @@ button{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-
 .logo img{
     width:100%;
     height:100%;
@@ -370,7 +369,7 @@ button{font:inherit;}
 </nav>
 
 <script>
-// Mobile Back Button Override: Directly redirect to dashboard on back button press
+// Mobile Back Button Override
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
@@ -425,12 +424,12 @@ function proceedToPayment() {
     const amt = Number(amountInput.value);
 
     if (isNaN(amt) || amt < 100) {
-        alert("⚠️ Kam se kam (Minimum) deposit ₹100 hona chahiye.");
+        alert("⚠️ Minimum deposit ₹100 hona chahiye.");
         amountInput.focus();
         return;
     }
     if (amt > 10000) {
-        alert("⚠️ Adhik se adhik (Maximum) deposit ₹10,000 hi ho sakta hai.");
+        alert("⚠️ Maximum deposit ₹10,000 hi ho sakta hai.");
         amountInput.focus();
         return;
     }
@@ -449,6 +448,11 @@ async function loadUserData() {
             const d = snap.data();
             document.getElementById("topBalance").textContent = Number(d.balance || 0);
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
+            
+            let fullName = d.name || d.fullName || d.username || localStorage.getItem("rdxUsername") || ("User " + String(snap.id).slice(-4));
+            if(document.getElementById("menuUsername")) {
+                document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+            }
         }
     } catch(err) { console.error(err); }
 }
