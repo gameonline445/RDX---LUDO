@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Complete Payment</title>
 
-<!-- FontAwesome for Icons -->
+<!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -480,7 +480,11 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const userId = String(localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "").replace(/\D/g, "");
+function getCleanUserId() {
+    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
+    return String(raw).replace(/\D/g, "");
+}
+const userId = getCleanUserId();
 
 let cachedUserName = "";
 let cachedUserMobile = "";
@@ -503,7 +507,7 @@ async function loadSettings() {
             const userSnap = await getDoc(doc(db, "customers", docId));
             if (userSnap.exists()) {
                 const uData = userSnap.data();
-                cachedUserName = uData.name || ("User " + userId.slice(-4));
+                cachedUserName = uData.name || uData.fullName || uData.username || localStorage.getItem("rdxUsername") || ("User " + userId.slice(-4));
                 cachedUserMobile = "+" + userId;
                 document.getElementById("drawerName").textContent = cachedUserName;
                 document.getElementById("drawerMobile").textContent = cachedUserMobile;
@@ -517,7 +521,6 @@ window.copyUPI = () => {
     alert("UPI ID Copied!");
 };
 
-// Image ko Fast Compress karke Base64 me convert karne ka function
 function processImageToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -527,7 +530,7 @@ function processImageToBase64(file) {
                 const canvas = document.createElement("canvas");
                 let width = img.width;
                 let height = img.height;
-                const MAX_WIDTH = 800; // Optimal Size for fast database saving
+                const MAX_WIDTH = 800;
                 
                 if (width > MAX_WIDTH) {
                     height = Math.round((height * MAX_WIDTH) / width);
@@ -537,7 +540,7 @@ function processImageToBase64(file) {
                 canvas.height = height;
                 const ctx = canvas.getContext("2d");
                 ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL("image/jpeg", 0.6)); // Light Compression
+                resolve(canvas.toDataURL("image/jpeg", 0.6));
             };
             img.onerror = (err) => reject(err);
             img.src = event.target.result;
@@ -560,7 +563,6 @@ window.submitDeposit = async () => {
     btn.textContent = "Checking UTR...";
 
     try {
-        // 1. Duplicate UTR check
         const q = query(collection(db, "deposits"), where("utr", "==", utr));
         const duplicateSnap = await getDocs(q);
 
@@ -571,11 +573,9 @@ window.submitDeposit = async () => {
             return;
         }
 
-        // 2. Image Compression & Base64 Conversion (No Storage Needed)
         btn.textContent = "Processing Screenshot...";
         const screenshotData = await processImageToBase64(file);
 
-        // 3. Save directly to Firestore
         btn.textContent = "Submitting...";
         await addDoc(collection(db, "deposits"), {
             uid: userId || "N/A",
