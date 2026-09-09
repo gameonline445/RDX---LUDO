@@ -5,12 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - History & Logs</title>
 
-<!-- FontAwesome for Icons -->
+<!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
 // Authentication Security Check
@@ -369,7 +365,7 @@ button,input{font:inherit;}
     backdrop-filter:blur(12px);
     border-top:1.5px solid #e2e8f0;
     display:flex;
-    justify-style:space-around;
+    justify-content:space-around;
     align-items:center;
     z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
@@ -492,6 +488,16 @@ window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
 });
 
+function toggleMenu() {
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -500,13 +506,15 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const firebaseDB = firebase.firestore();
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 function getCleanUserId() {
     const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
+
 const userId = getCleanUserId();
 let allLogs = [];
 let activeTab = "all";
@@ -514,11 +522,6 @@ let activeTab = "all";
 let battlesData = [];
 let depositsData = [];
 let withdrawalsData = [];
-
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
 
 function parseItemTime(ts) {
     if (!ts) return { dateObj: new Date(0), formatted: "—" };
@@ -538,14 +541,13 @@ function startRealtimeUserListener() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
-    firebaseDB.collection("customers").doc(docId).onSnapshot(snap => {
-        if (snap.exists) {
+    onSnapshot(doc(db, "customers", docId), (snap) => {
+        if (snap.exists()) {
             const d = snap.data();
             const displayName = d.name || ("User " + userId.slice(-4));
             document.getElementById("drawerName").textContent = displayName;
             document.getElementById("drawerMobile").textContent = "+" + userId;
             
-            // Calculating total wallet balance dynamically
             const depBal = Number(d.depositBalance || 0);
             const winBal = Number(d.winnings || d.winningBalance || 0);
             const totalWallet = depBal + winBal;
@@ -553,9 +555,7 @@ function startRealtimeUserListener() {
             document.getElementById("topBalance").textContent = totalWallet;
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
-    }, err => {
-        console.error("User realtime listener error:", err);
-    });
+    }, err => console.error("User listener error:", err));
 }
 
 // REAL-TIME LISTENER FOR ALL LOGS
@@ -564,10 +564,10 @@ function startRealtimeLogsListener() {
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     // 1. Battles Real-Time Listener
-    firebaseDB.collection("battles").onSnapshot(snap => {
+    onSnapshot(collection(db, "battles"), (snap) => {
         let list = [];
-        snap.forEach(doc => {
-            const b = doc.data();
+        snap.forEach(docSnap => {
+            const b = docSnap.data();
             if (b.creatorUid === docId || b.acceptedUid === docId) {
                 const timeInfo = parseItemTime(b.resolvedAt || b.startedAt || b.createdAt);
                 const isCreator = b.creatorUid === docId;
@@ -591,7 +591,7 @@ function startRealtimeLogsListener() {
 
                 list.push({
                     type: "battle",
-                    id: doc.id,
+                    id: docSnap.id,
                     title: `Battle vs ${oppName}`,
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
@@ -600,7 +600,7 @@ function startRealtimeLogsListener() {
                     status: battleStatus,
                     isWon: isWon,
                     isCancelled: isCancelled,
-                    searchKey: `battle vs ${oppName} ${timeInfo.formatted} ${b.amount} ${b.prize} ${battleStatus} ${doc.id}`
+                    searchKey: `battle vs ${oppName} ${timeInfo.formatted} ${b.amount} ${b.prize} ${battleStatus} ${docSnap.id}`
                 });
             }
         });
@@ -609,10 +609,10 @@ function startRealtimeLogsListener() {
     });
 
     // 2. Deposits Real-Time Listener
-    firebaseDB.collection("deposits").onSnapshot(snap => {
+    onSnapshot(collection(db, "deposits"), (snap) => {
         let list = [];
-        snap.forEach(doc => {
-            const d = doc.data();
+        snap.forEach(docSnap => {
+            const d = docSnap.data();
             const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "");
             if (cleanUid === userId || cleanUid === docId) {
                 const timeInfo = parseItemTime(d.createdAt || d.date);
@@ -621,7 +621,7 @@ function startRealtimeLogsListener() {
 
                 list.push({
                     type: "deposit",
-                    id: doc.id,
+                    id: docSnap.id,
                     title: "Deposit Amount",
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
@@ -629,7 +629,7 @@ function startRealtimeLogsListener() {
                     status: rawStatus,
                     utr: utrVal,
                     comment: d.comment || "",
-                    searchKey: `deposit amount ${timeInfo.formatted} ${d.amount} ${utrVal} ${rawStatus} ${d.comment || ''} ${doc.id}`
+                    searchKey: `deposit amount ${timeInfo.formatted} ${d.amount} ${utrVal} ${rawStatus} ${d.comment || ''} ${docSnap.id}`
                 });
             }
         });
@@ -638,10 +638,10 @@ function startRealtimeLogsListener() {
     });
 
     // 3. Withdrawals Real-Time Listener
-    firebaseDB.collection("withdrawals").onSnapshot(snap => {
+    onSnapshot(collection(db, "withdrawals"), (snap) => {
         let list = [];
-        snap.forEach(doc => {
-            const w = doc.data();
+        snap.forEach(docSnap => {
+            const w = docSnap.data();
             const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "");
             if (cleanUid === userId || cleanUid === docId) {
                 const timeInfo = parseItemTime(w.createdAt || w.date);
@@ -650,7 +650,7 @@ function startRealtimeLogsListener() {
 
                 list.push({
                     type: "withdrawal",
-                    id: doc.id,
+                    id: docSnap.id,
                     title: "Withdrawal Cash",
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
@@ -658,7 +658,7 @@ function startRealtimeLogsListener() {
                     status: rawStatus,
                     modeInfo: modeVal,
                     comment: w.comment || "",
-                    searchKey: `withdrawal cash ${timeInfo.formatted} ${w.amount} ${modeVal} ${rawStatus} ${w.comment || ''} ${doc.id}`
+                    searchKey: `withdrawal cash ${timeInfo.formatted} ${w.amount} ${modeVal} ${rawStatus} ${w.comment || ''} ${docSnap.id}`
                 });
             }
         });
@@ -790,17 +790,15 @@ function renderLogs() {
 
 document.getElementById("historySearchInput").addEventListener("input", renderLogs);
 
-function setFilter(type, btnEl) {
+window.setFilter = (type, btnEl) => {
     activeTab = type;
     document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
     btnEl.classList.add("active");
     renderLogs();
-}
+};
 
-window.addEventListener("load", () => {
-    startRealtimeUserListener();
-    startRealtimeLogsListener();
-});
+startRealtimeUserListener();
+startRealtimeLogsListener();
 </script>
 
 </body>
