@@ -12,49 +12,57 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        html, body { height: 100%; overflow: hidden; background-color: #000000; color: #ffffff; }
+        body { display: flex; flex-direction: column; }
         
-        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; flex-shrink: 0; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
         .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
         .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
         .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
-        .admin-layout { display: flex; flex: 1; }
-        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .admin-layout { display: flex; flex: 1; height: calc(100vh - 60px); overflow: hidden; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; overflow-y: auto; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
         .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
-        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
-        .dashboard-title { color: #3182ce; font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; height: 100%; display: flex; flex-direction: column; }
+        .dashboard-title { color: #3182ce; font-size: 24px; font-weight: 800; margin-bottom: 16px; flex-shrink: 0; }
 
-        .search-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 20px; margin-bottom: 24px; display: flex; gap: 12px; }
-        .search-card input { flex: 1; padding: 12px 16px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 15px; outline: none; }
-        .btn-search { background: #3182ce; color: #ffffff; padding: 0 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 15px; }
+        .search-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 16px; margin-bottom: 20px; display: flex; gap: 12px; flex-shrink: 0; }
+        .search-card input { flex: 1; padding: 10px 16px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+        .btn-search { background: #3182ce; color: #ffffff; padding: 0 20px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 14px; }
 
-        .user-profile-banner { background: linear-gradient(135deg, #1a202c, #151921); border: 1px solid #2d3748; border-radius: 14px; padding: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
-        .user-meta h2 { color: #63b3ed; font-size: 22px; margin-bottom: 6px; }
+        .user-profile-banner { background: linear-gradient(135deg, #1a202c, #151921); border: 1px solid #2d3748; border-radius: 14px; padding: 16px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; flex-shrink: 0; }
+        .user-meta h2 { color: #63b3ed; font-size: 20px; margin-bottom: 4px; }
         .user-meta p { font-size: 13px; color: #a0aec0; margin-top: 2px; }
-        .badge-kyc { padding: 6px 14px; border-radius: 20px; font-weight: 700; font-size: 12px; display: inline-block; }
+        .badge-kyc { padding: 4px 12px; border-radius: 20px; font-weight: 700; font-size: 11px; display: inline-block; }
         .kyc-yes { background: rgba(72, 187, 120, 0.2); color: #68d391; border: 1px solid #48bb78; }
         .kyc-no { background: rgba(229, 62, 62, 0.2); color: #fc8181; border: 1px solid #e53e3e; }
 
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; margin-bottom: 24px; }
-        .stat-card { background-color: #151921; padding: 16px; border-radius: 12px; border: 1px solid #232936; }
-        .stat-card .title { font-size: 12px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
-        .stat-card .value { font-size: 20px; font-weight: 800; }
-        .stat-card .sub-text { font-size: 11px; color: #a0aec0; margin-top: 4px; line-height: 1.4; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; flex-shrink: 0; }
+        .stat-card { background-color: #151921; padding: 12px 14px; border-radius: 12px; border: 1px solid #232936; }
+        .stat-card .title { font-size: 11px; color: #a0aec0; font-weight: 600; margin-bottom: 4px; }
+        .stat-card .value { font-size: 18px; font-weight: 800; }
+        .stat-card .sub-text { font-size: 11px; color: #a0aec0; margin-top: 4px; line-height: 1.3; }
 
-        .section-title { font-size: 18px; color: #63b3ed; margin: 24px 0 12px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; margin-bottom: 24px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
-        th { background-color: #1a202c; color: #a0aec0; padding: 12px 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
-        td { padding: 12px 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
+        .section-header-bar { display: flex; justify-content: space-between; align-items: center; margin: 16px 0 8px 0; flex-wrap: wrap; gap: 10px; }
+        .section-title { font-size: 16px; color: #63b3ed; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        
+        .box-filter-controls { display: flex; align-items: center; gap: 8px; }
+        .box-filter-controls input { background: #0d1117; border: 1px solid #2d3748; border-radius: 6px; color: #ffffff; padding: 6px 10px; font-size: 12px; outline: none; }
+
+        /* Independent Scrollable Box Container */
+        .scrollable-box-container { background-color: #151921; border-radius: 12px; border: 1px solid #232936; overflow-y: auto; max-height: 280px; margin-bottom: 20px; position: relative; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
+        th { background-color: #1a202c; color: #a0aec0; padding: 10px 12px; font-weight: 700; border-bottom: 1px solid #2d3748; position: sticky; top: 0; z-index: 5; white-space: nowrap; }
+        td { padding: 10px 12px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
 
         .text-win { color: #68d391; font-weight: 700; }
         .text-loss { color: #fc8181; font-weight: 700; }
         .text-cancel { color: #cbd5e0; font-weight: 700; }
         .text-pending { color: #f6ad55; font-weight: 700; }
+        .code-tag { background: #2d3748; padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 11px; }
     </style>
 </head>
 <body>
@@ -101,14 +109,14 @@
                         <p>🎁 Referral Code: <span id="profRef">--</span></p>
                     </div>
                     <div>
-                        <p style="margin-bottom:6px; font-size:12px; color:#a0aec0;">KYC Status:</p>
+                        <p style="margin-bottom:4px; font-size:11px; color:#a0aec0;">KYC Status:</p>
                         <div id="profKycBadge" class="badge-kyc kyc-no">NOT VERIFIED</div>
                     </div>
                     <div>
-                        <p style="font-size:12px; color:#a0aec0;">Deposit Balance:</p>
-                        <p style="font-size:20px; font-weight:800; color:#38a169;" id="profDepositBal">₹0</p>
-                        <p style="font-size:12px; color:#a0aec0; margin-top:4px;">Winning Balance:</p>
-                        <p style="font-size:20px; font-weight:800; color:#d69e2e;" id="profWinBal">₹0</p>
+                        <p style="font-size:11px; color:#a0aec0;">Deposit Balance:</p>
+                        <p style="font-size:18px; font-weight:800; color:#38a169;" id="profDepositBal">₹0</p>
+                        <p style="font-size:11px; color:#a0aec0; margin-top:2px;">Winning Balance:</p>
+                        <p style="font-size:18px; font-weight:800; color:#d69e2e;" id="profWinBal">₹0</p>
                     </div>
                 </div>
 
@@ -148,25 +156,26 @@
                         <div class="title">Total Approved Deposit</div>
                         <div class="value" id="stDepApprovedAmt" style="color: #38a169;">₹0</div>
                         <div class="sub-text">
-                            Count: <span id="stDepApprovedCount">0</span><br>
-                            Pending: <span id="stDepPending" style="color:#f6ad55;">₹0 (0)</span><br>
-                            Rejected: <span id="stDepRejected" style="color:#fc8181;">₹0 (0)</span>
+                            Count: <span id="stDepApprovedCount">0</span> | Pending: <span id="stDepPending" style="color:#f6ad55;">₹0 (0)</span> | Rejected: <span id="stDepRejected" style="color:#fc8181;">₹0 (0)</span>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="title">Total Approved Withdrawal</div>
                         <div class="value" id="stWithApprovedAmt" style="color: #e53e3e;">₹0</div>
                         <div class="sub-text">
-                            Count: <span id="stWithApprovedCount">0</span><br>
-                            Pending: <span id="stWithPending" style="color:#f6ad55;">₹0 (0)</span><br>
-                            Rejected/Cancel: <span id="stWithRejected" style="color:#fc8181;">₹0 (0)</span>
+                            Count: <span id="stWithApprovedCount">0</span> | Pending: <span id="stWithPending" style="color:#f6ad55;">₹0 (0)</span> | Rejected: <span id="stWithRejected" style="color:#fc8181;">₹0 (0)</span>
                         </div>
                     </div>
                 </div>
 
                 <!-- Opponent Analysis Table -->
-                <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head Breakdown (Kiske Sath Kitna Khela/Jeeta/Haara/Running)</div>
-                <div class="table-container">
+                <div class="section-header-bar">
+                    <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head Breakdown</div>
+                    <div class="box-filter-controls">
+                        <input type="text" id="oppSearchInput" placeholder="Search Opponent Mobile..." onkeyup="filterOpponentTable()" />
+                    </div>
+                </div>
+                <div class="scrollable-box-container">
                     <table>
                         <thead>
                             <tr>
@@ -185,8 +194,15 @@
                 </div>
 
                 <!-- Complete Match Logs -->
-                <div class="section-title"><i class="fa-solid fa-list"></i> Complete Match Logs</div>
-                <div class="table-container">
+                <div class="section-header-bar">
+                    <div class="section-title"><i class="fa-solid fa-list"></i> Complete Match Logs</div>
+                    <div class="box-filter-controls">
+                        <span style="font-size:11px; color:#a0aec0;">Filter Date:</span>
+                        <input type="date" id="matchDateInput" onchange="filterMatchLogs()" />
+                        <button onclick="resetMatchDate()" style="background:#2d3748; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px;">Reset</button>
+                    </div>
+                </div>
+                <div class="scrollable-box-container">
                     <table>
                         <thead>
                             <tr>
@@ -205,20 +221,29 @@
                 </div>
 
                 <!-- Wallet Deposit & Withdrawal Journey Table -->
-                <div class="section-title"><i class="fa-solid fa-receipt"></i> Wallet Transaction History Journey (Web History)</div>
-                <div class="table-container">
+                <div class="section-header-bar">
+                    <div class="section-title"><i class="fa-solid fa-receipt"></i> Wallet Transaction History Journey (Web History)</div>
+                    <div class="box-filter-controls">
+                        <span style="font-size:11px; color:#a0aec0;">Filter Date:</span>
+                        <input type="date" id="walletDateInput" onchange="filterWalletJourney()" />
+                        <button onclick="resetWalletDate()" style="background:#2d3748; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px;">Reset</button>
+                    </div>
+                </div>
+                <div class="scrollable-box-container">
                     <table>
                         <thead>
                             <tr>
                                 <th>Date & Time</th>
                                 <th>Type</th>
                                 <th>Amount</th>
-                                <th>Payment Method / UPI</th>
+                                <th>Method / App</th>
+                                <th>UTR Number</th>
+                                <th>Comments / Reason</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody id="walletJourneyTableBody">
-                            <tr><td colspan="5" style="text-align: center; color: #a0aec0;">No wallet transactions found.</td></tr>
+                            <tr><td colspan="7" style="text-align: center; color: #a0aec0;">No wallet transactions found.</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -247,7 +272,9 @@
         let activeDepUnsubscribe = null;
         let activeWithUnsubscribe = null;
 
-        let globalWalletJourney = [];
+        let rawOpponentData = [];
+        let rawMatchLogs = [];
+        let rawWalletJourney = [];
 
         async function startSyncUserHistory() {
             const queryVal = document.getElementById("userSearchInput").value.trim();
@@ -323,9 +350,8 @@
         }
 
         function listenUserFinancials(uid) {
-            globalWalletJourney = [];
+            rawWalletJourney = [];
 
-            // Deposits realtime tracking
             activeDepUnsubscribe = db.collection("deposits").where("uid", "==", uid).onSnapshot(snap => {
                 let appAmt = 0, appCnt = 0;
                 let pendAmt = 0, pendCnt = 0;
@@ -344,19 +370,20 @@
                         rejAmt += amt; rejCnt++;
                     }
 
-                    let dtStr = "N/A";
-                    if (d.createdAt) {
-                        let dt = d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt);
-                        dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-                    }
+                    let rawDt = d.createdAt ? (d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt)) : new Date(0);
+                    let dtStr = rawDt ? rawDt.toLocaleDateString('en-IN') + " " + rawDt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A";
+                    let isoDate = rawDt ? rawDt.toISOString().split('T')[0] : "";
 
-                    globalWalletJourney.push({
-                        date: dtStr,
+                    rawWalletJourney.push({
+                        dateStr: dtStr,
+                        isoDate: isoDate,
                         type: `<span style="color:#38a169; font-weight:700;">DEPOSIT</span>`,
                         amount: "₹" + amt,
-                        method: d.paymentMethod || d.upiId || "UPI",
+                        method: d.paymentMethod || d.app || d.upiId || "UPI",
+                        utr: d.utr || d.transactionId || d.utrNumber || "N/A",
+                        comment: d.adminComment || d.comment || d.rejectReason || "-",
                         status: st.toUpperCase(),
-                        rawDate: d.createdAt ? (d.createdAt.toDate ? d.createdAt.toDate() : new Date(d.createdAt)) : new Date(0)
+                        rawDate: rawDt
                     });
                 });
 
@@ -365,10 +392,9 @@
                 document.getElementById("stDepPending").innerText = "₹" + pendAmt + " (" + pendCnt + ")";
                 document.getElementById("stDepRejected").innerText = "₹" + rejAmt + " (" + rejCnt + ")";
 
-                renderWalletJourneyTable();
+                renderWalletJourneyTable(rawWalletJourney);
             });
 
-            // Withdrawals realtime tracking
             activeWithUnsubscribe = db.collection("withdrawals").where("uid", "==", uid).onSnapshot(snap => {
                 let appAmt = 0, appCnt = 0;
                 let pendAmt = 0, pendCnt = 0;
@@ -387,19 +413,20 @@
                         rejAmt += amt; rejCnt++;
                     }
 
-                    let dtStr = "N/A";
-                    if (w.createdAt) {
-                        let dt = w.createdAt.toDate ? w.createdAt.toDate() : new Date(w.createdAt);
-                        dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-                    }
+                    let rawDt = w.createdAt ? (w.createdAt.toDate ? w.createdAt.toDate() : new Date(w.createdAt)) : new Date(0);
+                    let dtStr = rawDt ? rawDt.toLocaleDateString('en-IN') + " " + rawDt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A";
+                    let isoDate = rawDt ? rawDt.toISOString().split('T')[0] : "";
 
-                    globalWalletJourney.push({
-                        date: dtStr,
+                    rawWalletJourney.push({
+                        dateStr: dtStr,
+                        isoDate: isoDate,
                         type: `<span style="color:#e53e3e; font-weight:700;">WITHDRAWAL</span>`,
                         amount: "₹" + amt,
                         method: w.upiId || w.bankDetails || "UPI/Bank",
+                        utr: w.utr || w.transactionId || w.referenceId || "N/A",
+                        comment: w.adminComment || w.comment || w.rejectReason || "-",
                         status: st.toUpperCase(),
-                        rawDate: w.createdAt ? (w.createdAt.toDate ? w.createdAt.toDate() : new Date(w.createdAt)) : new Date(0)
+                        rawDate: rawDt
                     });
                 });
 
@@ -408,36 +435,53 @@
                 document.getElementById("stWithPending").innerText = "₹" + pendAmt + " (" + pendCnt + ")";
                 document.getElementById("stWithRejected").innerText = "₹" + rejAmt + " (" + rejCnt + ")";
 
-                renderWalletJourneyTable();
+                renderWalletJourneyTable(rawWalletJourney);
             });
         }
 
-        function renderWalletJourneyTable() {
+        function renderWalletJourneyTable(list) {
             const tbody = document.getElementById("walletJourneyTableBody");
             tbody.innerHTML = "";
 
-            if (globalWalletJourney.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: #a0aec0;">No deposit/withdrawal transactions found.</td></tr>`;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #a0aec0;">No wallet transactions found.</td></tr>`;
                 return;
             }
 
-            globalWalletJourney.sort((a, b) => b.rawDate - a.rawDate);
+            list.sort((a, b) => b.rawDate - a.rawDate);
 
-            globalWalletJourney.forEach(item => {
+            list.forEach(item => {
                 let stClass = "text-pending";
                 if (item.status === "APPROVED" || item.status === "SUCCESS") stClass = "text-win";
                 else if (item.status === "REJECTED" || item.status === "CANCELLED") stClass = "text-loss";
 
                 const tr = document.createElement("tr");
                 tr.innerHTML = `
-                    <td style="font-size:11px; color:#a0aec0;">${item.date}</td>
+                    <td style="font-size:11px; color:#a0aec0;">${item.dateStr}</td>
                     <td>${item.type}</td>
                     <td><strong>${item.amount}</strong></td>
                     <td style="color:#63b3ed;">${item.method}</td>
+                    <td><span class="code-tag">${item.utr}</span></td>
+                    <td style="font-size:11px; color:#a0aec0;">${item.comment}</td>
                     <td class="${stClass}">${item.status}</td>
                 `;
                 tbody.appendChild(tr);
             });
+        }
+
+        function filterWalletJourney() {
+            const dateVal = document.getElementById("walletDateInput").value;
+            if (!dateVal) {
+                renderWalletJourneyTable(rawWalletJourney);
+                return;
+            }
+            const filtered = rawWalletJourney.filter(x => x.isoDate === dateVal);
+            renderWalletJourneyTable(filtered);
+        }
+
+        function resetWalletDate() {
+            document.getElementById("walletDateInput").value = "";
+            renderWalletJourneyTable(rawWalletJourney);
         }
 
         function listenUserBattles(uid, userMobile) {
@@ -446,7 +490,7 @@
             activeBattlesUnsubscribe = db.collection("battles").onSnapshot(snapshot => {
                 let played = 0, won = 0, lost = 0, running = 0, cancelOpen = 0, cancelRunning = 0;
                 let opponentStats = {};
-                let matchLogs = [];
+                rawMatchLogs = [];
 
                 snapshot.forEach(doc => {
                     const b = doc.data();
@@ -504,14 +548,13 @@
                             if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].cancelled++;
                         }
 
-                        let dtStr = "N/A";
-                        if (b.createdAt) {
-                            let dt = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
-                            dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-                        }
+                        let rawDt = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
+                        let dtStr = rawDt ? rawDt.toLocaleDateString('en-IN') + " " + rawDt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) : "N/A";
+                        let isoDate = rawDt ? rawDt.toISOString().split('T')[0] : "";
 
-                        matchLogs.push({
+                        rawMatchLogs.push({
                             dateTime: dtStr,
+                            isoDate: isoDate,
                             roomCode: b.roomCode || "N/A",
                             amount: b.amount || b.entry || 0,
                             opponent: opponentMobile,
@@ -528,50 +571,85 @@
                 document.getElementById("stCancelOpen").innerText = cancelOpen;
                 document.getElementById("stCancelRunning").innerText = cancelRunning;
 
-                // Render Opponents Table
-                const oppTbody = document.getElementById("opponentTableBody");
-                oppTbody.innerHTML = "";
-                const oppKeys = Object.keys(opponentStats);
-
-                if (oppKeys.length === 0) {
-                    oppTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No opponent history records found.</td></tr>`;
-                } else {
-                    oppKeys.forEach(oppKey => {
-                        const opp = opponentStats[oppKey];
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td><strong style="color:#63b3ed;">📱 ${oppKey}</strong></td>
-                            <td><strong>${opp.total}</strong></td>
-                            <td class="text-win">${opp.won}</td>
-                            <td class="text-loss">${opp.lost}</td>
-                            <td class="text-pending">${opp.running}</td>
-                            <td class="text-cancel">${opp.cancelled}</td>
-                        `;
-                        oppTbody.appendChild(tr);
+                // Prepare Opponent List
+                rawOpponentData = [];
+                Object.keys(opponentStats).forEach(oppKey => {
+                    rawOpponentData.push({
+                        mobile: oppKey,
+                        ...opponentStats[oppKey]
                     });
-                }
+                });
 
-                // Render Logs Table
-                const logTbody = document.getElementById("matchLogsTableBody");
-                logTbody.innerHTML = "";
-
-                if (matchLogs.length === 0) {
-                    logTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No battles found for this user.</td></tr>`;
-                } else {
-                    matchLogs.forEach(m => {
-                        const tr = document.createElement("tr");
-                        tr.innerHTML = `
-                            <td style="font-size:11px; color:#a0aec0;">${m.dateTime}</td>
-                            <td><span style="background:#2d3748; padding:3px 8px; border-radius:4px;">${m.roomCode}</span></td>
-                            <td>₹${m.amount}</td>
-                            <td><strong style="color:#48bb78;">📱 ${m.opponent}</strong></td>
-                            <td><span class="badge" style="background:#2d3748; font-size:10px;">${m.status}</span></td>
-                            <td>${m.outcome}</td>
-                        `;
-                        logTbody.appendChild(tr);
-                    });
-                }
+                renderOpponentTable(rawOpponentData);
+                renderMatchLogsTable(rawMatchLogs);
             });
+        }
+
+        function renderOpponentTable(list) {
+            const oppTbody = document.getElementById("opponentTableBody");
+            oppTbody.innerHTML = "";
+
+            if (list.length === 0) {
+                oppTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No opponent history records found.</td></tr>`;
+                return;
+            }
+
+            list.forEach(opp => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td><strong style="color:#63b3ed;">📱 ${opp.mobile}</strong></td>
+                    <td><strong>${opp.total}</strong></td>
+                    <td class="text-win">${opp.won}</td>
+                    <td class="text-loss">${opp.lost}</td>
+                    <td class="text-pending">${opp.running}</td>
+                    <td class="text-cancel">${opp.cancelled}</td>
+                `;
+                oppTbody.appendChild(tr);
+            });
+        }
+
+        function filterOpponentTable() {
+            const query = document.getElementById("oppSearchInput").value.trim().toLowerCase();
+            const filtered = rawOpponentData.filter(x => x.mobile.toLowerCase().includes(query));
+            renderOpponentTable(filtered);
+        }
+
+        function renderMatchLogsTable(list) {
+            const logTbody = document.getElementById("matchLogsTableBody");
+            logTbody.innerHTML = "";
+
+            if (list.length === 0) {
+                logTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No battles found for this selection.</td></tr>`;
+                return;
+            }
+
+            list.forEach(m => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td style="font-size:11px; color:#a0aec0;">${m.dateTime}</td>
+                    <td><span class="code-tag">${m.roomCode}</span></td>
+                    <td>₹${m.amount}</td>
+                    <td><strong style="color:#48bb78;">📱 ${m.opponent}</strong></td>
+                    <td><span class="badge" style="background:#2d3748; font-size:10px; padding:2px 6px; border-radius:4px;">${m.status}</span></td>
+                    <td>${m.outcome}</td>
+                `;
+                logTbody.appendChild(tr);
+            });
+        }
+
+        function filterMatchLogs() {
+            const dateVal = document.getElementById("matchDateInput").value;
+            if (!dateVal) {
+                renderMatchLogsTable(rawMatchLogs);
+                return;
+            }
+            const filtered = rawMatchLogs.filter(x => x.isoDate === dateVal);
+            renderMatchLogsTable(filtered);
+        }
+
+        function resetMatchDate() {
+            document.getElementById("matchDateInput").value = "";
+            renderMatchLogsTable(rawMatchLogs);
         }
     </script>
 </body>
