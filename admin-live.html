@@ -13,51 +13,38 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
-        
-        /* Header */
+
         .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
-        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
-        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
-        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 13px; }
+        .brand-title { color: #1a365d; font-size: 18px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 6px 20px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
-        /* Layout */
         .admin-layout { display: flex; flex: 1; }
-        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .sidebar { width: 250px; background-color: #ffffff; padding: 20px 12px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; border-right: 1px solid #e2e8f0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
         .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
-        /* Main Content */
-        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
-        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; max-width: 900px; }
+        .dashboard-title { color: #3182ce; font-size: 30px; font-weight: 800; margin-bottom: 20px; }
 
-        /* Stats Grid */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
-        .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
-        .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
-        .stat-card .value { font-size: 28px; font-weight: 800; color: #48bb78; }
+        .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
+        .metric-card { background-color: #1a202c; padding: 18px 20px; border-radius: 16px; border: 1px solid #2d3748; }
+        .card-label { font-size: 12px; font-weight: 700; color: #a0aec0; margin-bottom: 6px; }
+        .card-value { font-size: 28px; font-weight: 900; }
+        .val-green { color: #48bb78; }
+        .val-blue { color: #4299e1; }
 
-        /* Filter / Search */
-        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; }
-        .filter-card input { width: 100%; padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
-        .filter-card input:focus { border-color: #3182ce; }
+        .search-box { width: 100%; margin-bottom: 20px; }
+        .search-input { width: 100%; padding: 14px 18px; background: #1a202c; border: 1px solid #2d3748; border-radius: 12px; color: #ffffff; font-size: 14px; outline: none; }
 
-        /* Table */
-        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
+        .users-table-container { background-color: #1a202c; border-radius: 16px; border: 1px solid #2d3748; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
-        td { padding: 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
+        th { background-color: #2d3748; color: #cbd5e0; padding: 14px; font-weight: 700; }
+        td { padding: 14px; border-bottom: 1px solid #2d3748; color: #e2e8f0; }
 
-        /* Online Badge Animation */
-        .status-online { display: inline-flex; align-items: center; gap: 6px; color: #48bb78; font-weight: 700; font-size: 12px; background: rgba(72, 187, 120, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(72, 187, 120, 0.3); }
-        .dot-online { width: 8px; height: 8px; background-color: #48bb78; border-radius: 50%; box-shadow: 0 0 8px #48bb78; animation: pulse 1.5s infinite; }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(72, 187, 120, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }
-        }
+        .status-badge-on { background: #276749; color: #9ae6b4; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; display: inline-block; }
+        .status-badge-off { background: #742a2a; color: #feb2b2; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -72,51 +59,46 @@
 
     <div class="admin-layout">
         <aside class="sidebar">
-            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
             <a href="admin-live.html" class="nav-item active"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
             <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
             <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
             <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
             <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
-            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
-            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
             <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
-            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
-            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
         </aside>
 
         <main class="main-content">
             <h1 class="dashboard-title">Live Active Users Monitor</h1>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="title">Currently Active Site Users</div>
-                    <div class="value" id="statOnlineUsers">0</div>
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <div class="card-label">Currently Active Site Users</div>
+                    <div class="card-value val-green" id="activeCount">0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="title">Total Registered Users</div>
-                    <div class="value" id="statTotalUsers" style="color: #3182ce;">0</div>
+                <div class="metric-card">
+                    <div class="card-label">Total Registered Users</div>
+                    <div class="card-value val-blue" id="totalCount">0</div>
                 </div>
             </div>
 
-            <div class="filter-card">
-                <input type="text" id="searchInput" placeholder="Search active user by Mobile, Name, City, or State..." onkeyup="filterUsers()">
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search active user by Mobile, Name, City, or State..." onkeyup="filterUsers()">
             </div>
 
-            <div class="table-container">
+            <div class="users-table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Status</th>
-                            <th>Mobile Number</th>
                             <th>User Name</th>
-                            <th>City & State Location</th>
-                            <th>Current Active Page</th>
-                            <th>Last Activity Time</th>
+                            <th>Mobile</th>
+                            <th>City</th>
+                            <th>State</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
-                    <tbody id="liveUsersTable">
-                        <tr><td colspan="6" style="text-align: center;">Fetching active users from Firebase...</td></tr>
+                    <tbody id="usersTableBody">
+                        <tr><td colspan="5" style="text-align:center;">Loading users...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -124,7 +106,6 @@
     </div>
 
     <script>
-        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
@@ -134,107 +115,72 @@
             appId: "1:928340814840:web:6eca42a8b76138b268440d"
         };
 
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let activeUsersOnly = [];
+        let allUsers = [];
 
         function listenLiveUsers() {
             db.collection("customers").onSnapshot(snapshot => {
-                activeUsersOnly = [];
-                const now = new Date();
+                let active = 0;
+                let total = snapshot.size;
+                allUsers = [];
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    data.id = doc.id;
-                    
-                    let isActiveNow = false;
+                    const isOnline = data.isOnline === true;
+                    if (isOnline) active++;
 
-                    // Condition: Must be explicitly online AND active within last 45 seconds
-                    if (data.isOnline === true && data.lastActive) {
-                        const lastActiveDate = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
-                        const diffSec = (now - lastActiveDate) / 1000;
-                        if (diffSec <= 45) {
-                            isActiveNow = true;
-                        }
-                    }
-
-                    if (isActiveNow) {
-                        activeUsersOnly.push(data);
-                    }
+                    allUsers.push({
+                        name: data.name || data.username || "User",
+                        mobile: data.mobile || data.phone || "N/A",
+                        city: data.city || "Unknown",
+                        state: data.state || "Unknown",
+                        isOnline: isOnline
+                    });
                 });
 
-                document.getElementById("statTotalUsers").innerText = snapshot.size;
-                document.getElementById("statOnlineUsers").innerText = activeUsersOnly.length;
+                document.getElementById("activeCount").innerText = active;
+                document.getElementById("totalCount").innerText = total;
 
-                renderTable(activeUsersOnly);
+                renderTable(allUsers);
             });
         }
 
-        function renderTable(users) {
-            const tbody = document.getElementById("liveUsersTable");
-            tbody.innerHTML = "";
-
-            if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No users are currently active on the site right now.</td></tr>`;
+        function renderTable(usersList) {
+            const tbody = document.getElementById("usersTableBody");
+            if (usersList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No users found.</td></tr>`;
                 return;
             }
 
-            users.forEach(u => {
-                const tr = document.createElement("tr");
-
-                const phone = u.phone || u.mobile || u.phoneNumber || u.userId || u.id;
-                const name = u.name || u.userName || u.displayName || "User";
-                
-                const city = u.city || u.cityName || u.district || "";
-                const state = u.state || u.stateName || u.region || "";
-                
-                let locationStr = "Location Not Shared";
-                if (city || state) {
-                    locationStr = `${city}${city && state ? ', ' : ''}${state}`;
-                } else if (u.location || u.address) {
-                    locationStr = u.location || u.address;
-                }
-
-                const currentPage = u.currentPage || u.activePage || "Home Page";
-
-                let lastActiveStr = "Just Now";
-                if (u.lastActive) {
-                    const dt = u.lastActive.toDate ? u.lastActive.toDate() : new Date(u.lastActive);
-                    lastActiveStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                }
-
-                tr.innerHTML = `
-                    <td><span class="status-online"><span class="dot-online"></span> ONLINE</span></td>
-                    <td><strong style="color: #63b3ed; font-size: 15px;">${phone}</strong></td>
-                    <td><strong>${name}</strong></td>
-                    <td><i class="fa-solid fa-location-dot" style="color:#e53e3e; margin-right:5px;"></i> ${locationStr}</td>
-                    <td><span style="background: #2d3748; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">${currentPage}</span></td>
-                    <td style="font-size: 12px; color: #a0aec0;">${lastActiveStr}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+            tbody.innerHTML = usersList.map(u => `
+                <tr>
+                    <td><b>${u.name}</b></td>
+                    <td>${u.mobile}</td>
+                    <td>${u.city}</td>
+                    <td>${u.state}</td>
+                    <td>
+                        <span class="${u.isOnline ? 'status-badge-on' : 'status-badge-off'}">
+                            ${u.isOnline ? 'Active Live' : 'Offline'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         function filterUsers() {
-            const search = document.getElementById("searchInput").value.toLowerCase().trim();
-            const filtered = activeUsersOnly.filter(u => {
-                const name = (u.name || u.userName || "").toLowerCase();
-                const phone = (u.phone || u.mobile || u.phoneNumber || u.userId || "").toLowerCase();
-                const city = (u.city || u.location || "").toLowerCase();
-                const state = (u.state || "").toLowerCase();
-
-                return name.includes(search) || phone.includes(search) || city.includes(search) || state.includes(search);
-            });
-
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const filtered = allUsers.filter(u => 
+                u.name.toLowerCase().includes(query) ||
+                u.mobile.toLowerCase().includes(query) ||
+                u.city.toLowerCase().includes(query) ||
+                u.state.toLowerCase().includes(query)
+            );
             renderTable(filtered);
         }
 
-        window.onload = () => {
-            listenLiveUsers();
-        };
+        window.addEventListener("DOMContentLoaded", listenLiveUsers);
     </script>
 </body>
 </html>
