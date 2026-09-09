@@ -13,7 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -490,7 +490,6 @@ button,input{font:inherit;}
 </nav>
 
 <script>
-// Mobile Back Button Override: Directly redirect to dashboard on back button press
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
@@ -537,22 +536,31 @@ function parseItemTime(ts) {
     return { dateObj: d, formatted: formatted };
 }
 
-async function loadHeaderUserData() {
+// ⚡ REALTIME LISTENER FOR USER BALANCE & PROFILE DATA
+function startRealtimeUserListener() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
-    try {
-        const snap = await firebaseDB.collection("customers").doc(docId).get();
+    firebaseDB.collection("customers").doc(docId).onSnapshot(snap => {
         if (snap.exists) {
             const d = snap.data();
             const displayName = d.name || ("User " + userId.slice(-4));
             document.getElementById("drawerName").textContent = displayName;
             document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
-            document.getElementById("topBalance").textContent = Number(d.balance || 0);
+            
+            // Calculating total wallet balance
+            const mainBal = Number(d.balance || 0);
+            const depBal = Number(d.depositBalance || 0);
+            const winBal = Number(d.winnings || 0);
+            const totalWallet = (mainBal + depBal + winBal) || mainBal;
+
+            document.getElementById("topBalance").textContent = totalWallet;
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
         }
-    } catch(err) { console.error(err); }
+    }, err => {
+        console.error("User realtime listener error:", err);
+    });
 }
 
 // REAL-TIME LISTENER FOR ALL LOGS
@@ -610,7 +618,7 @@ function startRealtimeLogsListener() {
         let list = [];
         snap.forEach(doc => {
             const d = doc.data();
-            const cleanUid = String(d.uid || d.userId).replace(/\D/g, "");
+            const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "");
             if (cleanUid === userId) {
                 const timeInfo = parseItemTime(d.createdAt || d.date);
                 const rawStatus = String(d.status || "pending").toLowerCase();
@@ -639,7 +647,7 @@ function startRealtimeLogsListener() {
         let list = [];
         snap.forEach(doc => {
             const w = doc.data();
-            const cleanUid = String(w.uid || w.mobile).replace(/\D/g, "");
+            const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "");
             if (cleanUid === userId) {
                 const timeInfo = parseItemTime(w.createdAt || w.date);
                 const rawStatus = String(w.status || "pending").toLowerCase();
@@ -746,7 +754,7 @@ function renderLogs() {
                             <h4>Deposit Amount</h4>
                             <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
                             ${item.utr ? `<span class="utr-tag"><i class="fa-solid fa-receipt"></i> UTR: ${item.utr}</span>` : ''}
-                            ${item.comment && s === 'rejected' ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
+                            ${item.comment && (s === 'rejected' || s === 'failed') ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
                         </div>
                     </div>
                     <div class="history-right">
@@ -772,7 +780,7 @@ function renderLogs() {
                             <h4>Withdrawal Cash</h4>
                             <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
                             ${item.modeInfo ? `<span class="utr-tag" style="color:#64748b;">${item.modeInfo}</span>` : ''}
-                            ${item.comment && s === 'rejected' ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
+                            ${item.comment && (s === 'rejected' || s === 'failed') ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
                         </div>
                     </div>
                     <div class="history-right">
@@ -795,7 +803,7 @@ function setFilter(type, btnEl) {
 }
 
 window.addEventListener("load", () => {
-    loadHeaderUserData();
+    startRealtimeUserListener();
     startRealtimeLogsListener();
 });
 </script>
