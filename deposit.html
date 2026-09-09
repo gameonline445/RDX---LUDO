@@ -13,7 +13,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -48,7 +47,7 @@ body{
 }
 button{font:inherit;}
 
-/* UNIFIED TOP HEADER STYLING */
+/* TOP HEADER - Matches Image 13 */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -68,18 +67,17 @@ button{font:inherit;}
     height:42px;
     border:0;
     border-radius:14px;
-    background:linear-gradient(145deg,#ff7165,#ff8a70);
+    background:#f87171;
     color:white;
-    font-size:20px;
+    font-size:18px;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 4px 12px rgba(255,113,101,0.25);
+    box-shadow:0 4px 10px rgba(248,113,113,0.3);
 }
 .menu-btn:active{transform:scale(0.95);}
 
-/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -101,42 +99,25 @@ button{font:inherit;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
+    width:38px;
     height:38px;
     border:0;
-    border-radius:20px;
+    border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:15px;
     color:white;
     cursor:pointer;
-    padding:0 12px;
-    gap:6px;
-    font-weight:800;
-}
-.notification{
-    width:38px;
-    height:38px;
     padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#6366f1,#818cf8);
-    box-shadow:0 3px 10px rgba(99,102,241,0.25);
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    transition:transform 0.15s ease;
 }
-.wallet-top{
-    background:linear-gradient(145deg,#22c55e,#16a34a);
-    box-shadow:0 3px 10px rgba(22,163,74,0.25);
-    border-radius:20px;
-    padding:0 14px;
-    font-size:14px;
-}
-.redeem-top{
-    width:38px;
-    height:38px;
-    padding:0;
-    border-radius:50%;
-    background:linear-gradient(145deg,#ea580c,#f97316);
-    box-shadow:0 3px 10px rgba(234,88,12,0.25);
-}
+.header-icon:active{transform:scale(0.95);}
+
+.notification{background:#6366f1;}
+.wallet-top{background:#22c55e;}
+.redeem-top{background:#f97316;}
 
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
@@ -269,21 +250,19 @@ button{font:inherit;}
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAV - Matches Image 14 */
 .bottom-nav{
     position:fixed;
     bottom:0;
     left:0;
     width:100%;
     height:74px;
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(12px);
-    border-top:1.5px solid #e2e8f0;
+    background:#ffffff;
+    border-top:1px solid #e2e8f0;
     display:flex;
     justify-content:space-around;
     align-items:center;
     z-index:200;
-    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
 }
 .nav-item{
     width:25%;
@@ -295,11 +274,10 @@ button{font:inherit;}
     align-items:center;
     justify-content:center;
     gap:4px;
-    color:#64748b;
-    font-size:11px;
+    color:#1e293b;
+    font-size:12px;
     font-weight:700;
     cursor:pointer;
-    position:relative;
 }
 .nav-icon-box{
     width:42px;
@@ -310,16 +288,13 @@ button{font:inherit;}
     justify-content:center;
     font-size:18px;
     color:#ffffff;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
     transition:transform 0.2s ease;
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
-.nav-item.active{color:#101a38;font-weight:800;}
-.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#10b981;}
+.icon-home{background:#6366f1;}
+.icon-wallet{background:#22c55e;}
+.icon-support{background:#38bdf8;}
+.icon-profile{background:#f97316;}
 </style>
 </head>
 
@@ -351,7 +326,7 @@ button{font:inherit;}
     </div>
 </div>
 
-<!-- UNIFIED TOP HEADER -->
+<!-- TOP HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -361,7 +336,7 @@ button{font:inherit;}
     </div>
     <div class="header-right">
         <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
+        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-wallet"></i></button>
         <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
@@ -397,13 +372,12 @@ button{font:inherit;}
 
 <nav class="bottom-nav">
     <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
     <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
     <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
-// Mobile Back Button Override
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
@@ -482,18 +456,9 @@ async function loadUserData() {
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // Real-Time Firebase Listener for Live Balance Sync
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
-                
-                // Real-Time Calculation: depositBalance + winningBalance
-                const deposit = Number(data.depositBalance || data.deposit || 0);
-                const winnings = Number(data.winnings || data.winningBalance || 0);
-                const realTotalBalance = deposit + winnings;
-
-                document.getElementById("topBalance").textContent = "₹" + realTotalBalance;
-
                 let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(doc.id).slice(-4));
                 if(document.getElementById("menuUsername")) {
                     document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
