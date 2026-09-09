@@ -384,13 +384,14 @@ function parseTimestamp(val) {
     return isNaN(parsed) ? 0 : parsed;
 }
 
+// Global Sync Function handling Dual Collection fallbacks
 function syncDashboardData() {
     const todayStart = new Date();
     todayStart.setHours(0,0,0,0);
     const todayStartMs = todayStart.getTime();
 
-    // 1. SYNC CUSTOMERS & ACTIVE USERS & BALANCE
-    firebaseDB.collection("customers").onSnapshot((snapshot) => {
+    // 1. SYNC CUSTOMERS / USERS
+    const handleUsersSnapshot = (snapshot) => {
         let liveCount = 0;
         let totalBal = 0;
         let approvedKycCount = 0;
@@ -400,22 +401,22 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Strict 15-second cutoff active check
-            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt);
+            // Strict 15-second active cutoff ping check
+            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt) || parseTimestamp(data.updatedAt);
             const isPingActive = lastPingMs > 0 && (now - lastPingMs) < 15000;
-            if (data.isOnline === true && isPingActive) {
+            if ((data.isOnline === true || data.status === 'online') && isPingActive) {
                 liveCount++;
             }
 
-            // Calculate Balance
-            const bal = Number(data.balance || (Number(data.deposit || 0) + Number(data.winnings || 0)));
+            // Universal Balance calculation fallback
+            const bal = Number(data.balance !== undefined ? data.balance : (Number(data.deposit || 0) + Number(data.winnings || 0)));
             totalBal += bal;
 
-            // KYC Status Sync
-            const kycStatus = String(data.kycStatus || '').toLowerCase();
-            if (kycStatus === 'approved' || data.isKycVerified === true) {
+            // Universal KYC Status fallback
+            const kycStatus = String(data.kycStatus || data.kyc || '').toLowerCase();
+            if (kycStatus === 'approved' || kycStatus === 'verified' || data.isKycVerified === true) {
                 approvedKycCount++;
-            } else if (kycStatus === 'pending') {
+            } else if (kycStatus === 'pending' || kycStatus === 'requested') {
                 pendingKycCount++;
             }
         });
@@ -427,22 +428,39 @@ function syncDashboardData() {
         document.getElementById("pendingKYC").textContent = pendingKycCount;
         
         updateSyncTime();
+    };
+
+    // Listen on 'customers' collection first, fallback to 'users'
+    firebaseDB.collection("customers").onSnapshot((snapshot) => {
+        if (!snapshot.empty) {
+            handleUsersSnapshot(snapshot);
+        } else {
+            firebaseDB.collection("users").onSnapshot(handleUsersSnapshot);
+        }
     });
 
-    // 2. SYNC BATTLES (LIVE / RUNNING / OPEN)
-    firebaseDB.collection("battles").onSnapshot((snapshot) => {
+    // 2. SYNC BATTLES / MATCHES
+    const handleBattlesSnapshot = (snapshot) => {
         let liveBattleCount = 0;
         snapshot.forEach((doc) => {
-            const status = String(doc.data().status || '').toLowerCase();
-            if (status === 'running' || status === 'open' || status === 'playing' || status === 'requested') {
+            const status = String(doc.data().status || doc.data().battleStatus || '').toLowerCase();
+            if (status === 'running' || status === 'open' || status === 'playing' || status === 'requested' || status === 'active') {
                 liveBattleCount++;
             }
         });
         document.getElementById("liveMatches").textContent = liveBattleCount;
         updateSyncTime();
+    };
+
+    firebaseDB.collection("battles").onSnapshot((snapshot) => {
+        if (!snapshot.empty) {
+            handleBattlesSnapshot(snapshot);
+        } else {
+            firebaseDB.collection("matches").onSnapshot(handleBattlesSnapshot);
+        }
     });
 
-    // 3. SYNC DEPOSITS (TOTAL, TODAY, PENDING)
+    // 3. SYNC DEPOSITS
     firebaseDB.collection("deposits").onSnapshot((snapshot) => {
         let totalPaid = 0;
         let todayPaid = 0;
@@ -451,15 +469,15 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             const status = String(data.status || '').toLowerCase();
-            const amount = Number(data.amount || 0);
-            const createdAtMs = parseTimestamp(data.createdAt) || parseTimestamp(data.date);
+            const amount = Number(data.amount || data.depositAmount || 0);
+            const createdAtMs = parseTimestamp(data.createdAt) || parseTimestamp(data.date) || parseTimestamp(data.timestamp);
 
-            if (status === 'approved' || status === 'success' || status === 'paid') {
+            if (status === 'approved' || status === 'success' || status === 'paid' || status === 'completed') {
                 totalPaid += amount;
                 if (createdAtMs >= todayStartMs) {
                     todayPaid += amount;
                 }
-            } else if (status === 'pending') {
+            } else if (status === 'pending' || status === 'requested') {
                 pendingCount++;
             }
         });
@@ -470,7 +488,7 @@ function syncDashboardData() {
         updateSyncTime();
     });
 
-    // 4. SYNC WITHDRAWALS (TOTAL, TODAY, PENDING)
+    // 4. SYNC WITHDRAWALS
     firebaseDB.collection("withdrawals").onSnapshot((snapshot) => {
         let totalPaid = 0;
         let todayPaid = 0;
@@ -479,15 +497,15 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             const status = String(data.status || '').toLowerCase();
-            const amount = Number(data.amount || 0);
-            const createdAtMs = parseTimestamp(data.createdAt) || parseTimestamp(data.date);
+            const amount = Number(data.amount || data.withdrawAmount || 0);
+            const createdAtMs = parseTimestamp(data.createdAt) || parseTimestamp(data.date) || parseTimestamp(data.timestamp);
 
-            if (status === 'approved' || status === 'success' || status === 'paid') {
+            if (status === 'approved' || status === 'success' || status === 'paid' || status === 'completed') {
                 totalPaid += amount;
                 if (createdAtMs >= todayStartMs) {
                     todayPaid += amount;
                 }
-            } else if (status === 'pending') {
+            } else if (status === 'pending' || status === 'requested') {
                 pendingCount++;
             }
         });
