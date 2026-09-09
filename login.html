@@ -287,15 +287,25 @@ body{
     margin-top:14px;
 }
 
-.resend-btn{
-    display:block;
-    margin:12px auto 0;
+.otp-actions{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:12px;
+}
+
+.resend-btn, .change-num-btn{
     border:0;
     background:transparent;
     color:#0284c7;
-    font-size:13px;
+    font-size:12px;
     font-weight:800;
     cursor:pointer;
+    padding:4px 0;
+}
+
+.change-num-btn{
+    color:#ea580c;
 }
 
 .resend-btn:disabled{
@@ -521,14 +531,24 @@ try{
     >
         Verify OTP
     </button>
-    <button
-        type="button"
-        class="resend-btn"
-        id="resendBtn"
-        disabled
-    >
-        Resend OTP
-    </button>
+    <div class="otp-actions">
+        <button
+            type="button"
+            class="change-num-btn"
+            id="changeNumBtn"
+            onclick="resetToStep1()"
+        >
+            ✏️ Change Mobile Number
+        </button>
+        <button
+            type="button"
+            class="resend-btn"
+            id="resendBtn"
+            disabled
+        >
+            Resend OTP
+        </button>
+    </div>
 </div>
 
 <div class="features">
@@ -678,6 +698,20 @@ function getMobile(){
     return mobileInput.value.replace(/\D/g,"").slice(0, 10);
 }
 
+function resetToStep1(){
+    clearInterval(resendTimer);
+    otpSection.style.display = "none";
+    mobileGroup.style.display = "block";
+    continueBtn.style.display = "block";
+    continueBtn.disabled = false;
+    continueBtn.textContent = "Send OTP";
+    stepLabel.textContent = "✨ STEP 1";
+    titleText.textContent = "Mobile Login";
+    subtitleText.textContent = "Enter your registered mobile number. We will send you an OTP for secure login.";
+    otpInput.value = "";
+    mobileInput.focus();
+}
+
 // 🔒 STRICT CHECK BEFORE SENDING OTP
 async function startLogin(){
     const mobile = getMobile();
@@ -697,7 +731,7 @@ async function startLogin(){
     if (isBlocked) {
         continueBtn.disabled = false;
         continueBtn.textContent = "Send OTP";
-        showBlockModal(); // Clean Popup without Site Name
+        showBlockModal();
         return;
     }
 
@@ -737,14 +771,16 @@ async function checkIfUserIsBlocked(cleanMobile) {
     }
 }
 
-function sendOTPNow(){
+function sendOTPNow(isResend = false){
     if(typeof window.sendOtp !== "function"){
         showMessage("MSG91 Send OTP method ready nahi hai.");
         return;
     }
 
-    continueBtn.disabled = true;
-    continueBtn.textContent = "Sending OTP...";
+    if(!isResend){
+        continueBtn.disabled = true;
+        continueBtn.textContent = "Sending OTP...";
+    }
     verifyBtn.disabled = true;
     resendBtn.disabled = true;
     showMessage("OTP bheja ja raha hai...");
@@ -765,18 +801,24 @@ function sendOTPNow(){
             titleText.textContent = "Verify Mobile Number";
             subtitleText.textContent = "Enter the 4-digit OTP sent to your registered mobile number.";
             otpSection.style.display = "block";
-            otpInput.value = "";
+            
+            if(isResend){
+                otpInput.value = "";
+            }
+
             otpHint.textContent = "OTP aapke registered mobile number par bhej diya gaya hai.";
 
             verifyBtn.disabled = true;
-            showMessage("OTP successfully sent.");
+            showMessage(isResend ? "OTP phir se bhej diya gaya." : "OTP successfully sent.");
             startResendTimer();
             setTimeout(function(){ otpInput.focus(); }, 300);
         },
         function(error){
             console.error("MSG91 SEND OTP ERROR:", error);
-            continueBtn.disabled = false;
-            continueBtn.textContent = "Send OTP";
+            if(!isResend){
+                continueBtn.disabled = false;
+                continueBtn.textContent = "Send OTP";
+            }
             verifyBtn.disabled = true;
             resendBtn.disabled = false;
 
@@ -811,8 +853,6 @@ function verifyOTP(){
         async function(data){
             console.log("MSG91 OTP VERIFIED:", data);
 
-            showMessage("OTP verify ho gaya. Checking Account Status...");
-            
             const saved = await saveCustomerToFirebase(currentIdentifier);
 
             if(!saved){
@@ -881,7 +921,6 @@ async function saveCustomerToFirebase(mobile){
             }
         }
 
-        // FIX: Define urlParams properly
         const urlParams = new URLSearchParams(window.location.search);
         const incomingRef = urlParams.get('ref') || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
         
@@ -936,38 +975,35 @@ async function saveCustomerToFirebase(mobile){
 
 function resendOTP(){
     if(resendSeconds > 0) return;
-    if(typeof window.retryOtp !== "function"){
-        showMessage("MSG91 Resend service ready nahi hai.");
-        return;
-    }
-    if(!currentReqId){
-        showMessage("Pehle OTP bhejein.");
-        return;
-    }
 
-    resendBtn.disabled = true;
-    showMessage("OTP phir se bheja ja raha hai...");
+    if(typeof window.retryOtp === "function" && currentReqId){
+        resendBtn.disabled = true;
+        showMessage("OTP phir se bheja ja raha hai...");
 
-    window.retryOtp(
-        "11",
-        function(data){
-            if(data && data.reqId){
-                currentReqId = data.reqId;
-            }else if(data && data.requestId){
-                currentReqId = data.requestId;
-            }
-            otpInput.value = "";
-            otpInput.focus();
-            verifyBtn.disabled = true;
-            startResendTimer();
-            showMessage("OTP phir se bhej diya gaya.");
-        },
-        function(error){
-            resendBtn.disabled = false;
-            showMessage("OTP resend nahi ho paya.");
-        },
-        currentReqId
-    );
+        window.retryOtp(
+            "11",
+            function(data){
+                if(data && data.reqId){
+                    currentReqId = data.reqId;
+                }else if(data && data.requestId){
+                    currentReqId = data.requestId;
+                }
+                otpInput.value = "";
+                otpInput.focus();
+                verifyBtn.disabled = true;
+                startResendTimer();
+                showMessage("OTP phir se bhej diya gaya.");
+            },
+            function(error){
+                // Fallback to sendOTPNow if retryOtp fails
+                sendOTPNow(true);
+            },
+            currentReqId
+        );
+    } else {
+        // Fallback for seamless Resend OTP
+        sendOTPNow(true);
+    }
 }
 
 function startResendTimer(){
