@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - History</title>
+<title>RDX LUDO - History & Activity Logs</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,7 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
-button, input{font:inherit;}
+button{font:inherit;}
 
 /* TOP HEADER */
 .top-header{
@@ -73,7 +73,7 @@ button, input{font:inherit;}
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
-/* RIGHT SIDE 3 BUTTONS (EXACT IMAGE SHAPE & RADIUS MATCH) */
+/* RIGHT SIDE BUTTONS (EXACT 1:1 MATCH WITH BOTTOM NAV SHAPE & RADIUS) */
 .header-right{
     display:flex;
     align-items:center;
@@ -84,7 +84,7 @@ button, input{font:inherit;}
     width:42px;
     height:42px;
     border:0;
-    border-radius:14px; /* Matches exact squircle button shape */
+    border-radius:14px; /* Same rounded square style as bottom buttons */
     display:flex;
     align-items:center;
     justify-content:center;
@@ -313,7 +313,7 @@ button, input{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAVIGATION (EXACT MATCHING 4 BUTTONS) */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -410,7 +410,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
     </div>
     
-    <!-- 3 HEADER BUTTONS WITH MATCHED DESIGN -->
+    <!-- 3 BUTTONS EXACTLY MATCHED TO BOTTOM NAV -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -437,6 +437,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </div>
 
     <div class="history-list" id="historyList">
+        <!-- Dynamic Firebase History Cards loaded here -->
         <p style="text-align:center; color:#64748b; font-weight:600; padding:20px 0;">Loading history...</p>
     </div>
 </main>
@@ -518,7 +519,7 @@ function renderHistory() {
     });
 
     if (filtered.length === 0) {
-        listEl.innerHTML = `<p style="text-align:center; color:#64748b; font-weight:700; padding:30px 0;">No history logs found.</p>`;
+        listEl.innerHTML = `<p style="text-align:center; color:#64748b; font-weight:700; padding:30px 0;">No records found.</p>`;
         return;
     }
 
@@ -537,7 +538,7 @@ function renderHistory() {
                 <div class="card-left">
                     <div class="card-icon-box"><i class="fa-solid ${icon}"></i></div>
                     <div class="card-info">
-                        <h4>${item.title || 'Transaction Log'}</h4>
+                        <h4>${item.title || 'Deposit Amount'}</h4>
                         <p><i class="fa-regular fa-clock"></i> ${item.date || 'Recent'}</p>
                         ${item.utr ? `<small>UTR: ${item.utr}</small>` : ''}
                     </div>
