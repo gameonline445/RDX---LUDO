@@ -426,7 +426,6 @@ function adminLogout() {
     window.location.href = "admin-login.html";
 }
 
-// Helper to convert dynamic Firebase Timestamps or Strings into Time MS
 function parseTimestamp(val) {
     if (!val) return 0;
     if (typeof val === 'number') return val;
@@ -447,7 +446,6 @@ function listenToUserPresence() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Format Mobile
             let cleanMobile = String(data.mobile || doc.id).replace(/\D/g, "");
             if (cleanMobile.startsWith("91") && cleanMobile.length > 10) {
                 cleanMobile = "+" + cleanMobile;
@@ -457,14 +455,14 @@ function listenToUserPresence() {
                 cleanMobile = "+" + cleanMobile;
             }
 
-            // Sync with all possible timestamp fields (lastPing, lastSeenAt, updatedAt)
-            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt) || parseTimestamp(data.updatedAt);
+            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt);
 
-            // Match Dashboard Logic: If isOnline flag is true OR ping received in last 2 mins (120000ms)
-            const isPingRecent = lastPingMs > 0 && (now - lastPingMs) < 120000;
-            const isOnline = data.isOnline === true || isPingRecent;
-            
-            // Logged in Logic
+            // STRICT 15-SECOND CUTOFF LOGIC
+            // Tab close/Background hone par 15s me offline ho jayega
+            const isPingActive = lastPingMs > 0 && (now - lastPingMs) < 15000;
+            const isOnline = data.isOnline === true && isPingActive;
+
+            // LOGGED IN LOGIC (Logged in on site in last 24h)
             const isLoggedIn = data.isLoggedIn === true || isOnline || (lastPingMs > 0 && (now - lastPingMs) < 86400000);
 
             if (isOnline) {
@@ -503,6 +501,11 @@ function listenToUserPresence() {
         console.error("Firestore Listen Error:", error);
     });
 }
+
+// Auto Refresh every 3 seconds to immediately auto-expire users after 15 sec
+setInterval(() => {
+    if (allUsersData.length > 0) renderTable();
+}, 3000);
 
 function renderTable() {
     const tbody = document.getElementById("userTableBody");
