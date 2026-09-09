@@ -44,7 +44,6 @@
 
         .status-online { display: inline-flex; align-items: center; gap: 6px; color: #48bb78; font-weight: 700; font-size: 12px; background: rgba(72, 187, 120, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(72, 187, 120, 0.3); }
         .dot-online { width: 8px; height: 8px; background-color: #48bb78; border-radius: 50%; box-shadow: 0 0 8px #48bb78; animation: pulse 1.5s infinite; }
-        .status-offline { color: #a0aec0; font-weight: 600; font-size: 12px; background: rgba(160, 174, 192, 0.1); padding: 4px 10px; border-radius: 20px; }
 
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7); }
@@ -79,11 +78,11 @@
         </aside>
 
         <main class="main-content">
-            <h1 class="dashboard-title">Live Users Monitor</h1>
+            <h1 class="dashboard-title">Live Active Users Monitor</h1>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="title">Total Active Live Users</div>
+                    <div class="title">Currently Active Site Users</div>
                     <div class="value" id="statOnlineUsers">0</div>
                 </div>
                 <div class="stat-card">
@@ -109,7 +108,7 @@
                         </tr>
                     </thead>
                     <tbody id="liveUsersTable">
-                        <tr><td colspan="6" style="text-align: center;">Fetching active users from Firebase...</td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Fetching active users...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -131,35 +130,37 @@
         }
         const db = firebase.firestore();
 
-        let allUsersList = [];
+        let activeUsersOnly = [];
 
         function listenLiveUsers() {
             db.collection("customers").onSnapshot(snapshot => {
-                allUsersList = [];
-                let onlineCount = 0;
+                activeUsersOnly = [];
+                const now = new Date();
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
                     data.id = doc.id;
                     
-                    let isOnline = false;
-                    if (data.isOnline === true) {
-                        isOnline = true;
-                    } else if (data.lastActive) {
+                    let isActiveNow = false;
+
+                    // Condition: Must be explicitly marked online AND active within last 45 seconds
+                    if (data.isOnline === true && data.lastActive) {
                         const lastActiveDate = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
-                        const diffMins = (new Date() - lastActiveDate) / (1000 * 60);
-                        if (diffMins <= 5) isOnline = true; // 5 minute active window
+                        const diffSec = (now - lastActiveDate) / 1000;
+                        if (diffSec <= 45) {
+                            isActiveNow = true;
+                        }
                     }
 
-                    if (isOnline) onlineCount++;
-                    data.computedOnline = isOnline;
-                    allUsersList.push(data);
+                    if (isActiveNow) {
+                        activeUsersOnly.push(data);
+                    }
                 });
 
                 document.getElementById("statTotalUsers").innerText = snapshot.size;
-                document.getElementById("statOnlineUsers").innerText = onlineCount;
+                document.getElementById("statOnlineUsers").innerText = activeUsersOnly.length;
 
-                renderTable(allUsersList);
+                renderTable(activeUsersOnly);
             });
         }
 
@@ -168,32 +169,22 @@
             tbody.innerHTML = "";
 
             if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No registered users found in Firestore.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No users are currently active on the site right now.</td></tr>`;
                 return;
             }
-
-            // Online users top par show hongge
-            users.sort((a, b) => (b.computedOnline ? 1 : 0) - (a.computedOnline ? 1 : 0));
 
             users.forEach(u => {
                 const tr = document.createElement("tr");
 
-                const statusHTML = u.computedOnline 
-                    ? `<span class="status-online"><span class="dot-online"></span> ONLINE</span>`
-                    : `<span class="status-offline">OFFLINE</span>`;
-
                 const phone = u.phone || u.mobile || u.phoneNumber || u.userId || u.id;
                 const name = u.name || u.userName || u.displayName || "User";
                 
-                // Location field variations handle kiye hain
                 const city = u.city || u.cityName || u.district || "";
                 const state = u.state || u.stateName || u.region || "";
                 
                 let locationStr = "Location Not Shared";
                 if (city || state) {
                     locationStr = `${city}${city && state ? ', ' : ''}${state}`;
-                } else if (u.location || u.address) {
-                    locationStr = u.location || u.address;
                 }
 
                 const currentPage = u.currentPage || u.activePage || "Home Page";
@@ -205,7 +196,7 @@
                 }
 
                 tr.innerHTML = `
-                    <td>${statusHTML}</td>
+                    <td><span class="status-online"><span class="dot-online"></span> ONLINE</span></td>
                     <td><strong style="color: #63b3ed; font-size: 15px;">${phone}</strong></td>
                     <td><strong>${name}</strong></td>
                     <td><i class="fa-solid fa-location-dot" style="color:#e53e3e; margin-right:5px;"></i> ${locationStr}</td>
@@ -218,10 +209,10 @@
 
         function filterUsers() {
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
-            const filtered = allUsersList.filter(u => {
+            const filtered = activeUsersOnly.filter(u => {
                 const name = (u.name || u.userName || "").toLowerCase();
                 const phone = (u.phone || u.mobile || u.phoneNumber || u.userId || "").toLowerCase();
-                const city = (u.city || u.location || "").toLowerCase();
+                const city = (u.city || "").toLowerCase();
                 const state = (u.state || "").toLowerCase();
 
                 return name.includes(search) || phone.includes(search) || city.includes(search) || state.includes(search);
