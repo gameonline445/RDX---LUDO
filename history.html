@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - Dashboard</title>
+<title>RDX LUDO - History</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,7 +25,7 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
-button{font:inherit;}
+button, input{font:inherit;}
 
 /* TOP HEADER */
 .top-header{
@@ -58,7 +58,6 @@ button{font:inherit;}
 }
 .menu-btn:active{transform:scale(0.95);}
 
-/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -72,148 +71,181 @@ button{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-.logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.logo img{width:100%;height:100%;object-fit:cover;}
 
-/* RIGHT SIDE BUTTONS */
-.header-right{display:flex;align-items:center;gap:8px;}
+.header-right{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:auto;
+}
 .header-icon{
-    width:38px;
-    height:38px;
+    width:42px;
+    height:42px;
     border:0;
-    border-radius:50%;
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:15px;
+    font-size:18px;
     color:white;
     cursor:pointer;
     padding:0;
     box-shadow:0 4px 10px rgba(0,0,0,0.1);
     transition:transform 0.15s ease;
 }
-.header-icon:active{transform:scale(0.95);}
-
+.header-icon:active{transform:scale(0.92);}
 .bell{background:#6366f1;}
 .cash{background:#22c55e;}
 .gift{background:#f97316;}
 
-/* CONTAINER */
+/* MAIN CONTENT CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
-/* WELCOME BANNER */
-.welcome-box{margin-bottom:14px;}
-.welcome-box h1{font-size:24px;font-weight:900;color:#0c4a6e;}
-.welcome-box p{color:#64748b;font-size:13px;font-weight:600;margin-top:2px;}
-
-/* REFER BANNER */
-.refer-banner{
-    border:1.5px solid #7dd3fc;
-    border-radius:22px;
-    padding:16px 18px;
-    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
+.page-title{
     display:flex;
-    justify-style:space-between;
     align-items:center;
-    cursor:pointer;
-    box-shadow:0 6px 18px rgba(2,132,199,0.08);
-    margin-bottom:20px;
+    gap:10px;
+    font-size:22px;
+    font-weight:900;
+    color:#0369a1;
+    margin-bottom:16px;
 }
-.refer-banner small{color:#0284c7;font-weight:850;font-size:11px;letter-spacing:0.8px;}
-.refer-banner h3{font-size:22px;font-weight:900;color:#0c4a6e;margin-top:2px;}
-.refer-banner p{color:#64748b;font-size:12px;margin-top:2px;}
-.refer-arrow{
-    width:40px;
-    height:40px;
-    border-radius:50%;
+.page-title i{
+    font-size:20px;
+    color:#0284c7;
+    background:#e0f2fe;
+    padding:10px;
+    border-radius:14px;
+    border:1px solid #bae6fd;
+}
+
+/* SEARCH BAR */
+.search-box{
+    position:relative;
+    margin-bottom:16px;
+}
+.search-box i{
+    position:absolute;
+    left:16px;
+    top:50%;
+    transform:translateY(-50%);
+    color:#64748b;
+    font-size:16px;
+}
+.search-box input{
+    width:100%;
+    padding:14px 16px 14px 45px;
+    border-radius:16px;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    font-size:13px;
+    font-weight:600;
+    color:#0f172a;
+    outline:none;
+    box-shadow:0 4px 12px rgba(2,132,199,0.04);
+}
+.search-box input::placeholder{color:#94a3b8;}
+
+/* TABS FILTER */
+.tabs-wrapper{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:8px;
+    margin-bottom:16px;
+    scrollbar-width:none;
+}
+.tabs-wrapper::-webkit-scrollbar{display:none;}
+
+.tab-btn{
+    white-space:nowrap;
+    padding:10px 18px;
+    border-radius:20px;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    color:#0284c7;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    box-shadow:0 2px 8px rgba(2,132,199,0.05);
+}
+.tab-btn.active{
     background:#0284c7;
-    color:white;
+    color:#ffffff;
+    border-color:#0284c7;
+    box-shadow:0 4px 12px rgba(2,132,199,0.3);
+}
+
+/* HISTORY CARDS LIST */
+.history-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+.history-item{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:18px;
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-style:space-between;
+    box-shadow:0 4px 12px rgba(2,132,199,0.05);
+}
+.item-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+.item-icon{
+    width:44px;
+    height:44px;
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:18px;
-    box-shadow:0 4px 12px rgba(2,132,199,0.3);
-}
-
-/* GAMES SECTION */
-.section-label{font-size:11px;font-weight:850;color:#64748b;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase;}
-.section-title{font-size:18px;font-weight:900;color:#0f172a;margin-bottom:12px;}
-
-/* LUDO CARD */
-.game-card{
-    width:100%;
-    height:200px;
-    border-radius:22px;
-    overflow:hidden;
-    position:relative;
-    background:#111;
-    box-shadow:0 8px 24px rgba(0,0,0,0.16);
-    cursor:pointer;
-    margin-bottom:12px;
-}
-.game-card img{width:100%;height:100%;object-fit:cover;}
-.game-overlay{
-    position:absolute;
-    inset:0;
-    background:linear-gradient(180deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.8) 100%);
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
     color:white;
+    flex-shrink:0;
 }
-@keyframes slowPulse {
-    0%, 100% { opacity:1; transform:scale(1); box-shadow:0 0 10px rgba(34,197,94,0.95); }
-    50% { opacity:0.4; transform:scale(0.96); box-shadow:0 0 2px rgba(34,197,94,0.2); }
-}
-.live-badge{
-    align-self:flex-start;
-    background:#16a34a;
-    color:white;
-    padding:4px 10px;
-    border-radius:12px;
+.type-deposit{background:linear-gradient(145deg, #22c55e, #16a34a);}
+.type-withdraw{background:linear-gradient(145deg, #ef4444, #dc2626);}
+.type-battle{background:linear-gradient(145deg, #6366f1, #4f46e5);}
+.type-refer{background:linear-gradient(145deg, #f97316, #ea580c);}
+
+.item-details h4{font-size:14px;font-weight:850;color:#0f172a;}
+.item-details p{font-size:11px;font-weight:600;color:#64748b;margin-top:2px;}
+.item-details small{font-size:10px;font-weight:700;color:#94a3b8;display:block;margin-top:3px;}
+
+.item-right{text-align:right;}
+.amount{font-size:15px;font-weight:900;}
+.amount.plus{color:#16a34a;}
+.amount.minus{color:#dc2626;}
+.status-badge{
+    display:inline-block;
+    padding:3px 8px;
+    border-radius:8px;
     font-size:10px;
-    font-weight:850;
-    animation:slowPulse 1.8s ease-in-out infinite;
+    font-weight:800;
+    margin-top:4px;
+    text-transform:uppercase;
 }
-.game-card-bottom{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-}
-.game-card-bottom h2{font-size:22px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,0.6);}
-.game-card-bottom p{font-size:12px;color:#cbd5e1;}
-.play-btn{
-    background:linear-gradient(100deg,#0284c7,#0369a1);
-    color:white;
-    border:0;
-    padding:8px 20px;
-    border-radius:18px;
-    font-size:13px;
-    font-weight:850;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(2,132,199,0.35);
-}
+.badge-success{background:#dcfce7;color:#15803d;}
+.badge-pending{background:#fef3c7;color:#b45309;}
+.badge-failed{background:#fee2e2;color:#b91c1c;}
 
-/* COMING SOON CARD */
-.soon-card{
-    background:#ffffff;
-    border:1px solid #e2e8f0;
-    border-radius:18px;
-    padding:12px 14px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    box-shadow:0 4px 14px rgba(30,60,120,0.03);
+/* EMPTY / NO DATA */
+.empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:#64748b;
+    font-weight:700;
+    font-size:14px;
 }
-.soon-card img{width:60px;height:60px;border-radius:14px;object-fit:cover;}
-.soon-info{flex:1;}
-.soon-info h4{font-size:15px;font-weight:850;color:#0f172a;}
-.soon-info p{color:#64748b;font-size:12px;margin-top:2px;}
-.soon-tag{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:5px 10px;border-radius:12px;font-size:10px;font-weight:800;}
 
 /* SIDE DRAWER */
 .drawer-overlay{
@@ -248,7 +280,7 @@ button{font:inherit;}
     border-bottom:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-style:space-between;
 }
 .drawer-user{display:flex;align-items:center;gap:10px;}
 .drawer-avatar{
@@ -262,11 +294,7 @@ button{font:inherit;}
     overflow:hidden;
     border:1.5px solid #bae6fd;
 }
-.drawer-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
 .drawer-close{
     width:34px;
     height:34px;
@@ -295,7 +323,6 @@ button{font:inherit;}
     color:#334155;
     cursor:pointer;
     margin-bottom:4px;
-    transition:background 0.2s ease;
 }
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
 .drawer-item-icon{
@@ -307,7 +334,6 @@ button{font:inherit;}
     justify-content:center;
     color:white;
     font-size:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 .menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
 .menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
@@ -318,7 +344,7 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAVIGATION */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -328,7 +354,7 @@ button{font:inherit;}
     background:#ffffff;
     border-top:1px solid #e2e8f0;
     display:flex;
-    justify-style:space-around;
+    justify-space:around;
     align-items:center;
     z-index:200;
 }
@@ -356,9 +382,7 @@ button{font:inherit;}
     justify-content:center;
     font-size:18px;
     color:#ffffff;
-    transition:transform 0.2s ease;
 }
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
 .icon-home{background:#6366f1;}
 .icon-wallet{background:#22c55e;}
 .icon-support{background:#38bdf8;}
@@ -369,29 +393,15 @@ button{font:inherit;}
 <body>
 
 <script>
-// BFCache Reload Prevention
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
         window.location.reload();
     }
 });
 
-// Authentication Guard
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
-
-// Mobile Back Button Management
-(function() {
-    history.pushState(null, null, location.href);
-    window.addEventListener("popstate", function() {
-        const drawer = document.getElementById("sideDrawer");
-        if (drawer && drawer.classList.contains("active")) {
-            toggleMenu();
-        }
-        history.pushState(null, null, location.href);
-    });
-})();
 </script>
 
 <!-- SIDE DRAWER -->
@@ -399,7 +409,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
         <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">
+            <div class="drawer-avatar">
                 <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
             </div>
             <div>
@@ -431,7 +441,6 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
     </div>
     
-    <!-- 3 BUTTONS ON THE RIGHT SIDE -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -440,47 +449,29 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 </header>
 
 <main class="container">
-    <section class="welcome-box">
-        <h1>Hey, <span id="userName">User</span></h1>
-        <p>Welcome to RDX LUDO</p>
-    </section>
+    <div class="page-title">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        <span>History & Activity Logs</span>
+    </div>
 
-    <section class="refer-banner" onclick="window.location.replace('referral.html')">
-        <div>
-            <small>REFER & EARN</small>
-            <h3>2% Refer Bonus</h3>
-            <p>Invite friends and earn lifetime rewards</p>
-        </div>
-        <div class="refer-arrow">↗</div>
-    </section>
+    <!-- SEARCH INPUT -->
+    <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <input type="text" id="searchInput" placeholder="Search by Date, UTR, Amount, Status, Opponent..." oninput="filterLogs()">
+    </div>
 
-    <div class="section-label">GAMES</div>
-    <h2 class="section-title">Play Your Game</h2>
+    <!-- TABS -->
+    <div class="tabs-wrapper">
+        <button class="tab-btn active" onclick="switchTab('all', this)">All Activity</button>
+        <button class="tab-btn" onclick="switchTab('battle', this)"><i class="fa-solid fa-gamepad"></i> Battles History</button>
+        <button class="tab-btn" onclick="switchTab('deposit', this)"><i class="fa-solid fa-wallet"></i> Deposits</button>
+        <button class="tab-btn" onclick="switchTab('withdraw', this)"><i class="fa-solid fa-building-columns"></i> Withdrawals</button>
+    </div>
 
-    <article class="game-card" onclick="window.location.replace('battles.html')">
-        <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
-        <div class="game-overlay">
-            <span class="live-badge">● LIVE</span>
-            <div class="game-card-bottom">
-                <div>
-                    <h2>Ludo Classic</h2>
-                    <p>Classic 2-Player Battle</p>
-                </div>
-                <button class="play-btn" onclick="event.stopPropagation(); window.location.replace('battles.html');">
-                    ▶ Play
-                </button>
-            </div>
-        </div>
-    </article>
-
-    <section class="soon-card">
-        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
-        <div class="soon-info">
-            <h4>1 Goti Quick Ludo</h4>
-            <p>Fast paced 1-Token match</p>
-        </div>
-        <span class="soon-tag">🔒 SOON</span>
-    </section>
+    <!-- HISTORY LIST CONTAINER -->
+    <div class="history-list" id="historyList">
+        <div class="empty-state">Loading history logs...</div>
+    </div>
 </main>
 
 <!-- BOTTOM NAVIGATION -->
@@ -509,96 +500,137 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
+let allLogsData = [];
+let currentCategory = 'all';
+
 function toggleMenu() {
     document.getElementById("sideDrawer").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME FIRESTORE DATA SYNC
-function loadDashboardDataRealtime() {
-    if (!userId) { window.location.replace("index.html"); return; }
+/* FETCH HISTORY LOGS FROM FIREBASE */
+function loadHistoryData() {
+    if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
 
-    firebaseDB.collection("customers").doc(docId).onSnapshot((snap) => {
-        if (snap.exists) {
-            const d = snap.data();
-
-            // ADMIN BLOCK CHECK
-            const isUserBlocked = d.isBlocked === true || 
-                                  d.isBlock === true || 
-                                  d.blocked === true || 
-                                  String(d.status).toLowerCase() === 'blocked';
-
-            if (isUserBlocked) {
-                localStorage.clear();
-                sessionStorage.clear();
-                alert("Aapka account admin dwara block kar diya gaya hai.");
-                window.location.replace("index.html");
-                return;
-            }
-
-            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
-            const firstName = fullName.split(" ")[0] || "User";
-
-            document.getElementById("userName").textContent = firstName;
-            document.getElementById("drawerName").textContent = fullName;
+    // Load User Header Info
+    firebaseDB.collection("customers").doc(docId).get().then(doc => {
+        if(doc.exists){
+            const d = doc.data();
+            document.getElementById("drawerName").textContent = String(d.name || ("User " + userId.slice(-4))).trim();
             document.getElementById("drawerMobile").textContent = "+" + userId;
         }
-    }, (err) => {
-        console.error("Realtime balance update error:", err);
+    });
+
+    // Fetch transactions from subcollection or global collection
+    firebaseDB.collection("customers").doc(docId).collection("history")
+    .onSnapshot(snapshot => {
+        if (!snapshot.empty) {
+            allLogsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            renderLogs();
+        } else {
+            // Fallback: check global 'transactions' collection filtered by userId
+            firebaseDB.collection("transactions").where("userId", "==", docId)
+            .onSnapshot(transSnap => {
+                allLogsData = transSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderLogs();
+            }, err => {
+                renderLogs();
+            });
+        }
+    }, err => {
+        renderLogs();
     });
 }
 
-// HEARTBEAT & PRESENCE TRACKER
-async function startPresenceHeartbeat() {
-    if (!userId) return;
-    const docId = userId.length === 10 ? "91" + userId : userId;
-    const userRef = firebaseDB.collection("customers").doc(docId);
+function renderLogs() {
+    const container = document.getElementById("historyList");
+    const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
-    let userCity = "Unknown";
-    let userState = "Unknown";
+    let filtered = allLogsData.filter(item => {
+        const itemType = (item.type || '').toLowerCase();
+        
+        let matchesCategory = true;
+        if(currentCategory === 'battle') matchesCategory = itemType.includes('battle') || itemType.includes('game') || itemType.includes('ludo');
+        else if(currentCategory === 'deposit') matchesCategory = itemType.includes('deposit') || itemType.includes('add');
+        else if(currentCategory === 'withdraw') matchesCategory = itemType.includes('withdraw') || itemType.includes('payout');
 
-    try {
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
-        if (data && data.city) {
-            userCity = data.city;
-            userState = data.region || data.region_code || "Unknown";
-        }
-    } catch(e) {
-        console.log("Location fetch error:", e);
-    }
+        const title = (item.title || item.type || '').toLowerCase();
+        const desc = (item.description || item.utr || item.opponent || '').toLowerCase();
+        const status = (item.status || '').toLowerCase();
+        const amount = String(item.amount || '');
 
-    const sendHeartbeat = (isOnlineStatus) => {
-        const payload = {
-            isOnline: isOnlineStatus,
-            lastPing: firebase.firestore.FieldValue.serverTimestamp(),
-            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        if (userCity !== "Unknown") payload.city = userCity;
-        if (userState !== "Unknown") payload.state = userState;
+        const matchesSearch = title.includes(query) || desc.includes(query) || status.includes(query) || amount.includes(query);
 
-        userRef.set(payload, { merge: true }).catch(err => console.error("Presence error:", err));
-    };
-
-    sendHeartbeat(true);
-
-    setInterval(() => {
-        if (!document.hidden) {
-            sendHeartbeat(true);
-        } else {
-            sendHeartbeat(false);
-        }
-    }, 5000);
-
-    document.addEventListener("visibilitychange", () => {
-        sendHeartbeat(!document.hidden);
+        return matchesCategory && matchesSearch;
     });
 
-    window.addEventListener("blur", () => sendHeartbeat(false));
-    window.addEventListener("focus", () => sendHeartbeat(true));
-    window.addEventListener("pagehide", () => sendHeartbeat(false));
-    window.addEventListener("beforeunload", () => sendHeartbeat(false));
+    if (filtered.length === 0) {
+        container.innerHTML = `<div class="empty-state">No records found.</div>`;
+        return;
+    }
+
+    // Sort by timestamp descending
+    filtered.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+    let html = '';
+    filtered.forEach(item => {
+        const type = (item.type || 'transaction').toLowerCase();
+        let iconClass = 'fa-arrow-right-left';
+        let bgClass = 'type-battle';
+        let isPlus = item.isCredit || type.includes('deposit') || type.includes('win');
+
+        if(type.includes('deposit') || type.includes('add')){
+            iconClass = 'fa-wallet';
+            bgClass = 'type-deposit';
+        } else if(type.includes('withdraw')){
+            iconClass = 'fa-building-columns';
+            bgClass = 'type-withdraw';
+        } else if(type.includes('refer')){
+            iconClass = 'fa-gift';
+            bgClass = 'type-refer';
+        } else {
+            iconClass = 'fa-dice';
+            bgClass = 'type-battle';
+        }
+
+        const dateStr = item.date || (item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleString() : 'Recently');
+        const statusStr = item.status || 'Success';
+        let badgeClass = 'badge-success';
+        if(statusStr.toLowerCase().includes('pending')) badgeClass = 'badge-pending';
+        if(statusStr.toLowerCase().includes('failed') || statusStr.toLowerCase().includes('reject')) badgeClass = 'badge-failed';
+
+        html += `
+        <div class="history-item">
+            <div class="item-left">
+                <div class="item-icon ${bgClass}">
+                    <i class="fa-solid ${iconClass}"></i>
+                </div>
+                <div class="item-details">
+                    <h4>${item.title || item.type || 'Transaction'}</h4>
+                    <p>${item.description || item.utr || item.opponent || 'Account Activity'}</p>
+                    <small>${dateStr}</small>
+                </div>
+            </div>
+            <div class="item-right">
+                <div class="amount ${isPlus ? 'plus' : 'minus'}">${isPlus ? '+' : '-'}₹${parseFloat(item.amount || 0).toFixed(2)}</div>
+                <span class="status-badge ${badgeClass}">${statusStr}</span>
+            </div>
+        </div>`;
+    });
+
+    container.innerHTML = html;
+}
+
+function switchTab(cat, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentCategory = cat;
+    renderLogs();
+}
+
+function filterLogs() {
+    renderLogs();
 }
 
 function logout() {
@@ -613,8 +645,7 @@ function logout() {
 }
 
 window.addEventListener("load", () => {
-    loadDashboardDataRealtime();
-    startPresenceHeartbeat();
+    loadHistoryData();
 });
 </script>
 
