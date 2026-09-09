@@ -49,7 +49,7 @@ button{font:inherit;}
 /* TOP HEADER */
 .top-header{
     position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
-    display:flex;align-items:center;justify-space-between;padding:0 14px;
+    display:flex;align-items:center;justify-content:space-between;padding:0 14px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom:1.5px solid #bae6fd;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
@@ -243,6 +243,7 @@ button{font:inherit;}
 
 <script>
 let unsubscribeWalletListener = null;
+let unsubscribeDepositsListener = null;
 
 async function loadFirebaseCustomer(){
     try {
@@ -286,7 +287,7 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REAL-TIME SYNC LISTENER
+        // 1. REAL-TIME CUSTOMER BALANCE LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
@@ -313,6 +314,37 @@ async function loadFirebaseCustomer(){
         }, (error) => {
             console.error("Wallet Real-time Sync Error:", error);
         });
+
+        // 2. AUTOMATIC DEPOSIT APPROVAL SYNC LISTENER
+        // Monitor deposits collection for approved/success status that haven't been processed yet
+        if(unsubscribeDepositsListener) unsubscribeDepositsListener();
+        
+        unsubscribeDepositsListener = firebaseDB.collection("deposits")
+            .where("uid", "in", [mobile10Digits, docIdWith91])
+            .onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach(async (change) => {
+                    if (change.type === "modified" || change.type === "added") {
+                        const depData = change.doc.data();
+                        const status = (depData.status || "").toLowerCase();
+                        
+                        // If approved by admin and not yet auto-credited
+                        if ((status === "approved" || status === "success") && !depData.autoSynced) {
+                            const depAmount = Number(depData.amount || 0);
+                            if (depAmount > 0) {
+                                // Auto increment depositBalance & balance in customer doc
+                                await userRef.update({
+                                    depositBalance: firebase.firestore.FieldValue.increment(depAmount),
+                                    balance: firebase.firestore.FieldValue.increment(depAmount)
+                                });
+                                // Mark deposit record as autoSynced
+                                await change.doc.ref.update({ autoSynced: true });
+                            }
+                        }
+                    }
+                });
+            }, (error) => {
+                console.warn("Deposits Auto-sync Listener error:", error);
+            });
 
     } catch(error) { 
         console.error("Wallet Fetch Error:", error); 
