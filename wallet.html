@@ -5,11 +5,21 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
+<!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- FIREBASE SDK (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
+// BFCache Reload Prevention
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (performance && performance.navigation.type === 2)) {
+        window.location.reload();
+    }
+});
+
 // Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
@@ -23,11 +33,14 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
+
 let firebaseDB = null;
 try {
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     firebaseDB = firebase.firestore();
-} catch(error){ console.error(error); }
+} catch(error) { 
+    console.error("Firebase Init Error:", error); 
+}
 </script>
 
 <style>
@@ -130,9 +143,9 @@ button{font:inherit;}
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="goNotifications()">🔔</button>
-        <button class="header-icon wallet-top" onclick="goWallet()">🪙 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
+        <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
+        <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -165,8 +178,8 @@ button{font:inherit;}
 <main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
-            <div class="wallet-title">▣ MY WALLET</div>
-            <button class="history-btn" onclick="goHistory()">◷ &nbsp; History</button>
+            <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
+            <button class="history-btn" onclick="goHistory()"><i class="fa-solid fa-clock-rotate-left"></i> &nbsp; History</button>
         </div>
         <div class="balance-label">Total Balance</div>
         <div class="balance">₹<span id="mainBalance">0</span></div>
@@ -178,13 +191,13 @@ button{font:inherit;}
 
     <section class="balance-grid">
         <div class="balance-box">
-            <div class="balance-icon">▣</div>
+            <div class="balance-icon"><i class="fa-solid fa-money-bill-transfer"></i></div>
             <h3>DEPOSIT</h3>
             <div class="balance-value">₹<span id="depositBalance">0</span></div>
             <span class="balance-note">For battles only</span>
         </div>
         <div class="balance-box">
-            <div class="balance-icon">🏆</div>
+            <div class="balance-icon"><i class="fa-solid fa-trophy"></i></div>
             <h3>WINNINGS</h3>
             <div class="balance-value">₹<span id="winningBalance">0</span></div>
             <span class="balance-note">Can withdraw</span>
@@ -210,7 +223,6 @@ let unsubscribeWalletListener = null;
 function renderWalletData(data, docId) {
     if (!data) return;
 
-    // Check all possible field names used in Firestore
     const b1 = Number(data.balance || 0);
     const b2 = Number(data.wallet || 0);
     const b3 = Number(data.totalBalance || 0);
@@ -218,10 +230,8 @@ function renderWalletData(data, docId) {
     let winnings = Number(data.winnings || data.winningBalance || data.winningAmount || 0);
     let deposit = Number(data.deposit || data.depositBalance || data.depositAmount || 0);
 
-    // Calculate maximum available total balance
     let realTotal = Math.max(b1, b2, b3, (deposit + winnings));
 
-    // Auto-adjust deposit if total balance is higher than individual values
     if (deposit === 0 && winnings === 0) {
         deposit = realTotal;
     } else if (deposit + winnings !== realTotal) {
@@ -230,9 +240,8 @@ function renderWalletData(data, docId) {
         }
     }
 
-    // Update HTML Elements
     document.getElementById("mainBalance").textContent = realTotal;
-    document.getElementById("topBalance").textContent = realTotal;
+    document.getElementById("topBalance").textContent = "₹" + realTotal;
     document.getElementById("depositBalance").textContent = deposit;
     document.getElementById("winningBalance").textContent = winnings;
 
@@ -263,16 +272,13 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // Check primary document ID (with 91 prefix)
         let userRef = firebaseDB.collection("customers").doc(primaryId);
         let snap = await userRef.get();
 
         if(!snap.exists && primaryId !== secondaryId) {
-            // Fallback to 10-digit mobile if primary doesn't exist
             userRef = firebaseDB.collection("customers").doc(secondaryId);
         }
 
-        // Attach Realtime Listener
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 renderWalletData(doc.data(), doc.id);
