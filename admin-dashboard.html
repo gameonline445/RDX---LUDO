@@ -29,17 +29,18 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; height: 100%; display: flex; flex-direction: column; gap: 16px; }
         .dashboard-title { color: #3182ce; font-size: 28px; font-weight: 800; margin-bottom: 8px; flex-shrink: 0; }
 
-        .cards-container { display: flex; flex-direction: column; gap: 14px; max-width: 600px; }
-        .dash-card { background: #ffffff; border-radius: 16px; padding: 18px 20px; color: #1a202c; border: 1px solid #e2e8f0; }
-        .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-        .card-value { font-size: 26px; font-weight: 900; }
+        /* Updated 2-Column Grid Container matching screenshot */
+        .cards-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; max-width: 700px; }
+        .dash-card { background: #ffffff; border-radius: 16px; padding: 20px 22px; color: #1a202c; border: 1px solid #e2e8f0; min-height: 100px; display: flex; flex-direction: column; justify-content: center; }
+        .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+        .card-value { font-size: 28px; font-weight: 900; }
 
         .val-green { color: #2f855a; }
         .val-orange { color: #dd6b20; }
         .val-blue { color: #3182ce; }
         .val-purple { color: #6b46c1; }
 
-        .status-card { background: #ffffff; border-radius: 16px; padding: 20px; color: #1a202c; max-width: 600px; margin-top: 10px; }
+        .status-card { background: #ffffff; border-radius: 16px; padding: 20px; color: #1a202c; max-width: 700px; margin-top: 10px; }
         .status-title { font-size: 18px; font-weight: 800; color: #1a202c; margin-bottom: 12px; }
         .status-badge { background: #c6f6d5; color: #22543d; font-weight: 800; font-size: 14px; padding: 10px 16px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #9ae6b4; }
         .status-sub { font-size: 13px; color: #718096; margin-top: 10px; font-weight: 600; }
@@ -64,7 +65,7 @@
             <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
             <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
             <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book-bookmark"></i> User Complete History</a>
-            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-share-nodes"></i> Referral Management</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-share-nodes"></i> Referral Analytics</a>
             <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
             <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
             <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
@@ -73,7 +74,8 @@
         <main class="main-content">
             <h1 class="dashboard-title">Dashboard</h1>
 
-            <div class="cards-container">
+            <!-- 2-Column Grid Layout -->
+            <div class="cards-grid">
                 <div class="dash-card">
                     <div class="card-label">ACTIVE LIVE USERS</div>
                     <div class="card-value val-green"><span id="activeLiveUsers">0</span> Live</div>
@@ -151,7 +153,7 @@
         const db = firebase.firestore();
 
         function initRealtimeDashboard() {
-            // Customers Sync
+            // Customers Fetch
             db.collection("customers").onSnapshot(snapshot => {
                 let totalCust = snapshot.size;
                 let activeUsers = 0, pendingKycCount = 0, sumBalance = 0, totalRef = 0;
@@ -175,7 +177,7 @@
                 document.getElementById("totalReferrals").innerText = totalRef;
             });
 
-            // Battles Sync
+            // Battles Fetch
             db.collection("battles").onSnapshot(snapshot => {
                 let liveMatchesCount = 0;
                 snapshot.forEach(doc => {
@@ -185,7 +187,7 @@
                 document.getElementById("liveMatches").innerText = liveMatchesCount;
             });
 
-            // Deposits Sync
+            // Deposits Fetch
             db.collection("deposits").onSnapshot(snapshot => {
                 let pendingDepCount = 0, totalApprovedDepSum = 0;
                 snapshot.forEach(doc => {
@@ -201,7 +203,7 @@
                 document.getElementById("totalDepositPaid").innerText = totalApprovedDepSum;
             });
 
-            // Withdrawals Sync
+            // Withdrawals Fetch
             db.collection("withdrawals").onSnapshot(snapshot => {
                 let pendingWithCount = 0, totalApprovedWithSum = 0;
                 snapshot.forEach(doc => {
