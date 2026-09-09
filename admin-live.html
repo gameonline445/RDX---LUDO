@@ -6,7 +6,6 @@
     <title>RDX LUDO ADMIN - Live Users Monitor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
@@ -110,7 +109,7 @@
                         </tr>
                     </thead>
                     <tbody id="liveUsersTable">
-                        <tr><td colspan="6" style="text-align: center;">Fetching active users...</td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Fetching active users from Firebase...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -149,7 +148,7 @@
                     } else if (data.lastActive) {
                         const lastActiveDate = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
                         const diffMins = (new Date() - lastActiveDate) / (1000 * 60);
-                        if (diffMins <= 3) isOnline = true;
+                        if (diffMins <= 5) isOnline = true; // 5 minute active window
                     }
 
                     if (isOnline) onlineCount++;
@@ -157,7 +156,7 @@
                     allUsersList.push(data);
                 });
 
-                document.getElementById("statTotalUsers").innerText = allUsersList.length;
+                document.getElementById("statTotalUsers").innerText = snapshot.size;
                 document.getElementById("statOnlineUsers").innerText = onlineCount;
 
                 renderTable(allUsersList);
@@ -169,10 +168,11 @@
             tbody.innerHTML = "";
 
             if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No user records found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No registered users found in Firestore.</td></tr>`;
                 return;
             }
 
+            // Online users top par show hongge
             users.sort((a, b) => (b.computedOnline ? 1 : 0) - (a.computedOnline ? 1 : 0));
 
             users.forEach(u => {
@@ -182,13 +182,20 @@
                     ? `<span class="status-online"><span class="dot-online"></span> ONLINE</span>`
                     : `<span class="status-offline">OFFLINE</span>`;
 
-                const phone = u.phone || u.mobile || u.userId || u.id;
-                const name = u.name || u.userName || "User";
+                const phone = u.phone || u.mobile || u.phoneNumber || u.userId || u.id;
+                const name = u.name || u.userName || u.displayName || "User";
                 
-                const city = u.city || "N/A";
-                const state = u.state || "N/A";
-                const locationStr = (city !== "N/A" || state !== "N/A") ? `${city}, ${state}` : "Location Not Shared";
+                // Location field variations handle kiye hain
+                const city = u.city || u.cityName || u.district || "";
+                const state = u.state || u.stateName || u.region || "";
                 
+                let locationStr = "Location Not Shared";
+                if (city || state) {
+                    locationStr = `${city}${city && state ? ', ' : ''}${state}`;
+                } else if (u.location || u.address) {
+                    locationStr = u.location || u.address;
+                }
+
                 const currentPage = u.currentPage || u.activePage || "Home Page";
 
                 let lastActiveStr = "Just Now";
@@ -213,8 +220,8 @@
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const filtered = allUsersList.filter(u => {
                 const name = (u.name || u.userName || "").toLowerCase();
-                const phone = (u.phone || u.mobile || u.userId || "").toLowerCase();
-                const city = (u.city || "").toLowerCase();
+                const phone = (u.phone || u.mobile || u.phoneNumber || u.userId || "").toLowerCase();
+                const city = (u.city || u.location || "").toLowerCase();
                 const state = (u.state || "").toLowerCase();
 
                 return name.includes(search) || phone.includes(search) || city.includes(search) || state.includes(search);
