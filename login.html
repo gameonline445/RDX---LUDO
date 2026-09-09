@@ -370,6 +370,50 @@ body{
     transform:translateX(-50%) translateY(0);
 }
 
+/* 🚫 CUSTOM CLEAN BLOCK POPUP (NO DOMAIN NAME) */
+.custom-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.custom-modal {
+    background: #ffffff;
+    width: 100%;
+    max-width: 320px;
+    border-radius: 20px;
+    padding: 24px 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    animation: modalPop 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes modalPop {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+.custom-modal-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1.4;
+    margin-bottom: 20px;
+}
+.custom-modal-btn {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 22px;
+    background: #e11d48;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+}
 </style>
 
 <!-- FIREBASE -->
@@ -514,6 +558,16 @@ try{
 
 <div class="toast" id="toast"></div>
 
+<!-- 🚫 CUSTOM NO-DOMAIN BLOCK POPUP -->
+<div class="custom-modal-overlay" id="blockModal">
+    <div class="custom-modal">
+        <div class="custom-modal-text">
+            Your account has been<br>BLOCKED
+        </div>
+        <button type="button" class="custom-modal-btn" onclick="closeBlockModal()">OK</button>
+    </div>
+</div>
+
 <!-- MSG91 CONFIGURATION -->
 <script>
 var MSG91_WIDGET_ID = "366870704943343439343834";
@@ -553,6 +607,7 @@ const titleText = document.getElementById("titleText");
 const subtitleText = document.getElementById("subtitleText");
 const otpHint = document.getElementById("otpHint");
 const toast = document.getElementById("toast");
+const blockModal = document.getElementById("blockModal");
 
 let currentIdentifier = "";
 let currentReqId = "";
@@ -566,14 +621,12 @@ window.addEventListener("DOMContentLoaded", function(){
     }
 });
 
-const urlParams = new URLSearchParams(window.location.search);
-const refFromUrl = urlParams.get('ref');
-if (refFromUrl && refFromUrl.trim() !== "") {
-    const cleanRef = refFromUrl.trim().toUpperCase();
-    sessionStorage.setItem("rdx_referral_code", cleanRef);
-    if (!localStorage.getItem("rdxReferredBy")) {
-        localStorage.setItem("rdxReferredBy", cleanRef);
-    }
+function showBlockModal() {
+    blockModal.style.display = "flex";
+}
+
+function closeBlockModal() {
+    blockModal.style.display = "none";
 }
 
 function showMessage(message){
@@ -622,27 +675,63 @@ function getMobile(){
     return mobileInput.value.replace(/\D/g,"").slice(0, 10);
 }
 
-function startLogin(){
+// 🔒 STRICT CHECK BEFORE SENDING OTP
+async function startLogin(){
     const mobile = getMobile();
     if(!/^[6-9]\d{9}$/.test(mobile)){
         showMessage("Enter a valid 10-digit mobile number.");
         mobileInput.focus();
         return;
     }
+
+    continueBtn.disabled = true;
+    continueBtn.textContent = "Checking Account...";
+
+    // CHECK IF MOBILE IS BLOCKED BEFORE SENDING OTP
+    currentIdentifier = "91" + mobile;
+    const isBlocked = await checkIfUserIsBlocked(currentIdentifier);
+
+    if (isBlocked) {
+        continueBtn.disabled = false;
+        continueBtn.textContent = "Send OTP";
+        showBlockModal(); // Clean Popup without Site Name
+        return;
+    }
+
     if(!MSG91_TOKEN){
         showMessage("MSG91 configuration missing.");
+        continueBtn.disabled = false;
+        continueBtn.textContent = "Send OTP";
         return;
     }
     if(typeof window.sendOtp !== "function"){
         showMessage("MSG91 abhi ready nahi hua.");
+        continueBtn.disabled = false;
+        continueBtn.textContent = "Send OTP";
         waitForMSG91();
         return;
     }
 
-    currentIdentifier = "91" + mobile;
     localStorage.setItem("rdxLoginMobile", currentIdentifier);
-
     sendOTPNow();
+}
+
+async function checkIfUserIsBlocked(cleanMobile) {
+    try {
+        if (!firebaseDB) return false;
+        const userSnap = await firebaseDB.collection("customers").doc(cleanMobile).get();
+        if (userSnap.exists) {
+            const userData = userSnap.data();
+            return userData.isBlocked === true || 
+                   userData.isBlock === true || 
+                   userData.blocked === true || 
+                   String(userData.status).toLowerCase() === 'blocked';
+        }
+        return false;
+    } catch(e) {
+        console.error("Block check error:", e);
+        return false;
+    }
 }
 
 function sendOTPNow(){
@@ -721,7 +810,6 @@ function verifyOTP(){
 
             showMessage("OTP verify ho gaya. Checking Account Status...");
             
-            // 🔒 STRICT BLOCK SECURITY CHECK BEFORE ALLOWING LOGIN
             const saved = await saveCustomerToFirebase(currentIdentifier);
 
             if(!saved){
@@ -772,7 +860,7 @@ async function saveCustomerToFirebase(mobile){
         const userSnap = await userRef.get();
         const now = firebase.firestore.FieldValue.serverTimestamp();
 
-        // 🚨 STRICT BLOCK CHECK LOGIC 🚨
+        // DOUBLE SAFETY BLOCK CHECK
         if (userSnap.exists) {
             const userData = userSnap.data();
             const isUserBlocked = userData.isBlocked === true || 
@@ -781,13 +869,11 @@ async function saveCustomerToFirebase(mobile){
                                   String(userData.status).toLowerCase() === 'blocked';
 
             if (isUserBlocked) {
-                // Clear any stored local sessions
                 localStorage.removeItem("rdxLoggedIn");
                 localStorage.removeItem("rdxVerifiedMobile");
                 localStorage.removeItem("rdxFirebaseUserId");
 
-                alert("🚫 Your account has been BLOCKED by Admin. You cannot log in.");
-                showMessage("Account Blocked. Sampark karein admin se.");
+                showBlockModal();
                 return false;
             }
         }
