@@ -63,7 +63,7 @@ button,input{font:inherit;}
     cursor:pointer;
 }
 
-/* BRAND 3D LOGO */
+/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -356,10 +356,7 @@ button,input{font:inherit;}
 .menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
 .menu-deposit{background:linear-gradient(145deg,#0284c7,#0369a1);}
 .menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-
-.drawer-footer{display:none;}
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -372,7 +369,7 @@ button,input{font:inherit;}
     backdrop-filter:blur(12px);
     border-top:1.5px solid #e2e8f0;
     display:flex;
-    justify-content:space-around;
+    justify-style:space-around;
     align-items:center;
     z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
@@ -450,8 +447,8 @@ button,input{font:inherit;}
     </div>
     <div class="header-right">
         <button class="header-icon notification icon-only" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')">💰 ₹<span id="topBalance">0</span></button>
+        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')">🎁 ₹<span id="topReferral">0</span></button>
     </div>
 </header>
 
@@ -536,7 +533,7 @@ function parseItemTime(ts) {
     return { dateObj: d, formatted: formatted };
 }
 
-// ⚡ REALTIME LISTENER FOR USER BALANCE & PROFILE DATA
+// REALTIME LISTENER FOR USER BALANCE & PROFILE DATA
 function startRealtimeUserListener() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -546,14 +543,12 @@ function startRealtimeUserListener() {
             const d = snap.data();
             const displayName = d.name || ("User " + userId.slice(-4));
             document.getElementById("drawerName").textContent = displayName;
-            document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
             
-            // Calculating total wallet balance
-            const mainBal = Number(d.balance || 0);
+            // Calculating total wallet balance dynamically
             const depBal = Number(d.depositBalance || 0);
-            const winBal = Number(d.winnings || 0);
-            const totalWallet = (mainBal + depBal + winBal) || mainBal;
+            const winBal = Number(d.winnings || d.winningBalance || 0);
+            const totalWallet = depBal + winBal;
 
             document.getElementById("topBalance").textContent = totalWallet;
             document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
@@ -600,8 +595,8 @@ function startRealtimeLogsListener() {
                     title: `Battle vs ${oppName}`,
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
-                    amount: b.amount,
-                    prize: b.prize,
+                    amount: b.amount || 0,
+                    prize: b.prize || 0,
                     status: battleStatus,
                     isWon: isWon,
                     isCancelled: isCancelled,
@@ -619,7 +614,7 @@ function startRealtimeLogsListener() {
         snap.forEach(doc => {
             const d = doc.data();
             const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "");
-            if (cleanUid === userId) {
+            if (cleanUid === userId || cleanUid === docId) {
                 const timeInfo = parseItemTime(d.createdAt || d.date);
                 const rawStatus = String(d.status || "pending").toLowerCase();
                 const utrVal = d.utr ? String(d.utr).trim() : "";
@@ -630,7 +625,7 @@ function startRealtimeLogsListener() {
                     title: "Deposit Amount",
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
-                    amount: d.amount,
+                    amount: d.amount || 0,
                     status: rawStatus,
                     utr: utrVal,
                     comment: d.comment || "",
@@ -648,7 +643,7 @@ function startRealtimeLogsListener() {
         snap.forEach(doc => {
             const w = doc.data();
             const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "");
-            if (cleanUid === userId) {
+            if (cleanUid === userId || cleanUid === docId) {
                 const timeInfo = parseItemTime(w.createdAt || w.date);
                 const rawStatus = String(w.status || "pending").toLowerCase();
                 const modeVal = w.mode === "BANK" ? `Bank: ${w.accountNumber || ''}` : `UPI: ${w.upiId || ''}`;
@@ -659,7 +654,7 @@ function startRealtimeLogsListener() {
                     title: "Withdrawal Cash",
                     dateStr: timeInfo.formatted,
                     timeObj: timeInfo.dateObj,
-                    amount: w.amount,
+                    amount: w.amount || 0,
                     status: rawStatus,
                     modeInfo: modeVal,
                     comment: w.comment || "",
