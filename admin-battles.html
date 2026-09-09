@@ -155,7 +155,7 @@
     <div id="proofModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('proofModal')">&times;</span>
-            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Screenshot / Video</h3>
+            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Screenshot / Video Proof</h3>
             <div id="proofContainer"></div>
         </div>
     </div>
@@ -176,22 +176,57 @@
         const db = firebase.firestore();
 
         let allBattles = [];
+        let userCache = {};
+
+        // Helper function to extract user mobile phone cleanly from multiple possibilities
+        async function getPhoneForUser(userId, fallbackPhone) {
+            if (fallbackPhone && fallbackPhone !== "N/A" && fallbackPhone !== "" && fallbackPhone.length >= 10) {
+                return fallbackPhone;
+            }
+            if (!userId) return "N/A";
+            if (userCache[userId]) return userCache[userId];
+
+            try {
+                // Try finding in customers collection first, then users collection
+                let doc = await db.collection("customers").doc(userId).get();
+                if (!doc.exists) {
+                    doc = await db.collection("users").doc(userId).get();
+                }
+                if (doc.exists) {
+                    const uData = doc.data();
+                    const phone = uData.phone || uData.mobile || uData.phoneNumber || userId;
+                    userCache[userId] = phone;
+                    return phone;
+                }
+            } catch (e) {
+                console.log("Error fetching user phone", e);
+            }
+            return userId; // return user ID if phone field not found
+        }
 
         function listenBattles() {
-            db.collection("battles").onSnapshot(snapshot => {
+            db.collection("battles").onSnapshot(async snapshot => {
                 allBattles = [];
                 let open = 0, running = 0, completed = 0;
 
-                snapshot.forEach(doc => {
+                for (let doc of snapshot.docs) {
                     const data = doc.data();
                     data.id = doc.id;
+
+                    // Resolve creator and joiner real mobile numbers dynamically
+                    const rawCreatorPhone = data.creatorPhone || data.creatorMobile || data.createdBy || data.creatorId || "";
+                    const rawJoinerPhone = data.joinerPhone || data.joinerMobile || data.joinedBy || data.joinerId || "";
+
+                    data.realCreatorPhone = await getPhoneForUser(data.creatorId || data.createdBy, rawCreatorPhone);
+                    data.realJoinerPhone = rawJoinerPhone ? await getPhoneForUser(data.joinerId || data.joinedBy, rawJoinerPhone) : "Waiting...";
+
                     allBattles.push(data);
 
                     const st = (data.status || "").toLowerCase();
                     if (st === "open") open++;
                     else if (st === "running") running++;
                     else if (st === "completed") completed++;
-                });
+                }
 
                 document.getElementById("statTotalBattles").innerText = snapshot.size;
                 document.getElementById("statOpenBattles").innerText = open;
@@ -220,10 +255,10 @@
             battles.forEach(b => {
                 const tr = document.createElement("tr");
 
-                const creatorName = b.creatorName || b.createdByPhone || "Creator";
-                const creatorPhone = b.creatorPhone || b.createdBy || "N/A";
-                const joinerName = b.joinerName || b.joinedByPhone || "Joiner";
-                const joinerPhone = b.joinerPhone || b.joinedBy || "Waiting...";
+                const creatorName = b.creatorName || "Creator";
+                const creatorPhone = b.realCreatorPhone || "N/A";
+                const joinerName = b.joinerName || "Joiner";
+                const joinerPhone = b.realJoinerPhone || "Waiting...";
 
                 const amount = b.entryFee || b.amount || 0;
                 const prize = b.prize || (amount * 1.8);
@@ -236,22 +271,27 @@
                 else if (status === "completed") statusBadge = `<span class="badge badge-completed">COMPLETED</span>`;
                 else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
 
-                // Proof Screenshot/Video Logic
-                let proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof</span>`;
-                if (b.proofUrl || b.screenshot) {
-                    const url = b.proofUrl || b.screenshot;
-                    proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
+                // Proof Logic: ONLY show in Running or Completed battles if proof uploaded
+                let proofBtnHTML = `<span style="color:#718096; font-size:11px;">N/A</span>`;
+                if (status !== "open") {
+                    if (b.proofUrl || b.screenshot || b.videoProof) {
+                        const url = b.proofUrl || b.screenshot || b.videoProof;
+                        proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
+                    } else {
+                        proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof Uploaded</span>`;
+                    }
                 }
 
-                // Actions Column Logic
+                // Actions Logic
                 let actionsHTML = `<div class="btn-group">`;
 
                 if (status === "open") {
-                    // Open Battle -> Only Cancel Option
+                    // Open Battle -> Only Cancel Button
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creatorPhone}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                 } else if (status === "running") {
-                    // Running Battle -> Win/Loss + Penalty Options
+                    // Running Battle -> Win/Loss, Cancel, and Penalty Buttons
                     actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${creatorPhone}', '${joinerName}', '${joinerPhone}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
+                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creatorPhone}', ${amount}, '${joinerPhone}')"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                     actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creatorPhone}', '${joinerPhone}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button>`;
                 } else {
                     actionsHTML += `<span style="color:#718096; font-size:12px;">Completed</span>`;
@@ -289,8 +329,8 @@
             const statusVal = document.getElementById("statusFilter").value;
 
             const filtered = allBattles.filter(b => {
-                const creator = ((b.creatorName || '') + " " + (b.creatorPhone || b.createdBy || '')).toLowerCase();
-                const joiner = ((b.joinerName || '') + " " + (b.joinerPhone || b.joinedBy || '')).toLowerCase();
+                const creator = ((b.creatorName || '') + " " + (b.realCreatorPhone || '')).toLowerCase();
+                const joiner = ((b.joinerName || '') + " " + (b.realJoinerPhone || '')).toLowerCase();
                 const status = (b.status || "").toLowerCase();
 
                 const matchSearch = creator.includes(search) || joiner.includes(search);
@@ -341,7 +381,7 @@
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // Add Prize Money directly to Wallet Balance
+                    // Add Prize Money directly to Winner Wallet
                     await db.collection("customers").doc(winnerPhone).update({
                         wallet: firebase.firestore.FieldValue.increment(parseFloat(prize))
                     });
@@ -354,8 +394,8 @@
             }
         }
 
-        async function cancelBattle(battleId, creatorPhone, entryFee) {
-            if (confirm("Cancel this open battle and refund entry fee to creator?")) {
+        async function cancelBattle(battleId, creatorPhone, entryFee, joinerPhone = null) {
+            if (confirm("Cancel this battle and refund entry fee to user wallet?")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
@@ -368,7 +408,13 @@
                         });
                     }
 
-                    alert("Battle cancelled and entry fee refunded.");
+                    if (joinerPhone && joinerPhone !== "Waiting..." && joinerPhone !== "N/A") {
+                        await db.collection("customers").doc(joinerPhone).update({
+                            wallet: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
+                        });
+                    }
+
+                    alert("Battle cancelled and entry fee refunded successfully.");
                 } catch(e) {
                     alert("Cancel Error: " + e.message);
                 }
