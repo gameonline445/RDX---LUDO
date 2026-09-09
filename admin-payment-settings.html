@@ -1,4 +1,193 @@
 <!DOCTYPE html>
-<html><head><style>body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; }</style></head>
-<body><h1 style="color: #3b82f6;">Payment Settings</h1><p>UPI ID & Gateway integration keys.</p></body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDX LUDO ADMIN - Payment Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE FIRESTORE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
+
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
+
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 24px; }
+
+        .form-card { background-color: #151921; padding: 24px; border-radius: 16px; border: 1px solid #232936; max-width: 800px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 14px; font-weight: 700; color: #a0aec0; }
+        .form-group input { width: 100%; padding: 12px 16px; border-radius: 10px; border: 1px solid #2d3748; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
+        .form-group input:focus { border-color: #3182ce; }
+
+        .btn-save { background-color: #3182ce; color: #ffffff; border: none; padding: 12px 28px; border-radius: 10px; font-weight: 800; font-size: 15px; cursor: pointer; transition: background 0.2s; }
+        .btn-save:hover { background-color: #2b6cb0; }
+        
+        .qr-preview { margin-top: 10px; max-width: 150px; border-radius: 10px; border: 1px solid #4a5568; display: none; }
+        .section-title { font-size: 18px; font-weight: 800; color: #63b3ed; margin-bottom: 16px; border-bottom: 1px solid #2d3748; padding-bottom: 8px; }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+        <a href="admin-login.html" class="logout-link">Logout</a>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item active"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="dashboard-title">Payment Settings</h1>
+
+            <div class="form-card">
+                <form id="paymentSettingsForm" onsubmit="saveSettings(event)">
+                    
+                    <div class="section-title">UPI Details</div>
+                    <div class="form-group">
+                        <label>UPI ID</label>
+                        <input type="text" id="upiId" placeholder="e.g. 9876543210@paytm / name@upi" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>QR Code Image URL</label>
+                        <input type="text" id="qrCodeUrl" placeholder="https://..." oninput="updateQrPreview(this.value)">
+                        <img id="qrPreview" class="qr-preview" alt="QR Preview">
+                    </div>
+
+                    <div class="section-title" style="margin-top: 30px;">Bank Account Details</div>
+                    <div class="form-group">
+                        <label>Account Holder Name</label>
+                        <input type="text" id="accountHolderName" placeholder="e.g. Rahul Sharma">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Account Number</label>
+                        <input type="text" id="accountNumber" placeholder="e.g. 919876543210">
+                    </div>
+
+                    <div class="form-group">
+                        <label>IFSC Code</label>
+                        <input type="text" id="ifsc" placeholder="e.g. SBIN0001234">
+                    </div>
+
+                    <div class="section-title" style="margin-top: 30px;">Deposit Config</div>
+                    <div class="form-group">
+                        <label>Minimum Deposit Limit (₹)</label>
+                        <input type="number" id="minimumDeposit" value="10" required>
+                    </div>
+
+                    <button type="submit" class="btn-save" id="saveBtn"><i class="fa-solid fa-floppy-disk"></i> Save Payment Settings</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        function loadPaymentSettings() {
+            db.collection("paymentSettings").doc("config").get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById("upiId").value = data.upiId || "";
+                    document.getElementById("qrCodeUrl").value = data.qrCodeUrl || "";
+                    document.getElementById("accountHolderName").value = data.accountHolderName || "";
+                    document.getElementById("accountNumber").value = data.accountNumber || "";
+                    document.getElementById("ifsc").value = data.ifsc || "";
+                    document.getElementById("minimumDeposit").value = data.minimumDeposit || 10;
+
+                    if (data.qrCodeUrl) {
+                        updateQrPreview(data.qrCodeUrl);
+                    }
+                }
+            }).catch((err) => {
+                alert("Settings fetch error: " + err.message);
+            });
+        }
+
+        function updateQrPreview(url) {
+            const img = document.getElementById("qrPreview");
+            if (url.trim() !== "") {
+                img.src = url;
+                img.style.display = "block";
+            } else {
+                img.style.display = "none";
+            }
+        }
+
+        function saveSettings(e) {
+            e.preventDefault();
+            const btn = document.getElementById("saveBtn");
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
+            const payload = {
+                upiId: document.getElementById("upiId").value.trim(),
+                qrCodeUrl: document.getElementById("qrCodeUrl").value.trim(),
+                accountHolderName: document.getElementById("accountHolderName").value.trim(),
+                accountNumber: document.getElementById("accountNumber").value.trim(),
+                ifsc: document.getElementById("ifsc").value.trim(),
+                minimumDeposit: Number(document.getElementById("minimumDeposit").value),
+                coinRate: 1,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection("paymentSettings").doc("config").set(payload, { merge: true })
+            .then(() => {
+                alert("Payment Settings successfully updated!");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Payment Settings';
+            })
+            .catch((err) => {
+                alert("Save Error: " + err.message);
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Payment Settings';
+            });
+        }
+
+        window.onload = loadPaymentSettings;
+    </script>
+</body>
 </html>
