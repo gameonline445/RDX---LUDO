@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RDX LUDO ADMIN - Live Deposits</title>
-    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE FIRESTORE SDK LIBRARIES -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
@@ -50,6 +48,7 @@
         .btn-ss { background-color: #3182ce; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
         .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 2px 6px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-left: 4px; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 20px; border-radius: 16px; text-align: center; }
@@ -151,7 +150,6 @@
         }
         const db = firebase.firestore();
 
-        // REAL-TIME FIRESTORE LISTENER
         db.collection("deposits").onSnapshot((snapshot) => {
             const tableBody = document.getElementById("realDepositBody");
             tableBody.innerHTML = "";
@@ -164,7 +162,7 @@
             const todayFormatted = todayObj.toLocaleDateString('en-IN');
 
             if (snapshot.empty) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Data in "deposits" Collection</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
                 document.getElementById("totalDepositVal").innerText = "₹0";
                 document.getElementById("todayDepositVal").innerText = "₹0";
                 document.getElementById("pendingCountVal").innerText = "0 Pending";
@@ -178,7 +176,6 @@
                 depositList.push(data);
             });
 
-            // Pending request top par rakhein
             depositList.sort((a, b) => {
                 let statusA = (a.status || "Pending").toLowerCase();
                 let statusB = (b.status || "Pending").toLowerCase();
@@ -191,23 +188,18 @@
                 let amt = Number(data.amount || data.amt || 0);
                 let rawStatus = data.status || "Pending";
                 let statusLower = rawStatus.toLowerCase();
+                let uid = data.userId || data.uid || data.user_id || "";
 
-                // Screenshot URL Fallbacks
-                let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || "";
+                // Enhanced Screenshot Fetching Logic
+                let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
 
-                // Mobile Fallbacks
-                let mobile = data.mobile || data.userPhone || data.phone || data.mobileNo || "N/A";
+                // Mobile Check
+                let mobile = data.mobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
+                let mobileCellId = `mobile-${data.id}`;
 
-                // Name Fallbacks
-                let name = data.name || data.userName || data.customerName || "User";
-
-                // UTR Fallbacks
-                let utr = data.utr || data.utrNumber || data.refNo || data.transactionId || "N/A";
-
-                // Date Parsing & Formatting
+                // Fallback Date Formatting
                 let dateStr = "N/A";
                 let itemDateFormatted = "";
-                
                 if (data.date) {
                     dateStr = data.date;
                     itemDateFormatted = data.date;
@@ -221,7 +213,7 @@
                     itemDateFormatted = d.toLocaleDateString('en-IN');
                 }
 
-                // Total Cards Logic
+                // Total Counters
                 if (statusLower === "approved" || statusLower === "success") {
                     totalDeposit += amt;
                     if (itemDateFormatted === todayFormatted || dateStr.includes(todayFormatted)) {
@@ -235,44 +227,88 @@
                                  (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
 
                 let actionHTML = statusLower === "pending" ? 
-                    `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${data.userId || data.uid || ''}', ${amt}, 'Approved')">Approve</button>
-                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${data.userId || data.uid || ''}', ${amt}, 'Rejected')">Reject</button>` :
+                    `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Approved')">Approve</button>
+                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Rejected')">Reject</button>` :
                     `<span style="color:#8b949e; font-size:12px; font-weight:700;">Completed</span>`;
 
                 let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
 
+                let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
+                if (statusLower === "pending") {
+                    amountHTML += ` <button class="btn-edit" onclick="editAmount('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
+                }
+
                 let row = `<tr>
                     <td>${dateStr}</td>
-                    <td><strong>${name}</strong></td>
-                    <td>${mobile}</td>
-                    <td style="color:#2e7d32; font-weight:800;">₹${amt}</td>
-                    <td><strong>${utr}</strong></td>
+                    <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
+                    <td id="${mobileCellId}">${mobile || "Fetching..."}</td>
+                    <td style="color:#2e7d32; font-weight:800;">${amountHTML}</td>
+                    <td><strong>${data.utr || data.utrNumber || data.refNo || "N/A"}</strong></td>
                     <td>${ssButton}</td>
                     <td><span class="${badgeClass}">${rawStatus.toUpperCase()}</span></td>
                     <td>${actionHTML}</td>
                 </tr>`;
 
                 tableBody.innerHTML += row;
+
+                // Auto-fetch mobile number from 'users' collection if missing
+                if (!mobile && uid) {
+                    db.collection("users").doc(uid).get().then((userDoc) => {
+                        if (userDoc.exists) {
+                            let uData = userDoc.data();
+                            let fetchedPhone = uData.mobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
+                            document.getElementById(mobileCellId).innerText = fetchedPhone;
+                        } else {
+                            document.getElementById(mobileCellId).innerText = "N/A";
+                        }
+                    }).catch(() => {
+                        document.getElementById(mobileCellId).innerText = "N/A";
+                    });
+                } else if (!mobile && !uid) {
+                    document.getElementById(mobileCellId).innerText = "N/A";
+                }
             });
 
-            // Card Values Render
             document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
             document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
             document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
         });
 
-        // ACTION DEPOSIT FUNCTION
-        function actionDeposit(depId, userId, amount, newStatus) {
-            if (confirm(`Kya aap is deposit ko ${newStatus} karna chahte hain?`)) {
+        // EDIT AMOUNT FUNCTION
+        function editAmount(depId, currentAmt) {
+            let newAmt = prompt("Deposit Amount Edit Karein (₹):", currentAmt);
+            if (newAmt !== null && newAmt !== "") {
+                let parsedAmt = Number(newAmt);
+                if (isNaN(parsedAmt) || parsedAmt <= 0) {
+                    alert("Kripya sahi amount enter karein!");
+                    return;
+                }
                 db.collection("deposits").doc(depId).update({
-                    status: newStatus
+                    amount: parsedAmt
+                }).then(() => {
+                    alert("Amount successfully update ho gaya!");
+                }).catch((err) => {
+                    alert("Amount update karne me error: " + err.message);
+                });
+            }
+        }
+
+        // APPROVE & REJECT ACTION
+        function actionDeposit(depId, userId, currentAmt, newStatus) {
+            let latestAmtText = document.getElementById(`amt-val-${depId}`) ? document.getElementById(`amt-val-${depId}`).innerText : currentAmt;
+            let finalAmt = Number(latestAmtText);
+
+            if (confirm(`Kya aap ₹${finalAmt} deposit ko ${newStatus} karna chahte hain?`)) {
+                db.collection("deposits").doc(depId).update({
+                    status: newStatus,
+                    amount: finalAmt
                 }).then(() => {
                     if (newStatus === "Approved" && userId) {
                         db.collection("users").doc(userId).update({
-                            wallet: firebase.firestore.FieldValue.increment(amount)
+                            wallet: firebase.firestore.FieldValue.increment(finalAmt)
                         }).catch(e => console.log("User wallet update error:", e));
                     }
-                    alert("Status change ho gaya!");
+                    alert("Deposit status success!");
                 }).catch((err) => {
                     alert("Error: " + err.message);
                 });
@@ -280,7 +316,7 @@
         }
 
         function viewSS(url) {
-            if (!url) return alert("Screenshot available nahi hai!");
+            if (!url) return alert("Screenshot Available Nahi Hai!");
             document.getElementById("ssImage").src = url;
             document.getElementById("ssModal").style.display = "flex";
         }
