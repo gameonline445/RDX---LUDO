@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RDX LUDO ADMIN - Live Users Monitor</title>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Firebase SDKs -->
@@ -14,17 +15,24 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
 
+        /* TOP HEADER */
         .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
         .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 13px; }
         .brand-title { color: #1a365d; font-size: 18px; font-weight: 800; }
         .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 6px 20px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
+        /* MAIN LAYOUT */
         .admin-layout { display: flex; flex: 1; }
+        
+        /* SIDEBAR WITH ALL NAVIGATION BUTTONS */
         .sidebar { width: 250px; background-color: #ffffff; padding: 20px 12px; display: flex; flex-direction: column; gap: 6px; flex-shrink: 0; border-right: 1px solid #e2e8f0; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; transition: all 0.2s ease; }
+        .nav-item i { font-size: 15px; width: 18px; text-align: center; }
         .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
+        .nav-item:hover:not(.active) { background-color: #f7fafc; color: #2b6cb0; }
 
+        /* MAIN CONTENT AREA */
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; max-width: 900px; }
         .dashboard-title { color: #3182ce; font-size: 30px; font-weight: 800; margin-bottom: 20px; }
 
@@ -38,13 +46,13 @@
         .search-box { width: 100%; margin-bottom: 20px; }
         .search-input { width: 100%; padding: 14px 18px; background: #1a202c; border: 1px solid #2d3748; border-radius: 12px; color: #ffffff; font-size: 14px; outline: none; }
 
+        /* TABLE STYLING */
         .users-table-container { background-color: #1a202c; border-radius: 16px; border: 1px solid #2d3748; overflow: hidden; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         th { background-color: #2d3748; color: #cbd5e0; padding: 14px; font-weight: 700; }
         td { padding: 14px; border-bottom: 1px solid #2d3748; color: #e2e8f0; }
 
         .status-badge-on { background: #276749; color: #9ae6b4; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; display: inline-block; }
-        .status-badge-off { background: #742a2a; color: #feb2b2; padding: 4px 10px; border-radius: 12px; font-weight: 700; font-size: 12px; display: inline-block; }
     </style>
 </head>
 <body>
@@ -54,10 +62,11 @@
             <div class="brand-logo-img">RDX</div>
             <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
-        <a href="admin-login.html" class="logout-link">Logout</a>
+        <a href="admin-login.html" id="logoutBtn" class="logout-link">Logout</a>
     </header>
 
     <div class="admin-layout">
+        <!-- FULL RESTORED SIDEBAR NAVIGATION -->
         <aside class="sidebar">
             <a href="admin-dashboard.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
             <a href="admin-live.html" class="nav-item active"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
@@ -65,7 +74,11 @@
             <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
             <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
             <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
             <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
         </aside>
 
         <main class="main-content">
@@ -98,7 +111,7 @@
                         </tr>
                     </thead>
                     <tbody id="usersTableBody">
-                        <tr><td colspan="5" style="text-align:center;">Loading users...</td></tr>
+                        <tr><td colspan="5" style="text-align:center;">Loading active users...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -118,60 +131,56 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        let allUsers = [];
+        let activeUsersList = [];
 
         function listenLiveUsers() {
             db.collection("customers").onSnapshot(snapshot => {
-                let active = 0;
                 let total = snapshot.size;
-                allUsers = [];
+                activeUsersList = [];
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
-                    const isOnline = data.isOnline === true;
-                    if (isOnline) active++;
-
-                    allUsers.push({
-                        name: data.name || data.username || "User",
-                        mobile: data.mobile || data.phone || "N/A",
-                        city: data.city || "Unknown",
-                        state: data.state || "Unknown",
-                        isOnline: isOnline
-                    });
+                    
+                    // STRICT FILTER: Only include users currently inside the web page (isOnline: true)
+                    if (data.isOnline === true) {
+                        activeUsersList.push({
+                            name: data.name || data.username || "User",
+                            mobile: data.mobile || data.phone || "N/A",
+                            city: data.city || "Unknown",
+                            state: data.state || "Unknown"
+                        });
+                    }
                 });
 
-                document.getElementById("activeCount").innerText = active;
+                // Set numbers and render ONLY active users in table
+                document.getElementById("activeCount").innerText = activeUsersList.length;
                 document.getElementById("totalCount").innerText = total;
 
-                renderTable(allUsers);
+                renderTable(activeUsersList);
             });
         }
 
-        function renderTable(usersList) {
+        function renderTable(list) {
             const tbody = document.getElementById("usersTableBody");
-            if (usersList.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No users found.</td></tr>`;
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: #a0aec0;">No users currently active on the website.</td></tr>`;
                 return;
             }
 
-            tbody.innerHTML = usersList.map(u => `
+            tbody.innerHTML = list.map(u => `
                 <tr>
                     <td><b>${u.name}</b></td>
                     <td>${u.mobile}</td>
                     <td>${u.city}</td>
                     <td>${u.state}</td>
-                    <td>
-                        <span class="${u.isOnline ? 'status-badge-on' : 'status-badge-off'}">
-                            ${u.isOnline ? 'Active Live' : 'Offline'}
-                        </span>
-                    </td>
+                    <td><span class="status-badge-on">Active Live</span></td>
                 </tr>
             `).join('');
         }
 
         function filterUsers() {
             const query = document.getElementById("searchInput").value.toLowerCase();
-            const filtered = allUsers.filter(u => 
+            const filtered = activeUsersList.filter(u => 
                 u.name.toLowerCase().includes(query) ||
                 u.mobile.toLowerCase().includes(query) ||
                 u.city.toLowerCase().includes(query) ||
@@ -179,6 +188,10 @@
             );
             renderTable(filtered);
         }
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            try { localStorage.clear(); sessionStorage.clear(); } catch (e) {}
+        });
 
         window.addEventListener("DOMContentLoaded", listenLiveUsers);
     </script>
