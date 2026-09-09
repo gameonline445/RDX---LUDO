@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
+<!-- FontAwesome for Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
@@ -44,18 +45,52 @@ html,body{
 }
 button{font:inherit;}
 
-/* HEADER */
-.top-header{position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);border-bottom:1.5px solid #bae6fd;box-shadow:0 4px 18px rgba(2,132,199,0.08);}
+/* UNIFIED TOP HEADER STYLING */
+.top-header{
+    position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;padding:0 14px;
+    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom:1.5px solid #bae6fd;
+    box-shadow:0 4px 18px rgba(2,132,199,0.08);
+}
 .header-left{display:flex;align-items:center;gap:10px;}
-.back-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#0284c7,#0369a1);color:#ffffff;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(2,132,199,.22);cursor:pointer;}
-.menu-btn{width:42px;height:42px;border:0;border-radius:14px;background:linear-gradient(145deg,#ff7165,#ff8a70);color:#ffffff;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 5px 12px rgba(255,96,80,.22);cursor:pointer;}
-.logo{width:46px;height:46px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1.5px solid #bae6fd;background:#ffffff;box-shadow:0 4px 12px rgba(2,132,199,0.15);cursor:pointer;}
+.menu-btn{
+    width:42px;height:42px;border:0;border-radius:14px;
+    background:linear-gradient(145deg,#ff7165,#ff8a70);
+    color:white;font-size:20px;display:flex;align-items:center;justify-content:center;
+    cursor:pointer;box-shadow:0 4px 12px rgba(255,113,101,0.25);
+}
+.menu-btn:active{transform:scale(0.95);}
+
+.logo{
+    width:46px;height:46px;border-radius:50%;overflow:hidden;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    border:1.5px solid #bae6fd;background:#ffffff;
+    box-shadow:0 4px 12px rgba(2,132,199,0.15);
+}
 .logo img{width:100%;height:100%;object-fit:cover;}
+
 .header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{height:38px;border:0;border-radius:19px;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;color:white;box-shadow:0 4px 12px rgba(0,0,0,.10);padding:0 12px;gap:5px;}
-.notification{width:38px;padding:0;border-radius:50%;background:linear-gradient(145deg,#6366f1,#818cf8);}
-.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);font-size:13px;font-weight:800;}
-.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);font-size:13px;font-weight:800;}
+.header-icon{
+    height:38px;border:0;border-radius:20px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:15px;color:white;cursor:pointer;padding:0 12px;gap:6px;font-weight:800;
+}
+.notification{
+    width:38px;height:38px;padding:0;border-radius:50%;
+    background:linear-gradient(145deg,#6366f1,#818cf8);
+    box-shadow:0 3px 10px rgba(99,102,241,0.25);
+}
+.wallet-top{
+    background:linear-gradient(145deg,#22c55e,#16a34a);
+    box-shadow:0 3px 10px rgba(22,163,74,0.25);
+    border-radius:20px;padding:0 14px;font-size:14px;
+}
+.redeem-top{
+    width:38px;height:38px;padding:0;border-radius:50%;
+    background:linear-gradient(145deg,#ea580c,#f97316);
+    box-shadow:0 3px 10px rgba(234,88,12,0.25);
+}
 
 /* CONTAINER */
 .container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
@@ -121,18 +156,18 @@ button{font:inherit;}
 
 <body>
 
+<!-- UNIFIED TOP HEADER -->
 <header class="top-header">
     <div class="header-left">
-        <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
-        <button class="menu-btn" onclick="openMenu()">☰</button>
+        <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
         <div class="logo" onclick="goHome()">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="goNotifications()">🔔</button>
-        <button class="header-icon wallet-top" onclick="goWallet()">🪙 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="goRedeem()">🎁</button>
+        <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
+        <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -239,16 +274,14 @@ async function loadFirebaseCustomer(){
             if (doc.exists) {
                 const data = doc.data();
                 
-                const totalBalance = Number(data.balance || 0);
+                // Real-Time Balance Calculation
+                const deposit = Number(data.depositBalance || data.deposit || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
-                
-                let deposit = Number(data.depositBalance || data.deposit || 0);
-                if (deposit > totalBalance || (deposit + winnings !== totalBalance)) {
-                    deposit = Math.max(0, totalBalance - winnings);
-                }
+                const realTotalBalance = deposit + winnings;
 
-                document.getElementById("mainBalance").textContent = totalBalance;
-                document.getElementById("topBalance").textContent = totalBalance;
+                // Sync UI Elements
+                document.getElementById("mainBalance").textContent = realTotalBalance;
+                document.getElementById("topBalance").textContent = "₹" + realTotalBalance;
                 document.getElementById("depositBalance").textContent = deposit;
                 document.getElementById("winningBalance").textContent = winnings;
 
