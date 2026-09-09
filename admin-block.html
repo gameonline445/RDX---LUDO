@@ -13,7 +13,8 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        /* Security Display Shield */
+        
+        /* Security Guard: Page tabhi dikhega jab Firebase Login status confirm hoga */
         body { background-color: #000000; color: #ffffff; min-height: 100vh; display: none; flex-direction: column; }
         
         .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
@@ -24,7 +25,8 @@
 
         .admin-layout { display: flex; flex: 1; }
         .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; transition: all 0.2s; }
+        .nav-item:hover { background-color: #f7fafc; color: #2b6cb0; }
         .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
@@ -72,6 +74,7 @@
     </header>
 
     <div class="admin-layout">
+        <!-- COMPLETE SIDEBAR NAVIGATION BAR -->
         <aside class="sidebar">
             <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
             <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
@@ -148,13 +151,11 @@
         let allUsers = [];
         let selectedUserId = null;
 
-        // 🔒 STRICT SECURITY AUTHENTICATION GUARD
+        // 🔒 AUTH GUARD & AUTO REDIRECT
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
-                // Bina login ke aane par turant Login Page par bhejo
                 window.location.href = "admin-login.html";
             } else {
-                // Login verified rehne par hi UI dikhao
                 document.body.style.display = "flex";
                 listenUsers();
             }
