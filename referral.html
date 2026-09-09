@@ -541,7 +541,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     <section class="earning-card">
         <div class="earning-info">
             <small>REFERRAL EARNINGS</small>
-            <h3 id="referralBalanceDisplay">₹0</h3>
+            <h3 id="referralBalanceDisplay">₹0.00</h3>
         </div>
         <button class="transfer-btn" onclick="openRedeemModal()">
             Transfer to Wallet
@@ -561,7 +561,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         <div class="wallet-display">
             <div>
                 <small style="color:#64748b; font-weight:850;">REFERRAL WALLET</small>
-                <h4 id="modalRefBalance" style="font-size:18px; color:#0c4a6e; font-weight:900;">₹0</h4>
+                <h4 id="modalRefBalance" style="font-size:18px; color:#0c4a6e; font-weight:900;">₹0.00</h4>
             </div>
             <i class="fa-solid fa-wallet" style="font-size:22px; color:#0284c7;"></i>
         </div>
@@ -636,16 +636,6 @@ function loadReferralDataRealtime() {
             const fullName = String(data.name || ("User " + userId.slice(-4))).trim();
             document.getElementById("drawerName").textContent = fullName;
             document.getElementById("drawerMobile").textContent = "+" + userId;
-
-            // Main Wallet Balance Calculation
-            let realTotalBalance = 0;
-            if (data.balance !== undefined && data.balance !== null) {
-                realTotalBalance = Number(data.balance);
-            } else {
-                const deposit = Number(data.deposit || data.depositAmount || 0);
-                const winnings = Number(data.winnings || data.winningAmount || 0);
-                realTotalBalance = deposit + winnings;
-            }
 
             // Referral Wallet Balance
             currentReferralBalance = Number(data.referralBalance || data.referralWallet || 0);
@@ -773,8 +763,33 @@ function closeRedeemModal() {
 function copyReferralCode() {
     const code = document.getElementById("refCodeDisplay").innerText;
     if (!code || code === "LOADING...") return;
-    navigator.clipboard.writeText(code);
-    showToast("📋 Referral Code Copied!");
+
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(() => {
+            showToast("📋 Referral Code Copied!");
+        }).catch(() => {
+            fallbackCopyText(code);
+        });
+    } else {
+        fallbackCopyText(code);
+    }
+}
+
+function fallbackCopyText(text) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+        document.execCommand('copy');
+        showToast("📋 Referral Code Copied!");
+    } catch (err) {
+        showToast("❌ Copy karne me samasya aayi");
+    }
+    document.body.removeChild(textArea);
 }
 
 function shareOnWhatsApp() {
