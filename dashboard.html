@@ -25,7 +25,7 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
-button{font:inherit;}
+button, input{font:inherit;}
 
 /* TOP HEADER */
 .top-header{
@@ -41,11 +41,7 @@ button{font:inherit;}
     z-index:100;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
-.header-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+.header-left{display:flex;align-items:center;gap:10px;}
 .menu-btn{
     width:42px;
     height:42px;
@@ -62,7 +58,6 @@ button{font:inherit;}
 }
 .menu-btn:active{transform:scale(0.95);}
 
-/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -76,13 +71,9 @@ button{font:inherit;}
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
-.logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.logo img{width:100%;height:100%;object-fit:cover;}
 
-/* RIGHT SIDE BUTTONS (MATCHED EXACTLY WITH BOTTOM NAV SHAPE & SIZE) */
+/* RIGHT SIDE 3 BUTTONS (EXACT PROFILE DESIGN MATCH) */
 .header-right{
     display:flex;
     align-items:center;
@@ -93,7 +84,7 @@ button{font:inherit;}
     width:42px;
     height:42px;
     border:0;
-    border-radius:14px; /* Exact same rounded-square shape as bottom nav */
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -110,119 +101,97 @@ button{font:inherit;}
 .cash{background:#22c55e;}
 .gift{background:#f97316;}
 
-/* CONTAINER */
+/* MAIN CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
-/* WELCOME BANNER */
-.welcome-box{margin-bottom:14px;}
-.welcome-box h1{font-size:24px;font-weight:900;color:#0c4a6e;}
-.welcome-box p{color:#64748b;font-size:13px;font-weight:600;margin-top:2px;}
-
-/* REFER BANNER */
-.refer-banner{
-    border:1.5px solid #7dd3fc;
-    border-radius:22px;
-    padding:16px 18px;
-    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
+/* BANNER */
+.banner-card{
+    background:linear-gradient(135deg,#0284c7,#0369a1);
+    border-radius:20px;
+    padding:20px;
+    color:white;
+    margin-bottom:20px;
+    box-shadow:0 8px 20px rgba(2,132,199,0.25);
     display:flex;
-    justify-content:space-between;
     align-items:center;
+    justify-style:space-between;
+}
+.banner-text h2{font-size:20px;font-weight:900;}
+.banner-text p{font-size:12px;opacity:0.9;margin-top:4px;font-weight:600;}
+.banner-btn{
+    background:#ffffff;
+    color:#0284c7;
+    border:0;
+    padding:10px 16px;
+    border-radius:12px;
+    font-weight:900;
+    font-size:12px;
     cursor:pointer;
-    box-shadow:0 6px 18px rgba(2,132,199,0.08);
+    box-shadow:0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* WALLET CARD SUMMARY */
+.wallet-summary{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    justify-style:space-between;
+    margin-bottom:20px;
+    box-shadow:0 4px 14px rgba(2,132,199,0.05);
+}
+.wallet-info label{font-size:11px;font-weight:850;color:#64748b;text-transform:uppercase;}
+.wallet-info h3{font-size:22px;font-weight:900;color:#0f172a;margin-top:2px;}
+.add-cash-btn{
+    background:#22c55e;
+    color:white;
+    border:0;
+    padding:10px 18px;
+    border-radius:12px;
+    font-weight:800;
+    font-size:13px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    box-shadow:0 4px 12px rgba(34,197,94,0.25);
+}
+
+/* GAME MODES GRID */
+.section-title{font-size:12px;font-weight:900;color:#64748b;letter-spacing:1px;margin-bottom:12px;text-transform:uppercase;}
+.games-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
     margin-bottom:20px;
 }
-.refer-banner small{color:#0284c7;font-weight:850;font-size:11px;letter-spacing:0.8px;}
-.refer-banner h3{font-size:22px;font-weight:900;color:#0c4a6e;margin-top:2px;}
-.refer-banner p{color:#64748b;font-size:12px;margin-top:2px;}
-.refer-arrow{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    background:#0284c7;
-    color:white;
+.game-card{
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    border-radius:20px;
+    padding:18px 14px;
+    text-align:center;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(2,132,199,0.05);
+    transition:transform 0.15s ease;
+}
+.game-card:active{transform:scale(0.97);}
+.game-card-icon{
+    width:50px;
+    height:50px;
+    border-radius:16px;
+    background:#e0f2fe;
+    color:#0284c7;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:18px;
-    box-shadow:0 4px 12px rgba(2,132,199,0.3);
+    font-size:24px;
+    margin:0 auto 12px auto;
 }
-
-/* GAMES SECTION */
-.section-label{font-size:11px;font-weight:850;color:#64748b;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase;}
-.section-title{font-size:18px;font-weight:900;color:#0f172a;margin-bottom:12px;}
-
-/* LUDO CARD */
-.game-card{
-    width:100%;
-    height:200px;
-    border-radius:22px;
-    overflow:hidden;
-    position:relative;
-    background:#111;
-    box-shadow:0 8px 24px rgba(0,0,0,0.16);
-    cursor:pointer;
-    margin-bottom:12px;
-}
-.game-card img{width:100%;height:100%;object-fit:cover;}
-.game-overlay{
-    position:absolute;
-    inset:0;
-    background:linear-gradient(180deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.8) 100%);
-    padding:16px;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    color:white;
-}
-@keyframes slowPulse {
-    0%, 100% { opacity:1; transform:scale(1); box-shadow:0 0 10px rgba(34,197,94,0.95); }
-    50% { opacity:0.4; transform:scale(0.96); box-shadow:0 0 2px rgba(34,197,94,0.2); }
-}
-.live-badge{
-    align-self:flex-start;
-    background:#16a34a;
-    color:white;
-    padding:4px 10px;
-    border-radius:12px;
-    font-size:10px;
-    font-weight:850;
-    animation:slowPulse 1.8s ease-in-out infinite;
-}
-.game-card-bottom{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-}
-.game-card-bottom h2{font-size:22px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,0.6);}
-.game-card-bottom p{font-size:12px;color:#cbd5e1;}
-.play-btn{
-    background:linear-gradient(100deg,#0284c7,#0369a1);
-    color:white;
-    border:0;
-    padding:8px 20px;
-    border-radius:18px;
-    font-size:13px;
-    font-weight:850;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(2,132,199,0.35);
-}
-
-/* COMING SOON CARD */
-.soon-card{
-    background:#ffffff;
-    border:1px solid #e2e8f0;
-    border-radius:18px;
-    padding:12px 14px;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    box-shadow:0 4px 14px rgba(30,60,120,0.03);
-}
-.soon-card img{width:60px;height:60px;border-radius:14px;object-fit:cover;}
-.soon-info{flex:1;}
-.soon-info h4{font-size:15px;font-weight:850;color:#0f172a;}
-.soon-info p{color:#64748b;font-size:12px;margin-top:2px;}
-.soon-tag{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:5px 10px;border-radius:12px;font-size:10px;font-weight:800;}
+.game-card h3{font-size:15px;font-weight:900;color:#0f172a;}
+.game-card p{font-size:11px;font-weight:600;color:#64748b;margin-top:2px;}
 
 /* SIDE DRAWER */
 .drawer-overlay{
@@ -271,11 +240,7 @@ button{font:inherit;}
     overflow:hidden;
     border:1.5px solid #bae6fd;
 }
-.drawer-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
+.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
 .drawer-close{
     width:34px;
     height:34px;
@@ -304,7 +269,6 @@ button{font:inherit;}
     color:#334155;
     cursor:pointer;
     margin-bottom:4px;
-    transition:background 0.2s ease;
 }
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
 .drawer-item-icon{
@@ -316,7 +280,6 @@ button{font:inherit;}
     justify-content:center;
     color:white;
     font-size:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 .menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
 .menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
@@ -327,7 +290,7 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAVIGATION (EXACT 4-BUTTON BAR) */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -365,9 +328,7 @@ button{font:inherit;}
     justify-content:center;
     font-size:18px;
     color:#ffffff;
-    transition:transform 0.2s ease;
 }
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
 .icon-home{background:#6366f1;}
 .icon-wallet{background:#22c55e;}
 .icon-support{background:#38bdf8;}
@@ -387,17 +348,6 @@ window.addEventListener("pageshow", function (event) {
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
-
-(function() {
-    history.pushState(null, null, location.href);
-    window.addEventListener("popstate", function() {
-        const drawer = document.getElementById("sideDrawer");
-        if (drawer && drawer.classList.contains("active")) {
-            toggleMenu();
-        }
-        history.pushState(null, null, location.href);
-    });
-})();
 </script>
 
 <!-- SIDE DRAWER -->
@@ -405,7 +355,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
         <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">
+            <div class="drawer-avatar">
                 <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
             </div>
             <div>
@@ -437,7 +387,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
     </div>
     
-    <!-- RIGHT ALIGNED MATCHING BUTTONS -->
+    <!-- 3 HEADER BUTTONS (EXACTLY MATCHES PROFILE HTML) -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -446,47 +396,48 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 </header>
 
 <main class="container">
-    <section class="welcome-box">
-        <h1>Hey, <span id="userName">User</span></h1>
-        <p>Welcome to RDX LUDO</p>
-    </section>
-
-    <section class="refer-banner" onclick="window.location.replace('referral.html')">
-        <div>
-            <small>REFER & EARN</small>
-            <h3>2% Refer Bonus</h3>
-            <p>Invite friends and earn lifetime rewards</p>
+    <div class="banner-card">
+        <div class="banner-text">
+            <h2>Play & Earn Cash!</h2>
+            <p>Join live Ludo battles & win instant rewards.</p>
         </div>
-        <div class="refer-arrow">↗</div>
-    </section>
+        <button class="banner-btn" onclick="window.location.replace('referral.html')">Refer Now</button>
+    </div>
 
-    <div class="section-label">GAMES</div>
-    <h2 class="section-title">Play Your Game</h2>
-
-    <article class="game-card" onclick="window.location.replace('battles.html')">
-        <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
-        <div class="game-overlay">
-            <span class="live-badge">● LIVE</span>
-            <div class="game-card-bottom">
-                <div>
-                    <h2>Ludo Classic</h2>
-                    <p>Classic 2-Player Battle</p>
-                </div>
-                <button class="play-btn" onclick="event.stopPropagation(); window.location.replace('battles.html');">
-                    ▶ Play
-                </button>
-            </div>
+    <div class="wallet-summary">
+        <div class="wallet-info">
+            <label>Total Balance</label>
+            <h3 id="dashBalance">₹0.00</h3>
         </div>
-    </article>
+        <button class="add-cash-btn" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-plus"></i> Add Cash</button>
+    </div>
 
-    <section class="soon-card">
-        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
-        <div class="soon-info">
-            <h4>1 Goti Quick Ludo</h4>
-            <p>Fast paced 1-Token match</p>
+    <div class="section-title">CHOOSE GAME MODE</div>
+    <div class="games-grid">
+        <div class="game-card" onclick="window.location.replace('classic.html')">
+            <div class="game-card-icon"><i class="fa-solid fa-dice"></i></div>
+            <h3>Classic Ludo</h3>
+            <p>Traditional 4-pawn game</p>
         </div>
-        <span class="soon-tag">🔒 SOON</span>
-    </section>
+
+        <div class="game-card" onclick="window.location.replace('quick.html')">
+            <div class="game-card-icon"><i class="fa-solid fa-bolt"></i></div>
+            <h3>Quick Ludo</h3>
+            <p>Fast 1-pawn battle</p>
+        </div>
+
+        <div class="game-card" onclick="window.location.replace('tournaments.html')">
+            <div class="game-card-icon"><i class="fa-solid fa-trophy"></i></div>
+            <h3>Tournaments</h3>
+            <p>Big prize pools</p>
+        </div>
+
+        <div class="game-card" onclick="window.location.replace('private.html')">
+            <div class="game-card-icon"><i class="fa-solid fa-users"></i></div>
+            <h3>Private Room</h3>
+            <p>Play with friends</p>
+        </div>
+    </div>
 </main>
 
 <!-- BOTTOM NAVIGATION -->
@@ -520,88 +471,21 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-function loadDashboardDataRealtime() {
-    if (!userId) { window.location.replace("index.html"); return; }
-    const docId = userId.length === 10 ? "91" + userId : userId;
-
-    firebaseDB.collection("customers").doc(docId).onSnapshot((snap) => {
-        if (snap.exists) {
-            const d = snap.data();
-
-            const isUserBlocked = d.isBlocked === true || 
-                                  d.isBlock === true || 
-                                  d.blocked === true || 
-                                  String(d.status).toLowerCase() === 'blocked';
-
-            if (isUserBlocked) {
-                localStorage.clear();
-                sessionStorage.clear();
-                alert("Aapka account admin dwara block kar diya gaya hai.");
-                window.location.replace("index.html");
-                return;
-            }
-
-            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
-            const firstName = fullName.split(" ")[0] || "User";
-
-            document.getElementById("userName").textContent = firstName;
-            document.getElementById("drawerName").textContent = fullName;
-            document.getElementById("drawerMobile").textContent = "+" + userId;
-        }
-    }, (err) => {
-        console.error("Realtime balance update error:", err);
-    });
-}
-
-async function startPresenceHeartbeat() {
+function loadDashboardData() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
-    const userRef = firebaseDB.collection("customers").doc(docId);
 
-    let userCity = "Unknown";
-    let userState = "Unknown";
+    firebaseDB.collection("customers").doc(docId).onSnapshot((doc) => {
+        if (doc.exists) {
+            const d = doc.data();
+            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
+            const walletBal = parseFloat(d.wallet || d.balance || 0).toFixed(2);
 
-    try {
-        const res = await fetch('https://ipapi.co/json/');
-        const data = await res.json();
-        if (data && data.city) {
-            userCity = data.city;
-            userState = data.region || data.region_code || "Unknown";
+            document.getElementById("drawerName").textContent = fullName;
+            document.getElementById("drawerMobile").textContent = "+" + userId;
+            document.getElementById("dashBalance").textContent = "₹" + walletBal;
         }
-    } catch(e) {
-        console.log("Location fetch error:", e);
-    }
-
-    const sendHeartbeat = (isOnlineStatus) => {
-        const payload = {
-            isOnline: isOnlineStatus,
-            lastPing: firebase.firestore.FieldValue.serverTimestamp(),
-            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        if (userCity !== "Unknown") payload.city = userCity;
-        if (userState !== "Unknown") payload.state = userState;
-
-        userRef.set(payload, { merge: true }).catch(err => console.error("Presence error:", err));
-    };
-
-    sendHeartbeat(true);
-
-    setInterval(() => {
-        if (!document.hidden) {
-            sendHeartbeat(true);
-        } else {
-            sendHeartbeat(false);
-        }
-    }, 5000);
-
-    document.addEventListener("visibilitychange", () => {
-        sendHeartbeat(!document.hidden);
     });
-
-    window.addEventListener("blur", () => sendHeartbeat(false));
-    window.addEventListener("focus", () => sendHeartbeat(true));
-    window.addEventListener("pagehide", () => sendHeartbeat(false));
-    window.addEventListener("beforeunload", () => sendHeartbeat(false));
 }
 
 function logout() {
@@ -616,8 +500,7 @@ function logout() {
 }
 
 window.addEventListener("load", () => {
-    loadDashboardDataRealtime();
-    startPresenceHeartbeat();
+    loadDashboardData();
 });
 </script>
 
