@@ -120,7 +120,7 @@
                         </tr>
                     </thead>
                     <tbody id="kycTableBody">
-                        <tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Loading KYC Requests...</td></tr>
+                        <tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Loading KYC Requests from Firestore...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -147,22 +147,67 @@
         }
         const db = firebase.firestore();
 
+        // UNIVERSAL SCANNER FOR BOTH 'kyc' AND 'users' COLLECTIONS
         function loadKycRequests() {
-            // First listening in 'kyc' collection, fallback to 'users' collection
-            db.collection("kyc").onSnapshot((snapshot) => {
-                if (snapshot.empty) {
-                    db.collection("users").where("kycSubmitted", "==", true).onSnapshot((userSnap) => {
-                        renderKycList(userSnap, "users");
+            // Listen to 'kyc' collection
+            db.collection("kyc").onSnapshot((kycSnap) => {
+                let kycDocs = [];
+                if (!kycSnap.empty) {
+                    kycSnap.forEach(doc => {
+                        let d = doc.data();
+                        d.docId = doc.id;
+                        d._sourceColl = "kyc";
+                        kycDocs.push(d);
                     });
-                } else {
-                    renderKycList(snapshot, "kyc");
                 }
+
+                // Also Listen to 'users' collection to check embedded KYC documents
+                db.collection("users").onSnapshot((usersSnap) => {
+                    let userKycDocs = [];
+                    if (!usersSnap.empty) {
+                        usersSnap.forEach(doc => {
+                            let u = doc.data();
+                            u.docId = doc.id;
+                            u._sourceColl = "users";
+
+                            // Check if document contains document/kyc details
+                            let hasDocInfo = u.documentNo || u.docNumber || u.aadhaarNo || u.aadhaarNumber || u.frontPhoto || u.frontImage || u.kycStatus || u.kycSubmitted || u.kyc;
+                            if (hasDocInfo) {
+                                userKycDocs.push(u);
+                            }
+                        });
+                    }
+
+                    // Merge and deduplicate records
+                    let combinedList = combineKycData(kycDocs, userKycDocs);
+                    renderKycList(combinedList);
+                });
             }, (err) => {
                 console.error("KYC Fetch Error:", err);
             });
         }
 
-        function renderKycList(snapshot, collectionName) {
+        function combineKycData(kycDocs, userKycDocs) {
+            let map = new Map();
+
+            kycDocs.forEach(item => {
+                map.set(item.docId, item);
+            });
+
+            userKycDocs.forEach(item => {
+                if (!map.has(item.docId)) {
+                    map.set(item.docId, item);
+                } else {
+                    // Merge fields if already present
+                    let existing = map.get(item.docId);
+                    map.set(item.docId, { ...existing, ...item });
+                }
+            });
+
+            return Array.from(map.values());
+        }
+
+        function renderKycList(kycList) {
             const tbody = document.getElementById("kycTableBody");
             tbody.innerHTML = "";
 
@@ -170,7 +215,7 @@
             let approvedCount = 0;
             let rejectedCount = 0;
 
-            if (snapshot.empty) {
+            if (!kycList || kycList.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">No KYC Requests Found</td></tr>';
                 document.getElementById("pendingKycVal").innerText = "0";
                 document.getElementById("approvedKycVal").innerText = "0";
@@ -178,14 +223,7 @@
                 return;
             }
 
-            let kycList = [];
-            snapshot.forEach(doc => {
-                let data = doc.data();
-                data.docId = doc.id;
-                kycList.push(data);
-            });
-
-            // CRITICAL SORTING: Pending requests top par aayengi, uske baad Approved/Rejected
+            // CRITICAL SORTING: PENDING SABSE UPAR, THEN APPROVED / REJECTED
             kycList.sort((a, b) => {
                 let statusA = (a.status || a.kycStatus || 'pending').toLowerCase();
                 let statusB = (b.status || b.kycStatus || 'pending').toLowerCase();
@@ -193,8 +231,8 @@
                 if (statusA === 'pending' && statusB !== 'pending') return -1;
                 if (statusA !== 'pending' && statusB === 'pending') return 1;
 
-                let timeA = a.timestamp || a.createdAt || 0;
-                let timeB = b.timestamp || b.createdAt || 0;
+                let timeA = a.timestamp || a.createdAt || a.updatedAt || 0;
+                let timeB = b.timestamp || b.createdAt || b.updatedAt || 0;
                 if (timeA.toDate) timeA = timeA.toDate().getTime();
                 if (timeB.toDate) timeB = timeB.toDate().getTime();
                 return timeB - timeA;
@@ -205,28 +243,31 @@
                 let status = (item.status || item.kycStatus || "PENDING").toUpperCase();
                 
                 if (status === "PENDING") pendingCount++;
-                else if (status === "APPROVED") approvedCount++;
+                else if (status === "APPROVED" || status === "VERIFIED") approvedCount++;
                 else if (status === "REJECTED") rejectedCount++;
 
-                let userName = item.userName || item.name || "User";
-                let mobile = item.mobile || item.userPhone || item.phone || "N/A";
-                let docNumber = item.aadhaarNo || item.docNumber || item.documentNo || item.aadhaarNumber || "N/A";
+                let userName = item.userName || item.name || item.customerName || "User";
+                let mobile = item.mobile || item.userPhone || item.phone || item.mobileNo || "N/A";
                 
-                let frontImg = item.frontPhoto || item.aadhaarFront || item.frontImage || "";
-                let backImg = item.backPhoto || item.aadhaarBack || item.backImage || "";
+                // Extraction for Document Number
+                let docNumber = item.aadhaarNo || item.docNumber || item.documentNo || item.aadhaarNumber || (item.kyc ? item.kyc.documentNo : null) || "N/A";
+
+                // Extraction for Front & Back Image URLs
+                let frontImg = item.frontPhoto || item.aadhaarFront || item.frontImage || item.frontUrl || (item.kyc ? item.kyc.frontPhoto : null) || "";
+                let backImg = item.backPhoto || item.aadhaarBack || item.backImage || item.backUrl || (item.kyc ? item.kyc.backPhoto : null) || "";
 
                 let statusBadge = `<span class="badge-pending">PENDING</span>`;
-                if (status === "APPROVED") statusBadge = `<span class="badge-approved">APPROVED</span>`;
+                if (status === "APPROVED" || status === "VERIFIED") statusBadge = `<span class="badge-approved">APPROVED</span>`;
                 if (status === "REJECTED") statusBadge = `<span class="badge-rejected">REJECTED</span>`;
 
                 let actionBtns = "";
                 if (status === "PENDING") {
                     actionBtns = `
-                        <button class="btn-approve" onclick="updateKycStatus('${collectionName}', '${item.docId}', 'APPROVED')">Approve</button>
-                        <button class="btn-reject" onclick="updateKycStatus('${collectionName}', '${item.docId}', 'REJECTED')">Reject</button>
+                        <button class="btn-approve" onclick="updateKycStatus('${item._sourceColl}', '${item.docId}', 'APPROVED')">Approve</button>
+                        <button class="btn-reject" onclick="updateKycStatus('${item._sourceColl}', '${item.docId}', 'REJECTED')">Reject</button>
                     `;
                 } else {
-                    actionBtns = `<span style="color:#718096; font-size:12px;">Completed</span>`;
+                    actionBtns = `<span style="color:#718096; font-size:12px;">Done</span>`;
                 }
 
                 let frontHtml = frontImg ? `<img src="${frontImg}" class="doc-thumb" onclick="previewImage('${frontImg}')" alt="Front">` : `<span style="color:#999;">No Image</span>`;
@@ -253,23 +294,22 @@
             document.getElementById("rejectedKycVal").innerText = rejectedCount;
         }
 
-        function updateKycStatus(collectionName, docId, newStatus) {
-            if (confirm(`Kkya aap is KYC request ko ${newStatus} karna chahte hain?`)) {
-                db.collection(collectionName).doc(docId).update({
+        function updateKycStatus(sourceColl, docId, newStatus) {
+            if (confirm(`Kya aap is KYC request ko ${newStatus} karna chahte hain?`)) {
+                let updates = {
                     status: newStatus,
                     kycStatus: newStatus,
+                    isKycVerified: newStatus === "APPROVED",
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    // Update user main collection status as well if using separate kyc table
-                    if (collectionName === "kyc") {
-                        db.collection("users").doc(docId).update({
-                            kycStatus: newStatus,
-                            isKycVerified: newStatus === "APPROVED"
-                        }).catch(() => {});
-                    }
-                    alert(`KYC Status successfully set to ${newStatus}`);
+                };
+
+                // Update in target collection
+                db.collection(sourceColl || "users").doc(docId).update(updates).then(() => {
+                    // Sync to main users collection as well
+                    db.collection("users").doc(docId).update(updates).catch(() => {});
+                    alert(`KYC Status successfully updated to ${newStatus}`);
                 }).catch((err) => {
-                    alert("Error: " + err.message);
+                    alert("Update Error: " + err.message);
                 });
             }
         }
