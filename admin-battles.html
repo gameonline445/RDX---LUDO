@@ -36,13 +36,11 @@
         .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 12px; flex-wrap: wrap; }
         .filter-card input, .filter-card select { padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
         .filter-card input[type="text"] { flex: 1; min-width: 220px; }
-        .filter-card input:focus, .filter-card select:focus { border-color: #3182ce; }
 
         .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
         th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
         td { padding: 12px 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
 
         .badge { padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 11px; display: inline-block; }
         .badge-open { background: rgba(49, 130, 206, 0.15); color: #63b3ed; border: 1px solid rgba(49, 130, 206, 0.3); }
@@ -50,18 +48,15 @@
         .badge-completed { background: rgba(72, 187, 120, 0.15); color: #68d391; border: 1px solid rgba(72, 187, 120, 0.3); }
         .badge-cancelled { background: rgba(229, 62, 62, 0.15); color: #fc8181; border: 1px solid rgba(229, 62, 62, 0.3); }
 
-        .btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; margin-bottom: 4px; }
+        .btn-group { display: flex; flex-direction: column; gap: 6px; width: 110px; }
+        .btn { padding: 7px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; text-align: center; }
         .btn-win { background: #38a169; color: #ffffff; }
-        .btn-win:hover { background: #2f855a; }
         .btn-cancel { background: #e53e3e; color: #ffffff; }
-        .btn-cancel:hover { background: #c53030; }
         .btn-view { background: #3182ce; color: #ffffff; }
-        .btn-view:hover { background: #2b6cb0; }
         .btn-penalty { background: #dd6b20; color: #ffffff; }
-        .btn-penalty:hover { background: #c05621; }
 
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
-        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 500px; padding: 20px; position: relative; }
+        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 480px; padding: 20px; position: relative; }
         .modal-close { position: absolute; right: 16px; top: 16px; color: #a0aec0; font-size: 20px; cursor: pointer; }
         .proof-media { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-top: 14px; background: #000; }
         .winner-option { background: #1a202c; border: 1px solid #2d3748; padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
@@ -86,8 +81,6 @@
             <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
             <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
             <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
-            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
-            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
             <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
             <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
             <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
@@ -116,7 +109,7 @@
             </div>
 
             <div class="filter-card">
-                <input type="text" id="searchInput" placeholder="Search by Mobile Number or Battle ID..." onkeyup="applyFilters()">
+                <input type="text" id="searchInput" placeholder="Search Mobile Number or Name..." onkeyup="applyFilters()">
                 <input type="date" id="dateFilter" onchange="applyFilters()">
                 <select id="statusFilter" onchange="applyFilters()">
                     <option value="all">All Status</option>
@@ -131,8 +124,7 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>Battle ID & Date</th>
-                            <th>Players (Creator / Joiner)</th>
+                            <th>Players (Name & Mobile)</th>
                             <th>Entry Fee & Prize</th>
                             <th>Room Code</th>
                             <th>Status</th>
@@ -141,7 +133,7 @@
                         </tr>
                     </thead>
                     <tbody id="battlesTableBody">
-                        <tr><td colspan="7" style="text-align: center;">Loading battles data...</td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Loading battles data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -152,8 +144,8 @@
     <div id="winnerModal" class="modal">
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
-            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Declare Winner</h3>
-            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select the winner to credit prize amount automatically.</p>
+            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Select Battle Winner</h3>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Selected winner's wallet will be credited automatically.</p>
             <div id="winnerOptionsContainer"></div>
         </div>
     </div>
@@ -214,15 +206,18 @@
             tbody.innerHTML = "";
 
             if (battles.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #a0aec0;">No matching battles found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No matching battles found.</td></tr>`;
                 return;
             }
 
             battles.forEach(b => {
                 const tr = document.createElement("tr");
 
-                const creator = b.createdBy || b.creatorPhone || "N/A";
-                const joiner = b.joinedBy || b.joinerPhone || "Waiting...";
+                const creatorName = b.creatorName || "Creator";
+                const creatorPhone = b.createdBy || b.creatorPhone || "N/A";
+                const joinerName = b.joinerName || "Joiner";
+                const joinerPhone = b.joinedBy || b.joinerPhone || "Waiting...";
+
                 const amount = b.entryFee || b.amount || 0;
                 const prize = b.prize || (amount * 1.8);
                 const roomCode = b.roomCode || "Not Set";
@@ -233,43 +228,34 @@
                 else if (status === "completed") statusBadge = `<span class="badge badge-completed">COMPLETED</span>`;
                 else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
 
-                let dateStr = "N/A";
-                if (b.createdAt) {
-                    const dt = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
-                    dateStr = dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                }
-
-                // Proof view
+                // Proof Screenshot/Video
                 let proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof</span>`;
                 if (b.proofUrl || b.screenshot) {
                     const url = b.proofUrl || b.screenshot;
                     proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
                 }
 
-                // Actions Logic
-                let actionsHTML = "";
-                
-                // Win/Loss Button
-                if (status === "running" || status === "review" || status === "open") {
-                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creator}', '${joiner}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button><br>`;
+                // Action Buttons
+                let actionsHTML = `<div class="btn-group">`;
+
+                if (status === "running" || status === "open" || status === "review") {
+                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${creatorPhone}', '${joinerName}', '${joinerPhone}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
                 }
 
-                // Cancel Button (Only for Open or Disputed)
                 if (status === "open") {
-                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creator}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button><br>`;
+                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creatorPhone}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
                 }
 
-                // Penalty Option
-                actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creator}', '${joiner}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button>`;
+                actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creatorPhone}', '${joinerPhone}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button></div>`;
 
                 tr.innerHTML = `
                     <td>
-                        <strong style="color:#63b3ed;">#${b.id.substring(0,8)}</strong><br>
-                        <span style="font-size:11px; color:#a0aec0;">${dateStr}</span>
-                    </td>
-                    <td>
-                        <i class="fa-solid fa-user" style="color:#4299e1;"></i> ${creator}<br>
-                        <i class="fa-solid fa-user-check" style="color:#48bb78;"></i> ${joiner}
+                        <div style="margin-bottom:4px;">
+                            <strong style="color:#63b3ed;">${creatorName}</strong> <span style="font-size:11px; color:#a0aec0;">(${creatorPhone})</span>
+                        </div>
+                        <div>
+                            <strong style="color:#48bb78;">${joinerPhone !== 'Waiting...' ? joinerName : ''}</strong> <span style="font-size:11px; color:#a0aec0;">${joinerPhone}</span>
+                        </div>
                     </td>
                     <td>
                         Entry: <strong>₹${amount}</strong><br>
@@ -291,12 +277,11 @@
             const statusVal = document.getElementById("statusFilter").value;
 
             const filtered = allBattles.filter(b => {
-                const bId = b.id.toLowerCase();
-                const creator = (b.createdBy || b.creatorPhone || "").toLowerCase();
-                const joiner = (b.joinedBy || b.joinerPhone || "").toLowerCase();
+                const creator = ((b.creatorName || '') + " " + (b.createdBy || b.creatorPhone || '')).toLowerCase();
+                const joiner = ((b.joinerName || '') + " " + (b.joinedBy || b.joinerPhone || '')).toLowerCase();
                 const status = (b.status || "").toLowerCase();
 
-                const matchSearch = bId.includes(search) || creator.includes(search) || joiner.includes(search);
+                const matchSearch = creator.includes(search) || joiner.includes(search);
                 const matchStatus = (statusVal === "all") || (status === statusVal);
 
                 let matchDate = true;
@@ -312,20 +297,20 @@
             renderBattles(filtered);
         }
 
-        function openWinnerModal(battleId, creator, joiner, prize) {
+        function openWinnerModal(battleId, creatorName, creatorPhone, joinerName, joinerPhone, prize) {
             const container = document.getElementById("winnerOptionsContainer");
             container.innerHTML = `
-                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creator}', ${prize})">
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorPhone}', ${prize})">
                     <div>
-                        <strong style="color:#63b3ed;">Creator: ${creator}</strong><br>
+                        <strong style="color:#63b3ed;">${creatorName} (${creatorPhone})</strong><br>
                         <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
                 </div>
-                ${joiner !== 'Waiting...' ? `
-                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joiner}', ${prize})">
+                ${joinerPhone !== 'Waiting...' ? `
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerPhone}', ${prize})">
                     <div>
-                        <strong style="color:#48bb78;">Joiner: ${joiner}</strong><br>
+                        <strong style="color:#48bb78;">${joinerName} (${joinerPhone})</strong><br>
                         <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
@@ -336,35 +321,32 @@
         }
 
         async function confirmDeclareWinner(battleId, winnerPhone, prize) {
-            if (confirm(`Confirm declare ${winnerPhone} as Winner? ₹${prize} will be credited to wallet.`)) {
+            if (confirm(`Declare ${winnerPhone} as Winner? ₹${prize} will be credited to wallet.`)) {
                 try {
-                    // Update Battle Status
                     await db.collection("battles").doc(battleId).update({
                         status: "completed",
                         winner: winnerPhone,
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // Credit Wallet
                     await db.collection("customers").doc(winnerPhone).update({
                         wallet: firebase.firestore.FieldValue.increment(parseFloat(prize))
                     });
 
-                    alert(`₹${prize} successfully credited to ${winnerPhone}.`);
+                    alert(`₹${prize} credited to ${winnerPhone}!`);
                     closeModal('winnerModal');
                 } catch(e) {
-                    alert("Error updating winner: " + e.message);
+                    alert("Error: " + e.message);
                 }
             }
         }
 
         async function cancelBattle(battleId, creatorPhone, entryFee) {
-            if (confirm("Are you sure you want to cancel this open battle? Entry fee will be refunded.")) {
+            if (confirm("Cancel this battle and refund entry fee?")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
-                        cancelledBy: "admin",
-                        cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
+                        cancelledBy: "admin"
                     });
 
                     if (creatorPhone && creatorPhone !== "N/A") {
@@ -373,25 +355,25 @@
                         });
                     }
 
-                    alert("Battle cancelled & entry fee refunded.");
+                    alert("Battle cancelled and entry fee refunded.");
                 } catch(e) {
-                    alert("Cancellation Error: " + e.message);
+                    alert("Cancel Error: " + e.message);
                 }
             }
         }
 
-        function applyPenalty(creator, joiner) {
-            const userPhone = prompt(`Enter User Mobile Number to apply penalty:\n1: ${creator}\n2: ${joiner}`);
+        function applyPenalty(creatorPhone, joinerPhone) {
+            const userPhone = prompt(`Enter Mobile Number for Penalty:\n1: ${creatorPhone}\n2: ${joinerPhone}`);
             if (!userPhone) return;
 
-            const amount = prompt(`Enter Penalty Amount to deduct from ${userPhone}:`, "50");
+            const amount = prompt(`Enter Penalty Amount (₹) to deduct from ${userPhone}:`, "50");
             if (!amount || isNaN(amount)) return;
 
-            if (confirm(`Deduct ₹${amount} penalty directly from ${userPhone}'s wallet?`)) {
+            if (confirm(`Deduct ₹${amount} penalty from ${userPhone}'s wallet?`)) {
                 db.collection("customers").doc(userPhone).update({
                     wallet: firebase.firestore.FieldValue.increment(-parseFloat(amount))
                 }).then(() => {
-                    alert(`₹${amount} penalty applied successfully to ${userPhone}.`);
+                    alert(`₹${amount} Penalty applied to ${userPhone}.`);
                 }).catch(e => {
                     alert("Penalty Error: " + e.message);
                 });
@@ -405,7 +387,7 @@
             if (isVideo) {
                 container.innerHTML = `<video src="${url}" controls class="proof-media" autoplay></video>`;
             } else {
-                container.innerHTML = `<img src="${url}" class="proof-media" alt="Battle Proof" />`;
+                container.innerHTML = `<img src="${url}" class="proof-media" alt="Proof" />`;
             }
 
             document.getElementById("proofModal").style.display = "flex";
