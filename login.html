@@ -630,6 +630,9 @@ function closeBlockModal() {
 }
 
 function showMessage(message){
+    if(message === "IPBlocked" || (typeof message === "string" && message.includes("IPBlocked"))){
+        message = "Too many attempts. Please try again after 5 minutes.";
+    }
     toast.textContent = message;
     toast.classList.add("show");
     clearTimeout(showMessage.timer);
@@ -878,7 +881,10 @@ async function saveCustomerToFirebase(mobile){
             }
         }
 
+        // FIX: Define urlParams properly
+        const urlParams = new URLSearchParams(window.location.search);
         const incomingRef = urlParams.get('ref') || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
+        
         let finalReferredBy = "DIRECT";
         if (incomingRef && incomingRef.trim() !== "") {
             finalReferredBy = incomingRef.trim().toUpperCase();
