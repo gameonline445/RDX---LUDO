@@ -6,7 +6,7 @@
     <title>RDX LUDO ADMIN - KYC Requests</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE FIRESTORE SDK LIBRARIES -->
+    <!-- FIREBASE FIRESTORE SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
@@ -54,7 +54,6 @@
         .btn-reject { background-color: #e53e3e; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-reject:hover { background-color: #c53030; }
 
-        /* IMAGE PREVIEW MODAL */
         .modal { display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
         .modal-img { max-width: 90%; max-height: 85%; border-radius: 12px; border: 2px solid #ffffff; }
     </style>
@@ -103,7 +102,7 @@
             </div>
 
             <div class="filter-card">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search by Name, Mobile or Document Number..." onkeyup="filterKYC()">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by Mobile or Document Number..." onkeyup="filterKYC()">
             </div>
 
             <div class="table-container">
@@ -120,14 +119,13 @@
                         </tr>
                     </thead>
                     <tbody id="kycTableBody">
-                        <tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Fetching live data from database...</td></tr>
+                        <tr><td colspan="7" style="text-align:center; padding:20px; color:#666;">Connecting to kycRequests collection...</td></tr>
                     </tbody>
                 </table>
             </div>
         </main>
     </div>
 
-    <!-- PREVIEW IMAGE MODAL -->
     <div id="imageModal" class="modal" onclick="closePreview()">
         <img id="modalImg" class="modal-img">
     </div>
@@ -148,156 +146,109 @@
         const db = firebase.firestore();
 
         function loadKycRequests() {
-            // Pull all documents from users table without any strict conditions to catch all forms of submitted KYC
-            db.collection("users").onSnapshot((usersSnap) => {
-                let userList = [];
-                if (!usersSnap.empty) {
-                    usersSnap.forEach(doc => {
-                        let data = doc.data();
-                        data.docId = doc.id;
-                        data._sourceColl = "users";
-                        userList.push(data);
-                    });
+            // Direct Realtime listener on 'kycRequests' collection
+            db.collection("kycRequests").onSnapshot((snapshot) => {
+                const tbody = document.getElementById("kycTableBody");
+                tbody.innerHTML = "";
+
+                if (snapshot.empty) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">No KYC Requests found in kycRequests collection.</td></tr>';
+                    document.getElementById("pendingKycVal").innerText = "0";
+                    document.getElementById("approvedKycVal").innerText = "0";
+                    document.getElementById("rejectedKycVal").innerText = "0";
+                    return;
                 }
 
-                // Check secondary 'kyc' collection
-                db.collection("kyc").get().then((kycSnap) => {
-                    if (!kycSnap.empty) {
-                        kycSnap.forEach(doc => {
-                            let data = doc.data();
-                            data.docId = doc.id;
-                            data._sourceColl = "kyc";
-                            userList.push(data);
-                        });
-                    }
-                    renderKycList(userList);
-                }).catch(() => {
-                    renderKycList(userList);
+                let pendingCount = 0;
+                let approvedCount = 0;
+                let rejectedCount = 0;
+                let listData = [];
+
+                snapshot.forEach(doc => {
+                    let data = doc.data();
+                    data.docId = doc.id;
+                    listData.push(data);
                 });
 
-            }, (err) => {
-                console.error("Firestore Error:", err);
-                document.getElementById("kycTableBody").innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">Database Permission Error: ${err.message}</td></tr>`;
-            });
-        }
+                // Pending requests show first
+                listData.sort((a, b) => {
+                    let stA = (a.status || "pending").toLowerCase();
+                    let stB = (b.status || "pending").toLowerCase();
+                    if (stA === "pending" && stB !== "pending") return -1;
+                    if (stA !== "pending" && stB === "pending") return 1;
+                    return 0;
+                });
 
-        function renderKycList(allDocs) {
-            const tbody = document.getElementById("kycTableBody");
-            tbody.innerHTML = "";
+                let serialNo = 1;
+                listData.forEach(item => {
+                    let rawStatus = (item.status || "pending").toLowerCase();
 
-            let pendingCount = 0;
-            let approvedCount = 0;
-            let rejectedCount = 0;
-
-            if (!allDocs || allDocs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">No Users or KYC Submissions Found in Database</td></tr>';
-                document.getElementById("pendingKycVal").innerText = "0";
-                document.getElementById("approvedKycVal").innerText = "0";
-                document.getElementById("rejectedKycVal").innerText = "0";
-                return;
-            }
-
-            // Grouping and Filtering Users who have uploaded documents or set status
-            let kycList = [];
-            allDocs.forEach(item => {
-                let docNo = item.aadhaarNo || item.docNumber || item.documentNo || item.aadhaarNumber || item.aadhaar || (item.kyc ? item.kyc.documentNo : "") || "";
-                let front = item.frontPhoto || item.aadhaarFront || item.frontImage || item.frontUrl || (item.kyc ? item.kyc.frontPhoto : "") || "";
-                let back = item.backPhoto || item.aadhaarBack || item.backImage || item.backUrl || (item.kyc ? item.kyc.backPhoto : "") || "";
-                let st = item.status || item.kycStatus || (item.kyc ? item.kyc.status : "");
-
-                // Include if document number or photos or explicit status exists
-                if (docNo || front || back || st) {
-                    kycList.push(item);
-                }
-            });
-
-            if (kycList.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">Users exist, but no user has submitted KYC documents yet.</td></tr>';
-                document.getElementById("pendingKycVal").innerText = "0";
-                document.getElementById("approvedKycVal").innerText = "0";
-                document.getElementById("rejectedKycVal").innerText = "0";
-                return;
-            }
-
-            // PENDING FIRST SORTING
-            kycList.sort((a, b) => {
-                let statusA = (a.status || a.kycStatus || 'pending').toLowerCase();
-                let statusB = (b.status || b.kycStatus || 'pending').toLowerCase();
-
-                if (statusA === 'pending' && statusB !== 'pending') return -1;
-                if (statusA !== 'pending' && statusB === 'pending') return 1;
-                return 0;
-            });
-
-            let serialNo = 1;
-            kycList.forEach(item => {
-                let rawStatus = (item.status || item.kycStatus || "PENDING").toUpperCase();
-                
-                if (rawStatus === "PENDING") pendingCount++;
-                else if (rawStatus === "APPROVED" || rawStatus === "VERIFIED") approvedCount++;
-                else if (rawStatus === "REJECTED") rejectedCount++;
-
-                let userName = item.userName || item.name || item.customerName || "User";
-                let mobile = item.mobile || item.userPhone || item.phone || item.mobileNo || "N/A";
-                
-                let docNumber = item.aadhaarNo || item.docNumber || item.documentNo || item.aadhaarNumber || item.aadhaar || (item.kyc ? item.kyc.documentNo : "N/A");
-
-                let frontImg = item.frontPhoto || item.aadhaarFront || item.frontImage || item.frontUrl || (item.kyc ? item.kyc.frontPhoto : "");
-                let backImg = item.backPhoto || item.aadhaarBack || item.backImage || item.backUrl || (item.kyc ? item.kyc.backPhoto : "");
-
-                let statusBadge = `<span class="badge-pending">PENDING</span>`;
-                if (rawStatus === "APPROVED" || rawStatus === "VERIFIED") statusBadge = `<span class="badge-approved">APPROVED</span>`;
-                if (rawStatus === "REJECTED") statusBadge = `<span class="badge-rejected">REJECTED</span>`;
-
-                let actionBtns = "";
-                if (rawStatus === "PENDING") {
-                    actionBtns = `
-                        <button class="btn-approve" onclick="updateKycStatus('${item._sourceColl}', '${item.docId}', 'APPROVED')">Approve</button>
-                        <button class="btn-reject" onclick="updateKycStatus('${item._sourceColl}', '${item.docId}', 'REJECTED')">Reject</button>
-                    `;
-                } else {
-                    actionBtns = `<span style="color:#718096; font-size:12px;">Completed</span>`;
-                }
-
-                let frontHtml = frontImg ? `<img src="${frontImg}" class="doc-thumb" onclick="previewImage('${frontImg}')" alt="Front">` : `<span style="color:#999; font-size:11px;">No Image</span>`;
-                let backHtml = backImg ? `<img src="${backImg}" class="doc-thumb" onclick="previewImage('${backImg}')" alt="Back">` : `<span style="color:#999; font-size:11px;">No Image</span>`;
-
-                let row = `<tr>
-                    <td>${serialNo++}</td>
-                    <td>
-                        <strong>${userName}</strong><br>
-                        <span style="color:#3182ce;">${mobile}</span>
-                    </td>
-                    <td style="font-weight:700;">${docNumber}</td>
-                    <td>${frontHtml}</td>
-                    <td>${backHtml}</td>
-                    <td>${statusBadge}</td>
-                    <td>${actionBtns}</td>
-                </tr>`;
-
-                tbody.innerHTML += row;
-            });
-
-            document.getElementById("pendingKycVal").innerText = pendingCount;
-            document.getElementById("approvedKycVal").innerText = approvedCount;
-            document.getElementById("rejectedKycVal").innerText = rejectedCount;
-        }
-
-        function updateKycStatus(sourceColl, docId, newStatus) {
-            if (confirm(`Aap is request ko ${newStatus} karna chahte hain?`)) {
-                let updates = {
-                    status: newStatus,
-                    kycStatus: newStatus,
-                    isKycVerified: newStatus === "APPROVED"
-                };
-
-                db.collection(sourceColl).doc(docId).update(updates).then(() => {
-                    if (sourceColl === "kyc") {
-                        db.collection("users").doc(docId).update(updates).catch(() => {});
+                    if (rawStatus === "approved" || rawStatus === "verified") {
+                        approvedCount++;
+                    } else if (rawStatus === "rejected") {
+                        rejectedCount++;
+                    } else {
+                        pendingCount++;
                     }
-                    alert(`KYC Status successfully updated to ${newStatus}`);
+
+                    let mobile = item.mobile || item.uid || "N/A";
+                    let docNumber = item.docNumber || item.documentNo || item.aadhaarNo || "N/A";
+                    let frontImg = item.frontImage || item.frontPhoto || "";
+                    let backImg = item.backImage || item.backPhoto || "";
+
+                    let statusBadge = `<span class="badge-pending">PENDING</span>`;
+                    if (rawStatus === "approved" || rawStatus === "verified") {
+                        statusBadge = `<span class="badge-approved">APPROVED</span>`;
+                    } else if (rawStatus === "rejected") {
+                        statusBadge = `<span class="badge-rejected">REJECTED</span>`;
+                    }
+
+                    let actionBtns = "";
+                    if (rawStatus !== "approved" && rawStatus !== "verified" && rawStatus !== "rejected") {
+                        actionBtns = `
+                            <button class="btn-approve" onclick="updateKycStatus('${item.docId}', 'approved')">Approve</button>
+                            <button class="btn-reject" onclick="updateKycStatus('${item.docId}', 'rejected')">Reject</button>
+                        `;
+                    } else {
+                        actionBtns = `<span style="color:#718096; font-size:12px;">Completed</span>`;
+                    }
+
+                    let frontHtml = frontImg ? `<img src="${frontImg}" class="doc-thumb" onclick="previewImage('${frontImg}')" alt="Front">` : `<span style="color:#999; font-size:11px;">No Image</span>`;
+                    let backHtml = backImg ? `<img src="${backImg}" class="doc-thumb" onclick="previewImage('${backImg}')" alt="Back">` : `<span style="color:#999; font-size:11px;">No Image</span>`;
+
+                    let row = `<tr>
+                        <td>${serialNo++}</td>
+                        <td>
+                            <strong>User</strong><br>
+                            <span style="color:#3182ce;">${mobile}</span>
+                        </td>
+                        <td style="font-weight:700;">${docNumber}</td>
+                        <td>${frontHtml}</td>
+                        <td>${backHtml}</td>
+                        <td>${statusBadge}</td>
+                        <td>${actionBtns}</td>
+                    </tr>`;
+
+                    tbody.innerHTML += row;
+                });
+
+                document.getElementById("pendingKycVal").innerText = pendingCount;
+                document.getElementById("approvedKycVal").innerText = approvedCount;
+                document.getElementById("rejectedKycVal").innerText = rejectedCount;
+
+            }, (err) => {
+                document.getElementById("kycTableBody").innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#e53e3e;">Firebase Error: ${err.message}</td></tr>`;
+            });
+        }
+
+        function updateKycStatus(docId, newStatus) {
+            if (confirm(`Aap is request ko ${newStatus.toUpperCase()} karna chahte hain?`)) {
+                db.collection("kycRequests").doc(docId).update({
+                    status: newStatus
+                }).then(() => {
+                    alert(`KYC Status updated to ${newStatus.toUpperCase()}`);
                 }).catch((err) => {
-                    alert("Error: " + err.message);
+                    alert("Update Error: " + err.message);
                 });
             }
         }
