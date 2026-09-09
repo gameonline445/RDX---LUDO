@@ -1,208 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Live Users Monitor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDX LUDO ADMIN - Live Users Monitor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
-  <!-- FontAwesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
 
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
 
-    body {
-      background: radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.15) 0%, transparent 35%),
-                  radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.12) 0%, transparent 32%),
-                  linear-gradient(180deg, #f0f7ff 0%, #ffffff 50%, #eaf4ff 100%);
-      color: #101a38;
-      padding: 24px 20px;
-      min-height: 100vh;
-    }
+        /* STATS CARDS GRID */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
+        .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
+        .stat-card .value { font-size: 26px; font-weight: 800; color: #3182ce; }
 
-    .page-title {
-      font-size: 24px;
-      font-weight: 850;
-      color: #0c4a6e;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+        /* FILTER BAR */
+        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; }
+        .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
+        .filter-group label { font-size: 12px; color: #a0aec0; font-weight: 600; }
+        .filter-group input { padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+        .filter-group input:focus { border-color: #3182ce; }
 
-    .page-title i {
-      color: #ef4444;
-    }
+        /* TABLE */
+        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+        td { padding: 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
 
-    .table-card {
-      background: #ffffff;
-      border: 1.5px solid #bae6fd;
-      border-radius: 20px;
-      box-shadow: 0 8px 22px rgba(2, 132, 199, 0.08);
-      overflow: hidden;
-    }
+        /* LIVE BADGE */
+        .status-online { display: inline-flex; align-items: center; gap: 6px; color: #48bb78; font-weight: 700; font-size: 12px; background: rgba(72, 187, 120, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(72, 187, 120, 0.3); }
+        .dot-online { width: 8px; height: 8px; background-color: #48bb78; border-radius: 50%; box-shadow: 0 0 8px #48bb78; animation: pulse 1.5s infinite; }
+        
+        .status-offline { color: #a0aec0; font-weight: 600; font-size: 12px; background: rgba(160, 174, 192, 0.1); padding: 4px 10px; border-radius: 20px; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-
-    th {
-      background: #e0f2fe;
-      color: #0c4a6e;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 14px 18px;
-      border-bottom: 1px solid #bae6fd;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    td {
-      padding: 14px 18px;
-      font-size: 14px;
-      border-bottom: 1px solid #f0f9ff;
-      color: #334155;
-      font-weight: 600;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover td {
-      background-color: #f8fafc;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .badge-online {
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #86efac;
-    }
-
-    .badge-playing {
-      background: #fef3c7;
-      color: #d97706;
-      border: 1px solid #fde68a;
-    }
-
-    .badge-offline {
-      background: #f1f5f9;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
-    }
-
-    .no-data {
-      text-align: center;
-      padding: 30px;
-      color: #64748b;
-      font-weight: 600;
-    }
-  </style>
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(72, 187, 120, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }
+        }
+    </style>
 </head>
 <body>
 
-  <h1 class="page-title"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</h1>
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+        <a href="admin-login.html" class="logout-link">Logout</a>
+    </header>
 
-  <div class="table-card">
-    <table>
-      <thead>
-        <tr>
-          <th>User ID / Phone</th>
-          <th>Name</th>
-          <th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="usersTableBody">
-        <tr>
-          <td colspan="3" class="no-data"><i class="fa-solid fa-spinner fa-spin"></i> Firebase se Live Data connect ho raha hai...</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live-users.html" class="nav-item active"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
 
-  <script>
-    // Aapke Firebase Config Keys
-    const firebaseConfig = {
-      apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-      authDomain: "rdx-ludo.firebaseapp.com",
-      projectId: "rdx-ludo",
-      storageBucket: "rdx-ludo.firebasestorage.app",
-      messagingSenderId: "928340814840",
-      appId: "1:928340814840:web:6eca42a8b76138b268440d",
-      databaseURL: "https://rdx-ludo-default-rtdb.firebaseio.com" // Live Realtime DB Path
-    };
+        <main class="main-content">
+            <h1 class="dashboard-title">Live Users Monitor</h1>
 
-    if (!firebase.apps.length) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    const db = firebase.database();
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">Active Live Users</div>
+                    <div class="value" id="statOnlineUsers" style="color: #48bb78;">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Total Registered Users</div>
+                    <div class="value" id="statTotalUsers">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Active Battles Playing</div>
+                    <div class="value" id="statActiveBattles" style="color: #ed8936;">0</div>
+                </div>
+            </div>
 
-    // Firebase Database se Realtime Data Fetch karna
-    const usersRef = db.ref('users'); // Firebase me 'users' path se fetch karega
+            <!-- FILTERS -->
+            <div class="filter-card">
+                <div class="filter-group">
+                    <label>Search User Name / Mobile / City</label>
+                    <input type="text" id="searchInput" placeholder="Search by name, phone, or location..." onkeyup="filterUsers()">
+                </div>
+            </div>
 
-    usersRef.on('value', (snapshot) => {
-      const tableBody = document.getElementById('usersTableBody');
-      tableBody.innerHTML = '';
+            <!-- TABLE -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Status</th>
+                            <th>User Name</th>
+                            <th>Mobile Number</th>
+                            <th>City / State Location</th>
+                            <th>IP Address</th>
+                            <th>Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody id="liveUsersTable">
+                        <tr><td colspan="6" style="text-align: center;">Fetching live user data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
-        let hasUsers = false;
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
 
-        Object.keys(usersData).forEach((key) => {
-          hasUsers = true;
-          const user = usersData[key];
-
-          const userId = user.phone || user.uid || key;
-          const userName = user.name || user.displayName || 'Unnamed User';
-          const userStatus = user.status || (user.isOnline ? 'Online' : 'Offline');
-
-          let badgeClass = 'badge-offline';
-          if (userStatus.toLowerCase().includes('match') || userStatus.toLowerCase().includes('playing')) {
-            badgeClass = 'badge-playing';
-          } else if (userStatus.toLowerCase().includes('online')) {
-            badgeClass = 'badge-online';
-          }
-
-          const rowHTML = `
-            <tr>
-              <td>${userId}</td>
-              <td>${userName}</td>
-              <td><span class="badge ${badgeClass}">${userStatus}</span></td>
-            </tr>
-          `;
-          tableBody.innerHTML += rowHTML;
-        });
-
-        if (!hasUsers) {
-          tableBody.innerHTML = '<tr><td colspan="3" class="no-data">Koi live user mil nahi raha.</td></tr>';
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
-      } else {
-        tableBody.innerHTML = '<tr><td colspan="3" class="no-data">Database me filhaal koi user register nahi hai.</td></tr>';
-      }
-    }, (error) => {
-      console.error("Data Fetch Error:", error);
-      document.getElementById('usersTableBody').innerHTML = `<tr><td colspan="3" class="no-data" style="color:red;">Firebase Read Error: ${error.message}</td></tr>`;
-    });
-  </script>
+        const db = firebase.firestore();
 
+        let allUsersList = [];
+
+        function listenLiveUsers() {
+            db.collection("customers").onSnapshot(snapshot => {
+                allUsersList = [];
+                let onlineCount = 0;
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    
+                    // Check if lastActive was within 3 minutes
+                    let isOnline = false;
+                    if (data.isOnline === true) {
+                        isOnline = true;
+                    } else if (data.lastActive) {
+                        const lastActiveDate = data.lastActive.toDate ? data.lastActive.toDate() : new Date(data.lastActive);
+                        const diffMins = (new Date() - lastActiveDate) / (1000 * 60);
+                        if (diffMins <= 3) isOnline = true;
+                    }
+
+                    if (isOnline) onlineCount++;
+                    data.computedOnline = isOnline;
+                    allUsersList.push(data);
+                });
+
+                document.getElementById("statTotalUsers").innerText = allUsersList.length;
+                document.getElementById("statOnlineUsers").innerText = onlineCount;
+
+                renderTable(allUsersList);
+            });
+
+            // Fetching active playing battles
+            db.collection("battles").where("status", "==", "running").onSnapshot(snap => {
+                document.getElementById("statActiveBattles").innerText = snap.size;
+            });
+        }
+
+        function renderTable(users) {
+            const tbody = document.getElementById("liveUsersTable");
+            tbody.innerHTML = "";
+
+            if (users.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No users found.</td></tr>`;
+                return;
+            }
+
+            // Online users first
+            users.sort((a, b) => (b.computedOnline ? 1 : 0) - (a.computedOnline ? 1 : 0));
+
+            users.forEach(u => {
+                const tr = document.createElement("tr");
+
+                const statusHTML = u.computedOnline 
+                    ? `<span class="status-online"><span class="dot-online"></span> LIVE</span>`
+                    : `<span class="status-offline">Offline</span>`;
+
+                const name = u.name || u.userName || "User";
+                const phone = u.phone || u.userId || u.id;
+                const location = (u.city || u.state) ? `${u.city || ''}${u.city && u.state ? ', ' : ''}${u.state || ''}` : (u.location || 'N/A');
+                const ip = u.ipAddress || u.ip || "192.168.1.X";
+                
+                let lastActiveStr = "N/A";
+                if (u.lastActive) {
+                    const dt = u.lastActive.toDate ? u.lastActive.toDate() : new Date(u.lastActive);
+                    lastActiveStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                }
+
+                tr.innerHTML = `
+                    <td>${statusHTML}</td>
+                    <td><strong>${name}</strong></td>
+                    <td>${phone}</td>
+                    <td><i class="fa-solid fa-location-dot" style="color:#e53e3e; margin-right:4px;"></i> ${location}</td>
+                    <td><span style="color:#a0aec0; font-family:monospace;">${ip}</span></td>
+                    <td>${lastActiveStr}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterUsers() {
+            const search = document.getElementById("searchInput").value.toLowerCase().trim();
+            const filtered = allUsersList.filter(u => {
+                const name = (u.name || u.userName || "").toLowerCase();
+                const phone = (u.phone || u.userId || "").toLowerCase();
+                const loc = ((u.city || "") + " " + (u.state || "") + " " + (u.location || "")).toLowerCase();
+
+                return name.includes(search) || phone.includes(search) || loc.includes(search);
+            });
+
+            renderTable(filtered);
+        }
+
+        window.onload = () => {
+            listenLiveUsers();
+        };
+    </script>
 </body>
 </html>
