@@ -6,6 +6,11 @@
     <title>RDX LUDO - Admin Login</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -113,10 +118,19 @@
             cursor: pointer;
             transition: background 0.2s;
             margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .login-btn:hover {
             background-color: #2b6cb0;
+        }
+
+        .login-btn:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
         }
 
         /* ERROR / ALERT MESSAGE */
@@ -157,41 +171,61 @@
                 <input type="password" id="adminPassword" class="input-field" placeholder="••••••••" required>
             </div>
 
-            <button type="submit" class="login-btn">Login to Dashboard</button>
+            <button type="submit" id="loginBtn" class="login-btn">
+                <span id="btnText">Login to Dashboard</span>
+            </button>
         </form>
     </div>
 
     <!-- LOGIN SYSTEM SCRIPT -->
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        const auth = firebase.auth();
+
+        // Already Logged-in Guard
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                window.location.href = "admin.html";
+            }
+        });
+
         document.getElementById('adminLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
             const email = document.getElementById('adminEmail').value.trim();
             const password = document.getElementById('adminPassword').value.trim();
             const errorAlert = document.getElementById('errorAlert');
+            const loginBtn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('btnText');
 
-            // 1. Storage Session Set Karein
-            localStorage.setItem('admin_session', 'true');
-            localStorage.setItem('admin_email', email);
+            errorAlert.style.display = "none";
+            loginBtn.disabled = true;
+            btnText.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...`;
 
-            // 2. Firebase / Auth Logic Connect Karein
-            /*
-            if (window.firebase && firebase.auth) {
-                firebase.auth().signInWithEmailAndPassword(email, password)
+            auth.signInWithEmailAndPassword(email, password)
                 .then((userCredential) => {
+                    localStorage.setItem('admin_session', 'true');
+                    localStorage.setItem('admin_email', email);
                     window.location.href = "admin.html";
                 })
                 .catch((error) => {
+                    loginBtn.disabled = false;
+                    btnText.innerText = "Login to Dashboard";
+                    errorAlert.innerText = error.message || "Incorrect Email or Password!";
                     errorAlert.style.display = "block";
                 });
-            } else {
-                // Direct Dashboard Redirect (If Demo or Testing)
-                window.location.href = "admin.html";
-            }
-            */
-
-            // Direct guaranteed redirect to admin.html
-            window.location.href = "admin.html";
         });
     </script>
 </body>
