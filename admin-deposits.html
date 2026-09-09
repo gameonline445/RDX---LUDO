@@ -6,18 +6,28 @@
     <title>RDX LUDO ADMIN - Live Deposits</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <!-- FIREBASE FIRESTORE & AUTH SDK LIBRARIES -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        /* Hidden by default until Authentication check passes */
+        body { 
+            display: none; 
+            background-color: #000000; 
+            color: #ffffff; 
+            min-height: 100vh; 
+            flex-direction: column; 
+        }
         
         .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
         .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
         .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
-        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; cursor: pointer; }
 
         .admin-layout { display: flex; flex: 1; }
         .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
@@ -62,7 +72,7 @@
             <div class="brand-logo-img">RDX</div>
             <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
-        <a href="admin-login.html" id="logoutBtn" class="logout-link">Logout</a>
+        <button onclick="adminLogout()" class="logout-link">Logout</button>
     </header>
 
     <div class="admin-layout">
@@ -74,7 +84,7 @@
             <a href="admin-deposits.html" class="nav-item active"><i class="fa-solid fa-wallet"></i> Deposits</a>
             <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
             <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
-            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-referral.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
             <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
             <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
             <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
@@ -150,129 +160,149 @@
         }
         const db = firebase.firestore();
 
-        db.collection("deposits").onSnapshot((snapshot) => {
-            const tableBody = document.getElementById("realDepositBody");
-            tableBody.innerHTML = "";
-
-            let totalDeposit = 0;
-            let todayDeposit = 0;
-            let pendingCount = 0;
-
-            const todayObj = new Date();
-            const todayFormatted = todayObj.toLocaleDateString('en-IN');
-
-            if (snapshot.empty) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
-                document.getElementById("totalDepositVal").innerText = "₹0";
-                document.getElementById("todayDepositVal").innerText = "₹0";
-                document.getElementById("pendingCountVal").innerText = "0 Pending";
-                return;
+        // 🔒 STRICT SECURITY AUTHENTICATION GUARD
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            } else {
+                document.body.style.display = "flex";
+                initDepositsListener();
             }
-
-            let depositList = [];
-            snapshot.forEach((doc) => {
-                let data = doc.data();
-                data.id = doc.id;
-                depositList.push(data);
-            });
-
-            depositList.sort((a, b) => {
-                let statusA = (a.status || "Pending").toLowerCase();
-                let statusB = (b.status || "Pending").toLowerCase();
-                if (statusA === 'pending' && statusB !== 'pending') return -1;
-                if (statusA !== 'pending' && statusB === 'pending') return 1;
-                return 0;
-            });
-
-            depositList.forEach((data) => {
-                let amt = Number(data.amount || data.amt || 0);
-                let rawStatus = data.status || "Pending";
-                let statusLower = rawStatus.toLowerCase();
-                let uid = data.userId || data.uid || data.user_id || "";
-
-                // Enhanced Screenshot Fetching Logic
-                let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
-
-                // Mobile Check
-                let mobile = data.mobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
-                let mobileCellId = `mobile-${data.id}`;
-
-                // Fallback Date Formatting
-                let dateStr = "N/A";
-                let itemDateFormatted = "";
-                if (data.date) {
-                    dateStr = data.date;
-                    itemDateFormatted = data.date;
-                } else if (data.createdAt) {
-                    let d = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-                    dateStr = d.toLocaleString('en-IN');
-                    itemDateFormatted = d.toLocaleDateString('en-IN');
-                } else if (data.timestamp) {
-                    let d = new Date(data.timestamp);
-                    dateStr = d.toLocaleString('en-IN');
-                    itemDateFormatted = d.toLocaleDateString('en-IN');
-                }
-
-                // Total Counters
-                if (statusLower === "approved" || statusLower === "success") {
-                    totalDeposit += amt;
-                    if (itemDateFormatted === todayFormatted || dateStr.includes(todayFormatted)) {
-                        todayDeposit += amt;
-                    }
-                } else if (statusLower === "pending") {
-                    pendingCount++;
-                }
-
-                let badgeClass = (statusLower === "approved" || statusLower === "success") ? "badge-approved" : 
-                                 (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
-
-                let actionHTML = statusLower === "pending" ? 
-                    `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Approved')">Approve</button>
-                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Rejected')">Reject</button>` :
-                    `<span style="color:#8b949e; font-size:12px; font-weight:700;">Completed</span>`;
-
-                let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
-
-                let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
-                if (statusLower === "pending") {
-                    amountHTML += ` <button class="btn-edit" onclick="editAmount('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
-                }
-
-                let row = `<tr>
-                    <td>${dateStr}</td>
-                    <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
-                    <td id="${mobileCellId}">${mobile || "Fetching..."}</td>
-                    <td style="color:#2e7d32; font-weight:800;">${amountHTML}</td>
-                    <td><strong>${data.utr || data.utrNumber || data.refNo || "N/A"}</strong></td>
-                    <td>${ssButton}</td>
-                    <td><span class="${badgeClass}">${rawStatus.toUpperCase()}</span></td>
-                    <td>${actionHTML}</td>
-                </tr>`;
-
-                tableBody.innerHTML += row;
-
-                // Auto-fetch mobile number from 'users' collection if missing
-                if (!mobile && uid) {
-                    db.collection("users").doc(uid).get().then((userDoc) => {
-                        if (userDoc.exists) {
-                            let uData = userDoc.data();
-                            let fetchedPhone = uData.mobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
-                            document.getElementById(mobileCellId).innerText = fetchedPhone;
-                        } else {
-                            document.getElementById(mobileCellId).innerText = "N/A";
-                        }
-                    }).catch(() => {
-                        document.getElementById(mobileCellId).innerText = "N/A";
-                    });
-                } else if (!mobile && !uid) {
-                    document.getElementById(mobileCellId).innerText = "N/A";
-                }
-            });
-
-            document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
-            document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
-            document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
         });
+
+        function adminLogout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "admin-login.html";
+            }).catch(() => {
+                window.location.href = "admin-login.html";
+            });
+        }
+
+        function initDepositsListener() {
+            db.collection("deposits").onSnapshot((snapshot) => {
+                const tableBody = document.getElementById("realDepositBody");
+                tableBody.innerHTML = "";
+
+                let totalDeposit = 0;
+                let todayDeposit = 0;
+                let pendingCount = 0;
+
+                const todayObj = new Date();
+                const todayFormatted = todayObj.toLocaleDateString('en-IN');
+
+                if (snapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
+                    document.getElementById("totalDepositVal").innerText = "₹0";
+                    document.getElementById("todayDepositVal").innerText = "₹0";
+                    document.getElementById("pendingCountVal").innerText = "0 Pending";
+                    return;
+                }
+
+                let depositList = [];
+                snapshot.forEach((doc) => {
+                    let data = doc.data();
+                    data.id = doc.id;
+                    depositList.push(data);
+                });
+
+                depositList.sort((a, b) => {
+                    let statusA = (a.status || "Pending").toLowerCase();
+                    let statusB = (b.status || "Pending").toLowerCase();
+                    if (statusA === 'pending' && statusB !== 'pending') return -1;
+                    if (statusA !== 'pending' && statusB === 'pending') return 1;
+                    return 0;
+                });
+
+                depositList.forEach((data) => {
+                    let amt = Number(data.amount || data.amt || 0);
+                    let rawStatus = data.status || "Pending";
+                    let statusLower = rawStatus.toLowerCase();
+                    let uid = data.userId || data.uid || data.user_id || "";
+
+                    // Enhanced Screenshot Fetching Logic
+                    let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
+
+                    // Mobile Check
+                    let mobile = data.mobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
+                    let mobileCellId = `mobile-${data.id}`;
+
+                    // Fallback Date Formatting
+                    let dateStr = "N/A";
+                    let itemDateFormatted = "";
+                    if (data.date) {
+                        dateStr = data.date;
+                        itemDateFormatted = data.date;
+                    } else if (data.createdAt) {
+                        let d = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+                        dateStr = d.toLocaleString('en-IN');
+                        itemDateFormatted = d.toLocaleDateString('en-IN');
+                    } else if (data.timestamp) {
+                        let d = new Date(data.timestamp);
+                        dateStr = d.toLocaleString('en-IN');
+                        itemDateFormatted = d.toLocaleDateString('en-IN');
+                    }
+
+                    // Total Counters
+                    if (statusLower === "approved" || statusLower === "success") {
+                        totalDeposit += amt;
+                        if (itemDateFormatted === todayFormatted || dateStr.includes(todayFormatted)) {
+                            todayDeposit += amt;
+                        }
+                    } else if (statusLower === "pending") {
+                        pendingCount++;
+                    }
+
+                    let badgeClass = (statusLower === "approved" || statusLower === "success") ? "badge-approved" : 
+                                     (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
+
+                    let actionHTML = statusLower === "pending" ? 
+                        `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Approved')">Approve</button>
+                         <button class="btn-reject" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Rejected')">Reject</button>` :
+                        `<span style="color:#8b949e; font-size:12px; font-weight:700;">Completed</span>`;
+
+                    let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
+
+                    let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
+                    if (statusLower === "pending") {
+                        amountHTML += ` <button class="btn-edit" onclick="editAmount('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
+                    }
+
+                    let row = `<tr>
+                        <td>${dateStr}</td>
+                        <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
+                        <td id="${mobileCellId}">${mobile || "Fetching..."}</td>
+                        <td style="color:#2e7d32; font-weight:800;">${amountHTML}</td>
+                        <td><strong>${data.utr || data.utrNumber || data.refNo || "N/A"}</strong></td>
+                        <td>${ssButton}</td>
+                        <td><span class="${badgeClass}">${rawStatus.toUpperCase()}</span></td>
+                        <td>${actionHTML}</td>
+                    </tr>`;
+
+                    tableBody.innerHTML += row;
+
+                    // Auto-fetch mobile number from 'users' collection if missing
+                    if (!mobile && uid) {
+                        db.collection("users").doc(uid).get().then((userDoc) => {
+                            if (userDoc.exists) {
+                                let uData = userDoc.data();
+                                let fetchedPhone = uData.mobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
+                                document.getElementById(mobileCellId).innerText = fetchedPhone;
+                            } else {
+                                document.getElementById(mobileCellId).innerText = "N/A";
+                            }
+                        }).catch(() => {
+                            document.getElementById(mobileCellId).innerText = "N/A";
+                        });
+                    } else if (!mobile && !uid) {
+                        document.getElementById(mobileCellId).innerText = "N/A";
+                    }
+                });
+
+                document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
+                document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
+                document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
+            });
+        }
 
         // EDIT AMOUNT FUNCTION
         function editAmount(depId, currentAmt) {
