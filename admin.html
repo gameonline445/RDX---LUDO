@@ -8,17 +8,22 @@
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE -->
+<!-- FIREBASE SDKs (AUTH INCLUDED) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
-body{
+/* Page is strictly hidden by default until authentication check passes */
+body {
+    display: none;
     background:#0b1329;
     color:#f8fafc;
     min-height:100vh;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    margin:0;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
 
 /* TOP ADMIN NAVBAR */
 .top-navbar{
@@ -366,13 +371,29 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
+// 🔒 STRICT SECURITY AUTHENTICATION GUARD
+firebase.auth().onAuthStateChanged((user) => {
+    if (!user) {
+        // Bina login access karne par Admin Login par bhej do
+        window.location.href = "admin-login.html";
+    } else {
+        // Auth success hone par page show karo aur sync start karo
+        document.body.style.display = "block";
+        syncDashboardData();
+    }
+});
+
 function toggleSidebar() {
     document.getElementById("sidebarNav").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
 function adminLogout() {
-    window.location.href = "admin-login.html";
+    firebase.auth().signOut().then(() => {
+        window.location.href = "admin-login.html";
+    }).catch(() => {
+        window.location.href = "admin-login.html";
+    });
 }
 
 function parseTimestamp(val) {
@@ -519,8 +540,6 @@ function updateSyncTime() {
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     document.getElementById("syncTime").textContent = "Fetching live collections data from Cloud Firestore. Last sync: " + timeStr;
 }
-
-window.addEventListener("load", syncDashboardData);
 </script>
 
 </body>
