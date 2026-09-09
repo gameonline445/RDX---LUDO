@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
-<!-- FontAwesome for Icons -->
+<!-- FontAwesome & Firebase SDKs -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check
+// Authentication Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -24,11 +24,12 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
+
 let firebaseDB = null;
 try {
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     firebaseDB = firebase.firestore();
-} catch(error){ console.error(error); }
+} catch(error){ console.error("Firebase Init Error:", error); }
 </script>
 
 <style>
@@ -45,10 +46,10 @@ html,body{
 }
 button{font:inherit;}
 
-/* UNIFIED TOP HEADER STYLING */
+/* TOP HEADER */
 .top-header{
     position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
-    display:flex;align-items:center;justify-content:space-between;padding:0 14px;
+    display:flex;align-items:center;justify-space-between;padding:0 14px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom:1.5px solid #bae6fd;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
@@ -92,7 +93,7 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.25);
 }
 
-/* CONTAINER */
+/* MAIN CONTAINER */
 .container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
 .wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
@@ -156,7 +157,7 @@ button{font:inherit;}
 
 <body>
 
-<!-- UNIFIED TOP HEADER -->
+<!-- HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -173,6 +174,7 @@ button{font:inherit;}
 
 <div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
 
+<!-- SIDE MENU -->
 <div class="menu-panel" id="menuPanel">
     <div class="menu-title">
         <div class="menu-brand">
@@ -243,7 +245,7 @@ button{font:inherit;}
 let unsubscribeWalletListener = null;
 
 async function loadFirebaseCustomer(){
-    try{
+    try {
         if(!firebaseDB) return;
 
         let mobile = localStorage.getItem("rdxFirebaseUserId") || 
@@ -258,50 +260,63 @@ async function loadFirebaseCustomer(){
         }
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
-        let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+        const mobile10Digits = cleanMobile.slice(-10); // Extract exact last 10 digits
+        const docIdWith91 = "91" + mobile10Digits;
 
-        let userRef = firebaseDB.collection("customers").doc(firebaseDocId);
-
-        // Check if Document Exists with prefix 91 or without prefix
+        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
         let snapshot = await userRef.get();
+
+        // Fallback check: Check 10-digit docID if 91-prefixed doc ID doesn't exist
         if(!snapshot.exists) {
-            firebaseDocId = cleanMobile;
-            userRef = firebaseDB.collection("customers").doc(firebaseDocId);
+            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+            snapshot = await userRef.get();
+        }
+
+        // Secondary Fallback: Query by field `mobile`
+        if(!snapshot.exists) {
+            const querySnap = await firebaseDB.collection("customers")
+                .where("mobile", "in", [mobile10Digits, "+" + mobile10Digits, "+91" + mobile10Digits, docIdWith91])
+                .limit(1)
+                .get();
+                
+            if(!querySnap.empty) {
+                userRef = querySnap.docs[0].ref;
+            }
         }
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // LIVE REAL-TIME SYNC LISTENER
+        // REAL-TIME SYNC LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
                 
-                // Fetch All Sub-Balances
                 const deposit = Number(data.depositBalance || data.deposit || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
                 
-                // If total 'balance' exists in DB use it, otherwise calculate live sum
-                let total = Number(data.balance || 0);
-                if(total === 0 || total !== (deposit + winnings)) {
-                    total = deposit + winnings;
-                }
+                // Real Calculation
+                let total = deposit + winnings;
 
-                // Sync UI Elements Instantly
+                // Sync UI Instantly
                 document.getElementById("mainBalance").textContent = total;
                 document.getElementById("topBalance").textContent = "₹" + total;
                 document.getElementById("depositBalance").textContent = deposit;
                 document.getElementById("winningBalance").textContent = winnings;
 
-                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(doc.id).slice(-4));
+                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
                 if(document.getElementById("menuUsername")) {
                     document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
                 }
+            } else {
+                console.warn("User Document not found in Firestore!");
             }
         }, (error) => {
-            console.error("Real-time Wallet Sync Error:", error);
+            console.error("Wallet Real-time Sync Error:", error);
         });
 
-    } catch(error){ console.error("Wallet Load Error:", error); }
+    } catch(error) { 
+        console.error("Wallet Fetch Error:", error); 
+    }
 }
 
 window.addEventListener("load", loadFirebaseCustomer);
@@ -314,7 +329,6 @@ function closeMenu(){
     document.getElementById("menuPanel").classList.remove("open"); 
     document.getElementById("menuOverlay").classList.remove("show");
 }
-function goBack(){ window.location.replace("./dashboard.html"); }
 function goHome(){ closeMenu(); window.location.replace("./dashboard.html"); }
 function goWallet(){ closeMenu(); window.location.replace("./wallet.html"); }
 function goDeposit(){ closeMenu(); window.location.replace("./deposit.html"); }
