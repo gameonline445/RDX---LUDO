@@ -3,17 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - History & Logs</title>
+<title>RDX LUDO - Dashboard</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<script>
-// Authentication Security Check
-if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("index.html");
-}
-</script>
+<!-- FIREBASE SDK (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -28,9 +25,9 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
-button,input{font:inherit;}
+button{font:inherit;}
 
-/* TOP HEADER - Matches Image 15 */
+/* TOP HEADER */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -41,7 +38,7 @@ button,input{font:inherit;}
     padding:0 14px;
     position:sticky;
     top:0;
-    z-index:1000;
+    z-index:100;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
 .header-left{display:flex;align-items:center;gap:10px;}
@@ -61,6 +58,7 @@ button,input{font:inherit;}
 }
 .menu-btn:active{transform:scale(0.95);}
 
+/* BRAND LOGO */
 .logo{
     width:46px;
     height:46px;
@@ -80,6 +78,7 @@ button,input{font:inherit;}
     object-fit:cover;
 }
 
+/* RIGHT SIDE BUTTONS */
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
     width:38px;
@@ -102,156 +101,119 @@ button,input{font:inherit;}
 .cash{background:#22c55e;}
 .gift{background:#f97316;}
 
+/* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
-.page-title{
-    font-size:20px;
-    font-weight:900;
-    color:#0c4a6e;
-    margin-bottom:12px;
+/* WELCOME BANNER */
+.welcome-box{margin-bottom:14px;}
+.welcome-box h1{font-size:24px;font-weight:900;color:#0c4a6e;}
+.welcome-box p{color:#64748b;font-size:13px;font-weight:600;margin-top:2px;}
+
+/* REFER BANNER */
+.refer-banner{
+    border:1.5px solid #7dd3fc;
+    border-radius:22px;
+    padding:16px 18px;
+    background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
     display:flex;
+    justify-style:space-between;
     align-items:center;
-    gap:8px;
-}
-
-/* SEARCH BAR */
-.search-box-wrap{
-    position:relative;
-    margin-bottom:12px;
-}
-.search-icon{
-    position:absolute;
-    left:14px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#0284c7;
-    font-size:14px;
-}
-.search-input{
-    width:100%;
-    height:46px;
-    border-radius:14px;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    padding:0 14px 0 38px;
-    font-size:13px;
-    font-weight:700;
-    color:#0f172a;
-    outline:none;
-    box-shadow:0 4px 14px rgba(2,132,199,0.04);
-}
-.search-input:focus{
-    border-color:#0284c7;
-}
-
-/* FILTER TABS */
-.filter-scroll{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    scrollbar-width:none;
-    margin-bottom:16px;
-}
-.filter-scroll::-webkit-scrollbar{display:none;}
-.tab-btn{
-    padding:8px 16px;
-    border-radius:18px;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    color:#64748b;
-    font-weight:850;
-    font-size:12px;
     cursor:pointer;
-    white-space:nowrap;
-    transition:all 0.2s ease;
+    box-shadow:0 6px 18px rgba(2,132,199,0.08);
+    margin-bottom:20px;
 }
-.tab-btn.active{
+.refer-banner small{color:#0284c7;font-weight:850;font-size:11px;letter-spacing:0.8px;}
+.refer-banner h3{font-size:22px;font-weight:900;color:#0c4a6e;margin-top:2px;}
+.refer-banner p{color:#64748b;font-size:12px;margin-top:2px;}
+.refer-arrow{
+    width:40px;
+    height:40px;
+    border-radius:50%;
     background:#0284c7;
-    color:#ffffff;
-    border-color:#0284c7;
-    box-shadow:0 4px 12px rgba(2,132,199,0.25);
-}
-
-/* HISTORY CARDS */
-.history-card{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:18px;
-    padding:14px 16px;
-    margin-bottom:10px;
-    box-shadow:0 4px 12px rgba(2,132,199,0.04);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.history-left{display:flex;align-items:center;gap:12px;}
-.history-icon{
-    width:42px;
-    height:42px;
-    border-radius:12px;
+    color:white;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:18px;
-}
-.icon-win{background:#dcfce7;color:#15803d;}
-.icon-lost{background:#fee2e2;color:#be123c;}
-.icon-cancel{background:#f1f5f9;color:#64748b;}
-.icon-dep{background:#e0f2fe;color:#0284c7;}
-.icon-with{background:#fef3c7;color:#b45309;}
-
-.history-details h4{
-    font-size:14px;
-    font-weight:850;
-    color:#0c4a6e;
-}
-.history-details p{
-    font-size:11px;
-    color:#64748b;
-    font-weight:600;
-    margin-top:2px;
-}
-.history-details .utr-tag{
-    display:inline-block;
-    font-size:11px;
-    color:#0369a1;
-    font-weight:750;
-    margin-top:2px;
-}
-.history-details .reason-tag{
-    display:block;
-    font-size:10px;
-    color:#be123c;
-    font-weight:750;
-    margin-top:2px;
+    box-shadow:0 4px 12px rgba(2,132,199,0.3);
 }
 
-.history-right{text-align:right;}
-.amount-win{font-size:16px;font-weight:900;color:#15803d;}
-.amount-loss{font-size:16px;font-weight:900;color:#be123c;}
-.amount-cancel{font-size:16px;font-weight:900;color:#64748b;}
+/* GAMES SECTION */
+.section-label{font-size:11px;font-weight:850;color:#64748b;letter-spacing:1px;margin-bottom:4px;text-transform:uppercase;}
+.section-title{font-size:18px;font-weight:900;color:#0f172a;margin-bottom:12px;}
 
-/* BADGES */
-.badge-status{
-    display:inline-block;
-    padding:3px 8px;
-    border-radius:8px;
+/* LUDO CARD */
+.game-card{
+    width:100%;
+    height:200px;
+    border-radius:22px;
+    overflow:hidden;
+    position:relative;
+    background:#111;
+    box-shadow:0 8px 24px rgba(0,0,0,0.16);
+    cursor:pointer;
+    margin-bottom:12px;
+}
+.game-card img{width:100%;height:100%;object-fit:cover;}
+.game-overlay{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(180deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.8) 100%);
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    color:white;
+}
+@keyframes slowPulse {
+    0%, 100% { opacity:1; transform:scale(1); box-shadow:0 0 10px rgba(34,197,94,0.95); }
+    50% { opacity:0.4; transform:scale(0.96); box-shadow:0 0 2px rgba(34,197,94,0.2); }
+}
+.live-badge{
+    align-self:flex-start;
+    background:#16a34a;
+    color:white;
+    padding:4px 10px;
+    border-radius:12px;
     font-size:10px;
     font-weight:850;
-    text-transform:uppercase;
-    margin-top:4px;
+    animation:slowPulse 1.8s ease-in-out infinite;
 }
-.status-approved, .status-success, .status-won{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
-.status-rejected, .status-lost{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
-.status-pending{background:#fef3c7;color:#b45309;border:1px solid #fde68a;}
-.status-cancelled{background:#f1f5f9;color:#64748b;border:1px solid #cbd5e1;}
+.game-card-bottom{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+}
+.game-card-bottom h2{font-size:22px;font-weight:900;text-shadow:0 2px 4px rgba(0,0,0,0.6);}
+.game-card-bottom p{font-size:12px;color:#cbd5e1;}
+.play-btn{
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    border:0;
+    padding:8px 20px;
+    border-radius:18px;
+    font-size:13px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 4px 12px rgba(2,132,199,0.35);
+}
 
-.empty-state{
-    text-align:center;
-    padding:40px 14px;
-    color:#64748b;
+/* COMING SOON CARD */
+.soon-card{
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    box-shadow:0 4px 14px rgba(30,60,120,0.03);
 }
-.empty-state i{font-size:36px;color:#bae6fd;margin-bottom:10px;}
+.soon-card img{width:60px;height:60px;border-radius:14px;object-fit:cover;}
+.soon-info{flex:1;}
+.soon-info h4{font-size:15px;font-weight:850;color:#0f172a;}
+.soon-info p{color:#64748b;font-size:12px;margin-top:2px;}
+.soon-tag{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:5px 10px;border-radius:12px;font-size:10px;font-weight:800;}
 
 /* SIDE DRAWER */
 .drawer-overlay{
@@ -275,7 +237,7 @@ button,input{font:inherit;}
     z-index:1000;
     box-shadow:4px 0 25px rgba(2,132,199,0.15);
     transform:translateX(-100%);
-    transition:transform 0.2s cubic-bezier(0.4,0,0.2,1);
+    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
     display:flex;
     flex-direction:column;
 }
@@ -293,12 +255,12 @@ button,input{font:inherit;}
     width:46px;
     height:46px;
     border-radius:50%;
-    overflow:hidden;
     background:#ffffff;
-    border:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
     justify-content:center;
+    overflow:hidden;
+    border:1.5px solid #bae6fd;
 }
 .drawer-avatar img{
     width:100%;
@@ -309,8 +271,8 @@ button,input{font:inherit;}
     width:34px;
     height:34px;
     border-radius:50%;
-    border:1px solid #bae6fd;
     background:#ffffff;
+    border:1.5px solid #bae6fd;
     color:#0c4a6e;
     font-size:16px;
     display:flex;
@@ -321,7 +283,7 @@ button,input{font:inherit;}
 .drawer-links{flex:1;overflow-y:auto;padding:12px;}
 .drawer-item{
     width:100%;
-    padding:10px 14px;
+    padding:12px 14px;
     border:0;
     border-radius:14px;
     background:transparent;
@@ -332,7 +294,7 @@ button,input{font:inherit;}
     font-weight:750;
     color:#334155;
     cursor:pointer;
-    margin-bottom:6px;
+    margin-bottom:4px;
     transition:background 0.2s ease;
 }
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
@@ -352,11 +314,11 @@ button,input{font:inherit;}
 .menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
 .menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
 .menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-deposit{background:linear-gradient(145deg,#0284c7,#0369a1);}
-.menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV - Matches Image 16 */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -406,6 +368,32 @@ button,input{font:inherit;}
 
 <body>
 
+<script>
+// BFCache Reload Prevention
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (performance && performance.navigation.type === 2)) {
+        window.location.reload();
+    }
+});
+
+// Authentication Guard
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("index.html");
+}
+
+// Mobile Back Button Management
+(function() {
+    history.pushState(null, null, location.href);
+    window.addEventListener("popstate", function() {
+        const drawer = document.getElementById("sideDrawer");
+        if (drawer && drawer.classList.contains("active")) {
+            toggleMenu();
+        }
+        history.pushState(null, null, location.href);
+    });
+})();
+</script>
+
 <!-- SIDE DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
@@ -426,11 +414,11 @@ button,input{font:inherit;}
         <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
         <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
         <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
-        <button class="drawer-item" onclick="window.location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
-        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
-        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
-        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
+        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
+        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
+        <button class="drawer-item" onclick="window.location.replace('notification.html')"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
+        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
     </div>
 </div>
 
@@ -442,6 +430,8 @@ button,input{font:inherit;}
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
+    
+    <!-- 3 BUTTONS ON THE RIGHT SIDE -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -450,32 +440,50 @@ button,input{font:inherit;}
 </header>
 
 <main class="container">
+    <section class="welcome-box">
+        <h1>Hey, <span id="userName">User</span></h1>
+        <p>Welcome to RDX LUDO</p>
+    </section>
 
-    <div class="page-title">
-        <i class="fa-solid fa-clock-rotate-left" style="color:#0284c7;"></i> History & Activity Logs
-    </div>
+    <section class="refer-banner" onclick="window.location.replace('referral.html')">
+        <div>
+            <small>REFER & EARN</small>
+            <h3>2% Refer Bonus</h3>
+            <p>Invite friends and earn lifetime rewards</p>
+        </div>
+        <div class="refer-arrow">↗</div>
+    </section>
 
-    <!-- SEARCH BAR -->
-    <div class="search-box-wrap">
-        <i class="fa-solid fa-magnifying-glass search-icon"></i>
-        <input type="text" id="historySearchInput" class="search-input" placeholder="Search by Date, UTR, Amount, Status, Opponent...">
-    </div>
+    <div class="section-label">GAMES</div>
+    <h2 class="section-title">Play Your Game</h2>
 
-    <!-- TABS -->
-    <div class="filter-scroll">
-        <button class="tab-btn active" onclick="setFilter('all', this)">All Activity</button>
-        <button class="tab-btn" onclick="setFilter('battles', this)">⚔️ Battles History</button>
-        <button class="tab-btn" onclick="setFilter('deposits', this)">💰 Deposits</button>
-        <button class="tab-btn" onclick="setFilter('withdrawals', this)">💳 Withdrawals</button>
-    </div>
+    <article class="game-card" onclick="window.location.replace('battles.html')">
+        <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
+        <div class="game-overlay">
+            <span class="live-badge">● LIVE</span>
+            <div class="game-card-bottom">
+                <div>
+                    <h2>Ludo Classic</h2>
+                    <p>Classic 2-Player Battle</p>
+                </div>
+                <button class="play-btn" onclick="event.stopPropagation(); window.location.replace('battles.html');">
+                    ▶ Play
+                </button>
+            </div>
+        </div>
+    </article>
 
-    <!-- LOGS LIST -->
-    <div id="logsContainer">
-        <p style="text-align:center; color:#64748b; font-size:13px; padding:30px;">Loading history records...</p>
-    </div>
-
+    <section class="soon-card">
+        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
+        <div class="soon-info">
+            <h4>1 Goti Quick Ludo</h4>
+            <p>Fast paced 1-Token match</p>
+        </div>
+        <span class="soon-tag">🔒 SOON</span>
+    </section>
 </main>
 
+<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -484,21 +492,6 @@ button,input{font:inherit;}
 </nav>
 
 <script>
-history.pushState({ page: 1 }, "", "");
-window.addEventListener("popstate", function (event) {
-    window.location.href = "dashboard.html";
-});
-
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
-</script>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -507,292 +500,122 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseDB = firebase.firestore();
 
 function getCleanUserId() {
     const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
-
 const userId = getCleanUserId();
-let allLogs = [];
-let activeTab = "all";
 
-let battlesData = [];
-let depositsData = [];
-let withdrawalsData = [];
-
-function parseItemTime(ts) {
-    if (!ts) return { dateObj: new Date(0), formatted: "—" };
-    let d;
-    if (typeof ts.toDate === "function") { d = ts.toDate(); }
-    else if (ts.seconds) { d = new Date(ts.seconds * 1000); }
-    else { d = new Date(ts); }
-
-    const formatted = isNaN(d.getTime()) ? "—" : d.toLocaleString("en-IN", {
-        day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true
-    });
-    return { dateObj: d, formatted: formatted };
+function toggleMenu() {
+    document.getElementById("sideDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME LISTENER FOR USER PROFILE DATA
-function startRealtimeUserListener() {
+// REALTIME FIRESTORE DATA SYNC
+function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
-    onSnapshot(doc(db, "customers", docId), (snap) => {
-        if (snap.exists()) {
+    firebaseDB.collection("customers").doc(docId).onSnapshot((snap) => {
+        if (snap.exists) {
             const d = snap.data();
-            const displayName = d.name || ("User " + userId.slice(-4));
-            document.getElementById("drawerName").textContent = displayName;
+
+            // ADMIN BLOCK CHECK
+            const isUserBlocked = d.isBlocked === true || 
+                                  d.isBlock === true || 
+                                  d.blocked === true || 
+                                  String(d.status).toLowerCase() === 'blocked';
+
+            if (isUserBlocked) {
+                localStorage.clear();
+                sessionStorage.clear();
+                alert("Aapka account admin dwara block kar diya gaya hai.");
+                window.location.replace("index.html");
+                return;
+            }
+
+            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
+            const firstName = fullName.split(" ")[0] || "User";
+
+            document.getElementById("userName").textContent = firstName;
+            document.getElementById("drawerName").textContent = fullName;
             document.getElementById("drawerMobile").textContent = "+" + userId;
         }
-    }, err => console.error("User listener error:", err));
+    }, (err) => {
+        console.error("Realtime balance update error:", err);
+    });
 }
 
-// REAL-TIME LISTENER FOR ALL LOGS
-function startRealtimeLogsListener() {
+// HEARTBEAT & PRESENCE TRACKER
+async function startPresenceHeartbeat() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
+    const userRef = firebaseDB.collection("customers").doc(docId);
 
-    // 1. Battles Real-Time Listener
-    onSnapshot(collection(db, "battles"), (snap) => {
-        let list = [];
-        snap.forEach(docSnap => {
-            const b = docSnap.data();
-            if (b.creatorUid === docId || b.acceptedUid === docId) {
-                const timeInfo = parseItemTime(b.resolvedAt || b.startedAt || b.createdAt);
-                const isCreator = b.creatorUid === docId;
-                const oppName = isCreator ? (b.acceptedName || "Opponent") : (b.creatorName || "Creator");
+    let userCity = "Unknown";
+    let userState = "Unknown";
 
-                let battleStatus = "Live";
-                let isWon = false;
-                let isCancelled = false;
-
-                if (b.status === "completed") {
-                    if (b.winnerUid === docId) {
-                        battleStatus = "Won";
-                        isWon = true;
-                    } else {
-                        battleStatus = "Lost";
-                    }
-                } else if (b.status === "cancelled") {
-                    battleStatus = "Cancelled";
-                    isCancelled = true;
-                }
-
-                list.push({
-                    type: "battle",
-                    id: docSnap.id,
-                    title: `Battle vs ${oppName}`,
-                    dateStr: timeInfo.formatted,
-                    timeObj: timeInfo.dateObj,
-                    amount: b.amount || 0,
-                    prize: b.prize || 0,
-                    status: battleStatus,
-                    isWon: isWon,
-                    isCancelled: isCancelled,
-                    searchKey: `battle vs ${oppName} ${timeInfo.formatted} ${b.amount} ${b.prize} ${battleStatus} ${docSnap.id}`
-                });
-            }
-        });
-        battlesData = list;
-        mergeAndRenderLogs();
-    });
-
-    // 2. Deposits Real-Time Listener
-    onSnapshot(collection(db, "deposits"), (snap) => {
-        let list = [];
-        snap.forEach(docSnap => {
-            const d = docSnap.data();
-            const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "");
-            if (cleanUid === userId || cleanUid === docId) {
-                const timeInfo = parseItemTime(d.createdAt || d.date);
-                const rawStatus = String(d.status || "pending").toLowerCase();
-                const utrVal = d.utr ? String(d.utr).trim() : "";
-
-                list.push({
-                    type: "deposit",
-                    id: docSnap.id,
-                    title: "Deposit Amount",
-                    dateStr: timeInfo.formatted,
-                    timeObj: timeInfo.dateObj,
-                    amount: d.amount || 0,
-                    status: rawStatus,
-                    utr: utrVal,
-                    comment: d.comment || "",
-                    searchKey: `deposit amount ${timeInfo.formatted} ${d.amount} ${utrVal} ${rawStatus} ${d.comment || ''} ${docSnap.id}`
-                });
-            }
-        });
-        depositsData = list;
-        mergeAndRenderLogs();
-    });
-
-    // 3. Withdrawals Real-Time Listener
-    onSnapshot(collection(db, "withdrawals"), (snap) => {
-        let list = [];
-        snap.forEach(docSnap => {
-            const w = docSnap.data();
-            const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "");
-            if (cleanUid === userId || cleanUid === docId) {
-                const timeInfo = parseItemTime(w.createdAt || w.date);
-                const rawStatus = String(w.status || "pending").toLowerCase();
-                const modeVal = w.mode === "BANK" ? `Bank: ${w.accountNumber || ''}` : `UPI: ${w.upiId || ''}`;
-
-                list.push({
-                    type: "withdrawal",
-                    id: docSnap.id,
-                    title: "Withdrawal Cash",
-                    dateStr: timeInfo.formatted,
-                    timeObj: timeInfo.dateObj,
-                    amount: w.amount || 0,
-                    status: rawStatus,
-                    modeInfo: modeVal,
-                    comment: w.comment || "",
-                    searchKey: `withdrawal cash ${timeInfo.formatted} ${w.amount} ${modeVal} ${rawStatus} ${w.comment || ''} ${docSnap.id}`
-                });
-            }
-        });
-        withdrawalsData = list;
-        mergeAndRenderLogs();
-    });
-}
-
-function mergeAndRenderLogs() {
-    allLogs = [...battlesData, ...depositsData, ...withdrawalsData];
-    allLogs.sort((a, b) => b.timeObj - a.timeObj);
-    renderLogs();
-}
-
-function renderLogs() {
-    const container = document.getElementById("logsContainer");
-    const searchVal = document.getElementById("historySearchInput").value.toLowerCase().trim();
-
-    let filtered = allLogs;
-
-    if (activeTab === "battles") filtered = allLogs.filter(x => x.type === "battle");
-    else if (activeTab === "deposits") filtered = allLogs.filter(x => x.type === "deposit");
-    else if (activeTab === "withdrawals") filtered = allLogs.filter(x => x.type === "withdrawal");
-
-    if (searchVal !== "") {
-        filtered = filtered.filter(item => (item.searchKey || "").toLowerCase().includes(searchVal));
-    }
-
-    if (!filtered.length) {
-        container.innerHTML = `
-            <div class="empty-state">
-                <i class="fa-solid fa-folder-open"></i>
-                <h4 style="color:#0c4a6e; font-size:15px; font-weight:850;">No Records Found</h4>
-                <p style="font-size:12px; margin-top:4px;">Aapki search ya selected tab ke hisab se koi data nahi mila.</p>
-            </div>
-        `;
-        return;
-    }
-
-    container.innerHTML = filtered.map(item => {
-        if (item.type === "battle") {
-            let iconBox = `<div class="history-icon icon-lost"><i class="fa-solid fa-gamepad"></i></div>`;
-            let amtClass = "amount-loss";
-            let amtSign = `- ₹${item.amount}`;
-            let statusBadge = `<span class="badge-status status-lost">Lost</span>`;
-
-            if (item.isWon) {
-                iconBox = `<div class="history-icon icon-win"><i class="fa-solid fa-trophy"></i></div>`;
-                amtClass = "amount-win";
-                amtSign = `+ ₹${item.prize}`;
-                statusBadge = `<span class="badge-status status-won">Won</span>`;
-            } else if (item.isCancelled) {
-                iconBox = `<div class="history-icon icon-cancel"><i class="fa-solid fa-ban"></i></div>`;
-                amtClass = "amount-cancel";
-                amtSign = `Refund ₹${item.amount}`;
-                statusBadge = `<span class="badge-status status-cancelled">Cancelled</span>`;
-            }
-
-            return `
-                <div class="history-card">
-                    <div class="history-left">
-                        ${iconBox}
-                        <div class="history-details">
-                            <h4>${item.title}</h4>
-                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
-                        </div>
-                    </div>
-                    <div class="history-right">
-                        <div class="${amtClass}">${amtSign}</div>
-                        ${statusBadge}
-                    </div>
-                </div>
-            `;
-        } else if (item.type === "deposit") {
-            const s = item.status;
-            let statusBadge = `<span class="badge-status status-pending">Pending</span>`;
-            if (s === "approved" || s === "success") {
-                statusBadge = `<span class="badge-status status-approved">Success</span>`;
-            } else if (s === "rejected" || s === "failed") {
-                statusBadge = `<span class="badge-status status-rejected">Rejected</span>`;
-            }
-
-            return `
-                <div class="history-card">
-                    <div class="history-left">
-                        <div class="history-icon icon-dep"><i class="fa-solid fa-money-bill-wave"></i></div>
-                        <div class="history-details">
-                            <h4>Deposit Amount</h4>
-                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
-                            ${item.utr ? `<span class="utr-tag"><i class="fa-solid fa-receipt"></i> UTR: ${item.utr}</span>` : ''}
-                            ${item.comment && (s === 'rejected' || s === 'failed') ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
-                        </div>
-                    </div>
-                    <div class="history-right">
-                        <div class="amount-win">+ ₹${item.amount}</div>
-                        ${statusBadge}
-                    </div>
-                </div>
-            `;
-        } else if (item.type === "withdrawal") {
-            const s = item.status;
-            let statusBadge = `<span class="badge-status status-pending">Pending</span>`;
-            if (s === "approved" || s === "success") {
-                statusBadge = `<span class="badge-status status-approved">Success</span>`;
-            } else if (s === "rejected" || s === "failed") {
-                statusBadge = `<span class="badge-status status-rejected">Rejected</span>`;
-            }
-
-            return `
-                <div class="history-card">
-                    <div class="history-left">
-                        <div class="history-icon icon-with"><i class="fa-solid fa-money-bill-transfer"></i></div>
-                        <div class="history-details">
-                            <h4>Withdrawal Cash</h4>
-                            <p><i class="fa-regular fa-clock"></i> ${item.dateStr}</p>
-                            ${item.modeInfo ? `<span class="utr-tag" style="color:#64748b;">${item.modeInfo}</span>` : ''}
-                            ${item.comment && (s === 'rejected' || s === 'failed') ? `<small class="reason-tag">Reason: ${item.comment}</small>` : ''}
-                        </div>
-                    </div>
-                    <div class="history-right">
-                        <div class="amount-loss">- ₹${item.amount}</div>
-                        ${statusBadge}
-                    </div>
-                </div>
-            `;
+    try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && data.city) {
+            userCity = data.city;
+            userState = data.region || data.region_code || "Unknown";
         }
-    }).join("");
+    } catch(e) {
+        console.log("Location fetch error:", e);
+    }
+
+    const sendHeartbeat = (isOnlineStatus) => {
+        const payload = {
+            isOnline: isOnlineStatus,
+            lastPing: firebase.firestore.FieldValue.serverTimestamp(),
+            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (userCity !== "Unknown") payload.city = userCity;
+        if (userState !== "Unknown") payload.state = userState;
+
+        userRef.set(payload, { merge: true }).catch(err => console.error("Presence error:", err));
+    };
+
+    sendHeartbeat(true);
+
+    setInterval(() => {
+        if (!document.hidden) {
+            sendHeartbeat(true);
+        } else {
+            sendHeartbeat(false);
+        }
+    }, 5000);
+
+    document.addEventListener("visibilitychange", () => {
+        sendHeartbeat(!document.hidden);
+    });
+
+    window.addEventListener("blur", () => sendHeartbeat(false));
+    window.addEventListener("focus", () => sendHeartbeat(true));
+    window.addEventListener("pagehide", () => sendHeartbeat(false));
+    window.addEventListener("beforeunload", () => sendHeartbeat(false));
 }
 
-document.getElementById("historySearchInput").addEventListener("input", renderLogs);
+function logout() {
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (userId) {
+        const docId = userId.length === 10 ? "91" + userId : userId;
+        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+    }
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("index.html");
+}
 
-window.setFilter = (type, btnEl) => {
-    activeTab = type;
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-    btnEl.classList.add("active");
-    renderLogs();
-};
-
-startRealtimeUserListener();
-startRealtimeLogsListener();
+window.addEventListener("load", () => {
+    loadDashboardDataRealtime();
+    startPresenceHeartbeat();
+});
 </script>
 
 </body>
