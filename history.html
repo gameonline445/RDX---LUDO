@@ -27,15 +27,16 @@ body{
 }
 button, input{font:inherit;}
 
-/* DEBUG BOX */
-#debugBanner {
-    background: #ef4444;
-    color: white;
-    padding: 8px 12px;
-    font-size: 11px;
-    font-weight: bold;
-    word-break: break-all;
-    z-index: 1000;
+/* STATUS ALERT BOX */
+.status-box {
+    margin: 12px 14px 0 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: #e0f2fe;
+    border: 1px solid #bae6fd;
+    color: #0369a1;
+    font-size: 12px;
+    font-weight: 700;
 }
 
 /* TOP HEADER */
@@ -65,7 +66,6 @@ button, input{font:inherit;}
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 4px 10px rgba(248,113,113,0.3);
 }
 
 .logo{
@@ -207,7 +207,7 @@ button, input{font:inherit;}
     background:#ffffff;
     border-top:1px solid #e2e8f0;
     display:flex;
-    justify-content:space-around;
+    justify-space:around;
     align-items:center;
     z-index:200;
 }
@@ -244,19 +244,19 @@ button, input{font:inherit;}
 
 <body>
 
-<div id="debugBanner">Initializing Debugger...</div>
-
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn"><i class="fa-solid fa-bars"></i></button>
         <div class="logo"><img src="logo.png" alt="RDX"></div>
     </div>
     <div class="header-right">
-        <button class="header-icon bell"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon cash"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon gift"><i class="fa-solid fa-gift"></i></button>
+        <button class="header-icon bell" onclick="window.location.href='notification.html'"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon cash" onclick="window.location.href='wallet.html'"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon gift" onclick="window.location.href='referral.html'"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
+
+<div class="status-box" id="userStatusInfo">Connecting to server...</div>
 
 <main class="container">
     <div class="page-title">
@@ -300,86 +300,82 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
-function debug(msg) {
-    document.getElementById("debugBanner").innerText = msg;
-    console.log(msg);
-}
-
-// Extract mobile number from all possible localstorage keys
-function getUserIdentifiers() {
-    let keys = ['rdxFirebaseUserId', 'rdxVerifiedMobile', 'userMobile', 'userId', 'mobile'];
-    let found = [];
-    keys.forEach(k => {
-        let val = localStorage.getItem(k);
-        if(val) found.push(String(val).replace(/\D/g, ""));
-    });
-    return [...new Set(found)].filter(x => x.length >= 10);
-}
-
 let allLogsData = [];
 let currentCategory = 'all';
 
-async function fetchLogsDeep() {
-    const ids = getUserIdentifiers();
-    debug("Searching User IDs: " + (ids.join(', ') || 'None found in LocalStorage'));
+function getMobileFromStorage() {
+    let raw = localStorage.getItem("rdxFirebaseUserId") || 
+              localStorage.getItem("rdxVerifiedMobile") || 
+              localStorage.getItem("userMobile") || 
+              localStorage.getItem("mobile") || "";
+    return String(raw).replace(/\D/g, "");
+}
 
-    if(ids.length === 0) {
-        document.getElementById("historyList").innerHTML = `<div class="empty-state">Mobile number not found in localStorage. Please login again.</div>`;
+async function loadUserHistory() {
+    const rawMobile = getMobileFromStorage();
+    const statusBox = document.getElementById("userStatusInfo");
+
+    if(!rawMobile || rawMobile.length < 10) {
+        statusBox.style.background = "#fee2e2";
+        statusBox.style.color = "#991b1b";
+        statusBox.textContent = "Error: Mobile number missing in session. Please log in again.";
+        document.getElementById("historyList").innerHTML = `<div class="empty-state">Please log in to view history.</div>`;
         return;
     }
 
-    let combined = [];
+    const tenDigit = rawMobile.slice(-10);
+    const countryDigit = "91" + tenDigit;
+    statusBox.textContent = `Account: +${countryDigit} | Fetching records...`;
 
-    for (let rawId of ids) {
-        let tenDigit = rawId.slice(-10);
-        let countryDigit = "91" + tenDigit;
+    let records = [];
 
-        try {
-            // Check Document Collections: customers -> history
-            let snap1 = await firebaseDB.collection("customers").doc(countryDigit).collection("history").get();
-            snap1.forEach(d => combined.push({ id: d.id, ...d.data() }));
+    try {
+        // Query 1: Direct subcollection (customers -> history)
+        const sub1 = await firebaseDB.collection("customers").doc(countryDigit).collection("history").get();
+        sub1.forEach(d => records.push({ id: d.id, ...d.data() }));
 
-            let snap2 = await firebaseDB.collection("customers").doc(tenDigit).collection("history").get();
-            snap2.forEach(d => combined.push({ id: d.id, ...d.data() }));
+        const sub2 = await firebaseDB.collection("customers").doc(tenDigit).collection("history").get();
+        sub2.forEach(d => records.push({ id: d.id, ...d.data() }));
 
-            // Check Direct Collections: transactions
-            let snap3 = await firebaseDB.collection("transactions").get();
-            snap3.forEach(d => {
-                let data = d.data();
-                let strData = JSON.stringify(data);
-                if(strData.includes(tenDigit) || strData.includes(countryDigit)) {
-                    combined.push({ id: d.id, ...data });
-                }
-            });
+        // Query 2: All root level transactions matching mobile
+        const txSnap = await firebaseDB.collection("transactions").get();
+        txSnap.forEach(d => {
+            let data = d.data();
+            let str = JSON.stringify(data);
+            if(str.includes(tenDigit) || str.includes(countryDigit)) {
+                records.push({ id: d.id, ...data });
+            }
+        });
 
-            // Check Battles
-            let snap4 = await firebaseDB.collection("battles").get();
-            snap4.forEach(d => {
-                let data = d.data();
-                let strData = JSON.stringify(data);
-                if(strData.includes(tenDigit) || strData.includes(countryDigit)) {
-                    combined.push({
-                        id: d.id,
-                        type: 'battle',
-                        title: 'Ludo Battle',
-                        amount: data.amount || data.entryFee || 0,
-                        status: data.status || 'Completed',
-                        createdAt: data.createdAt || data.timestamp
-                    });
-                }
-            });
+        // Query 3: All battles matching user
+        const battleSnap = await firebaseDB.collection("battles").get();
+        battleSnap.forEach(d => {
+            let data = d.data();
+            let str = JSON.stringify(data);
+            if(str.includes(tenDigit) || str.includes(countryDigit)) {
+                records.push({
+                    id: d.id,
+                    type: 'battle',
+                    title: 'Ludo Battle',
+                    description: `Game ID: ${d.id}`,
+                    amount: data.amount || data.entryFee || 0,
+                    status: data.status || 'Completed',
+                    date: data.createdAt ? new Date(data.createdAt.seconds * 1000).toLocaleString() : 'Recent'
+                });
+            }
+        });
 
-        } catch (err) {
-            debug("Error: " + err.message);
-        }
+    } catch (e) {
+        console.error("Firestore Error:", e);
+        statusBox.textContent = "Database Error: " + e.message;
     }
 
-    // Deduplicate
+    // Filter duplicates
     const uniqueMap = new Map();
-    combined.forEach(item => uniqueMap.set(item.id, item));
+    records.forEach(r => uniqueMap.set(r.id, r));
     allLogsData = Array.from(uniqueMap.values());
 
-    debug(`Fetch Complete! Found ${allLogsData.length} records for IDs: ${ids.join(', ')}`);
+    statusBox.textContent = `Account: +${countryDigit} | Total records found: ${allLogsData.length}`;
     renderLogs();
 }
 
@@ -395,8 +391,8 @@ function renderLogs() {
         else if(currentCategory === 'deposit') matchesCategory = type.includes('deposit') || type.includes('add');
         else if(currentCategory === 'withdraw') matchesCategory = type.includes('withdraw');
 
-        let fullStr = JSON.stringify(item).toLowerCase();
-        let matchesSearch = fullStr.includes(query);
+        let fullText = JSON.stringify(item).toLowerCase();
+        let matchesSearch = fullText.includes(query);
 
         return matchesCategory && matchesSearch;
     });
@@ -446,7 +442,7 @@ function filterLogs() {
 }
 
 window.addEventListener("load", () => {
-    fetchLogsDeep();
+    loadUserHistory();
 });
 </script>
 
