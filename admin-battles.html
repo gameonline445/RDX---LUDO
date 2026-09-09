@@ -50,7 +50,9 @@
         .badge-completed { background: rgba(72, 187, 120, 0.15); color: #68d391; border: 1px solid rgba(72, 187, 120, 0.3); }
         .badge-cancelled { background: rgba(229, 62, 62, 0.15); color: #fc8181; border: 1px solid rgba(229, 62, 62, 0.3); }
 
-        .btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; }
+        .btn { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; border: none; cursor: pointer; transition: 0.2s; margin-bottom: 4px; }
+        .btn-win { background: #38a169; color: #ffffff; }
+        .btn-win:hover { background: #2f855a; }
         .btn-cancel { background: #e53e3e; color: #ffffff; }
         .btn-cancel:hover { background: #c53030; }
         .btn-view { background: #3182ce; color: #ffffff; }
@@ -58,11 +60,12 @@
         .btn-penalty { background: #dd6b20; color: #ffffff; }
         .btn-penalty:hover { background: #c05621; }
 
-        /* Modal Styles */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); align-items: center; justify-content: center; }
-        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 550px; padding: 20px; position: relative; }
+        .modal-content { background: #151921; border: 1px solid #232936; border-radius: 14px; width: 90%; max-width: 500px; padding: 20px; position: relative; }
         .modal-close { position: absolute; right: 16px; top: 16px; color: #a0aec0; font-size: 20px; cursor: pointer; }
         .proof-media { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-top: 14px; background: #000; }
+        .winner-option { background: #1a202c; border: 1px solid #2d3748; padding: 12px; border-radius: 8px; margin-top: 10px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .winner-option:hover { border-color: #38a169; background: #222c3a; }
     </style>
 </head>
 <body>
@@ -113,7 +116,7 @@
             </div>
 
             <div class="filter-card">
-                <input type="text" id="searchInput" placeholder="Search by Battle ID, Mobile, or Room Code..." onkeyup="applyFilters()">
+                <input type="text" id="searchInput" placeholder="Search by Mobile Number or Battle ID..." onkeyup="applyFilters()">
                 <input type="date" id="dateFilter" onchange="applyFilters()">
                 <select id="statusFilter" onchange="applyFilters()">
                     <option value="all">All Status</option>
@@ -145,11 +148,21 @@
         </main>
     </div>
 
+    <!-- Win / Loss Decision Modal -->
+    <div id="winnerModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
+            <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Declare Winner</h3>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select the winner to credit prize amount automatically.</p>
+            <div id="winnerOptionsContainer"></div>
+        </div>
+    </div>
+
     <!-- Proof View Modal -->
     <div id="proofModal" class="modal">
         <div class="modal-content">
-            <span class="modal-close" onclick="closeModal()">&times;</span>
-            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Proof</h3>
+            <span class="modal-close" onclick="closeModal('proofModal')">&times;</span>
+            <h3 style="color: #3182ce; margin-bottom: 10px;">Submitted Screenshot / Video</h3>
             <div id="proofContainer"></div>
         </div>
     </div>
@@ -226,18 +239,27 @@
                     dateStr = dt.toLocaleDateString() + " " + dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 }
 
-                // Proof button logic
+                // Proof view
                 let proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof</span>`;
                 if (b.proofUrl || b.screenshot) {
                     const url = b.proofUrl || b.screenshot;
                     proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
                 }
 
-                // Action buttons
+                // Actions Logic
                 let actionsHTML = "";
-                if (status === "open" || status === "running") {
-                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}')"><i class="fa-solid fa-ban"></i> Cancel</button> `;
+                
+                // Win/Loss Button
+                if (status === "running" || status === "review" || status === "open") {
+                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creator}', '${joiner}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button><br>`;
                 }
+
+                // Cancel Button (Only for Open or Disputed)
+                if (status === "open") {
+                    actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creator}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button><br>`;
+                }
+
+                // Penalty Option
                 actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creator}', '${joiner}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button>`;
 
                 tr.innerHTML = `
@@ -270,12 +292,11 @@
 
             const filtered = allBattles.filter(b => {
                 const bId = b.id.toLowerCase();
-                const creator = (b.createdBy || "").toLowerCase();
-                const joiner = (b.joinedBy || "").toLowerCase();
-                const roomCode = (b.roomCode || "").toLowerCase();
+                const creator = (b.createdBy || b.creatorPhone || "").toLowerCase();
+                const joiner = (b.joinedBy || b.joinerPhone || "").toLowerCase();
                 const status = (b.status || "").toLowerCase();
 
-                const matchSearch = bId.includes(search) || creator.includes(search) || joiner.includes(search) || roomCode.includes(search);
+                const matchSearch = bId.includes(search) || creator.includes(search) || joiner.includes(search);
                 const matchStatus = (statusVal === "all") || (status === statusVal);
 
                 let matchDate = true;
@@ -291,29 +312,82 @@
             renderBattles(filtered);
         }
 
-        async function cancelBattle(battleId) {
-            if (confirm("Are you sure you want to cancel this battle? Entry fee will be refunded.")) {
+        function openWinnerModal(battleId, creator, joiner, prize) {
+            const container = document.getElementById("winnerOptionsContainer");
+            container.innerHTML = `
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creator}', ${prize})">
+                    <div>
+                        <strong style="color:#63b3ed;">Creator: ${creator}</strong><br>
+                        <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
+                    </div>
+                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
+                </div>
+                ${joiner !== 'Waiting...' ? `
+                <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joiner}', ${prize})">
+                    <div>
+                        <strong style="color:#48bb78;">Joiner: ${joiner}</strong><br>
+                        <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
+                    </div>
+                    <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
+                </div>
+                ` : ''}
+            `;
+            document.getElementById("winnerModal").style.display = "flex";
+        }
+
+        async function confirmDeclareWinner(battleId, winnerPhone, prize) {
+            if (confirm(`Confirm declare ${winnerPhone} as Winner? ₹${prize} will be credited to wallet.`)) {
+                try {
+                    // Update Battle Status
+                    await db.collection("battles").doc(battleId).update({
+                        status: "completed",
+                        winner: winnerPhone,
+                        completedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    // Credit Wallet
+                    await db.collection("customers").doc(winnerPhone).update({
+                        wallet: firebase.firestore.FieldValue.increment(parseFloat(prize))
+                    });
+
+                    alert(`₹${prize} successfully credited to ${winnerPhone}.`);
+                    closeModal('winnerModal');
+                } catch(e) {
+                    alert("Error updating winner: " + e.message);
+                }
+            }
+        }
+
+        async function cancelBattle(battleId, creatorPhone, entryFee) {
+            if (confirm("Are you sure you want to cancel this open battle? Entry fee will be refunded.")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
                         cancelledBy: "admin",
                         cancelledAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
-                    alert("Battle cancelled successfully.");
+
+                    if (creatorPhone && creatorPhone !== "N/A") {
+                        await db.collection("customers").doc(creatorPhone).update({
+                            wallet: firebase.firestore.FieldValue.increment(parseFloat(entryFee))
+                        });
+                    }
+
+                    alert("Battle cancelled & entry fee refunded.");
                 } catch(e) {
-                    alert("Error cancelling battle: " + e.message);
+                    alert("Cancellation Error: " + e.message);
                 }
             }
         }
 
         function applyPenalty(creator, joiner) {
-            const userPhone = prompt(`Enter User Mobile Number to apply penalty:\nOption 1: ${creator}\nOption 2: ${joiner}`);
+            const userPhone = prompt(`Enter User Mobile Number to apply penalty:\n1: ${creator}\n2: ${joiner}`);
             if (!userPhone) return;
 
             const amount = prompt(`Enter Penalty Amount to deduct from ${userPhone}:`, "50");
             if (!amount || isNaN(amount)) return;
 
-            if (confirm(`Deduct ₹${amount} penalty from user ${userPhone}?`)) {
+            if (confirm(`Deduct ₹${amount} penalty directly from ${userPhone}'s wallet?`)) {
                 db.collection("customers").doc(userPhone).update({
                     wallet: firebase.firestore.FieldValue.increment(-parseFloat(amount))
                 }).then(() => {
@@ -337,9 +411,8 @@
             document.getElementById("proofModal").style.display = "flex";
         }
 
-        function closeModal() {
-            document.getElementById("proofModal").style.display = "none";
-            document.getElementById("proofContainer").innerHTML = "";
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = "none";
         }
 
         window.onload = () => {
