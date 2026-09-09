@@ -91,7 +91,7 @@
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="title">Total Live Battles</div>
+                    <div class="title">Total Battles</div>
                     <div class="value" id="statTotalBattles" style="color: #63b3ed;">0</div>
                 </div>
                 <div class="stat-card">
@@ -103,8 +103,8 @@
                     <div class="value" id="statRunningBattles" style="color: #f6ad55;">0</div>
                 </div>
                 <div class="stat-card">
-                    <div class="title">Review / Disputed</div>
-                    <div class="value" id="statReviewBattles" style="color: #fc8181;">0</div>
+                    <div class="title">Completed / Disputed</div>
+                    <div class="value" id="statReviewBattles" style="color: #68d391;">0</div>
                 </div>
             </div>
 
@@ -124,6 +124,7 @@
                 <table>
                     <thead>
                         <tr>
+                            <th>Date & Time</th>
                             <th>Players (Name & Mobile)</th>
                             <th>Entry Fee & Prize</th>
                             <th>Room Code</th>
@@ -133,7 +134,7 @@
                         </tr>
                     </thead>
                     <tbody id="battlesTableBody">
-                        <tr><td colspan="6" style="text-align: center;">Loading battles data...</td></tr>
+                        <tr><td colspan="7" style="text-align: center;">Loading battles data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -145,7 +146,7 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
             <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Select Battle Winner</h3>
-            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Selected winner's wallet will be credited automatically.</p>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Selected winner's wallet balance will be auto-credited.</p>
             <div id="winnerOptionsContainer"></div>
         </div>
     </div>
@@ -179,7 +180,7 @@
         function listenBattles() {
             db.collection("battles").onSnapshot(snapshot => {
                 allBattles = [];
-                let open = 0, running = 0, review = 0;
+                let open = 0, running = 0, completed = 0;
 
                 snapshot.forEach(doc => {
                     const data = doc.data();
@@ -189,16 +190,22 @@
                     const st = (data.status || "").toLowerCase();
                     if (st === "open") open++;
                     else if (st === "running") running++;
-                    else if (st === "review" || st === "dispute") review++;
+                    else if (st === "completed") completed++;
                 });
 
                 document.getElementById("statTotalBattles").innerText = snapshot.size;
                 document.getElementById("statOpenBattles").innerText = open;
                 document.getElementById("statRunningBattles").innerText = running;
-                document.getElementById("statReviewBattles").innerText = review;
+                document.getElementById("statReviewBattles").innerText = completed;
 
                 applyFilters();
             });
+        }
+
+        function formatDateTime(timestamp) {
+            if (!timestamp) return "N/A";
+            let dt = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return dt.toLocaleDateString('en-IN') + '<br>' + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
         }
 
         function renderBattles(battles) {
@@ -206,56 +213,61 @@
             tbody.innerHTML = "";
 
             if (battles.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No matching battles found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: #a0aec0;">No battles found.</td></tr>`;
                 return;
             }
 
             battles.forEach(b => {
                 const tr = document.createElement("tr");
 
-                const creatorName = b.creatorName || "Creator";
-                const creatorPhone = b.createdBy || b.creatorPhone || "N/A";
-                const joinerName = b.joinerName || "Joiner";
-                const joinerPhone = b.joinedBy || b.joinerPhone || "Waiting...";
+                const creatorName = b.creatorName || b.createdByPhone || "Creator";
+                const creatorPhone = b.creatorPhone || b.createdBy || "N/A";
+                const joinerName = b.joinerName || b.joinedByPhone || "Joiner";
+                const joinerPhone = b.joinerPhone || b.joinedBy || "Waiting...";
 
                 const amount = b.entryFee || b.amount || 0;
                 const prize = b.prize || (amount * 1.8);
                 const roomCode = b.roomCode || "Not Set";
                 const status = (b.status || "open").toLowerCase();
+                const dateTimeStr = formatDateTime(b.createdAt);
 
                 let statusBadge = `<span class="badge badge-open">OPEN</span>`;
                 if (status === "running") statusBadge = `<span class="badge badge-running">RUNNING</span>`;
                 else if (status === "completed") statusBadge = `<span class="badge badge-completed">COMPLETED</span>`;
                 else if (status === "cancelled") statusBadge = `<span class="badge badge-cancelled">CANCELLED</span>`;
 
-                // Proof Screenshot/Video
+                // Proof Screenshot/Video Logic
                 let proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof</span>`;
                 if (b.proofUrl || b.screenshot) {
                     const url = b.proofUrl || b.screenshot;
                     proofBtnHTML = `<button class="btn btn-view" onclick="viewProof('${url}')"><i class="fa-solid fa-eye"></i> View Proof</button>`;
                 }
 
-                // Action Buttons
+                // Actions Column Logic
                 let actionsHTML = `<div class="btn-group">`;
 
-                if (status === "running" || status === "open" || status === "review") {
-                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${creatorPhone}', '${joinerName}', '${joinerPhone}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
-                }
-
                 if (status === "open") {
+                    // Open Battle -> Only Cancel Option
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${creatorPhone}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
+                } else if (status === "running") {
+                    // Running Battle -> Win/Loss + Penalty Options
+                    actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${creatorPhone}', '${joinerName}', '${joinerPhone}', ${prize})"><i class="fa-solid fa-check"></i> Win/Loss</button>`;
+                    actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creatorPhone}', '${joinerPhone}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button>`;
+                } else {
+                    actionsHTML += `<span style="color:#718096; font-size:12px;">Completed</span>`;
                 }
-
-                actionsHTML += `<button class="btn btn-penalty" onclick="applyPenalty('${creatorPhone}', '${joinerPhone}')"><i class="fa-solid fa-triangle-exclamation"></i> Penalty</button></div>`;
+                actionsHTML += `</div>`;
 
                 tr.innerHTML = `
+                    <td style="font-size:11px; color:#a0aec0;">${dateTimeStr}</td>
                     <td>
                         <div style="margin-bottom:4px;">
-                            <strong style="color:#63b3ed;">${creatorName}</strong> <span style="font-size:11px; color:#a0aec0;">(${creatorPhone})</span>
+                            <strong style="color:#63b3ed;">${creatorName}</strong> <br><span style="font-size:11px; color:#a0aec0;">📱 ${creatorPhone}</span>
                         </div>
-                        <div>
-                            <strong style="color:#48bb78;">${joinerPhone !== 'Waiting...' ? joinerName : ''}</strong> <span style="font-size:11px; color:#a0aec0;">${joinerPhone}</span>
-                        </div>
+                        ${joinerPhone !== 'Waiting...' ? `
+                        <div style="margin-top:6px;">
+                            <strong style="color:#48bb78;">${joinerName}</strong> <br><span style="font-size:11px; color:#a0aec0;">📱 ${joinerPhone}</span>
+                        </div>` : '<span style="color:#718096; font-size:11px;">(Waiting for Joiner)</span>'}
                     </td>
                     <td>
                         Entry: <strong>₹${amount}</strong><br>
@@ -277,8 +289,8 @@
             const statusVal = document.getElementById("statusFilter").value;
 
             const filtered = allBattles.filter(b => {
-                const creator = ((b.creatorName || '') + " " + (b.createdBy || b.creatorPhone || '')).toLowerCase();
-                const joiner = ((b.joinerName || '') + " " + (b.joinedBy || b.joinerPhone || '')).toLowerCase();
+                const creator = ((b.creatorName || '') + " " + (b.creatorPhone || b.createdBy || '')).toLowerCase();
+                const joiner = ((b.joinerName || '') + " " + (b.joinerPhone || b.joinedBy || '')).toLowerCase();
                 const status = (b.status || "").toLowerCase();
 
                 const matchSearch = creator.includes(search) || joiner.includes(search);
@@ -302,7 +314,7 @@
             container.innerHTML = `
                 <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorPhone}', ${prize})">
                     <div>
-                        <strong style="color:#63b3ed;">${creatorName} (${creatorPhone})</strong><br>
+                        <strong style="color:#63b3ed;">${creatorName}</strong> (${creatorPhone})<br>
                         <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
@@ -310,7 +322,7 @@
                 ${joinerPhone !== 'Waiting...' ? `
                 <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerPhone}', ${prize})">
                     <div>
-                        <strong style="color:#48bb78;">${joinerName} (${joinerPhone})</strong><br>
+                        <strong style="color:#48bb78;">${joinerName}</strong> (${joinerPhone})<br>
                         <span style="font-size:12px; color:#a0aec0;">Declare Winner & Credit ₹${prize}</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:20px;"></i>
@@ -329,11 +341,12 @@
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
+                    // Add Prize Money directly to Wallet Balance
                     await db.collection("customers").doc(winnerPhone).update({
                         wallet: firebase.firestore.FieldValue.increment(parseFloat(prize))
                     });
 
-                    alert(`₹${prize} credited to ${winnerPhone}!`);
+                    alert(`Success! ₹${prize} credited to ${winnerPhone}.`);
                     closeModal('winnerModal');
                 } catch(e) {
                     alert("Error: " + e.message);
@@ -342,7 +355,7 @@
         }
 
         async function cancelBattle(battleId, creatorPhone, entryFee) {
-            if (confirm("Cancel this battle and refund entry fee?")) {
+            if (confirm("Cancel this open battle and refund entry fee to creator?")) {
                 try {
                     await db.collection("battles").doc(battleId).update({
                         status: "cancelled",
@@ -363,17 +376,17 @@
         }
 
         function applyPenalty(creatorPhone, joinerPhone) {
-            const userPhone = prompt(`Enter Mobile Number for Penalty:\n1: ${creatorPhone}\n2: ${joinerPhone}`);
+            const userPhone = prompt(`Enter Mobile Number for Penalty:\nCreator: ${creatorPhone}\nJoiner: ${joinerPhone}`);
             if (!userPhone) return;
 
-            const amount = prompt(`Enter Penalty Amount (₹) to deduct from ${userPhone}:`, "50");
+            const amount = prompt(`Enter Penalty Amount (₹) to deduct:`, "50");
             if (!amount || isNaN(amount)) return;
 
-            if (confirm(`Deduct ₹${amount} penalty from ${userPhone}'s wallet?`)) {
+            if (confirm(`Deduct ₹${amount} penalty from ${userPhone}?`)) {
                 db.collection("customers").doc(userPhone).update({
                     wallet: firebase.firestore.FieldValue.increment(-parseFloat(amount))
                 }).then(() => {
-                    alert(`₹${amount} Penalty applied to ${userPhone}.`);
+                    alert(`Penalty of ₹${amount} applied to ${userPhone}.`);
                 }).catch(e => {
                     alert("Penalty Error: " + e.message);
                 });
@@ -387,7 +400,7 @@
             if (isVideo) {
                 container.innerHTML = `<video src="${url}" controls class="proof-media" autoplay></video>`;
             } else {
-                container.innerHTML = `<img src="${url}" class="proof-media" alt="Proof" />`;
+                container.innerHTML = `<img src="${url}" class="proof-media" alt="Proof Screenshot" />`;
             }
 
             document.getElementById("proofModal").style.display = "flex";
