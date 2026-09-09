@@ -47,13 +47,13 @@
         .badge-approved { background-color: #d1fae5; color: #047857; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
         .badge-rejected { background-color: #fee2e2; color: #b91c1c; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
 
-        .btn-ss { background-color: #4a5568; color: #ffffff; border: none; padding: 5px 10px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-ss { background-color: #3182ce; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
         .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 420px; padding: 20px; border-radius: 16px; text-align: center; }
-        .modal-card img { width: 100%; max-height: 380px; object-fit: contain; border-radius: 8px; margin-bottom: 15px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 20px; border-radius: 16px; text-align: center; }
+        .modal-card img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin: 15px 0; border: 1px solid #ddd; }
     </style>
 </head>
 <body>
@@ -119,7 +119,7 @@
                         </tr>
                     </thead>
                     <tbody id="realDepositBody">
-                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Connecting to Firestore Database...</td></tr>
+                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Loading Firestore Deposits...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -128,14 +128,15 @@
 
     <div class="modal-overlay" id="ssModal">
         <div class="modal-card">
-            <h3>Payment Proof Screenshot</h3>
+            <h3 style="color:#1a365d;">Payment Proof Screenshot</h3>
             <img id="ssImage" src="" alt="Payment Screenshot">
-            <button style="padding: 8px 16px; background:#1a202c; color:white; border:none; border-radius:6px; cursor:pointer;" onclick="document.getElementById('ssModal').style.display='none'">Close</button>
+            <div>
+                <button style="padding: 8px 18px; background:#1a202c; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:700;" onclick="document.getElementById('ssModal').style.display='none'">Close</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // FIREBASE FIRESTORE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
@@ -150,7 +151,7 @@
         }
         const db = firebase.firestore();
 
-        // REAL-TIME FIRESTORE DATA SYNC
+        // REAL-TIME FIRESTORE LISTENER
         db.collection("deposits").onSnapshot((snapshot) => {
             const tableBody = document.getElementById("realDepositBody");
             tableBody.innerHTML = "";
@@ -158,10 +159,12 @@
             let totalDeposit = 0;
             let todayDeposit = 0;
             let pendingCount = 0;
-            const todayStr = new Date().toISOString().split('T')[0];
+
+            const todayObj = new Date();
+            const todayFormatted = todayObj.toLocaleDateString('en-IN');
 
             if (snapshot.empty) {
-                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found in Firestore Collection ("deposits")</td></tr>';
+                tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Data in "deposits" Collection</td></tr>';
                 document.getElementById("totalDepositVal").innerText = "₹0";
                 document.getElementById("todayDepositVal").innerText = "₹0";
                 document.getElementById("pendingCountVal").innerText = "0 Pending";
@@ -175,74 +178,109 @@
                 depositList.push(data);
             });
 
-            // Sorting: Pending First, then Latest Date First
+            // Pending request top par rakhein
             depositList.sort((a, b) => {
-                if (a.status === 'Pending' && b.status !== 'Pending') return -1;
-                if (a.status !== 'Pending' && b.status === 'Pending') return 1;
-                return (b.timestamp || 0) - (a.timestamp || 0);
+                let statusA = (a.status || "Pending").toLowerCase();
+                let statusB = (b.status || "Pending").toLowerCase();
+                if (statusA === 'pending' && statusB !== 'pending') return -1;
+                if (statusA !== 'pending' && statusB === 'pending') return 1;
+                return 0;
             });
 
             depositList.forEach((data) => {
-                let amt = Number(data.amount || 0);
-                let status = data.status || "Pending";
+                let amt = Number(data.amount || data.amt || 0);
+                let rawStatus = data.status || "Pending";
+                let statusLower = rawStatus.toLowerCase();
 
-                if (status === "Approved") {
+                // Screenshot URL Fallbacks
+                let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || "";
+
+                // Mobile Fallbacks
+                let mobile = data.mobile || data.userPhone || data.phone || data.mobileNo || "N/A";
+
+                // Name Fallbacks
+                let name = data.name || data.userName || data.customerName || "User";
+
+                // UTR Fallbacks
+                let utr = data.utr || data.utrNumber || data.refNo || data.transactionId || "N/A";
+
+                // Date Parsing & Formatting
+                let dateStr = "N/A";
+                let itemDateFormatted = "";
+                
+                if (data.date) {
+                    dateStr = data.date;
+                    itemDateFormatted = data.date;
+                } else if (data.createdAt) {
+                    let d = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+                    dateStr = d.toLocaleString('en-IN');
+                    itemDateFormatted = d.toLocaleDateString('en-IN');
+                } else if (data.timestamp) {
+                    let d = new Date(data.timestamp);
+                    dateStr = d.toLocaleString('en-IN');
+                    itemDateFormatted = d.toLocaleDateString('en-IN');
+                }
+
+                // Total Cards Logic
+                if (statusLower === "approved" || statusLower === "success") {
                     totalDeposit += amt;
-                    if (data.date && data.date.includes(todayStr)) todayDeposit += amt;
-                } else if (status === "Pending") {
+                    if (itemDateFormatted === todayFormatted || dateStr.includes(todayFormatted)) {
+                        todayDeposit += amt;
+                    }
+                } else if (statusLower === "pending") {
                     pendingCount++;
                 }
 
-                let badgeClass = status === "Approved" ? "badge-approved" : (status === "Rejected" ? "badge-rejected" : "badge-pending");
+                let badgeClass = (statusLower === "approved" || statusLower === "success") ? "badge-approved" : 
+                                 (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
 
-                let actionHTML = status === "Pending" ? 
-                    `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${data.userId}', ${amt}, 'Approved')">Approve</button>
-                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${data.userId}', ${amt}, 'Rejected')">Reject</button>` :
-                    `<span style="color:#8b949e; font-size:12px;">Completed</span>`;
+                let actionHTML = statusLower === "pending" ? 
+                    `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${data.userId || data.uid || ''}', ${amt}, 'Approved')">Approve</button>
+                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${data.userId || data.uid || ''}', ${amt}, 'Rejected')">Reject</button>` :
+                    `<span style="color:#8b949e; font-size:12px; font-weight:700;">Completed</span>`;
+
+                let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
 
                 let row = `<tr>
-                    <td>${data.date || "N/A"}</td>
-                    <td><strong>${data.name || data.userName || "User"}</strong></td>
-                    <td>${data.mobile || data.userPhone || "N/A"}</td>
+                    <td>${dateStr}</td>
+                    <td><strong>${name}</strong></td>
+                    <td>${mobile}</td>
                     <td style="color:#2e7d32; font-weight:800;">₹${amt}</td>
-                    <td><strong>${data.utr || data.utrNumber || "N/A"}</strong></td>
-                    <td><button class="btn-ss" onclick="viewSS('${data.ssUrl || data.screenshot}')">View SS</button></td>
-                    <td><span class="${badgeClass}">${status.toUpperCase()}</span></td>
+                    <td><strong>${utr}</strong></td>
+                    <td>${ssButton}</td>
+                    <td><span class="${badgeClass}">${rawStatus.toUpperCase()}</span></td>
                     <td>${actionHTML}</td>
                 </tr>`;
 
                 tableBody.innerHTML += row;
             });
 
+            // Card Values Render
             document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
             document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
             document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
-        }, (error) => {
-            console.error("Firestore Error:", error);
-            document.getElementById("realDepositBody").innerHTML = `<tr><td colspan="8" style="text-align:center; padding:20px; color:#ef4444;">Error loading data: ${error.message}</td></tr>`;
         });
 
-        // APPROVE & REJECT ACTION IN FIRESTORE
+        // ACTION DEPOSIT FUNCTION
         function actionDeposit(depId, userId, amount, newStatus) {
-            if (confirm(`Kya aap is payment ko ${newStatus} karna chahte hain?`)) {
+            if (confirm(`Kya aap is deposit ko ${newStatus} karna chahte hain?`)) {
                 db.collection("deposits").doc(depId).update({
                     status: newStatus
                 }).then(() => {
                     if (newStatus === "Approved" && userId) {
-                        // User wallet field update
                         db.collection("users").doc(userId).update({
                             wallet: firebase.firestore.FieldValue.increment(amount)
-                        });
+                        }).catch(e => console.log("User wallet update error:", e));
                     }
-                    alert("Deposit status successfully updated!");
+                    alert("Status change ho gaya!");
                 }).catch((err) => {
-                    alert("Error updating deposit: " + err.message);
+                    alert("Error: " + err.message);
                 });
             }
         }
 
         function viewSS(url) {
-            if (!url || url === "undefined") return alert("Screenshot Available Nahi Hai!");
+            if (!url) return alert("Screenshot available nahi hai!");
             document.getElementById("ssImage").src = url;
             document.getElementById("ssModal").style.display = "flex";
         }
