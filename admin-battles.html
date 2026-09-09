@@ -130,7 +130,7 @@
                             <th>Room Code</th>
                             <th>Status</th>
                             <th>Proof Screenshot / Video</th>
-                            <th>Actions / Edit</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="battlesTableBody">
@@ -146,7 +146,7 @@
         <div class="modal-content">
             <span class="modal-close" onclick="closeModal('winnerModal')">&times;</span>
             <h3 style="color: #38a169; margin-bottom: 6px;"><i class="fa-solid fa-trophy"></i> Set / Edit Battle Winner</h3>
-            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select the winner or change decision. Wallet balances will automatically re-adjust.</p>
+            <p style="font-size: 13px; color: #a0aec0; margin-bottom: 14px;">Select winner to change decision. Wallet balances will automatically re-adjust.</p>
             <div id="winnerOptionsContainer"></div>
         </div>
     </div>
@@ -301,17 +301,22 @@
                     proofBtnHTML = `<span style="color:#718096; font-size:11px;">No Proof Uploaded</span>`;
                 }
 
-                // Actions & Edit Logic
+                // Strictly Conditional Action Controls
                 let actionsHTML = `<div class="btn-group">`;
 
                 if (status === "open") {
+                    // Open Battle -> Only Cancel
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', null, ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
-                } else if (status === "running" || status === "in_progress" || status === "pending" || status === "under_review") {
+                } else if (status === "running" || status === "in_progress" || status === "pending") {
+                    // Running Battle -> Win/Loss & Cancel
                     actionsHTML += `<button class="btn btn-win" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize}, '${b.winnerUid || ''}')"><i class="fa-solid fa-trophy"></i> Win/Loss</button>`;
                     actionsHTML += `<button class="btn btn-cancel" onclick="cancelBattle('${b.id}', '${b.creatorUid || creatorMobile}', '${b.acceptedUid || joinerMobile}', ${amount})"><i class="fa-solid fa-ban"></i> Cancel</button>`;
+                } else if (status === "completed" || status === "under_review") {
+                    // Completed / Under Review -> Edit Result to change winner
+                    actionsHTML += `<button class="btn btn-edit" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize}, '${b.winnerUid || ''}')"><i class="fa-solid fa-pen-to-square"></i> Edit Win/Loss</button>`;
                 } else {
-                    // Re-Edit Completed / Cancelled Battle
-                    actionsHTML += `<button class="btn btn-edit" onclick="openWinnerModal('${b.id}', '${creatorName}', '${b.creatorUid || creatorMobile}', '${joinerName}', '${b.acceptedUid || joinerMobile}', ${prize}, '${b.winnerUid || ''}')"><i class="fa-solid fa-pen-to-square"></i> Edit Result</button>`;
+                    // Cancelled Battle
+                    actionsHTML += `<span style="color:#718096; font-size:11px;">Cancelled</span>`;
                 }
                 actionsHTML += `</div>`;
 
@@ -372,7 +377,7 @@
                 <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${creatorKey}', '${joinerKey}', ${prize}, '${currentWinner}')">
                     <div>
                         <strong style="color:#63b3ed;">${creatorName}</strong> (${creatorKey})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Declare Winner (Credit ₹${prize} Winnings)</span>
+                        <span style="font-size:12px; color:#a0aec0;">Set Winner (Credit ₹${prize} Winnings)</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:22px;"></i>
                 </div>
@@ -383,7 +388,7 @@
                 <div class="winner-option" onclick="confirmDeclareWinner('${battleId}', '${joinerKey}', '${creatorKey}', ${prize}, '${currentWinner}')">
                     <div>
                         <strong style="color:#48bb78;">${joinerName}</strong> (${joinerKey})<br>
-                        <span style="font-size:12px; color:#a0aec0;">Declare Winner (Credit ₹${prize} Winnings)</span>
+                        <span style="font-size:12px; color:#a0aec0;">Set Winner (Credit ₹${prize} Winnings)</span>
                     </div>
                     <i class="fa-solid fa-circle-check" style="color:#38a169; font-size:22px;"></i>
                 </div>
@@ -395,16 +400,16 @@
         }
 
         async function confirmDeclareWinner(battleId, winnerKey, loserKey, prize, prevWinnerKey) {
-            if (confirm(`Declare ${winnerKey} as Winner? Wallet will be updated.`)) {
+            if (confirm(`Confirm ${winnerKey} as Winner? Firebase wallet will be updated.`)) {
                 try {
-                    // Re-adjust previous winner wallet if editing
-                    if (prevWinnerKey && prevWinnerKey !== winnerKey) {
+                    // Deduct from previous winner if editing a decision
+                    if (prevWinnerKey && prevWinnerKey !== winnerKey && prevWinnerKey !== '' && prevWinnerKey !== 'null') {
                         await db.collection("customers").doc(prevWinnerKey).set({
                             winnings: firebase.firestore.FieldValue.increment(-parseFloat(prize))
                         }, { merge: true });
                     }
 
-                    // Update Battle in Firestore
+                    // Update Battle Status
                     await db.collection("battles").doc(battleId).update({
                         status: "completed",
                         winnerUid: winnerKey,
@@ -412,7 +417,7 @@
                         completedAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
 
-                    // Credit new Winner
+                    // Credit New Winner Wallet
                     await db.collection("customers").doc(winnerKey).set({
                         winnings: firebase.firestore.FieldValue.increment(parseFloat(prize))
                     }, { merge: true });
@@ -447,7 +452,7 @@
                         }, { merge: true });
                     }
 
-                    alert("Battle cancelled & refunded successfully.");
+                    alert("Battle cancelled & entry fee refunded.");
                 } catch(e) {
                     alert("Cancel Error: " + e.message);
                 }
