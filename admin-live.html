@@ -20,7 +20,7 @@ body{
     min-height:100vh;
 }
 
-/* TOP ADMIN NAVBAR (MATCHING YOUR OTHER ADMIN PAGES) */
+/* TOP ADMIN NAVBAR */
 .top-navbar{
     background:#eef2ff;
     padding:12px 16px;
@@ -73,7 +73,7 @@ body{
     cursor:pointer;
 }
 
-/* SIDEBAR DRAWER NAVIGATION (MATCHING YOUR PIC EXACTLY) */
+/* SIDEBAR DRAWER NAVIGATION */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -426,6 +426,16 @@ function adminLogout() {
     window.location.href = "admin-login.html";
 }
 
+// Helper to convert dynamic Firebase Timestamps or Strings into Time MS
+function parseTimestamp(val) {
+    if (!val) return 0;
+    if (typeof val === 'number') return val;
+    if (val.toDate && typeof val.toDate === 'function') return val.toDate().getTime();
+    if (val.seconds) return val.seconds * 1000;
+    const parsed = new Date(val).getTime();
+    return isNaN(parsed) ? 0 : parsed;
+}
+
 function listenToUserPresence() {
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         allUsersData = [];
@@ -437,6 +447,7 @@ function listenToUserPresence() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
+            // Format Mobile
             let cleanMobile = String(data.mobile || doc.id).replace(/\D/g, "");
             if (cleanMobile.startsWith("91") && cleanMobile.length > 10) {
                 cleanMobile = "+" + cleanMobile;
@@ -446,16 +457,15 @@ function listenToUserPresence() {
                 cleanMobile = "+" + cleanMobile;
             }
 
-            let lastPingMs = 0;
-            if (data.lastPing && data.lastPing.toDate) {
-                lastPingMs = data.lastPing.toDate().getTime();
-            } else if (data.lastSeenAt && data.lastSeenAt.toDate) {
-                lastPingMs = data.lastSeenAt.toDate().getTime();
-            }
+            // Sync with all possible timestamp fields (lastPing, lastSeenAt, updatedAt)
+            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt) || parseTimestamp(data.updatedAt);
 
-            const isPingActive = (now - lastPingMs) < 15000;
-            const isOnline = data.isOnline === true && isPingActive;
-            const isLoggedIn = data.isLoggedIn === true || data.isOnline === true || (now - lastPingMs) < 86400000;
+            // Match Dashboard Logic: If isOnline flag is true OR ping received in last 2 mins (120000ms)
+            const isPingRecent = lastPingMs > 0 && (now - lastPingMs) < 120000;
+            const isOnline = data.isOnline === true || isPingRecent;
+            
+            // Logged in Logic
+            const isLoggedIn = data.isLoggedIn === true || isOnline || (lastPingMs > 0 && (now - lastPingMs) < 86400000);
 
             if (isOnline) {
                 onlineCount++;
@@ -493,10 +503,6 @@ function listenToUserPresence() {
         console.error("Firestore Listen Error:", error);
     });
 }
-
-setInterval(() => {
-    if (allUsersData.length > 0) renderTable();
-}, 5000);
 
 function renderTable() {
     const tbody = document.getElementById("userTableBody");
