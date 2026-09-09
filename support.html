@@ -464,7 +464,7 @@ function listenUserData() {
             if (snap.exists()) {
                 const d = snap.data();
                 const userName = d.name || ("User " + userId.slice(-4));
-                const depBal = Number(d.depositBalance || 0);
+                const depBal = Number(d.depositBalance || d.deposit || 0);
                 const winBal = Number(d.winningBalance || d.winnings || 0);
                 const realTotalBalance = depBal + winBal;
 
