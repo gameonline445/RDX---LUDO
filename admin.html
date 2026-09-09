@@ -6,6 +6,11 @@
     <title>RDX LUDO ADMIN</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Firebase SDKs (Required for Data Sync) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
     <style>
         * {
             box-sizing: border-box;
@@ -263,73 +268,174 @@
         <main class="main-content">
             <h1 class="dashboard-title">Dashboard</h1>
 
-            <!-- 10 METRICS CARDS -->
+            <!-- 10 METRICS CARDS WITH REAL-TIME DYNAMIC IDS -->
             <div class="cards-grid">
                 <div class="metric-card">
                     <span class="card-label">Active Live Users</span>
-                    <span class="card-value val-green">0 Live</span>
+                    <span class="card-value val-green"><span id="activeLiveUsers">0</span> Live</span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Live Matches</span>
-                    <span class="card-value val-orange">0</span>
+                    <span class="card-value val-orange" id="liveMatches">0</span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Pending KYC</span>
-                    <span class="card-value val-orange">0</span>
+                    <span class="card-value val-orange" id="pendingKyc">0</span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Total Customers</span>
-                    <span class="card-value val-blue">60</span>
+                    <span class="card-value val-blue" id="totalCustomers">0</span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Total Balance</span>
-                    <span class="card-value val-green">₹5350</span>
+                    <span class="card-value val-green">₹<span id="totalBalance">0</span></span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Total Deposit Paid</span>
-                    <span class="card-value val-purple">₹7100</span>
+                    <span class="card-value val-purple">₹<span id="totalDepositPaid">0</span></span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Total Withdrawal Paid</span>
-                    <span class="card-value val-green">₹570</span>
+                    <span class="card-value val-green">₹<span id="totalWithdrawalPaid">0</span></span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Pending Deposits</span>
-                    <span class="card-value val-orange">3</span>
+                    <span class="card-value val-orange" id="pendingDeposits">0</span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Pending Withdrawals</span>
-                    <span class="card-value val-orange">0</span>
+                    <span class="card-value val-orange" id="pendingWithdrawals">0</span>
                 </div>
                 <div class="metric-card">
                     <span class="card-label">Total Referrals</span>
-                    <span class="card-value val-blue">23</span>
+                    <span class="card-value val-blue" id="totalReferrals">0</span>
                 </div>
             </div>
 
             <!-- FIREBASE STATUS SECTION -->
             <div class="status-panel">
                 <h2 class="status-panel-title">Firebase Status</h2>
-                <div class="status-badge connected">
-                    <i class="fa-solid fa-square-check"></i> Firebase Connected (All Data Loaded)
+                <div class="status-badge connected" id="statusBadge">
+                    <i class="fa-solid fa-square-check"></i> <span id="statusText">Connecting to Firebase...</span>
                 </div>
-                <p class="status-text">Admin login Firebase Authentication se successful hua.</p>
+                <p class="status-text" id="statusDesc">Fetching live collections data from Cloud Firestore.</p>
             </div>
         </main>
     </div>
 
-    <!-- LOGOUT CLEANUP SCRIPT -->
+    <!-- FIREBASE INITIALIZATION & REAL-TIME LISTENERS -->
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        function parseNum(v) {
+            if (v === undefined || v === null) return 0;
+            const n = parseFloat(v);
+            return isNaN(n) ? 0 : n;
+        }
+
+        function startFirestoreSync() {
+            // 1. Sync Customers
+            db.collection("customers").onSnapshot(snapshot => {
+                let total = snapshot.size;
+                let active = 0, balanceSum = 0, refCount = 0;
+
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    if (d.isOnline === true || d.status === "online" || d.isLive === true) active++;
+                    
+                    const dep = parseNum(d.depositBalance || d.wallet || d.balance);
+                    const win = parseNum(d.winnings || d.winningBalance);
+                    balanceSum += (dep + win);
+
+                    if (d.referredBy || d.referralCode || d.referredByUid) refCount++;
+                });
+
+                document.getElementById("totalCustomers").innerText = total;
+                document.getElementById("activeLiveUsers").innerText = active;
+                document.getElementById("totalBalance").innerText = balanceSum;
+                document.getElementById("totalReferrals").innerText = refCount;
+                document.getElementById("statusText").innerText = "Firebase Connected (Live Data Synced)";
+            }, err => {
+                console.error("Customers Error:", err);
+                document.getElementById("statusText").innerText = "Connection Error: " + err.message;
+            });
+
+            // 2. Sync KYC Requests
+            db.collection("kycRequests").onSnapshot(snapshot => {
+                let pending = 0;
+                snapshot.forEach(doc => {
+                    const st = (doc.data().status || "").toLowerCase();
+                    if (st === "pending" || st === "submitted") pending++;
+                });
+                document.getElementById("pendingKyc").innerText = pending;
+            }, err => console.error("KYC Error:", err));
+
+            // 3. Sync Battles
+            db.collection("battles").onSnapshot(snapshot => {
+                let live = 0;
+                snapshot.forEach(doc => {
+                    const st = (doc.data().status || "").toLowerCase();
+                    if (st === "running" || st === "playing" || st === "in_progress") live++;
+                });
+                document.getElementById("liveMatches").innerText = live;
+            }, err => console.error("Battles Error:", err));
+
+            // 4. Sync Deposits
+            db.collection("deposits").onSnapshot(snapshot => {
+                let pending = 0, paid = 0;
+                snapshot.forEach(doc => {
+                    const d = doc.data();
+                    const st = (d.status || "").toLowerCase();
+                    const amt = parseNum(d.amount || d.coins || d.depositAmount);
+
+                    if (st === "pending") pending++;
+                    if (st === "approved" || st === "success" || st === "paid") paid += amt;
+                });
+                document.getElementById("pendingDeposits").innerText = pending;
+                document.getElementById("totalDepositPaid").innerText = paid;
+            }, err => console.error("Deposits Error:", err));
+
+            // 5. Sync Withdrawals
+            db.collection("withdrawals").onSnapshot(snapshot => {
+                let pending = 0, paid = 0;
+                snapshot.forEach(doc => {
+                    const w = doc.data();
+                    const st = (w.status || "").toLowerCase();
+                    const amt = parseNum(w.amount || w.coins || w.withdrawAmount);
+
+                    if (st === "pending") pending++;
+                    if (st === "approved" || st === "success" || st === "paid") paid += amt;
+                });
+                document.getElementById("pendingWithdrawals").innerText = pending;
+                document.getElementById("totalWithdrawalPaid").innerText = paid;
+            }, err => console.error("Withdrawals Error:", err));
+        }
+
+        // Logout Script
         document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            // Storage local/session clear karein
             try {
                 localStorage.clear();
                 sessionStorage.clear();
             } catch (err) {
                 console.error("Storage clear error:", err);
             }
-            
-            // Browser direct hyperlink URL par bhej dega (admin-login.html)
+        });
+
+        // Initialize Data Listeners on Load
+        window.addEventListener("DOMContentLoaded", () => {
+            startFirestoreSync();
         });
     </script>
 </body>
