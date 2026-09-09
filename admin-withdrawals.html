@@ -1,4 +1,283 @@
 <!DOCTYPE html>
-<html><head><style>body { font-family: sans-serif; background: #000; color: #fff; padding: 20px; }</style></head>
-<body><h1 style="color: #3b82f6;">Withdrawals</h1><p>User payout requests and status updates.</p></body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDX LUDO ADMIN - Withdrawals Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE FIRESTORE SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
+
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
+
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+
+        /* STATS CARDS */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
+        .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
+        .stat-card .value { font-size: 24px; font-weight: 800; color: #48bb78; }
+
+        /* SEARCH BAR */
+        .search-box { position: relative; margin-bottom: 20px; max-width: 500px; }
+        .search-box input { width: 100%; padding: 12px 16px 12px 42px; border-radius: 10px; border: 1px solid #2d3748; background-color: #151921; color: #ffffff; font-size: 14px; outline: none; }
+        .search-box input:focus { border-color: #3182ce; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #718096; }
+
+        /* TABLE */
+        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+        td { padding: 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; white-space: nowrap; }
+        tr:last-child td { border-bottom: none; }
+
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; display: inline-block; text-transform: capitalize; }
+        .badge.approved { background-color: #276749; color: #9ae6b4; }
+        .badge.rejected { background-color: #9b2c2c; color: #feb2b2; }
+        .badge.pending { background-color: #975a16; color: #fbd38d; }
+
+        .btn-action { border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; margin-right: 4px; }
+        .btn-approve { background-color: #38a169; color: #ffffff; }
+        .btn-reject { background-color: #e53e3e; color: #ffffff; }
+        .btn-edit { background-color: #3182ce; color: #ffffff; }
+
+        .payment-info { font-size: 12px; color: #cbd5e0; line-height: 1.4; }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+        <a href="admin-login.html" class="logout-link">Logout</a>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item active"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="dashboard-title">Withdrawals Management</h1>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="title">Total Approved Withdrawal</div>
+                    <div class="value" id="totalWithdrawal">₹0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="title">Today's Approved Withdrawal</div>
+                    <div class="value" id="todayWithdrawal">₹0</div>
+                </div>
+            </div>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" onkeyup="filterWithdrawals()" placeholder="Search by Name, Mobile Number or UTR...">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name / Phone</th>
+                            <th>Amount</th>
+                            <th>Payment Details</th>
+                            <th>UTR Number</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="withdrawalsTable">
+                        <tr><td colspan="7" style="text-align: center;">Loading withdrawals data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let allWithdrawals = [];
+
+        function listenWithdrawals() {
+            db.collection("withdrawals").onSnapshot((snapshot) => {
+                allWithdrawals = [];
+                let totalAmt = 0;
+                let todayAmt = 0;
+
+                const todayStr = new Date().toDateString();
+
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    data.id = doc.id;
+                    allWithdrawals.push(data);
+
+                    if (data.status === "approved" || data.status === "success") {
+                        const amt = Number(data.amount) || 0;
+                        totalAmt += amt;
+
+                        if (data.createdAt) {
+                            const dateObj = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
+                            if (dateObj.toDateString() === todayStr) {
+                                todayAmt += amt;
+                            }
+                        }
+                    }
+                });
+
+                document.getElementById("totalWithdrawal").innerText = `₹${totalAmt}`;
+                document.getElementById("todayWithdrawal").innerText = `₹${todayAmt}`;
+
+                renderTable(allWithdrawals);
+            }, (error) => {
+                console.error("Firestore error:", error);
+            });
+        }
+
+        function renderTable(dataList) {
+            const tbody = document.getElementById("withdrawalsTable");
+            tbody.innerHTML = "";
+
+            if (dataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align: center;">No withdrawal requests found.</td></tr>`;
+                return;
+            }
+
+            dataList.forEach((item) => {
+                const tr = document.createElement("tr");
+
+                const date = item.createdAt && item.createdAt.toDate 
+                    ? item.createdAt.toDate().toLocaleString() 
+                    : (item.createdAt ? new Date(item.createdAt).toLocaleString() : "N/A");
+
+                const name = item.userName || item.name || "N/A";
+                const phone = item.userId || item.phone || item.uid || "N/A";
+                const utr = item.utr || item.utrNumber || "-";
+                const status = (item.status || "pending").toLowerCase();
+
+                let paymentDetail = "";
+                if (item.upiId) {
+                    paymentDetail = `<strong>UPI:</strong> ${item.upiId}`;
+                } else if (item.accountNumber) {
+                    paymentDetail = `<strong>A/C:</strong> ${item.accountNumber}<br><strong>IFSC:</strong> ${item.ifsc || ''}<br><strong>Name:</strong> ${item.accountHolderName || ''}`;
+                } else {
+                    paymentDetail = item.paymentMethod || "N/A";
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <strong>${name}</strong><br>
+                        <span style="font-size:12px; color:#a0aec0;">${phone}</span>
+                    </td>
+                    <td style="font-weight:700; color:#48bb78;">₹${item.amount || 0}</td>
+                    <td class="payment-info">${paymentDetail}</td>
+                    <td>${utr}</td>
+                    <td style="font-size:12px; color:#a0aec0;">${date}</td>
+                    <td><span class="badge ${status}">${status}</span></td>
+                    <td>
+                        ${status === 'pending' ? `
+                            <button class="btn-action btn-approve" onclick="updateStatus('${item.id}', 'approved')">Approve</button>
+                            <button class="btn-action btn-reject" onclick="updateStatus('${item.id}', 'rejected')">Reject</button>
+                        ` : ''}
+                        <button class="btn-action btn-edit" onclick="editRequest('${item.id}', '${utr}', '${status}')">Edit</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterWithdrawals() {
+            const query = document.getElementById("searchInput").value.toLowerCase().trim();
+            
+            const filtered = allWithdrawals.filter((item) => {
+                const name = (item.userName || item.name || "").toLowerCase();
+                const phone = String(item.userId || item.phone || item.uid || "").toLowerCase();
+                const utr = String(item.utr || item.utrNumber || "").toLowerCase();
+
+                return name.includes(query) || phone.includes(query) || utr.includes(query);
+            });
+
+            renderTable(filtered);
+        }
+
+        function updateStatus(id, newStatus) {
+            let utr = "";
+            if (newStatus === "approved") {
+                utr = prompt("Enter UTR / Transaction Reference Number:") || "";
+            }
+
+            db.collection("withdrawals").doc(id).update({
+                status: newStatus,
+                utr: utr,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert(`Withdrawal marked as ${newStatus}`);
+            }).catch((err) => {
+                alert("Error: " + err.message);
+            });
+        }
+
+        function editRequest(id, currentUtr, currentStatus) {
+            const newUtr = prompt("Edit UTR Number:", currentUtr !== '-' ? currentUtr : '') || currentUtr;
+            const newStatus = prompt("Edit Status (pending/approved/rejected):", currentStatus) || currentStatus;
+
+            if (newStatus) {
+                db.collection("withdrawals").doc(id).update({
+                    utr: newUtr,
+                    status: newStatus.toLowerCase().trim(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }).then(() => {
+                    alert("Withdrawal details updated successfully!");
+                }).catch((err) => {
+                    alert("Update error: " + err.message);
+                });
+            }
+        }
+
+        window.onload = listenWithdrawals;
+    </script>
+</body>
 </html>
