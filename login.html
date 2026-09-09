@@ -718,21 +718,23 @@ function verifyOTP(){
         otp,
         async function(data){
             console.log("MSG91 OTP VERIFIED:", data);
-            localStorage.setItem("rdxLoggedIn", "true");
-            localStorage.setItem("rdxVerifiedMobile", currentIdentifier);
 
-            if(data && data.accessToken){
-                localStorage.setItem("rdxAccessToken", data.accessToken);
-            }
-
-            showMessage("OTP verify ho gaya. Database me profile sync ho rahi hai...");
+            showMessage("OTP verify ho gaya. Checking Account Status...");
+            
+            // 🔒 STRICT BLOCK SECURITY CHECK BEFORE ALLOWING LOGIN
             const saved = await saveCustomerToFirebase(currentIdentifier);
 
             if(!saved){
                 verifyBtn.disabled = false;
                 verifyBtn.textContent = "Verify OTP";
-                showMessage("OTP verify ho gaya, lekin database sync fail ho gaya.");
                 return;
+            }
+
+            localStorage.setItem("rdxLoggedIn", "true");
+            localStorage.setItem("rdxVerifiedMobile", currentIdentifier);
+
+            if(data && data.accessToken){
+                localStorage.setItem("rdxAccessToken", data.accessToken);
             }
 
             clearInterval(resendTimer);
@@ -770,6 +772,26 @@ async function saveCustomerToFirebase(mobile){
         const userSnap = await userRef.get();
         const now = firebase.firestore.FieldValue.serverTimestamp();
 
+        // 🚨 STRICT BLOCK CHECK LOGIC 🚨
+        if (userSnap.exists) {
+            const userData = userSnap.data();
+            const isUserBlocked = userData.isBlocked === true || 
+                                  userData.isBlock === true || 
+                                  userData.blocked === true || 
+                                  String(userData.status).toLowerCase() === 'blocked';
+
+            if (isUserBlocked) {
+                // Clear any stored local sessions
+                localStorage.removeItem("rdxLoggedIn");
+                localStorage.removeItem("rdxVerifiedMobile");
+                localStorage.removeItem("rdxFirebaseUserId");
+
+                alert("🚫 Your account has been BLOCKED by Admin. You cannot log in.");
+                showMessage("Account Blocked. Sampark karein admin se.");
+                return false;
+            }
+        }
+
         const incomingRef = urlParams.get('ref') || sessionStorage.getItem("rdx_referral_code") || localStorage.getItem("rdxReferredBy");
         let finalReferredBy = "DIRECT";
         if (incomingRef && incomingRef.trim() !== "") {
@@ -794,12 +816,12 @@ async function saveCustomerToFirebase(mobile){
                 referredBy: finalReferredBy,
                 referralCode: myReferralCode,
                 status: "active",
+                isBlocked: false,
                 createdAt: now,
                 lastLoginAt: now
             });
         } else {
             let updatePayload = {
-                status: "active",
                 lastLoginAt: now
             };
             if ((!userSnap.data().referredBy || userSnap.data().referredBy === "DIRECT") && finalReferredBy !== "DIRECT") {
