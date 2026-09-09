@@ -373,19 +373,19 @@ button{font:inherit;}
 <body>
 
 <script>
-// 🔴 BFCache Bypass
+// BFCache Bypass
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
         window.location.reload();
     }
 });
 
-// 🔴 Security Check: User Logged In hai ya nahi
+// Security Check: User Logged In
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
 
-// 🔴 Strict Back Button Lock
+// Strict Back Button Lock
 (function() {
     history.pushState(null, null, location.href);
 
@@ -515,7 +515,7 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME FIRESTORE LISTENER (बिना कोई लेआउट/डिजाइन बदले)
+// REALTIME FIRESTORE LISTENER
 function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -531,7 +531,6 @@ function loadDashboardDataRealtime() {
             document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
 
-            // 1. अगर 'balance' फ़ील्ड मौजूद है तो उसे लो, वरना deposit + winnings को जोड़ो
             let realTotalBalance = 0;
             if (d.balance !== undefined && d.balance !== null) {
                 realTotalBalance = Number(d.balance);
@@ -541,10 +540,8 @@ function loadDashboardDataRealtime() {
                 realTotalBalance = deposit + winnings;
             }
 
-            // 2. Refer Balance Calculation
             const realReferral = Number(d.referralBalance || d.referralWallet || d.redeemBalance || d.referralEarnings || 0);
 
-            // 3. UI Update
             document.getElementById("topBalance").textContent = realTotalBalance;
             document.getElementById("topReferral").textContent = realReferral;
         }
@@ -553,42 +550,51 @@ function loadDashboardDataRealtime() {
     });
 }
 
+// 🔴 PRESENCE MONITORING WITH CITY & STATE TRACKING
 async function startPresenceHeartbeat() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
     const userRef = firebaseDB.collection("customers").doc(docId);
 
-    let locationStr = "Unknown Location";
+    let userCity = "Unknown";
+    let userState = "Unknown";
+
+    // City & State Geolocation Capture
     try {
         const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
         if (data && data.city) {
-            locationStr = `${data.city}, ${data.region || data.country_name || ''}`;
+            userCity = data.city;
+            userState = data.region || data.region_code || "Unknown";
         }
     } catch(e) {
-        console.log("Location fetch skipped");
+        console.log("Location fetch error:", e);
     }
 
+    // Function to update Firestore
     const setOnline = (onlineStatus) => {
-        userRef.set({
+        const payload = {
             isOnline: onlineStatus,
-            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp(),
-            location: locationStr
-        }, { merge: true }).catch(err => console.error(err));
+            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (userCity !== "Unknown") payload.city = userCity;
+        if (userState !== "Unknown") payload.state = userState;
+
+        userRef.set(payload, { merge: true }).catch(err => console.error("Presence update error:", err));
     };
 
+    // Initial Status Set
     setOnline(true);
 
-    setInterval(() => {
-        if (!document.hidden) { setOnline(true); }
-    }, 15000);
-
+    // Tab Switch / Page Focus Events
     document.addEventListener("visibilitychange", () => {
-        if (document.hidden) { setOnline(false); }
-        else { setOnline(true); }
+        setOnline(!document.hidden);
     });
 
-    window.addEventListener("pagehide", () => { setOnline(false); });
+    window.addEventListener("blur", () => setOnline(false));
+    window.addEventListener("focus", () => setOnline(true));
+    window.addEventListener("pagehide", () => setOnline(false));
+    window.addEventListener("beforeunload", () => setOnline(false));
 }
 
 function logout() {
@@ -602,7 +608,6 @@ function logout() {
     localStorage.removeItem("rdxVerifiedMobile");
     localStorage.removeItem("rdxAccessToken");
     
-    // 🔴 Logout hone par hi index.html par bhejega
     window.location.replace("index.html");
 }
 
