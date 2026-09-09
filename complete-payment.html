@@ -28,21 +28,23 @@ body{
     min-height:100vh;
     padding-bottom:95px;
 }
+button{font:inherit;}
 
-/* TOP HEADER */
+/* UNIFIED TOP HEADER STYLING */
 .top{
     height:66px;
     display:flex;
     align-items:center;
-    gap:10px;
+    justify-content:space-between;
     padding:0 14px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom:1.5px solid #bae6fd;
     position:sticky;
     top:0;
-    z-index:100;
+    z-index:1000;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
+.header-left{display:flex;align-items:center;gap:10px;}
 .menu{
     width:42px;
     height:42px;
@@ -55,7 +57,9 @@ body{
     display:flex;
     align-items:center;
     justify-content:center;
+    box-shadow:0 4px 12px rgba(255,113,101,0.25);
 }
+.menu:active{transform:scale(0.95);}
 
 /* BRAND LOGO */
 .logo{
@@ -77,20 +81,44 @@ body{
     object-fit:cover;
 }
 
-.spacer{flex:1;}
-.topicon{
-    width:36px;
-    height:36px;
-    border-radius:50%;
-    display:grid;
-    place-items:center;
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{
+    height:38px;
+    border:0;
+    border-radius:20px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-size:15px;
+    color:white;
     cursor:pointer;
-    color:#fff;
+    padding:0 12px;
+    gap:6px;
+    font-weight:800;
 }
-.bell{background:linear-gradient(145deg,#6366f1,#818cf8);}
-.cash{background:linear-gradient(145deg,#16a34a,#22c55e);}
-.gift{background:linear-gradient(145deg,#ea580c,#f97316);}
+.bell{
+    width:38px;
+    height:38px;
+    padding:0;
+    border-radius:50%;
+    background:linear-gradient(145deg,#6366f1,#818cf8);
+    box-shadow:0 3px 10px rgba(99,102,241,0.25);
+}
+.cash{
+    background:linear-gradient(145deg,#22c55e,#16a34a);
+    box-shadow:0 3px 10px rgba(22,163,74,0.25);
+    border-radius:20px;
+    padding:0 14px;
+    font-size:14px;
+}
+.gift{
+    width:38px;
+    height:38px;
+    padding:0;
+    border-radius:50%;
+    background:linear-gradient(145deg,#ea580c,#f97316);
+    box-shadow:0 3px 10px rgba(234,88,12,0.25);
+}
 
 /* MAIN CONTENT */
 main{padding:14px;}
@@ -388,15 +416,19 @@ input:focus{
     </div>
 </div>
 
+<!-- UNIFIED TOP HEADER -->
 <header class="top">
-    <button class="menu" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-    <div class="logo" onclick="window.location.replace('dashboard.html')">
-        <img src="logo.png" alt="RDX Logo">
+    <div class="header-left">
+        <button class="menu" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <div class="logo" onclick="window.location.replace('dashboard.html')">
+            <img src="logo.png" alt="RDX Logo">
+        </div>
     </div>
-    <div class="spacer"></div>
-    <div class="topicon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></div>
-    <div class="topicon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></div>
-    <div class="topicon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></div>
+    <div class="header-right">
+        <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
+        <button class="header-icon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
+    </div>
 </header>
 
 <main>
@@ -467,7 +499,7 @@ function handleFilePreview(e) {
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, doc, getDoc, onSnapshot, collection, query, where, getDocs, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -481,13 +513,18 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 function getCleanUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
+    const raw = localStorage.getItem("rdxFirebaseUserId") || 
+                localStorage.getItem("rdxVerifiedMobile") || 
+                localStorage.getItem("rdxUserMobile") || 
+                localStorage.getItem("rdxMobile") ||
+                localStorage.getItem("userMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
 
 let cachedUserName = "";
 let cachedUserMobile = "";
+let unsubscribeWallet = null;
 
 const urlParams = new URLSearchParams(window.location.search);
 const amt = urlParams.get('amount') || localStorage.getItem("rdxDepositAmount") || 100;
@@ -504,14 +541,35 @@ async function loadSettings() {
 
         if (userId) {
             let docId = userId.length === 10 ? "91" + userId : userId;
-            const userSnap = await getDoc(doc(db, "customers", docId));
-            if (userSnap.exists()) {
-                const uData = userSnap.data();
-                cachedUserName = uData.name || uData.fullName || uData.username || localStorage.getItem("rdxUsername") || ("User " + userId.slice(-4));
-                cachedUserMobile = "+" + userId;
-                document.getElementById("drawerName").textContent = cachedUserName;
-                document.getElementById("drawerMobile").textContent = cachedUserMobile;
+            let userDocRef = doc(db, "customers", docId);
+            let userSnap = await getDoc(userDocRef);
+
+            if (!userSnap.exists()) {
+                docId = userId;
+                userDocRef = doc(db, "customers", docId);
             }
+
+            if(unsubscribeWallet) unsubscribeWallet();
+
+            // Real-time listener for live balance & profile sync
+            unsubscribeWallet = onSnapshot(userDocRef, (snapDoc) => {
+                if (snapDoc.exists()) {
+                    const uData = snapDoc.data();
+                    
+                    // Real-Time Total Balance Calculation
+                    const dep = Number(uData.depositBalance || uData.deposit || 0);
+                    const win = Number(uData.winnings || uData.winningBalance || 0);
+                    const totalBalance = dep + win;
+
+                    document.getElementById("topBalance").textContent = "₹" + totalBalance;
+
+                    cachedUserName = uData.name || uData.fullName || uData.username || localStorage.getItem("rdxUsername") || ("User " + userId.slice(-4));
+                    cachedUserMobile = "+" + userId;
+                    
+                    if(document.getElementById("drawerName")) document.getElementById("drawerName").textContent = cachedUserName;
+                    if(document.getElementById("drawerMobile")) document.getElementById("drawerMobile").textContent = cachedUserMobile;
+                }
+            }, (err) => console.error("Realtime Balance Sync Error:", err));
         }
     } catch(e){ console.error("Setting load error:", e); }
 }
