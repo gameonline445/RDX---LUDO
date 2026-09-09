@@ -28,19 +28,16 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
 
-        /* STATS CARDS */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
         .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
         .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
         .stat-card .value { font-size: 24px; font-weight: 800; color: #48bb78; }
 
-        /* SEARCH BAR */
         .search-box { position: relative; margin-bottom: 20px; max-width: 500px; }
         .search-box input { width: 100%; padding: 12px 16px 12px 42px; border-radius: 10px; border: 1px solid #2d3748; background-color: #151921; color: #ffffff; font-size: 14px; outline: none; }
         .search-box input:focus { border-color: #3182ce; }
         .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #718096; }
 
-        /* TABLE */
         .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
@@ -57,7 +54,9 @@
         .btn-reject { background-color: #e53e3e; color: #ffffff; }
         .btn-edit { background-color: #3182ce; color: #ffffff; }
 
-        .payment-info { font-size: 12px; color: #cbd5e0; line-height: 1.4; }
+        .copy-btn { background: #2d3748; border: none; color: #63b3ed; padding: 2px 6px; border-radius: 4px; font-size: 10px; cursor: pointer; margin-left: 6px; }
+        .copy-btn:hover { background: #4a5568; color: #ffffff; }
+        .payment-info { font-size: 13px; color: #cbd5e0; line-height: 1.6; }
     </style>
 </head>
 <body>
@@ -141,18 +140,46 @@
         const db = firebase.firestore();
 
         let allWithdrawals = [];
+        let usersMap = {};
 
-        function listenWithdrawals() {
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert("Copied: " + text);
+        }
+
+        async function loadUsersMap() {
+            try {
+                const snap = await db.collection("customers").get();
+                snap.forEach(doc => {
+                    const uData = doc.data();
+                    usersMap[doc.id] = uData.name || uData.userName || uData.displayName || "User";
+                    if(uData.phone) usersMap[uData.phone] = uData.name || uData.userName || uData.displayName || "User";
+                });
+            } catch(e) {
+                console.error("Users map load error", e);
+            }
+        }
+
+        async function listenWithdrawals() {
+            await loadUsersMap();
+
             db.collection("withdrawals").onSnapshot((snapshot) => {
                 allWithdrawals = [];
                 let totalAmt = 0;
                 let todayAmt = 0;
-
                 const todayStr = new Date().toDateString();
 
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     data.id = doc.id;
+
+                    const uidKey = data.userId || data.uid || data.phone;
+                    if (!data.userName || data.userName === "N/A") {
+                        data.realUserName = usersMap[uidKey] || "Customer";
+                    } else {
+                        data.realUserName = data.userName;
+                    }
+
                     allWithdrawals.push(data);
 
                     if (data.status === "approved" || data.status === "success") {
@@ -172,8 +199,6 @@
                 document.getElementById("todayWithdrawal").innerText = `₹${todayAmt}`;
 
                 renderTable(allWithdrawals);
-            }, (error) => {
-                console.error("Firestore error:", error);
             });
         }
 
@@ -193,16 +218,20 @@
                     ? item.createdAt.toDate().toLocaleString() 
                     : (item.createdAt ? new Date(item.createdAt).toLocaleString() : "N/A");
 
-                const name = item.userName || item.name || "N/A";
+                const name = item.realUserName || "User";
                 const phone = item.userId || item.phone || item.uid || "N/A";
                 const utr = item.utr || item.utrNumber || "-";
                 const status = (item.status || "pending").toLowerCase();
 
                 let paymentDetail = "";
                 if (item.upiId) {
-                    paymentDetail = `<strong>UPI:</strong> ${item.upiId}`;
+                    paymentDetail = `<strong>UPI:</strong> ${item.upiId} <button class="copy-btn" onclick="copyText('${item.upiId}')"><i class="fa-regular fa-copy"></i> Copy</button>`;
                 } else if (item.accountNumber) {
-                    paymentDetail = `<strong>A/C:</strong> ${item.accountNumber}<br><strong>IFSC:</strong> ${item.ifsc || ''}<br><strong>Name:</strong> ${item.accountHolderName || ''}`;
+                    paymentDetail = `
+                        <strong>A/C:</strong> ${item.accountNumber} <button class="copy-btn" onclick="copyText('${item.accountNumber}')"><i class="fa-regular fa-copy"></i></button><br>
+                        <strong>IFSC:</strong> ${item.ifsc || ''} <button class="copy-btn" onclick="copyText('${item.ifsc || ''}')"><i class="fa-regular fa-copy"></i></button><br>
+                        <strong>Name:</strong> ${item.accountHolderName || ''} <button class="copy-btn" onclick="copyText('${item.accountHolderName || ''}')"><i class="fa-regular fa-copy"></i></button>
+                    `;
                 } else {
                     paymentDetail = item.paymentMethod || "N/A";
                 }
@@ -219,10 +248,10 @@
                     <td><span class="badge ${status}">${status}</span></td>
                     <td>
                         ${status === 'pending' ? `
-                            <button class="btn-action btn-approve" onclick="updateStatus('${item.id}', 'approved')">Approve</button>
-                            <button class="btn-action btn-reject" onclick="updateStatus('${item.id}', 'rejected')">Reject</button>
+                            <button class="btn-action btn-approve" onclick="processWithdrawal('${item.id}', '${phone}', ${item.amount || 0}, 'approved', '${status}')">Approve</button>
+                            <button class="btn-action btn-reject" onclick="processWithdrawal('${item.id}', '${phone}', ${item.amount || 0}, 'rejected', '${status}')">Reject</button>
                         ` : ''}
-                        <button class="btn-action btn-edit" onclick="editRequest('${item.id}', '${utr}', '${status}')">Edit</button>
+                        <button class="btn-action btn-edit" onclick="editRequest('${item.id}', '${phone}', ${item.amount || 0}, '${utr}', '${status}')">Edit</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -231,49 +260,75 @@
 
         function filterWithdrawals() {
             const query = document.getElementById("searchInput").value.toLowerCase().trim();
-            
             const filtered = allWithdrawals.filter((item) => {
-                const name = (item.userName || item.name || "").toLowerCase();
+                const name = (item.realUserName || "").toLowerCase();
                 const phone = String(item.userId || item.phone || item.uid || "").toLowerCase();
                 const utr = String(item.utr || item.utrNumber || "").toLowerCase();
-
                 return name.includes(query) || phone.includes(query) || utr.includes(query);
             });
-
             renderTable(filtered);
         }
 
-        function updateStatus(id, newStatus) {
+        async function processWithdrawal(id, userId, amount, newStatus, currentStatus) {
             let utr = "";
             if (newStatus === "approved") {
                 utr = prompt("Enter UTR / Transaction Reference Number:") || "";
             }
 
-            db.collection("withdrawals").doc(id).update({
-                status: newStatus,
-                utr: utr,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }).then(() => {
-                alert(`Withdrawal marked as ${newStatus}`);
-            }).catch((err) => {
-                alert("Error: " + err.message);
-            });
+            try {
+                const batch = db.batch();
+                const wRef = db.collection("withdrawals").doc(id);
+
+                batch.update(wRef, {
+                    status: newStatus,
+                    utr: utr,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                if (newStatus === "rejected" && currentStatus !== "rejected") {
+                    const userRef = db.collection("customers").doc(userId);
+                    batch.update(userRef, {
+                        wallet: firebase.firestore.FieldValue.increment(Number(amount)),
+                        balance: firebase.firestore.FieldValue.increment(Number(amount))
+                    });
+                }
+
+                await batch.commit();
+                alert(`Withdrawal marked as ${newStatus}${newStatus === 'rejected' ? ' and balance refunded to user account.' : '.'}`);
+            } catch (err) {
+                alert("Transaction Error: " + err.message);
+            }
         }
 
-        function editRequest(id, currentUtr, currentStatus) {
+        async function editRequest(id, userId, amount, currentUtr, currentStatus) {
             const newUtr = prompt("Edit UTR Number:", currentUtr !== '-' ? currentUtr : '') || currentUtr;
-            const newStatus = prompt("Edit Status (pending/approved/rejected):", currentStatus) || currentStatus;
+            const newStatus = prompt("Edit Status (pending/approved/rejected):", currentStatus);
 
-            if (newStatus) {
-                db.collection("withdrawals").doc(id).update({
+            if (!newStatus) return;
+            const formattedStatus = newStatus.toLowerCase().trim();
+
+            try {
+                const batch = db.batch();
+                const wRef = db.collection("withdrawals").doc(id);
+
+                batch.update(wRef, {
                     utr: newUtr,
-                    status: newStatus.toLowerCase().trim(),
+                    status: formattedStatus,
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }).then(() => {
-                    alert("Withdrawal details updated successfully!");
-                }).catch((err) => {
-                    alert("Update error: " + err.message);
                 });
+
+                if (formattedStatus === "rejected" && currentStatus !== "rejected") {
+                    const userRef = db.collection("customers").doc(userId);
+                    batch.update(userRef, {
+                        wallet: firebase.firestore.FieldValue.increment(Number(amount)),
+                        balance: firebase.firestore.FieldValue.increment(Number(amount))
+                    });
+                }
+
+                await batch.commit();
+                alert("Withdrawal details updated successfully!");
+            } catch (err) {
+                alert("Update Error: " + err.message);
             }
         }
 
