@@ -515,7 +515,7 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-// REALTIME FIRESTORE LISTENER & INSTANT BLOCK CHECK
+// REALTIME FIRESTORE LISTENER & INSTANT ACCURATE BALANCE SYNC
 function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -524,17 +524,15 @@ function loadDashboardDataRealtime() {
         if (snap.exists) {
             const d = snap.data();
 
-            // ⚡ ADMIN BLOCK CHECK (ADMIN SE BLOCK KARTE HI INSTANT LOGOUT HOGA)
+            // ⚡ ADMIN BLOCK CHECK
             const isUserBlocked = d.isBlocked === true || 
                                   d.isBlock === true || 
                                   d.blocked === true || 
                                   String(d.status).toLowerCase() === 'blocked';
 
             if (isUserBlocked) {
-                // Clear all stored credentials
                 localStorage.clear();
                 sessionStorage.clear();
-                
                 alert("Aapka account admin dwara block kar diya gaya hai.");
                 window.location.replace("index.html");
                 return;
@@ -548,17 +546,22 @@ function loadDashboardDataRealtime() {
             document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
             document.getElementById("drawerMobile").textContent = "+" + userId;
 
+            // ⚡ REAL-TIME TOTAL BALANCE CALCULATION FIX
+            const mainBal = Number(d.balance || 0);
+            const depBal = Number(d.deposit || d.depositAmount || d.depositBalance || 0);
+            const winBal = Number(d.winnings || d.winningAmount || d.winningBalance || 0);
+
+            // Calculate exact total amount to match History/Wallet
             let realTotalBalance = 0;
-            if (d.balance !== undefined && d.balance !== null) {
-                realTotalBalance = Number(d.balance);
+            if (d.balance !== undefined && d.balance !== null && Number(d.balance) > (depBal + winBal)) {
+                realTotalBalance = mainBal;
             } else {
-                const deposit = Number(d.deposit || d.depositAmount || 0);
-                const winnings = Number(d.winnings || d.winningAmount || 0);
-                realTotalBalance = deposit + winnings;
+                realTotalBalance = (depBal + winBal) > 0 ? (depBal + winBal) : mainBal;
             }
 
             const realReferral = Number(d.referralBalance || d.referralWallet || d.redeemBalance || d.referralEarnings || 0);
 
+            // Update top bar balance dynamically
             document.getElementById("topBalance").textContent = realTotalBalance;
             document.getElementById("topReferral").textContent = realReferral;
         }
