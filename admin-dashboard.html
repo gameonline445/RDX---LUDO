@@ -6,10 +6,9 @@
     <title>RDX LUDO ADMIN - Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Firebase SDKs (Compat Version for Quick Sync) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -43,6 +42,7 @@
         .status-card { background: #ffffff; border-radius: 16px; padding: 20px; color: #1a202c; max-width: 700px; margin-top: 10px; }
         .status-title { font-size: 18px; font-weight: 800; color: #1a202c; margin-bottom: 12px; }
         .status-badge { background: #c6f6d5; color: #22543d; font-weight: 800; font-size: 14px; padding: 10px 16px; border-radius: 10px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #9ae6b4; }
+        .status-badge.error { background: #fed7d7; color: #742a2a; border-color: #feb2b2; }
         .status-sub { font-size: 13px; color: #718096; margin-top: 10px; font-weight: 600; }
     </style>
 </head>
@@ -129,9 +129,9 @@
             <div class="status-card">
                 <div class="status-title">Firebase Status</div>
                 <div class="status-badge" id="statusBadge">
-                    <i class="fa-solid fa-square-check"></i> <span id="statusText">Firebase Connected (Scanning Collections...)</span>
+                    <i class="fa-solid fa-check" id="statusIcon"></i> <span id="statusText">Connecting...</span>
                 </div>
-                <div class="status-sub" id="debugLog">Syncing real-time database nodes...</div>
+                <div class="status-sub" id="statusSub">Admin login Firebase Authentication se successful hua.</div>
             </div>
         </main>
     </div>
@@ -140,7 +140,6 @@
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
-            databaseURL: "https://rdx-ludo-default-rtdb.firebaseio.com",
             projectId: "rdx-ludo",
             storageBucket: "rdx-ludo.firebasestorage.app",
             messagingSenderId: "928340814840",
@@ -152,88 +151,117 @@
         }
         const db = firebase.firestore();
 
-        // Multi-Collection Fallback Fetcher
-        function fetchFirestoreCollection(collections, callback) {
-            let matched = false;
-            collections.forEach(colName => {
-                db.collection(colName).onSnapshot(snapshot => {
-                    if (!snapshot.empty) {
-                        matched = true;
-                        console.log(`Matched Collection: ${colName} (${snapshot.size} documents)`);
-                        callback(snapshot, colName);
-                    }
-                }, err => console.log(`Error checking ${colName}:`, err));
-            });
+        // Helper function to safely parse numeric values from documents
+        function getNumber(val) {
+            if (val === undefined || val === null) return 0;
+            const num = parseFloat(val);
+            return isNaN(num) ? 0 : num;
         }
 
-        function initDataSync() {
-            // 1. Users / Customers Sync
-            fetchFirestoreCollection(["customers", "users", "Users", "Customers"], (snapshot) => {
-                let total = snapshot.size;
-                let active = 0, kyc = 0, balance = 0, refs = 0;
+        function syncRealtimeData() {
+            // 1. Customers Collection Sync
+            db.collection("customers").onSnapshot((snapshot) => {
+                let count = snapshot.size;
+                let active = 0;
+                let sumBal = 0;
+                let refs = 0;
 
                 snapshot.forEach(doc => {
-                    const d = doc.data();
-                    if (d.isOnline || d.status === "online") active++;
-                    if (d.kycStatus === "pending") kyc++;
+                    const data = doc.data();
                     
-                    const dep = parseFloat(d.depositBalance || d.wallet || d.balance || 0);
-                    const win = parseFloat(d.winnings || d.winningBalance || 0);
-                    balance += (dep + win);
+                    // Check online status
+                    if (data.isOnline === true || data.status === "online" || data.isLive === true) {
+                        active++;
+                    }
 
-                    if (d.referredBy || d.referralCode || d.referredByUid) refs++;
+                    // Balance Calculation (Supports depositBalance, wallet, balance, winningBalance)
+                    const dep = getNumber(data.depositBalance || data.wallet || data.balance);
+                    const win = getNumber(data.winnings || data.winningBalance || data.winBalance);
+                    sumBal += (dep + win);
+
+                    // Referrals Calculation
+                    if (data.referredBy || data.referralCode || data.referredByUid) {
+                        refs++;
+                    }
                 });
 
-                document.getElementById("totalCustomers").innerText = total;
+                document.getElementById("totalCustomers").innerText = count;
                 document.getElementById("activeLiveUsers").innerText = active;
-                document.getElementById("pendingKyc").innerText = kyc;
-                document.getElementById("totalBalance").innerText = balance;
+                document.getElementById("totalBalance").innerText = sumBal;
                 document.getElementById("totalReferrals").innerText = refs;
-                
-                document.getElementById("statusText").innerText = "Firebase Connected (Real Data Loaded)";
-            });
 
-            // 2. Battles / Games Sync
-            fetchFirestoreCollection(["battles", "games", "Battles", "Games", "matches"], (snapshot) => {
-                let live = 0;
+                document.getElementById("statusText").innerText = "Firebase Connected (All Data Loaded)";
+            }, err => console.error("Error Customers:", err));
+
+            // 2. KYC Requests Sync
+            db.collection("kycRequests").onSnapshot((snapshot) => {
+                let pendingCount = 0;
                 snapshot.forEach(doc => {
-                    const st = (doc.data().status || "").toLowerCase();
-                    if (st === "running" || st === "playing" || st === "in_progress") live++;
+                    const status = (doc.data().status || "").toLowerCase();
+                    if (status === "pending" || status === "submitted") {
+                        pendingCount++;
+                    }
                 });
-                document.getElementById("liveMatches").innerText = live;
-            });
+                document.getElementById("pendingKyc").innerText = pendingCount;
+            }, err => console.error("Error KYC:", err));
 
-            // 3. Deposits Sync
-            fetchFirestoreCollection(["deposits", "Deposits", "deposit_requests"], (snapshot) => {
-                let pending = 0, paid = 0;
+            // 3. Battles Collection Sync
+            db.collection("battles").onSnapshot((snapshot) => {
+                let runningMatches = 0;
+                snapshot.forEach(doc => {
+                    const status = (doc.data().status || "").toLowerCase();
+                    if (status === "running" || status === "in_progress" || status === "playing" || status === "active") {
+                        runningMatches++;
+                    }
+                });
+                document.getElementById("liveMatches").innerText = runningMatches;
+            }, err => console.error("Error Battles:", err));
+
+            // 4. Deposits Collection Sync
+            db.collection("deposits").onSnapshot((snapshot) => {
+                let pendingDep = 0;
+                let totalDepSum = 0;
+
                 snapshot.forEach(doc => {
                     const d = doc.data();
-                    const st = (d.status || "").toLowerCase();
-                    const amt = parseFloat(d.amount || 0);
-                    if (st === "pending") pending++;
-                    if (st === "approved" || st === "success") paid += amt;
-                });
-                document.getElementById("pendingDeposits").innerText = pending;
-                document.getElementById("totalDepositPaid").innerText = paid;
-            });
+                    const status = (d.status || "").toLowerCase();
+                    const amt = getNumber(d.amount || d.coins || d.depositAmount);
 
-            // 4. Withdrawals Sync
-            fetchFirestoreCollection(["withdrawals", "Withdrawals", "withdraw_requests"], (snapshot) => {
-                let pending = 0, paid = 0;
+                    if (status === "pending" || status === "processing") {
+                        pendingDep++;
+                    } else if (status === "approved" || status === "success" || status === "paid" || status === "completed") {
+                        totalDepSum += amt;
+                    }
+                });
+
+                document.getElementById("pendingDeposits").innerText = pendingDep;
+                document.getElementById("totalDepositPaid").innerText = totalDepSum;
+            }, err => console.error("Error Deposits:", err));
+
+            // 5. Withdrawals Collection Sync
+            db.collection("withdrawals").onSnapshot((snapshot) => {
+                let pendingWith = 0;
+                let totalWithSum = 0;
+
                 snapshot.forEach(doc => {
                     const w = doc.data();
-                    const st = (w.status || "").toLowerCase();
-                    const amt = parseFloat(w.amount || 0);
-                    if (st === "pending") pending++;
-                    if (st === "approved" || st === "success") paid += amt;
+                    const status = (w.status || "").toLowerCase();
+                    const amt = getNumber(w.amount || w.coins || w.withdrawAmount);
+
+                    if (status === "pending" || status === "processing") {
+                        pendingWith++;
+                    } else if (status === "approved" || status === "success" || status === "paid" || status === "completed") {
+                        totalWithSum += amt;
+                    }
                 });
-                document.getElementById("pendingWithdrawals").innerText = pending;
-                document.getElementById("totalWithdrawalPaid").innerText = paid;
-            });
+
+                document.getElementById("pendingWithdrawals").innerText = pendingWith;
+                document.getElementById("totalWithdrawalPaid").innerText = totalWithSum;
+            }, err => console.error("Error Withdrawals:", err));
         }
 
         window.addEventListener("DOMContentLoaded", () => {
-            initDataSync();
+            syncRealtimeData();
         });
     </script>
 </body>
