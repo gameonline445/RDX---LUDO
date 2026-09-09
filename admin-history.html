@@ -28,12 +28,10 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 28px; font-weight: 800; margin-bottom: 20px; }
 
-        /* Search Section */
         .search-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 20px; margin-bottom: 24px; display: flex; gap: 12px; }
         .search-card input { flex: 1; padding: 12px 16px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 15px; outline: none; }
         .btn-search { background: #3182ce; color: #ffffff; padding: 0 24px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; font-size: 15px; }
 
-        /* Profile Banner */
         .user-profile-banner { background: linear-gradient(135deg, #1a202c, #151921); border: 1px solid #2d3748; border-radius: 14px; padding: 20px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
         .user-meta h2 { color: #63b3ed; font-size: 22px; margin-bottom: 6px; }
         .user-meta p { font-size: 13px; color: #a0aec0; margin-top: 2px; }
@@ -41,13 +39,11 @@
         .kyc-yes { background: rgba(72, 187, 120, 0.2); color: #68d391; border: 1px solid #48bb78; }
         .kyc-no { background: rgba(229, 62, 62, 0.2); color: #fc8181; border: 1px solid #e53e3e; }
 
-        /* Stats Grid */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
         .stat-card { background-color: #151921; padding: 16px; border-radius: 12px; border: 1px solid #232936; }
         .stat-card .title { font-size: 12px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
         .stat-card .value { font-size: 22px; font-weight: 800; }
 
-        /* Sections and Tables */
         .section-title { font-size: 18px; color: #63b3ed; margin: 24px 0 12px 0; font-weight: 700; display: flex; align-items: center; gap: 8px; }
         .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; margin-bottom: 24px; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
@@ -88,35 +84,37 @@
 
             <div class="search-card">
                 <input type="text" id="userSearchInput" placeholder="Enter Mobile Number or User UID..." />
-                <button class="btn-search" onclick="searchUserHistory()"><i class="fa-solid fa-magnifying-glass"></i> Search User</button>
+                <button class="btn-search" onclick="startSyncUserHistory()"><i class="fa-solid fa-magnifying-glass"></i> Search User</button>
             </div>
 
+            <!-- History Container: Hidden by default -->
             <div id="historyDataContainer" style="display: none;">
                 
                 <!-- Profile Header Banner -->
                 <div class="user-profile-banner">
                     <div class="user-meta">
-                        <h2 id="profName">Name: --</h2>
-                        <p>📱 Mobile / UID: <span id="profMobile" style="color:#ffffff; font-weight:700;">--</span></p>
+                        <h2 id="profName">Name: Loading...</h2>
+                        <p>📱 Mobile: <span id="profMobile" style="color:#ffffff; font-weight:700;">--</span></p>
+                        <p>🆔 UID: <span id="profUid" style="color:#a0aec0;">--</span></p>
                         <p>🎁 Referral Code: <span id="profRef">--</span></p>
                     </div>
                     <div>
-                        <p style="margin-bottom:6px; font-size:12px; color:#a0aec0;">KYC Status Verification:</p>
+                        <p style="margin-bottom:6px; font-size:12px; color:#a0aec0;">KYC Status:</p>
                         <div id="profKycBadge" class="badge-kyc kyc-no">NOT VERIFIED</div>
                     </div>
                     <div>
-                        <p style="font-size:12px; color:#a0aec0;">Deposit Wallet Balance:</p>
+                        <p style="font-size:12px; color:#a0aec0;">Deposit Balance:</p>
                         <p style="font-size:20px; font-weight:800; color:#38a169;" id="profDepositBal">₹0</p>
-                        <p style="font-size:12px; color:#a0aec0; margin-top:4px;">Winning Wallet Balance:</p>
+                        <p style="font-size:12px; color:#a0aec0; margin-top:4px;">Winning Balance:</p>
                         <p style="font-size:20px; font-weight:800; color:#d69e2e;" id="profWinBal">₹0</p>
                     </div>
                 </div>
 
                 <!-- Match Statistics Grid -->
-                <div class="section-title"><i class="fa-solid fa-gamepad"></i> Gameplay Overview</div>
+                <div class="section-title"><i class="fa-solid fa-gamepad"></i> Gameplay Summary</div>
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="title">Total Played Matches</div>
+                        <div class="title">Total Matches Played</div>
                         <div class="value" id="stTotalPlayed" style="color: #3182ce;">0</div>
                     </div>
                     <div class="stat-card">
@@ -132,40 +130,40 @@
                         <div class="value" id="stRunning" style="color: #ed8936;">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="title">Cancelled (Open State)</div>
+                        <div class="title">Cancelled (Open)</div>
                         <div class="value" id="stCancelOpen" style="color: #a0aec0;">0</div>
                     </div>
                     <div class="stat-card">
-                        <div class="title">Cancelled (Running State)</div>
+                        <div class="title">Cancelled (Running)</div>
                         <div class="value" id="stCancelRunning" style="color: #e2e8f0;">0</div>
                     </div>
                 </div>
 
                 <!-- Financial Statistics Grid -->
-                <div class="section-title"><i class="fa-solid fa-wallet"></i> Wallet Transactions Summary</div>
+                <div class="section-title"><i class="fa-solid fa-wallet"></i> Deposits & Withdrawals Summary</div>
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="title">Total Deposit Amount</div>
                         <div class="value" id="stTotalDepAmt" style="color: #38a169;">₹0</div>
-                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Total Times: <span id="stDepCount">0</span></div>
+                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Successful Counts: <span id="stDepCount">0</span></div>
                     </div>
                     <div class="stat-card">
                         <div class="title">Total Withdrawal Amount</div>
                         <div class="value" id="stTotalWithAmt" style="color: #e53e3e;">₹0</div>
-                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Total Times: <span id="stWithCount">0</span></div>
+                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Successful Counts: <span id="stWithCount">0</span></div>
                     </div>
                 </div>
 
                 <!-- Opponent Analysis Table -->
-                <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head History (Kiske sath kitna khela/hara/jeeta)</div>
+                <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head History</div>
                 <div class="table-container">
                     <table>
                         <thead>
                             <tr>
-                                <th>Opponent Name & Mobile</th>
-                                <th>Total Matches Played Against</th>
-                                <th>Won Against</th>
-                                <th>Lost Against</th>
+                                <th>Opponent Details (UID/Mobile)</th>
+                                <th>Matches Played</th>
+                                <th>Matches Won</th>
+                                <th>Matches Lost</th>
                             </tr>
                         </thead>
                         <tbody id="opponentTableBody">
@@ -174,8 +172,8 @@
                     </table>
                 </div>
 
-                <!-- Match Details Table -->
-                <div class="section-title"><i class="fa-solid fa-list"></i> All Match Logs</div>
+                <!-- Detailed Match Logs -->
+                <div class="section-title"><i class="fa-solid fa-list"></i> Complete Match Logs</div>
                 <div class="table-container">
                     <table>
                         <thead>
@@ -183,9 +181,9 @@
                                 <th>Date & Time</th>
                                 <th>Room Code</th>
                                 <th>Entry Amount</th>
-                                <th>Opponent Details</th>
-                                <th>Match Status</th>
-                                <th>Result / Outcome</th>
+                                <th>Opponent Player</th>
+                                <th>Status</th>
+                                <th>Result</th>
                             </tr>
                         </thead>
                         <tbody id="matchLogsTableBody">
@@ -213,216 +211,238 @@
         }
         const db = firebase.firestore();
 
-        async function searchUserHistory() {
+        let activeUserUnsubscribe = null;
+        let activeBattlesUnsubscribe = null;
+        let activeDepUnsubscribe = null;
+        let activeWithUnsubscribe = null;
+
+        async function startSyncUserHistory() {
             const queryVal = document.getElementById("userSearchInput").value.trim();
             if (!queryVal) {
                 alert("Please enter a Mobile Number or User UID!");
                 return;
             }
 
-            document.getElementById("historyDataContainer").style.display = "none";
+            // Cleanup previous active listeners
+            if (activeUserUnsubscribe) activeUserUnsubscribe();
+            if (activeBattlesUnsubscribe) activeBattlesUnsubscribe();
+            if (activeDepUnsubscribe) activeDepUnsubscribe();
+            if (activeWithUnsubscribe) activeWithUnsubscribe();
 
             try {
-                // Find User
-                let userDoc = await db.collection("customers").doc(queryVal).get();
-                let userId = queryVal;
-                let userData = null;
-
-                if (userDoc.exists) {
-                    userData = userDoc.data();
+                // Find User Document ID
+                let targetUid = null;
+                
+                // 1. Try Document Direct Match
+                const directDoc = await db.collection("customers").doc(queryVal).get();
+                if (directDoc.exists) {
+                    targetUid = directDoc.id;
                 } else {
-                    // Search by mobile query
-                    const snap = await db.collection("customers").where("mobile", "==", queryVal).get();
+                    // 2. Query by Mobile Field
+                    let mobileQuery = queryVal;
+                    let snap = await db.collection("customers").where("mobile", "==", mobileQuery).get();
+                    
+                    if (snap.empty && !mobileQuery.startsWith("+91")) {
+                        snap = await db.collection("customers").where("mobile", "==", "+91" + mobileQuery).get();
+                    }
+
                     if (!snap.empty) {
-                        userDoc = snap.docs[0];
-                        userId = userDoc.id;
-                        userData = userDoc.data();
+                        targetUid = snap.docs[0].id;
                     }
                 }
 
-                if (!userData) {
-                    alert("User not found!");
+                if (!targetUid) {
+                    alert("User not found in Firebase database!");
+                    document.getElementById("historyDataContainer").style.display = "none";
                     return;
                 }
 
-                // Render User Profile Information
-                document.getElementById("profName").innerText = "Name: " + (userData.name || "User");
-                document.getElementById("profMobile").innerText = userData.mobile || userId;
-                document.getElementById("profRef").innerText = userData.referralCode || "N/A";
-                document.getElementById("profDepositBal").innerText = "₹" + (userData.depositBalance || 0);
-                document.getElementById("profWinBal").innerText = "₹" + (userData.winnings || 0);
-
-                const kycBadge = document.getElementById("profKycBadge");
-                if (userData.kycStatus === "verified" || userData.isKycVerified === true) {
-                    kycBadge.className = "badge-kyc kyc-yes";
-                    kycBadge.innerText = "KYC VERIFIED";
-                } else {
-                    kycBadge.className = "badge-kyc kyc-no";
-                    kycBadge.innerText = "NOT VERIFIED";
-                }
-
-                // Fetch Wallet Financials
-                fetchWalletHistory(userId);
-
-                // Fetch Battle History
-                fetchBattleHistory(userId);
-
+                // Show Container
                 document.getElementById("historyDataContainer").style.display = "block";
+
+                // Listen Profile Realtime Changes
+                listenUserProfile(targetUid);
+                listenUserFinancials(targetUid);
+                listenUserBattles(targetUid);
 
             } catch (e) {
                 console.error(e);
-                alert("Error fetching user history: " + e.message);
+                alert("Error searching user: " + e.message);
             }
         }
 
-        async function fetchWalletHistory(uid) {
-            let totalDep = 0, depCount = 0;
-            let totalWith = 0, withCount = 0;
+        function listenUserProfile(uid) {
+            activeUserUnsubscribe = db.collection("customers").doc(uid).onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById("profName").innerText = "Name: " + (data.name || "User");
+                    document.getElementById("profMobile").innerText = data.mobile || "N/A";
+                    document.getElementById("profUid").innerText = uid;
+                    document.getElementById("profRef").innerText = data.referralCode || "N/A";
+                    document.getElementById("profDepositBal").innerText = "₹" + (data.depositBalance || 0);
+                    document.getElementById("profWinBal").innerText = "₹" + (data.winnings || 0);
 
-            // Deposits
-            const depSnap = await db.collection("deposits").where("uid", "==", uid).get();
-            depSnap.forEach(doc => {
-                const d = doc.data();
-                if ((d.status || "").toLowerCase() === "approved" || (d.status || "").toLowerCase() === "success") {
-                    totalDep += parseFloat(d.amount || 0);
-                    depCount++;
+                    const kycBadge = document.getElementById("profKycBadge");
+                    if (data.kycStatus === "verified" || data.isKycVerified === true) {
+                        kycBadge.className = "badge-kyc kyc-yes";
+                        kycBadge.innerText = "KYC VERIFIED";
+                    } else {
+                        kycBadge.className = "badge-kyc kyc-no";
+                        kycBadge.innerText = "NOT VERIFIED";
+                    }
                 }
             });
-
-            // Withdrawals
-            const withSnap = await db.collection("withdrawals").where("uid", "==", uid).get();
-            withSnap.forEach(doc => {
-                const w = doc.data();
-                if ((w.status || "").toLowerCase() === "approved" || (w.status || "").toLowerCase() === "success") {
-                    totalWith += parseFloat(w.amount || 0);
-                    withCount++;
-                }
-            });
-
-            document.getElementById("stTotalDepAmt").innerText = "₹" + totalDep;
-            document.getElementById("stDepCount").innerText = depCount;
-            document.getElementById("stTotalWithAmt").innerText = "₹" + totalWith;
-            document.getElementById("stWithCount").innerText = withCount;
         }
 
-        async function fetchBattleHistory(uid) {
-            const battlesSnap = await db.collection("battles").get();
+        function listenUserFinancials(uid) {
+            // Deposits Realtime
+            activeDepUnsubscribe = db.collection("deposits").where("uid", "==", uid).onSnapshot(snap => {
+                let totalDep = 0, depCount = 0;
+                snap.forEach(doc => {
+                    const d = doc.data();
+                    const st = (d.status || "").toLowerCase();
+                    if (st === "approved" || st === "success") {
+                        totalDep += parseFloat(d.amount || 0);
+                        depCount++;
+                    }
+                });
+                document.getElementById("stTotalDepAmt").innerText = "₹" + totalDep;
+                document.getElementById("stDepCount").innerText = depCount;
+            });
 
-            let played = 0, won = 0, lost = 0, running = 0, cancelOpen = 0, cancelRunning = 0;
-            let opponentStats = {};
-            let matchLogs = [];
+            // Withdrawals Realtime
+            activeWithUnsubscribe = db.collection("withdrawals").where("uid", "==", uid).onSnapshot(snap => {
+                let totalWith = 0, withCount = 0;
+                snap.forEach(doc => {
+                    const w = doc.data();
+                    const st = (w.status || "").toLowerCase();
+                    if (st === "approved" || st === "success") {
+                        totalWith += parseFloat(w.amount || 0);
+                        withCount++;
+                    }
+                });
+                document.getElementById("stTotalWithAmt").innerText = "₹" + totalWith;
+                document.getElementById("stWithCount").innerText = withCount;
+            });
+        }
 
-            battlesSnap.forEach(doc => {
-                const b = doc.data();
-                const creator = b.creatorUid || b.creatorMobile || b.hostId;
-                const joiner = b.acceptedUid || b.acceptedMobile || b.joinerUid;
+        function listenUserBattles(uid) {
+            activeBattlesUnsubscribe = db.collection("battles").onSnapshot(snapshot => {
+                let played = 0, won = 0, lost = 0, running = 0, cancelOpen = 0, cancelRunning = 0;
+                let opponentStats = {};
+                let matchLogs = [];
 
-                if (creator === uid || joiner === uid) {
-                    const isCreator = (creator === uid);
-                    const opponentUid = isCreator ? joiner : creator;
-                    const status = (b.status || "").toLowerCase();
-                    const winner = b.winnerUid;
+                snapshot.forEach(doc => {
+                    const b = doc.data();
+                    const creator = b.creatorUid || b.creatorMobile || b.hostId;
+                    const joiner = b.acceptedUid || b.acceptedMobile || b.joinerUid;
 
-                    let outcome = "Pending";
+                    if (creator === uid || joiner === uid) {
+                        const isCreator = (creator === uid);
+                        const opponentUid = isCreator ? joiner : creator;
+                        const status = (b.status || "").toLowerCase();
+                        const winner = b.winnerUid;
 
-                    if (status === "completed") {
-                        played++;
-                        if (winner === uid) {
-                            won++;
-                            outcome = `<span class="text-win">WON</span>`;
-                        } else {
-                            lost++;
-                            outcome = `<span class="text-loss">LOST</span>`;
-                        }
+                        let outcome = "Pending";
 
-                        // Opponent statistics aggregation
-                        if (opponentUid) {
-                            if (!opponentStats[opponentUid]) {
-                                opponentStats[opponentUid] = { total: 0, won: 0, lost: 0 };
+                        if (status === "completed") {
+                            played++;
+                            if (winner === uid) {
+                                won++;
+                                outcome = `<span class="text-win">WON</span>`;
+                            } else {
+                                lost++;
+                                outcome = `<span class="text-loss">LOST</span>`;
                             }
-                            opponentStats[opponentUid].total++;
-                            if (winner === uid) opponentStats[opponentUid].won++;
-                            else opponentStats[opponentUid].lost++;
+
+                            if (opponentUid) {
+                                if (!opponentStats[opponentUid]) {
+                                    opponentStats[opponentUid] = { total: 0, won: 0, lost: 0 };
+                                }
+                                opponentStats[opponentUid].total++;
+                                if (winner === uid) opponentStats[opponentUid].won++;
+                                else opponentStats[opponentUid].lost++;
+                            }
+
+                        } else if (status === "running" || status === "in_progress" || status === "pending") {
+                            running++;
+                            outcome = "Running";
+                        } else if (status === "cancelled") {
+                            if (joiner) {
+                                cancelRunning++;
+                            } else {
+                                cancelOpen++;
+                            }
+                            outcome = `<span class="text-cancel">CANCELLED</span>`;
                         }
 
-                    } else if (status === "running" || status === "in_progress" || status === "pending") {
-                        running++;
-                        outcome = "Running";
-                    } else if (status === "cancelled") {
-                        if (joiner) {
-                            cancelRunning++;
-                        } else {
-                            cancelOpen++;
+                        let dtStr = "N/A";
+                        if (b.createdAt) {
+                            let dt = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+                            dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
                         }
-                        outcome = `<span class="text-cancel">CANCELLED</span>`;
-                    }
 
-                    let dtStr = "N/A";
-                    if (b.createdAt) {
-                        let dt = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
-                        dtStr = dt.toLocaleDateString('en-IN') + " " + dt.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+                        matchLogs.push({
+                            dateTime: dtStr,
+                            roomCode: b.roomCode || "N/A",
+                            amount: b.amount || b.entry || 0,
+                            opponent: opponentUid || "Waiting...",
+                            status: status.toUpperCase(),
+                            outcome: outcome
+                        });
                     }
+                });
 
-                    matchLogs.push({
-                        dateTime: dtStr,
-                        roomCode: b.roomCode || "N/A",
-                        amount: b.amount || b.entry || 0,
-                        opponent: opponentUid || "Waiting...",
-                        status: status.toUpperCase(),
-                        outcome: outcome
+                // Update Stats
+                document.getElementById("stTotalPlayed").innerText = played;
+                document.getElementById("stWon").innerText = won;
+                document.getElementById("stLost").innerText = lost;
+                document.getElementById("stRunning").innerText = running;
+                document.getElementById("stCancelOpen").innerText = cancelOpen;
+                document.getElementById("stCancelRunning").innerText = cancelRunning;
+
+                // Render Opponents Table
+                const oppTbody = document.getElementById("opponentTableBody");
+                oppTbody.innerHTML = "";
+                const oppKeys = Object.keys(opponentStats);
+
+                if (oppKeys.length === 0) {
+                    oppTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #a0aec0;">No head-to-head records found.</td></tr>`;
+                } else {
+                    oppKeys.forEach(oppKey => {
+                        const opp = opponentStats[oppKey];
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td><strong style="color:#63b3ed;">${oppKey}</strong></td>
+                            <td><strong>${opp.total}</strong></td>
+                            <td class="text-win">${opp.won}</td>
+                            <td class="text-loss">${opp.lost}</td>
+                        `;
+                        oppTbody.appendChild(tr);
+                    });
+                }
+
+                // Render Logs Table
+                const logTbody = document.getElementById("matchLogsTableBody");
+                logTbody.innerHTML = "";
+
+                if (matchLogs.length === 0) {
+                    logTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No battles found for this user.</td></tr>`;
+                } else {
+                    matchLogs.forEach(m => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `
+                            <td style="font-size:11px; color:#a0aec0;">${m.dateTime}</td>
+                            <td><span style="background:#2d3748; padding:3px 8px; border-radius:4px;">${m.roomCode}</span></td>
+                            <td>₹${m.amount}</td>
+                            <td><strong style="color:#48bb78;">${m.opponent}</strong></td>
+                            <td><span class="badge" style="background:#2d3748; font-size:10px;">${m.status}</span></td>
+                            <td>${m.outcome}</td>
+                        `;
+                        logTbody.appendChild(tr);
                     });
                 }
             });
-
-            // Update Statistics
-            document.getElementById("stTotalPlayed").innerText = played;
-            document.getElementById("stWon").innerText = won;
-            document.getElementById("stLost").innerText = lost;
-            document.getElementById("stRunning").innerText = running;
-            document.getElementById("stCancelOpen").innerText = cancelOpen;
-            document.getElementById("stCancelRunning").innerText = cancelRunning;
-
-            // Render Opponent Table
-            const oppTbody = document.getElementById("opponentTableBody");
-            oppTbody.innerHTML = "";
-            const oppKeys = Object.keys(opponentStats);
-
-            if (oppKeys.length === 0) {
-                oppTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #a0aec0;">No head-to-head opponent records.</td></tr>`;
-            } else {
-                oppKeys.forEach(oppKey => {
-                    const opp = opponentStats[oppKey];
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td><strong style="color:#63b3ed;">${oppKey}</strong></td>
-                        <td><strong>${opp.total}</strong></td>
-                        <td class="text-win">${opp.won}</td>
-                        <td class="text-loss">${opp.lost}</td>
-                    `;
-                    oppTbody.appendChild(tr);
-                });
-            }
-
-            // Render Match Logs Table
-            const logTbody = document.getElementById("matchLogsTableBody");
-            logTbody.innerHTML = "";
-
-            if (matchLogs.length === 0) {
-                logTbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #a0aec0;">No battle history found for this user.</td></tr>`;
-            } else {
-                matchLogs.forEach(m => {
-                    const tr = document.createElement("tr");
-                    tr.innerHTML = `
-                        <td style="font-size:11px; color:#a0aec0;">${m.dateTime}</td>
-                        <td><span style="background:#2d3748; padding:3px 8px; border-radius:4px;">${m.roomCode}</span></td>
-                        <td>₹${m.amount}</td>
-                        <td><strong style="color:#48bb78;">${m.opponent}</strong></td>
-                        <td><span class="badge" style="background:#2d3748; font-size:10px;">${m.status}</span></td>
-                        <td>${m.outcome}</td>
-                    `;
-                    logTbody.appendChild(tr);
-                });
-            }
         }
     </script>
 </body>
