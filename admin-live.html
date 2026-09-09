@@ -21,7 +21,7 @@ body{
     padding:16px;
 }
 
-/* HEADER */
+/* HEADER WITH NAVIGATION MENU BUTTON */
 .header{
     display:flex;
     justify-content:space-between;
@@ -30,11 +30,34 @@ body{
     border-bottom:1px solid #1e293b;
     margin-bottom:18px;
 }
+.header-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+.menu-toggle-btn{
+    width:38px;
+    height:38px;
+    background:#131c35;
+    border:1px solid #1e293b;
+    color:#38bdf8;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    cursor:pointer;
+    transition:0.2s;
+}
+.menu-toggle-btn:active{
+    transform:scale(0.95);
+    background:#1e293b;
+}
 .header-title{
     display:flex;
     align-items:center;
-    gap:10px;
-    font-size:20px;
+    gap:8px;
+    font-size:18px;
     font-weight:800;
     color:#38bdf8;
 }
@@ -51,7 +74,91 @@ body{
     color:#94a3b8;
 }
 
-/* STATS GRID - 2x2 ON MOBILE, 4 IN A ROW ON DESKTOP */
+/* SIDE DRAWER NAVIGATION */
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.6);
+    backdrop-filter:blur(4px);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+}
+.drawer-overlay.active{
+    opacity:1;
+    pointer-events:auto;
+}
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:260px;
+    height:100%;
+    background:#131c35;
+    border-right:1px solid #1e293b;
+    z-index:1000;
+    transform:translateX(-100%);
+    transition:transform 0.25s ease;
+    display:flex;
+    flex-direction:column;
+}
+.drawer.active{
+    transform:translateX(0);
+}
+.drawer-header{
+    padding:18px 16px;
+    background:#0b1329;
+    border-bottom:1px solid #1e293b;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+.drawer-header h3{
+    color:#38bdf8;
+    font-size:16px;
+    font-weight:800;
+}
+.drawer-close{
+    background:transparent;
+    border:none;
+    color:#94a3b8;
+    font-size:18px;
+    cursor:pointer;
+}
+.drawer-links{
+    flex:1;
+    padding:12px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+}
+.drawer-item{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    background:transparent;
+    border:none;
+    color:#e2e8f0;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+    text-align:left;
+}
+.drawer-item:hover, .drawer-item.active{
+    background:#1e293b;
+    color:#38bdf8;
+}
+.drawer-item i{
+    width:20px;
+    text-align:center;
+}
+
+/* STATS GRID */
 .stats-grid{
     display:grid;
     grid-template-columns:repeat(2, 1fr);
@@ -184,9 +291,30 @@ tr:hover{background:#1a2649;}
 
 <body>
 
+<!-- NAVIGATION DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleNav()"></div>
+<div class="drawer" id="navDrawer">
+    <div class="drawer-header">
+        <h3>Admin Panel</h3>
+        <button class="drawer-close" onclick="toggleNav()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="drawer-links">
+        <button class="drawer-item active" onclick="window.location.href='admin-live.html'"><i class="fa-solid fa-users"></i> Live Users</button>
+        <button class="drawer-item" onclick="window.location.href='admin-dashboard.html'"><i class="fa-solid fa-gauge"></i> Dashboard</button>
+        <button class="drawer-item" onclick="window.location.href='admin-battles.html'"><i class="fa-solid fa-gamepad"></i> Battles</button>
+        <button class="drawer-item" onclick="window.location.href='admin-deposits.html'"><i class="fa-solid fa-money-bill-transfer"></i> Deposits</button>
+        <button class="drawer-item" onclick="window.location.href='admin-withdrawals.html'"><i class="fa-solid fa-building-columns"></i> Withdrawals</button>
+        <button class="drawer-item" onclick="window.location.href='admin-settings.html'"><i class="fa-solid fa-gear"></i> Settings</button>
+    </div>
+</div>
+
+<!-- HEADER WITH MENU BUTTON -->
 <div class="header">
-    <div class="header-title">
-        <span class="live-indicator"></span> Strictly Realtime Monitor
+    <div class="header-left">
+        <button class="menu-toggle-btn" onclick="toggleNav()"><i class="fa-solid fa-bars"></i></button>
+        <div class="header-title">
+            <span class="live-indicator"></span> Strictly Realtime Monitor
+        </div>
     </div>
     <div class="last-sync" id="lastUpdated">Syncing...</div>
 </div>
@@ -258,6 +386,11 @@ const firebaseDB = firebase.firestore();
 let allUsersData = [];
 let currentFilter = 'online';
 
+function toggleNav() {
+    document.getElementById("navDrawer").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
+
 function listenToUserPresence() {
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         allUsersData = [];
@@ -290,7 +423,7 @@ function listenToUserPresence() {
             const isPingActive = (now - lastPingMs) < 15000;
             const isOnline = data.isOnline === true && isPingActive;
             
-            // Logged in Logic (Not explicitly logged out, or active in last 24 hrs)
+            // Logged in Logic
             const isLoggedIn = data.isLoggedIn === true || data.isOnline === true || (now - lastPingMs) < 86400000;
 
             if (isOnline) {
@@ -330,7 +463,7 @@ function listenToUserPresence() {
     });
 }
 
-// Auto Refresh every 5 seconds to clear stale connections
+// Auto Refresh every 5 seconds
 setInterval(() => {
     if (allUsersData.length > 0) renderTable();
 }, 5000);
