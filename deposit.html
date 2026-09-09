@@ -17,6 +17,20 @@
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+let firebaseDB = null;
+try {
+    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    firebaseDB = firebase.firestore();
+} catch(error){ console.error(error); }
 </script>
 
 <style>
@@ -34,7 +48,7 @@ body{
 }
 button{font:inherit;}
 
-/* TOP HEADER */
+/* UNIFIED TOP HEADER STYLING */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -45,7 +59,7 @@ button{font:inherit;}
     padding:0 14px;
     position:sticky;
     top:0;
-    z-index:100;
+    z-index:1000;
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
 .header-left{display:flex;align-items:center;gap:10px;}
@@ -88,22 +102,41 @@ button{font:inherit;}
 .header-right{display:flex;align-items:center;gap:8px;}
 .header-icon{
     height:38px;
-    padding:0 10px;
     border:0;
     border-radius:20px;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:5px;
-    font-size:13px;
-    font-weight:800;
+    font-size:15px;
     color:white;
     cursor:pointer;
+    padding:0 12px;
+    gap:6px;
+    font-weight:800;
 }
-.icon-only{width:38px;padding:0;border-radius:50%;}
-.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
-.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);}
-.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);}
+.notification{
+    width:38px;
+    height:38px;
+    padding:0;
+    border-radius:50%;
+    background:linear-gradient(145deg,#6366f1,#818cf8);
+    box-shadow:0 3px 10px rgba(99,102,241,0.25);
+}
+.wallet-top{
+    background:linear-gradient(145deg,#22c55e,#16a34a);
+    box-shadow:0 3px 10px rgba(22,163,74,0.25);
+    border-radius:20px;
+    padding:0 14px;
+    font-size:14px;
+}
+.redeem-top{
+    width:38px;
+    height:38px;
+    padding:0;
+    border-radius:50%;
+    background:linear-gradient(145deg,#ea580c,#f97316);
+    box-shadow:0 3px 10px rgba(234,88,12,0.25);
+}
 
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
@@ -318,6 +351,7 @@ button{font:inherit;}
     </div>
 </div>
 
+<!-- UNIFIED TOP HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -326,9 +360,9 @@ button{font:inherit;}
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification icon-only" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="goWallet()">💰 <span id="topBalance">0</span></button>
-        <button class="header-icon redeem-top" onclick="goRedeem()">🎁 <span id="topReferral">0</span></button>
+        <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
+        <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -375,28 +409,13 @@ window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
 });
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain: "rdx-ludo.firebaseapp.com",
-    projectId: "rdx-ludo",
-    storageBucket: "rdx-ludo.firebasestorage.app",
-    messagingSenderId: "928340814840",
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
-};
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const firebaseDB = firebase.firestore();
-
-function getCleanUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
-    return String(raw).replace(/\D/g, "");
-}
-const userId = getCleanUserId();
-
-const amountInput = document.getElementById("depositAmountInput");
-const btnProceed = document.getElementById("btnProceed");
+let unsubscribeWalletListener = null;
 
 function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
 function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
+
+const amountInput = document.getElementById("depositAmountInput");
+const btnProceed = document.getElementById("btnProceed");
 
 function updateProceedButton() {
     const val = Number(amountInput.value) || 0;
@@ -439,22 +458,50 @@ function proceedToPayment() {
 }
 
 async function loadUserData() {
-    if (!userId) { window.location.replace("index.html"); return; }
-    const docId = userId.length === 10 ? "91" + userId : userId;
-
     try {
-        const snap = await firebaseDB.collection("customers").doc(docId).get();
-        if (snap.exists) {
-            const d = snap.data();
-            document.getElementById("topBalance").textContent = Number(d.balance || 0);
-            document.getElementById("topReferral").textContent = Number(d.referralBalance || d.redeemBalance || 0);
-            
-            let fullName = d.name || d.fullName || d.username || localStorage.getItem("rdxUsername") || ("User " + String(snap.id).slice(-4));
-            if(document.getElementById("menuUsername")) {
-                document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
-            }
+        if(!firebaseDB) return;
+
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                     localStorage.getItem("rdxVerifiedMobile") || 
+                     localStorage.getItem("rdxUserMobile") || 
+                     localStorage.getItem("rdxMobile") ||
+                     localStorage.getItem("userMobile");
+
+        if (!mobile) { window.location.replace("index.html"); return; }
+
+        const cleanMobile = String(mobile).replace(/\D/g, "");
+        let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+
+        let userRef = firebaseDB.collection("customers").doc(firebaseDocId);
+        let snapshot = await userRef.get();
+        
+        if(!snapshot.exists) {
+            firebaseDocId = cleanMobile;
+            userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         }
-    } catch(err) { console.error(err); }
+
+        if(unsubscribeWalletListener) unsubscribeWalletListener();
+
+        // Real-Time Firebase Listener for Live Balance Sync
+        unsubscribeWalletListener = userRef.onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                
+                // Real-Time Calculation: depositBalance + winningBalance
+                const deposit = Number(data.depositBalance || data.deposit || 0);
+                const winnings = Number(data.winnings || data.winningBalance || 0);
+                const realTotalBalance = deposit + winnings;
+
+                document.getElementById("topBalance").textContent = "₹" + realTotalBalance;
+
+                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(doc.id).slice(-4));
+                if(document.getElementById("menuUsername")) {
+                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                }
+            }
+        }, (err) => { console.error("Real-time Wallet Sync Error:", err); });
+
+    } catch(err) { console.error("Load User Data Error:", err); }
 }
 
 window.addEventListener("load", loadUserData);
