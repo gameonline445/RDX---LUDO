@@ -53,6 +53,7 @@
         .text-win { color: #68d391; font-weight: 700; }
         .text-loss { color: #fc8181; font-weight: 700; }
         .text-cancel { color: #cbd5e0; font-weight: 700; }
+        .text-pending { color: #f6ad55; font-weight: 700; }
     </style>
 </head>
 <body>
@@ -87,7 +88,7 @@
                 <button class="btn-search" onclick="startSyncUserHistory()"><i class="fa-solid fa-magnifying-glass"></i> Search User</button>
             </div>
 
-            <!-- History Container: Hidden by default -->
+            <!-- History Container -->
             <div id="historyDataContainer" style="display: none;">
                 
                 <!-- Profile Header Banner -->
@@ -145,12 +146,12 @@
                     <div class="stat-card">
                         <div class="title">Total Deposit Amount</div>
                         <div class="value" id="stTotalDepAmt" style="color: #38a169;">₹0</div>
-                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Successful Counts: <span id="stDepCount">0</span></div>
+                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Approved: <span id="stDepCount">0</span></div>
                     </div>
                     <div class="stat-card">
                         <div class="title">Total Withdrawal Amount</div>
                         <div class="value" id="stTotalWithAmt" style="color: #e53e3e;">₹0</div>
-                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Successful Counts: <span id="stWithCount">0</span></div>
+                        <div style="font-size:11px; color:#a0aec0; margin-top:4px;">Approved: <span id="stWithCount">0</span></div>
                     </div>
                 </div>
 
@@ -160,7 +161,7 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Opponent Details (UID/Mobile)</th>
+                                <th>Opponent Mobile / User</th>
                                 <th>Matches Played</th>
                                 <th>Matches Won</th>
                                 <th>Matches Lost</th>
@@ -181,7 +182,7 @@
                                 <th>Date & Time</th>
                                 <th>Room Code</th>
                                 <th>Entry Amount</th>
-                                <th>Opponent Player</th>
+                                <th>Opponent Mobile</th>
                                 <th>Status</th>
                                 <th>Result</th>
                             </tr>
@@ -223,31 +224,28 @@
                 return;
             }
 
-            // Cleanup previous active listeners
             if (activeUserUnsubscribe) activeUserUnsubscribe();
             if (activeBattlesUnsubscribe) activeBattlesUnsubscribe();
             if (activeDepUnsubscribe) activeDepUnsubscribe();
             if (activeWithUnsubscribe) activeWithUnsubscribe();
 
             try {
-                // Find User Document ID
                 let targetUid = null;
-                
-                // 1. Try Document Direct Match
+                let userMobile = queryVal;
+
                 const directDoc = await db.collection("customers").doc(queryVal).get();
                 if (directDoc.exists) {
                     targetUid = directDoc.id;
+                    userMobile = directDoc.data().mobile || queryVal;
                 } else {
-                    // 2. Query by Mobile Field
-                    let mobileQuery = queryVal;
-                    let snap = await db.collection("customers").where("mobile", "==", mobileQuery).get();
-                    
-                    if (snap.empty && !mobileQuery.startsWith("+91")) {
-                        snap = await db.collection("customers").where("mobile", "==", "+91" + mobileQuery).get();
+                    let snap = await db.collection("customers").where("mobile", "==", queryVal).get();
+                    if (snap.empty && !queryVal.startsWith("+91")) {
+                        snap = await db.collection("customers").where("mobile", "==", "+91" + queryVal).get();
                     }
 
                     if (!snap.empty) {
                         targetUid = snap.docs[0].id;
+                        userMobile = snap.docs[0].data().mobile || queryVal;
                     }
                 }
 
@@ -257,13 +255,11 @@
                     return;
                 }
 
-                // Show Container
                 document.getElementById("historyDataContainer").style.display = "block";
 
-                // Listen Profile Realtime Changes
                 listenUserProfile(targetUid);
                 listenUserFinancials(targetUid);
-                listenUserBattles(targetUid);
+                listenUserBattles(targetUid, userMobile);
 
             } catch (e) {
                 console.error(e);
@@ -295,7 +291,6 @@
         }
 
         function listenUserFinancials(uid) {
-            // Deposits Realtime
             activeDepUnsubscribe = db.collection("deposits").where("uid", "==", uid).onSnapshot(snap => {
                 let totalDep = 0, depCount = 0;
                 snap.forEach(doc => {
@@ -310,7 +305,6 @@
                 document.getElementById("stDepCount").innerText = depCount;
             });
 
-            // Withdrawals Realtime
             activeWithUnsubscribe = db.collection("withdrawals").where("uid", "==", uid).onSnapshot(snap => {
                 let totalWith = 0, withCount = 0;
                 snap.forEach(doc => {
@@ -326,7 +320,9 @@
             });
         }
 
-        function listenUserBattles(uid) {
+        function listenUserBattles(uid, userMobile) {
+            const cleanUserMobile = userMobile.replace("+91", "").trim();
+
             activeBattlesUnsubscribe = db.collection("battles").onSnapshot(snapshot => {
                 let played = 0, won = 0, lost = 0, running = 0, cancelOpen = 0, cancelRunning = 0;
                 let opponentStats = {};
@@ -334,20 +330,30 @@
 
                 snapshot.forEach(doc => {
                     const b = doc.data();
-                    const creator = b.creatorUid || b.creatorMobile || b.hostId;
-                    const joiner = b.acceptedUid || b.acceptedMobile || b.joinerUid;
+                    
+                    const creatorUid = b.creatorUid || b.hostId || "";
+                    const joinerUid = b.acceptedUid || b.joinerUid || "";
 
-                    if (creator === uid || joiner === uid) {
-                        const isCreator = (creator === uid);
-                        const opponentUid = isCreator ? joiner : creator;
+                    const creatorMobile = (b.creatorMobile || "").replace("+91", "").trim();
+                    const joinerMobile = (b.acceptedMobile || b.joinerMobile || "").replace("+91", "").trim();
+
+                    const isCreator = (creatorUid === uid || (creatorMobile && creatorMobile === cleanUserMobile));
+                    const isJoiner = (joinerUid === uid || (joinerMobile && joinerMobile === cleanUserMobile));
+
+                    if (isCreator || isJoiner) {
+                        let opponentMobile = isCreator ? (b.acceptedMobile || joinerMobile || joinerUid) : (b.creatorMobile || creatorMobile || creatorUid);
+                        if (!opponentMobile || opponentMobile === "") opponentMobile = "Waiting...";
+
                         const status = (b.status || "").toLowerCase();
-                        const winner = b.winnerUid;
+                        const winner = b.winnerUid || b.winnerMobile;
 
-                        let outcome = "Pending";
+                        let outcome = `<span class="text-pending">PENDING</span>`;
 
                         if (status === "completed") {
                             played++;
-                            if (winner === uid) {
+                            const isWinner = (winner === uid || (winner && winner.toString().includes(cleanUserMobile)));
+                            
+                            if (isWinner) {
                                 won++;
                                 outcome = `<span class="text-win">WON</span>`;
                             } else {
@@ -355,20 +361,20 @@
                                 outcome = `<span class="text-loss">LOST</span>`;
                             }
 
-                            if (opponentUid) {
-                                if (!opponentStats[opponentUid]) {
-                                    opponentStats[opponentUid] = { total: 0, won: 0, lost: 0 };
+                            if (opponentMobile && opponentMobile !== "Waiting...") {
+                                if (!opponentStats[opponentMobile]) {
+                                    opponentStats[opponentMobile] = { total: 0, won: 0, lost: 0 };
                                 }
-                                opponentStats[opponentUid].total++;
-                                if (winner === uid) opponentStats[opponentUid].won++;
-                                else opponentStats[opponentUid].lost++;
+                                opponentStats[opponentMobile].total++;
+                                if (isWinner) opponentStats[opponentMobile].won++;
+                                else opponentStats[opponentMobile].lost++;
                             }
 
                         } else if (status === "running" || status === "in_progress" || status === "pending") {
                             running++;
-                            outcome = "Running";
+                            outcome = `<span class="text-pending">RUNNING</span>`;
                         } else if (status === "cancelled") {
-                            if (joiner) {
+                            if (joinerUid || joinerMobile) {
                                 cancelRunning++;
                             } else {
                                 cancelOpen++;
@@ -386,14 +392,13 @@
                             dateTime: dtStr,
                             roomCode: b.roomCode || "N/A",
                             amount: b.amount || b.entry || 0,
-                            opponent: opponentUid || "Waiting...",
+                            opponent: opponentMobile,
                             status: status.toUpperCase(),
                             outcome: outcome
                         });
                     }
                 });
 
-                // Update Stats
                 document.getElementById("stTotalPlayed").innerText = played;
                 document.getElementById("stWon").innerText = won;
                 document.getElementById("stLost").innerText = lost;
@@ -407,13 +412,13 @@
                 const oppKeys = Object.keys(opponentStats);
 
                 if (oppKeys.length === 0) {
-                    oppTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #a0aec0;">No head-to-head records found.</td></tr>`;
+                    oppTbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: #a0aec0;">No completed opponent records found.</td></tr>`;
                 } else {
                     oppKeys.forEach(oppKey => {
                         const opp = opponentStats[oppKey];
                         const tr = document.createElement("tr");
                         tr.innerHTML = `
-                            <td><strong style="color:#63b3ed;">${oppKey}</strong></td>
+                            <td><strong style="color:#63b3ed;">📱 ${oppKey}</strong></td>
                             <td><strong>${opp.total}</strong></td>
                             <td class="text-win">${opp.won}</td>
                             <td class="text-loss">${opp.lost}</td>
@@ -435,7 +440,7 @@
                             <td style="font-size:11px; color:#a0aec0;">${m.dateTime}</td>
                             <td><span style="background:#2d3748; padding:3px 8px; border-radius:4px;">${m.roomCode}</span></td>
                             <td>₹${m.amount}</td>
-                            <td><strong style="color:#48bb78;">${m.opponent}</strong></td>
+                            <td><strong style="color:#48bb78;">📱 ${m.opponent}</strong></td>
                             <td><span class="badge" style="background:#2d3748; font-size:10px;">${m.status}</span></td>
                             <td>${m.outcome}</td>
                         `;
