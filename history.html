@@ -34,7 +34,7 @@ button, input{font:inherit;}
     border-bottom:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
-    justify-style:space-between;
+    justify-content:space-between;
     padding:0 14px;
     position:sticky;
     top:0;
@@ -499,6 +499,8 @@ function getCleanUserId() {
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
+const docIdWithCountry = userId.length === 10 ? "91" + userId : userId;
+const docIdWithoutCountry = userId.length === 12 && userId.startsWith("91") ? userId.substring(2) : userId;
 
 let allLogsData = [];
 let currentCategory = 'all';
@@ -508,39 +510,65 @@ function toggleMenu() {
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-/* FETCH HISTORY LOGS FROM FIREBASE */
-function loadHistoryData() {
-    if (!userId) return;
-    const docId = userId.length === 10 ? "91" + userId : userId;
+/* MULTI-SOURCE HYBRID FETCH FOR GUARANTEED HISTORY LOGS */
+async function loadHistoryData() {
+    if (!userId) {
+        document.getElementById("historyList").innerHTML = `<div class="empty-state">User not logged in.</div>`;
+        return;
+    }
 
-    // Load User Header Info
-    firebaseDB.collection("customers").doc(docId).get().then(doc => {
+    // Load User Drawer Header Info
+    firebaseDB.collection("customers").doc(docIdWithCountry).get().then(doc => {
         if(doc.exists){
             const d = doc.data();
             document.getElementById("drawerName").textContent = String(d.name || ("User " + userId.slice(-4))).trim();
-            document.getElementById("drawerMobile").textContent = "+" + userId;
+            document.getElementById("drawerMobile").textContent = "+" + docIdWithCountry;
         }
     });
 
-    // Fetch transactions from subcollection or global collection
-    firebaseDB.collection("customers").doc(docId).collection("history")
-    .onSnapshot(snapshot => {
-        if (!snapshot.empty) {
-            allLogsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            renderLogs();
-        } else {
-            // Fallback: check global 'transactions' collection filtered by userId
-            firebaseDB.collection("transactions").where("userId", "==", docId)
-            .onSnapshot(transSnap => {
-                allLogsData = transSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderLogs();
-            }, err => {
-                renderLogs();
-            });
-        }
-    }, err => {
-        renderLogs();
-    });
+    let combinedLogs = [];
+
+    try {
+        // 1. Fetch from Subcollection: customers/{id}/history
+        const subSnap1 = await firebaseDB.collection("customers").doc(docIdWithCountry).collection("history").get();
+        subSnap1.forEach(doc => combinedLogs.push({ id: doc.id, ...doc.data() }));
+
+        const subSnap2 = await firebaseDB.collection("customers").doc(docIdWithoutCountry).collection("history").get();
+        subSnap2.forEach(doc => {
+            if(!combinedLogs.some(item => item.id === doc.id)) combinedLogs.push({ id: doc.id, ...doc.data() });
+        });
+
+        // 2. Fetch from Root Collection: transactions
+        const transSnap = await firebaseDB.collection("transactions").get();
+        transSnap.forEach(doc => {
+            const data = doc.data();
+            if ((data.userId === docIdWithCountry || data.userId === docIdWithoutCountry || data.mobile === docIdWithoutCountry) && !combinedLogs.some(item => item.id === doc.id)) {
+                combinedLogs.push({ id: doc.id, ...data });
+            }
+        });
+
+        // 3. Fetch from Root Collection: battles
+        const battleSnap = await firebaseDB.collection("battles").get();
+        battleSnap.forEach(doc => {
+            const data = doc.data();
+            if ((data.creatorId === docIdWithCountry || data.joinerId === docIdWithCountry || data.creatorId === docIdWithoutCountry || data.joinerId === docIdWithoutCountry) && !combinedLogs.some(item => item.id === doc.id)) {
+                combinedLogs.push({
+                    id: doc.id,
+                    type: 'battle',
+                    title: `Battle vs ${data.creatorId === docIdWithCountry || data.creatorId === docIdWithoutCountry ? (data.joinerName || 'Opponent') : (data.creatorName || 'Opponent')}`,
+                    amount: data.amount || data.entryFee || 0,
+                    status: data.status || 'Completed',
+                    createdAt: data.createdAt || data.timestamp
+                });
+            }
+        });
+
+    } catch (err) {
+        console.error("Firestore Load Error:", err);
+    }
+
+    allLogsData = combinedLogs;
+    renderLogs();
 }
 
 function renderLogs() {
@@ -570,8 +598,12 @@ function renderLogs() {
         return;
     }
 
-    // Sort by timestamp descending
-    filtered.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+    // Sort by timestamp descending safely
+    filtered.sort((a,b) => {
+        const timeA = a.createdAt?.seconds || (a.timestamp ? new Date(a.timestamp).getTime()/1000 : 0);
+        const timeB = b.createdAt?.seconds || (b.timestamp ? new Date(b.timestamp).getTime()/1000 : 0);
+        return timeB - timeA;
+    });
 
     let html = '';
     filtered.forEach(item => {
@@ -594,7 +626,7 @@ function renderLogs() {
             bgClass = 'type-battle';
         }
 
-        const dateStr = item.date || (item.createdAt ? new Date(item.createdAt.seconds * 1000).toLocaleString() : 'Recently');
+        const dateStr = item.date || (item.createdAt?.seconds ? new Date(item.createdAt.seconds * 1000).toLocaleString() : 'Recently');
         const statusStr = item.status || 'Success';
         let badgeClass = 'badge-success';
         if(statusStr.toLowerCase().includes('pending')) badgeClass = 'badge-pending';
@@ -636,8 +668,7 @@ function filterLogs() {
 function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
     if (userId) {
-        const docId = userId.length === 10 ? "91" + userId : userId;
-        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
+        firebaseDB.collection("customers").doc(docIdWithCountry).set({ isOnline: false }, { merge: true });
     }
     localStorage.clear();
     sessionStorage.clear();
