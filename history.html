@@ -73,7 +73,7 @@ button{font:inherit;}
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
-/* RIGHT SIDE BUTTONS (EXACT 1:1 MATCH WITH BOTTOM NAV SHAPE & RADIUS) */
+/* RIGHT SIDE BUTTONS CONTAINER */
 .header-right{
     display:flex;
     align-items:center;
@@ -81,21 +81,21 @@ button{font:inherit;}
     margin-left:auto;
 }
 .header-icon{
-    width:42px;
-    height:42px;
+    width:38px;
+    height:38px;
     border:0;
-    border-radius:14px; /* Same rounded square style as bottom buttons */
+    border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:18px;
+    font-size:15px;
     color:white;
     cursor:pointer;
     padding:0;
     box-shadow:0 4px 10px rgba(0,0,0,0.1);
     transition:transform 0.15s ease;
 }
-.header-icon:active{transform:scale(0.92);}
+.header-icon:active{transform:scale(0.95);}
 
 .bell{background:#6366f1;}
 .cash{background:#22c55e;}
@@ -410,7 +410,7 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         </div>
     </div>
     
-    <!-- 3 BUTTONS EXACTLY MATCHED TO BOTTOM NAV -->
+    <!-- 3 BUTTONS RIGHT ALIGNED -->
     <div class="header-right">
         <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
