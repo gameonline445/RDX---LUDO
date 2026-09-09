@@ -27,6 +27,17 @@ body{
 }
 button, input{font:inherit;}
 
+/* DEBUG BOX */
+#debugBanner {
+    background: #ef4444;
+    color: white;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: bold;
+    word-break: break-all;
+    z-index: 1000;
+}
+
 /* TOP HEADER */
 .top-header{
     height:66px;
@@ -56,7 +67,6 @@ button, input{font:inherit;}
     cursor:pointer;
     box-shadow:0 4px 10px rgba(248,113,113,0.3);
 }
-.menu-btn:active{transform:scale(0.95);}
 
 .logo{
     width:46px;
@@ -66,19 +76,12 @@ button, input{font:inherit;}
     display:flex;
     align-items:center;
     justify-content:center;
-    cursor:pointer;
     border:1.5px solid #bae6fd;
     background:#ffffff;
-    box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
 
-.header-right{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    margin-left:auto;
-}
+.header-right{display:flex;align-items:center;gap:8px;margin-left:auto;}
 .header-icon{
     width:42px;
     height:42px;
@@ -90,16 +93,12 @@ button, input{font:inherit;}
     font-size:18px;
     color:white;
     cursor:pointer;
-    padding:0;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    transition:transform 0.15s ease;
 }
-.header-icon:active{transform:scale(0.92);}
 .bell{background:#6366f1;}
 .cash{background:#22c55e;}
 .gift{background:#f97316;}
 
-/* MAIN CONTENT CONTAINER */
+/* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
 .page-title{
@@ -120,19 +119,9 @@ button, input{font:inherit;}
     border:1px solid #bae6fd;
 }
 
-/* SEARCH BAR */
-.search-box{
-    position:relative;
-    margin-bottom:16px;
-}
-.search-box i{
-    position:absolute;
-    left:16px;
-    top:50%;
-    transform:translateY(-50%);
-    color:#64748b;
-    font-size:16px;
-}
+/* SEARCH */
+.search-box{position:relative;margin-bottom:16px;}
+.search-box i{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:#64748b;}
 .search-box input{
     width:100%;
     padding:14px 16px 14px 45px;
@@ -141,23 +130,11 @@ button, input{font:inherit;}
     background:#ffffff;
     font-size:13px;
     font-weight:600;
-    color:#0f172a;
     outline:none;
-    box-shadow:0 4px 12px rgba(2,132,199,0.04);
 }
-.search-box input::placeholder{color:#94a3b8;}
 
-/* TABS FILTER */
-.tabs-wrapper{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding-bottom:8px;
-    margin-bottom:16px;
-    scrollbar-width:none;
-}
-.tabs-wrapper::-webkit-scrollbar{display:none;}
-
+/* TABS */
+.tabs-wrapper{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:16px;}
 .tab-btn{
     white-space:nowrap;
     padding:10px 18px;
@@ -168,24 +145,11 @@ button, input{font:inherit;}
     font-size:13px;
     font-weight:800;
     cursor:pointer;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    box-shadow:0 2px 8px rgba(2,132,199,0.05);
 }
-.tab-btn.active{
-    background:#0284c7;
-    color:#ffffff;
-    border-color:#0284c7;
-    box-shadow:0 4px 12px rgba(2,132,199,0.3);
-}
+.tab-btn.active{background:#0284c7;color:#ffffff;border-color:#0284c7;}
 
-/* HISTORY CARDS LIST */
-.history-list{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-}
+/* LIST */
+.history-list{display:flex;flex-direction:column;gap:12px;}
 .history-item{
     background:#ffffff;
     border:1.5px solid #bae6fd;
@@ -193,14 +157,9 @@ button, input{font:inherit;}
     padding:14px 16px;
     display:flex;
     align-items:center;
-    justify-style:space-between;
-    box-shadow:0 4px 12px rgba(2,132,199,0.05);
+    justify-content:space-between;
 }
-.item-left{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
+.item-left{display:flex;align-items:center;gap:12px;}
 .item-icon{
     width:44px;
     height:44px;
@@ -212,14 +171,13 @@ button, input{font:inherit;}
     color:white;
     flex-shrink:0;
 }
-.type-deposit{background:linear-gradient(145deg, #22c55e, #16a34a);}
-.type-withdraw{background:linear-gradient(145deg, #ef4444, #dc2626);}
-.type-battle{background:linear-gradient(145deg, #6366f1, #4f46e5);}
-.type-refer{background:linear-gradient(145deg, #f97316, #ea580c);}
+.type-deposit{background:#22c55e;}
+.type-withdraw{background:#ef4444;}
+.type-battle{background:#6366f1;}
 
 .item-details h4{font-size:14px;font-weight:850;color:#0f172a;}
-.item-details p{font-size:11px;font-weight:600;color:#64748b;margin-top:2px;}
-.item-details small{font-size:10px;font-weight:700;color:#94a3b8;display:block;margin-top:3px;}
+.item-details p{font-size:11px;font-weight:600;color:#64748b;}
+.item-details small{font-size:10px;font-weight:700;color:#94a3b8;display:block;}
 
 .item-right{text-align:right;}
 .amount{font-size:15px;font-weight:900;}
@@ -231,120 +189,15 @@ button, input{font:inherit;}
     border-radius:8px;
     font-size:10px;
     font-weight:800;
-    margin-top:4px;
     text-transform:uppercase;
 }
 .badge-success{background:#dcfce7;color:#15803d;}
 .badge-pending{background:#fef3c7;color:#b45309;}
 .badge-failed{background:#fee2e2;color:#b91c1c;}
 
-/* EMPTY / NO DATA */
-.empty-state{
-    text-align:center;
-    padding:40px 20px;
-    color:#64748b;
-    font-weight:700;
-    font-size:14px;
-}
+.empty-state{text-align:center;padding:40px 20px;color:#64748b;font-weight:700;}
 
-/* SIDE DRAWER */
-.drawer-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.45);
-    backdrop-filter:blur(4px);
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.25s ease;
-}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{
-    position:fixed;
-    top:0;
-    left:0;
-    width:280px;
-    height:100%;
-    background:#ffffff;
-    z-index:1000;
-    box-shadow:4px 0 25px rgba(2,132,199,0.15);
-    transform:translateX(-100%);
-    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-    display:flex;
-    flex-direction:column;
-}
-.drawer.active{transform:translateX(0);}
-.drawer-header{
-    padding:20px 16px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-style:space-between;
-}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    background:#ffffff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    border:1.5px solid #bae6fd;
-}
-.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-.drawer-close{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    color:#0c4a6e;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{
-    width:100%;
-    padding:12px 14px;
-    border:0;
-    border-radius:14px;
-    background:transparent;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:14px;
-    font-weight:750;
-    color:#334155;
-    cursor:pointer;
-    margin-bottom:4px;
-}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item-icon{
-    width:36px;
-    height:36px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:16px;
-}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
-
-/* BOTTOM NAVIGATION */
+/* BOTTOM NAV */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -354,7 +207,7 @@ button, input{font:inherit;}
     background:#ffffff;
     border-top:1px solid #e2e8f0;
     display:flex;
-    justify-space:around;
+    justify-content:space-around;
     align-items:center;
     z-index:200;
 }
@@ -371,7 +224,6 @@ button, input{font:inherit;}
     color:#1e293b;
     font-size:12px;
     font-weight:700;
-    cursor:pointer;
 }
 .nav-icon-box{
     width:42px;
@@ -392,59 +244,17 @@ button, input{font:inherit;}
 
 <body>
 
-<script>
-window.addEventListener("pageshow", function (event) {
-    if (event.persisted || (performance && performance.navigation.type === 2)) {
-        window.location.reload();
-    }
-});
+<div id="debugBanner">Initializing Debugger...</div>
 
-if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("index.html");
-}
-</script>
-
-<!-- SIDE DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar">
-                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
-            </div>
-            <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
-        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
-        <button class="drawer-item" onclick="window.location.replace('notification.html')"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
-        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
-    </div>
-</div>
-
-<!-- TOP HEADER -->
 <header class="top-header">
     <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="window.location.replace('dashboard.html')">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
+        <button class="menu-btn"><i class="fa-solid fa-bars"></i></button>
+        <div class="logo"><img src="logo.png" alt="RDX"></div>
     </div>
-    
     <div class="header-right">
-        <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
+        <button class="header-icon bell"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon cash"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon gift"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -454,32 +264,28 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
         <span>History & Activity Logs</span>
     </div>
 
-    <!-- SEARCH INPUT -->
     <div class="search-box">
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="searchInput" placeholder="Search by Date, UTR, Amount, Status, Opponent..." oninput="filterLogs()">
+        <input type="text" id="searchInput" placeholder="Search by Date, UTR, Amount..." oninput="filterLogs()">
     </div>
 
-    <!-- TABS -->
     <div class="tabs-wrapper">
         <button class="tab-btn active" onclick="switchTab('all', this)">All Activity</button>
-        <button class="tab-btn" onclick="switchTab('battle', this)"><i class="fa-solid fa-gamepad"></i> Battles History</button>
-        <button class="tab-btn" onclick="switchTab('deposit', this)"><i class="fa-solid fa-wallet"></i> Deposits</button>
-        <button class="tab-btn" onclick="switchTab('withdraw', this)"><i class="fa-solid fa-building-columns"></i> Withdrawals</button>
+        <button class="tab-btn" onclick="switchTab('battle', this)">Battles History</button>
+        <button class="tab-btn" onclick="switchTab('deposit', this)">Deposits</button>
+        <button class="tab-btn" onclick="switchTab('withdraw', this)">Withdrawals</button>
     </div>
 
-    <!-- HISTORY LIST CONTAINER -->
     <div class="history-list" id="historyList">
         <div class="empty-state">Loading history logs...</div>
     </div>
 </main>
 
-<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.href='dashboard.html'"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item" onclick="window.location.href='wallet.html'"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="window.location.href='support.html'"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="window.location.href='profile.html'"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
@@ -494,80 +300,86 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
-function getCleanUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
-    return String(raw).replace(/\D/g, "");
+function debug(msg) {
+    document.getElementById("debugBanner").innerText = msg;
+    console.log(msg);
 }
-const userId = getCleanUserId();
-const docIdWithCountry = userId.length === 10 ? "91" + userId : userId;
-const docIdWithoutCountry = userId.length === 12 && userId.startsWith("91") ? userId.substring(2) : userId;
+
+// Extract mobile number from all possible localstorage keys
+function getUserIdentifiers() {
+    let keys = ['rdxFirebaseUserId', 'rdxVerifiedMobile', 'userMobile', 'userId', 'mobile'];
+    let found = [];
+    keys.forEach(k => {
+        let val = localStorage.getItem(k);
+        if(val) found.push(String(val).replace(/\D/g, ""));
+    });
+    return [...new Set(found)].filter(x => x.length >= 10);
+}
 
 let allLogsData = [];
 let currentCategory = 'all';
 
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
+async function fetchLogsDeep() {
+    const ids = getUserIdentifiers();
+    debug("Searching User IDs: " + (ids.join(', ') || 'None found in LocalStorage'));
 
-/* MULTI-SOURCE HYBRID FETCH FOR GUARANTEED HISTORY LOGS */
-async function loadHistoryData() {
-    if (!userId) {
-        document.getElementById("historyList").innerHTML = `<div class="empty-state">User not logged in.</div>`;
+    if(ids.length === 0) {
+        document.getElementById("historyList").innerHTML = `<div class="empty-state">Mobile number not found in localStorage. Please login again.</div>`;
         return;
     }
 
-    // Load User Drawer Header Info
-    firebaseDB.collection("customers").doc(docIdWithCountry).get().then(doc => {
-        if(doc.exists){
-            const d = doc.data();
-            document.getElementById("drawerName").textContent = String(d.name || ("User " + userId.slice(-4))).trim();
-            document.getElementById("drawerMobile").textContent = "+" + docIdWithCountry;
+    let combined = [];
+
+    for (let rawId of ids) {
+        let tenDigit = rawId.slice(-10);
+        let countryDigit = "91" + tenDigit;
+
+        try {
+            // Check Document Collections: customers -> history
+            let snap1 = await firebaseDB.collection("customers").doc(countryDigit).collection("history").get();
+            snap1.forEach(d => combined.push({ id: d.id, ...d.data() }));
+
+            let snap2 = await firebaseDB.collection("customers").doc(tenDigit).collection("history").get();
+            snap2.forEach(d => combined.push({ id: d.id, ...d.data() }));
+
+            // Check Direct Collections: transactions
+            let snap3 = await firebaseDB.collection("transactions").get();
+            snap3.forEach(d => {
+                let data = d.data();
+                let strData = JSON.stringify(data);
+                if(strData.includes(tenDigit) || strData.includes(countryDigit)) {
+                    combined.push({ id: d.id, ...data });
+                }
+            });
+
+            // Check Battles
+            let snap4 = await firebaseDB.collection("battles").get();
+            snap4.forEach(d => {
+                let data = d.data();
+                let strData = JSON.stringify(data);
+                if(strData.includes(tenDigit) || strData.includes(countryDigit)) {
+                    combined.push({
+                        id: d.id,
+                        type: 'battle',
+                        title: 'Ludo Battle',
+                        amount: data.amount || data.entryFee || 0,
+                        status: data.status || 'Completed',
+                        createdAt: data.createdAt || data.timestamp
+                    });
+                }
+            });
+
+        } catch (err) {
+            debug("Error: " + err.message);
         }
-    });
-
-    let combinedLogs = [];
-
-    try {
-        // 1. Fetch from Subcollection: customers/{id}/history
-        const subSnap1 = await firebaseDB.collection("customers").doc(docIdWithCountry).collection("history").get();
-        subSnap1.forEach(doc => combinedLogs.push({ id: doc.id, ...doc.data() }));
-
-        const subSnap2 = await firebaseDB.collection("customers").doc(docIdWithoutCountry).collection("history").get();
-        subSnap2.forEach(doc => {
-            if(!combinedLogs.some(item => item.id === doc.id)) combinedLogs.push({ id: doc.id, ...doc.data() });
-        });
-
-        // 2. Fetch from Root Collection: transactions
-        const transSnap = await firebaseDB.collection("transactions").get();
-        transSnap.forEach(doc => {
-            const data = doc.data();
-            if ((data.userId === docIdWithCountry || data.userId === docIdWithoutCountry || data.mobile === docIdWithoutCountry) && !combinedLogs.some(item => item.id === doc.id)) {
-                combinedLogs.push({ id: doc.id, ...data });
-            }
-        });
-
-        // 3. Fetch from Root Collection: battles
-        const battleSnap = await firebaseDB.collection("battles").get();
-        battleSnap.forEach(doc => {
-            const data = doc.data();
-            if ((data.creatorId === docIdWithCountry || data.joinerId === docIdWithCountry || data.creatorId === docIdWithoutCountry || data.joinerId === docIdWithoutCountry) && !combinedLogs.some(item => item.id === doc.id)) {
-                combinedLogs.push({
-                    id: doc.id,
-                    type: 'battle',
-                    title: `Battle vs ${data.creatorId === docIdWithCountry || data.creatorId === docIdWithoutCountry ? (data.joinerName || 'Opponent') : (data.creatorName || 'Opponent')}`,
-                    amount: data.amount || data.entryFee || 0,
-                    status: data.status || 'Completed',
-                    createdAt: data.createdAt || data.timestamp
-                });
-            }
-        });
-
-    } catch (err) {
-        console.error("Firestore Load Error:", err);
     }
 
-    allLogsData = combinedLogs;
+    // Deduplicate
+    const uniqueMap = new Map();
+    combined.forEach(item => uniqueMap.set(item.id, item));
+    allLogsData = Array.from(uniqueMap.values());
+
+    debug(`Fetch Complete! Found ${allLogsData.length} records for IDs: ${ids.join(', ')}`);
     renderLogs();
 }
 
@@ -576,19 +388,15 @@ function renderLogs() {
     const query = document.getElementById("searchInput").value.toLowerCase().trim();
 
     let filtered = allLogsData.filter(item => {
-        const itemType = (item.type || '').toLowerCase();
-        
+        let type = (item.type || '').toLowerCase();
         let matchesCategory = true;
-        if(currentCategory === 'battle') matchesCategory = itemType.includes('battle') || itemType.includes('game') || itemType.includes('ludo');
-        else if(currentCategory === 'deposit') matchesCategory = itemType.includes('deposit') || itemType.includes('add');
-        else if(currentCategory === 'withdraw') matchesCategory = itemType.includes('withdraw') || itemType.includes('payout');
+        
+        if(currentCategory === 'battle') matchesCategory = type.includes('battle') || type.includes('game');
+        else if(currentCategory === 'deposit') matchesCategory = type.includes('deposit') || type.includes('add');
+        else if(currentCategory === 'withdraw') matchesCategory = type.includes('withdraw');
 
-        const title = (item.title || item.type || '').toLowerCase();
-        const desc = (item.description || item.utr || item.opponent || '').toLowerCase();
-        const status = (item.status || '').toLowerCase();
-        const amount = String(item.amount || '');
-
-        const matchesSearch = title.includes(query) || desc.includes(query) || status.includes(query) || amount.includes(query);
+        let fullStr = JSON.stringify(item).toLowerCase();
+        let matchesSearch = fullStr.includes(query);
 
         return matchesCategory && matchesSearch;
     });
@@ -598,55 +406,27 @@ function renderLogs() {
         return;
     }
 
-    // Sort by timestamp descending safely
-    filtered.sort((a,b) => {
-        const timeA = a.createdAt?.seconds || (a.timestamp ? new Date(a.timestamp).getTime()/1000 : 0);
-        const timeB = b.createdAt?.seconds || (b.timestamp ? new Date(b.timestamp).getTime()/1000 : 0);
-        return timeB - timeA;
-    });
-
     let html = '';
     filtered.forEach(item => {
-        const type = (item.type || 'transaction').toLowerCase();
-        let iconClass = 'fa-arrow-right-left';
-        let bgClass = 'type-battle';
+        let type = (item.type || 'transaction').toLowerCase();
         let isPlus = item.isCredit || type.includes('deposit') || type.includes('win');
-
-        if(type.includes('deposit') || type.includes('add')){
-            iconClass = 'fa-wallet';
-            bgClass = 'type-deposit';
-        } else if(type.includes('withdraw')){
-            iconClass = 'fa-building-columns';
-            bgClass = 'type-withdraw';
-        } else if(type.includes('refer')){
-            iconClass = 'fa-gift';
-            bgClass = 'type-refer';
-        } else {
-            iconClass = 'fa-dice';
-            bgClass = 'type-battle';
-        }
-
-        const dateStr = item.date || (item.createdAt?.seconds ? new Date(item.createdAt.seconds * 1000).toLocaleString() : 'Recently');
-        const statusStr = item.status || 'Success';
-        let badgeClass = 'badge-success';
-        if(statusStr.toLowerCase().includes('pending')) badgeClass = 'badge-pending';
-        if(statusStr.toLowerCase().includes('failed') || statusStr.toLowerCase().includes('reject')) badgeClass = 'badge-failed';
+        let dateStr = item.date || 'Recent';
 
         html += `
         <div class="history-item">
             <div class="item-left">
-                <div class="item-icon ${bgClass}">
-                    <i class="fa-solid ${iconClass}"></i>
+                <div class="item-icon ${type.includes('deposit') ? 'type-deposit' : type.includes('withdraw') ? 'type-withdraw' : 'type-battle'}">
+                    <i class="fa-solid ${type.includes('deposit') ? 'fa-wallet' : type.includes('withdraw') ? 'fa-building-columns' : 'fa-dice'}"></i>
                 </div>
                 <div class="item-details">
                     <h4>${item.title || item.type || 'Transaction'}</h4>
-                    <p>${item.description || item.utr || item.opponent || 'Account Activity'}</p>
+                    <p>${item.description || item.utr || 'Activity'}</p>
                     <small>${dateStr}</small>
                 </div>
             </div>
             <div class="item-right">
                 <div class="amount ${isPlus ? 'plus' : 'minus'}">${isPlus ? '+' : '-'}₹${parseFloat(item.amount || 0).toFixed(2)}</div>
-                <span class="status-badge ${badgeClass}">${statusStr}</span>
+                <span class="status-badge badge-success">${item.status || 'Success'}</span>
             </div>
         </div>`;
     });
@@ -665,18 +445,8 @@ function filterLogs() {
     renderLogs();
 }
 
-function logout() {
-    if (!confirm("Kya aap Logout karna chahte hain?")) return;
-    if (userId) {
-        firebaseDB.collection("customers").doc(docIdWithCountry).set({ isOnline: false }, { merge: true });
-    }
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.replace("index.html");
-}
-
 window.addEventListener("load", () => {
-    loadHistoryData();
+    fetchLogsDeep();
 });
 </script>
 
