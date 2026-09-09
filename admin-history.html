@@ -53,7 +53,7 @@
         .box-filter-controls input { background: #0d1117; border: 1px solid #2d3748; border-radius: 6px; color: #ffffff; padding: 6px 10px; font-size: 12px; outline: none; }
 
         /* Independent Scrollable Box Container */
-        .scrollable-box-container { background-color: #151921; border-radius: 12px; border: 1px solid #232936; overflow-y: auto; max-height: 280px; margin-bottom: 20px; position: relative; }
+        .scrollable-box-container { background-color: #151921; border-radius: 12px; border: 1px solid #232936; overflow-y: auto; max-height: 250px; margin-bottom: 20px; position: relative; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 12px; }
         th { background-color: #1a202c; color: #a0aec0; padding: 10px 12px; font-weight: 700; border-bottom: 1px solid #2d3748; position: sticky; top: 0; z-index: 5; white-space: nowrap; }
         td { padding: 10px 12px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
@@ -149,7 +149,7 @@
                     </div>
                 </div>
 
-                <!-- Financial Deep Statistics Grid -->
+                <!-- Financial Summary Grid -->
                 <div class="section-title"><i class="fa-solid fa-wallet"></i> Deposits & Withdrawals Status Summary</div>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -168,13 +168,17 @@
                     </div>
                 </div>
 
-                <!-- Opponent Analysis Table -->
+                <!-- Opponent Analysis Table Header & Date Filter -->
                 <div class="section-header-bar">
                     <div class="section-title"><i class="fa-solid fa-users-between-lines"></i> Opponent Head-to-Head Breakdown</div>
                     <div class="box-filter-controls">
-                        <input type="text" id="oppSearchInput" placeholder="Search Opponent Mobile..." onkeyup="filterOpponentTable()" />
+                        <span style="font-size:11px; color:#a0aec0;">Filter Date:</span>
+                        <input type="date" id="oppDateInput" onchange="filterOpponentByDate()" />
+                        <button onclick="resetOppDate()" style="background:#2d3748; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:11px;">Reset</button>
                     </div>
                 </div>
+
+                <!-- Scrollable Box Container -->
                 <div class="scrollable-box-container">
                     <table>
                         <thead>
@@ -272,7 +276,10 @@
         let activeDepUnsubscribe = null;
         let activeWithUnsubscribe = null;
 
-        let rawOpponentData = [];
+        let targetGlobalUid = "";
+        let cleanGlobalUserMobile = "";
+
+        let rawBattlesList = [];
         let rawMatchLogs = [];
         let rawWalletJourney = [];
 
@@ -313,6 +320,9 @@
                     document.getElementById("historyDataContainer").style.display = "none";
                     return;
                 }
+
+                targetGlobalUid = targetUid;
+                cleanGlobalUserMobile = userMobile.replace("+91", "").trim();
 
                 document.getElementById("historyDataContainer").style.display = "block";
 
@@ -485,12 +495,10 @@
         }
 
         function listenUserBattles(uid, userMobile) {
-            const cleanUserMobile = userMobile.replace("+91", "").trim();
-
             activeBattlesUnsubscribe = db.collection("battles").onSnapshot(snapshot => {
                 let played = 0, won = 0, lost = 0, running = 0, cancelOpen = 0, cancelRunning = 0;
-                let opponentStats = {};
                 rawMatchLogs = [];
+                rawBattlesList = [];
 
                 snapshot.forEach(doc => {
                     const b = doc.data();
@@ -501,10 +509,12 @@
                     const creatorMobile = (b.creatorMobile || "").replace("+91", "").trim();
                     const joinerMobile = (b.acceptedMobile || b.joinerMobile || "").replace("+91", "").trim();
 
-                    const isCreator = (creatorUid === uid || (creatorMobile && creatorMobile === cleanUserMobile));
-                    const isJoiner = (joinerUid === uid || (joinerMobile && joinerMobile === cleanUserMobile));
+                    const isCreator = (creatorUid === uid || (creatorMobile && creatorMobile === cleanGlobalUserMobile));
+                    const isJoiner = (joinerUid === uid || (joinerMobile && joinerMobile === cleanGlobalUserMobile));
 
                     if (isCreator || isJoiner) {
+                        rawBattlesList.push(b);
+
                         let opponentMobile = isCreator ? (b.acceptedMobile || joinerMobile || joinerUid) : (b.creatorMobile || creatorMobile || creatorUid);
                         if (!opponentMobile || opponentMobile === "") opponentMobile = "Waiting...";
 
@@ -513,31 +523,19 @@
 
                         let outcome = `<span class="text-pending">PENDING</span>`;
 
-                        if (opponentMobile && opponentMobile !== "Waiting...") {
-                            if (!opponentStats[opponentMobile]) {
-                                opponentStats[opponentMobile] = { total: 0, won: 0, lost: 0, running: 0, cancelled: 0 };
-                            }
-                            opponentStats[opponentMobile].total++;
-                        }
-
                         if (status === "completed") {
                             played++;
-                            const isWinner = (winner === uid || (winner && winner.toString().includes(cleanUserMobile)));
-                            
+                            const isWinner = (winner === uid || (winner && winner.toString().includes(cleanGlobalUserMobile)));
                             if (isWinner) {
                                 won++;
                                 outcome = `<span class="text-win">WON</span>`;
-                                if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].won++;
                             } else {
                                 lost++;
                                 outcome = `<span class="text-loss">LOST</span>`;
-                                if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].lost++;
                             }
-
                         } else if (status === "running" || status === "in_progress" || status === "pending") {
                             running++;
                             outcome = `<span class="text-pending">RUNNING</span>`;
-                            if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].running++;
                         } else if (status === "cancelled") {
                             if (joinerUid || joinerMobile) {
                                 cancelRunning++;
@@ -545,7 +543,6 @@
                                 cancelOpen++;
                             }
                             outcome = `<span class="text-cancel">CANCELLED</span>`;
-                            if (opponentMobile && opponentStats[opponentMobile]) opponentStats[opponentMobile].cancelled++;
                         }
 
                         let rawDt = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : new Date(0);
@@ -571,18 +568,51 @@
                 document.getElementById("stCancelOpen").innerText = cancelOpen;
                 document.getElementById("stCancelRunning").innerText = cancelRunning;
 
-                // Prepare Opponent List
-                rawOpponentData = [];
-                Object.keys(opponentStats).forEach(oppKey => {
-                    rawOpponentData.push({
-                        mobile: oppKey,
-                        ...opponentStats[oppKey]
-                    });
-                });
-
-                renderOpponentTable(rawOpponentData);
+                recalculateOpponentStats(rawBattlesList);
                 renderMatchLogsTable(rawMatchLogs);
             });
+        }
+
+        function recalculateOpponentStats(battlesToProcess) {
+            let opponentStats = {};
+
+            battlesToProcess.forEach(b => {
+                const creatorUid = b.creatorUid || b.hostId || "";
+                const joinerUid = b.acceptedUid || b.joinerUid || "";
+                const creatorMobile = (b.creatorMobile || "").replace("+91", "").trim();
+                const joinerMobile = (b.acceptedMobile || b.joinerMobile || "").replace("+91", "").trim();
+
+                const isCreator = (creatorUid === targetGlobalUid || (creatorMobile && creatorMobile === cleanGlobalUserMobile));
+                const isJoiner = (joinerUid === targetGlobalUid || (joinerMobile && joinerMobile === cleanGlobalUserMobile));
+
+                if (isCreator || isJoiner) {
+                    let opponentMobile = isCreator ? (b.acceptedMobile || joinerMobile || joinerUid) : (b.creatorMobile || creatorMobile || creatorUid);
+                    if (!opponentMobile || opponentMobile === "") opponentMobile = "Waiting...";
+
+                    const status = (b.status || "").toLowerCase();
+                    const winner = b.winnerUid || b.winnerMobile;
+
+                    if (opponentMobile && opponentMobile !== "Waiting...") {
+                        if (!opponentStats[opponentMobile]) {
+                            opponentStats[opponentMobile] = { mobile: opponentMobile, total: 0, won: 0, lost: 0, running: 0, cancelled: 0 };
+                        }
+                        opponentStats[opponentMobile].total++;
+
+                        if (status === "completed") {
+                            const isWinner = (winner === targetGlobalUid || (winner && winner.toString().includes(cleanGlobalUserMobile)));
+                            if (isWinner) opponentStats[opponentMobile].won++;
+                            else opponentStats[opponentMobile].lost++;
+                        } else if (status === "running" || status === "in_progress" || status === "pending") {
+                            opponentStats[opponentMobile].running++;
+                        } else if (status === "cancelled") {
+                            opponentStats[opponentMobile].cancelled++;
+                        }
+                    }
+                }
+            });
+
+            const list = Object.values(opponentStats);
+            renderOpponentTable(list);
         }
 
         function renderOpponentTable(list) {
@@ -608,10 +638,26 @@
             });
         }
 
-        function filterOpponentTable() {
-            const query = document.getElementById("oppSearchInput").value.trim().toLowerCase();
-            const filtered = rawOpponentData.filter(x => x.mobile.toLowerCase().includes(query));
-            renderOpponentTable(filtered);
+        function filterOpponentByDate() {
+            const selectedDate = document.getElementById("oppDateInput").value;
+            if (!selectedDate) {
+                recalculateOpponentStats(rawBattlesList);
+                return;
+            }
+
+            const filteredBattles = rawBattlesList.filter(b => {
+                let rawDt = b.createdAt ? (b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt)) : null;
+                if (!rawDt) return false;
+                let isoDate = rawDt.toISOString().split('T')[0];
+                return isoDate === selectedDate;
+            });
+
+            recalculateOpponentStats(filteredBattles);
+        }
+
+        function resetOppDate() {
+            document.getElementById("oppDateInput").value = "";
+            recalculateOpponentStats(rawBattlesList);
         }
 
         function renderMatchLogsTable(list) {
