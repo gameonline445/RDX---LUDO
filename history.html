@@ -13,7 +13,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Security Check: Agar user logged-in nahi hai toh seedha index.html par bhejein
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -84,7 +84,7 @@ button,input{font:inherit;}
     object-fit:cover;
 }
 
-/* HEADER RIGHT - EXACT MATCH TO SCREENSHOT */
+/* HEADER RIGHT - 3 ICONS */
 .header-right{
     display:flex;
     align-items:center;
@@ -108,10 +108,9 @@ button,input{font:inherit;}
     transform: scale(0.95);
 }
 
-/* EXACT ICON COLORS */
-.notification{ background: #5c67f2; } /* Purple/Blue */
-.wallet-top{ background: #42be65; }   /* Green */
-.redeem-top{ background: #e86a2c; }   /* Orange */
+.notification{ background: #5c67f2; }
+.wallet-top{ background: #42be65; }
+.redeem-top{ background: #e86a2c; }
 
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
@@ -264,7 +263,7 @@ button,input{font:inherit;}
 }
 .empty-state i{font-size:36px;color:#bae6fd;margin-bottom:10px;}
 
-/* SIDE DRAWER */
+/* SIDE DRAWER (EXACT DESIGN MATCH) */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -292,21 +291,21 @@ button,input{font:inherit;}
 }
 .drawer.active{transform:translateX(0);}
 .drawer-header{
-    padding:20px 16px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
+    padding:16px 14px;
+    background:#f0f7ff;
+    border-bottom:1px solid #e2e8f0;
     display:flex;
     align-items:center;
     justify-content:space-between;
 }
 .drawer-user{display:flex;align-items:center;gap:10px;}
 .drawer-avatar{
-    width:46px;
-    height:46px;
+    width:42px;
+    height:42px;
     border-radius:50%;
     overflow:hidden;
     background:#ffffff;
-    border:1.5px solid #bae6fd;
+    border:1px solid #bae6fd;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -317,58 +316,58 @@ button,input{font:inherit;}
     object-fit:cover;
 }
 .drawer-close{
-    width:34px;
-    height:34px;
+    width:32px;
+    height:32px;
     border-radius:50%;
-    border:1px solid #bae6fd;
+    border:1px solid #cbd5e1;
     background:#ffffff;
     color:#0c4a6e;
-    font-size:16px;
+    font-size:14px;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
 }
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
+.drawer-links{flex:1;overflow-y:auto;padding:14px 12px;}
 .drawer-item{
     width:100%;
-    padding:10px 14px;
+    padding:10px 12px;
     border:0;
     border-radius:14px;
     background:transparent;
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:14px;
     font-size:14px;
-    font-weight:750;
-    color:#334155;
+    font-weight:800;
+    color:#1e293b;
     cursor:pointer;
-    margin-bottom:6px;
+    margin-bottom:8px;
     transition:background 0.2s ease;
 }
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item:active{background:#f1f5f9;}
+
 .drawer-item-icon{
-    width:36px;
-    height:36px;
-    border-radius:12px;
+    width:38px;
+    height:38px;
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
     color:white;
     font-size:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+    flex-shrink:0;
 }
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-deposit{background:linear-gradient(145deg,#0284c7,#0369a1);}
-.menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 
-.drawer-footer{display:none;}
+/* SIDE MENU ICON COLORS (EXACT MATCH TO SCREENSHOTS) */
+.m-home{ background: #5c67f2; }
+.m-profile{ background: #e86a2c; }
+.m-wallet{ background: #42be65; }
+.m-refer{ background: #e86a2c; }
+.m-history{ background: #5c67f2; }
+.m-notif{ background: #3b82f6; }
+.m-support{ background: #38bdf8; }
+.m-logout{ background: #ef4444; }
 
 /* BOTTOM NAV */
 .bottom-nav{
@@ -381,7 +380,7 @@ button,input{font:inherit;}
     backdrop-filter:blur(12px);
     border-top:1.5px solid #e2e8f0;
     display:flex;
-    justify-content:space-around;
+    justify-space:around;
     align-items:center;
     z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
@@ -422,7 +421,7 @@ button,input{font:inherit;}
 
 <body>
 
-<!-- SIDE DRAWER -->
+<!-- SIDE DRAWER (EXACT SAME MENU ITEMS) -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
@@ -431,22 +430,53 @@ button,input{font:inherit;}
                 <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
             </div>
             <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
+                <h4 style="font-size:14px; font-weight:800; color:#0c4a6e;" id="drawerName">Jai shree shyam</h4>
+                <small style="color:#64748b; font-weight:700; text-decoration:underline;" id="drawerMobile">+917878852370</small>
             </div>
         </div>
         <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
     <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
-        <button class="drawer-item" onclick="window.location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
-        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
-        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
-        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
+        <button class="drawer-item" onclick="window.location.replace('dashboard.html')">
+            <div class="drawer-item-icon m-home"><i class="fa-solid fa-house"></i></div>
+            <span>Home</span>
+        </button>
+        
+        <button class="drawer-item" onclick="window.location.replace('profile.html')">
+            <div class="drawer-item-icon m-profile"><i class="fa-solid fa-user"></i></div>
+            <span>My Profile</span>
+        </button>
+        
+        <button class="drawer-item" onclick="window.location.replace('wallet.html')">
+            <div class="drawer-item-icon m-wallet"><i class="fa-solid fa-wallet"></i></div>
+            <span>My Wallet</span>
+        </button>
+        
+        <button class="drawer-item" onclick="window.location.replace('referral.html')">
+            <div class="drawer-item-icon m-refer"><i class="fa-solid fa-gift"></i></div>
+            <span>Refer & Earn</span>
+        </button>
+        
+        <button class="drawer-item" onclick="window.location.replace('history.html')">
+            <div class="drawer-item-icon m-history"><i class="fa-solid fa-clock-rotate-left"></i></div>
+            <span>History</span>
+        </button>
+        
+        <button class="drawer-item" onclick="window.location.replace('notification.html')">
+            <div class="drawer-item-icon m-notif"><i class="fa-solid fa-bell"></i></div>
+            <span>Notifications</span>
+        </button>
+        
+        <button class="drawer-item" onclick="window.location.replace('support.html')">
+            <div class="drawer-item-icon m-support"><i class="fa-solid fa-headset"></i></div>
+            <span>Support</span>
+        </button>
+
+        <button class="drawer-item" onclick="handleLogout()">
+            <div class="drawer-item-icon m-logout"><i class="fa-solid fa-right-from-bracket"></i></div>
+            <span>Logout</span>
+        </button>
     </div>
 </div>
 
@@ -457,7 +487,6 @@ button,input{font:inherit;}
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
-    <!-- 3 ICONS: EXACT SAME TO SCREENSHOT -->
     <div class="header-right">
         <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
         <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
@@ -500,7 +529,6 @@ button,input{font:inherit;}
 </nav>
 
 <script>
-// Mobile Back Button Override: Directly redirect to dashboard on back button press
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
@@ -532,6 +560,11 @@ let withdrawalsData = [];
 function toggleMenu() {
     document.getElementById("sideDrawer").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
+}
+
+function handleLogout() {
+    localStorage.clear();
+    window.location.replace("index.html");
 }
 
 function parseItemTime(ts) {
