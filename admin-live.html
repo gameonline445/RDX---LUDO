@@ -28,30 +28,23 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
 
-        /* STATS CARDS GRID */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
         .stat-card { background-color: #151921; padding: 18px; border-radius: 14px; border: 1px solid #232936; }
         .stat-card .title { font-size: 13px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
-        .stat-card .value { font-size: 26px; font-weight: 800; color: #3182ce; }
+        .stat-card .value { font-size: 28px; font-weight: 800; color: #48bb78; }
 
-        /* FILTER BAR */
-        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-end; }
-        .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 200px; }
-        .filter-group label { font-size: 12px; color: #a0aec0; font-weight: 600; }
-        .filter-group input { padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
-        .filter-group input:focus { border-color: #3182ce; }
+        .filter-card { background-color: #151921; border-radius: 14px; border: 1px solid #232936; padding: 18px; margin-bottom: 24px; }
+        .filter-card input { width: 100%; padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+        .filter-card input:focus { border-color: #3182ce; }
 
-        /* TABLE */
         .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
         th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
         td { padding: 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; }
         tr:last-child td { border-bottom: none; }
 
-        /* LIVE BADGE */
         .status-online { display: inline-flex; align-items: center; gap: 6px; color: #48bb78; font-weight: 700; font-size: 12px; background: rgba(72, 187, 120, 0.1); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(72, 187, 120, 0.3); }
         .dot-online { width: 8px; height: 8px; background-color: #48bb78; border-radius: 50%; box-shadow: 0 0 8px #48bb78; animation: pulse 1.5s infinite; }
-        
         .status-offline { color: #a0aec0; font-weight: 600; font-size: 12px; background: rgba(160, 174, 192, 0.1); padding: 4px 10px; border-radius: 20px; }
 
         @keyframes pulse {
@@ -74,7 +67,7 @@
     <div class="admin-layout">
         <aside class="sidebar">
             <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
-            <a href="admin-live-users.html" class="nav-item active"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-live.html" class="nav-item active"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
             <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
             <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
             <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
@@ -89,45 +82,35 @@
         <main class="main-content">
             <h1 class="dashboard-title">Live Users Monitor</h1>
 
-            <!-- STATS CARDS -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="title">Active Live Users</div>
-                    <div class="value" id="statOnlineUsers" style="color: #48bb78;">0</div>
+                    <div class="title">Total Active Live Users</div>
+                    <div class="value" id="statOnlineUsers">0</div>
                 </div>
                 <div class="stat-card">
                     <div class="title">Total Registered Users</div>
-                    <div class="value" id="statTotalUsers">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="title">Active Battles Playing</div>
-                    <div class="value" id="statActiveBattles" style="color: #ed8936;">0</div>
+                    <div class="value" id="statTotalUsers" style="color: #3182ce;">0</div>
                 </div>
             </div>
 
-            <!-- FILTERS -->
             <div class="filter-card">
-                <div class="filter-group">
-                    <label>Search User Name / Mobile / City</label>
-                    <input type="text" id="searchInput" placeholder="Search by name, phone, or location..." onkeyup="filterUsers()">
-                </div>
+                <input type="text" id="searchInput" placeholder="Search active user by Mobile, Name, City, or State..." onkeyup="filterUsers()">
             </div>
 
-            <!-- TABLE -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
                             <th>Status</th>
-                            <th>User Name</th>
                             <th>Mobile Number</th>
-                            <th>City / State Location</th>
-                            <th>IP Address</th>
-                            <th>Last Active</th>
+                            <th>User Name</th>
+                            <th>City & State Location</th>
+                            <th>Current Active Page</th>
+                            <th>Last Activity Time</th>
                         </tr>
                     </thead>
                     <tbody id="liveUsersTable">
-                        <tr><td colspan="6" style="text-align: center;">Fetching live user data...</td></tr>
+                        <tr><td colspan="6" style="text-align: center;">Fetching active users...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -160,7 +143,6 @@
                     const data = doc.data();
                     data.id = doc.id;
                     
-                    // Check if lastActive was within 3 minutes
                     let isOnline = false;
                     if (data.isOnline === true) {
                         isOnline = true;
@@ -180,11 +162,6 @@
 
                 renderTable(allUsersList);
             });
-
-            // Fetching active playing battles
-            db.collection("battles").where("status", "==", "running").onSnapshot(snap => {
-                document.getElementById("statActiveBattles").innerText = snap.size;
-            });
         }
 
         function renderTable(users) {
@@ -192,38 +169,41 @@
             tbody.innerHTML = "";
 
             if (users.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No users found.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No user records found.</td></tr>`;
                 return;
             }
 
-            // Online users first
             users.sort((a, b) => (b.computedOnline ? 1 : 0) - (a.computedOnline ? 1 : 0));
 
             users.forEach(u => {
                 const tr = document.createElement("tr");
 
                 const statusHTML = u.computedOnline 
-                    ? `<span class="status-online"><span class="dot-online"></span> LIVE</span>`
-                    : `<span class="status-offline">Offline</span>`;
+                    ? `<span class="status-online"><span class="dot-online"></span> ONLINE</span>`
+                    : `<span class="status-offline">OFFLINE</span>`;
 
+                const phone = u.phone || u.mobile || u.userId || u.id;
                 const name = u.name || u.userName || "User";
-                const phone = u.phone || u.userId || u.id;
-                const location = (u.city || u.state) ? `${u.city || ''}${u.city && u.state ? ', ' : ''}${u.state || ''}` : (u.location || 'N/A');
-                const ip = u.ipAddress || u.ip || "192.168.1.X";
                 
-                let lastActiveStr = "N/A";
+                const city = u.city || "N/A";
+                const state = u.state || "N/A";
+                const locationStr = (city !== "N/A" || state !== "N/A") ? `${city}, ${state}` : "Location Not Shared";
+                
+                const currentPage = u.currentPage || u.activePage || "Home Page";
+
+                let lastActiveStr = "Just Now";
                 if (u.lastActive) {
                     const dt = u.lastActive.toDate ? u.lastActive.toDate() : new Date(u.lastActive);
-                    lastActiveStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    lastActiveStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                 }
 
                 tr.innerHTML = `
                     <td>${statusHTML}</td>
+                    <td><strong style="color: #63b3ed; font-size: 15px;">${phone}</strong></td>
                     <td><strong>${name}</strong></td>
-                    <td>${phone}</td>
-                    <td><i class="fa-solid fa-location-dot" style="color:#e53e3e; margin-right:4px;"></i> ${location}</td>
-                    <td><span style="color:#a0aec0; font-family:monospace;">${ip}</span></td>
-                    <td>${lastActiveStr}</td>
+                    <td><i class="fa-solid fa-location-dot" style="color:#e53e3e; margin-right:5px;"></i> ${locationStr}</td>
+                    <td><span style="background: #2d3748; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">${currentPage}</span></td>
+                    <td style="font-size: 12px; color: #a0aec0;">${lastActiveStr}</td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -233,10 +213,11 @@
             const search = document.getElementById("searchInput").value.toLowerCase().trim();
             const filtered = allUsersList.filter(u => {
                 const name = (u.name || u.userName || "").toLowerCase();
-                const phone = (u.phone || u.userId || "").toLowerCase();
-                const loc = ((u.city || "") + " " + (u.state || "") + " " + (u.location || "")).toLowerCase();
+                const phone = (u.phone || u.mobile || u.userId || "").toLowerCase();
+                const city = (u.city || "").toLowerCase();
+                const state = (u.state || "").toLowerCase();
 
-                return name.includes(search) || phone.includes(search) || loc.includes(search);
+                return name.includes(search) || phone.includes(search) || city.includes(search) || state.includes(search);
             });
 
             renderTable(filtered);
