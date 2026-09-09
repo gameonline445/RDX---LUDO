@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDX LUDO ADMIN - Block & Report Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- FIREBASE SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: none; flex-direction: column; }
+        
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; cursor: pointer; }
+
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
+
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #e53e3e; font-size: 32px; font-weight: 800; margin-bottom: 20px; }
+
+        .search-box { position: relative; margin-bottom: 20px; max-width: 500px; }
+        .search-box input { width: 100%; padding: 12px 16px 12px 42px; border-radius: 10px; border: 1px solid #2d3748; background-color: #151921; color: #ffffff; font-size: 14px; outline: none; }
+        .search-box input:focus { border-color: #e53e3e; }
+        .search-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #718096; }
+
+        .table-container { background-color: #151921; border-radius: 14px; border: 1px solid #232936; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background-color: #1a202c; color: #a0aec0; padding: 14px; font-weight: 700; border-bottom: 1px solid #2d3748; white-space: nowrap; }
+        td { padding: 14px; border-bottom: 1px solid #232936; color: #e2e8f0; vertical-align: middle; white-space: nowrap; }
+        tr:last-child td { border-bottom: none; }
+
+        .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 700; display: inline-block; }
+        .badge.active-user { background-color: #276749; color: #9ae6b4; }
+        .badge.blocked-user { background-color: #9b2c2c; color: #feb2b2; }
+
+        .btn-action { border: none; padding: 6px 14px; border-radius: 6px; font-weight: 700; font-size: 12px; cursor: pointer; }
+        .btn-block { background-color: #e53e3e; color: #ffffff; }
+        .btn-unblock { background-color: #38a169; color: #ffffff; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); display: none; align-items: center; justify-content: center; z-index: 9999; }
+        .modal-card { background: #151921; width: 100%; max-width: 420px; border-radius: 16px; border: 1px solid #2d3748; padding: 24px; }
+        .modal-card h3 { color: #feb2b2; font-size: 18px; margin-bottom: 16px; font-weight: 700; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; color: #a0aec0; font-weight: 600; margin-bottom: 6px; }
+        .form-group textarea { width: 100%; padding: 10px 14px; background: #0d1117; border: 1px solid #2d3748; border-radius: 8px; color: #ffffff; font-size: 14px; outline: none; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-cancel { background: #2d3748; color: #ffffff; padding: 8px 16px; border-radius: 8px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-confirm { background: #e53e3e; color: #ffffff; padding: 8px 18px; border-radius: 8px; border: none; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+        <button onclick="adminLogout()" class="logout-link">Logout</button>
+    </header>
+
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referrals.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-block.html" class="nav-item active"><i class="fa-solid fa-user-slash"></i> Block & Report</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
+
+        <main class="main-content">
+            <h1 class="dashboard-title">Block & Report Management</h1>
+
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" onkeyup="filterUsers()" placeholder="Search by User ID, Name or Phone Number...">
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Mobile / UID</th>
+                            <th>Wallet Balance</th>
+                            <th>Account Status</th>
+                            <th>Block Reason</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable">
+                        <tr><td colspan="6" style="text-align: center;">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- BLOCK USER MODAL -->
+    <div class="modal-overlay" id="blockModal">
+        <div class="modal-card">
+            <h3>Block User Account</h3>
+            <div class="form-group">
+                <label>Reason for Blocking</label>
+                <textarea id="blockReasonInput" rows="3" placeholder="e.g. Fraudulent activity, Fake Room Code, Suspicious Behavior"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-confirm" onclick="confirmBlockUser()">Block User</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+
+        let allUsers = [];
+        let selectedUserId = null;
+
+        // AUTH GUARD
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            } else {
+                document.body.style.display = "flex";
+                listenUsers();
+            }
+        });
+
+        function adminLogout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "admin-login.html";
+            });
+        }
+
+        function listenUsers() {
+            db.collection("customers").onSnapshot((snap) => {
+                allUsers = [];
+                snap.forEach(doc => {
+                    let uData = doc.data();
+                    uData.id = doc.id;
+                    allUsers.push(uData);
+                });
+                renderTable(allUsers);
+            });
+        }
+
+        function renderTable(dataList) {
+            const tbody = document.getElementById("usersTable");
+            tbody.innerHTML = "";
+
+            if (dataList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">No users found.</td></tr>`;
+                return;
+            }
+
+            dataList.forEach(user => {
+                const tr = document.createElement("tr");
+                const isBlocked = user.isBlocked === true;
+                const statusBadge = isBlocked 
+                    ? `<span class="badge blocked-user">Blocked</span>` 
+                    : `<span class="badge active-user">Active</span>`;
+
+                const actionBtn = isBlocked
+                    ? `<button class="btn-action btn-unblock" onclick="unblockUser('${user.id}')">Unblock</button>`
+                    : `<button class="btn-action btn-block" onclick="openBlockModal('${user.id}')">Block User</button>`;
+
+                tr.innerHTML = `
+                    <td><strong>${user.name || user.userName || 'User'}</strong></td>
+                    <td>${user.phone || user.id}</td>
+                    <td style="color:#48bb78; font-weight:700;">₹${user.wallet || user.balance || 0}</td>
+                    <td>${statusBadge}</td>
+                    <td style="font-size:12px; color:#feb2b2;">${user.blockReason || '-'}</td>
+                    <td>${actionBtn}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterUsers() {
+            const q = document.getElementById("searchInput").value.toLowerCase().trim();
+            const filtered = allUsers.filter(u => {
+                const name = (u.name || u.userName || "").toLowerCase();
+                const phone = String(u.phone || u.id || "").toLowerCase();
+                return name.includes(q) || phone.includes(q);
+            });
+            renderTable(filtered);
+        }
+
+        function openBlockModal(userId) {
+            selectedUserId = userId;
+            document.getElementById("blockReasonInput").value = "";
+            document.getElementById("blockModal").style.display = "flex";
+        }
+
+        function closeModal() {
+            document.getElementById("blockModal").style.display = "none";
+            selectedUserId = null;
+        }
+
+        function confirmBlockUser() {
+            if (!selectedUserId) return;
+            const reason = document.getElementById("blockReasonInput").value.trim() || "Violation of Terms & Conditions";
+
+            db.collection("customers").doc(selectedUserId).update({
+                isBlocked: true,
+                blockReason: reason,
+                blockedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).then(() => {
+                alert("User has been BLOCKED successfully!");
+                closeModal();
+            }).catch((err) => {
+                alert("Error: " + err.message);
+            });
+        }
+
+        function unblockUser(userId) {
+            if (confirm("Are you sure you want to unblock this user?")) {
+                db.collection("customers").doc(userId).update({
+                    isBlocked: false,
+                    blockReason: firebase.firestore.FieldValue.delete()
+                }).then(() => {
+                    alert("User has been UNBLOCKED!");
+                }).catch((err) => {
+                    alert("Error: " + err.message);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
