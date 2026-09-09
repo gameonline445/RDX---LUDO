@@ -550,7 +550,7 @@ function loadDashboardDataRealtime() {
     });
 }
 
-// 🔴 PRESENCE MONITORING WITH CITY & STATE TRACKING
+// STRICT HEARTBEAT & ACTIVE PRESENCE TRACKING
 async function startPresenceHeartbeat() {
     if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -559,7 +559,7 @@ async function startPresenceHeartbeat() {
     let userCity = "Unknown";
     let userState = "Unknown";
 
-    // City & State Geolocation Capture
+    // Geolocation Fetch
     try {
         const res = await fetch('https://ipapi.co/json/');
         const data = await res.json();
@@ -571,30 +571,40 @@ async function startPresenceHeartbeat() {
         console.log("Location fetch error:", e);
     }
 
-    // Function to update Firestore
-    const setOnline = (onlineStatus) => {
+    // Ping update function
+    const sendHeartbeat = (isOnlineStatus) => {
         const payload = {
-            isOnline: onlineStatus,
+            isOnline: isOnlineStatus,
+            lastPing: firebase.firestore.FieldValue.serverTimestamp(),
             lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         if (userCity !== "Unknown") payload.city = userCity;
         if (userState !== "Unknown") payload.state = userState;
 
-        userRef.set(payload, { merge: true }).catch(err => console.error("Presence update error:", err));
+        userRef.set(payload, { merge: true }).catch(err => console.error("Presence error:", err));
     };
 
-    // Initial Status Set
-    setOnline(true);
+    // User page par aate hi ONLINE mark karo
+    sendHeartbeat(true);
 
-    // Tab Switch / Page Focus Events
+    // Continuous Heartbeat Every 5 Seconds (Jab tak user active tab me hai)
+    setInterval(() => {
+        if (!document.hidden) {
+            sendHeartbeat(true);
+        } else {
+            sendHeartbeat(false);
+        }
+    }, 5000);
+
+    // Instant Offline Triggers (Tab switch, backgrounding, browser close)
     document.addEventListener("visibilitychange", () => {
-        setOnline(!document.hidden);
+        sendHeartbeat(!document.hidden);
     });
 
-    window.addEventListener("blur", () => setOnline(false));
-    window.addEventListener("focus", () => setOnline(true));
-    window.addEventListener("pagehide", () => setOnline(false));
-    window.addEventListener("beforeunload", () => setOnline(false));
+    window.addEventListener("blur", () => sendHeartbeat(false));
+    window.addEventListener("focus", () => sendHeartbeat(true));
+    window.addEventListener("pagehide", () => sendHeartbeat(false));
+    window.addEventListener("beforeunload", () => sendHeartbeat(false));
 }
 
 function logout() {
