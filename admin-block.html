@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Blocked Users Management</title>
+<title>RDX LUDO - Block & Report Management</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -158,6 +158,9 @@ body {
     font-size:24px;
     font-weight:900;
     margin-bottom:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
 }
 
 /* SEARCH BAR */
@@ -234,6 +237,9 @@ td {
     cursor: pointer;
     transition: 0.2s;
     font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 .btn-block { background: #ef4444; color: #ffffff; }
 .btn-block:hover { background: #dc2626; }
@@ -291,13 +297,13 @@ td {
 
 <!-- MAIN PAGE CONTENT -->
 <div class="main-content">
-    <h1 class="page-title"><i class="fa-solid fa-user-slash"></i> Block & Report Management</h1>
+    <h1 class="page-title"><i class="fa-solid fa-user-slash"></i> Block & Unblock Management</h1>
 
     <!-- MOBILE NUMBER SEARCH BAR -->
     <div class="search-box-container">
         <div class="search-input-wrapper">
             <i class="fa-solid fa-phone"></i>
-            <input type="text" id="mobileSearchInput" class="search-input" placeholder="Search by Mobile Number to Block / Unblock..." onkeyup="filterByMobile()">
+            <input type="text" id="mobileSearchInput" class="search-input" placeholder="Search by Mobile Number to Block or Unblock..." onkeyup="filterByMobile()">
         </div>
     </div>
 
@@ -379,21 +385,40 @@ function loadUsersData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Auto detect if user is blocked across database formats
+            // Auto detect if user is blocked across all firebase formats
             const isBlocked = data.isBlocked === true || 
                               data.isBlock === true || 
                               data.blocked === true || 
                               String(data.status).toLowerCase() === 'blocked';
 
-            const mobileNum = String(data.phone || data.mobile || data.phoneNumber || data.mobileNo || doc.id || 'N/A');
-            const userName = data.name || data.userName || data.username || 'User';
-            const balanceVal = data.balance !== undefined ? data.balance : (Number(data.deposit || 0) + Number(data.winnings || 0));
+            const rawMobile = String(data.mobile || data.phone || data.phoneNumber || data.mobileNo || doc.id || '');
+            const cleanMobile = rawMobile.replace(/\D/g, "");
+            
+            // Display phone format (+91...)
+            let displayMobile = rawMobile;
+            if (cleanMobile.length === 10) {
+                displayMobile = "+91" + cleanMobile;
+            } else if (cleanMobile.length === 12 && cleanMobile.startsWith("91")) {
+                displayMobile = "+" + cleanMobile;
+            }
+
+            const userName = data.name || data.userName || data.username || ('User ' + cleanMobile.slice(-4));
+            
+            // Wallet Balance Math
+            let balanceVal = 0;
+            if (data.balance !== undefined) {
+                balanceVal = Number(data.balance);
+            } else {
+                balanceVal = Number(data.deposit || data.depositBalance || 0) + Number(data.winnings || 0);
+            }
+
             const dateStr = isBlocked ? formatDate(data.blockedAt || data.updatedAt || data.createdAt) : '-';
 
             allRealUsers.push({
                 id: doc.id,
                 name: userName,
-                phone: mobileNum,
+                phone: displayMobile,
+                cleanPhone: cleanMobile,
                 balance: balanceVal,
                 isBlocked: isBlocked,
                 blockedDate: dateStr
@@ -420,7 +445,7 @@ function renderTable(users) {
     tbody.innerHTML = "";
 
     if (users.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="no-data">No blocked users found! Search by mobile number to block a user.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="no-data">No blocked users found! Search by mobile number to block an active user.</td></tr>`;
         return;
     }
 
@@ -454,15 +479,15 @@ function renderTable(users) {
 
 // FILTER LOGIC: DEFAULT ONLY SHOW BLOCKED USERS, SEARCH MATCHES MOBILE
 function filterByMobile() {
-    const searchMobile = document.getElementById("mobileSearchInput").value.trim().toLowerCase();
+    const searchMobile = document.getElementById("mobileSearchInput").value.trim().replace(/\D/g, "");
     
     if (!searchMobile) {
         // Agar search bar khali hai -> SIRF BLOCKED USERS DIKHENGE
         const onlyBlocked = allRealUsers.filter(u => u.isBlocked);
         renderTable(onlyBlocked);
     } else {
-        // Search bar me number dalne par matches filter honge
-        const filtered = allRealUsers.filter(u => u.phone.toLowerCase().includes(searchMobile));
+        // Search bar me number hone par Active/Blocked dono match honge
+        const filtered = allRealUsers.filter(u => u.cleanPhone.includes(searchMobile));
         renderTable(filtered);
     }
 }
@@ -475,6 +500,7 @@ function toggleUserBlock(userId, blockAction) {
         const updateData = {
             isBlocked: blockAction,
             isBlock: blockAction,
+            blocked: blockAction,
             status: blockAction ? 'blocked' : 'active',
             blockedAt: blockAction ? firebase.firestore.FieldValue.serverTimestamp() : null,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
