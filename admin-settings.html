@@ -6,19 +6,20 @@
     <title>RDX LUDO ADMIN - Payment Settings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE FIRESTORE SDK -->
+    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; }
+        body { background-color: #000000; color: #ffffff; min-height: 100vh; display: none; flex-direction: column; }
         
         .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
         .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
         .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
-        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; cursor: pointer; }
 
         .admin-layout { display: flex; flex: 1; }
         .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
@@ -48,7 +49,7 @@
             <div class="brand-logo-img">RDX</div>
             <span class="brand-title">RDX LUDO ADMIN</span>
         </div>
-        <a href="admin-login.html" class="logout-link">Logout</a>
+        <button onclick="adminLogout()" class="logout-link">Logout</button>
     </header>
 
     <div class="admin-layout">
@@ -127,6 +128,24 @@
         }
         const db = firebase.firestore();
 
+        // 🔒 STRICT SECURITY AUTHENTICATION GUARD
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            } else {
+                document.body.style.display = "flex";
+                loadPaymentSettings();
+            }
+        });
+
+        function adminLogout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "admin-login.html";
+            }).catch(() => {
+                window.location.href = "admin-login.html";
+            });
+        }
+
         function loadPaymentSettings() {
             db.collection("paymentSettings").doc("config").get().then((doc) => {
                 if (doc.exists) {
@@ -186,8 +205,6 @@
                 btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Payment Settings';
             });
         }
-
-        window.onload = loadPaymentSettings;
     </script>
 </body>
 </html>
