@@ -117,6 +117,7 @@
                 <table class="dep-table">
                     <thead>
                         <tr>
+                            <th>S.No.</th>
                             <th>Date & Time</th>
                             <th>Customer Name</th>
                             <th>Mobile No.</th>
@@ -128,7 +129,7 @@
                         </tr>
                     </thead>
                     <tbody id="realDepositBody">
-                        <tr><td colspan="8" style="text-align:center; padding:20px; color:#666;">Loading Firestore Deposits...</td></tr>
+                        <tr><td colspan="9" style="text-align:center; padding:20px; color:#666;">Loading Firestore Deposits...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -178,6 +179,19 @@
             });
         }
 
+        function getTimeStamp(item) {
+            if (item.createdAt) {
+                return item.createdAt.toDate ? item.createdAt.toDate().getTime() : new Date(item.createdAt).getTime();
+            }
+            if (item.timestamp) {
+                return new Date(item.timestamp).getTime();
+            }
+            if (item.date) {
+                return new Date(item.date).getTime();
+            }
+            return 0;
+        }
+
         function initDepositsListener() {
             db.collection("deposits").onSnapshot((snapshot) => {
                 const tableBody = document.getElementById("realDepositBody");
@@ -191,7 +205,7 @@
                 const todayFormatted = todayObj.toLocaleDateString('en-IN');
 
                 if (snapshot.empty) {
-                    tableBody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
+                    tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
                     document.getElementById("totalDepositVal").innerText = "₹0";
                     document.getElementById("todayDepositVal").innerText = "₹0";
                     document.getElementById("pendingCountVal").innerText = "0 Pending";
@@ -205,13 +219,22 @@
                     depositList.push(data);
                 });
 
+                // SORTING LOGIC: Pending Subse Upar + Latest Date Pehle (Serial Order)
                 depositList.sort((a, b) => {
                     let statusA = (a.status || "Pending").toLowerCase();
                     let statusB = (b.status || "Pending").toLowerCase();
-                    if (statusA === 'pending' && statusB !== 'pending') return -1;
-                    if (statusA !== 'pending' && statusB === 'pending') return 1;
-                    return 0;
+
+                    let isPendingA = statusA === 'pending';
+                    let isPendingB = statusB === 'pending';
+
+                    if (isPendingA && !isPendingB) return -1;
+                    if (!isPendingA && isPendingB) return 1;
+
+                    // Agar status same hai toh Time Serial ke according Newest First
+                    return getTimeStamp(b) - getTimeStamp(a);
                 });
+
+                let serialNo = 1;
 
                 depositList.forEach((data) => {
                     let amt = Number(data.amount || data.amt || 0);
@@ -219,30 +242,24 @@
                     let statusLower = rawStatus.toLowerCase();
                     let uid = data.userId || data.uid || data.user_id || "";
 
-                    // Enhanced Screenshot Fetching Logic
                     let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
 
-                    // Mobile Check
-                    let mobile = data.mobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
+                    // Enhanced Mobile Field Checks
+                    let mobile = data.mobile || data.userMobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
                     let mobileCellId = `mobile-${data.id}`;
 
-                    // Fallback Date Formatting
                     let dateStr = "N/A";
                     let itemDateFormatted = "";
-                    if (data.date) {
+                    let ts = getTimeStamp(data);
+                    if (ts > 0) {
+                        let d = new Date(ts);
+                        dateStr = d.toLocaleString('en-IN');
+                        itemDateFormatted = d.toLocaleDateString('en-IN');
+                    } else if (data.date) {
                         dateStr = data.date;
                         itemDateFormatted = data.date;
-                    } else if (data.createdAt) {
-                        let d = data.createdAt.toDate ? data.createdAt.toDate() : new Date(data.createdAt);
-                        dateStr = d.toLocaleString('en-IN');
-                        itemDateFormatted = d.toLocaleDateString('en-IN');
-                    } else if (data.timestamp) {
-                        let d = new Date(data.timestamp);
-                        dateStr = d.toLocaleString('en-IN');
-                        itemDateFormatted = d.toLocaleDateString('en-IN');
                     }
 
-                    // Total Counters
                     if (statusLower === "approved" || statusLower === "success") {
                         totalDeposit += amt;
                         if (itemDateFormatted === todayFormatted || dateStr.includes(todayFormatted)) {
@@ -268,6 +285,7 @@
                     }
 
                     let row = `<tr>
+                        <td style="font-weight:bold; text-align:center;">${serialNo++}</td>
                         <td>${dateStr}</td>
                         <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
                         <td id="${mobileCellId}">${mobile || "Fetching..."}</td>
@@ -280,21 +298,33 @@
 
                     tableBody.innerHTML += row;
 
-                    // Auto-fetch mobile number from 'users' collection if missing
-                    if (!mobile && uid) {
-                        db.collection("users").doc(uid).get().then((userDoc) => {
-                            if (userDoc.exists) {
-                                let uData = userDoc.data();
-                                let fetchedPhone = uData.mobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
-                                document.getElementById(mobileCellId).innerText = fetchedPhone;
-                            } else {
+                    // Smart Fallback Fetching Mobile Number from Users/Customers Collection
+                    if (!mobile) {
+                        let targetUid = uid || data.id;
+                        if (targetUid) {
+                            db.collection("users").doc(targetUid).get().then((userDoc) => {
+                                if (userDoc.exists) {
+                                    let uData = userDoc.data();
+                                    let fetchedPhone = uData.mobile || uData.userMobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
+                                    document.getElementById(mobileCellId).innerText = fetchedPhone;
+                                } else {
+                                    // Try customers collection as backup
+                                    db.collection("customers").doc(targetUid).get().then((custDoc) => {
+                                        if (custDoc.exists) {
+                                            let cData = custDoc.data();
+                                            let fetchedPhone = cData.mobile || cData.userMobile || cData.phone || cData.userPhone || "N/A";
+                                            document.getElementById(mobileCellId).innerText = fetchedPhone;
+                                        } else {
+                                            document.getElementById(mobileCellId).innerText = "N/A";
+                                        }
+                                    }).catch(() => document.getElementById(mobileCellId).innerText = "N/A");
+                                }
+                            }).catch(() => {
                                 document.getElementById(mobileCellId).innerText = "N/A";
-                            }
-                        }).catch(() => {
+                            });
+                        } else {
                             document.getElementById(mobileCellId).innerText = "N/A";
-                        });
-                    } else if (!mobile && !uid) {
-                        document.getElementById(mobileCellId).innerText = "N/A";
+                        }
                     }
                 });
 
@@ -335,7 +365,8 @@
                 }).then(() => {
                     if (newStatus === "Approved" && userId) {
                         db.collection("users").doc(userId).update({
-                            wallet: firebase.firestore.FieldValue.increment(finalAmt)
+                            wallet: firebase.firestore.FieldValue.increment(finalAmt),
+                            depositBalance: firebase.firestore.FieldValue.increment(finalAmt)
                         }).catch(e => console.log("User wallet update error:", e));
                     }
                     alert("Deposit status success!");
