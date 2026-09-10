@@ -53,6 +53,16 @@
 
         .btn-edit { background-color: #3182ce; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .btn-edit:hover { background-color: #2b6cb0; }
+
+        /* MODAL STYLES FOR BALANCE EDITING */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 420px; padding: 24px; border-radius: 16px; text-align: left; }
+        .modal-card h3 { margin-bottom: 15px; color: #1a365d; font-size: 20px; }
+        .modal-card label { font-size: 12px; font-weight: bold; color: #4a5568; display: block; margin-top: 10px; margin-bottom: 4px; }
+        .modal-card input { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 12px; }
+        .modal-btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+        .btn-modal-cancel { background: #e2e8f0; color: #4a5568; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-modal-submit { background: #3182ce; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -123,6 +133,24 @@
         </main>
     </div>
 
+    <!-- Edit Balance Modal -->
+    <div class="modal-overlay" id="editBalanceModal">
+        <div class="modal-card">
+            <h3 id="modalUserName">Edit User Balance</h3>
+            
+            <label>Main Wallet / Real Deposit Balance (₹):</label>
+            <input type="number" id="inputMainBalance" placeholder="Enter Main Balance">
+
+            <label>Bonus Balance (₹):</label>
+            <input type="number" id="inputBonusBalance" placeholder="Enter Bonus Balance">
+
+            <div class="modal-btn-group">
+                <button class="btn-modal-cancel" onclick="closeBalanceModal()">Cancel</button>
+                <button class="btn-modal-submit" id="saveBalBtn" onclick="saveUserBalance()">Update Balance</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -138,7 +166,10 @@
         }
         const db = firebase.firestore();
 
-        // 🔒 STRICT SECURITY AUTHENTICATION GUARD
+        let activeTargetColl = "";
+        let activeUserId = "";
+
+        // STRICT SECURITY AUTHENTICATION GUARD
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "admin-login.html";
@@ -157,6 +188,7 @@
         }
 
         function loadRealCustomers() {
+            // Real-time listener on 'users' collection first, fallback to 'customers'
             db.collection("users").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
                     db.collection("customers").onSnapshot((custSnapshot) => {
@@ -171,6 +203,44 @@
             });
         }
 
+        function getFormattedDate(ts) {
+            if (!ts) return "N/A";
+            let d;
+            if (ts.toDate) {
+                d = ts.toDate();
+            } else if (typeof ts === 'number') {
+                d = new Date(ts);
+            } else {
+                d = new Date(ts);
+            }
+
+            if (isNaN(d.getTime())) return "N/A";
+
+            const day = d.getDate();
+            const month = d.getMonth() + 1;
+            const year = d.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function isToday(ts) {
+            if (!ts) return false;
+            let d;
+            if (ts.toDate) {
+                d = ts.toDate();
+            } else if (typeof ts === 'number') {
+                d = new Date(ts);
+            } else {
+                d = new Date(ts);
+            }
+
+            if (isNaN(d.getTime())) return false;
+
+            const today = new Date();
+            return d.getDate() === today.getDate() &&
+                   d.getMonth() === today.getMonth() &&
+                   d.getFullYear() === today.getFullYear();
+        }
+
         function renderUserList(snapshot, targetColl) {
             const tbody = document.getElementById("customerTableBody");
             tbody.innerHTML = "";
@@ -178,14 +248,6 @@
             let totalUsersCount = 0;
             let todayUsersCount = 0;
             let sumUserWallet = 0;
-
-            const todayObj = new Date();
-            const todayFormatted = todayObj.toLocaleDateString('en-IN');
-            
-            const day = todayObj.getDate();
-            const month = todayObj.getMonth() + 1;
-            const year = todayObj.getFullYear();
-            const altTodayStr = `${day}/${month}/${year}`;
 
             if (snapshot.empty) {
                 tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:20px; color:#e53e3e;">No Registered Users Found</td></tr>';
@@ -202,7 +264,7 @@
                 userList.push(data);
             });
 
-            // Sorting: Latest registered users top pe show honge
+            // Sorting: Latest registered users top par show honge
             userList.sort((a, b) => {
                 let timeA = a.createdAt || a.timestamp || a.joinedDate || 0;
                 let timeB = b.createdAt || b.timestamp || b.joinedDate || 0;
@@ -217,40 +279,27 @@
             userList.forEach((user) => {
                 let name = user.name || user.userName || user.customerName || "User";
                 let mobile = user.mobile || user.phone || user.userPhone || user.mobileNo || "N/A";
-                let balance = Number(user.wallet || user.balance || user.realBalance || 0);
+                let balance = Number(user.wallet ?? user.depositBalance ?? user.balance ?? user.realBalance ?? 0);
+                let bonus = Number(user.bonus ?? user.bonusBalance ?? 0);
 
                 sumUserWallet += balance;
 
                 // Date Parsing & Today Check
-                let dateStr = "N/A";
-                let rawDateFormatted = "";
+                let rawTS = user.createdAt || user.timestamp || user.joinedDate || user.date;
+                let dateStr = getFormattedDate(rawTS);
 
-                if (user.joinedDate || user.date) {
-                    dateStr = user.joinedDate || user.date;
-                    rawDateFormatted = dateStr;
-                } else if (user.createdAt) {
-                    let d = user.createdAt.toDate ? user.createdAt.toDate() : new Date(user.createdAt);
-                    dateStr = d.toLocaleDateString('en-IN');
-                    rawDateFormatted = dateStr;
-                } else if (user.timestamp) {
-                    let d = new Date(user.timestamp);
-                    dateStr = d.toLocaleDateString('en-IN');
-                    rawDateFormatted = dateStr;
-                }
-
-                // Match with today's date
-                if (rawDateFormatted.includes(todayFormatted) || rawDateFormatted.includes(altTodayStr)) {
+                if (isToday(rawTS)) {
                     todayUsersCount++;
                 }
 
                 let row = `<tr>
-                    <td>${serialNo++}</td>
+                    <td style="font-weight:bold; text-align:center;">${serialNo++}</td>
                     <td>${dateStr}</td>
                     <td><strong>${name}</strong></td>
                     <td style="color:#2b6cb0; font-weight:700;">${mobile}</td>
                     <td style="color:#2e7d32; font-weight:800;">₹${balance}</td>
                     <td>
-                        <button class="btn-edit" onclick="editUserBalance('${targetColl}', '${user.docId}', ${balance}, '${name}')">Edit Balance</button>
+                        <button class="btn-edit" onclick="openBalanceModal('${targetColl}', '${user.docId}', ${balance}, ${bonus}, '${name}')"><i class="fa-solid fa-pen-to-square"></i> Edit Balance</button>
                     </td>
                 </tr>`;
 
@@ -263,28 +312,57 @@
             document.getElementById("totalUserBalVal").innerText = "₹" + sumUserWallet;
         }
 
-        function editUserBalance(collectionName, userId, currentBalance, userName) {
-            let newBalance = prompt(`${userName} Ka New Wallet Balance Enter Karein (₹):`, currentBalance);
-            if (newBalance !== null && newBalance !== "") {
-                let parsedAmt = Number(newBalance);
-                if (isNaN(parsedAmt) || parsedAmt < 0) {
-                    alert("Kripya sahi valid amount enter karein!");
-                    return;
-                }
+        function openBalanceModal(collName, userId, currentWallet, currentBonus, userName) {
+            activeTargetColl = collName;
+            activeUserId = userId;
 
-                db.collection(collectionName).doc(userId).update({
-                    wallet: parsedAmt,
-                    balance: parsedAmt
-                }).then(() => {
-                    alert(`${userName} ka balance successfully updated to ₹${parsedAmt}!`);
-                }).catch((err) => {
-                    alert("Balance update karne me error: " + err.message);
-                });
+            document.getElementById("modalUserName").innerText = `Edit Balance: ${userName}`;
+            document.getElementById("inputMainBalance").value = currentWallet;
+            document.getElementById("inputBonusBalance").value = currentBonus;
+
+            document.getElementById("editBalanceModal").style.display = "flex";
+        }
+
+        function closeBalanceModal() {
+            document.getElementById("editBalanceModal").style.display = "none";
+        }
+
+        async function saveUserBalance() {
+            let saveBtn = document.getElementById("saveBalBtn");
+            let newMain = Number(document.getElementById("inputMainBalance").value);
+            let newBonus = Number(document.getElementById("inputBonusBalance").value);
+
+            if (isNaN(newMain) || newMain < 0 || isNaN(newBonus) || newBonus < 0) {
+                alert("Kripya sahi valid amount enter karein!");
+                return;
+            }
+
+            saveBtn.disabled = true;
+            saveBtn.innerText = "Updating...";
+
+            try {
+                // Synchronize across both wallet and depositBalance fields
+                await db.collection(activeTargetColl).doc(activeUserId).set({
+                    wallet: newMain,
+                    depositBalance: newMain,
+                    balance: newMain,
+                    realBalance: newMain,
+                    bonus: newBonus,
+                    bonusBalance: newBonus
+                }, { merge: true });
+
+                alert("User Balance successfully updated!");
+                closeBalanceModal();
+            } catch (err) {
+                alert("Error updating balance: " + err.message);
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Update Balance";
             }
         }
 
         function filterCustomers() {
-            let filter = document.getElementById("searchInput").value.toLowerCase();
+            let filter = document.getElementById("searchInput").value.toLowerCase().trim();
             let rows = document.querySelectorAll("#customerTableBody tr");
 
             rows.forEach(row => {
