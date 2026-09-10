@@ -242,15 +242,15 @@ function formatTime(ms) {
 }
 
 function startRealtimeMonitor() {
-    // Live Realtime listener on 'customers' collection
+    // Realtime listener on full 'customers' collection (No limit applied)
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         allLiveUsers = [];
         const now = Date.now();
 
         let onlineCnt = 0;
         let loggedInCnt = 0;
-        
-        // Total Registered Users direct snapshot size se calculate hoga
+
+        // Total registered count strictly reads total documents in customers
         const totalRegisteredCnt = snapshot.size;
 
         snapshot.forEach((doc) => {
@@ -258,14 +258,14 @@ function startRealtimeMonitor() {
             const docId = doc.id;
 
             const mobile = data.mobile || docId;
-            const name = data.name || "N/A";
+            const name = data.name || "User";
             const location = data.location || "N/A";
             const balance = Number(data.balance !== undefined ? data.balance : (Number(data.depositBalance || 0) + Number(data.winnings || 0)));
             
-            const lastSeenMs = parseTimestamp(data.lastSeenAt) || parseTimestamp(data.lastLoginAt);
-            const isRecent = (now - lastSeenMs) <= (5 * 60 * 1000); // Active within last 5 mins
+            const lastSeenMs = parseTimestamp(data.lastSeenAt) || parseTimestamp(data.lastLoginAt) || parseTimestamp(data.createdAt);
+            const isRecent = lastSeenMs > 0 && ((now - lastSeenMs) <= (10 * 60 * 1000)); // Active within last 10 mins
 
-            // Check Status
+            // Multi-field Online Check
             const isOnline = data.isOnline === true || 
                              String(data.status).toLowerCase() === 'online' || 
                              String(data.status).toLowerCase() === 'active' || 
@@ -290,17 +290,17 @@ function startRealtimeMonitor() {
 
         const offlineCnt = totalRegisteredCnt - onlineCnt;
 
-        // Dynamic Count Update
+        // Sync Counter Values Directly
         document.getElementById("cntOnline").textContent = onlineCnt;
         document.getElementById("cntLoggedIn").textContent = loggedInCnt;
         document.getElementById("cntOffline").textContent = offlineCnt < 0 ? 0 : offlineCnt;
-        document.getElementById("cntTotal").textContent = totalRegisteredCnt; // Realtime Total Sync
+        document.getElementById("cntTotal").textContent = totalRegisteredCnt;
 
         document.getElementById("lastSyncTime").textContent = new Date().toLocaleTimeString();
 
         renderTable();
     }, (error) => {
-        console.error("Realtime Monitor Error: ", error);
+        console.error("Realtime Monitor Sync Error: ", error);
     });
 }
 
