@@ -245,6 +245,7 @@ button{font:inherit;}
 
 <script>
 let unsubscribeWalletListener = null;
+let unsubscribeDepositsListener = null;
 
 async function loadFirebaseCustomer(){
     try {
@@ -286,7 +287,7 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REAL-TIME FIRESTORE BALANCE SYNC
+        // 1. REAL-TIME CUSTOMER BALANCE LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
@@ -308,6 +309,36 @@ async function loadFirebaseCustomer(){
         }, (error) => {
             console.error("Wallet Sync Error:", error);
         });
+
+        // 2. AUTO-SYNC APPROVED DEPOSITS TO USER WALLET BALANCE
+        if(unsubscribeDepositsListener) unsubscribeDepositsListener();
+
+        unsubscribeDepositsListener = firebaseDB.collection("deposits")
+            .where("uid", "in", [mobile10Digits, docIdWith91, cleanMobile])
+            .onSnapshot((snapshot) => {
+                snapshot.docChanges().forEach(async (change) => {
+                    if (change.type === "added" || change.type === "modified") {
+                        const depData = change.doc.data();
+                        const status = (depData.status || "").toLowerCase();
+
+                        // Check if deposit is approved/success but not auto-credited yet
+                        if ((status === "approved" || status === "success") && !depData.autoSynced) {
+                            const depAmount = Number(depData.amount || 0);
+                            if (depAmount > 0) {
+                                // Increment depositBalance directly in Firestore customer doc
+                                await userRef.set({
+                                    depositBalance: firebase.firestore.FieldValue.increment(depAmount)
+                                }, { merge: true });
+
+                                // Mark deposit record so it doesn't double add
+                                await change.doc.ref.update({ autoSynced: true });
+                            }
+                        }
+                    }
+                });
+            }, (err) => {
+                console.warn("Deposits Auto-sync Error:", err);
+            });
 
     } catch(error) { 
         console.error("Wallet Error:", error); 
