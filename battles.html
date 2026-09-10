@@ -646,7 +646,7 @@ const userId = getCleanUserId();
 let myCurrentBalance = 0;
 let myUserName = "User";
 let activeBattleId = null;
-let activeBattlesCount = 0;
+let myActiveBattlesCount = 0;
 let selectedResultType = "won";
 
 function showErrorModal(msg) {
@@ -681,7 +681,6 @@ async function loadUserData() {
                 const dep = Number(d.depositBalance || d.deposit || 0);
                 const win = Number(d.winnings || d.winningBalance || 0);
                 
-                // Unified Balance Calculation (Synced with Wallet)
                 myCurrentBalance = dep + win;
                 myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
                 
@@ -694,10 +693,10 @@ async function loadUserData() {
     }
 }
 
-// 1. CREATE BATTLE
+// 1. CREATE BATTLE (STRICT LIMIT: MAXIMUM 1 OPEN/ACTIVE BATTLE PER USER)
 async function createBattle() {
-    if(activeBattlesCount >= 2) {
-        alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain. Pehle ek match complete karein.");
+    if(myActiveBattlesCount >= 1) {
+        alert("Aap ek waqt me sirf 1 battle hi laga sakte hain.");
         return;
     }
 
@@ -743,8 +742,8 @@ function listenBattles() {
 
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
-        let dbRunningHTML = "";
-        let count = 0;
+        let runningHTML = "";
+        let userBattleCount = 0;
 
         snap.forEach(doc => {
             const b = doc.data();
@@ -755,15 +754,18 @@ function listenBattles() {
             const isCreator = creatorClean === myClean10;
             const isAccepter = accepterClean === myClean10;
 
+            // Track active/pending/open battles created or joined by the current user
             if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
-                count++;
+                userBattleCount++;
             }
 
+            // Live view controller
             if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 activeBattleId = bId;
                 renderRoomView(b, isCreator);
             }
 
+            // Render Open / Requested Battles
             if(b.status === "open" || b.status === "requested"){
                 if(b.status === "open"){
                     openHTML += `
@@ -805,28 +807,31 @@ function listenBattles() {
                 }
             }
 
+            // Render ALL Running Battles (Live / Conflict)
             if(b.status === "live" || b.status === "conflict"){
-                dbRunningHTML += `
-                    <div class="battle-card" onclick="openRunningMatch('${bId}')" style="cursor:pointer;">
-                        <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
-                        <div class="battle-meta" style="margin-top:6px;">
+                runningHTML += `
+                    <div class="battle-card" ${(isCreator || isAccepter) ? `onclick="openRunningMatch('${bId}')" style="cursor:pointer;"` : ''}>
+                        <div class="card-top">
+                            <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
+                        </div>
+                        <div class="battle-meta">
                             <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
                             <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
                         </div>
                         <div class="vs-row">
-                            <div class="player-box"><span class="player-name">${b.creatorName}</span></div>
+                            <div class="player-box"><span class="player-name">${b.creatorName || 'Player 1'}</span></div>
                             <div class="vs-circle">VS</div>
-                            <div class="player-box"><span class="player-name">${b.acceptedName}</span></div>
+                            <div class="player-box"><span class="player-name">${b.acceptedName || 'Player 2'}</span></div>
                         </div>
                     </div>
                 `;
             }
         });
 
-        activeBattlesCount = count;
+        myActiveBattlesCount = userBattleCount;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        document.getElementById("runningBattlesList").innerHTML = dbRunningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
+        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
     });
 }
 
@@ -836,8 +841,8 @@ async function deleteBattle(bId) {
 }
 
 async function requestPlayBattle(bId, amt) {
-    if(activeBattlesCount >= 2) {
-        alert("Aap ek waqt mein maximum 2 battles hi laga sakte hain.");
+    if(myActiveBattlesCount >= 1) {
+        alert("Aap ek waqt me sirf 1 battle hi khel sakte hain.");
         return;
     }
     if(myCurrentBalance < amt){
@@ -874,7 +879,6 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-// Helper to deduct balance from Deposit first then Winnings
 function deductFromBalance(deposit, winnings, amt) {
     let newDeposit = deposit;
     let newWinnings = winnings;
