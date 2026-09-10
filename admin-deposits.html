@@ -4,2390 +4,583 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RDX LUDO ADMIN - Live Deposits</title>
-
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            display: none;
-            background-color: #000000;
-            color: #ffffff;
-            min-height: 100vh;
-            flex-direction: column;
-        }
-
-        .top-header {
-            background-color: #ebf3fa;
-            height: 60px;
-            padding: 0 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #d0e1f9;
-        }
-
-        .brand-logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .brand-logo-img {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 14px;
-        }
-
-        .brand-title {
-            color: #1a365d;
-            font-size: 20px;
-            font-weight: 800;
-        }
-
-        .logout-link {
-            background-color: #fde8e8;
-            color: #e53e3e;
-            padding: 8px 22px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            border: 1px solid #fbb6b6;
-            cursor: pointer;
-        }
-
-        .admin-layout {
-            display: flex;
-            flex: 1;
-        }
-
-        .sidebar {
-            width: 260px;
-            background-color: #ffffff;
-            padding: 20px 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-shrink: 0;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            text-decoration: none;
-            color: #4a5568;
-            font-weight: 700;
-            font-size: 14px;
-        }
-
-        .nav-item.active {
-            background-color: #ebf8ff;
-            color: #3182ce;
-            border: 1px solid #bee3f8;
-        }
-
-        .main-content {
-            flex: 1;
-            background-color: #000000;
-            padding: 24px;
-            overflow-y: auto;
-        }
-
-        .dashboard-title {
-            color: #3182ce;
-            font-size: 32px;
-            font-weight: 800;
-            margin-bottom: 24px;
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 18px;
-            margin-bottom: 24px;
-        }
-
-        .metric-card {
-            background-color: #ffffff;
-            padding: 20px 22px;
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card-label {
-            font-size: 11px;
-            font-weight: 800;
-            color: #718096;
-            text-transform: uppercase;
-        }
-
-        .card-value {
-            font-size: 26px;
-            font-weight: 900;
-            margin-top: 8px;
-        }
-
-        .filter-card {
-            background-color: #151921;
-            padding: 16px 20px;
-            border-radius: 16px;
-            display: flex;
-            gap: 15px;
-            margin-bottom: 24px;
-            border: 1px solid #232936;
-        }
-
-        .search-input,
-        .date-picker {
-            flex: 1;
-            padding: 10px 14px;
-            border-radius: 10px;
-            border: 1px solid #232936;
-            background-color: #0b0e14;
-            color: #ffffff;
-            font-size: 14px;
-            outline: none;
-        }
-
-        .table-container {
-            background-color: #ffffff;
-            border-radius: 16px;
-            overflow-x: auto;
-        }
-
-        .dep-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            color: #333333;
-        }
-
-        .dep-table th {
-            background-color: #f7fafc;
-            color: #4a5568;
-            padding: 16px;
-            font-size: 12px;
-            font-weight: 800;
-            text-transform: uppercase;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .dep-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid #e2e8f0;
-            font-size: 13px;
-            font-weight: 600;
-        }
-
-        .badge-pending {
-            background-color: #fef3c7;
-            color: #b45309;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        .badge-approved {
-            background-color: #d1fae5;
-            color: #047857;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        .badge-rejected {
-            background-color: #fee2e2;
-            color: #b91c1c;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 800;
-        }
-
-        .btn-ss {
-            background-color: #3182ce;
-            color: #ffffff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-approve {
-            background-color: #10b981;
-            color: #ffffff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-right: 4px;
-        }
-
-        .btn-reject {
-            background-color: #ef4444;
-            color: #ffffff;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-edit {
-            background-color: #edf2f7;
-            color: #2d3748;
-            border: 1px solid #cbd5e0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            cursor: pointer;
-            font-weight: 700;
-            margin-left: 4px;
-        }
-
-        .btn-revert {
-            background-color: #d97706;
-            color: #ffffff;
-            border: none;
-            padding: 6px 8px;
-            border-radius: 4px;
-            font-size: 11px;
-            font-weight: 700;
-            cursor: pointer;
-            margin-left: 4px;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.85);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal-card {
-            background: #ffffff;
-            color: #333;
-            width: 90%;
-            max-width: 450px;
-            padding: 24px;
-            border-radius: 16px;
-            text-align: left;
-        }
-
-        .modal-card h3 {
-            margin-bottom: 15px;
-            color: #1a365d;
-        }
-
-        .modal-card label {
-            font-size: 12px;
-            font-weight: bold;
-            color: #4a5568;
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 4px;
-        }
-
-        .modal-card input,
-        .modal-card select,
-        .modal-card textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e0;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            margin-bottom: 12px;
-        }
-
-        .modal-btn-group {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .btn-modal-cancel {
-            background: #e2e8f0;
-            color: #4a5568;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        .btn-modal-submit {
-            background: #3182ce;
-            color: #ffffff;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-
-        @media (max-width: 900px) {
-            .sidebar {
-                width: 210px;
-            }
-
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 650px) {
-            .admin-layout {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                overflow-x: auto;
-                flex-direction: row;
-            }
-
-            .nav-item {
-                white-space: nowrap;
-            }
-
-            .filter-card {
-                flex-direction: column;
-            }
-
-            .top-header {
-                padding: 0 12px;
-            }
-
-            .brand-title {
-                font-size: 15px;
-            }
-
-            .main-content {
-                padding: 14px;
-            }
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        body { display: none; background-color: #000000; color: #ffffff; min-height: 100vh; flex-direction: column; }
+        .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
+        .brand-logo-container { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
+        .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
+        .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; cursor: pointer; }
+        .admin-layout { display: flex; flex: 1; }
+        .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+        .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
+        .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
+        .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
+        .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 24px; }
+        .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px; }
+        .metric-card { background-color: #ffffff; padding: 20px 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; }
+        .card-value { font-size: 26px; font-weight: 900; margin-top: 8px; }
+        .filter-card { background-color: #151921; padding: 16px 20px; border-radius: 16px; display: flex; gap: 15px; margin-bottom: 24px; border: 1px solid #232936; }
+        .search-input, .date-picker { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #232936; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
+        .table-container { background-color: #ffffff; border-radius: 16px; overflow-x: auto; }
+        .dep-table { width: 100%; border-collapse: collapse; text-align: left; color: #333333; }
+        .dep-table th { background-color: #f7fafc; color: #4a5568; padding: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
+        .dep-table td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; font-weight: 600; }
+        .badge-pending { background-color: #fef3c7; color: #b45309; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+        .badge-approved { background-color: #d1fae5; color: #047857; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+        .badge-rejected { background-color: #fee2e2; color: #b91c1c; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
+        .btn-ss { background-color: #3182ce; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
+        .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight:700; margin-left: 4px; }
+        .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 6px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 24px; border-radius: 16px; text-align: left; }
+        .modal-card h3 { margin-bottom: 15px; color: #1a365d; }
+        .modal-card label { font-size: 12px; font-weight: bold; color: #4a5568; display: block; margin-top: 10px; margin-bottom: 4px; }
+        .modal-card input, .modal-card select, .modal-card textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 12px; }
+        .modal-btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+        .btn-modal-cancel { background: #e2e8f0; color: #4a5568; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-modal-submit { background: #3182ce; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
-
 <body>
 
-<header class="top-header">
-    <div class="brand-logo-container">
-        <div class="brand-logo-img">RDX</div>
-        <span class="brand-title">RDX LUDO ADMIN</span>
-    </div>
+    <header class="top-header">
+        <div class="brand-logo-container">
+            <div class="brand-logo-img">RDX</div>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+        <button onclick="adminLogout()" class="logout-link">Logout</button>
+    </header>
 
-    <button onclick="adminLogout()" class="logout-link">
-        Logout
-    </button>
-</header>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-item"><i class="fa-solid fa-compass"></i> Dashboard</a>
+            <a href="admin-live.html" class="nav-item"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+            <a href="admin-battles.html" class="nav-item"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+            <a href="admin-kyc.html" class="nav-item"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+            <a href="admin-deposits.html" class="nav-item active"><i class="fa-solid fa-wallet"></i> Deposits</a>
+            <a href="admin-withdrawals.html" class="nav-item"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+            <a href="admin-history.html" class="nav-item"><i class="fa-solid fa-book"></i> User Complete History</a>
+            <a href="admin-referral.html" class="nav-item"><i class="fa-solid fa-users-viewfinder"></i> Referral Analytics</a>
+            <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+            <a href="admin-notifications.html" class="nav-item"><i class="fa-solid fa-bell"></i> Notifications</a>
+            <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+        </aside>
 
+        <main class="main-content">
+            <h1 class="dashboard-title">Deposits Management</h1>
 
-<div class="admin-layout">
-
-    <aside class="sidebar">
-
-        <a href="admin.html" class="nav-item">
-            <i class="fa-solid fa-compass"></i>
-            Dashboard
-        </a>
-
-        <a href="admin-live.html" class="nav-item">
-            <i class="fa-solid fa-tower-broadcast"></i>
-            Live Users Monitor
-        </a>
-
-        <a href="admin-battles.html" class="nav-item">
-            <i class="fa-solid fa-gamepad"></i>
-            Battles Management
-        </a>
-
-        <a href="admin-kyc.html" class="nav-item">
-            <i class="fa-solid fa-id-card"></i>
-            KYC Requests
-        </a>
-
-        <a href="admin-deposits.html" class="nav-item active">
-            <i class="fa-solid fa-wallet"></i>
-            Deposits
-        </a>
-
-        <a href="admin-withdrawals.html" class="nav-item">
-            <i class="fa-solid fa-money-bill-transfer"></i>
-            Withdrawals
-        </a>
-
-        <a href="admin-history.html" class="nav-item">
-            <i class="fa-solid fa-book"></i>
-            User Complete History
-        </a>
-
-        <a href="admin-referral.html" class="nav-item">
-            <i class="fa-solid fa-users-viewfinder"></i>
-            Referral Analytics
-        </a>
-
-        <a href="admin-customers.html" class="nav-item">
-            <i class="fa-solid fa-users"></i>
-            Customers
-        </a>
-
-        <a href="admin-notifications.html" class="nav-item">
-            <i class="fa-solid fa-bell"></i>
-            Notifications
-        </a>
-
-        <a href="admin-settings.html" class="nav-item">
-            <i class="fa-solid fa-gear"></i>
-            Payment Settings
-        </a>
-
-    </aside>
-
-
-    <main class="main-content">
-
-        <h1 class="dashboard-title">
-            Deposits Management
-        </h1>
-
-
-        <div class="cards-grid">
-
-            <div class="metric-card">
-                <span class="card-label">
-                    Total Real Deposit
-                </span>
-
-                <span
-                    class="card-value"
-                    style="color:#7c3aed;"
-                    id="totalDepositVal">
-                    ₹0
-                </span>
+            <div class="cards-grid">
+                <div class="metric-card">
+                    <span class="card-label">Total Real Deposit</span>
+                    <span class="card-value" style="color: #7c3aed;" id="totalDepositVal">₹0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Today's Deposit</span>
+                    <span class="card-value" style="color: #2563eb;" id="todayDepositVal">₹0</span>
+                </div>
+                <div class="metric-card">
+                    <span class="card-label">Total Pending Requests</span>
+                    <span class="card-value" style="color: #d97706;" id="pendingCountVal">0 Pending</span>
+                </div>
             </div>
 
-
-            <div class="metric-card">
-                <span class="card-label">
-                    Today's Deposit
-                </span>
-
-                <span
-                    class="card-value"
-                    style="color:#2563eb;"
-                    id="todayDepositVal">
-                    ₹0
-                </span>
+            <div class="filter-card">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search Name, Phone, or UTR Number..." onkeyup="filterTable()">
+                <input type="date" id="dateInput" class="date-picker" onchange="filterTable()">
+                <button style="padding: 10px 14px; background:#374151; color:white; border:none; border-radius:10px; cursor:pointer;" onclick="clearDateFilter()">Reset Date</button>
             </div>
 
+            <div class="table-container">
+                <table class="dep-table">
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Date & Time</th>
+                            <th>Customer Name</th>
+                            <th>Mobile No.</th>
+                            <th>Amount</th>
+                            <th>UTR / Ref No.</th>
+                            <th>Screenshot</th>
+                            <th>Status</th>
+                            <th>Admin Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="realDepositBody">
+                        <tr><td colspan="9" style="text-align:center; padding:20px; color:#666;">Loading Firestore Deposits...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
 
-            <div class="metric-card">
-                <span class="card-label">
-                    Total Pending Requests
-                </span>
+    <!-- Screenshot Modal -->
+    <div class="modal-overlay" id="ssModal">
+        <div class="modal-card" style="text-align: center;">
+            <h3 style="color:#1a365d;">Payment Proof Screenshot</h3>
+            <img id="ssImage" src="" alt="Payment Screenshot" style="width:100%; max-height:400px; object-fit:contain; border-radius:8px; margin:15px 0; border:1px solid #ddd;">
+            <div>
+                <button class="btn-modal-cancel" onclick="closeModal('ssModal')">Close</button>
+            </div>
+        </div>
+    </div>
 
-                <span
-                    class="card-value"
-                    style="color:#d97706;"
-                    id="pendingCountVal">
-                    0 Pending
-                </span>
+    <!-- Status Change Modal -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-card">
+            <h3 id="modalTitle">Update Deposit Status</h3>
+            
+            <label>Select New Status:</label>
+            <select id="modalStatusSelect" onchange="toggleRejectReasonBox()">
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Pending">Pending</option>
+            </select>
+
+            <div id="rejectReasonBox" style="display:none;">
+                <label>Rejection Reason (User ko Dikhane ke liye):</label>
+                <textarea id="modalRejectReason" rows="2" placeholder="e.g. Invalid UTR Number / Payment Not Received"></textarea>
             </div>
 
+            <div class="modal-btn-group">
+                <button class="btn-modal-cancel" onclick="closeModal('actionModal')">Cancel</button>
+                <button class="btn-modal-submit" id="submitBtn" onclick="submitStatusUpdate()">Update Status</button>
+            </div>
         </div>
-
-
-        <div class="filter-card">
-
-            <input
-                type="text"
-                id="searchInput"
-                class="search-input"
-                placeholder="Search Name, Phone, or UTR Number..."
-                onkeyup="filterTable()"
-            >
-
-            <input
-                type="date"
-                id="dateInput"
-                class="date-picker"
-                onchange="filterTable()"
-            >
-
-            <button
-                style="padding:10px 14px;background:#374151;color:white;border:none;border-radius:10px;cursor:pointer;"
-                onclick="clearDateFilter()">
-                Reset Date
-            </button>
-
-        </div>
-
-
-        <div class="table-container">
-
-            <table class="dep-table">
-
-                <thead>
-                    <tr>
-                        <th>S.No.</th>
-                        <th>Date & Time</th>
-                        <th>Customer Name</th>
-                        <th>Mobile No.</th>
-                        <th>Amount</th>
-                        <th>UTR / Ref No.</th>
-                        <th>Screenshot</th>
-                        <th>Status</th>
-                        <th>Admin Action</th>
-                    </tr>
-                </thead>
-
-                <tbody id="realDepositBody">
-
-                    <tr>
-                        <td
-                            colspan="9"
-                            style="text-align:center;padding:20px;color:#666;">
-                            Loading Firestore Deposits...
-                        </td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </main>
-
-</div>
-
-
-<!-- SCREENSHOT MODAL -->
-
-<div class="modal-overlay" id="ssModal">
-
-    <div
-        class="modal-card"
-        style="text-align:center;">
-
-        <h3 style="color:#1a365d;">
-            Payment Proof Screenshot
-        </h3>
-
-        <img
-            id="ssImage"
-            src=""
-            alt="Payment Screenshot"
-            style="width:100%;max-height:400px;object-fit:contain;border-radius:8px;margin:15px 0;border:1px solid #ddd;"
-        >
-
-        <div>
-
-            <button
-                class="btn-modal-cancel"
-                onclick="closeModal('ssModal')">
-                Close
-            </button>
-
-        </div>
-
     </div>
 
-</div>
-
-
-<!-- STATUS MODAL -->
-
-<div class="modal-overlay" id="actionModal">
-
-    <div class="modal-card">
-
-        <h3 id="modalTitle">
-            Update Deposit Status
-        </h3>
-
-        <label>
-            Select New Status:
-        </label>
-
-        <select
-            id="modalStatusSelect"
-            onchange="toggleRejectReasonBox()">
-
-            <option value="Approved">
-                Approved
-            </option>
-
-            <option value="Rejected">
-                Rejected
-            </option>
-
-            <option value="Pending">
-                Pending
-            </option>
-
-        </select>
-
-
-        <div
-            id="rejectReasonBox"
-            style="display:none;">
-
-            <label>
-                Rejection Reason (User ko Dikhane ke liye):
-            </label>
-
-            <textarea
-                id="modalRejectReason"
-                rows="2"
-                placeholder="e.g. Invalid UTR Number / Payment Not Received">
-            </textarea>
-
+    <!-- Edit Amount Modal -->
+    <div class="modal-overlay" id="editAmtModal">
+        <div class="modal-card">
+            <h3>Edit Deposit Amount</h3>
+            <label>Enter New Amount (₹):</label>
+            <input type="number" id="newAmountInput" placeholder="Enter amount">
+            <div class="modal-btn-group">
+                <button class="btn-modal-cancel" onclick="closeModal('editAmtModal')">Cancel</button>
+                <button class="btn-modal-submit" id="submitAmtBtn" onclick="submitAmountUpdate()">Save Amount</button>
+            </div>
         </div>
-
-
-        <div class="modal-btn-group">
-
-            <button
-                class="btn-modal-cancel"
-                onclick="closeModal('actionModal')">
-                Cancel
-            </button>
-
-            <button
-                class="btn-modal-submit"
-                id="submitBtn"
-                onclick="submitStatusUpdate()">
-                Update Status
-            </button>
-
-        </div>
-
     </div>
 
-</div>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
+        };
 
-
-<!-- EDIT AMOUNT MODAL -->
-
-<div class="modal-overlay" id="editAmtModal">
-
-    <div class="modal-card">
-
-        <h3>
-            Edit Deposit Amount
-        </h3>
-
-        <label>
-            Enter New Amount (₹):
-        </label>
-
-        <input
-            type="number"
-            id="newAmountInput"
-            placeholder="Enter amount"
-        >
-
-        <div class="modal-btn-group">
-
-            <button
-                class="btn-modal-cancel"
-                onclick="closeModal('editAmtModal')">
-                Cancel
-            </button>
-
-            <button
-                class="btn-modal-submit"
-                id="submitAmtBtn"
-                onclick="submitAmountUpdate()">
-                Save Amount
-            </button>
-
-        </div>
-
-    </div>
-
-</div>
-
-
-<script>
-
-const firebaseConfig = {
-
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-
-    authDomain: "rdx-ludo.firebaseapp.com",
-
-    projectId: "rdx-ludo",
-
-    storageBucket: "rdx-ludo.firebasestorage.app",
-
-    messagingSenderId: "928340814840",
-
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
-
-};
-
-
-if (!firebase.apps.length) {
-
-    firebase.initializeApp(firebaseConfig);
-
-}
-
-
-const db = firebase.firestore();
-
-
-let activeDepId = null;
-let activeUserId = null;
-let activeCurrentAmt = 0;
-let activeOldStatus = "";
-let activeMobileNo = "";
-
-
-firebase.auth().onAuthStateChanged((user) => {
-
-    if (!user) {
-
-        window.location.href = "admin-login.html";
-
-    } else {
-
-        document.body.style.display = "flex";
-
-        initDepositsListener();
-
-    }
-
-});
-
-
-function adminLogout() {
-
-    firebase.auth()
-        .signOut()
-        .then(() => {
-
-            window.location.href = "admin-login.html";
-
-        });
-
-}
-
-
-/* ================================
-   DATE / TIME HELPERS
-================================ */
-
-function getTimeStamp(item) {
-
-    if (item.createdAt) {
-
-        if (item.createdAt.toDate) {
-
-            return item.createdAt.toDate().getTime();
-
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
         }
-
-        return new Date(item.createdAt).getTime();
-
-    }
-
-    if (item.timestamp) {
-
-        return new Date(item.timestamp).getTime();
-
-    }
-
-    if (item.date) {
-
-        return new Date(item.date).getTime();
-
-    }
-
-    return 0;
-
-}
-
-
-function getIsoDateStr(ts) {
-
-    if (!ts) return "";
-
-    let d = new Date(ts);
-
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-
-}
-
-
-/* ================================
-   DEPOSIT LISTENER
-================================ */
-
-function initDepositsListener() {
-
-    db.collection("deposits").onSnapshot((snapshot) => {
-
-        const tableBody =
-            document.getElementById("realDepositBody");
-
-        tableBody.innerHTML = "";
-
-
-        let totalDeposit = 0;
-        let todayDeposit = 0;
-        let pendingCount = 0;
-
-
-        const todayIsoStr =
-            getIsoDateStr(new Date().getTime());
-
-
-        if (snapshot.empty) {
-
-            tableBody.innerHTML = `
-                <tr>
-                    <td
-                        colspan="9"
-                        style="text-align:center;padding:20px;color:#e53e3e;font-weight:bold;">
-                        No Deposits Found
-                    </td>
-                </tr>
-            `;
-
-            document.getElementById("totalDepositVal").innerText = "₹0";
-            document.getElementById("todayDepositVal").innerText = "₹0";
-            document.getElementById("pendingCountVal").innerText = "0 Pending";
-
-            return;
-
-        }
-
-
-        let depositList = [];
-
-
-        snapshot.forEach((doc) => {
-
-            let data = doc.data();
-
-            data.id = doc.id;
-
-            depositList.push(data);
-
-        });
-
-
-        /* Pending first */
-
-        depositList.sort((a, b) => {
-
-            let isPendingA =
-                (a.status || "Pending").toLowerCase() === "pending";
-
-            let isPendingB =
-                (b.status || "Pending").toLowerCase() === "pending";
-
-
-            if (isPendingA && !isPendingB) return -1;
-
-            if (!isPendingA && isPendingB) return 1;
-
-
-            return getTimeStamp(b) - getTimeStamp(a);
-
-        });
-
-
-        let serialNo = 1;
-
-
-        depositList.forEach((data) => {
-
-            let amt =
-                Number(data.amount || data.amt || 0);
-
-
-            let rawStatus =
-                data.status || "Pending";
-
-
-            let statusLower =
-                rawStatus.toLowerCase();
-
-
-            let uid =
-                data.userId ||
-                data.uid ||
-                data.user_id ||
-                "";
-
-
-            let ssUrl =
-                data.ssUrl ||
-                data.screenshot ||
-                data.ss ||
-                data.proof ||
-                data.imageUrl ||
-                data.image ||
-                data.screenshotUrl ||
-                data.payProof ||
-                "";
-
-
-            let mobile =
-                data.mobile ||
-                data.userMobile ||
-                data.userPhone ||
-                data.phone ||
-                data.mobileNo ||
-                "";
-
-
-            let mobileCellId =
-                `mobile-${data.id}`;
-
-
-            let dateStr = "N/A";
-
-            let rowIsoDate = "";
-
-            let ts = getTimeStamp(data);
-
-
-            if (ts > 0) {
-
-                dateStr =
-                    new Date(ts).toLocaleString("en-IN");
-
-                rowIsoDate =
-                    getIsoDateStr(ts);
-
-            }
-
-
-            /* ==========================
-               TOTALS
-            ========================== */
-
-            if (
-                statusLower === "approved" ||
-                statusLower === "success"
-            ) {
-
-                totalDeposit += amt;
-
-                if (rowIsoDate === todayIsoStr) {
-
-                    todayDeposit += amt;
-
-                }
-
-            }
-
-
-            else if (statusLower === "pending") {
-
-                pendingCount++;
-
-            }
-
-
-            let badgeClass =
-                (
-                    statusLower === "approved" ||
-                    statusLower === "success"
-                )
-                ? "badge-approved"
-                : (
-                    statusLower === "rejected" ||
-                    statusLower === "failed"
-                )
-                ? "badge-rejected"
-                : "badge-pending";
-
-
-            /* ==========================
-               ACTION BUTTONS
-            ========================== */
-
-            let actionHTML = "";
-
-
-            if (statusLower === "pending") {
-
-                actionHTML = `
-
-                    <button
-                        class="btn-approve"
-                        onclick="openActionModal(
-                            '${data.id}',
-                            '${uid}',
-                            ${amt},
-                            '${escapeForAttribute(rawStatus)}',
-                            '${escapeForAttribute(mobile)}',
-                            'Approved'
-                        )">
-                        Approve
-                    </button>
-
-                    <button
-                        class="btn-reject"
-                        onclick="openActionModal(
-                            '${data.id}',
-                            '${uid}',
-                            ${amt},
-                            '${escapeForAttribute(rawStatus)}',
-                            '${escapeForAttribute(mobile)}',
-                            'Rejected'
-                        )">
-                        Reject
-                    </button>
-
-                `;
-
+        const db = firebase.firestore();
+
+        let activeDepId = null;
+        let activeUserId = null;
+        let activeCurrentAmt = 0;
+        let activeOldStatus = "";
+        let activeMobileNo = "";
+
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
             } else {
-
-                actionHTML = `
-
-                    <button
-                        class="btn-revert"
-                        onclick="openActionModal(
-                            '${data.id}',
-                            '${uid}',
-                            ${amt},
-                            '${escapeForAttribute(rawStatus)}',
-                            '${escapeForAttribute(mobile)}'
-                        )">
-
-                        <i class="fa-solid fa-arrows-rotate"></i>
-
-                        Change Status
-
-                    </button>
-
-                `;
-
+                document.body.style.display = "flex";
+                initDepositsListener();
             }
-
-
-            /* ==========================
-               SCREENSHOT
-            ========================== */
-
-            let ssButton = "";
-
-
-            if (ssUrl) {
-
-                ssButton = `
-
-                    <button
-                        class="btn-ss"
-                        onclick="viewSS('${escapeForAttribute(ssUrl)}')">
-
-                        View SS
-
-                    </button>
-
-                `;
-
-            } else {
-
-                ssButton = `
-                    <span style="color:#aaa;">
-                        No SS
-                    </span>
-                `;
-
-            }
-
-
-            /* ==========================
-               AMOUNT
-            ========================== */
-
-            let amountHTML = `
-
-                ₹<span id="amt-val-${data.id}">
-                    ${amt}
-                </span>
-
-            `;
-
-
-            amountHTML += `
-
-                <button
-                    class="btn-edit"
-                    onclick="openAmountModal(
-                        '${data.id}',
-                        '${uid}',
-                        ${amt},
-                        '${escapeForAttribute(rawStatus)}',
-                        '${escapeForAttribute(mobile)}'
-                    )">
-
-                    <i class="fa-solid fa-pen"></i>
-                    Edit
-
-                </button>
-
-            `;
-
-
-            /* ==========================
-               STATUS DISPLAY
-            ========================== */
-
-            let statusDisplay =
-                rawStatus.toUpperCase();
-
-
-            if (
-                statusLower === "rejected" &&
-                data.rejectReason
-            ) {
-
-                statusDisplay += `
-
-                    <br>
-
-                    <small
-                        style="font-size:9px;color:#c53030;">
-
-                        (${escapeHtml(data.rejectReason)})
-
-                    </small>
-
-                `;
-
-            }
-
-
-            let row = `
-
-                <tr data-date="${rowIsoDate}">
-
-                    <td
-                        style="font-weight:bold;text-align:center;">
-                        ${serialNo++}
-                    </td>
-
-                    <td>
-                        ${dateStr}
-                    </td>
-
-                    <td>
-                        <strong>
-                            ${
-                                escapeHtml(
-                                    data.name ||
-                                    data.userName ||
-                                    data.customerName ||
-                                    "User"
-                                )
-                            }
-                        </strong>
-                    </td>
-
-                    <td id="${mobileCellId}">
-                        ${mobile
-                            ? escapeHtml(mobile)
-                            : "Fetching..."
-                        }
-                    </td>
-
-                    <td
-                        style="color:#2e7d32;font-weight:800;">
-                        ${amountHTML}
-                    </td>
-
-                    <td>
-                        <strong>
-                            ${
-                                escapeHtml(
-                                    data.utr ||
-                                    data.utrNumber ||
-                                    data.refNo ||
-                                    "N/A"
-                                )
-                            }
-                        </strong>
-                    </td>
-
-                    <td>
-                        ${ssButton}
-                    </td>
-
-                    <td>
-                        <span class="${badgeClass}">
-                            ${statusDisplay}
-                        </span>
-                    </td>
-
-                    <td>
-                        ${actionHTML}
-                    </td>
-
-                </tr>
-
-            `;
-
-
-            tableBody.innerHTML += row;
-
-
-            /* ==========================
-               FETCH MOBILE
-            ========================== */
-
-            if (!mobile && uid) {
-
-                db.collection("customers")
-                    .doc(String(uid))
-                    .get()
-                    .then((uDoc) => {
-
-                        if (uDoc.exists) {
-
-                            let customer =
-                                uDoc.data();
-
-
-                            let mobileValue =
-                                customer.mobile ||
-                                customer.phone ||
-                                "N/A";
-
-
-                            let cell =
-                                document.getElementById(
-                                    mobileCellId
-                                );
-
-
-                            if (cell) {
-
-                                cell.innerText =
-                                    mobileValue;
-
-                            }
-
-                        }
-
-                    })
-                    .catch(() => {});
-
-            }
-
         });
 
-
-        document.getElementById(
-            "totalDepositVal"
-        ).innerText =
-            "₹" + totalDeposit;
-
-
-        document.getElementById(
-            "todayDepositVal"
-        ).innerText =
-            "₹" + todayDeposit;
-
-
-        document.getElementById(
-            "pendingCountVal"
-        ).innerText =
-            pendingCount + " Pending";
-
-
-        filterTable();
-
-    });
-
-}
-
-
-/* ================================
-   MODAL
-================================ */
-
-function closeModal(modalId) {
-
-    document.getElementById(modalId).style.display =
-        "none";
-
-}
-
-
-function viewSS(url) {
-
-    document.getElementById("ssImage").src = url;
-
-    document.getElementById("ssModal").style.display =
-        "flex";
-
-}
-
-
-/* ================================
-   AMOUNT MODAL
-================================ */
-
-function openAmountModal(
-    depId,
-    uid,
-    currentAmt,
-    status,
-    mobile = ""
-) {
-
-    activeDepId = depId;
-
-    activeUserId = uid;
-
-    activeCurrentAmt =
-        Number(currentAmt) || 0;
-
-    activeOldStatus = status;
-
-    activeMobileNo = mobile;
-
-
-    document.getElementById(
-        "newAmountInput"
-    ).value = currentAmt;
-
-
-    document.getElementById(
-        "editAmtModal"
-    ).style.display = "flex";
-
-}
-
-
-/* ================================
-   FIND USER
-================================ */
-
-async function findUserDocRef(
-    data,
-    explicitUid,
-    explicitMobile
-) {
-
-    let possibleUid =
-        explicitUid ||
-        data.userId ||
-        data.uid ||
-        data.user_id;
-
-
-    if (possibleUid) {
-
-        let userRef =
-            db.collection("customers")
-                .doc(String(possibleUid));
-
-
-        let uDoc =
-            await userRef.get();
-
-
-        if (uDoc.exists) {
-
-            return userRef;
-
-        }
-
-
-        let qSnap =
-            await db.collection("customers")
-                .where(
-                    "uid",
-                    "==",
-                    String(possibleUid)
-                )
-                .limit(1)
-                .get();
-
-
-        if (!qSnap.empty) {
-
-            return qSnap.docs[0].ref;
-
-        }
-
-    }
-
-
-    let rawMobile =
-        explicitMobile ||
-        data.mobile ||
-        data.userMobile ||
-        data.phone ||
-        data.userPhone ||
-        data.mobileNo ||
-        "";
-
-
-    if (rawMobile) {
-
-        let cleanDigits =
-            String(rawMobile)
-                .replace(/\D/g, "")
-                .slice(-10);
-
-
-        let withPlus91 =
-            "+91" + cleanDigits;
-
-
-        if (cleanDigits.length === 10) {
-
-            let docPlain =
-                await db.collection("customers")
-                    .doc(cleanDigits)
-                    .get();
-
-
-            if (docPlain.exists) {
-
-                return db.collection("customers")
-                    .doc(cleanDigits);
-
-            }
-
-
-            let docPlus =
-                await db.collection("customers")
-                    .doc(withPlus91)
-                    .get();
-
-
-            if (docPlus.exists) {
-
-                return db.collection("customers")
-                    .doc(withPlus91);
-
-            }
-
-
-            let snap1 =
-                await db.collection("customers")
-                    .where(
-                        "mobile",
-                        "in",
-                        [cleanDigits, withPlus91]
-                    )
-                    .limit(1)
-                    .get();
-
-
-            if (!snap1.empty) {
-
-                return snap1.docs[0].ref;
-
-            }
-
-
-            let snap2 =
-                await db.collection("customers")
-                    .where(
-                        "phone",
-                        "in",
-                        [cleanDigits, withPlus91]
-                    )
-                    .limit(1)
-                    .get();
-
-
-            if (!snap2.empty) {
-
-                return snap2.docs[0].ref;
-
-            }
-
-        }
-
-    }
-
-
-    return null;
-
-}
-
-
-/* ================================
-   AMOUNT UPDATE
-================================ */
-
-async function submitAmountUpdate() {
-
-    let submitBtn =
-        document.getElementById("submitAmtBtn");
-
-
-    let newAmt =
-        Number(
-            document.getElementById(
-                "newAmountInput"
-            ).value
-        );
-
-
-    if (!newAmt || newAmt <= 0) {
-
-        alert("Valid Amount Enter Karein!");
-
-        return;
-
-    }
-
-
-    submitBtn.disabled = true;
-
-    submitBtn.innerText = "Saving...";
-
-
-    try {
-
-        let depRef =
-            db.collection("deposits")
-                .doc(activeDepId);
-
-
-        await db.runTransaction(async (transaction) => {
-
-            let depDoc =
-                await transaction.get(depRef);
-
-
-            if (!depDoc.exists) {
-
-                throw new Error(
-                    "Deposit request nahi mili!"
-                );
-
-            }
-
-
-            let data =
-                depDoc.data();
-
-
-            let oldAmt =
-                Number(
-                    data.amount ||
-                    data.amt ||
-                    0
-                );
-
-
-            let oldStatus =
-                (
-                    data.status ||
-                    "Pending"
-                ).toLowerCase();
-
-
-            let diff =
-                newAmt - oldAmt;
-
-
-            let walletCredited =
-                data.walletCredited === true;
-
-
-            let matchedUserRef = null;
-
-
-            /*
-             * IMPORTANT:
-             *
-             * Deposit submit hote waqt wallet
-             * already credit ho raha hai.
-             *
-             * Isliye amount edit karne par
-             * sirf difference adjust hoga.
-             */
-
-            if (
-                diff !== 0 &&
-                walletCredited
-            ) {
-
-                matchedUserRef =
-                    await findUserDocRef(
-                        data,
-                        activeUserId,
-                        activeMobileNo
-                    );
-
-
-                if (!matchedUserRef) {
-
-                    throw new Error(
-                        "Customer record nahi mila!"
-                    );
-
-                }
-
-            }
-
-
-            transaction.update(depRef, {
-
-                amount: newAmt,
-
-                amt: newAmt,
-
-                updatedAt:
-                    firebase.firestore.FieldValue
-                        .serverTimestamp()
-
+        function adminLogout() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = "admin-login.html";
             });
+        }
 
+        function getTimeStamp(item) {
+            if (item.createdAt) {
+                return item.createdAt.toDate ? item.createdAt.toDate().getTime() : new Date(item.createdAt).getTime();
+            }
+            if (item.timestamp) return new Date(item.timestamp).getTime();
+            if (item.date) return new Date(item.date).getTime();
+            return 0;
+        }
 
-            if (
-                matchedUserRef &&
-                diff !== 0
-            ) {
+        function getIsoDateStr(ts) {
+            if (!ts) return "";
+            let d = new Date(ts);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
 
-                transaction.set(
-                    matchedUserRef,
-                    {
-                        depositBalance:
-                            firebase.firestore.FieldValue
-                                .increment(diff)
-                    },
-                    {
-                        merge: true
+        function initDepositsListener() {
+            db.collection("deposits").onSnapshot((snapshot) => {
+                const tableBody = document.getElementById("realDepositBody");
+                tableBody.innerHTML = "";
+
+                let totalDeposit = 0;
+                let todayDeposit = 0;
+                let pendingCount = 0;
+                const todayIsoStr = getIsoDateStr(new Date().getTime());
+
+                if (snapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
+                    document.getElementById("totalDepositVal").innerText = "₹0";
+                    document.getElementById("todayDepositVal").innerText = "₹0";
+                    document.getElementById("pendingCountVal").innerText = "0 Pending";
+                    return;
+                }
+
+                let depositList = [];
+                snapshot.forEach((doc) => {
+                    let data = doc.data();
+                    data.id = doc.id;
+                    depositList.push(data);
+                });
+
+                depositList.sort((a, b) => {
+                    let isPendingA = (a.status || "Pending").toLowerCase() === 'pending';
+                    let isPendingB = (b.status || "Pending").toLowerCase() === 'pending';
+
+                    if (isPendingA && !isPendingB) return -1;
+                    if (!isPendingA && isPendingB) return 1;
+
+                    return getTimeStamp(b) - getTimeStamp(a);
+                });
+
+                let serialNo = 1;
+
+                depositList.forEach((data) => {
+                    let amt = Number(data.amount || data.amt || 0);
+                    let rawStatus = data.status || "Pending";
+                    let statusLower = rawStatus.toLowerCase();
+                    let uid = data.uid || data.userId || data.user_id || "";
+                    let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
+                    let mobile = data.mobile || data.userMobile || data.userPhone || data.phone || data.mobileNo || "";
+                    let mobileCellId = `mobile-${data.id}`;
+
+                    let dateStr = "N/A";
+                    let rowIsoDate = "";
+                    let ts = getTimeStamp(data);
+                    if (ts > 0) {
+                        dateStr = new Date(ts).toLocaleString('en-IN');
+                        rowIsoDate = getIsoDateStr(ts);
                     }
-                );
 
-            }
-
-        });
-
-
-        alert(
-            "Deposit amount successfully updated!"
-        );
-
-
-        closeModal("editAmtModal");
-
-
-    } catch (err) {
-
-        alert(
-            "Error updating amount: " +
-            err.message
-        );
-
-    } finally {
-
-        submitBtn.disabled = false;
-
-        submitBtn.innerText =
-            "Save Amount";
-
-    }
-
-}
-
-
-/* ================================
-   OPEN STATUS MODAL
-================================ */
-
-function openActionModal(
-    depId,
-    userId,
-    currentAmt,
-    oldStatus,
-    mobile = "",
-    targetStatus = null
-) {
-
-    activeDepId = depId;
-
-    activeUserId = userId;
-
-    activeMobileNo = mobile;
-
-
-    let amtElement =
-        document.getElementById(
-            `amt-val-${depId}`
-        );
-
-
-    if (amtElement) {
-
-        activeCurrentAmt =
-            Number(amtElement.innerText) ||
-            Number(currentAmt) ||
-            0;
-
-    } else {
-
-        activeCurrentAmt =
-            Number(currentAmt) || 0;
-
-    }
-
-
-    activeOldStatus =
-        oldStatus;
-
-
-    let statusSelect =
-        document.getElementById(
-            "modalStatusSelect"
-        );
-
-
-    if (targetStatus) {
-
-        statusSelect.value =
-            targetStatus;
-
-    } else {
-
-        statusSelect.value =
-            oldStatus;
-
-    }
-
-
-    document.getElementById(
-        "modalRejectReason"
-    ).value = "";
-
-
-    toggleRejectReasonBox();
-
-
-    document.getElementById(
-        "actionModal"
-    ).style.display = "flex";
-
-}
-
-
-/* ================================
-   REJECT BOX
-================================ */
-
-function toggleRejectReasonBox() {
-
-    let val =
-        document.getElementById(
-            "modalStatusSelect"
-        ).value;
-
-
-    document.getElementById(
-        "rejectReasonBox"
-    ).style.display =
-        val === "Rejected"
-            ? "block"
-            : "none";
-
-}
-
-
-/* ================================
-   STATUS UPDATE
-================================ */
-
-async function submitStatusUpdate() {
-
-    let submitBtn =
-        document.getElementById(
-            "submitBtn"
-        );
-
-
-    let newStatus =
-        document.getElementById(
-            "modalStatusSelect"
-        ).value;
-
-
-    let rejectReason =
-        document.getElementById(
-            "modalRejectReason"
-        ).value.trim();
-
-
-    if (
-        newStatus === "Rejected" &&
-        !rejectReason
-    ) {
-
-        alert(
-            "Kripya Reject karne ki wajah (Reason) zaroor likhein!"
-        );
-
-        return;
-
-    }
-
-
-    submitBtn.disabled = true;
-
-    submitBtn.innerText =
-        "Updating...";
-
-
-    try {
-
-        let depRef =
-            db.collection("deposits")
-                .doc(activeDepId);
-
-
-        await db.runTransaction(async (transaction) => {
-
-            let currentDepDoc =
-                await transaction.get(depRef);
-
-
-            if (!currentDepDoc.exists) {
-
-                throw new Error(
-                    "Deposit request nahi mili!"
-                );
-
-            }
-
-
-            let freshData =
-                currentDepDoc.data();
-
-
-            let oldLower =
-                (
-                    freshData.status ||
-                    "pending"
-                ).toLowerCase();
-
-
-            let targetLower =
-                newStatus.toLowerCase();
-
-
-            let targetAmount =
-                Number(
-                    freshData.amount ||
-                    freshData.amt ||
-                    activeCurrentAmt
-                );
-
-
-            if (
-                oldLower === targetLower
-            ) {
-
-                throw new Error(
-                    "Status pehle se yahi hai!"
-                );
-
-            }
-
-
-            /*
-             * ==========================================
-             * IMPORTANT WALLET LOGIC
-             * ==========================================
-             *
-             * Aapke case me deposit submit hote hi
-             * ₹100 wallet me already aa raha hai.
-             *
-             * Isliye:
-             *
-             * PENDING -> APPROVED
-             *      = wallet me kuch ADD NAHI karna
-             *
-             * PENDING -> REJECTED
-             *      = wallet se amount REMOVE
-             *
-             * REJECTED -> PENDING
-             *      = wallet me amount ADD
-             *
-             * REJECTED -> APPROVED
-             *      = wallet me amount ADD
-             *
-             * APPROVED -> REJECTED
-             *      = wallet se amount REMOVE
-             *
-             * APPROVED -> PENDING
-             *      = wallet se amount REMOVE
-             *
-             * ==========================================
-             */
-
-
-            let walletCredited =
-                freshData.walletCredited === true;
-
-
-            let walletChange = 0;
-
-
-            /*
-             * Existing old deposits ke liye:
-             *
-             * Pending ka matlab wallet me amount
-             * already credited maana ja raha hai.
-             *
-             * Isliye agar walletCredited field missing hai,
-             * Pending/Approved deposit ko credited treat
-             * kiya ja sakta hai.
-             */
-
-            if (
-                freshData.walletCredited === undefined &&
-                (
-                    oldLower === "pending" ||
-                    oldLower === "approved" ||
-                    oldLower === "success"
-                )
-            ) {
-
-                walletCredited = true;
-
-            }
-
-
-            /* ==========================
-               PENDING -> APPROVED
-            ========================== */
-
-            if (
-                oldLower === "pending" &&
-                (
-                    targetLower === "approved" ||
-                    targetLower === "success"
-                )
-            ) {
-
-                /*
-                 * DO NOT ADD MONEY HERE.
-                 *
-                 * Yahi ₹100 -> ₹200 wali problem ko
-                 * stop karta hai.
-                 */
-
-                walletChange = 0;
-
-                walletCredited = true;
-
-            }
-
-
-            /* ==========================
-               PENDING -> REJECTED
-            ========================== */
-
-            else if (
-                oldLower === "pending" &&
-                (
-                    targetLower === "rejected" ||
-                    targetLower === "failed"
-                )
-            ) {
-
-                if (walletCredited) {
-
-                    walletChange =
-                        -targetAmount;
-
-                    walletCredited = false;
-
-                }
-
-            }
-
-
-            /* ==========================
-               REJECTED -> PENDING
-            ========================== */
-
-            else if (
-                (
-                    oldLower === "rejected" ||
-                    oldLower === "failed"
-                ) &&
-                targetLower === "pending"
-            ) {
-
-                if (!walletCredited) {
-
-                    walletChange =
-                        targetAmount;
-
-                    walletCredited = true;
-
-                }
-
-            }
-
-
-            /* ==========================
-               REJECTED -> APPROVED
-            ========================== */
-
-            else if (
-                (
-                    oldLower === "rejected" ||
-                    oldLower === "failed"
-                ) &&
-                (
-                    targetLower === "approved" ||
-                    targetLower === "success"
-                )
-            ) {
-
-                if (!walletCredited) {
-
-                    walletChange =
-                        targetAmount;
-
-                    walletCredited = true;
-
-                }
-
-            }
-
-
-            /* ==========================
-               APPROVED -> REJECTED
-            ========================== */
-
-            else if (
-                (
-                    oldLower === "approved" ||
-                    oldLower === "success"
-                ) &&
-                (
-                    targetLower === "rejected" ||
-                    targetLower === "failed"
-                )
-            ) {
-
-                if (walletCredited) {
-
-                    walletChange =
-                        -targetAmount;
-
-                    walletCredited = false;
-
-                }
-
-            }
-
-
-            /* ==========================
-               APPROVED -> PENDING
-            ========================== */
-
-            else if (
-                (
-                    oldLower === "approved" ||
-                    oldLower === "success"
-                ) &&
-                targetLower === "pending"
-            ) {
-
-                if (walletCredited) {
-
-                    walletChange =
-                        -targetAmount;
-
-                    walletCredited = false;
-
-                }
-
-            }
-
-
-            /*
-             * ================================
-             * USER DOCUMENT
-             * ================================
-             */
-
-            let matchedUserRef = null;
-
-
-            if (walletChange !== 0) {
-
-                matchedUserRef =
-                    await findUserDocRef(
-                        freshData,
-                        activeUserId,
-                        activeMobileNo
-                    );
-
-
-                if (!matchedUserRef) {
-
-                    throw new Error(
-                        "Customer record nahi mila! Balance update nahi hua."
-                    );
-
-                }
-
-            }
-
-
-            /*
-             * ================================
-             * DEPOSIT UPDATE
-             * ================================
-             */
-
-            let updatePayload = {
-
-                status: newStatus,
-
-                rejectReason:
-                    newStatus === "Rejected"
-                        ? rejectReason
-                        : "",
-
-                walletCredited:
-                    walletCredited,
-
-                processedAt:
-                    firebase.firestore.FieldValue
-                        .serverTimestamp()
-
-            };
-
-
-            transaction.update(
-                depRef,
-                updatePayload
-            );
-
-
-            /*
-             * ================================
-             * WALLET UPDATE
-             * ================================
-             */
-
-            if (
-                matchedUserRef &&
-                walletChange !== 0
-            ) {
-
-                transaction.set(
-                    matchedUserRef,
-                    {
-
-                        depositBalance:
-                            firebase.firestore.FieldValue
-                                .increment(walletChange)
-
-                    },
-                    {
-                        merge: true
+                    if (statusLower === "approved" || statusLower === "success") {
+                        totalDeposit += amt;
+                        if (rowIsoDate === todayIsoStr) todayDeposit += amt;
+                    } else if (statusLower === "pending") {
+                        pendingCount++;
                     }
-                );
 
+                    let badgeClass = (statusLower === "approved" || statusLower === "success") ? "badge-approved" : 
+                                     (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
+
+                    let actionHTML = "";
+                    if (statusLower === "pending") {
+                        actionHTML = `<button class="btn-approve" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}', 'Approved')">Approve</button>
+                                     <button class="btn-reject" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}', 'Rejected')">Reject</button>`;
+                    } else {
+                        actionHTML = `<button class="btn-revert" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
+                    }
+
+                    let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
+
+                    let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
+                    amountHTML += ` <button class="btn-edit" onclick="openAmountModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}')"><i class="fa-solid fa-pen"></i> Edit</button>`;
+
+                    let statusDisplay = rawStatus.toUpperCase();
+                    if (statusLower === "rejected" && data.rejectReason) {
+                        statusDisplay += `<br><small style="font-size:9px; color:#c53030;">(${data.rejectReason})</small>`;
+                    }
+
+                    let row = `<tr data-date="${rowIsoDate}">
+                        <td style="font-weight:bold; text-align:center;">${serialNo++}</td>
+                        <td>${dateStr}</td>
+                        <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
+                        <td id="${mobileCellId}">${mobile || "Fetching..."}</td>
+                        <td style="color:#2e7d32; font-weight:800;">${amountHTML}</td>
+                        <td><strong>${data.utr || data.utrNumber || data.refNo || "N/A"}</strong></td>
+                        <td>${ssButton}</td>
+                        <td><span class="${badgeClass}">${statusDisplay}</span></td>
+                        <td>${actionHTML}</td>
+                    </tr>`;
+
+                    tableBody.innerHTML += row;
+
+                    if (!mobile && uid) {
+                        db.collection("customers").doc(String(uid)).get().then((uDoc) => {
+                            if (uDoc.exists) {
+                                document.getElementById(mobileCellId).innerText = uDoc.data().mobile || uDoc.data().phone || uid;
+                            }
+                        }).catch(() => {});
+                    }
+                });
+
+                document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
+                document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
+                document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
+
+                filterTable();
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function viewSS(url) {
+            document.getElementById("ssImage").src = url;
+            document.getElementById("ssModal").style.display = "flex";
+        }
+
+        function openAmountModal(depId, uid, currentAmt, status, mobile = "") {
+            activeDepId = depId;
+            activeUserId = uid;
+            activeCurrentAmt = Number(currentAmt) || 0;
+            activeOldStatus = status;
+            activeMobileNo = mobile;
+
+            document.getElementById("newAmountInput").value = currentAmt;
+            document.getElementById("editAmtModal").style.display = "flex";
+        }
+
+        async function findUserDocRef(data, explicitUid, explicitMobile) {
+            let possibleUid = explicitUid || data.uid || data.userId || data.user_id;
+            
+            if (possibleUid) {
+                let uDoc = await db.collection("customers").doc(String(possibleUid)).get();
+                if (uDoc.exists) return db.collection("customers").doc(String(possibleUid));
+                
+                let qSnap = await db.collection("customers").where("uid", "==", String(possibleUid)).limit(1).get();
+                if (!qSnap.empty) return qSnap.docs[0].ref;
             }
 
-        });
+            let rawMobile = explicitMobile || data.mobile || data.userMobile || data.phone || data.userPhone || data.mobileNo || "";
+            if (rawMobile) {
+                let cleanDigits = String(rawMobile).replace(/\D/g, "").slice(-10);
+                let withPlus91 = "+91" + cleanDigits;
 
+                if (cleanDigits.length === 10) {
+                    let docPlain = await db.collection("customers").doc(cleanDigits).get();
+                    if (docPlain.exists) return db.collection("customers").doc(cleanDigits);
 
-        alert(
-            `Status updated to ${newStatus} successfully!`
-        );
+                    let docPlus = await db.collection("customers").doc(withPlus91).get();
+                    if (docPlus.exists) return db.collection("customers").doc(withPlus91);
 
+                    let snap1 = await db.collection("customers").where("mobile", "in", [cleanDigits, withPlus91]).limit(1).get();
+                    if (!snap1.empty) return snap1.docs[0].ref;
+                    
+                    let snap2 = await db.collection("customers").where("phone", "in", [cleanDigits, withPlus91]).limit(1).get();
+                    if (!snap2.empty) return snap2.docs[0].ref;
+                }
+            }
 
-        closeModal("actionModal");
+            return null;
+        }
 
+        async function submitAmountUpdate() {
+            let submitBtn = document.getElementById("submitAmtBtn");
+            let newAmt = Number(document.getElementById("newAmountInput").value);
 
-    } catch (err) {
+            if (!newAmt || newAmt <= 0) {
+                alert("Valid Amount Enter Karein!");
+                return;
+            }
 
-        alert(
-            "Error: " +
-            err.message
-        );
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Saving...";
 
-    } finally {
+            try {
+                let depRef = db.collection("deposits").doc(activeDepId);
 
-        submitBtn.disabled = false;
+                await db.runTransaction(async (transaction) => {
+                    let depSnap = await transaction.get(depRef);
+                    if (!depSnap.exists) throw new Error("Deposit Record nahi mila!");
 
-        submitBtn.innerText =
-            "Update Status";
+                    let depData = depSnap.data();
+                    let currentAmount = Number(depData.amount || depData.amt || activeCurrentAmt);
+                    let diff = newAmt - currentAmount;
+                    let isWalletUpdated = depData.isWalletUpdated || false;
 
-    }
+                    transaction.update(depRef, { 
+                        amount: newAmt,
+                        amt: newAmt 
+                    });
 
-}
+                    // Adjusted only if the wallet was already credited
+                    if (isWalletUpdated && diff !== 0) {
+                        let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
+                        if (matchedUserRef) {
+                            transaction.set(matchedUserRef, {
+                                depositBalance: firebase.firestore.FieldValue.increment(diff)
+                            }, { merge: true });
+                        }
+                    }
+                });
 
+                alert("Amount updated successfully!");
+                closeModal("editAmtModal");
+            } catch (err) {
+                alert("Error updating amount: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Save Amount";
+            }
+        }
 
-/* ================================
-   SEARCH FILTER
-================================ */
+        function openActionModal(depId, userId, currentAmt, oldStatus, mobile = "", targetStatus = null) {
+            activeDepId = depId;
+            activeUserId = userId;
+            activeMobileNo = mobile;
+            
+            let amtElement = document.getElementById(`amt-val-${depId}`);
+            if (amtElement) {
+                activeCurrentAmt = Number(amtElement.innerText) || Number(currentAmt) || 0;
+            } else {
+                activeCurrentAmt = Number(currentAmt) || 0;
+            }
 
-function filterTable() {
+            activeOldStatus = oldStatus;
 
-    let searchVal =
-        document.getElementById(
-            "searchInput"
-        ).value
-        .toLowerCase()
-        .trim();
+            let statusSelect = document.getElementById("modalStatusSelect");
+            if (targetStatus) {
+                statusSelect.value = targetStatus;
+            } else {
+                statusSelect.value = oldStatus;
+            }
 
+            document.getElementById("modalRejectReason").value = "";
+            toggleRejectReasonBox();
+            document.getElementById("actionModal").style.display = "flex";
+        }
 
-    let selectedDate =
-        document.getElementById(
-            "dateInput"
-        ).value;
+        function toggleRejectReasonBox() {
+            let val = document.getElementById("modalStatusSelect").value;
+            document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
+        }
 
+        async function submitStatusUpdate() {
+            let submitBtn = document.getElementById("submitBtn");
+            let newStatus = document.getElementById("modalStatusSelect").value;
+            let rejectReason = document.getElementById("modalRejectReason").value.trim();
 
-    let rows =
-        document.querySelectorAll(
-            "#realDepositBody tr"
-        );
+            if (newStatus === "Rejected" && !rejectReason) {
+                alert("Kripya Reject karne ki wajah (Reason) zaroor likhein!");
+                return;
+            }
 
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Updating...";
 
-    rows.forEach((r) => {
+            try {
+                let depRef = db.collection("deposits").doc(activeDepId);
 
-        let rowText =
-            r.innerText.toLowerCase();
+                await db.runTransaction(async (transaction) => {
+                    let currentDepDoc = await transaction.get(depRef);
 
+                    if (!currentDepDoc.exists) {
+                        throw new Error("Deposit request nahi mili!");
+                    }
 
-        let rowDate =
-            r.getAttribute("data-date") || "";
+                    let freshData = currentDepDoc.data();
+                    let isWalletUpdated = freshData.isWalletUpdated || false;
+                    let oldLower = (freshData.status || "pending").toLowerCase();
+                    let targetLower = newStatus.toLowerCase();
 
+                    let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
 
-        let matchSearch =
-            !searchVal ||
-            rowText.includes(searchVal);
+                    if (oldLower === targetLower) {
+                        throw new Error("Status pehle se yahi hai!");
+                    }
 
+                    let amtChange = 0;
+                    let setWalletFlag = isWalletUpdated;
 
-        let matchDate =
-            !selectedDate ||
-            rowDate === selectedDate;
+                    // Controlled status transition checks using isWalletUpdated flag
+                    if (targetLower === "approved" || targetLower === "success") {
+                        if (!isWalletUpdated) {
+                            amtChange = targetAmount;
+                            setWalletFlag = true;
+                        }
+                    } else if (targetLower === "rejected" || targetLower === "failed") {
+                        if (isWalletUpdated) {
+                            amtChange = -targetAmount;
+                            setWalletFlag = false;
+                        }
+                    } else if (targetLower === "pending") {
+                        if (isWalletUpdated) {
+                            amtChange = -targetAmount;
+                            setWalletFlag = false;
+                        }
+                    }
 
+                    let updatePayload = {
+                        status: newStatus,
+                        rejectReason: (newStatus === "Rejected") ? rejectReason : "",
+                        isWalletUpdated: setWalletFlag,
+                        processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
 
-        r.style.display =
-            (
-                matchSearch &&
-                matchDate
-            )
-            ? ""
-            : "none";
+                    let matchedUserRef = null;
+                    if (amtChange !== 0) {
+                        matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
+                        if (!matchedUserRef) {
+                            throw new Error("Customer record nahi mila! Balance update nahi hua.");
+                        }
+                    }
 
-    });
+                    transaction.update(depRef, updatePayload);
 
-}
+                    if (matchedUserRef && amtChange !== 0) {
+                        transaction.set(matchedUserRef, {
+                            depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                        }, { merge: true });
+                    }
+                });
 
+                alert(`Status updated to ${newStatus} successfully!`);
+                closeModal("actionModal");
+            } catch (err) {
+                alert("Error: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Update Status";
+            }
+        }
 
-/* ================================
-   RESET DATE
-================================ */
+        function filterTable() {
+            let searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
+            let selectedDate = document.getElementById("dateInput").value;
+            let rows = document.querySelectorAll("#realDepositBody tr");
 
-function clearDateFilter() {
+            rows.forEach(r => {
+                let rowText = r.innerText.toLowerCase();
+                let rowDate = r.getAttribute("data-date") || "";
 
-    document.getElementById(
-        "dateInput"
-    ).value = "";
+                let matchSearch = !searchVal || rowText.includes(searchVal);
+                let matchDate = !selectedDate || rowDate === selectedDate;
 
+                r.style.display = (matchSearch && matchDate) ? "" : "none";
+            });
+        }
 
-    filterTable();
-
-}
-
-
-/* ================================
-   HTML ESCAPE
-================================ */
-
-function escapeHtml(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-
-}
-
-
-/* ================================
-   ATTRIBUTE ESCAPE
-================================ */
-
-function escapeForAttribute(value) {
-
-    if (value === null || value === undefined) {
-        return "";
-    }
-
-    return String(value)
-        .replace(/\\/g, "\\\\")
-        .replace(/'/g, "\\'")
-        .replace(/\r/g, "")
-        .replace(/\n/g, "");
-
-}
-
-</script>
-
+        function clearDateFilter() {
+            document.getElementById("dateInput").value = "";
+            filterTable();
+        }
+    </script>
 </body>
 </html>
