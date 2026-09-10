@@ -373,21 +373,31 @@
                 let statusLower = (activeOldStatus || "").toLowerCase();
                 let diff = newAmt - activeCurrentAmt;
 
-                await db.collection("deposits").doc(activeDepId).update({ 
+                // 1. ALL READS FIRST
+                let depSnap = await db.collection("deposits").doc(activeDepId).get();
+                let depData = depSnap.data() || {};
+                let matchedUserRef = null;
+
+                if ((statusLower === "approved" || statusLower === "success") && diff !== 0) {
+                    matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
+                }
+
+                // 2. ALL WRITES AFTER READS
+                let batch = db.batch();
+                let depRef = db.collection("deposits").doc(activeDepId);
+                
+                batch.update(depRef, { 
                     amount: newAmt,
                     amt: newAmt 
                 });
 
-                if ((statusLower === "approved" || statusLower === "success") && diff !== 0) {
-                    let depSnap = await db.collection("deposits").doc(activeDepId).get();
-                    let depData = depSnap.data() || {};
-                    let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
-                    if (matchedUserRef) {
-                        await matchedUserRef.set({
-                            depositBalance: firebase.firestore.FieldValue.increment(diff)
-                        }, { merge: true });
-                    }
+                if (matchedUserRef) {
+                    batch.set(matchedUserRef, {
+                        depositBalance: firebase.firestore.FieldValue.increment(diff)
+                    }, { merge: true });
                 }
+
+                await batch.commit();
 
                 alert("Amount and Wallet Balance updated successfully!");
                 closeModal("editAmtModal");
@@ -465,7 +475,7 @@
             return null;
         }
 
-        // EXACT BALANCE ADDITION ENGINE (PREVENTS 100 TO 200 DOUBLE INCREMENT)
+        // FIXED STATUS UPDATE ENGINE (STRICT READ BEFORE WRITE ORDER)
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -481,11 +491,14 @@
 
             try {
                 let depRef = db.collection("deposits").doc(activeDepId);
+                
+                // STEP 1: ALL READ OPERATIONS FIRST
                 let currentDepDoc = await depRef.get();
 
                 if (!currentDepDoc.exists) {
                     alert("Deposit request nahi mili!");
                     submitBtn.disabled = false;
+                    submitBtn.innerText = "Update Status";
                     return;
                 }
 
@@ -493,33 +506,27 @@
                 let oldLower = (freshData.status || "pending").toLowerCase();
                 let targetLower = newStatus.toLowerCase();
 
-                // EXACT EXACT SINGLE AMOUNT VALUE (NO DOUBLE/BONUS MULTIPLIER)
                 let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
 
                 if (oldLower === targetLower) {
                     alert("Status pehle se yahi hai!");
                     closeModal("actionModal");
                     submitBtn.disabled = false;
+                    submitBtn.innerText = "Update Status";
                     return;
                 }
 
                 let amtChange = 0;
 
-                // STRICT CALCULATION
                 if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
-                    amtChange = targetAmount; // Exact same amount
+                    amtChange = targetAmount;
                 } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
-                    amtChange = -targetAmount; // Deduct original added amount if reverted
+                    amtChange = -targetAmount;
                 }
-
-                let updatePayload = {
-                    status: newStatus,
-                    rejectReason: (newStatus === "Rejected") ? rejectReason : "",
-                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
 
                 let matchedUserRef = null;
                 if (amtChange !== 0) {
+                    // Search customer document while still in READ phase
                     matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
                     if (!matchedUserRef) {
                         alert("Error: Customer record nahi mila! Balance update nahi hua.");
@@ -529,7 +536,13 @@
                     }
                 }
 
-                // ATOMIC WRITE BATCH
+                // STEP 2: WRITE OPERATIONS (ONLY AFTER ALL READS ARE COMPLETED)
+                let updatePayload = {
+                    status: newStatus,
+                    rejectReason: (newStatus === "Rejected") ? rejectReason : "",
+                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
                 let batch = db.batch();
                 batch.update(depRef, updatePayload);
                 
