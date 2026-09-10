@@ -245,7 +245,6 @@ button{font:inherit;}
 
 <script>
 let unsubscribeWalletListener = null;
-let unsubscribeDepositsListener = null;
 
 async function loadFirebaseCustomer(){
     try {
@@ -266,17 +265,18 @@ async function loadFirebaseCustomer(){
         const mobile10Digits = cleanMobile.slice(-10);
         const docIdWith91 = "91" + mobile10Digits;
 
-        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
+        // FIXED: Using "users" collection (Matching Admin Dashboard)
+        let userRef = firebaseDB.collection("users").doc(mobile10Digits);
         let snapshot = await userRef.get();
 
         if(!snapshot.exists) {
-            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+            userRef = firebaseDB.collection("users").doc(docIdWith91);
             snapshot = await userRef.get();
         }
 
         if(!snapshot.exists) {
-            const querySnap = await firebaseDB.collection("customers")
-                .where("mobile", "in", [mobile10Digits, "+" + mobile10Digits, "+91" + mobile10Digits, docIdWith91])
+            const querySnap = await firebaseDB.collection("users")
+                .where("mobile", "in", [mobile10Digits, cleanMobile, docIdWith91, "+" + mobile10Digits, "+91" + mobile10Digits])
                 .limit(1)
                 .get();
                 
@@ -287,12 +287,12 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // 1. REAL-TIME CUSTOMER BALANCE LISTENER
+        // LIVE REAL-TIME WALLET BALANCE LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
                 
-                const deposit = Number(data.depositBalance || data.deposit || 0);
+                const deposit = Number(data.depositBalance || data.wallet || data.deposit || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
                 
                 let total = deposit + winnings;
@@ -309,36 +309,6 @@ async function loadFirebaseCustomer(){
         }, (error) => {
             console.error("Wallet Sync Error:", error);
         });
-
-        // 2. AUTO-SYNC APPROVED DEPOSITS TO USER WALLET BALANCE
-        if(unsubscribeDepositsListener) unsubscribeDepositsListener();
-
-        unsubscribeDepositsListener = firebaseDB.collection("deposits")
-            .where("uid", "in", [mobile10Digits, docIdWith91, cleanMobile])
-            .onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(async (change) => {
-                    if (change.type === "added" || change.type === "modified") {
-                        const depData = change.doc.data();
-                        const status = (depData.status || "").toLowerCase();
-
-                        // Check if deposit is approved/success but not auto-credited yet
-                        if ((status === "approved" || status === "success") && !depData.autoSynced) {
-                            const depAmount = Number(depData.amount || 0);
-                            if (depAmount > 0) {
-                                // Increment depositBalance directly in Firestore customer doc
-                                await userRef.set({
-                                    depositBalance: firebase.firestore.FieldValue.increment(depAmount)
-                                }, { merge: true });
-
-                                // Mark deposit record so it doesn't double add
-                                await change.doc.ref.update({ autoSynced: true });
-                            }
-                        }
-                    }
-                });
-            }, (err) => {
-                console.warn("Deposits Auto-sync Error:", err);
-            });
 
     } catch(error) { 
         console.error("Wallet Error:", error); 
