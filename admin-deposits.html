@@ -58,11 +58,17 @@
         .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
         .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight:700; margin-left: 4px; }
-        .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
+        .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 6px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
 
+        /* Modal Custom Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
-        .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 20px; border-radius: 16px; text-align: center; }
-        .modal-card img { width: 100%; max-height: 400px; object-fit: contain; border-radius: 8px; margin: 15px 0; border: 1px solid #ddd; }
+        .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 24px; border-radius: 16px; text-align: left; }
+        .modal-card h3 { margin-bottom: 15px; color: #1a365d; }
+        .modal-card label { font-size: 12px; font-weight: bold; color: #4a5568; display: block; margin-top: 10px; margin-bottom: 4px; }
+        .modal-card input, .modal-card select, .modal-card textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; outline: none; margin-bottom: 12px; }
+        .modal-btn-group { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
+        .btn-modal-cancel { background: #e2e8f0; color: #4a5568; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
+        .btn-modal-submit { background: #3182ce; color: #ffffff; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -137,12 +143,50 @@
         </main>
     </div>
 
+    <!-- Screenshot Modal -->
     <div class="modal-overlay" id="ssModal">
-        <div class="modal-card">
+        <div class="modal-card" style="text-align: center;">
             <h3 style="color:#1a365d;">Payment Proof Screenshot</h3>
-            <img id="ssImage" src="" alt="Payment Screenshot">
+            <img id="ssImage" src="" alt="Payment Screenshot" style="width:100%; max-height:400px; object-fit:contain; border-radius:8px; margin:15px 0; border:1px solid #ddd;">
             <div>
-                <button style="padding: 8px 18px; background:#1a202c; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:700;" onclick="document.getElementById('ssModal').style.display='none'">Close</button>
+                <button class="btn-modal-cancel" onclick="closeModal('ssModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action / Change Status Modal -->
+    <div class="modal-overlay" id="actionModal">
+        <div class="modal-card">
+            <h3 id="modalTitle">Update Deposit Status</h3>
+            
+            <label>Select New Status:</label>
+            <select id="modalStatusSelect" onchange="toggleRejectReasonBox()">
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+                <option value="Pending">Pending</option>
+            </select>
+
+            <div id="rejectReasonBox" style="display:none;">
+                <label>Rejection Reason (User ko Dikhane ke liye):</label>
+                <textarea id="modalRejectReason" rows="2" placeholder="e.g. Invalid UTR Number / Payment Not Received"></textarea>
+            </div>
+
+            <div class="modal-btn-group">
+                <button class="btn-modal-cancel" onclick="closeModal('actionModal')">Cancel</button>
+                <button class="btn-modal-submit" onclick="submitStatusUpdate()">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Amount Modal -->
+    <div class="modal-overlay" id="editAmtModal">
+        <div class="modal-card">
+            <h3>Edit Deposit Amount</h3>
+            <label>Enter New Amount (₹):</label>
+            <input type="number" id="newAmountInput" placeholder="Enter amount">
+            <div class="modal-btn-group">
+                <button class="btn-modal-cancel" onclick="closeModal('editAmtModal')">Cancel</button>
+                <button class="btn-modal-submit" onclick="submitAmountUpdate()">Save Amount</button>
             </div>
         </div>
     </div>
@@ -162,7 +206,12 @@
         }
         const db = firebase.firestore();
 
-        // 🔒 STRICT SECURITY AUTHENTICATION GUARD
+        // Active State Tracking for Modal Actions
+        let activeDepId = null;
+        let activeUserId = null;
+        let activeCurrentAmt = 0;
+        let activeOldStatus = "";
+
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "admin-login.html";
@@ -175,8 +224,6 @@
         function adminLogout() {
             firebase.auth().signOut().then(() => {
                 window.location.href = "admin-login.html";
-            }).catch(() => {
-                window.location.href = "admin-login.html";
             });
         }
 
@@ -184,23 +231,15 @@
             if (item.createdAt) {
                 return item.createdAt.toDate ? item.createdAt.toDate().getTime() : new Date(item.createdAt).getTime();
             }
-            if (item.timestamp) {
-                return new Date(item.timestamp).getTime();
-            }
-            if (item.date) {
-                return new Date(item.date).getTime();
-            }
+            if (item.timestamp) return new Date(item.timestamp).getTime();
+            if (item.date) return new Date(item.date).getTime();
             return 0;
         }
 
-        // YYYY-MM-DD Iso Date String Standardizer for exact Filter
         function getIsoDateStr(ts) {
             if (!ts) return "";
             let d = new Date(ts);
-            let year = d.getFullYear();
-            let month = String(d.getMonth() + 1).padStart(2, '0');
-            let day = String(d.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
         }
 
         function initDepositsListener() {
@@ -211,9 +250,7 @@
                 let totalDeposit = 0;
                 let todayDeposit = 0;
                 let pendingCount = 0;
-
-                const todayObj = new Date();
-                const todayIsoStr = getIsoDateStr(todayObj.getTime());
+                const todayIsoStr = getIsoDateStr(new Date().getTime());
 
                 if (snapshot.empty) {
                     tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
@@ -230,13 +267,10 @@
                     depositList.push(data);
                 });
 
-                // Pending Top + Time-Serial (Newest First)
+                // Pending Pehle + Transaction Serial Sorting (Newest First)
                 depositList.sort((a, b) => {
-                    let statusA = (a.status || "Pending").toLowerCase();
-                    let statusB = (b.status || "Pending").toLowerCase();
-
-                    let isPendingA = statusA === 'pending';
-                    let isPendingB = statusB === 'pending';
+                    let isPendingA = (a.status || "Pending").toLowerCase() === 'pending';
+                    let isPendingB = (b.status || "Pending").toLowerCase() === 'pending';
 
                     if (isPendingA && !isPendingB) return -1;
                     if (!isPendingA && isPendingB) return 1;
@@ -251,28 +285,21 @@
                     let rawStatus = data.status || "Pending";
                     let statusLower = rawStatus.toLowerCase();
                     let uid = data.userId || data.uid || data.user_id || "";
-
                     let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
-
-                    let mobile = data.mobile || data.userMobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
+                    let mobile = data.mobile || data.userMobile || data.userPhone || data.phone || data.mobileNo || "";
                     let mobileCellId = `mobile-${data.id}`;
 
                     let dateStr = "N/A";
                     let rowIsoDate = "";
                     let ts = getTimeStamp(data);
                     if (ts > 0) {
-                        let d = new Date(ts);
-                        dateStr = d.toLocaleString('en-IN');
+                        dateStr = new Date(ts).toLocaleString('en-IN');
                         rowIsoDate = getIsoDateStr(ts);
-                    } else if (data.date) {
-                        dateStr = data.date;
                     }
 
                     if (statusLower === "approved" || statusLower === "success") {
                         totalDeposit += amt;
-                        if (rowIsoDate === todayIsoStr) {
-                            todayDeposit += amt;
-                        }
+                        if (rowIsoDate === todayIsoStr) todayDeposit += amt;
                     } else if (statusLower === "pending") {
                         pendingCount++;
                     }
@@ -280,20 +307,24 @@
                     let badgeClass = (statusLower === "approved" || statusLower === "success") ? "badge-approved" : 
                                      (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
 
-                    // Action buttons with Status Change/Revert option
                     let actionHTML = "";
                     if (statusLower === "pending") {
-                        actionHTML = `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Approved', '${rawStatus}')">Approve</button>
-                                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Rejected', '${rawStatus}')">Reject</button>`;
+                        actionHTML = `<button class="btn-approve" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', 'Approved')">Approve</button>
+                                     <button class="btn-reject" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', 'Rejected')">Reject</button>`;
                     } else {
-                        actionHTML = `<button class="btn-revert" onclick="editCompletedDeposit('${data.id}', '${uid}', ${amt}, '${rawStatus}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
+                        actionHTML = `<button class="btn-revert" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
                     }
 
                     let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
 
                     let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
                     if (statusLower === "pending") {
-                        amountHTML += ` <button class="btn-edit" onclick="editAmount('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
+                        amountHTML += ` <button class="btn-edit" onclick="openAmountModal('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
+                    }
+
+                    let statusDisplay = rawStatus.toUpperCase();
+                    if (statusLower === "rejected" && data.rejectReason) {
+                        statusDisplay += `<br><small style="font-size:9px; color:#c53030;">(${data.rejectReason})</small>`;
                     }
 
                     let row = `<tr data-date="${rowIsoDate}">
@@ -304,38 +335,18 @@
                         <td style="color:#2e7d32; font-weight:800;">${amountHTML}</td>
                         <td><strong>${data.utr || data.utrNumber || data.refNo || "N/A"}</strong></td>
                         <td>${ssButton}</td>
-                        <td><span class="${badgeClass}">${rawStatus.toUpperCase()}</span></td>
+                        <td><span class="${badgeClass}">${statusDisplay}</span></td>
                         <td>${actionHTML}</td>
                     </tr>`;
 
                     tableBody.innerHTML += row;
 
-                    // Fallback Mobile Fetch
-                    if (!mobile) {
-                        let targetUid = uid || data.id;
-                        if (targetUid) {
-                            db.collection("users").doc(targetUid).get().then((userDoc) => {
-                                if (userDoc.exists) {
-                                    let uData = userDoc.data();
-                                    let fetchedPhone = uData.mobile || uData.userMobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
-                                    document.getElementById(mobileCellId).innerText = fetchedPhone;
-                                } else {
-                                    db.collection("customers").doc(targetUid).get().then((custDoc) => {
-                                        if (custDoc.exists) {
-                                            let cData = custDoc.data();
-                                            let fetchedPhone = cData.mobile || cData.userMobile || cData.phone || cData.userPhone || "N/A";
-                                            document.getElementById(mobileCellId).innerText = fetchedPhone;
-                                        } else {
-                                            document.getElementById(mobileCellId).innerText = "N/A";
-                                        }
-                                    }).catch(() => document.getElementById(mobileCellId).innerText = "N/A");
-                                }
-                            }).catch(() => {
-                                document.getElementById(mobileCellId).innerText = "N/A";
-                            });
-                        } else {
-                            document.getElementById(mobileCellId).innerText = "N/A";
-                        }
+                    if (!mobile && uid) {
+                        db.collection("users").doc(uid).get().then((uDoc) => {
+                            if (uDoc.exists) {
+                                document.getElementById(mobileCellId).innerText = uDoc.data().mobile || uDoc.data().phone || "N/A";
+                            }
+                        }).catch(() => {});
                     }
                 });
 
@@ -347,84 +358,92 @@
             });
         }
 
-        // EDIT AMOUNT FUNCTION
-        function editAmount(depId, currentAmt) {
-            let newAmt = prompt("Deposit Amount Edit Karein (₹):", currentAmt);
-            if (newAmt !== null && newAmt !== "") {
-                let parsedAmt = Number(newAmt);
-                if (isNaN(parsedAmt) || parsedAmt <= 0) {
-                    alert("Kripya sahi amount enter karein!");
-                    return;
-                }
-                db.collection("deposits").doc(depId).update({
-                    amount: parsedAmt
-                }).then(() => {
-                    alert("Amount successfully update ho gaya!");
-                }).catch((err) => {
-                    alert("Amount update karne me error: " + err.message);
-                });
-            }
-        }
-
-        // EDIT ALREADY APPROVED / REJECTED DEPOSIT STATUS
-        function editCompletedDeposit(depId, userId, currentAmt, currentStatus) {
-            let choice = prompt(`Current Status: ${currentStatus.toUpperCase()}\nNaya status type karein:\n1. Pending\n2. Approved\n3. Rejected`, "Pending");
-            if (!choice) return;
-
-            let newStatus = choice.trim().toLowerCase();
-            if (newStatus === "1" || newStatus === "pending") newStatus = "Pending";
-            else if (newStatus === "2" || newStatus === "approved") newStatus = "Approved";
-            else if (newStatus === "3" || newStatus === "rejected") newStatus = "Rejected";
-            else {
-                alert("Galat option select kiya hai!");
-                return;
-            }
-
-            if (newStatus.toLowerCase() === currentStatus.toLowerCase()) return;
-
-            actionDeposit(depId, userId, currentAmt, newStatus, currentStatus);
-        }
-
-        // APPROVE, REJECT & STATUS CHANGE LOGIC WITH BALANCE ADJUSTMENT
-        function actionDeposit(depId, userId, currentAmt, newStatus, oldStatus) {
-            let latestAmtText = document.getElementById(`amt-val-${depId}`) ? document.getElementById(`amt-val-${depId}`).innerText : currentAmt;
-            let finalAmt = Number(latestAmtText);
-
-            if (confirm(`Kya aap status '${oldStatus}' se badal kar '${newStatus}' karna chahte hain?`)) {
-                db.collection("deposits").doc(depId).update({
-                    status: newStatus,
-                    amount: finalAmt
-                }).then(() => {
-                    if (userId) {
-                        // Agar Approved ho raha h toh wallet me add karein
-                        if (newStatus === "Approved" && oldStatus !== "Approved") {
-                            db.collection("users").doc(userId).update({
-                                wallet: firebase.firestore.FieldValue.increment(finalAmt),
-                                depositBalance: firebase.firestore.FieldValue.increment(finalAmt)
-                            }).catch(e => console.log("User wallet credit error:", e));
-                        } 
-                        // Agar Pehle Approved tha aur ab Pending/Reject kar diya toh balance minus karein
-                        else if (oldStatus === "Approved" && newStatus !== "Approved") {
-                            db.collection("users").doc(userId).update({
-                                wallet: firebase.firestore.FieldValue.increment(-finalAmt),
-                                depositBalance: firebase.firestore.FieldValue.increment(-finalAmt)
-                            }).catch(e => console.log("User wallet debit error:", e));
-                        }
-                    }
-                    alert("Status successfully updated!");
-                }).catch((err) => {
-                    alert("Error: " + err.message);
-                });
-            }
+        // Modal Open / Close Handlers
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         function viewSS(url) {
-            if (!url) return alert("Screenshot Available Nahi Hai!");
             document.getElementById("ssImage").src = url;
             document.getElementById("ssModal").style.display = "flex";
         }
 
-        // EXACT DATE & MOBILE/NAME SEARCH FILTER FIX
+        function openAmountModal(depId, currentAmt) {
+            activeDepId = depId;
+            document.getElementById("newAmountInput").value = currentAmt;
+            document.getElementById("editAmtModal").style.display = "flex";
+        }
+
+        function submitAmountUpdate() {
+            let newAmt = Number(document.getElementById("newAmountInput").value);
+            if (!newAmt || newAmt <= 0) {
+                alert("Valid Amount Enter Karein!");
+                return;
+            }
+            db.collection("deposits").doc(activeDepId).update({ amount: newAmt })
+            .then(() => {
+                closeModal("editAmtModal");
+            });
+        }
+
+        function openActionModal(depId, userId, currentAmt, oldStatus, targetStatus = null) {
+            activeDepId = depId;
+            activeUserId = userId;
+            activeCurrentAmt = currentAmt;
+            activeOldStatus = oldStatus;
+
+            let statusSelect = document.getElementById("modalStatusSelect");
+            if (targetStatus) {
+                statusSelect.value = targetStatus;
+            } else {
+                statusSelect.value = oldStatus;
+            }
+
+            document.getElementById("modalRejectReason").value = "";
+            toggleRejectReasonBox();
+            document.getElementById("actionModal").style.display = "flex";
+        }
+
+        function toggleRejectReasonBox() {
+            let val = document.getElementById("modalStatusSelect").value;
+            document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
+        }
+
+        function submitStatusUpdate() {
+            let newStatus = document.getElementById("modalStatusSelect").value;
+            let rejectReason = document.getElementById("modalRejectReason").value.trim();
+
+            if (newStatus === "Rejected" && !rejectReason) {
+                alert("Kripya Reject karne ki wajah (Reason) zaroor likhein!");
+                return;
+            }
+
+            let updatePayload = {
+                status: newStatus,
+                rejectReason: (newStatus === "Rejected") ? rejectReason : ""
+            };
+
+            db.collection("deposits").doc(activeDepId).update(updatePayload).then(() => {
+                if (activeUserId) {
+                    // Logic: Approval par wallet me Credit
+                    if (newStatus === "Approved" && activeOldStatus !== "Approved") {
+                        db.collection("users").doc(activeUserId).update({
+                            wallet: firebase.firestore.FieldValue.increment(activeCurrentAmt),
+                            depositBalance: firebase.firestore.FieldValue.increment(activeCurrentAmt)
+                        });
+                    } 
+                    // Logic: Agar Approved se Badalkar Pending/Reject kiya toh Wallet se Deduct
+                    else if (activeOldStatus === "Approved" && newStatus !== "Approved") {
+                        db.collection("users").doc(activeUserId).update({
+                            wallet: firebase.firestore.FieldValue.increment(-activeCurrentAmt),
+                            depositBalance: firebase.firestore.FieldValue.increment(-activeCurrentAmt)
+                        });
+                    }
+                }
+                closeModal("actionModal");
+            }).catch(err => alert("Error: " + err.message));
+        }
+
         function filterTable() {
             let searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
             let selectedDate = document.getElementById("dateInput").value;
@@ -437,11 +456,7 @@
                 let matchSearch = !searchVal || rowText.includes(searchVal);
                 let matchDate = !selectedDate || rowDate === selectedDate;
 
-                if (matchSearch && matchDate) {
-                    r.style.display = "";
-                } else {
-                    r.style.display = "none";
-                }
+                r.style.display = (matchSearch && matchDate) ? "" : "none";
             });
         }
 
