@@ -193,6 +193,7 @@
         let activeCurrentAmt = 0;
         let activeOldStatus = "";
         let activeMobileNo = "";
+        let isProcessing = false;
 
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
@@ -430,7 +431,6 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // ACCURATE CUSTOMERS COLLECTION LOOKUP (FIXED USER NOT FOUND BUG)
         async function findUserDocRef(data, explicitUid, explicitMobile) {
             let possibleUid = explicitUid || data.userId || data.uid || data.user_id;
             
@@ -465,14 +465,18 @@
             return null;
         }
 
-        // STRICT EXACT BALANCE ENGINE (PREVENTS DOUBLE ADDITION & USES ATOMIC BATCH)
+        // TRANSACTION BASED STATUS UPDATE TO PREVENT DOUBLE BALANCES
         async function submitStatusUpdate() {
+            if (isProcessing) return;
+            isProcessing = true;
+
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
             let rejectReason = document.getElementById("modalRejectReason").value.trim();
 
             if (newStatus === "Rejected" && !rejectReason) {
                 alert("Kripya Reject karne ki wajah (Reason) zaroor likhein!");
+                isProcessing = false;
                 return;
             }
 
@@ -481,68 +485,61 @@
 
             try {
                 let depRef = db.collection("deposits").doc(activeDepId);
-                let currentDepDoc = await depRef.get();
 
-                if (!currentDepDoc.exists) {
-                    alert("Deposit request nahi mili!");
-                    submitBtn.disabled = false;
-                    return;
-                }
+                await db.runTransaction(async (transaction) => {
+                    let currentDepDoc = await transaction.get(depRef);
 
-                let freshData = currentDepDoc.data();
-                let oldLower = (freshData.status || "pending").toLowerCase();
-                let targetLower = newStatus.toLowerCase();
-
-                let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
-
-                if (oldLower === targetLower) {
-                    alert("Status pehle se yahi hai!");
-                    closeModal("actionModal");
-                    submitBtn.disabled = false;
-                    return;
-                }
-
-                let amtChange = 0;
-
-                if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
-                    amtChange = targetAmount;
-                } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
-                    amtChange = -targetAmount;
-                }
-
-                let updatePayload = {
-                    status: newStatus,
-                    rejectReason: (newStatus === "Rejected") ? rejectReason : "",
-                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                let matchedUserRef = null;
-                if (amtChange !== 0) {
-                    matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
-                    if (!matchedUserRef) {
-                        alert("Error: Customer record nahi mila! Balance update nahi hua.");
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = "Update Status";
-                        return;
+                    if (!currentDepDoc.exists) {
+                        throw new Error("Deposit request nahi mili!");
                     }
-                }
 
-                let batch = db.batch();
-                batch.update(depRef, updatePayload);
-                
-                if (matchedUserRef && amtChange !== 0) {
-                    batch.set(matchedUserRef, {
-                        depositBalance: firebase.firestore.FieldValue.increment(amtChange)
-                    }, { merge: true });
-                }
+                    let freshData = currentDepDoc.data();
+                    let oldLower = (freshData.status || "pending").toLowerCase();
+                    let targetLower = newStatus.toLowerCase();
 
-                await batch.commit();
+                    let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
 
-                alert(`Status updated to ${newStatus}. Balance adjustment: ₹${amtChange}`);
+                    if (oldLower === targetLower) {
+                        throw new Error("Status pehle se yahi hai!");
+                    }
+
+                    let amtChange = 0;
+
+                    if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
+                        amtChange = targetAmount;
+                    } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
+                        amtChange = -targetAmount;
+                    }
+
+                    let updatePayload = {
+                        status: newStatus,
+                        rejectReason: (newStatus === "Rejected") ? rejectReason : "",
+                        processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    transaction.update(depRef, updatePayload);
+
+                    if (amtChange !== 0) {
+                        let matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
+                        if (!matchedUserRef) {
+                            throw new Error("Customer record nahi mila! Balance update nahi hua.");
+                        }
+                        
+                        let userSnap = await transaction.get(matchedUserRef);
+                        let currentBalance = userSnap.exists ? Number(userSnap.data().depositBalance || 0) : 0;
+
+                        transaction.set(matchedUserRef, {
+                            depositBalance: currentBalance + amtChange
+                        }, { merge: true });
+                    }
+                });
+
+                alert(`Status updated to ${newStatus} successfully.`);
                 closeModal("actionModal");
             } catch (err) {
                 alert("Error: " + err.message);
             } finally {
+                isProcessing = false;
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Update Status";
             }
@@ -551,7 +548,7 @@
         function filterTable() {
             let searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
             let selectedDate = document.getElementById("dateInput").value;
-            let rows = document.querySelectorAll("#realDepositBody tr");
+            let rows = document.querySelectorAll("#realDepositBody" + " tr");
 
             rows.forEach(r => {
                 let rowText = r.innerText.toLowerCase();
