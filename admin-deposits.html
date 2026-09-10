@@ -194,6 +194,17 @@
         let activeOldStatus = "";
         let activeMobileNo = "";
 
+        // Helper to prevent XSS attacks when rendering user content
+        function escapeHtml(str) {
+            if (!str) return "";
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "admin-login.html";
@@ -290,29 +301,32 @@
 
                     let actionHTML = "";
                     if (statusLower === "pending") {
-                        actionHTML = `<button class="btn-approve" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}', 'Approved')">Approve</button>
-                                     <button class="btn-reject" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}', 'Rejected')">Reject</button>`;
+                        actionHTML = `<button class="btn-approve" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${escapeHtml(rawStatus)}', '${escapeHtml(mobile)}', 'Approved')">Approve</button>
+                                     <button class="btn-reject" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${escapeHtml(rawStatus)}', '${escapeHtml(mobile)}', 'Rejected')">Reject</button>`;
                     } else {
-                        actionHTML = `<button class="btn-revert" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
+                        actionHTML = `<button class="btn-revert" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${escapeHtml(rawStatus)}', '${escapeHtml(mobile)}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
                     }
 
-                    let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
+                    let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${escapeHtml(ssUrl)}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
 
                     let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
-                    amountHTML += ` <button class="btn-edit" onclick="openAmountModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}')"><i class="fa-solid fa-pen"></i> Edit</button>`;
+                    amountHTML += ` <button class="btn-edit" onclick="openAmountModal('${data.id}', '${uid}', ${amt}, '${escapeHtml(rawStatus)}', '${escapeHtml(mobile)}')"><i class="fa-solid fa-pen"></i> Edit</button>`;
 
-                    let statusDisplay = rawStatus.toUpperCase();
+                    let statusDisplay = escapeHtml(rawStatus.toUpperCase());
                     if (statusLower === "rejected" && data.rejectReason) {
-                        statusDisplay += `<br><small style="font-size:9px; color:#c53030;">(${data.rejectReason})</small>`;
+                        statusDisplay += `<br><small style="font-size:9px; color:#c53030;">(${escapeHtml(data.rejectReason)})</small>`;
                     }
+
+                    let customerName = escapeHtml(data.name || data.userName || data.customerName || "User");
+                    let utrNumber = escapeHtml(data.utr || data.utrNumber || data.refNo || "N/A");
 
                     let row = `<tr data-date="${rowIsoDate}">
                         <td style="font-weight:bold; text-align:center;">${serialNo++}</td>
                         <td>${dateStr}</td>
-                        <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
-                        <td id="${mobileCellId}">${mobile || "Fetching..."}</td>
+                        <td><strong>${customerName}</strong></td>
+                        <td id="${mobileCellId}">${escapeHtml(mobile) || "Fetching..."}</td>
                         <td style="color:#2e7d32; font-weight:800;">${amountHTML}</td>
-                        <td><strong>${data.utr || data.utrNumber || data.refNo || "N/A"}</strong></td>
+                        <td><strong>${utrNumber}</strong></td>
                         <td>${ssButton}</td>
                         <td><span class="${badgeClass}">${statusDisplay}</span></td>
                         <td>${actionHTML}</td>
@@ -323,7 +337,8 @@
                     if (!mobile && uid) {
                         db.collection("customers").doc(String(uid)).get().then((uDoc) => {
                             if (uDoc.exists) {
-                                document.getElementById(mobileCellId).innerText = uDoc.data().mobile || uDoc.data().phone || uid;
+                                let m = uDoc.data().mobile || uDoc.data().phone || uid;
+                                document.getElementById(mobileCellId).innerText = m;
                             }
                         }).catch(() => {});
                     }
@@ -391,6 +406,9 @@
             return null;
         }
 
+        // ==========================================
+        // AMOUNT EDIT TRANSACTION (DOUBLE BALANCE FIXED)
+        // ==========================================
         async function submitAmountUpdate() {
             let submitBtn = document.getElementById("submitAmtBtn");
             let newAmt = Number(document.getElementById("newAmountInput").value);
@@ -415,17 +433,21 @@
                     let diff = newAmt - currentAmount;
                     let isWalletUpdated = depData.isWalletUpdated === true;
 
+                    // Update deposit record amount
                     transaction.update(depRef, { 
                         amount: newAmt,
                         amt: newAmt 
                     });
 
-                    // Agar Wallet pehle se Credit ho chuka hai, sirf tabhi depositBalance aur balance dono me difference adjust hoga
+                    // IDEMPOTENCY GUARD FOR EDIT:
+                    // Only adjust wallet if the deposit was ALREADY credited (isWalletUpdated === true).
+                    // If it's pending/rejected, do NOT touch wallet balance.
                     if (isWalletUpdated && diff !== 0) {
                         let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
                         if (matchedUserRef) {
+                            // FIXED: Only increment main 'balance' field (single field update)
+                            // to avoid doubling total wallet balance.
                             transaction.set(matchedUserRef, {
-                                depositBalance: firebase.firestore.FieldValue.increment(diff),
                                 balance: firebase.firestore.FieldValue.increment(diff)
                             }, { merge: true });
                         }
@@ -473,6 +495,9 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
+        // ==========================================
+        // STATUS UPDATE TRANSACTION (ATOMIC + SAFE REVERSAL + IDEMPOTENCY)
+        // ==========================================
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -490,6 +515,7 @@
                 let depRef = db.collection("deposits").doc(activeDepId);
 
                 await db.runTransaction(async (transaction) => {
+                    // FRESH READ from Firestore (Do not blindly trust UI state)
                     let currentDepDoc = await transaction.get(depRef);
 
                     if (!currentDepDoc.exists) {
@@ -504,23 +530,26 @@
                     let amtChange = 0;
                     let setWalletFlag = isWalletUpdated;
 
-                    // Double Credit aur Double Deduction se bachne ke liye Idempotent Guards
+                    // 1. APPROVAL LOGIC & IDEMPOTENCY
                     if (targetLower === "approved" || targetLower === "success") {
                         if (isWalletUpdated) {
+                            // DUPLICATE APPROVAL PROTECTION: Already credited, stop duplicate addition!
                             throw new Error("Yah deposit pehle se Approved aur Wallet me credit ho chuka hai!");
                         }
-                        amtChange = targetAmount;
+                        amtChange = targetAmount; // Exact deposit amount credit
                         setWalletFlag = true;
 
+                    // 2. REJECTION LOGIC & REVERSAL
                     } else if (targetLower === "rejected" || targetLower === "failed") {
                         if (isWalletUpdated) {
-                            amtChange = -targetAmount; // Pehle diya gaya balance wapas subtract karo
+                            amtChange = -targetAmount; // Reverse previously credited balance exactly once
                             setWalletFlag = false;
                         }
 
+                    // 3. PENDING LOGIC & REVERSAL
                     } else if (targetLower === "pending") {
                         if (isWalletUpdated) {
-                            amtChange = -targetAmount; // Pehle diya gaya balance wapas subtract karo
+                            amtChange = -targetAmount; // Reverse previously credited balance exactly once
                             setWalletFlag = false;
                         }
                     }
@@ -540,12 +569,12 @@
                         }
                     }
 
+                    // Atomic Firestore Updates
                     transaction.update(depRef, updatePayload);
 
                     if (matchedUserRef && amtChange !== 0) {
-                        // FieldValue.increment ka upyog karke depositBalance aur balance dono ko ek sath update karo
+                        // FIXED: Single field addition on 'balance' to prevent double wallet accumulation
                         transaction.set(matchedUserRef, {
-                            depositBalance: firebase.firestore.FieldValue.increment(amtChange),
                             balance: firebase.firestore.FieldValue.increment(amtChange)
                         }, { merge: true });
                     }
