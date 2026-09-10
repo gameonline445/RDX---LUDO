@@ -375,10 +375,8 @@ const firebaseDB = firebase.firestore();
 // 🔒 STRICT SECURITY AUTHENTICATION GUARD
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
-        // Bina login access karne par Admin Login par bhej do
         window.location.href = "admin-login.html";
     } else {
-        // Auth success hone par page show karo aur sync start karo
         document.body.style.display = "block";
         syncDashboardData();
     }
@@ -422,15 +420,17 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // Strict 15-second active ping check
-            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt) || parseTimestamp(data.updatedAt);
-            const isPingActive = lastPingMs > 0 && (now - lastPingMs) < 15000;
-            if ((data.isOnline === true || data.status === 'online') && isPingActive) {
+            // 🔥 FIXED: Flexible & Smart Active/Online Check (Handles ping timeout or plain boolean)
+            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt) || parseTimestamp(data.updatedAt) || parseTimestamp(data.lastActive);
+            const isPingActive = lastPingMs > 0 && (now - lastPingMs) < 300000; // 5-min threshold
+            const isOnlineFlag = data.isOnline === true || String(data.status).toLowerCase() === 'online' || String(data.userStatus).toLowerCase() === 'online';
+
+            if (isOnlineFlag || isPingActive) {
                 liveCount++;
             }
 
             // Universal Balance calculation fallback
-            const bal = Number(data.balance !== undefined ? data.balance : (Number(data.deposit || 0) + Number(data.winnings || 0)));
+            const bal = Number(data.balance !== undefined ? data.balance : (Number(data.deposit || data.depositBalance || 0) + Number(data.winnings || data.winningBalance || 0)));
             totalBal += bal;
 
             // Universal KYC Status fallback
@@ -451,6 +451,7 @@ function syncDashboardData() {
         updateSyncTime();
     };
 
+    // Listen to customers and fallback to users if customers is empty
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         if (!snapshot.empty) {
             handleUsersSnapshot(snapshot);
@@ -463,8 +464,9 @@ function syncDashboardData() {
     const handleBattlesSnapshot = (snapshot) => {
         let liveBattleCount = 0;
         snapshot.forEach((doc) => {
-            const status = String(doc.data().status || doc.data().battleStatus || '').toLowerCase();
-            if (status === 'running' || status === 'open' || status === 'playing' || status === 'requested' || status === 'active') {
+            const status = String(doc.data().status || doc.data().battleStatus || doc.data().matchStatus || '').toLowerCase();
+            // 🔥 FIXED: Added 'pending', 'created', 'waiting' to match statuses
+            if (['running', 'open', 'playing', 'requested', 'active', 'pending', 'created', 'waiting'].includes(status)) {
                 liveBattleCount++;
             }
         });
