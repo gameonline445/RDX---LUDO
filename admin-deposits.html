@@ -58,7 +58,7 @@
         .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
         .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight:700; margin-left: 4px; }
-        .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 6px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
+        .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
 
         /* Modal Custom Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
@@ -389,7 +389,15 @@
         function openActionModal(depId, userId, currentAmt, oldStatus, targetStatus = null) {
             activeDepId = depId;
             activeUserId = userId;
-            activeCurrentAmt = currentAmt;
+            
+            // Fetch live amount from cell to avoid stale data
+            let amtElement = document.getElementById(`amt-val-${depId}`);
+            if (amtElement) {
+                activeCurrentAmt = Number(amtElement.innerText) || currentAmt;
+            } else {
+                activeCurrentAmt = Number(currentAmt) || 0;
+            }
+
             activeOldStatus = oldStatus;
 
             let statusSelect = document.getElementById("modalStatusSelect");
@@ -424,20 +432,23 @@
             };
 
             db.collection("deposits").doc(activeDepId).update(updatePayload).then(() => {
-                if (activeUserId) {
-                    // Logic: Approval par wallet me Credit
-                    if (newStatus === "Approved" && activeOldStatus !== "Approved") {
+                if (activeUserId && activeCurrentAmt > 0) {
+                    let oldLower = (activeOldStatus || "").toLowerCase();
+                    let newLower = (newStatus || "").toLowerCase();
+
+                    // Logic 1: Agar Pehle Pending/Rejected tha aur ab Approved kar rahe hain -> Wallet me ADD
+                    if ((oldLower === "pending" || oldLower === "rejected") && newLower === "approved") {
                         db.collection("users").doc(activeUserId).update({
                             wallet: firebase.firestore.FieldValue.increment(activeCurrentAmt),
                             depositBalance: firebase.firestore.FieldValue.increment(activeCurrentAmt)
-                        });
+                        }).catch(e => console.error("Wallet Add Error:", e));
                     } 
-                    // Logic: Agar Approved se Badalkar Pending/Reject kiya toh Wallet se Deduct
-                    else if (activeOldStatus === "Approved" && newStatus !== "Approved") {
+                    // Logic 2: Agar Pehle Approved tha aur ab Reject/Pending kar rahe hain -> Wallet se MINUS
+                    else if (oldLower === "approved" && (newLower === "rejected" || newLower === "pending")) {
                         db.collection("users").doc(activeUserId).update({
                             wallet: firebase.firestore.FieldValue.increment(-activeCurrentAmt),
                             depositBalance: firebase.firestore.FieldValue.increment(-activeCurrentAmt)
-                        });
+                        }).catch(e => console.error("Wallet Minus Error:", e));
                     }
                 }
                 closeModal("actionModal");
