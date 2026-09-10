@@ -432,31 +432,56 @@
                     rejectReason: (newStatus === "Rejected") ? rejectReason : ""
                 };
 
-                // Step 1: Update Deposit Status in DB
+                // Step 1: Deposit status update in DB
                 await db.collection("deposits").doc(activeDepId).update(updatePayload);
 
-                // Step 2: Handle Wallet Deduction / Addition
+                // Step 2: Smart User Wallet Reversal Logic
                 if (activeUserId && activeCurrentAmt > 0) {
                     let oldLower = (activeOldStatus || "").toLowerCase();
                     let newLower = (newStatus || "").toLowerCase();
 
-                    // Case A: Change from Pending/Rejected to Approved -> ADD
+                    let amtChange = 0;
                     if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (newLower === "approved" || newLower === "success")) {
-                        await db.collection("users").doc(activeUserId).update({
-                            wallet: firebase.firestore.FieldValue.increment(activeCurrentAmt),
-                            depositBalance: firebase.firestore.FieldValue.increment(activeCurrentAmt)
-                        });
-                    } 
-                    // Case B: Change from Approved to Rejected/Pending -> MINUS (Balance Reversal)
-                    else if ((oldLower === "approved" || oldLower === "success") && (newLower === "rejected" || newLower === "pending" || newLower === "failed")) {
-                        await db.collection("users").doc(activeUserId).update({
-                            wallet: firebase.firestore.FieldValue.increment(-activeCurrentAmt),
-                            depositBalance: firebase.firestore.FieldValue.increment(-activeCurrentAmt)
-                        });
+                        amtChange = activeCurrentAmt; // Add to Wallet
+                    } else if ((oldLower === "approved" || oldLower === "success") && (newLower === "rejected" || newLower === "pending" || newLower === "failed")) {
+                        amtChange = -activeCurrentAmt; // Deduct/Minus from Wallet
+                    }
+
+                    if (amtChange !== 0) {
+                        // Method 1: Check by UID
+                        let userRef = db.collection("users").doc(activeUserId);
+                        let userDoc = await userRef.get();
+
+                        if (userDoc.exists) {
+                            await userRef.update({
+                                wallet: firebase.firestore.FieldValue.increment(amtChange),
+                                depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                            });
+                        } else {
+                            // Method 2: Query by Mobile Number if Document ID isn't UID
+                            let targetMobile = activeUserId.replace("+91", "").trim();
+                            let userQuery = await db.collection("users").where("mobile", "==", targetMobile).get();
+                            if (userQuery.empty) {
+                                userQuery = await db.collection("users").where("phone", "==", targetMobile).get();
+                            }
+                            if (userQuery.empty) {
+                                userQuery = await db.collection("users").where("mobile", "==", activeUserId).get();
+                            }
+
+                            if (!userQuery.empty) {
+                                let matchedDocId = userQuery.docs[0].id;
+                                await db.collection("users").doc(matchedDocId).update({
+                                    wallet: firebase.firestore.FieldValue.increment(amtChange),
+                                    depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                                });
+                            } else {
+                                alert("Warning: Deposit status update ho gaya, par wallet subtract nahi hua kyunki user document match nahi mila.");
+                            }
+                        }
                     }
                 }
 
-                alert("Status updated successfully & User balance sync hogaya!");
+                alert("Status updated & Wallet Balance successfully synced!");
                 closeModal("actionModal");
             } catch (err) {
                 alert("Error: " + err.message);
