@@ -266,7 +266,7 @@ async function loadFirebaseCustomer(){
         const mobile10Digits = cleanMobile.slice(-10);
         const docIdWith91 = "91" + mobile10Digits;
 
-        // Fetch User Document
+        // Fetch User Document Reference
         let userRef = firebaseDB.collection("customers").doc(docIdWith91);
         let snapshot = await userRef.get();
 
@@ -302,16 +302,16 @@ async function loadFirebaseCustomer(){
             }
         }
 
+        // Unsubscribe old listener if exists
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REAL-TIME USER BALANCE LISTENER
+        // 1. REAL-TIME USER BALANCE LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
-            if (doc.exists) {
+            if (doc && doc.exists) {
                 const data = doc.data();
                 
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
-                
                 let total = deposit + winnings;
 
                 document.getElementById("mainBalance").textContent = total;
@@ -327,13 +327,13 @@ async function loadFirebaseCustomer(){
             console.error("Wallet Sync Error:", error);
         });
 
-        // STRICT AUTO-SYNC DEPOSITS TO USER WALLET
+        // 2. STRICT AUTO-SYNC DEPOSITS TO USER WALLET
         if(unsubscribeDepositsListener) unsubscribeDepositsListener();
 
         unsubscribeDepositsListener = firebaseDB.collection("deposits")
             .where("uid", "in", [mobile10Digits, docIdWith91, cleanMobile])
             .onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(async (change) => {
+                snapshot.docChanges().forEach((change) => {
                     if (change.type === "added" || change.type === "modified") {
                         const depData = change.doc.data();
                         const status = (depData.status || "").toLowerCase();
@@ -342,11 +342,11 @@ async function loadFirebaseCustomer(){
                         if ((status === "approved" || status === "success") && !depData.autoSynced) {
                             const depAmount = Number(depData.amount || 0);
                             if (depAmount > 0) {
-                                await userRef.set({
+                                userRef.set({
                                     depositBalance: firebase.firestore.FieldValue.increment(depAmount)
-                                }, { merge: true });
-
-                                await change.doc.ref.update({ autoSynced: true });
+                                }, { merge: true }).then(() => {
+                                    change.doc.ref.update({ autoSynced: true });
+                                }).catch(e => console.error("AutoSync Error:", e));
                             }
                         }
                     }
