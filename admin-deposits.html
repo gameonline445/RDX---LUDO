@@ -479,8 +479,8 @@
 
             try {
                 let depRef = db.collection("deposits").doc(activeDepId);
-                
-                // Firestore Transaction to prevent double execution
+
+                // Transaction ensures that atomic updates happen only once
                 await db.runTransaction(async (transaction) => {
                     let currentDepDoc = await transaction.get(depRef);
 
@@ -502,14 +502,11 @@
                     let amtChange = 0;
                     let setWalletFlag = isWalletUpdated;
 
-                    // Strictly check and prevent double increment
+                    // Strictly check if wallet was already updated
                     if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
                         if (!isWalletUpdated) {
                             amtChange = targetAmount;
                             setWalletFlag = true;
-                        } else {
-                            // If user client app already credited funds, don't increment again
-                            amtChange = 0; 
                         }
                     } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
                         if (isWalletUpdated) {
@@ -534,7 +531,7 @@
                     }
 
                     transaction.update(depRef, updatePayload);
-                    
+
                     if (matchedUserRef && amtChange !== 0) {
                         transaction.set(matchedUserRef, {
                             depositBalance: firebase.firestore.FieldValue.increment(amtChange)
