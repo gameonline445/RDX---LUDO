@@ -413,7 +413,7 @@
                     let depData = depSnap.data();
                     let currentAmount = Number(depData.amount || depData.amt || activeCurrentAmt);
                     let diff = newAmt - currentAmount;
-                    let isWalletUpdated = depData.isWalletUpdated || false;
+                    let isWalletUpdated = depData.isWalletUpdated === true;
 
                     transaction.update(depRef, { 
                         amount: newAmt,
@@ -496,7 +496,7 @@
                     }
 
                     let freshData = currentDepDoc.data();
-                    let isWalletUpdated = freshData.isWalletUpdated || false;
+                    let isWalletUpdated = freshData.isWalletUpdated === true; // Strict boolean evaluation
                     let oldLower = (freshData.status || "pending").toLowerCase();
                     let targetLower = newStatus.toLowerCase();
 
@@ -509,20 +509,23 @@
                     let amtChange = 0;
                     let setWalletFlag = isWalletUpdated;
 
-                    // Controlled status transition checks using isWalletUpdated flag
+                    // Strict Idempotency Guards & State Transitions
                     if (targetLower === "approved" || targetLower === "success") {
-                        if (!isWalletUpdated) {
-                            amtChange = targetAmount;
-                            setWalletFlag = true;
+                        if (isWalletUpdated) {
+                            throw new Error("Yah deposit pehle se Approved aur Wallet me credit ho chuka hai!");
                         }
+                        amtChange = targetAmount;
+                        setWalletFlag = true;
+
                     } else if (targetLower === "rejected" || targetLower === "failed") {
                         if (isWalletUpdated) {
-                            amtChange = -targetAmount;
+                            amtChange = -targetAmount; // Revert previously added amount
                             setWalletFlag = false;
                         }
+
                     } else if (targetLower === "pending") {
                         if (isWalletUpdated) {
-                            amtChange = -targetAmount;
+                            amtChange = -targetAmount; // Revert previously added amount
                             setWalletFlag = false;
                         }
                     }
