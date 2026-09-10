@@ -420,12 +420,13 @@
                         amt: newAmt 
                     });
 
-                    // Agar Wallet pehle se Credit ho chuka hai, sirf tabhi difference adjust hoga
+                    // Agar Wallet pehle se Credit ho chuka hai, sirf tabhi depositBalance aur balance dono me difference adjust hoga
                     if (isWalletUpdated && diff !== 0) {
                         let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
                         if (matchedUserRef) {
                             transaction.set(matchedUserRef, {
-                                depositBalance: firebase.firestore.FieldValue.increment(diff)
+                                depositBalance: firebase.firestore.FieldValue.increment(diff),
+                                balance: firebase.firestore.FieldValue.increment(diff)
                             }, { merge: true });
                         }
                     }
@@ -503,7 +504,7 @@
                     let amtChange = 0;
                     let setWalletFlag = isWalletUpdated;
 
-                    // Strict Idempotency Guards to Prevent Double Credit
+                    // Double Credit aur Double Deduction se bachne ke liye Idempotent Guards
                     if (targetLower === "approved" || targetLower === "success") {
                         if (isWalletUpdated) {
                             throw new Error("Yah deposit pehle se Approved aur Wallet me credit ho chuka hai!");
@@ -542,8 +543,10 @@
                     transaction.update(depRef, updatePayload);
 
                     if (matchedUserRef && amtChange !== 0) {
+                        // FieldValue.increment ka upyog karke depositBalance aur balance dono ko ek sath update karo
                         transaction.set(matchedUserRef, {
-                            depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                            depositBalance: firebase.firestore.FieldValue.increment(amtChange),
+                            balance: firebase.firestore.FieldValue.increment(amtChange)
                         }, { merge: true });
                     }
                 });
