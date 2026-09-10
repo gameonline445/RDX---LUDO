@@ -185,7 +185,7 @@
             <input type="number" id="newAmountInput" placeholder="Enter amount">
             <div class="modal-btn-group">
                 <button class="btn-modal-cancel" onclick="closeModal('editAmtModal')">Cancel</button>
-                <button class="btn-modal-submit" onclick="submitAmountUpdate()">Save Amount</button>
+                <button class="btn-modal-submit" id="submitAmtBtn" onclick="submitAmountUpdate()">Save Amount</button>
             </div>
         </div>
     </div>
@@ -316,9 +316,7 @@
                     let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
 
                     let amountHTML = `₹<span id="amt-val-${data.id}">${amt}</span>`;
-                    if (statusLower === "pending") {
-                        amountHTML += ` <button class="btn-edit" onclick="openAmountModal('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
-                    }
+                    amountHTML += ` <button class="btn-edit" onclick="openAmountModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}')"><i class="fa-solid fa-pen"></i> Edit</button>`;
 
                     let statusDisplay = rawStatus.toUpperCase();
                     if (statusLower === "rejected" && data.rejectReason) {
@@ -365,22 +363,58 @@
             document.getElementById("ssModal").style.display = "flex";
         }
 
-        function openAmountModal(depId, currentAmt) {
+        function openAmountModal(depId, uid, currentAmt, status, mobile = "") {
             activeDepId = depId;
+            activeUserId = uid;
+            activeCurrentAmt = Number(currentAmt) || 0;
+            activeOldStatus = status;
+            activeMobileNo = mobile;
+
             document.getElementById("newAmountInput").value = currentAmt;
             document.getElementById("editAmtModal").style.display = "flex";
         }
 
-        function submitAmountUpdate() {
+        async function submitAmountUpdate() {
+            let submitBtn = document.getElementById("submitAmtBtn");
             let newAmt = Number(document.getElementById("newAmountInput").value);
+
             if (!newAmt || newAmt <= 0) {
                 alert("Valid Amount Enter Karein!");
                 return;
             }
-            db.collection("deposits").doc(activeDepId).update({ amount: newAmt })
-            .then(() => {
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Saving...";
+
+            try {
+                let statusLower = (activeOldStatus || "").toLowerCase();
+                let diff = newAmt - activeCurrentAmt;
+
+                // 1. Update Amount in Deposit Document
+                await db.collection("deposits").doc(activeDepId).update({ 
+                    amount: newAmt,
+                    amt: newAmt 
+                });
+
+                // 2. If Status is Approved, Sync User Wallet with Difference Amount
+                if ((statusLower === "approved" || statusLower === "success") && diff !== 0) {
+                    let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
+                    if (matchedUserRef) {
+                        await matchedUserRef.update({
+                            wallet: firebase.firestore.FieldValue.increment(diff),
+                            depositBalance: firebase.firestore.FieldValue.increment(diff)
+                        });
+                    }
+                }
+
+                alert("Amount and Wallet Balance updated successfully!");
                 closeModal("editAmtModal");
-            });
+            } catch (err) {
+                alert("Error updating amount: " + err.message);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Save Amount";
+            }
         }
 
         function openActionModal(depId, userId, currentAmt, oldStatus, mobile = "", targetStatus = null) {
@@ -470,28 +504,37 @@
                     rejectReason: (newStatus === "Rejected") ? rejectReason : ""
                 };
 
+                let oldLower = (activeOldStatus || "").toLowerCase();
+                let newLower = (newStatus || "").toLowerCase();
+
+                let isOldApproved = (oldLower === "approved" || oldLower === "success");
+                let isNewApproved = (newLower === "approved" || newLower === "success");
+
+                let amtChange = 0;
+
+                // 1. Pending/Rejected -> Approved (Credit to Wallet)
+                if (!isOldApproved && isNewApproved) {
+                    amtChange = activeCurrentAmt;
+                }
+                // 2. Approved -> Rejected/Pending (Debit/Minus from Wallet)
+                else if (isOldApproved && !isNewApproved) {
+                    amtChange = -activeCurrentAmt;
+                }
+
+                // Update Deposit Document Status
                 await db.collection("deposits").doc(activeDepId).update(updatePayload);
 
-                if (activeCurrentAmt > 0) {
-                    let oldLower = (activeOldStatus || "").toLowerCase();
-                    let newLower = (newStatus || "").toLowerCase();
+                // Update User Wallet Balance if required
+                if (amtChange !== 0) {
+                    let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
 
-                    let amtChange = 0;
-                    if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (newLower === "approved" || newLower === "success")) {
-                        amtChange = activeCurrentAmt;
-                    } else if ((oldLower === "approved" || oldLower === "success") && (newLower === "rejected" || newLower === "pending" || newLower === "failed")) {
-                        amtChange = -activeCurrentAmt;
-                    }
-
-                    if (amtChange !== 0) {
-                        let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
-
-                        if (matchedUserRef) {
-                            await matchedUserRef.update({
-                                wallet: firebase.firestore.FieldValue.increment(amtChange),
-                                depositBalance: firebase.firestore.FieldValue.increment(amtChange)
-                            });
-                        }
+                    if (matchedUserRef) {
+                        await matchedUserRef.update({
+                            wallet: firebase.firestore.FieldValue.increment(amtChange),
+                            depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                        });
+                    } else {
+                        alert("Warning: User account not found to update wallet balance.");
                     }
                 }
 
