@@ -14,7 +14,6 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        /* Hidden by default until Authentication check passes */
         body { 
             display: none; 
             background-color: #000000; 
@@ -58,7 +57,8 @@
         .btn-ss { background-color: #3182ce; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
         .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
-        .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 2px 6px; border-radius: 4px; font-size: 11px; cursor: pointer; margin-left: 4px; }
+        .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight:700; margin-left: 4px; }
+        .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 20px; border-radius: 16px; text-align: center; }
@@ -111,6 +111,7 @@
             <div class="filter-card">
                 <input type="text" id="searchInput" class="search-input" placeholder="Search Name, Phone, or UTR Number..." onkeyup="filterTable()">
                 <input type="date" id="dateInput" class="date-picker" onchange="filterTable()">
+                <button style="padding: 10px 14px; background:#374151; color:white; border:none; border-radius:10px; cursor:pointer;" onclick="clearDateFilter()">Reset Date</button>
             </div>
 
             <div class="table-container">
@@ -192,6 +193,16 @@
             return 0;
         }
 
+        // YYYY-MM-DD Iso Date String Standardizer for exact Filter
+        function getIsoDateStr(ts) {
+            if (!ts) return "";
+            let d = new Date(ts);
+            let year = d.getFullYear();
+            let month = String(d.getMonth() + 1).padStart(2, '0');
+            let day = String(d.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         function initDepositsListener() {
             db.collection("deposits").onSnapshot((snapshot) => {
                 const tableBody = document.getElementById("realDepositBody");
@@ -202,7 +213,7 @@
                 let pendingCount = 0;
 
                 const todayObj = new Date();
-                const todayFormatted = todayObj.toLocaleDateString('en-IN');
+                const todayIsoStr = getIsoDateStr(todayObj.getTime());
 
                 if (snapshot.empty) {
                     tableBody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:20px; color:#e53e3e; font-weight:bold;">No Deposits Found</td></tr>';
@@ -219,7 +230,7 @@
                     depositList.push(data);
                 });
 
-                // SORTING LOGIC: Pending Subse Upar + Latest Date Pehle (Serial Order)
+                // Pending Top + Time-Serial (Newest First)
                 depositList.sort((a, b) => {
                     let statusA = (a.status || "Pending").toLowerCase();
                     let statusB = (b.status || "Pending").toLowerCase();
@@ -230,7 +241,6 @@
                     if (isPendingA && !isPendingB) return -1;
                     if (!isPendingA && isPendingB) return 1;
 
-                    // Agar status same hai toh Time Serial ke according Newest First
                     return getTimeStamp(b) - getTimeStamp(a);
                 });
 
@@ -244,25 +254,23 @@
 
                     let ssUrl = data.ssUrl || data.screenshot || data.ss || data.proof || data.imageUrl || data.image || data.screenshotUrl || data.payProof || "";
 
-                    // Enhanced Mobile Field Checks
                     let mobile = data.mobile || data.userMobile || data.userPhone || data.phone || data.mobileNo || data.number || "";
                     let mobileCellId = `mobile-${data.id}`;
 
                     let dateStr = "N/A";
-                    let itemDateFormatted = "";
+                    let rowIsoDate = "";
                     let ts = getTimeStamp(data);
                     if (ts > 0) {
                         let d = new Date(ts);
                         dateStr = d.toLocaleString('en-IN');
-                        itemDateFormatted = d.toLocaleDateString('en-IN');
+                        rowIsoDate = getIsoDateStr(ts);
                     } else if (data.date) {
                         dateStr = data.date;
-                        itemDateFormatted = data.date;
                     }
 
                     if (statusLower === "approved" || statusLower === "success") {
                         totalDeposit += amt;
-                        if (itemDateFormatted === todayFormatted || dateStr.includes(todayFormatted)) {
+                        if (rowIsoDate === todayIsoStr) {
                             todayDeposit += amt;
                         }
                     } else if (statusLower === "pending") {
@@ -272,10 +280,14 @@
                     let badgeClass = (statusLower === "approved" || statusLower === "success") ? "badge-approved" : 
                                      (statusLower === "rejected" || statusLower === "failed") ? "badge-rejected" : "badge-pending";
 
-                    let actionHTML = statusLower === "pending" ? 
-                        `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Approved')">Approve</button>
-                         <button class="btn-reject" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Rejected')">Reject</button>` :
-                        `<span style="color:#8b949e; font-size:12px; font-weight:700;">Completed</span>`;
+                    // Action buttons with Status Change/Revert option
+                    let actionHTML = "";
+                    if (statusLower === "pending") {
+                        actionHTML = `<button class="btn-approve" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Approved', '${rawStatus}')">Approve</button>
+                                     <button class="btn-reject" onclick="actionDeposit('${data.id}', '${uid}', ${amt}, 'Rejected', '${rawStatus}')">Reject</button>`;
+                    } else {
+                        actionHTML = `<button class="btn-revert" onclick="editCompletedDeposit('${data.id}', '${uid}', ${amt}, '${rawStatus}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
+                    }
 
                     let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
 
@@ -284,7 +296,7 @@
                         amountHTML += ` <button class="btn-edit" onclick="editAmount('${data.id}', ${amt})"><i class="fa-solid fa-pen"></i> Edit</button>`;
                     }
 
-                    let row = `<tr>
+                    let row = `<tr data-date="${rowIsoDate}">
                         <td style="font-weight:bold; text-align:center;">${serialNo++}</td>
                         <td>${dateStr}</td>
                         <td><strong>${data.name || data.userName || data.customerName || "User"}</strong></td>
@@ -298,7 +310,7 @@
 
                     tableBody.innerHTML += row;
 
-                    // Smart Fallback Fetching Mobile Number from Users/Customers Collection
+                    // Fallback Mobile Fetch
                     if (!mobile) {
                         let targetUid = uid || data.id;
                         if (targetUid) {
@@ -308,7 +320,6 @@
                                     let fetchedPhone = uData.mobile || uData.userMobile || uData.phone || uData.userPhone || uData.mobileNo || "N/A";
                                     document.getElementById(mobileCellId).innerText = fetchedPhone;
                                 } else {
-                                    // Try customers collection as backup
                                     db.collection("customers").doc(targetUid).get().then((custDoc) => {
                                         if (custDoc.exists) {
                                             let cData = custDoc.data();
@@ -331,6 +342,8 @@
                 document.getElementById("totalDepositVal").innerText = "₹" + totalDeposit;
                 document.getElementById("todayDepositVal").innerText = "₹" + todayDeposit;
                 document.getElementById("pendingCountVal").innerText = pendingCount + " Pending";
+
+                filterTable();
             });
         }
 
@@ -353,23 +366,52 @@
             }
         }
 
-        // APPROVE & REJECT ACTION
-        function actionDeposit(depId, userId, currentAmt, newStatus) {
+        // EDIT ALREADY APPROVED / REJECTED DEPOSIT STATUS
+        function editCompletedDeposit(depId, userId, currentAmt, currentStatus) {
+            let choice = prompt(`Current Status: ${currentStatus.toUpperCase()}\nNaya status type karein:\n1. Pending\n2. Approved\n3. Rejected`, "Pending");
+            if (!choice) return;
+
+            let newStatus = choice.trim().toLowerCase();
+            if (newStatus === "1" || newStatus === "pending") newStatus = "Pending";
+            else if (newStatus === "2" || newStatus === "approved") newStatus = "Approved";
+            else if (newStatus === "3" || newStatus === "rejected") newStatus = "Rejected";
+            else {
+                alert("Galat option select kiya hai!");
+                return;
+            }
+
+            if (newStatus.toLowerCase() === currentStatus.toLowerCase()) return;
+
+            actionDeposit(depId, userId, currentAmt, newStatus, currentStatus);
+        }
+
+        // APPROVE, REJECT & STATUS CHANGE LOGIC WITH BALANCE ADJUSTMENT
+        function actionDeposit(depId, userId, currentAmt, newStatus, oldStatus) {
             let latestAmtText = document.getElementById(`amt-val-${depId}`) ? document.getElementById(`amt-val-${depId}`).innerText : currentAmt;
             let finalAmt = Number(latestAmtText);
 
-            if (confirm(`Kya aap ₹${finalAmt} deposit ko ${newStatus} karna chahte hain?`)) {
+            if (confirm(`Kya aap status '${oldStatus}' se badal kar '${newStatus}' karna chahte hain?`)) {
                 db.collection("deposits").doc(depId).update({
                     status: newStatus,
                     amount: finalAmt
                 }).then(() => {
-                    if (newStatus === "Approved" && userId) {
-                        db.collection("users").doc(userId).update({
-                            wallet: firebase.firestore.FieldValue.increment(finalAmt),
-                            depositBalance: firebase.firestore.FieldValue.increment(finalAmt)
-                        }).catch(e => console.log("User wallet update error:", e));
+                    if (userId) {
+                        // Agar Approved ho raha h toh wallet me add karein
+                        if (newStatus === "Approved" && oldStatus !== "Approved") {
+                            db.collection("users").doc(userId).update({
+                                wallet: firebase.firestore.FieldValue.increment(finalAmt),
+                                depositBalance: firebase.firestore.FieldValue.increment(finalAmt)
+                            }).catch(e => console.log("User wallet credit error:", e));
+                        } 
+                        // Agar Pehle Approved tha aur ab Pending/Reject kar diya toh balance minus karein
+                        else if (oldStatus === "Approved" && newStatus !== "Approved") {
+                            db.collection("users").doc(userId).update({
+                                wallet: firebase.firestore.FieldValue.increment(-finalAmt),
+                                depositBalance: firebase.firestore.FieldValue.increment(-finalAmt)
+                            }).catch(e => console.log("User wallet debit error:", e));
+                        }
                     }
-                    alert("Deposit status success!");
+                    alert("Status successfully updated!");
                 }).catch((err) => {
                     alert("Error: " + err.message);
                 });
@@ -382,17 +424,30 @@
             document.getElementById("ssModal").style.display = "flex";
         }
 
+        // EXACT DATE & MOBILE/NAME SEARCH FILTER FIX
         function filterTable() {
-            let s = document.getElementById("searchInput").value.toLowerCase();
-            let d = document.getElementById("dateInput").value;
+            let searchVal = document.getElementById("searchInput").value.toLowerCase().trim();
+            let selectedDate = document.getElementById("dateInput").value;
             let rows = document.querySelectorAll("#realDepositBody tr");
 
             rows.forEach(r => {
-                let text = r.innerText.toLowerCase();
-                let matchSearch = text.includes(s);
-                let matchDate = !d || text.includes(d);
-                r.style.display = (matchSearch && matchDate) ? "" : "none";
+                let rowText = r.innerText.toLowerCase();
+                let rowDate = r.getAttribute("data-date") || "";
+
+                let matchSearch = !searchVal || rowText.includes(searchVal);
+                let matchDate = !selectedDate || rowDate === selectedDate;
+
+                if (matchSearch && matchDate) {
+                    r.style.display = "";
+                } else {
+                    r.style.display = "none";
+                }
             });
+        }
+
+        function clearDateFilter() {
+            document.getElementById("dateInput").value = "";
+            filterTable();
         }
     </script>
 </body>
