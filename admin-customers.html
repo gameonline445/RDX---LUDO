@@ -14,7 +14,6 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         
-        /* Hidden by default until Authentication check passes */
         body { 
             display: none; 
             background-color: #000000; 
@@ -37,7 +36,6 @@
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 24px; }
 
-        /* METRIC CARDS FOR TOTAL USER & NEW USER TODAY */
         .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px; }
         .metric-card { background-color: #ffffff; padding: 20px 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; }
         .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; }
@@ -54,7 +52,6 @@
         .btn-edit { background-color: #3182ce; color: #ffffff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .btn-edit:hover { background-color: #2b6cb0; }
 
-        /* MODAL STYLES FOR BALANCE EDITING */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 420px; padding: 24px; border-radius: 16px; text-align: left; }
         .modal-card h3 { margin-bottom: 15px; color: #1a365d; font-size: 20px; }
@@ -93,7 +90,6 @@
         <main class="main-content">
             <h1 class="dashboard-title">Customers Management</h1>
 
-            <!-- CARDS DISPLAY FOR TOTAL & TODAY USERS -->
             <div class="cards-grid">
                 <div class="metric-card">
                     <span class="card-label">Total Customers</span>
@@ -138,11 +134,11 @@
         <div class="modal-card">
             <h3 id="modalUserName">Edit User Balance</h3>
             
-            <label>Main Wallet / Real Deposit Balance (₹):</label>
-            <input type="number" id="inputMainBalance" placeholder="Enter Main Balance">
+            <label>Deposit Balance (₹):</label>
+            <input type="number" id="inputDepositBalance" placeholder="Enter Deposit Balance">
 
-            <label>Bonus Balance (₹):</label>
-            <input type="number" id="inputBonusBalance" placeholder="Enter Bonus Balance">
+            <label>Winnings Balance (₹):</label>
+            <input type="number" id="inputWinningsBalance" placeholder="Enter Winnings Balance">
 
             <div class="modal-btn-group">
                 <button class="btn-modal-cancel" onclick="closeBalanceModal()">Cancel</button>
@@ -169,7 +165,6 @@
         let activeTargetColl = "";
         let activeUserId = "";
 
-        // STRICT SECURITY AUTHENTICATION GUARD
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = "admin-login.html";
@@ -188,7 +183,6 @@
         }
 
         function loadRealCustomers() {
-            // Real-time listener on 'users' collection first, fallback to 'customers'
             db.collection("users").onSnapshot((snapshot) => {
                 if (snapshot.empty) {
                     db.collection("customers").onSnapshot((custSnapshot) => {
@@ -203,35 +197,58 @@
             });
         }
 
+        // Deep Balance Calculator to support all Firestore structure formats
+        function calculateUserBalances(user) {
+            let deposit = 0;
+            let winnings = 0;
+
+            // Check Deposit Amount
+            if (user.deposit !== undefined) deposit = Number(user.deposit);
+            else if (user.depositBalance !== undefined) deposit = Number(user.depositBalance);
+            else if (user.depositCash !== undefined) deposit = Number(user.depositCash);
+            else if (user.wallet && user.wallet.deposit !== undefined) deposit = Number(user.wallet.deposit);
+
+            // Check Winnings Amount
+            if (user.winnings !== undefined) winnings = Number(user.winnings);
+            else if (user.winningBalance !== undefined) winnings = Number(user.winningBalance);
+            else if (user.winningCash !== undefined) winnings = Number(user.winningCash);
+            else if (user.wallet && user.wallet.winnings !== undefined) winnings = Number(user.wallet.winnings);
+
+            // Fallback for single 'wallet' or 'balance' or 'realBalance' field
+            if (deposit === 0 && winnings === 0) {
+                let singleBal = Number(user.wallet ?? user.balance ?? user.realBalance ?? user.totalBalance ?? 0);
+                if (typeof user.wallet === 'object' && user.wallet !== null) {
+                    singleBal = Number(user.wallet.balance ?? user.wallet.total ?? 0);
+                }
+                deposit = singleBal;
+            }
+
+            let total = deposit + winnings;
+
+            return {
+                deposit: deposit,
+                winnings: winnings,
+                total: total
+            };
+        }
+
         function getFormattedDate(ts) {
             if (!ts) return "N/A";
             let d;
-            if (ts.toDate) {
-                d = ts.toDate();
-            } else if (typeof ts === 'number') {
-                d = new Date(ts);
-            } else {
-                d = new Date(ts);
-            }
+            if (ts.toDate) d = ts.toDate();
+            else if (typeof ts === 'number') d = new Date(ts);
+            else d = new Date(ts);
 
             if (isNaN(d.getTime())) return "N/A";
-
-            const day = d.getDate();
-            const month = d.getMonth() + 1;
-            const year = d.getFullYear();
-            return `${day}/${month}/${year}`;
+            return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
         }
 
         function isToday(ts) {
             if (!ts) return false;
             let d;
-            if (ts.toDate) {
-                d = ts.toDate();
-            } else if (typeof ts === 'number') {
-                d = new Date(ts);
-            } else {
-                d = new Date(ts);
-            }
+            if (ts.toDate) d = ts.toDate();
+            else if (typeof ts === 'number') d = new Date(ts);
+            else d = new Date(ts);
 
             if (isNaN(d.getTime())) return false;
 
@@ -264,7 +281,6 @@
                 userList.push(data);
             });
 
-            // Sorting: Latest registered users top par show honge
             userList.sort((a, b) => {
                 let timeA = a.createdAt || a.timestamp || a.joinedDate || 0;
                 let timeB = b.createdAt || b.timestamp || b.joinedDate || 0;
@@ -279,12 +295,10 @@
             userList.forEach((user) => {
                 let name = user.name || user.userName || user.customerName || "User";
                 let mobile = user.mobile || user.phone || user.userPhone || user.mobileNo || "N/A";
-                let balance = Number(user.wallet ?? user.depositBalance ?? user.balance ?? user.realBalance ?? 0);
-                let bonus = Number(user.bonus ?? user.bonusBalance ?? 0);
 
-                sumUserWallet += balance;
+                let balObj = calculateUserBalances(user);
+                sumUserWallet += balObj.total;
 
-                // Date Parsing & Today Check
                 let rawTS = user.createdAt || user.timestamp || user.joinedDate || user.date;
                 let dateStr = getFormattedDate(rawTS);
 
@@ -297,28 +311,27 @@
                     <td>${dateStr}</td>
                     <td><strong>${name}</strong></td>
                     <td style="color:#2b6cb0; font-weight:700;">${mobile}</td>
-                    <td style="color:#2e7d32; font-weight:800;">₹${balance}</td>
+                    <td style="color:#2e7d32; font-weight:800;">₹${balObj.total}</td>
                     <td>
-                        <button class="btn-edit" onclick="openBalanceModal('${targetColl}', '${user.docId}', ${balance}, ${bonus}, '${name}')"><i class="fa-solid fa-pen-to-square"></i> Edit Balance</button>
+                        <button class="btn-edit" onclick="openBalanceModal('${targetColl}', '${user.docId}', ${balObj.deposit}, ${balObj.winnings}, '${name}')"><i class="fa-solid fa-pen-to-square"></i> Edit Balance</button>
                     </td>
                 </tr>`;
 
                 tbody.innerHTML += row;
             });
 
-            // Update Metric Cards
             document.getElementById("totalUsersVal").innerText = totalUsersCount;
             document.getElementById("todayUsersVal").innerText = todayUsersCount;
             document.getElementById("totalUserBalVal").innerText = "₹" + sumUserWallet;
         }
 
-        function openBalanceModal(collName, userId, currentWallet, currentBonus, userName) {
+        function openBalanceModal(collName, userId, currentDeposit, currentWinnings, userName) {
             activeTargetColl = collName;
             activeUserId = userId;
 
             document.getElementById("modalUserName").innerText = `Edit Balance: ${userName}`;
-            document.getElementById("inputMainBalance").value = currentWallet;
-            document.getElementById("inputBonusBalance").value = currentBonus;
+            document.getElementById("inputDepositBalance").value = currentDeposit;
+            document.getElementById("inputWinningsBalance").value = currentWinnings;
 
             document.getElementById("editBalanceModal").style.display = "flex";
         }
@@ -329,26 +342,32 @@
 
         async function saveUserBalance() {
             let saveBtn = document.getElementById("saveBalBtn");
-            let newMain = Number(document.getElementById("inputMainBalance").value);
-            let newBonus = Number(document.getElementById("inputBonusBalance").value);
+            let newDeposit = Number(document.getElementById("inputDepositBalance").value);
+            let newWinnings = Number(document.getElementById("inputWinningsBalance").value);
 
-            if (isNaN(newMain) || newMain < 0 || isNaN(newBonus) || newBonus < 0) {
+            if (isNaN(newDeposit) || newDeposit < 0 || isNaN(newWinnings) || newWinnings < 0) {
                 alert("Kripya sahi valid amount enter karein!");
                 return;
             }
+
+            let totalNew = newDeposit + newWinnings;
 
             saveBtn.disabled = true;
             saveBtn.innerText = "Updating...";
 
             try {
-                // Synchronize across both wallet and depositBalance fields
+                // Update all common keys in Firestore so user app & admin remain fully synced
                 await db.collection(activeTargetColl).doc(activeUserId).set({
-                    wallet: newMain,
-                    depositBalance: newMain,
-                    balance: newMain,
-                    realBalance: newMain,
-                    bonus: newBonus,
-                    bonusBalance: newBonus
+                    deposit: newDeposit,
+                    depositBalance: newDeposit,
+                    depositCash: newDeposit,
+                    winnings: newWinnings,
+                    winningBalance: newWinnings,
+                    winningCash: newWinnings,
+                    wallet: totalNew,
+                    balance: totalNew,
+                    realBalance: totalNew,
+                    totalBalance: totalNew
                 }, { merge: true });
 
                 alert("User Balance successfully updated!");
