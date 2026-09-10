@@ -135,14 +135,14 @@
 
     <!-- Firebase Logic & Realtime Monitoring Script -->
     <script>
-        // 1. Firebase Configuration (Aapka Firebase Config yahan Replace Karein)
+        // Real Firebase Configuration
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+            authDomain: "rdx-ludo.firebaseapp.com",
+            projectId: "rdx-ludo",
+            storageBucket: "rdx-ludo.firebasestorage.app",
+            messagingSenderId: "928340814840",
+            appId: "1:928340814840:web:6eca42a8b76138b268440d"
         };
 
         // Initialize Firebase
@@ -157,7 +157,7 @@
         let currentFilter = 'all';
         let searchQuery = '';
 
-        // 2. Realtime Listener Setup
+        // Realtime Listener Setup
         function initRealtimeMonitor() {
             db.collection("customers").onSnapshot((snapshot) => {
                 const now = Date.now();
@@ -172,36 +172,34 @@
                     const data = doc.data();
                     const uid = doc.id;
 
-                    // Extracted Properties with Fallbacks
-                    const name = data.name || data.displayName || "User " + uid.substring(0, 4);
-                    const mobile = data.mobile || data.phone || data.phoneNumber || uid;
-                    const city = data.city || (data.location ? (data.location.city || data.location.state) : null) || "N/A";
-                    const state = data.state || (data.location ? data.location.state : null) || "";
-                    const fullLocation = state && city !== "N/A" ? `${city}, ${state}` : city;
-                    const balance = data.balance !== undefined ? data.balance : (data.wallet !== undefined ? data.wallet : 0);
+                    const name = data.name || "User " + uid.substring(0, 4);
+                    const mobile = data.mobile || uid;
+                    const location = data.location || "N/A";
+                    const balance = data.balance !== undefined ? data.balance : 0;
 
-                    // Presence Status Calculation Logic
-                    // heartbeat interval is assumed to be within 2 minutes (120,000 ms)
+                    // Timestamp calculation (lastSeenAt)
                     let lastActiveMs = 0;
-                    if (data.lastActive) {
-                        lastActiveMs = data.lastActive.toMillis ? data.lastActive.toMillis() : new Date(data.lastActive).getTime();
-                    } else if (data.lastSeen) {
-                        lastActiveMs = data.lastSeen.toMillis ? data.lastSeen.toMillis() : new Date(data.lastSeen).getTime();
+                    if (data.lastSeenAt) {
+                        lastActiveMs = data.lastSeenAt.toMillis ? data.lastSeenAt.toMillis() : new Date(data.lastSeenAt).getTime();
+                    } else if (data.lastLoginAt) {
+                        lastActiveMs = data.lastLoginAt.toMillis ? data.lastLoginAt.toMillis() : new Date(data.lastLoginAt).getTime();
                     }
 
-                    const isExplicitLoggedOut = data.isLoggedIn === false || data.status === "offline";
-                    const isRecentlyActive = (now - lastActiveMs) <= 120000; // 2 Minutes window
+                    // Status Logic:
+                    // 1. Online: isOnline is true AND active within last 2 minutes (120,000 ms)
+                    // 2. Logged In: isOnline is true OR active recently, but not in last 2 mins
+                    // 3. Offline: explicitly logged out or inactive
+                    const isOnlineFlag = data.isOnline === true;
+                    const isRecentlyActive = (now - lastActiveMs) <= 120000;
 
-                    let computedStatus = "offline"; // Default
+                    let computedStatus = "offline";
 
-                    if (!isExplicitLoggedOut) {
-                        if (isRecentlyActive) {
-                            computedStatus = "online";
-                            onlineCount++;
-                        } else {
-                            computedStatus = "loggedin";
-                            loggedInCount++;
-                        }
+                    if (isOnlineFlag && isRecentlyActive) {
+                        computedStatus = "online";
+                        onlineCount++;
+                    } else if (isOnlineFlag) {
+                        computedStatus = "loggedin";
+                        loggedInCount++;
                     } else {
                         computedStatus = "offline";
                         offlineCount++;
@@ -212,7 +210,7 @@
                         name: name,
                         mobile: mobile,
                         status: computedStatus,
-                        location: fullLocation,
+                        location: location,
                         balance: balance,
                         lastActiveMs: lastActiveMs
                     });
@@ -224,34 +222,30 @@
                 document.getElementById("countOffline").innerText = offlineCount;
                 document.getElementById("countTotal").innerText = totalCount;
 
-                // Update Time Tracker
+                // Update Sync Time
                 document.getElementById("syncTime").innerText = new Date().toLocaleTimeString();
 
                 // Render Table View
                 renderTable();
             }, (error) => {
-                console.error("Firestore realtime listener failed:", error);
+                console.error("Firestore Error:", error);
             });
         }
 
-        // 3. Render Table Data
+        // Render Table Data
         function renderTable() {
             const tbody = document.getElementById("usersTableBody");
             tbody.innerHTML = "";
 
-            // Filter logic
             let filtered = usersData.filter(user => {
-                // Filter Button Match
                 if (currentFilter !== 'all' && user.status !== currentFilter) {
                     return false;
                 }
-                // Search Input Match
                 if (searchQuery.trim() !== "") {
                     const q = searchQuery.toLowerCase();
-                    const matchName = user.name.toLowerCase().includes(q);
-                    const matchMobile = String(user.mobile).toLowerCase().includes(q);
-                    const matchLoc = user.location.toLowerCase().includes(q);
-                    return matchName || matchMobile || matchLoc;
+                    return user.name.toLowerCase().includes(q) || 
+                           String(user.mobile).toLowerCase().includes(q) || 
+                           user.location.toLowerCase().includes(q);
                 }
                 return true;
             });
@@ -261,14 +255,12 @@
                 return;
             }
 
-            // Sort by latest active first
             filtered.sort((a, b) => b.lastActiveMs - a.lastActiveMs);
 
             filtered.forEach(user => {
                 const tr = document.createElement("tr");
                 tr.className = "hover:bg-slate-800/30 transition";
 
-                // Format Status Badge
                 let statusBadge = "";
                 if (user.status === "online") {
                     statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Online</span>`;
@@ -278,7 +270,6 @@
                     statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>Offline</span>`;
                 }
 
-                // Format Time Display
                 let formattedTime = "N/A";
                 if (user.lastActiveMs > 0) {
                     formattedTime = new Date(user.lastActiveMs).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -297,35 +288,27 @@
             });
         }
 
-        // Filter Handlers
         function setFilter(filterType) {
             currentFilter = filterType;
-            const buttons = ['all', 'online', 'loggedin', 'offline'];
-            buttons.forEach(b => {
-                const btnElem = document.getElementById(`btn-${b}`);
-                if (b === filterType) {
-                    btnElem.className = "px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition";
-                } else {
-                    btnElem.className = "px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
-                }
+            ['all', 'online', 'loggedin', 'offline'].forEach(b => {
+                document.getElementById(`btn-${b}`).className = (b === filterType) 
+                    ? "px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition"
+                    : "px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
             });
             renderTable();
         }
 
-        // Search Handler
         function handleSearch() {
             searchQuery = document.getElementById("searchInput").value;
             renderTable();
         }
 
-        // Logout Handler
         function handleLogout() {
             auth.signOut().then(() => {
                 window.location.href = "login.html";
             });
         }
 
-        // Initialize Realtime Sync on Load
         window.addEventListener("DOMContentLoaded", () => {
             initRealtimeMonitor();
         });
