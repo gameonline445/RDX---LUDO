@@ -441,12 +441,9 @@
 
                     // IDEMPOTENCY GUARD FOR EDIT:
                     // Only adjust wallet if the deposit was ALREADY credited (isWalletUpdated === true).
-                    // If it's pending/rejected, do NOT touch wallet balance.
                     if (isWalletUpdated && diff !== 0) {
                         let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
                         if (matchedUserRef) {
-                            // FIXED: Only increment main 'balance' field (single field update)
-                            // to avoid doubling total wallet balance.
                             transaction.set(matchedUserRef, {
                                 balance: firebase.firestore.FieldValue.increment(diff)
                             }, { merge: true });
@@ -515,7 +512,6 @@
                 let depRef = db.collection("deposits").doc(activeDepId);
 
                 await db.runTransaction(async (transaction) => {
-                    // FRESH READ from Firestore (Do not blindly trust UI state)
                     let currentDepDoc = await transaction.get(depRef);
 
                     if (!currentDepDoc.exists) {
@@ -523,33 +519,32 @@
                     }
 
                     let freshData = currentDepDoc.data();
-                    let isWalletUpdated = freshData.isWalletUpdated === true; // Strict boolean check
+                    let isWalletUpdated = freshData.isWalletUpdated === true;
                     let targetLower = newStatus.toLowerCase();
                     let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
 
                     let amtChange = 0;
                     let setWalletFlag = isWalletUpdated;
 
-                    // 1. APPROVAL LOGIC & IDEMPOTENCY
+                    // 1. APPROVAL LOGIC
                     if (targetLower === "approved" || targetLower === "success") {
                         if (isWalletUpdated) {
-                            // DUPLICATE APPROVAL PROTECTION: Already credited, stop duplicate addition!
                             throw new Error("Yah deposit pehle se Approved aur Wallet me credit ho chuka hai!");
                         }
-                        amtChange = targetAmount; // Exact deposit amount credit
+                        amtChange = targetAmount;
                         setWalletFlag = true;
 
-                    // 2. REJECTION LOGIC & REVERSAL
+                    // 2. REJECTION LOGIC
                     } else if (targetLower === "rejected" || targetLower === "failed") {
                         if (isWalletUpdated) {
-                            amtChange = -targetAmount; // Reverse previously credited balance exactly once
+                            amtChange = -targetAmount;
                             setWalletFlag = false;
                         }
 
-                    // 3. PENDING LOGIC & REVERSAL
+                    // 3. PENDING LOGIC
                     } else if (targetLower === "pending") {
                         if (isWalletUpdated) {
-                            amtChange = -targetAmount; // Reverse previously credited balance exactly once
+                            amtChange = -targetAmount;
                             setWalletFlag = false;
                         }
                     }
@@ -569,11 +564,10 @@
                         }
                     }
 
-                    // Atomic Firestore Updates
+                    // Updates
                     transaction.update(depRef, updatePayload);
 
                     if (matchedUserRef && amtChange !== 0) {
-                        // FIXED: Single field addition on 'balance' to prevent double wallet accumulation
                         transaction.set(matchedUserRef, {
                             balance: firebase.firestore.FieldValue.increment(amtChange)
                         }, { merge: true });
