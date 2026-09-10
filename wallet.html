@@ -11,6 +11,20 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
+// Navigation & History State Management (Reference from support.html)
+(function() {
+    window.history.pushState({ page: "wallet" }, "", window.location.href);
+    window.addEventListener("popstate", function() {
+        const panel = document.getElementById("menuPanel");
+        if (panel && panel.classList.contains("open")) {
+            closeMenu();
+            window.history.pushState({ page: "wallet" }, "", window.location.href);
+        } else {
+            window.location.href = "dashboard.html";
+        }
+    });
+})();
+
 // Authentication Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
@@ -140,7 +154,7 @@ button{font:inherit;}
     width:100%;
     max-width:650px;
     margin:0 auto;
-    padding:80px 14px 90px; /* Padding taaki content default me header/nav k under na chhupe */
+    padding:80px 14px 90px;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
     display:flex;
@@ -200,7 +214,7 @@ button{font:inherit;}
     backdrop-filter:blur(12px);
     -webkit-backdrop-filter:blur(12px);
     border-top:1.5px solid rgba(226,232,240,0.7);
-    display:flex;justify-content:space-around;align-items:center;z-index:200;
+    display:flex;justify-style:space-around;align-items:center;z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
 }
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
@@ -365,8 +379,11 @@ async function loadFirebaseCustomer(){
             }
         }
 
-        // Unsubscribe old listener if exists
-        if(unsubscribeWalletListener) unsubscribeWalletListener();
+        // Unsubscribe old listener if exists to prevent duplicates on refresh
+        if(unsubscribeWalletListener) {
+            unsubscribeWalletListener();
+            unsubscribeWalletListener = null;
+        }
 
         // 1. REAL-TIME USER BALANCE LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
@@ -390,9 +407,13 @@ async function loadFirebaseCustomer(){
             console.error("Wallet Sync Error:", error);
         });
 
-        // 2. STRICT AUTO-SYNC DEPOSITS TO USER WALLET
-        if(unsubscribeDepositsListener) unsubscribeDepositsListener();
+        // Unsubscribe old deposits listener if exists
+        if(unsubscribeDepositsListener) {
+            unsubscribeDepositsListener();
+            unsubscribeDepositsListener = null;
+        }
 
+        // 2. STRICT AUTO-SYNC DEPOSITS TO USER WALLET
         unsubscribeDepositsListener = firebaseDB.collection("deposits")
             .where("uid", "in", [mobile10Digits, docIdWith91, cleanMobile])
             .onSnapshot((snapshot) => {
@@ -423,7 +444,7 @@ async function loadFirebaseCustomer(){
     }
 }
 
-// PULL-TO-REFRESH IMPLEMENTATION
+// PULL-TO-REFRESH IMPLEMENTATION (MERGED WITH PAGE REFRESH SYSTEM)
 const container = document.getElementById("mainContainer");
 const pullBox = document.getElementById("pullBox");
 const pullSpinner = document.getElementById("pullSpinner");
@@ -432,51 +453,59 @@ let startY = 0;
 let currentY = 0;
 let refreshing = false;
 
-container.addEventListener("touchstart", (e) => {
-    if (container.scrollTop === 0) {
-        startY = e.touches[0].pageY;
-    } else {
-        startY = 0;
-    }
-}, { passive: true });
-
-container.addEventListener("touchmove", (e) => {
-    if (startY === 0 || refreshing) return;
-    currentY = e.touches[0].pageY;
-    let distance = currentY - startY;
-
-    if (distance > 0 && container.scrollTop === 0) {
-        let pullHeight = Math.min(distance * 0.4, 50);
-        pullBox.style.height = pullHeight + "px";
-        if (pullHeight > 35) {
-            pullSpinner.classList.add("spinning");
+if (container) {
+    container.addEventListener("touchstart", (e) => {
+        if (container.scrollTop === 0) {
+            startY = e.touches[0].pageY;
+        } else {
+            startY = 0;
         }
-    }
-}, { passive: true });
+    }, { passive: true });
 
-container.addEventListener("touchend", async () => {
-    if (startY === 0 || refreshing) return;
-    let distance = currentY - startY;
+    container.addEventListener("touchmove", (e) => {
+        if (startY === 0 || refreshing) return;
+        currentY = e.touches[0].pageY;
+        let distance = currentY - startY;
 
-    if (distance > 60 && container.scrollTop === 0) {
-        refreshing = true;
-        pullBox.style.height = "50px";
-        pullSpinner.classList.add("spinning");
+        if (distance > 0 && container.scrollTop === 0) {
+            let pullHeight = Math.min(distance * 0.4, 50);
+            if (pullBox) pullBox.style.height = pullHeight + "px";
+            if (pullHeight > 35 && pullSpinner) {
+                pullSpinner.classList.add("spinning");
+            }
+        }
+    }, { passive: true });
 
-        // Reload data from Firebase
-        await loadFirebaseCustomer();
+    container.addEventListener("touchend", async () => {
+        if (startY === 0 || refreshing) return;
+        let distance = currentY - startY;
 
-        setTimeout(() => {
-            pullBox.style.height = "0px";
-            pullSpinner.classList.remove("spinning");
-            refreshing = false;
-        }, 800);
-    } else {
-        pullBox.style.height = "0px";
-        pullSpinner.classList.remove("spinning");
-    }
-    startY = 0;
-    currentY = 0;
+        if (distance > 60 && container.scrollTop === 0) {
+            refreshing = true;
+            if (pullBox) pullBox.style.height = "50px";
+            if (pullSpinner) pullSpinner.classList.add("spinning");
+
+            // Reload data from Firebase without unmounting UI
+            await loadFirebaseCustomer();
+
+            setTimeout(() => {
+                if (pullBox) pullBox.style.height = "0px";
+                if (pullSpinner) pullSpinner.classList.remove("spinning");
+                refreshing = false;
+            }, 800);
+        } else {
+            if (pullBox) pullBox.style.height = "0px";
+            if (pullSpinner) pullSpinner.classList.remove("spinning");
+        }
+        startY = 0;
+        currentY = 0;
+    });
+}
+
+// Clean cleanup on page unload / reload
+window.addEventListener("beforeunload", () => {
+    if (unsubscribeWalletListener) unsubscribeWalletListener();
+    if (unsubscribeDepositsListener) unsubscribeDepositsListener();
 });
 
 document.addEventListener("DOMContentLoaded", loadFirebaseCustomer);
