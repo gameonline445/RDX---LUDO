@@ -6,7 +6,7 @@
     <title>RDX LUDO ADMIN - Live Deposits</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- FIREBASE FIRESTORE & AUTH SDK LIBRARIES -->
+    <!-- FIREBASE SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -136,7 +136,7 @@
         </div>
     </div>
 
-    <!-- Action / Change Status Modal -->
+    <!-- Status Change Modal -->
     <div class="modal-overlay" id="actionModal">
         <div class="modal-card">
             <h3 id="modalTitle">Update Deposit Status</h3>
@@ -379,7 +379,9 @@
                 });
 
                 if ((statusLower === "approved" || statusLower === "success") && diff !== 0) {
-                    let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
+                    let depSnap = await db.collection("deposits").doc(activeDepId).get();
+                    let depData = depSnap.data() || {};
+                    let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
                     if (matchedUserRef) {
                         await matchedUserRef.set({
                             wallet: firebase.firestore.FieldValue.increment(diff),
@@ -429,25 +431,39 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // ACCURATE USER DOC FINDER
-        async function findUserDocRef(uid, mobileNo) {
-            if (uid) {
-                let uDoc = await db.collection("users").doc(uid).get();
-                if (uDoc.exists) return db.collection("users").doc(uid);
+        // DEEP USER SEARCH (PREVENTS "USER NOT FOUND" ERROR)
+        async function findUserDocRef(data, explicitUid, explicitMobile) {
+            let possibleUid = explicitUid || data.userId || data.uid || data.user_id || data.userIdDoc;
+            
+            if (possibleUid) {
+                let uDoc = await db.collection("users").doc(String(possibleUid)).get();
+                if (uDoc.exists) return db.collection("users").doc(String(possibleUid));
             }
 
-            if (mobileNo) {
-                let cleanKey = String(mobileNo).replace("+91", "").trim();
-                let snap = await db.collection("users").where("mobile", "==", cleanKey).limit(1).get();
-                if (!snap.empty) return snap.docs[0].ref;
+            let rawMobile = explicitMobile || data.mobile || data.userMobile || data.phone || data.userPhone || data.mobileNo || "";
+            if (rawMobile) {
+                let cleanKey = String(rawMobile).replace("+91", "").trim();
+                
+                let snap1 = await db.collection("users").where("mobile", "==", cleanKey).limit(1).get();
+                if (!snap1.empty) return snap1.docs[0].ref;
 
                 let snap2 = await db.collection("users").where("phone", "==", cleanKey).limit(1).get();
                 if (!snap2.empty) return snap2.docs[0].ref;
+
+                let snap3 = await db.collection("users").where("mobileNo", "==", cleanKey).limit(1).get();
+                if (!snap3.empty) return snap3.docs[0].ref;
+            }
+
+            let name = data.name || data.userName || data.customerName;
+            if (name) {
+                let snap4 = await db.collection("users").where("name", "==", name).limit(1).get();
+                if (!snap4.empty) return snap4.docs[0].ref;
             }
 
             return null;
         }
 
+        // STRICT SINGLE-TRANSACTION STATUS UPDATE
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -475,12 +491,26 @@
                 let currentStatus = (freshData.status || "").toLowerCase();
                 let newLower = newStatus.toLowerCase();
 
-                // Exact SAME STATUS BLOCKER
+                // Prevent Double Execution
                 if (currentStatus === newLower) {
                     alert("Status pehle se yahi hai!");
                     closeModal("actionModal");
                     submitBtn.disabled = false;
                     return;
+                }
+
+                let isOldApproved = (currentStatus === "approved" || currentStatus === "success");
+                let isNewApproved = (newLower === "approved" || newLower === "success");
+
+                let amtChange = 0;
+
+                // Pending/Rejected -> Approved (+Amt)
+                if (!isOldApproved && isNewApproved) {
+                    amtChange = activeCurrentAmt;
+                } 
+                // Approved -> Rejected/Pending (-Amt CUT)
+                else if (isOldApproved && !isNewApproved) {
+                    amtChange = -activeCurrentAmt;
                 }
 
                 let updatePayload = {
@@ -489,37 +519,26 @@
                     processedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                let isOldApproved = (currentStatus === "approved" || currentStatus === "success");
-                let isNewApproved = (newLower === "approved" || newLower === "success");
-
-                let amtChange = 0;
-
-                // 1. Pending -> Approved (+Amt)
-                if (!isOldApproved && isNewApproved) {
-                    amtChange = activeCurrentAmt;
-                } 
-                // 2. Approved -> Rejected / Pending (-Amt CUT BALANCE)
-                else if (isOldApproved && !isNewApproved) {
-                    amtChange = -activeCurrentAmt;
-                }
-
-                // First Update Deposit Status
+                // 1. Update Deposit Doc
                 await depRef.update(updatePayload);
 
-                // Second Update User Balance ACCURATELY
+                // 2. Sync User Wallet
                 if (amtChange !== 0) {
-                    let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
+                    let matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
+                    
                     if (matchedUserRef) {
                         await matchedUserRef.set({
                             wallet: firebase.firestore.FieldValue.increment(amtChange),
                             depositBalance: firebase.firestore.FieldValue.increment(amtChange)
                         }, { merge: true });
+                        alert(`Status update ho gaya aur Wallet me ₹${amtChange} adjust ho gaye!`);
                     } else {
-                        alert("Warning: User Account nahi mila wallet update karne ke liye.");
+                        alert("Deposit status change ho gaya hai lekin User record missing tha!");
                     }
+                } else {
+                    alert(`Status updated to ${newStatus}!`);
                 }
 
-                alert(`Status changed to ${newStatus}! Wallet Balance synced correctly.`);
                 closeModal("actionModal");
             } catch (err) {
                 alert("Error: " + err.message);
