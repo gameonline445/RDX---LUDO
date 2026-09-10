@@ -524,59 +524,7 @@ button,input{font:inherit;}
         </div>
 
         <div class="section-head"><i class="fa-solid fa-fire-flame-curved" style="color:#ea580c;"></i> Running Battles</div>
-        <div id="runningBattlesList">
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹300</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹570</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Rahul_99</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">Aman_King</span></div>
-                </div>
-            </div>
-
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹500</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹950</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Karan_007</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">RDX_Pro</span></div>
-                </div>
-            </div>
-
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹1000</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹1900</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Vikash_Yadav</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">Desi_Gamer</span></div>
-                </div>
-            </div>
-
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹2000</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹3800</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Royal_Ludo</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">Badshah_77</span></div>
-                </div>
-            </div>
-        </div>
+        <div id="runningBattlesList"></div>
     </div>
 
     <!-- VIEW 2: ACTIVE MATCH ROOM -->
@@ -715,22 +663,35 @@ async function loadUserData() {
         return; 
     }
     const cleanMobile = String(userId).replace(/\D/g,"");
-    let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+    const mobile10Digits = cleanMobile.slice(-10);
+    const docIdWith91 = "91" + mobile10Digits;
 
-    firebaseDB.collection("customers").doc(firebaseDocId).onSnapshot(snap => {
-        if(snap.exists){
-            const d = snap.data();
-            myCurrentBalance = Number(d.balance || 0);
-            myUserName = d.name || d.username || ("User " + cleanMobile.slice(-4));
-            
-            document.getElementById("topBalance").textContent = "₹" + myCurrentBalance;
-        } else {
-            localStorage.clear();
-            window.location.replace("index.html");
-        }
-    }, err => {
-        console.error("Firestore read error:", err);
-    });
+    let userRef = firebaseDB.collection("customers").doc(docIdWith91);
+    let snap = await userRef.get();
+
+    if(!snap.exists){
+        userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+        snap = await userRef.get();
+    }
+
+    if(snap.exists){
+        userRef.onSnapshot(doc => {
+            if(doc.exists){
+                const d = doc.data();
+                const dep = Number(d.depositBalance || d.deposit || 0);
+                const win = Number(d.winnings || d.winningBalance || 0);
+                
+                // Unified Balance Calculation (Synced with Wallet)
+                myCurrentBalance = dep + win;
+                myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
+                
+                document.getElementById("topBalance").textContent = "₹" + myCurrentBalance;
+            }
+        });
+    } else {
+        localStorage.clear();
+        window.location.replace("index.html");
+    }
 }
 
 // 1. CREATE BATTLE
@@ -750,14 +711,15 @@ async function createBattle() {
         return;
     }
 
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+    const docId = "91" + cleanMobile;
     const prize = Math.round(amt * 1.90);
 
     try {
         await firebaseDB.collection("battles").add({
             creatorUid: docId,
             creatorName: myUserName,
-            creatorMobile: "+" + userId,
+            creatorMobile: "+" + cleanMobile,
             amount: amt,
             prize: prize,
             status: "open",
@@ -776,8 +738,8 @@ async function createBattle() {
 // 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
     if(!userId) return;
-    const cleanMobile = String(userId).replace(/\D/g,"");
-    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+    const myClean10 = cleanMobile;
 
     firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
         let openHTML = "";
@@ -787,12 +749,11 @@ function listenBattles() {
         snap.forEach(doc => {
             const b = doc.data();
             const bId = doc.id;
-            const creatorClean = String(b.creatorUid || "").replace(/\D/g, "");
-            const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "");
-            const myClean = String(docId).replace(/\D/g, "");
+            const creatorClean = String(b.creatorUid || "").replace(/\D/g, "").slice(-10);
+            const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "").slice(-10);
 
-            const isCreator = creatorClean === myClean;
-            const isAccepter = accepterClean === myClean;
+            const isCreator = creatorClean === myClean10;
+            const isAccepter = accepterClean === myClean10;
 
             if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 count++;
@@ -865,59 +826,7 @@ function listenBattles() {
         activeBattlesCount = count;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        
-        const fakeRunningHTML = `
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹300</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹570</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Rahul_99</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">Aman_King</span></div>
-                </div>
-            </div>
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹500</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹950</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Karan_007</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">RDX_Pro</span></div>
-                </div>
-            </div>
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹1000</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹1900</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Vikash_Yadav</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">Desi_Gamer</span></div>
-                </div>
-            </div>
-            <div class="battle-card">
-                <span class="badge-tag tag-live">● LIVE</span>
-                <div class="battle-meta" style="margin-top:6px;">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹2000</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹3800</strong></div>
-                </div>
-                <div class="vs-row">
-                    <div class="player-box"><span class="player-name">Royal_Ludo</span></div>
-                    <div class="vs-circle">VS</div>
-                    <div class="player-box"><span class="player-name">Badshah_77</span></div>
-                </div>
-            </div>
-        `;
-
-        document.getElementById("runningBattlesList").innerHTML = dbRunningHTML + fakeRunningHTML;
+        document.getElementById("runningBattlesList").innerHTML = dbRunningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
     });
 }
 
@@ -935,8 +844,8 @@ async function requestPlayBattle(bId, amt) {
         showErrorModal("Insufficient balance");
         return;
     }
-    const cleanMobile = String(userId).replace(/\D/g,"");
-    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+    const docId = "91" + cleanMobile;
 
     await firebaseDB.collection("battles").doc(bId).update({
         status: "requested",
@@ -965,29 +874,72 @@ async function rejectBattleRequest(bId) {
     });
 }
 
+// Helper to deduct balance from Deposit first then Winnings
+function deductFromBalance(deposit, winnings, amt) {
+    let newDeposit = deposit;
+    let newWinnings = winnings;
+    let remaining = amt;
+
+    if (newDeposit >= remaining) {
+        newDeposit -= remaining;
+        remaining = 0;
+    } else {
+        remaining -= newDeposit;
+        newDeposit = 0;
+        newWinnings = Math.max(0, newWinnings - remaining);
+    }
+    return {
+        depositBalance: newDeposit,
+        winnings: newWinnings,
+        winningBalance: newWinnings,
+        balance: newDeposit + newWinnings
+    };
+}
+
 async function startBattle(bId, amt, oppUid) {
-    const cleanMobile = String(userId).replace(/\D/g,"");
-    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+    const p1DocId = "91" + cleanMobile;
+    const p2DocId = oppUid;
 
     try {
         await firebaseDB.runTransaction(async t => {
-            const p1Ref = firebaseDB.collection("customers").doc(docId);
-            const p2Ref = firebaseDB.collection("customers").doc(oppUid);
-            const bRef = firebaseDB.collection("battles").doc(bId);
+            let p1Ref = firebaseDB.collection("customers").doc(p1DocId);
+            let p2Ref = firebaseDB.collection("customers").doc(p2DocId);
 
-            const p1Snap = await t.get(p1Ref);
-            const p2Snap = await t.get(p2Ref);
-
-            const p1Bal = Number(p1Snap.data()?.balance || 0);
-            const p2Bal = Number(p2Snap.data()?.balance || 0);
-
-            if(p1Bal < amt || p2Bal < amt){
-                throw new Error("Kisi player ke pass balance kam hai.");
+            let p1Snap = await t.get(p1Ref);
+            if(!p1Snap.exists){
+                p1Ref = firebaseDB.collection("customers").doc(cleanMobile);
+                p1Snap = await t.get(p1Ref);
             }
 
-            t.update(p1Ref, { balance: p1Bal - amt });
-            t.update(p2Ref, { balance: p2Bal - amt });
+            let p2Snap = await t.get(p2Ref);
+            if(!p2Snap.exists){
+                p2Ref = firebaseDB.collection("customers").doc(p2DocId.replace(/^91/,""));
+                p2Snap = await t.get(p2Ref);
+            }
 
+            const p1Data = p1Snap.data() || {};
+            const p2Data = p2Snap.data() || {};
+
+            const p1Dep = Number(p1Data.depositBalance || p1Data.deposit || 0);
+            const p1Win = Number(p1Data.winnings || p1Data.winningBalance || 0);
+            const p1Total = p1Dep + p1Win;
+
+            const p2Dep = Number(p2Data.depositBalance || p2Data.deposit || 0);
+            const p2Win = Number(p2Data.winnings || p2Data.winningBalance || 0);
+            const p2Total = p2Dep + p2Win;
+
+            if(p1Total < amt || p2Total < amt){
+                throw new Error("Kisi player ke paas balance kam hai.");
+            }
+
+            const p1Updates = deductFromBalance(p1Dep, p1Win, amt);
+            const p2Updates = deductFromBalance(p2Dep, p2Win, amt);
+
+            t.update(p1Ref, p1Updates);
+            t.update(p2Ref, p2Updates);
+
+            const bRef = firebaseDB.collection("battles").doc(bId);
             t.update(bRef, {
                 status: "live",
                 startedAt: firebase.firestore.FieldValue.serverTimestamp()
@@ -1006,8 +958,8 @@ function renderRoomView(b, isCreator) {
     document.getElementById("roomPrizeFee").textContent = "₹" + b.prize;
     document.getElementById("roomP1Name").textContent = b.creatorName;
     document.getElementById("roomP2Name").textContent = b.acceptedName;
-    document.getElementById("roomP1Avatar").textContent = b.creatorName.charAt(0).toUpperCase();
-    document.getElementById("roomP2Avatar").textContent = b.acceptedName.charAt(0).toUpperCase();
+    document.getElementById("roomP1Avatar").textContent = (b.creatorName || "P").charAt(0).toUpperCase();
+    document.getElementById("roomP2Avatar").textContent = (b.acceptedName || "P").charAt(0).toUpperCase();
 
     if(b.status === "conflict") {
         document.getElementById("roomLiveBadge").className = "badge-tag tag-conflict";
@@ -1116,8 +1068,8 @@ async function uploadProofAndSubmit() {
         if(file) {
             proofBase64 = await compressImageFile(file);
         }
-        const cleanMobile = String(userId).replace(/\D/g,"");
-        const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+        const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+        const docId = "91" + cleanMobile;
 
         await processResultWithAutoSettlement(docId, selectedResultType, proofBase64);
 
@@ -1163,17 +1115,26 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
         else if(otherResult !== null) {
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
-                const winnerRef = firebaseDB.collection("customers").doc(winnerUid);
-                const winnerSnap = await t.get(winnerRef);
+                let winnerRef = firebaseDB.collection("customers").doc(winnerUid);
+                let winnerSnap = await t.get(winnerRef);
 
-                const currentBal = Number(winnerSnap.data()?.balance || 0);
-                const currentWin = Number(winnerSnap.data()?.winnings || winnerSnap.data()?.winningBalance || 0);
-                const currentPlayed = Number(winnerSnap.data()?.matchesPlayed || 0);
+                if(!winnerSnap.exists){
+                    winnerRef = firebaseDB.collection("customers").doc(winnerUid.replace(/^91/,""));
+                    winnerSnap = await t.get(winnerRef);
+                }
+
+                const wData = winnerSnap.data() || {};
+                const currentDep = Number(wData.depositBalance || wData.deposit || 0);
+                const currentWin = Number(wData.winnings || wData.winningBalance || 0);
+                const currentPlayed = Number(wData.matchesPlayed || 0);
+
+                const newWinnings = currentWin + prizeAmt;
+                const newTotal = currentDep + newWinnings;
 
                 t.update(winnerRef, {
-                    balance: currentBal + prizeAmt,
-                    winnings: currentWin + prizeAmt,
-                    winningBalance: currentWin + prizeAmt,
+                    balance: newTotal,
+                    winnings: newWinnings,
+                    winningBalance: newWinnings,
                     matchesPlayed: currentPlayed + 1
                 });
 
