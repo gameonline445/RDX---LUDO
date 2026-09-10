@@ -430,40 +430,42 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // ACCURATE CUSTOMERS COLLECTION LOOKUP (PREVENTS "USER NOT FOUND" ERROR)
+        // ACCURATE CUSTOMERS COLLECTION LOOKUP (FIXED USER NOT FOUND BUG)
         async function findUserDocRef(data, explicitUid, explicitMobile) {
             let possibleUid = explicitUid || data.userId || data.uid || data.user_id;
             
             if (possibleUid) {
                 let uDoc = await db.collection("customers").doc(String(possibleUid)).get();
                 if (uDoc.exists) return db.collection("customers").doc(String(possibleUid));
+                
+                let qSnap = await db.collection("customers").where("uid", "==", String(possibleUid)).limit(1).get();
+                if (!qSnap.empty) return qSnap.docs[0].ref;
             }
 
             let rawMobile = explicitMobile || data.mobile || data.userMobile || data.phone || data.userPhone || data.mobileNo || "";
             if (rawMobile) {
-                let cleanDigits = String(rawMobile).replace(/\D/g, ""); 
-                let withPlus91 = "+91" + cleanDigits.slice(-10);
-                let plain10Digits = cleanDigits.slice(-10);
+                let cleanDigits = String(rawMobile).replace(/\D/g, "").slice(-10);
+                let withPlus91 = "+91" + cleanDigits;
 
-                // 1. Direct Doc Lookup with Phone String
-                let docWithPlus = await db.collection("customers").doc(withPlus91).get();
-                if (docWithPlus.exists) return db.collection("customers").doc(withPlus91);
+                if (cleanDigits.length === 10) {
+                    let docPlain = await db.collection("customers").doc(cleanDigits).get();
+                    if (docPlain.exists) return db.collection("customers").doc(cleanDigits);
 
-                let docPlain = await db.collection("customers").doc(plain10Digits).get();
-                if (docPlain.exists) return db.collection("customers").doc(plain10Digits);
+                    let docPlus = await db.collection("customers").doc(withPlus91).get();
+                    if (docPlus.exists) return db.collection("customers").doc(withPlus91);
 
-                // 2. Field Search (mobile / phone)
-                let snap1 = await db.collection("customers").where("mobile", "==", withPlus91).limit(1).get();
-                if (!snap1.empty) return snap1.docs[0].ref;
-
-                let snap2 = await db.collection("customers").where("mobile", "==", plain10Digits).limit(1).get();
-                if (!snap2.empty) return snap2.docs[0].ref;
+                    let snap1 = await db.collection("customers").where("mobile", "in", [cleanDigits, withPlus91]).limit(1).get();
+                    if (!snap1.empty) return snap1.docs[0].ref;
+                    
+                    let snap2 = await db.collection("customers").where("phone", "in", [cleanDigits, withPlus91]).limit(1).get();
+                    if (!snap2.empty) return snap2.docs[0].ref;
+                }
             }
 
             return null;
         }
 
-        // STRICT EXACT BALANCE REVERSION ENGINE
+        // STRICT EXACT BALANCE ENGINE (PREVENTS DOUBLE ADDITION & USES ATOMIC BATCH)
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -491,7 +493,8 @@
                 let oldLower = (freshData.status || "pending").toLowerCase();
                 let targetLower = newStatus.toLowerCase();
 
-                // Prevent Double Execution
+                let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
+
                 if (oldLower === targetLower) {
                     alert("Status pehle se yahi hai!");
                     closeModal("actionModal");
@@ -499,17 +502,12 @@
                     return;
                 }
 
-                // EXACT BALANCE REVERSION ENGINE CALCULATIONS
                 let amtChange = 0;
 
-                if (oldLower === "approved" && targetLower === "rejected") {
-                    amtChange = -activeCurrentAmt; // -Amt
-                } else if (oldLower === "pending" && targetLower === "approved") {
-                    amtChange = activeCurrentAmt;  // +Amt
-                } else if (oldLower === "approved" && targetLower === "pending") {
-                    amtChange = -activeCurrentAmt; // -Amt
-                } else if (oldLower === "rejected" && targetLower === "approved") {
-                    amtChange = activeCurrentAmt;  // +Amt
+                if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
+                    amtChange = targetAmount;
+                } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
+                    amtChange = -targetAmount;
                 }
 
                 let updatePayload = {
@@ -518,25 +516,29 @@
                     processedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                // 1. Update Deposit Doc
-                await depRef.update(updatePayload);
-
-                // 2. Sync User Wallet
+                let matchedUserRef = null;
                 if (amtChange !== 0) {
-                    let matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
-                    
-                    if (matchedUserRef) {
-                        await matchedUserRef.set({
-                            depositBalance: firebase.firestore.FieldValue.increment(amtChange)
-                        }, { merge: true });
-                        alert(`Status update ho gaya aur Wallet (depositBalance) me ₹${amtChange} adjust ho gaye!`);
-                    } else {
-                        alert("Deposit status change ho gaya hai lekin User record missing tha!");
+                    matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
+                    if (!matchedUserRef) {
+                        alert("Error: Customer record nahi mila! Balance update nahi hua.");
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Update Status";
+                        return;
                     }
-                } else {
-                    alert(`Status updated to ${newStatus}!`);
                 }
 
+                let batch = db.batch();
+                batch.update(depRef, updatePayload);
+                
+                if (matchedUserRef && amtChange !== 0) {
+                    batch.set(matchedUserRef, {
+                        depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                    }, { merge: true });
+                }
+
+                await batch.commit();
+
+                alert(`Status updated to ${newStatus}. Balance adjustment: ₹${amtChange}`);
                 closeModal("actionModal");
             } catch (err) {
                 alert("Error: " + err.message);
