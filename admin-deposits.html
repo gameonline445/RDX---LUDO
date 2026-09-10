@@ -194,7 +194,6 @@
         let activeOldStatus = "";
         let activeMobileNo = "";
 
-        // Helper to prevent XSS attacks when rendering user content
         function escapeHtml(str) {
             if (!str) return "";
             return String(str)
@@ -372,15 +371,40 @@
             document.getElementById("editAmtModal").style.display = "flex";
         }
 
+        // UPDATED robust user lookup function
         async function findUserDocRef(data, explicitUid, explicitMobile) {
             let possibleUid = explicitUid || data.uid || data.userId || data.user_id;
-            
+
             if (possibleUid) {
-                let uDoc = await db.collection("customers").doc(String(possibleUid)).get();
-                if (uDoc.exists) return db.collection("customers").doc(String(possibleUid));
+                let cleanUid = String(possibleUid).trim();
                 
-                let qSnap = await db.collection("customers").where("uid", "==", String(possibleUid)).limit(1).get();
+                // Direct match by Doc ID
+                let uDoc = await db.collection("customers").doc(cleanUid).get();
+                if (uDoc.exists) return db.collection("customers").doc(cleanUid);
+
+                // Match by field 'uid'
+                let qSnap = await db.collection("customers").where("uid", "==", cleanUid).limit(1).get();
                 if (!qSnap.empty) return qSnap.docs[0].ref;
+
+                // Match by field 'mobile' or 'phone' equal to UID string
+                let snapMobile = await db.collection("customers").where("mobile", "==", cleanUid).limit(1).get();
+                if (!snapMobile.empty) return snapMobile.docs[0].ref;
+
+                let snapPhone = await db.collection("customers").where("phone", "==", cleanUid).limit(1).get();
+                if (!snapPhone.empty) return snapPhone.docs[0].ref;
+
+                // Strip leading +91 or non-digits if present
+                let digitsOnly = cleanUid.replace(/\D/g, "").slice(-10);
+                if (digitsOnly.length === 10) {
+                    let docDigits = await db.collection("customers").doc(digitsOnly).get();
+                    if (docDigits.exists) return db.collection("customers").doc(digitsOnly);
+
+                    let snapDigits1 = await db.collection("customers").where("mobile", "==", digitsOnly).limit(1).get();
+                    if (!snapDigits1.empty) return snapDigits1.docs[0].ref;
+
+                    let snapDigits2 = await db.collection("customers").where("mobile", "==", "+91" + digitsOnly).limit(1).get();
+                    if (!snapDigits2.empty) return snapDigits2.docs[0].ref;
+                }
             }
 
             let rawMobile = explicitMobile || data.mobile || data.userMobile || data.phone || data.userPhone || data.mobileNo || "";
@@ -397,18 +421,12 @@
 
                     let snap1 = await db.collection("customers").where("mobile", "in", [cleanDigits, withPlus91]).limit(1).get();
                     if (!snap1.empty) return snap1.docs[0].ref;
-                    
-                    let snap2 = await db.collection("customers").where("phone", "in", [cleanDigits, withPlus91]).limit(1).get();
-                    if (!snap2.empty) return snap2.docs[0].ref;
                 }
             }
 
             return null;
         }
 
-        // ==========================================
-        // AMOUNT EDIT TRANSACTION (DOUBLE BALANCE FIXED)
-        // ==========================================
         async function submitAmountUpdate() {
             let submitBtn = document.getElementById("submitAmtBtn");
             let newAmt = Number(document.getElementById("newAmountInput").value);
@@ -433,19 +451,17 @@
                     let diff = newAmt - currentAmount;
                     let isWalletUpdated = depData.isWalletUpdated === true;
 
-                    // Update deposit record amount
                     transaction.update(depRef, { 
                         amount: newAmt,
                         amt: newAmt 
                     });
 
-                    // IDEMPOTENCY GUARD FOR EDIT:
-                    // Only adjust wallet if the deposit was ALREADY credited (isWalletUpdated === true).
                     if (isWalletUpdated && diff !== 0) {
                         let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
                         if (matchedUserRef) {
                             transaction.set(matchedUserRef, {
-                                balance: firebase.firestore.FieldValue.increment(diff)
+                                balance: firebase.firestore.FieldValue.increment(diff),
+                                depositBalance: firebase.firestore.FieldValue.increment(diff)
                             }, { merge: true });
                         }
                     }
@@ -492,9 +508,7 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // ==========================================
-        // STATUS UPDATE TRANSACTION (ATOMIC + SAFE REVERSAL + IDEMPOTENCY)
-        // ==========================================
+        // STATUS UPDATE WITH GUARANTEED REVERSAL & IDEMPOTENCY
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -534,14 +548,14 @@
                         amtChange = targetAmount;
                         setWalletFlag = true;
 
-                    // 2. REJECTION LOGIC
+                    // 2. REJECTION LOGIC (Wallet Se Deduction)
                     } else if (targetLower === "rejected" || targetLower === "failed") {
                         if (isWalletUpdated) {
                             amtChange = -targetAmount;
                             setWalletFlag = false;
                         }
 
-                    // 3. PENDING LOGIC
+                    // 3. PENDING LOGIC (Wallet Se Deduction)
                     } else if (targetLower === "pending") {
                         if (isWalletUpdated) {
                             amtChange = -targetAmount;
@@ -560,16 +574,17 @@
                     if (amtChange !== 0) {
                         matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
                         if (!matchedUserRef) {
-                            throw new Error("Customer record nahi mila! Balance update nahi hua.");
+                            throw new Error("Customer record nahi mila! User ID / Mobile mismatch.");
                         }
                     }
 
-                    // Updates
+                    // Write Updates
                     transaction.update(depRef, updatePayload);
 
                     if (matchedUserRef && amtChange !== 0) {
                         transaction.set(matchedUserRef, {
-                            balance: firebase.firestore.FieldValue.increment(amtChange)
+                            balance: firebase.firestore.FieldValue.increment(amtChange),
+                            depositBalance: firebase.firestore.FieldValue.increment(amtChange)
                         }, { merge: true });
                     }
                 });
