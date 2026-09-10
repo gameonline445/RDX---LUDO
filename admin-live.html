@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Admin Live User Monitor</title>
+<title>RDX LUDO - Live Users Monitor</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -14,15 +14,17 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;}
-body{
+body {
+    display: none;
     background:#0b1329;
     color:#f8fafc;
     min-height:100vh;
-    display:none; /* Security Shield */
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    margin:0;
 }
+*{box-sizing:border-box;margin:0;padding:0;}
 
-/* TOP ADMIN NAVBAR */
+/* TOP NAVBAR */
 .top-navbar{
     background:#eef2ff;
     padding:12px 16px;
@@ -31,273 +33,65 @@ body{
     align-items:center;
     border-bottom:1px solid #cbd5e1;
 }
-.nav-left{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-.menu-btn{
-    background:none;
-    border:none;
-    font-size:20px;
-    color:#1e293b;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-}
-.brand-logo{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-.logo-badge{
-    background:#1e3a8a;
-    color:#ffffff;
-    font-weight:900;
-    font-size:12px;
-    padding:6px 8px;
-    border-radius:50%;
-}
-.brand-title{
-    color:#1e3a8a;
-    font-weight:900;
-    font-size:16px;
-    letter-spacing:0.5px;
-}
-.logout-btn{
-    background:#ffe4e6;
-    color:#e11d48;
-    border:1px solid #fecdd3;
-    padding:6px 14px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:700;
-    cursor:pointer;
-}
+.nav-left{ display:flex; align-items:center; gap:12px; }
+.menu-btn{ background:none; border:none; font-size:20px; color:#1e293b; cursor:pointer; }
+.brand-logo{ display:flex; align-items:center; gap:10px; }
+.logo-badge{ background:#1e3a8a; color:#ffffff; font-weight:900; font-size:12px; padding:6px 8px; border-radius:50%; }
+.brand-title{ color:#1e3a8a; font-weight:900; font-size:16px; }
+.logout-btn{ background:#ffe4e6; color:#e11d48; border:1px solid #fecdd3; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; }
 
-/* SIDEBAR DRAWER NAVIGATION */
-.drawer-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.5);
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.25s ease;
-}
-.drawer-overlay.active{
-    opacity:1;
-    pointer-events:auto;
-}
-.sidebar{
-    position:fixed;
-    top:0;
-    left:0;
-    width:270px;
-    height:100%;
-    background:#ffffff;
-    z-index:1000;
-    transform:translateX(-100%);
-    transition:transform 0.25s ease;
-    display:flex;
-    flex-direction:column;
-    box-shadow:4px 0 15px rgba(0,0,0,0.1);
-}
-.sidebar.active{
-    transform:translateX(0);
-}
-.sidebar-header{
-    padding:16px;
-    border-bottom:1px solid #f1f5f9;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.sidebar-menu{
-    padding:12px;
-    display:flex;
-    flex-direction:column;
-    gap:4px;
-    overflow-y:auto;
-}
-.nav-link{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding:12px 14px;
-    color:#334155;
-    font-size:14px;
-    font-weight:700;
-    text-decoration:none;
-    border-radius:10px;
-    transition:0.2s;
-}
-.nav-link i{
-    width:20px;
-    font-size:15px;
-    color:#64748b;
-    text-align:center;
-}
-.nav-link:hover{
-    background:#f1f5f9;
-    color:#0284c7;
-}
-.nav-link.active{
-    background:#e0f2fe;
-    color:#0284c7;
-}
-.nav-link.active i{
-    color:#0284c7;
-}
+/* SIDEBAR DRAWER */
+.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; opacity:0; pointer-events:none; transition:0.25s; }
+.drawer-overlay.active{ opacity:1; pointer-events:auto; }
+.sidebar{ position:fixed; top:0; left:0; width:270px; height:100%; background:#ffffff; z-index:1000; transform:translateX(-100%); transition:0.25s; display:flex; flex-direction:column; box-shadow:4px 0 15px rgba(0,0,0,0.1); }
+.sidebar.active{ transform:translateX(0); }
+.sidebar-header{ padding:16px; border-bottom:1px solid #f1f5f9; }
+.sidebar-menu{ padding:12px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
+.nav-link{ display:flex; align-items:center; gap:12px; padding:12px 14px; color:#334155; font-size:14px; font-weight:700; text-decoration:none; border-radius:10px; }
+.nav-link i{ width:20px; text-align:center; color:#64748b; }
+.nav-link.active{ background:#e0f2fe; color:#0284c7; }
+.nav-link.active i{ color:#0284c7; }
 
-/* MAIN CONTENT AREA */
-.main-content{
-    padding:16px;
-}
-.page-title{
-    color:#38bdf8;
-    font-size:20px;
-    font-weight:800;
-    margin-bottom:16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-.live-indicator{
-    width:10px;
-    height:10px;
-    background:#22c55e;
-    border-radius:50%;
-    box-shadow:0 0 8px #22c55e;
-    display:inline-block;
-}
+/* MAIN CONTENT */
+.main-content{ padding:16px; }
+.page-title{ color:#38bdf8; font-size:22px; font-weight:900; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; }
+.sync-time{ font-size:12px; color:#94a3b8; font-weight:normal; }
 
-/* STATS GRID - 4 BOXES */
+/* COUNTER CARDS GRID */
 .stats-grid{
     display:grid;
-    grid-template-columns:repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap:12px;
     margin-bottom:20px;
 }
-@media (min-width: 768px) {
-    .stats-grid{
-        grid-template-columns:repeat(4, 1fr);
-    }
-}
 .stat-card{
-    background:#131c35;
-    border:1px solid #1e293b;
+    background:#1e293b;
+    border:1px solid #334155;
     border-radius:14px;
-    padding:16px 14px;
-    display:flex;
-    flex-direction:column;
-    gap:6px;
+    padding:16px;
 }
-.stat-card small{
-    color:#94a3b8;
-    font-size:11px;
-    font-weight:800;
-    letter-spacing:0.5px;
-    text-transform:uppercase;
-}
-.stat-card .val{
-    font-size:28px;
-    font-weight:900;
-}
-.stat-online .val{color:#22c55e;}
-.stat-loggedin .val{color:#f59e0b;}
-.stat-offline .val{color:#ef4444;}
-.stat-total .val{color:#38bdf8;}
+.stat-label{ font-size:11px; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:8px; }
+.stat-value{ font-size:28px; font-weight:900; }
+.val-green{ color:#4ade80; }
+.val-amber{ color:#fbbf24; }
+.val-red{ color:#f87171; }
+.val-blue{ color:#38bdf8; }
 
-/* CONTROLS & TABS */
-.controls{
-    display:flex;
-    flex-direction:column;
-    gap:12px;
-    margin-bottom:18px;
-}
-.tabs{
-    display:flex;
-    gap:8px;
-    overflow-x:auto;
-    padding-bottom:4px;
-}
-.tabs::-webkit-scrollbar{display:none;}
-.tab-btn{
-    background:#131c35;
-    border:1px solid #1e293b;
-    color:#94a3b8;
-    padding:8px 14px;
-    border-radius:10px;
-    font-size:13px;
-    font-weight:700;
-    cursor:pointer;
-    white-space:nowrap;
-}
-.tab-btn.active{
-    background:#0284c7;
-    color:#ffffff;
-    border-color:#0284c7;
-}
+/* CONTROL BAR */
+.controls-container{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px; }
+.filter-btn{ background:#1e293b; color:#94a3b8; border:1px solid #334155; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; }
+.filter-btn.active{ background:#0284c7; color:#fff; border-color:#0284c7; }
+.search-box{ flex:1; min-width:200px; }
+.search-box input{ width:100%; padding:9px 12px; border-radius:8px; border:1px solid #334155; background:#1e293b; color:#fff; font-size:13px; outline:none; }
 
-.search-box input{
-    width:100%;
-    background:#131c35;
-    border:1px solid #1e293b;
-    color:#ffffff;
-    padding:10px 14px;
-    border-radius:10px;
-    outline:none;
-    font-size:14px;
-}
+/* TABLE CARD */
+.table-card{ background:#ffffff; border-radius:16px; padding:14px; color:#0f172a; overflow-x:auto; }
+table{ width:100%; border-collapse:collapse; text-align:left; font-size:13px; }
+th, td{ padding:10px 8px; border-bottom:1px solid #e2e8f0; white-space:nowrap; }
+th{ background:#f8fafc; color:#64748b; font-weight:800; font-size:11px; text-transform:uppercase; }
 
-/* TABLE STYLES */
-.table-container{
-    background:#131c35;
-    border-radius:14px;
-    border:1px solid #1e293b;
-    overflow-x:auto;
-}
-table{
-    width:100%;
-    border-collapse:collapse;
-    text-align:left;
-    font-size:13px;
-}
-th{
-    background:#0b1329;
-    color:#94a3b8;
-    font-weight:800;
-    padding:12px 14px;
-    border-bottom:1px solid #1e293b;
-    white-space:nowrap;
-}
-td{
-    padding:12px 14px;
-    border-bottom:1px solid #1e293b;
-    color:#e2e8f0;
-    white-space:nowrap;
-}
-tr:last-child td{border-bottom:none;}
-tr:hover{background:#1a2649;}
-
-/* BADGES */
-.status-badge{
-    padding:4px 8px;
-    border-radius:12px;
-    font-size:10px;
-    font-weight:800;
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
-}
-.status-online{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);}
-.status-loggedin{background:rgba(245,158,11,0.15);color:#f59e0b;border:1px solid rgba(245,158,11,0.3);}
-.status-offline{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.3);}
-.dot{width:6px;height:6px;border-radius:50%;}
-.status-online .dot{background:#22c55e;}
-.status-loggedin .dot{background:#f59e0b;}
-.status-offline .dot{background:#ef4444;}
+.badge-online{ background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
+.badge-offline{ background:#f1f5f9; color:#64748b; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
 </style>
 </head>
 
@@ -315,7 +109,7 @@ tr:hover{background:#1a2649;}
     <button class="logout-btn" onclick="adminLogout()">Logout</button>
 </div>
 
-<!-- SIDEBAR OVERLAY & MENU DRAWER -->
+<!-- SIDEBAR -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebarNav">
     <div class="sidebar-header">
@@ -332,76 +126,71 @@ tr:hover{background:#1a2649;}
         <a href="admin-deposits.html" class="nav-link"><i class="fa-solid fa-wallet"></i> Deposits</a>
         <a href="admin-withdrawals.html" class="nav-link"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
         <a href="admin-history.html" class="nav-link"><i class="fa-solid fa-rectangle-list"></i> User Complete History</a>
-        <a href="admin-referrals.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Referral Analytics</a>
+        <a href="admin-referral.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Referral Analytics</a>
         <a href="admin-customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a>
+        <a href="admin-block.html" class="nav-link"><i class="fa-solid fa-user-slash"></i> Block & Report</a>
         <a href="admin-notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a>
         <a href="admin-settings.html" class="nav-link"><i class="fa-solid fa-gear"></i> Payment Settings</a>
     </div>
 </div>
 
-<!-- MAIN PAGE CONTENT -->
+<!-- MAIN CONTENT -->
 <div class="main-content">
-
     <div class="page-title">
-        <div><span class="live-indicator"></span> Strictly Realtime Monitor</div>
-        <div style="font-size:12px; color:#94a3b8; font-weight:normal;" id="lastUpdated">Syncing...</div>
+        <span>🟢 Strictly Realtime Monitor</span>
+        <span class="sync-time">Last sync: <span id="lastSyncTime">--:--:--</span></span>
     </div>
 
-    <!-- 4 COUNTER CARDS -->
+    <!-- STATS CARDS -->
     <div class="stats-grid">
-        <div class="stat-card stat-online">
-            <small>ACTIVE ONLINE USERS</small>
-            <div class="val" id="countOnline">0</div>
+        <div class="stat-card">
+            <div class="stat-label">ACTIVE ONLINE USERS</div>
+            <div class="stat-value val-green" id="cntOnline">0</div>
         </div>
-        <div class="stat-card stat-loggedin">
-            <small>LOGGED IN USERS</small>
-            <div class="val" id="countLoggedIn">0</div>
+        <div class="stat-card">
+            <div class="stat-label">LOGGED IN USERS</div>
+            <div class="stat-value val-amber" id="cntLoggedIn">0</div>
         </div>
-        <div class="stat-card stat-offline">
-            <small>OFFLINE USERS</small>
-            <div class="val" id="countOffline">0</div>
+        <div class="stat-card">
+            <div class="stat-label">OFFLINE USERS</div>
+            <div class="stat-value val-red" id="cntOffline">0</div>
         </div>
-        <div class="stat-card stat-total">
-            <small>TOTAL REGISTERED</small>
-            <div class="val" id="countTotal">0</div>
+        <div class="stat-card">
+            <div class="stat-label">TOTAL REGISTERED</div>
+            <div class="stat-value val-blue" id="cntTotal">0</div>
         </div>
     </div>
 
-    <!-- FILTER BUTTONS & SEARCH -->
-    <div class="controls">
-        <div class="tabs">
-            <button class="tab-btn" onclick="switchFilter('all')" id="tabAll">All Users</button>
-            <button class="tab-btn active" onclick="switchFilter('online')" id="tabOnline">Online Only</button>
-            <button class="tab-btn" onclick="switchFilter('loggedin')" id="tabLoggedIn">Logged In Only</button>
-            <button class="tab-btn" onclick="switchFilter('offline')" id="tabOffline">Offline Only</button>
-        </div>
+    <!-- CONTROLS -->
+    <div class="controls-container">
+        <button class="filter-btn active" id="btnAll" onclick="setFilter('all')">All Users</button>
+        <button class="filter-btn" id="btnOnline" onclick="setFilter('online')">Online Only</button>
+        <button class="filter-btn" id="btnLoggedIn" onclick="setFilter('loggedin')">Logged In Only</button>
+        <button class="filter-btn" id="btnOffline" onclick="setFilter('offline')">Offline Only</button>
+
         <div class="search-box">
-            <input type="text" id="searchInput" onkeyup="filterUsers()" placeholder="Search Name, Phone, City..">
+            <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Search Name, Phone, City..">
         </div>
     </div>
 
-    <!-- DATA TABLE -->
-    <div class="table-container">
+    <!-- TABLE -->
+    <div class="table-card">
         <table>
             <thead>
                 <tr>
                     <th>User</th>
                     <th>Mobile Number</th>
                     <th>Status</th>
-                    <th>City</th>
-                    <th>State</th>
+                    <th>City / Location</th>
                     <th>Total Balance</th>
                     <th>Last Active</th>
                 </tr>
             </thead>
-            <tbody id="userTableBody">
-                <tr>
-                    <td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">Loading live user data...</td>
-                </tr>
+            <tbody id="liveUsersTableBody">
+                <tr><td colspan="6" style="text-align:center;">Connecting Realtime Stream...</td></tr>
             </tbody>
         </table>
     </div>
-
 </div>
 
 <script>
@@ -416,16 +205,12 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
-let allUsersData = [];
-let currentFilter = 'online';
-
-// 🔒 STRICT SECURITY AUTHENTICATION GUARD
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
         window.location.href = "admin-login.html";
     } else {
         document.body.style.display = "block";
-        listenToUserPresence();
+        startRealtimeMonitor();
     }
 });
 
@@ -435,155 +220,139 @@ function toggleSidebar() {
 }
 
 function adminLogout() {
-    firebase.auth().signOut().then(() => {
-        window.location.href = "admin-login.html";
-    }).catch(() => {
-        window.location.href = "admin-login.html";
-    });
+    firebase.auth().signOut().then(() => window.location.href = "admin-login.html");
 }
+
+let allLiveUsers = [];
+let currentFilter = 'all';
 
 function parseTimestamp(val) {
     if (!val) return 0;
     if (typeof val === 'number') return val;
     if (val.toDate && typeof val.toDate === 'function') return val.toDate().getTime();
     if (val.seconds) return val.seconds * 1000;
-    const parsed = new Date(val).getTime();
-    return isNaN(parsed) ? 0 : parsed;
+    const p = new Date(val).getTime();
+    return isNaN(p) ? 0 : p;
 }
 
-function listenToUserPresence() {
+function formatTime(ms) {
+    if(!ms) return "N/A";
+    const d = new Date(ms);
+    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+
+function startRealtimeMonitor() {
+    // Live Realtime listener on 'customers' collection
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
-        allUsersData = [];
-        let onlineCount = 0;
-        let loggedInCount = 0;
-        let offlineCount = 0;
+        allLiveUsers = [];
         const now = Date.now();
+
+        let onlineCnt = 0;
+        let loggedInCnt = 0;
+        let offlineCnt = 0;
 
         snapshot.forEach((doc) => {
             const data = doc.data();
+            const docId = doc.id;
+
+            const mobile = data.mobile || docId;
+            const name = data.name || "N/A";
+            const location = data.location || "N/A";
+            const balance = Number(data.balance !== undefined ? data.balance : (Number(data.depositBalance || 0) + Number(data.winnings || 0)));
             
-            let cleanMobile = String(data.mobile || doc.id).replace(/\D/g, "");
-            if (cleanMobile.startsWith("91") && cleanMobile.length > 10) {
-                cleanMobile = "+" + cleanMobile;
-            } else if (cleanMobile.length === 10) {
-                cleanMobile = "+91" + cleanMobile;
-            } else {
-                cleanMobile = "+" + cleanMobile;
-            }
+            const lastSeenMs = parseTimestamp(data.lastSeenAt) || parseTimestamp(data.lastLoginAt);
+            const isRecent = (now - lastSeenMs) <= (5 * 60 * 1000); // Active within last 5 mins
 
-            let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt);
+            // Dual Check Logic for Online Status
+            const isOnline = data.isOnline === true || 
+                             String(data.status).toLowerCase() === 'online' || 
+                             String(data.status).toLowerCase() === 'active' || 
+                             isRecent;
 
-            // STRICT 15-SECOND CUTOFF LOGIC
-            const isPingActive = lastPingMs > 0 && (now - lastPingMs) < 15000;
-            const isOnline = data.isOnline === true && isPingActive;
+            const isLoggedIn = lastSeenMs > 0 || isOnline;
 
-            // LOGGED IN LOGIC (Logged in on site in last 24h)
-            const isLoggedIn = data.isLoggedIn === true || isOnline || (lastPingMs > 0 && (now - lastPingMs) < 86400000);
+            if (isOnline) onlineCnt++;
+            else if (isLoggedIn) loggedInCnt++;
+            else offlineCnt++;
 
-            if (isOnline) {
-                onlineCount++;
-            } else {
-                offlineCount++;
-            }
-
-            if (isLoggedIn) {
-                loggedInCount++;
-            }
-
-            allUsersData.push({
-                id: doc.id,
-                name: data.name || ("User " + cleanMobile.slice(-4)),
-                mobile: cleanMobile,
+            allLiveUsers.push({
+                id: docId,
+                mobile: mobile,
+                name: name,
+                location: location,
+                balance: balance,
                 isOnline: isOnline,
                 isLoggedIn: isLoggedIn,
-                city: data.city || "-",
-                state: data.state || "-",
-                balance: Number(data.balance || (Number(data.deposit || 0) + Number(data.winnings || 0))),
-                lastSeen: lastPingMs ? new Date(lastPingMs) : null
+                lastSeenMs: lastSeenMs
             });
         });
 
-        document.getElementById("countOnline").textContent = onlineCount;
-        document.getElementById("countLoggedIn").textContent = loggedInCount;
-        document.getElementById("countOffline").textContent = offlineCount;
-        document.getElementById("countTotal").textContent = snapshot.size;
-        
-        const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        document.getElementById("lastUpdated").textContent = "Last sync: " + timeString;
+        // Update Counters
+        document.getElementById("cntOnline").textContent = onlineCnt;
+        document.getElementById("cntLoggedIn").textContent = loggedInCnt + onlineCnt;
+        document.getElementById("cntOffline").textContent = snapshot.size - (loggedInCnt + onlineCnt);
+        document.getElementById("cntTotal").textContent = snapshot.size;
+
+        document.getElementById("lastSyncTime").textContent = new Date().toLocaleTimeString();
 
         renderTable();
     }, (error) => {
-        console.error("Firestore Listen Error:", error);
+        console.error("Realtime Monitor Error: ", error);
     });
 }
 
-// Auto Refresh every 3 seconds to immediately auto-expire users after 15 sec
-setInterval(() => {
-    if (allUsersData.length > 0) renderTable();
-}, 3000);
+function setFilter(filterType) {
+    currentFilter = filterType;
+    document.getElementById("btnAll").classList.toggle("active", filterType === 'all');
+    document.getElementById("btnOnline").classList.toggle("active", filterType === 'online');
+    document.getElementById("btnLoggedIn").classList.toggle("active", filterType === 'loggedin');
+    document.getElementById("btnOffline").classList.toggle("active", filterType === 'offline');
+    renderTable();
+}
 
 function renderTable() {
-    const tbody = document.getElementById("userTableBody");
-    const searchTerm = document.getElementById("searchInput").value.toLowerCase();
-    
-    let filtered = allUsersData.filter(user => {
-        if (currentFilter === 'online') return user.isOnline;
-        if (currentFilter === 'loggedin') return user.isLoggedIn;
-        if (currentFilter === 'offline') return !user.isOnline;
+    const tbody = document.getElementById("liveUsersTableBody");
+    tbody.innerHTML = "";
+
+    const query = document.getElementById("searchInput").value.toLowerCase();
+
+    let filtered = allLiveUsers.filter(u => {
+        const matchesSearch = u.name.toLowerCase().includes(query) || 
+                              u.mobile.toLowerCase().includes(query) || 
+                              u.location.toLowerCase().includes(query);
+
+        if (!matchesSearch) return false;
+
+        if (currentFilter === 'online') return u.isOnline;
+        if (currentFilter === 'loggedin') return u.isLoggedIn;
+        if (currentFilter === 'offline') return !u.isOnline;
         return true;
     });
 
-    if (searchTerm) {
-        filtered = filtered.filter(u => 
-            u.name.toLowerCase().includes(searchTerm) || 
-            u.mobile.toLowerCase().includes(searchTerm) ||
-            u.city.toLowerCase().includes(searchTerm) ||
-            u.state.toLowerCase().includes(searchTerm)
-        );
-    }
-
     if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:30px;">No users found for this filter.</td></tr>`;
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No users found for this filter.</td></tr>';
         return;
     }
 
-    tbody.innerHTML = filtered.map(u => `
-        <tr>
-            <td style="font-weight:700;">${escapeHtml(u.name)}</td>
-            <td>${escapeHtml(u.mobile)}</td>
-            <td>
-                ${u.isOnline 
-                    ? `<span class="status-badge status-online"><span class="dot"></span> ONLINE</span>` 
-                    : u.isLoggedIn 
-                        ? `<span class="status-badge status-loggedin"><span class="dot"></span> LOGGED IN</span>`
-                        : `<span class="status-badge status-offline"><span class="dot"></span> OFFLINE</span>`
-                }
-            </td>
-            <td><strong style="color:#e2e8f0;">${escapeHtml(u.city)}</strong></td>
-            <td><span style="color:#94a3b8;">${escapeHtml(u.state)}</span></td>
-            <td style="color:#22c55e; font-weight:800;">₹${u.balance}</td>
-            <td style="color:#94a3b8; font-size:12px;">${u.lastSeen ? u.lastSeen.toLocaleTimeString() : 'N/A'}</td>
-        </tr>
-    `).join('');
-}
+    // Sort by Last Active / Highest Balance
+    filtered.sort((a, b) => b.lastSeenMs - a.lastSeenMs);
 
-function switchFilter(filter) {
-    currentFilter = filter;
-    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-    if (filter === 'all') document.getElementById('tabAll').classList.add('active');
-    if (filter === 'online') document.getElementById('tabOnline').classList.add('active');
-    if (filter === 'loggedin') document.getElementById('tabLoggedIn').classList.add('active');
-    if (filter === 'offline') document.getElementById('tabOffline').classList.add('active');
-    renderTable();
-}
+    filtered.forEach(u => {
+        const badge = u.isOnline ? 
+            '<span class="badge-online">🟢 Online</span>' : 
+            '<span class="badge-offline">⚪ Offline</span>';
 
-function filterUsers() {
-    renderTable();
-}
-
-function escapeHtml(text) {
-    return String(text).replace(/[&<>"']/g, function(m) {
-        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+        const row = `
+            <tr>
+                <td><b>${u.name}</b></td>
+                <td>${u.mobile}</td>
+                <td>${badge}</td>
+                <td>${u.location}</td>
+                <td><b>₹${u.balance}</b></td>
+                <td>${formatTime(u.lastSeenMs)}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
     });
 }
 </script>
