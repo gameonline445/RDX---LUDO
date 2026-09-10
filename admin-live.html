@@ -1,363 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Live Users Monitor</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDX LUDO ADMIN - Strictly Realtime Monitor</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Firebase SDKs (v8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
-<!-- FontAwesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<!-- FIREBASE SDKs -->
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
-
-<style>
-body {
-    display: none;
-    background:#0b1329;
-    color:#f8fafc;
-    min-height:100vh;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    margin:0;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-
-/* TOP NAVBAR */
-.top-navbar{
-    background:#eef2ff;
-    padding:12px 16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid #cbd5e1;
-}
-.nav-left{ display:flex; align-items:center; gap:12px; }
-.menu-btn{ background:none; border:none; font-size:20px; color:#1e293b; cursor:pointer; }
-.brand-logo{ display:flex; align-items:center; gap:10px; }
-.logo-badge{ background:#1e3a8a; color:#ffffff; font-weight:900; font-size:12px; padding:6px 8px; border-radius:50%; }
-.brand-title{ color:#1e3a8a; font-weight:900; font-size:16px; }
-.logout-btn{ background:#ffe4e6; color:#e11d48; border:1px solid #fecdd3; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; }
-
-/* SIDEBAR DRAWER */
-.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; opacity:0; pointer-events:none; transition:0.25s; }
-.drawer-overlay.active{ opacity:1; pointer-events:auto; }
-.sidebar{ position:fixed; top:0; left:0; width:270px; height:100%; background:#ffffff; z-index:1000; transform:translateX(-100%); transition:0.25s; display:flex; flex-direction:column; box-shadow:4px 0 15px rgba(0,0,0,0.1); }
-.sidebar.active{ transform:translateX(0); }
-.sidebar-header{ padding:16px; border-bottom:1px solid #f1f5f9; }
-.sidebar-menu{ padding:12px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
-.nav-link{ display:flex; align-items:center; gap:12px; padding:12px 14px; color:#334155; font-size:14px; font-weight:700; text-decoration:none; border-radius:10px; }
-.nav-link i{ width:20px; text-align:center; color:#64748b; }
-.nav-link.active{ background:#e0f2fe; color:#0284c7; }
-.nav-link.active i{ color:#0284c7; }
-
-/* MAIN CONTENT */
-.main-content{ padding:16px; }
-.page-title{ color:#38bdf8; font-size:22px; font-weight:900; margin-bottom:18px; display:flex; justify-content:space-between; align-items:center; }
-.sync-time{ font-size:12px; color:#94a3b8; font-weight:normal; }
-
-/* COUNTER CARDS GRID */
-.stats-grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap:12px;
-    margin-bottom:20px;
-}
-.stat-card{
-    background:#1e293b;
-    border:1px solid #334155;
-    border-radius:14px;
-    padding:16px;
-}
-.stat-label{ font-size:11px; font-weight:800; color:#94a3b8; text-transform:uppercase; margin-bottom:8px; }
-.stat-value{ font-size:28px; font-weight:900; }
-.val-green{ color:#4ade80; }
-.val-amber{ color:#fbbf24; }
-.val-red{ color:#f87171; }
-.val-blue{ color:#38bdf8; }
-
-/* CONTROL BAR */
-.controls-container{ display:flex; flex-wrap:wrap; gap:10px; margin-bottom:15px; }
-.filter-btn{ background:#1e293b; color:#94a3b8; border:1px solid #334155; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; }
-.filter-btn.active{ background:#0284c7; color:#fff; border-color:#0284c7; }
-.search-box{ flex:1; min-width:200px; }
-.search-box input{ width:100%; padding:9px 12px; border-radius:8px; border:1px solid #334155; background:#1e293b; color:#fff; font-size:13px; outline:none; }
-
-/* TABLE CARD */
-.table-card{ background:#ffffff; border-radius:16px; padding:14px; color:#0f172a; overflow-x:auto; }
-table{ width:100%; border-collapse:collapse; text-align:left; font-size:13px; }
-th, td{ padding:10px 8px; border-bottom:1px solid #e2e8f0; white-space:nowrap; }
-th{ background:#f8fafc; color:#64748b; font-weight:800; font-size:11px; text-transform:uppercase; }
-
-.badge-online{ background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
-.badge-offline{ background:#f1f5f9; color:#64748b; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
-</style>
+    <style>
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        .card-bg {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+        .pulse-dot {
+            height: 12px;
+            width: 12px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #22c55e;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
 </head>
+<body class="p-4 md:p-8">
 
-<body>
+    <!-- Top Header Navigation -->
+    <header class="flex justify-between items-center pb-6 border-b border-slate-700 mb-6">
+        <div class="flex items-center space-x-3">
+            <span class="bg-blue-600 text-white font-bold px-3 py-1 rounded-full text-sm">RDX</span>
+            <h1 class="text-xl font-bold tracking-wide">RDX LUDO ADMIN</h1>
+        </div>
+        <button id="logoutBtn" onclick="handleLogout()" class="bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 px-4 py-1.5 rounded-full text-sm font-semibold transition">
+            Logout
+        </button>
+    </header>
 
-<!-- TOP NAVBAR -->
-<div class="top-navbar">
-    <div class="nav-left">
-        <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-        <div class="brand-logo">
-            <span class="logo-badge">RDX</span>
-            <span class="brand-title">RDX LUDO ADMIN</span>
+    <!-- Main Title & Sync Info -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+        <div class="flex items-center space-x-3">
+            <span class="pulse-dot"></span>
+            <h2 class="text-2xl font-bold">Strictly Realtime Monitor</h2>
         </div>
-    </div>
-    <button class="logout-btn" onclick="adminLogout()">Logout</button>
-</div>
-
-<!-- SIDEBAR -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebar()"></div>
-<div class="sidebar" id="sidebarNav">
-    <div class="sidebar-header">
-        <div class="brand-logo">
-            <span class="logo-badge">RDX</span>
-            <span class="brand-title">RDX LUDO ADMIN</span>
-        </div>
-    </div>
-    <div class="sidebar-menu">
-        <a href="admin.html" class="nav-link"><i class="fa-solid fa-compass"></i> Dashboard</a>
-        <a href="admin-live.html" class="nav-link active"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
-        <a href="admin-battles.html" class="nav-link"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
-        <a href="admin-kyc.html" class="nav-link"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
-        <a href="admin-deposits.html" class="nav-link"><i class="fa-solid fa-wallet"></i> Deposits</a>
-        <a href="admin-withdrawals.html" class="nav-link"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
-        <a href="admin-history.html" class="nav-link"><i class="fa-solid fa-rectangle-list"></i> User Complete History</a>
-        <a href="admin-referral.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Referral Analytics</a>
-        <a href="admin-customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a>
-        <a href="admin-block.html" class="nav-link"><i class="fa-solid fa-user-slash"></i> Block & Report</a>
-        <a href="admin-notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a>
-        <a href="admin-settings.html" class="nav-link"><i class="fa-solid fa-gear"></i> Payment Settings</a>
-    </div>
-</div>
-
-<!-- MAIN CONTENT -->
-<div class="main-content">
-    <div class="page-title">
-        <span>🟢 Strictly Realtime Monitor</span>
-        <span class="sync-time">Last sync: <span id="lastSyncTime">--:--:--</span></span>
-    </div>
-
-    <!-- STATS CARDS -->
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-label">ACTIVE ONLINE USERS</div>
-            <div class="stat-value val-green" id="cntOnline">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">LOGGED IN USERS</div>
-            <div class="stat-value val-amber" id="cntLoggedIn">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">OFFLINE USERS</div>
-            <div class="stat-value val-red" id="cntOffline">0</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">TOTAL REGISTERED</div>
-            <div class="stat-value val-blue" id="cntTotal">0</div>
+        <div class="text-xs text-slate-400">
+            Last sync: <span id="syncTime" class="text-slate-200 font-mono">--:--:-- --</span>
         </div>
     </div>
 
-    <!-- CONTROLS -->
-    <div class="controls-container">
-        <button class="filter-btn active" id="btnAll" onclick="setFilter('all')">All Users</button>
-        <button class="filter-btn" id="btnOnline" onclick="setFilter('online')">Online Only</button>
-        <button class="filter-btn" id="btnLoggedIn" onclick="setFilter('loggedin')">Logged In Only</button>
-        <button class="filter-btn" id="btnOffline" onclick="setFilter('offline')">Offline Only</button>
+    <!-- Analytics Cards Row -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        
+        <!-- Active Online Users Card -->
+        <div class="card-bg p-5 rounded-2xl">
+            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">ACTIVE ONLINE USERS</p>
+            <h3 id="countOnline" class="text-4xl font-extrabold text-emerald-400">0</h3>
+        </div>
 
-        <div class="search-box">
-            <input type="text" id="searchInput" onkeyup="renderTable()" placeholder="Search Name, Phone, City..">
+        <!-- Logged In Users Card -->
+        <div class="card-bg p-5 rounded-2xl">
+            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">LOGGED IN USERS</p>
+            <h3 id="countLoggedIn" class="text-4xl font-extrabold text-amber-400">0</h3>
+        </div>
+
+        <!-- Offline Users Card -->
+        <div class="card-bg p-5 rounded-2xl">
+            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">OFFLINE USERS</p>
+            <h3 id="countOffline" class="text-4xl font-extrabold text-rose-400">0</h3>
+        </div>
+
+        <!-- Total Registered Card -->
+        <div class="card-bg p-5 rounded-2xl">
+            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">TOTAL REGISTERED</p>
+            <h3 id="countTotal" class="text-4xl font-extrabold text-sky-400">0</h3>
+        </div>
+
+    </div>
+
+    <!-- Controls Row (Filter Buttons & Search Box) -->
+    <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 mb-6">
+        
+        <!-- Filter Tabs -->
+        <div class="flex flex-wrap gap-2" id="filterTabs">
+            <button onclick="setFilter('all')" id="btn-all" class="px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition">All Users</button>
+            <button onclick="setFilter('online')" id="btn-online" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Online Only</button>
+            <button onclick="setFilter('loggedin')" id="btn-loggedin" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Logged In Only</button>
+            <button onclick="setFilter('offline')" id="btn-offline" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Offline Only</button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="w-full lg:w-80">
+            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search Name, Phone, City..." class="w-full card-bg text-sm text-slate-100 placeholder-slate-500 px-4 py-2.5 rounded-xl focus:outline-none focus:border-blue-500 transition">
+        </div>
+
+    </div>
+
+    <!-- Live Users Table Section -->
+    <div class="card-bg rounded-2xl overflow-hidden shadow-xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                    <tr class="border-b border-slate-700 bg-slate-800/50 text-slate-400 font-semibold text-xs tracking-wider uppercase">
+                        <th class="p-4">USER</th>
+                        <th class="p-4">MOBILE NUMBER</th>
+                        <th class="p-4">STATUS</th>
+                        <th class="p-4">CITY / LOCATION</th>
+                        <th class="p-4">TOTAL BALANCE</th>
+                        <th class="p-4">LAST ACTIVE</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody" class="divide-y divide-slate-800 text-slate-200">
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-slate-400">Loading user activity data...</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <!-- TABLE -->
-    <div class="table-card">
-        <table>
-            <thead>
-                <tr>
-                    <th>User</th>
-                    <th>Mobile Number</th>
-                    <th>Status</th>
-                    <th>City / Location</th>
-                    <th>Total Balance</th>
-                    <th>Last Active</th>
-                </tr>
-            </thead>
-            <tbody id="liveUsersTableBody">
-                <tr><td colspan="6" style="text-align:center;">Connecting Realtime Stream...</td></tr>
-            </tbody>
-        </table>
-    </div>
-</div>
+    <!-- Firebase Logic & Realtime Monitoring Script -->
+    <script>
+        // 1. Firebase Configuration (Aapka Firebase Config yahan Replace Karein)
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
 
-<script>
-const firebaseConfig = {
-    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-    authDomain: "rdx-ludo.firebaseapp.com",
-    projectId: "rdx-ludo",
-    storageBucket: "rdx-ludo.firebasestorage.app",
-    messagingSenderId: "928340814840",
-    appId: "1:928340814840:web:6eca42a8b76138b268440d"
-};
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const firebaseDB = firebase.firestore();
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
 
-firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-        window.location.href = "admin-login.html";
-    } else {
-        document.body.style.display = "block";
-        startRealtimeMonitor();
-    }
-});
+        // Global State Array for Users
+        let usersData = [];
+        let currentFilter = 'all';
+        let searchQuery = '';
 
-function toggleSidebar() {
-    document.getElementById("sidebarNav").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
+        // 2. Realtime Listener Setup
+        function initRealtimeMonitor() {
+            db.collection("customers").onSnapshot((snapshot) => {
+                const now = Date.now();
+                usersData = [];
 
-function adminLogout() {
-    firebase.auth().signOut().then(() => window.location.href = "admin-login.html");
-}
+                let onlineCount = 0;
+                let loggedInCount = 0;
+                let offlineCount = 0;
+                let totalCount = snapshot.size;
 
-let allLiveUsers = [];
-let currentFilter = 'all';
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const uid = doc.id;
 
-function parseTimestamp(val) {
-    if (!val) return 0;
-    if (typeof val === 'number') return val;
-    if (val.toDate && typeof val.toDate === 'function') return val.toDate().getTime();
-    if (val.seconds) return val.seconds * 1000;
-    const p = new Date(val).getTime();
-    return isNaN(p) ? 0 : p;
-}
+                    // Extracted Properties with Fallbacks
+                    const name = data.name || data.displayName || "User " + uid.substring(0, 4);
+                    const mobile = data.mobile || data.phone || data.phoneNumber || uid;
+                    const city = data.city || (data.location ? (data.location.city || data.location.state) : null) || "N/A";
+                    const state = data.state || (data.location ? data.location.state : null) || "";
+                    const fullLocation = state && city !== "N/A" ? `${city}, ${state}` : city;
+                    const balance = data.balance !== undefined ? data.balance : (data.wallet !== undefined ? data.wallet : 0);
 
-function formatTime(ms) {
-    if(!ms) return "N/A";
-    const d = new Date(ms);
-    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-}
+                    // Presence Status Calculation Logic
+                    // heartbeat interval is assumed to be within 2 minutes (120,000 ms)
+                    let lastActiveMs = 0;
+                    if (data.lastActive) {
+                        lastActiveMs = data.lastActive.toMillis ? data.lastActive.toMillis() : new Date(data.lastActive).getTime();
+                    } else if (data.lastSeen) {
+                        lastActiveMs = data.lastSeen.toMillis ? data.lastSeen.toMillis() : new Date(data.lastSeen).getTime();
+                    }
 
-function startRealtimeMonitor() {
-    // Realtime listener on full 'customers' collection (No limit applied)
-    firebaseDB.collection("customers").onSnapshot((snapshot) => {
-        allLiveUsers = [];
-        const now = Date.now();
+                    const isExplicitLoggedOut = data.isLoggedIn === false || data.status === "offline";
+                    const isRecentlyActive = (now - lastActiveMs) <= 120000; // 2 Minutes window
 
-        let onlineCnt = 0;
-        let loggedInCnt = 0;
+                    let computedStatus = "offline"; // Default
 
-        // Total registered count strictly reads total documents in customers
-        const totalRegisteredCnt = snapshot.size;
+                    if (!isExplicitLoggedOut) {
+                        if (isRecentlyActive) {
+                            computedStatus = "online";
+                            onlineCount++;
+                        } else {
+                            computedStatus = "loggedin";
+                            loggedInCount++;
+                        }
+                    } else {
+                        computedStatus = "offline";
+                        offlineCount++;
+                    }
 
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            const docId = doc.id;
+                    usersData.push({
+                        id: uid,
+                        name: name,
+                        mobile: mobile,
+                        status: computedStatus,
+                        location: fullLocation,
+                        balance: balance,
+                        lastActiveMs: lastActiveMs
+                    });
+                });
 
-            const mobile = data.mobile || docId;
-            const name = data.name || "User";
-            const location = data.location || "N/A";
-            const balance = Number(data.balance !== undefined ? data.balance : (Number(data.depositBalance || 0) + Number(data.winnings || 0)));
-            
-            const lastSeenMs = parseTimestamp(data.lastSeenAt) || parseTimestamp(data.lastLoginAt) || parseTimestamp(data.createdAt);
-            const isRecent = lastSeenMs > 0 && ((now - lastSeenMs) <= (10 * 60 * 1000)); // Active within last 10 mins
+                // Update Overview Counters
+                document.getElementById("countOnline").innerText = onlineCount;
+                document.getElementById("countLoggedIn").innerText = loggedInCount;
+                document.getElementById("countOffline").innerText = offlineCount;
+                document.getElementById("countTotal").innerText = totalCount;
 
-            // Multi-field Online Check
-            const isOnline = data.isOnline === true || 
-                             String(data.status).toLowerCase() === 'online' || 
-                             String(data.status).toLowerCase() === 'active' || 
-                             isRecent;
+                // Update Time Tracker
+                document.getElementById("syncTime").innerText = new Date().toLocaleTimeString();
 
-            const isLoggedIn = lastSeenMs > 0 || isOnline;
-
-            if (isOnline) onlineCnt++;
-            if (isLoggedIn) loggedInCnt++;
-
-            allLiveUsers.push({
-                id: docId,
-                mobile: mobile,
-                name: name,
-                location: location,
-                balance: balance,
-                isOnline: isOnline,
-                isLoggedIn: isLoggedIn,
-                lastSeenMs: lastSeenMs
+                // Render Table View
+                renderTable();
+            }, (error) => {
+                console.error("Firestore realtime listener failed:", error);
             });
+        }
+
+        // 3. Render Table Data
+        function renderTable() {
+            const tbody = document.getElementById("usersTableBody");
+            tbody.innerHTML = "";
+
+            // Filter logic
+            let filtered = usersData.filter(user => {
+                // Filter Button Match
+                if (currentFilter !== 'all' && user.status !== currentFilter) {
+                    return false;
+                }
+                // Search Input Match
+                if (searchQuery.trim() !== "") {
+                    const q = searchQuery.toLowerCase();
+                    const matchName = user.name.toLowerCase().includes(q);
+                    const matchMobile = String(user.mobile).toLowerCase().includes(q);
+                    const matchLoc = user.location.toLowerCase().includes(q);
+                    return matchName || matchMobile || matchLoc;
+                }
+                return true;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No active users matching criteria.</td></tr>`;
+                return;
+            }
+
+            // Sort by latest active first
+            filtered.sort((a, b) => b.lastActiveMs - a.lastActiveMs);
+
+            filtered.forEach(user => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-800/30 transition";
+
+                // Format Status Badge
+                let statusBadge = "";
+                if (user.status === "online") {
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Online</span>`;
+                } else if (user.status === "loggedin") {
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Logged In</span>`;
+                } else {
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>Offline</span>`;
+                }
+
+                // Format Time Display
+                let formattedTime = "N/A";
+                if (user.lastActiveMs > 0) {
+                    formattedTime = new Date(user.lastActiveMs).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                }
+
+                tr.innerHTML = `
+                    <td class="p-4 font-semibold text-slate-100">${user.name}</td>
+                    <td class="p-4 font-mono text-slate-300">${user.mobile}</td>
+                    <td class="p-4">${statusBadge}</td>
+                    <td class="p-4 text-slate-400">${user.location}</td>
+                    <td class="p-4 font-bold text-slate-100">₹${user.balance}</td>
+                    <td class="p-4 text-slate-400 font-mono text-xs">${formattedTime}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Filter Handlers
+        function setFilter(filterType) {
+            currentFilter = filterType;
+            const buttons = ['all', 'online', 'loggedin', 'offline'];
+            buttons.forEach(b => {
+                const btnElem = document.getElementById(`btn-${b}`);
+                if (b === filterType) {
+                    btnElem.className = "px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition";
+                } else {
+                    btnElem.className = "px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
+                }
+            });
+            renderTable();
+        }
+
+        // Search Handler
+        function handleSearch() {
+            searchQuery = document.getElementById("searchInput").value;
+            renderTable();
+        }
+
+        // Logout Handler
+        function handleLogout() {
+            auth.signOut().then(() => {
+                window.location.href = "login.html";
+            });
+        }
+
+        // Initialize Realtime Sync on Load
+        window.addEventListener("DOMContentLoaded", () => {
+            initRealtimeMonitor();
         });
-
-        const offlineCnt = totalRegisteredCnt - onlineCnt;
-
-        // Sync Counter Values Directly
-        document.getElementById("cntOnline").textContent = onlineCnt;
-        document.getElementById("cntLoggedIn").textContent = loggedInCnt;
-        document.getElementById("cntOffline").textContent = offlineCnt < 0 ? 0 : offlineCnt;
-        document.getElementById("cntTotal").textContent = totalRegisteredCnt;
-
-        document.getElementById("lastSyncTime").textContent = new Date().toLocaleTimeString();
-
-        renderTable();
-    }, (error) => {
-        console.error("Realtime Monitor Sync Error: ", error);
-    });
-}
-
-function setFilter(filterType) {
-    currentFilter = filterType;
-    document.getElementById("btnAll").classList.toggle("active", filterType === 'all');
-    document.getElementById("btnOnline").classList.toggle("active", filterType === 'online');
-    document.getElementById("btnLoggedIn").classList.toggle("active", filterType === 'loggedin');
-    document.getElementById("btnOffline").classList.toggle("active", filterType === 'offline');
-    renderTable();
-}
-
-function renderTable() {
-    const tbody = document.getElementById("liveUsersTableBody");
-    tbody.innerHTML = "";
-
-    const query = document.getElementById("searchInput").value.toLowerCase();
-
-    let filtered = allLiveUsers.filter(u => {
-        const matchesSearch = u.name.toLowerCase().includes(query) || 
-                              u.mobile.toLowerCase().includes(query) || 
-                              u.location.toLowerCase().includes(query);
-
-        if (!matchesSearch) return false;
-
-        if (currentFilter === 'online') return u.isOnline;
-        if (currentFilter === 'loggedin') return u.isLoggedIn;
-        if (currentFilter === 'offline') return !u.isOnline;
-        return true;
-    });
-
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No users found for this filter.</td></tr>';
-        return;
-    }
-
-    filtered.sort((a, b) => b.lastSeenMs - a.lastSeenMs);
-
-    filtered.forEach(u => {
-        const badge = u.isOnline ? 
-            '<span class="badge-online">🟢 Online</span>' : 
-            '<span class="badge-offline">⚪ Offline</span>';
-
-        const row = `
-            <tr>
-                <td><b>${u.name}</b></td>
-                <td>${u.mobile}</td>
-                <td>${badge}</td>
-                <td>${u.location}</td>
-                <td><b>₹${u.balance}</b></td>
-                <td>${formatTime(u.lastSeenMs)}</td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
-}
-</script>
-
+    </script>
 </body>
 </html>
