@@ -390,20 +390,20 @@
                 let statusLower = (activeOldStatus || "").toLowerCase();
                 let diff = newAmt - activeCurrentAmt;
 
-                // 1. Update Amount in Deposit Document
+                // 1. Deposit Document me Naya Amount Update Karein
                 await db.collection("deposits").doc(activeDepId).update({ 
                     amount: newAmt,
                     amt: newAmt 
                 });
 
-                // 2. If Status is Approved, Sync User Wallet with Difference Amount
+                // 2. Agar Status Approved hai, toh Difference Amount Wallet me sync karein
                 if ((statusLower === "approved" || statusLower === "success") && diff !== 0) {
                     let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
                     if (matchedUserRef) {
-                        await matchedUserRef.update({
+                        await matchedUserRef.set({
                             wallet: firebase.firestore.FieldValue.increment(diff),
                             depositBalance: firebase.firestore.FieldValue.increment(diff)
-                        });
+                        }, { merge: true });
                     }
                 }
 
@@ -448,36 +448,45 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
+        // SMART USER FINDER (Search in both 'users' and 'customers' collections)
         async function findUserDocRef(uid, mobileNo) {
+            let collectionsToSearch = ["users", "customers"];
+
+            // A. Check Direct UID Match
             if (uid) {
-                let directDoc = await db.collection("users").doc(uid).get();
-                if (directDoc.exists) return db.collection("users").doc(uid);
+                for (let col of collectionsToSearch) {
+                    let directDoc = await db.collection(col).doc(uid).get();
+                    if (directDoc.exists) return db.collection(col).doc(uid);
+                }
             }
 
+            // B. Check Mobile Number Match
             let searchKeys = [];
             if (uid) searchKeys.push(uid);
             if (mobileNo) searchKeys.push(mobileNo);
 
-            for (let rawKey of searchKeys) {
-                let cleanKey = String(rawKey).replace("+91", "").trim();
-                let numKey = Number(cleanKey);
+            for (let col of collectionsToSearch) {
+                for (let rawKey of searchKeys) {
+                    let cleanKey = String(rawKey).replace("+91", "").trim();
+                    let numKey = Number(cleanKey);
 
-                let queries = [
-                    db.collection("users").where("mobile", "==", cleanKey),
-                    db.collection("users").where("phone", "==", cleanKey),
-                    db.collection("users").where("mobile", "==", "+91" + cleanKey),
-                    db.collection("users").where("phone", "==", "+91" + cleanKey)
-                ];
+                    let queries = [
+                        db.collection(col).where("mobile", "==", cleanKey),
+                        db.collection(col).where("phone", "==", cleanKey),
+                        db.collection(col).where("mobile", "==", "+91" + cleanKey),
+                        db.collection(col).where("phone", "==", "+91" + cleanKey)
+                    ];
 
-                if (!isNaN(numKey)) {
-                    queries.push(db.collection("users").where("mobile", "==", numKey));
-                    queries.push(db.collection("users").where("phone", "==", numKey));
-                }
+                    if (!isNaN(numKey)) {
+                        queries.push(db.collection(col).where("mobile", "==", numKey));
+                        queries.push(db.collection(col).where("phone", "==", numKey));
+                    }
 
-                for (let q of queries) {
-                    let snap = await q.get();
-                    if (!snap.empty) {
-                        return db.collection("users").doc(snap.docs[0].id);
+                    for (let q of queries) {
+                        let snap = await q.get();
+                        if (!snap.empty) {
+                            return db.collection(col).doc(snap.docs[0].id);
+                        }
                     }
                 }
             }
@@ -512,29 +521,29 @@
 
                 let amtChange = 0;
 
-                // 1. Pending/Rejected -> Approved (Credit to Wallet)
+                // Case 1: Pending/Rejected -> Approved (CREDIT / ADD)
                 if (!isOldApproved && isNewApproved) {
                     amtChange = activeCurrentAmt;
                 }
-                // 2. Approved -> Rejected/Pending (Debit/Minus from Wallet)
+                // Case 2: Approved -> Rejected/Pending (DEBIT / MINUS)
                 else if (isOldApproved && !isNewApproved) {
                     amtChange = -activeCurrentAmt;
                 }
 
-                // Update Deposit Document Status
+                // 1. Update Status in Deposits Collection
                 await db.collection("deposits").doc(activeDepId).update(updatePayload);
 
-                // Update User Wallet Balance if required
+                // 2. Update User Wallet Balance
                 if (amtChange !== 0) {
                     let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
 
                     if (matchedUserRef) {
-                        await matchedUserRef.update({
+                        await matchedUserRef.set({
                             wallet: firebase.firestore.FieldValue.increment(amtChange),
                             depositBalance: firebase.firestore.FieldValue.increment(amtChange)
-                        });
+                        }, { merge: true });
                     } else {
-                        alert("Warning: User account not found to update wallet balance.");
+                        alert("Warning: User account not found in database to update wallet balance.");
                     }
                 }
 
