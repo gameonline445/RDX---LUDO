@@ -371,7 +371,7 @@
             document.getElementById("editAmtModal").style.display = "flex";
         }
 
-        // UPDATED robust user lookup function
+        // Robust user lookup function
         async function findUserDocRef(data, explicitUid, explicitMobile) {
             let possibleUid = explicitUid || data.uid || data.userId || data.user_id;
 
@@ -442,28 +442,37 @@
             try {
                 let depRef = db.collection("deposits").doc(activeDepId);
 
-                await db.runTransaction(async (transaction) => {
-                    let depSnap = await transaction.get(depRef);
-                    if (!depSnap.exists) throw new Error("Deposit Record nahi mila!");
+                // Fetch data & User Ref BEFORE starting transaction
+                let depSnap = await depRef.get();
+                if (!depSnap.exists) throw new Error("Deposit Record nahi mila!");
 
-                    let depData = depSnap.data();
-                    let currentAmount = Number(depData.amount || depData.amt || activeCurrentAmt);
-                    let diff = newAmt - currentAmount;
-                    let isWalletUpdated = depData.isWalletUpdated === true;
+                let depData = depSnap.data();
+                let currentAmount = Number(depData.amount || depData.amt || activeCurrentAmt);
+                let diff = newAmt - currentAmount;
+                let isWalletUpdated = depData.isWalletUpdated === true;
+
+                let matchedUserRef = null;
+                if (isWalletUpdated && diff !== 0) {
+                    matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
+                }
+
+                // Execute Transaction cleanly (Reads first, Writes later)
+                await db.runTransaction(async (transaction) => {
+                    let userDocSnap = null;
+                    if (matchedUserRef) {
+                        userDocSnap = await transaction.get(matchedUserRef);
+                    }
 
                     transaction.update(depRef, { 
                         amount: newAmt,
                         amt: newAmt 
                     });
 
-                    if (isWalletUpdated && diff !== 0) {
-                        let matchedUserRef = await findUserDocRef(depData, activeUserId, activeMobileNo);
-                        if (matchedUserRef) {
-                            transaction.set(matchedUserRef, {
-                                balance: firebase.firestore.FieldValue.increment(diff),
-                                depositBalance: firebase.firestore.FieldValue.increment(diff)
-                            }, { merge: true });
-                        }
+                    if (matchedUserRef && diff !== 0) {
+                        transaction.set(matchedUserRef, {
+                            balance: firebase.firestore.FieldValue.increment(diff),
+                            depositBalance: firebase.firestore.FieldValue.increment(diff)
+                        }, { merge: true });
                     }
                 });
 
@@ -508,7 +517,7 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // STATUS UPDATE WITH GUARANTEED REVERSAL & IDEMPOTENCY
+        // FIXED STATUS UPDATE FUNCTION WITH ASYNC FETCH OUTSIDE TRANSACTION
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -525,12 +534,20 @@
             try {
                 let depRef = db.collection("deposits").doc(activeDepId);
 
+                // STEP 1: Fetch initial details outside transaction to pre-resolve user reference
+                let depDocSnap = await depRef.get();
+                if (!depDocSnap.exists) {
+                    throw new Error("Deposit request nahi mili!");
+                }
+                let initialData = depDocSnap.data();
+
+                // Pre-fetch user doc reference if needed
+                let matchedUserRef = await findUserDocRef(initialData, activeUserId, activeMobileNo);
+
+                // STEP 2: Pure Transaction logic (Strict Reads then Writes)
                 await db.runTransaction(async (transaction) => {
                     let currentDepDoc = await transaction.get(depRef);
-
-                    if (!currentDepDoc.exists) {
-                        throw new Error("Deposit request nahi mili!");
-                    }
+                    if (!currentDepDoc.exists) throw new Error("Deposit request nahi mili!");
 
                     let freshData = currentDepDoc.data();
                     let isWalletUpdated = freshData.isWalletUpdated === true;
@@ -540,7 +557,7 @@
                     let amtChange = 0;
                     let setWalletFlag = isWalletUpdated;
 
-                    // 1. APPROVAL LOGIC
+                    // Approval logic
                     if (targetLower === "approved" || targetLower === "success") {
                         if (isWalletUpdated) {
                             throw new Error("Yah deposit pehle se Approved aur Wallet me credit ho chuka hai!");
@@ -548,14 +565,14 @@
                         amtChange = targetAmount;
                         setWalletFlag = true;
 
-                    // 2. REJECTION LOGIC (Wallet Se Deduction)
+                    // Rejection logic (Deductions if already credited)
                     } else if (targetLower === "rejected" || targetLower === "failed") {
                         if (isWalletUpdated) {
                             amtChange = -targetAmount;
                             setWalletFlag = false;
                         }
 
-                    // 3. PENDING LOGIC (Wallet Se Deduction)
+                    // Pending logic
                     } else if (targetLower === "pending") {
                         if (isWalletUpdated) {
                             amtChange = -targetAmount;
@@ -563,6 +580,16 @@
                         }
                     }
 
+                    // READ User Document if amount change is needed
+                    let userDocSnap = null;
+                    if (amtChange !== 0) {
+                        if (!matchedUserRef) {
+                            throw new Error("Customer record nahi mila! User ID / Mobile mismatch.");
+                        }
+                        userDocSnap = await transaction.get(matchedUserRef);
+                    }
+
+                    // WRITE Operations
                     let updatePayload = {
                         status: newStatus,
                         rejectReason: (newStatus === "Rejected") ? rejectReason : "",
@@ -570,15 +597,6 @@
                         processedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
 
-                    let matchedUserRef = null;
-                    if (amtChange !== 0) {
-                        matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
-                        if (!matchedUserRef) {
-                            throw new Error("Customer record nahi mila! User ID / Mobile mismatch.");
-                        }
-                    }
-
-                    // Write Updates
                     transaction.update(depRef, updatePayload);
 
                     if (matchedUserRef && amtChange !== 0) {
