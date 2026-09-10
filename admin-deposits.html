@@ -390,13 +390,11 @@
                 let statusLower = (activeOldStatus || "").toLowerCase();
                 let diff = newAmt - activeCurrentAmt;
 
-                // 1. Deposit Document me Naya Amount Update Karein
                 await db.collection("deposits").doc(activeDepId).update({ 
                     amount: newAmt,
                     amt: newAmt 
                 });
 
-                // 2. Agar Status Approved hai, toh Difference Amount Wallet me sync karein
                 if ((statusLower === "approved" || statusLower === "success") && diff !== 0) {
                     let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
                     if (matchedUserRef) {
@@ -448,47 +446,23 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // SMART USER FINDER (Search in both 'users' and 'customers' collections)
+        // ACCURATE USER DOC FINDER (STRICT SINGLE MATCH)
         async function findUserDocRef(uid, mobileNo) {
-            let collectionsToSearch = ["users", "customers"];
-
-            // A. Check Direct UID Match
             if (uid) {
-                for (let col of collectionsToSearch) {
-                    let directDoc = await db.collection(col).doc(uid).get();
-                    if (directDoc.exists) return db.collection(col).doc(uid);
-                }
+                let uDoc = await db.collection("users").doc(uid).get();
+                if (uDoc.exists) return db.collection("users").doc(uid);
+                
+                let cDoc = await db.collection("customers").doc(uid).get();
+                if (cDoc.exists) return db.collection("customers").doc(uid);
             }
 
-            // B. Check Mobile Number Match
-            let searchKeys = [];
-            if (uid) searchKeys.push(uid);
-            if (mobileNo) searchKeys.push(mobileNo);
+            if (mobileNo) {
+                let cleanKey = String(mobileNo).replace("+91", "").trim();
+                let snap = await db.collection("users").where("mobile", "==", cleanKey).limit(1).get();
+                if (!snap.empty) return snap.docs[0].ref;
 
-            for (let col of collectionsToSearch) {
-                for (let rawKey of searchKeys) {
-                    let cleanKey = String(rawKey).replace("+91", "").trim();
-                    let numKey = Number(cleanKey);
-
-                    let queries = [
-                        db.collection(col).where("mobile", "==", cleanKey),
-                        db.collection(col).where("phone", "==", cleanKey),
-                        db.collection(col).where("mobile", "==", "+91" + cleanKey),
-                        db.collection(col).where("phone", "==", "+91" + cleanKey)
-                    ];
-
-                    if (!isNaN(numKey)) {
-                        queries.push(db.collection(col).where("mobile", "==", numKey));
-                        queries.push(db.collection(col).where("phone", "==", numKey));
-                    }
-
-                    for (let q of queries) {
-                        let snap = await q.get();
-                        if (!snap.empty) {
-                            return db.collection(col).doc(snap.docs[0].id);
-                        }
-                    }
-                }
+                let snap2 = await db.collection("users").where("phone", "==", cleanKey).limit(1).get();
+                if (!snap2.empty) return snap2.docs[0].ref;
             }
 
             return null;
@@ -504,36 +478,59 @@
                 return;
             }
 
+            let oldLower = (activeOldStatus || "").toLowerCase();
+            let newLower = (newStatus || "").toLowerCase();
+
+            // STRICT DOUBLE ADD PREVENTER: Agar pehle se Approved hai aur firse Approve kar rahe ho toh block karo
+            if ((oldLower === "approved" || oldLower === "success") && (newLower === "approved" || newLower === "success")) {
+                alert("Yeh deposit pehle se Approved hai!");
+                closeModal("actionModal");
+                return;
+            }
+
             submitBtn.disabled = true;
             submitBtn.innerText = "Updating...";
 
             try {
+                let depRef = db.collection("deposits").doc(activeDepId);
+                let currentDepDoc = await depRef.get();
+
+                if (!currentDepDoc.exists) {
+                    alert("Deposit request nahi mili!");
+                    return;
+                }
+
+                let currentStatus = (currentDepDoc.data().status || "").toLowerCase();
+
+                // Double Check for Deduplication
+                if (newLower === "approved" && (currentStatus === "approved" || currentStatus === "success")) {
+                    alert("Already Approved on Server!");
+                    closeModal("actionModal");
+                    return;
+                }
+
                 let updatePayload = {
                     status: newStatus,
-                    rejectReason: (newStatus === "Rejected") ? rejectReason : ""
+                    rejectReason: (newStatus === "Rejected") ? rejectReason : "",
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
-
-                let oldLower = (activeOldStatus || "").toLowerCase();
-                let newLower = (newStatus || "").toLowerCase();
 
                 let isOldApproved = (oldLower === "approved" || oldLower === "success");
                 let isNewApproved = (newLower === "approved" || newLower === "success");
 
                 let amtChange = 0;
 
-                // Case 1: Pending/Rejected -> Approved (CREDIT / ADD)
+                // Only calculate exact difference or single credit
                 if (!isOldApproved && isNewApproved) {
-                    amtChange = activeCurrentAmt;
-                }
-                // Case 2: Approved -> Rejected/Pending (DEBIT / MINUS)
-                else if (isOldApproved && !isNewApproved) {
-                    amtChange = -activeCurrentAmt;
+                    amtChange = activeCurrentAmt; // Single +100
+                } else if (isOldApproved && !isNewApproved) {
+                    amtChange = -activeCurrentAmt; // Revert -100
                 }
 
-                // 1. Update Status in Deposits Collection
-                await db.collection("deposits").doc(activeDepId).update(updatePayload);
+                // 1. Update Status in Deposits Collection First
+                await depRef.update(updatePayload);
 
-                // 2. Update User Wallet Balance
+                // 2. Safely Update User Balance ONCE
                 if (amtChange !== 0) {
                     let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
 
