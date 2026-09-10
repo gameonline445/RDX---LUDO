@@ -11,6 +11,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
+// Dashboard Ki Tarah Automatic Back-Navigation Refresh Script
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (performance && performance.navigation.type === 2)) {
+        window.location.reload();
+    }
+});
+
 // Authentication Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
@@ -43,7 +50,7 @@ html,body{
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-    overscroll-behavior-y: contain; /* Enables smooth native & custom gesture pull-refresh */
+    overscroll-behavior-y: contain; /* Enables smooth native gesture pull-refresh */
 }
 button{font:inherit;}
 
@@ -121,7 +128,7 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* MAIN CONTAINER */
+/* MAIN CONTAINER (SCROLLABLE AREA INSIDE NAV) */
 .container{
     position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;
     padding:14px 14px 10px;overflow-y:auto;-webkit-overflow-scrolling:touch;
@@ -173,7 +180,7 @@ button{font:inherit;}
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAVIGATION (FIXED AT BOTTOM) */
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
