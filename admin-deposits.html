@@ -415,13 +415,11 @@
         }
 
         async function findUserDocRef(uid, mobileNo) {
-            // Priority 1: Check Direct Document ID
             if (uid) {
                 let directDoc = await db.collection("users").doc(uid).get();
                 if (directDoc.exists) return db.collection("users").doc(uid);
             }
 
-            // Clean up mobile numbers
             let searchKeys = [];
             if (uid) searchKeys.push(uid);
             if (mobileNo) searchKeys.push(mobileNo);
@@ -430,7 +428,6 @@
                 let cleanKey = String(rawKey).replace("+91", "").trim();
                 let numKey = Number(cleanKey);
 
-                // Build query variations
                 let queries = [
                     db.collection("users").where("mobile", "==", cleanKey),
                     db.collection("users").where("phone", "==", cleanKey),
@@ -473,19 +470,17 @@
                     rejectReason: (newStatus === "Rejected") ? rejectReason : ""
                 };
 
-                // Step 1: Deposit status update
                 await db.collection("deposits").doc(activeDepId).update(updatePayload);
 
-                // Step 2: User Wallet Reversal Logic
                 if (activeCurrentAmt > 0) {
                     let oldLower = (activeOldStatus || "").toLowerCase();
                     let newLower = (newStatus || "").toLowerCase();
 
                     let amtChange = 0;
                     if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (newLower === "approved" || newLower === "success")) {
-                        amtChange = activeCurrentAmt; // Add to Wallet
+                        amtChange = activeCurrentAmt;
                     } else if ((oldLower === "approved" || oldLower === "success") && (newLower === "rejected" || newLower === "pending" || newLower === "failed")) {
-                        amtChange = -activeCurrentAmt; // Deduct/Minus from Wallet
+                        amtChange = -activeCurrentAmt;
                     }
 
                     if (amtChange !== 0) {
