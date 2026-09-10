@@ -479,64 +479,70 @@
 
             try {
                 let depRef = db.collection("deposits").doc(activeDepId);
-                let currentDepDoc = await depRef.get();
-
-                if (!currentDepDoc.exists) {
-                    alert("Deposit request nahi mili!");
-                    submitBtn.disabled = false;
-                    return;
-                }
-
-                let freshData = currentDepDoc.data();
-                let oldLower = (freshData.status || "pending").toLowerCase();
-                let targetLower = newStatus.toLowerCase();
-
-                let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
-
-                if (oldLower === targetLower) {
-                    alert("Status pehle se yahi hai!");
-                    closeModal("actionModal");
-                    submitBtn.disabled = false;
-                    return;
-                }
-
-                let amtChange = 0;
-
-                if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
-                    amtChange = targetAmount;
-                } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
-                    amtChange = -targetAmount;
-                }
-
-                let updatePayload = {
-                    status: newStatus,
-                    rejectReason: (newStatus === "Rejected") ? rejectReason : "",
-                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-
-                let matchedUserRef = null;
-                if (amtChange !== 0) {
-                    matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
-                    if (!matchedUserRef) {
-                        alert("Error: Customer record nahi mila! Balance update nahi hua.");
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = "Update Status";
-                        return;
-                    }
-                }
-
-                let batch = db.batch();
-                batch.update(depRef, updatePayload);
                 
-                if (matchedUserRef && amtChange !== 0) {
-                    batch.set(matchedUserRef, {
-                        depositBalance: firebase.firestore.FieldValue.increment(amtChange)
-                    }, { merge: true });
-                }
+                // Firestore Transaction to prevent double execution
+                await db.runTransaction(async (transaction) => {
+                    let currentDepDoc = await transaction.get(depRef);
 
-                await batch.commit();
+                    if (!currentDepDoc.exists) {
+                        throw new Error("Deposit request nahi mili!");
+                    }
 
-                alert(`Status updated to ${newStatus}. Balance updated: ₹${amtChange}`);
+                    let freshData = currentDepDoc.data();
+                    let isWalletUpdated = freshData.isWalletUpdated || false;
+                    let oldLower = (freshData.status || "pending").toLowerCase();
+                    let targetLower = newStatus.toLowerCase();
+
+                    let targetAmount = Number(freshData.amount || freshData.amt || activeCurrentAmt);
+
+                    if (oldLower === targetLower) {
+                        throw new Error("Status pehle se yahi hai!");
+                    }
+
+                    let amtChange = 0;
+                    let setWalletFlag = isWalletUpdated;
+
+                    // Strictly check and prevent double increment
+                    if ((oldLower === "pending" || oldLower === "rejected" || oldLower === "failed") && (targetLower === "approved" || targetLower === "success")) {
+                        if (!isWalletUpdated) {
+                            amtChange = targetAmount;
+                            setWalletFlag = true;
+                        } else {
+                            // If user client app already credited funds, don't increment again
+                            amtChange = 0; 
+                        }
+                    } else if ((oldLower === "approved" || oldLower === "success") && (targetLower === "rejected" || targetLower === "pending" || targetLower === "failed")) {
+                        if (isWalletUpdated) {
+                            amtChange = -targetAmount;
+                            setWalletFlag = false;
+                        }
+                    }
+
+                    let updatePayload = {
+                        status: newStatus,
+                        rejectReason: (newStatus === "Rejected") ? rejectReason : "",
+                        isWalletUpdated: setWalletFlag,
+                        processedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    let matchedUserRef = null;
+                    if (amtChange !== 0) {
+                        matchedUserRef = await findUserDocRef(freshData, activeUserId, activeMobileNo);
+                        if (!matchedUserRef) {
+                            throw new Error("Customer record nahi mila! Balance update nahi hua.");
+                        }
+                    }
+
+                    transaction.update(depRef, updatePayload);
+                    
+                    if (matchedUserRef && amtChange !== 0) {
+                        transaction.set(matchedUserRef, {
+                            depositBalance: firebase.firestore.FieldValue.increment(amtChange)
+                        }, { merge: true });
+                    }
+                });
+
+                alert(`Status updated to ${newStatus} successfully!`);
                 closeModal("actionModal");
             } catch (err) {
                 alert("Error: " + err.message);
