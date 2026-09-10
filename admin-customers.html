@@ -56,9 +56,21 @@ body {
 .main-content{ padding:16px; }
 .page-title{ color:#38bdf8; font-size:24px; font-weight:900; margin-bottom:18px; }
 
-/* SEARCH & TABLE */
-.search-box{ margin-bottom:15px; width:100%; max-width:400px; }
+/* CONTROL BAR (FILTER & SEARCH) */
+.controls-container{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:15px;
+}
+.search-box{ flex:1; min-width:250px; max-width:400px; }
 .search-box input{ width:100%; padding:10px 14px; border-radius:10px; border:1px solid #334155; background:#1e293b; color:#fff; font-size:14px; outline:none; }
+
+.filter-btn-group{ display:flex; gap:8px; }
+.filter-btn{ background:#1e293b; color:#94a3b8; border:1px solid #334155; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; }
+.filter-btn.active{ background:#0284c7; color:#ffffff; border-color:#0284c7; }
 
 .table-card{ background:#ffffff; border-radius:18px; padding:16px; color:#0f172a; overflow-x:auto; box-shadow:0 4px 15px rgba(0,0,0,0.15); }
 table{ width:100%; border-collapse:collapse; text-align:left; font-size:13px; }
@@ -119,8 +131,14 @@ th{ background:#f8fafc; color:#64748b; font-weight:800; text-transform:uppercase
 <div class="main-content">
     <h1 class="page-title">Customers List (<span id="userCount">0</span>)</h1>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" onkeyup="filterUsers()" placeholder="Search by Mobile, Name, ID...">
+    <div class="controls-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" onkeyup="applySearchAndFilter()" placeholder="Search by Mobile, Name, ID...">
+        </div>
+        <div class="filter-btn-group">
+            <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">All Users</button>
+            <button class="filter-btn" id="filterToday" onclick="setFilter('today')">Joined Today 🆕</button>
+        </div>
     </div>
 
     <div class="table-card">
@@ -130,14 +148,15 @@ th{ background:#f8fafc; color:#64748b; font-weight:800; text-transform:uppercase
                     <th>User ID / Mobile</th>
                     <th>Name</th>
                     <th>Location</th>
-                    <th>Balance</th>
+                    <th>Joined Date 📅</th>
+                    <th>Balance 💰</th>
                     <th>Online Status</th>
                     <th>Account Status</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody id="customersTableBody">
-                <tr><td colspan="7" style="text-align:center;">Loading Real Customers Data...</td></tr>
+                <tr><td colspan="8" style="text-align:center;">Loading Real Customers Data...</td></tr>
             </tbody>
         </table>
     </div>
@@ -173,57 +192,115 @@ function adminLogout() {
     firebase.auth().signOut().then(() => window.location.href = "admin-login.html");
 }
 
-let allCustomers = [];
+let allCustomersList = [];
+let currentFilter = 'all';
+
+function parseTimestamp(val) {
+    if (!val) return 0;
+    if (typeof val === 'number') return val;
+    if (val.toDate && typeof val.toDate === 'function') return val.toDate().getTime();
+    if (val.seconds) return val.seconds * 1000;
+    const parsed = new Date(val).getTime();
+    return isNaN(parsed) ? 0 : parsed;
+}
+
+function formatDate(ms) {
+    if (!ms) return "N/A";
+    const d = new Date(ms);
+    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+}
 
 function loadCustomersData() {
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
-        const tbody = document.getElementById("customersTableBody");
-        tbody.innerHTML = "";
-        allCustomers = [];
-
-        if (snapshot.empty) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No Customers Found!</td></tr>';
-            document.getElementById("userCount").textContent = "0";
-            return;
-        }
-
-        document.getElementById("userCount").textContent = snapshot.size;
+        allCustomersList = [];
 
         snapshot.forEach((doc) => {
             const data = doc.data();
             const docId = doc.id;
-            allCustomers.push({ id: docId, ...data });
 
-            const mobile = data.mobile || docId;
-            const name = data.name || "N/A";
-            const location = data.location || "N/A";
+            // Total balance calculation
             const balance = Number(data.balance !== undefined ? data.balance : (Number(data.depositBalance || 0) + Number(data.winnings || 0)));
-            
-            // Check online state
-            const isOnline = data.isOnline === true || String(data.status).toLowerCase() === 'online';
-            const onlineBadge = isOnline ? '<span class="badge-online">🟢 Online</span>' : '<span class="badge-offline">⚪ Offline</span>';
-            
-            // Check active/blocked state
-            const isBlocked = String(data.status).toLowerCase() === 'blocked' || data.isBlocked === true;
-            const statusBadge = isBlocked ? '<span class="badge-blocked">Blocked</span>' : '<span class="badge-active">Active</span>';
+            const joinedMs = parseTimestamp(data.createdAt) || parseTimestamp(data.joinedAt) || parseTimestamp(data.timestamp);
 
-            const actionBtn = isBlocked ? 
-                `<button class="btn-action btn-unblock" onclick="toggleUserBlock('${docId}', false)">Unblock</button>` : 
-                `<button class="btn-action btn-block" onclick="toggleUserBlock('${docId}', true)">Block</button>`;
-
-            const row = `
-                <tr>
-                    <td><b>${mobile}</b></td>
-                    <td>${name}</td>
-                    <td>${location}</td>
-                    <td><b>₹${balance}</b></td>
-                    <td>${onlineBadge}</td>
-                    <td>${statusBadge}</td>
-                    <td>${actionBtn}</td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
+            allCustomersList.push({
+                id: docId,
+                mobile: data.mobile || docId,
+                name: data.name || "N/A",
+                location: data.location || "N/A",
+                balance: balance,
+                joinedMs: joinedMs,
+                isOnline: data.isOnline === true || String(data.status).toLowerCase() === 'online',
+                isBlocked: String(data.status).toLowerCase() === 'blocked' || data.isBlocked === true,
+                rawStatus: data.status
+            });
         });
+
+        // 🔥 SORTING: Highest Balance Top Par
+        allCustomersList.sort((a, b) => b.balance - a.balance);
+
+        applySearchAndFilter();
+    });
+}
+
+function setFilter(type) {
+    currentFilter = type;
+    document.getElementById("filterAll").classList.toggle("active", type === 'all');
+    document.getElementById("filterToday").classList.toggle("active", type === 'today');
+    applySearchAndFilter();
+}
+
+function applySearchAndFilter() {
+    const tbody = document.getElementById("customersTableBody");
+    tbody.innerHTML = "";
+
+    const query = document.getElementById("searchInput").value.toLowerCase();
+    
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    const todayStartMs = todayStart.getTime();
+
+    // Filter Logic
+    let filtered = allCustomersList.filter(user => {
+        const matchesSearch = user.mobile.toLowerCase().includes(query) || 
+                              user.name.toLowerCase().includes(query) || 
+                              user.id.toLowerCase().includes(query);
+
+        if (!matchesSearch) return false;
+
+        if (currentFilter === 'today') {
+            return user.joinedMs >= todayStartMs;
+        }
+        return true;
+    });
+
+    document.getElementById("userCount").textContent = filtered.length;
+
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No Matching Customers Found!</td></tr>';
+        return;
+    }
+
+    filtered.forEach(user => {
+        const onlineBadge = user.isOnline ? '<span class="badge-online">🟢 Online</span>' : '<span class="badge-offline">⚪ Offline</span>';
+        const statusBadge = user.isBlocked ? '<span class="badge-blocked">Blocked</span>' : '<span class="badge-active">Active</span>';
+
+        const actionBtn = user.isBlocked ? 
+            `<button class="btn-action btn-unblock" onclick="toggleUserBlock('${user.id}', false)">Unblock</button>` : 
+            `<button class="btn-action btn-block" onclick="toggleUserBlock('${user.id}', true)">Block</button>`;
+
+        const row = `
+            <tr>
+                <td><b>${user.mobile}</b></td>
+                <td>${user.name}</td>
+                <td>${user.location}</td>
+                <td>${formatDate(user.joinedMs)}</td>
+                <td><b>₹${user.balance}</b></td>
+                <td>${onlineBadge}</td>
+                <td>${statusBadge}</td>
+                <td>${actionBtn}</td>
+            </tr>
+        `;
+        tbody.innerHTML += row;
     });
 }
 
@@ -236,16 +313,6 @@ function toggleUserBlock(userId, blockStatus) {
         alert("User status updated successfully!");
     }).catch((err) => {
         alert("Error: " + err.message);
-    });
-}
-
-function filterUsers() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    const rows = document.querySelectorAll("#customersTableBody tr");
-
-    rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(query) ? "" : "none";
     });
 }
 </script>
