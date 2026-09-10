@@ -13,53 +13,36 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        
-        body { 
-            display: none; 
-            background-color: #000000; 
-            color: #ffffff; 
-            min-height: 100vh; 
-            flex-direction: column; 
-        }
-        
+        body { display: none; background-color: #000000; color: #ffffff; min-height: 100vh; flex-direction: column; }
         .top-header { background-color: #ebf3fa; height: 60px; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #d0e1f9; }
         .brand-logo-container { display: flex; align-items: center; gap: 12px; }
         .brand-logo-img { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #1e3c72, #2a5298); display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 14px; }
         .brand-title { color: #1a365d; font-size: 20px; font-weight: 800; }
         .logout-link { background-color: #fde8e8; color: #e53e3e; padding: 8px 22px; border-radius: 20px; text-decoration: none; font-weight: 700; font-size: 14px; border: 1px solid #fbb6b6; cursor: pointer; }
-
         .admin-layout { display: flex; flex: 1; }
         .sidebar { width: 260px; background-color: #ffffff; padding: 20px 14px; display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
         .nav-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 12px; text-decoration: none; color: #4a5568; font-weight: 700; font-size: 14px; }
         .nav-item.active { background-color: #ebf8ff; color: #3182ce; border: 1px solid #bee3f8; }
-
         .main-content { flex: 1; background-color: #000000; padding: 24px; overflow-y: auto; }
         .dashboard-title { color: #3182ce; font-size: 32px; font-weight: 800; margin-bottom: 24px; }
-
         .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 24px; }
         .metric-card { background-color: #ffffff; padding: 20px 22px; border-radius: 16px; display: flex; flex-direction: column; justify-content: space-between; }
         .card-label { font-size: 11px; font-weight: 800; color: #718096; text-transform: uppercase; }
         .card-value { font-size: 26px; font-weight: 900; margin-top: 8px; }
-
         .filter-card { background-color: #151921; padding: 16px 20px; border-radius: 16px; display: flex; gap: 15px; margin-bottom: 24px; border: 1px solid #232936; }
-        .search-input { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #232936; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
-        .date-picker { padding: 10px 14px; border-radius: 10px; border: 1px solid #232936; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
-
+        .search-input, .date-picker { flex: 1; padding: 10px 14px; border-radius: 10px; border: 1px solid #232936; background-color: #0b0e14; color: #ffffff; font-size: 14px; outline: none; }
         .table-container { background-color: #ffffff; border-radius: 16px; overflow-x: auto; }
         .dep-table { width: 100%; border-collapse: collapse; text-align: left; color: #333333; }
         .dep-table th { background-color: #f7fafc; color: #4a5568; padding: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; }
         .dep-table td { padding: 14px 16px; border-bottom: 1px solid #e2e8f0; font-size: 13px; font-weight: 600; }
-
         .badge-pending { background-color: #fef3c7; color: #b45309; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
         .badge-approved { background-color: #d1fae5; color: #047857; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
         .badge-rejected { background-color: #fee2e2; color: #b91c1c; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 800; }
-
         .btn-ss { background-color: #3182ce; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-approve { background-color: #10b981; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; margin-right: 4px; }
         .btn-reject { background-color: #ef4444; color: #ffffff; border: none; padding: 6px 12px; border-radius: 6px; font-weight: 700; cursor: pointer; }
         .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight:700; margin-left: 4px; }
         .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 6px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
-
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 24px; border-radius: 16px; text-align: left; }
         .modal-card h3 { margin-bottom: 15px; color: #1a365d; }
@@ -446,14 +429,11 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
-        // ACCURATE USER DOC FINDER (STRICT SINGLE MATCH)
+        // ACCURATE SINGLE USER FINDER
         async function findUserDocRef(uid, mobileNo) {
             if (uid) {
                 let uDoc = await db.collection("users").doc(uid).get();
                 if (uDoc.exists) return db.collection("users").doc(uid);
-                
-                let cDoc = await db.collection("customers").doc(uid).get();
-                if (cDoc.exists) return db.collection("customers").doc(uid);
             }
 
             if (mobileNo) {
@@ -478,16 +458,6 @@
                 return;
             }
 
-            let oldLower = (activeOldStatus || "").toLowerCase();
-            let newLower = (newStatus || "").toLowerCase();
-
-            // STRICT DOUBLE ADD PREVENTER: Agar pehle se Approved hai aur firse Approve kar rahe ho toh block karo
-            if ((oldLower === "approved" || oldLower === "success") && (newLower === "approved" || newLower === "success")) {
-                alert("Yeh deposit pehle se Approved hai!");
-                closeModal("actionModal");
-                return;
-            }
-
             submitBtn.disabled = true;
             submitBtn.innerText = "Updating...";
 
@@ -497,54 +467,54 @@
 
                 if (!currentDepDoc.exists) {
                     alert("Deposit request nahi mili!");
+                    submitBtn.disabled = false;
                     return;
                 }
 
-                let currentStatus = (currentDepDoc.data().status || "").toLowerCase();
+                let freshData = currentDepDoc.data();
+                let currentStatus = (freshData.status || "").toLowerCase();
+                let newLower = newStatus.toLowerCase();
 
-                // Double Check for Deduplication
+                // 1. STRICT LOCK: Agar Server pe pehle se Approved h toh dubara credit mat karo
                 if (newLower === "approved" && (currentStatus === "approved" || currentStatus === "success")) {
-                    alert("Already Approved on Server!");
+                    alert("Yeh request pehle hi Approve ho chuki hai! Wallet me extra add nahi kiya jayega.");
                     closeModal("actionModal");
+                    submitBtn.disabled = false;
                     return;
                 }
 
+                // 2. Deposit status update payload
                 let updatePayload = {
                     status: newStatus,
                     rejectReason: (newStatus === "Rejected") ? rejectReason : "",
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    processedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
 
-                let isOldApproved = (oldLower === "approved" || oldLower === "success");
+                let isOldApproved = (currentStatus === "approved" || currentStatus === "success");
                 let isNewApproved = (newLower === "approved" || newLower === "success");
 
                 let amtChange = 0;
-
-                // Only calculate exact difference or single credit
                 if (!isOldApproved && isNewApproved) {
-                    amtChange = activeCurrentAmt; // Single +100
+                    amtChange = activeCurrentAmt; // Single Credit Only (+100)
                 } else if (isOldApproved && !isNewApproved) {
-                    amtChange = -activeCurrentAmt; // Revert -100
+                    amtChange = -activeCurrentAmt; // Revert (-100)
                 }
 
-                // 1. Update Status in Deposits Collection First
+                // First Update Deposit Status
                 await depRef.update(updatePayload);
 
-                // 2. Safely Update User Balance ONCE
+                // Second Update User Balance ONCE
                 if (amtChange !== 0) {
                     let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
-
                     if (matchedUserRef) {
                         await matchedUserRef.set({
                             wallet: firebase.firestore.FieldValue.increment(amtChange),
                             depositBalance: firebase.firestore.FieldValue.increment(amtChange)
                         }, { merge: true });
-                    } else {
-                        alert("Warning: User account not found in database to update wallet balance.");
                     }
                 }
 
-                alert("Status updated & Wallet Balance successfully synced!");
+                alert("Status Successfully Updated! Wallet Balance Sahi Add Ho Gaya Hai.");
                 closeModal("actionModal");
             } catch (err) {
                 alert("Error: " + err.message);
