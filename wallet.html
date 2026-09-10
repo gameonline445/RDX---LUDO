@@ -72,25 +72,27 @@ button{font:inherit;}
 .logo img{width:100%;height:100%;object-fit:cover;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
+
+/* CIRCULAR TOP HEADER ICONS */
 .header-icon{
-    height:38px;border:0;border-radius:20px;
+    width:40px;height:40px;border:0;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
-    font-size:15px;color:white;cursor:pointer;padding:0 12px;gap:6px;font-weight:800;
+    font-size:16px;color:white;cursor:pointer;padding:0;
+    transition:transform 0.15s ease;
 }
+.header-icon:active{transform:scale(0.92);}
+
 .notification{
-    width:38px;height:38px;padding:0;border-radius:50%;
     background:linear-gradient(145deg,#6366f1,#818cf8);
-    box-shadow:0 3px 10px rgba(99,102,241,0.25);
+    box-shadow:0 3px 10px rgba(99,102,241,0.3);
 }
 .wallet-top{
     background:linear-gradient(145deg,#22c55e,#16a34a);
-    box-shadow:0 3px 10px rgba(22,163,74,0.25);
-    border-radius:20px;padding:0 14px;font-size:14px;
+    box-shadow:0 3px 10px rgba(22,163,74,0.3);
 }
 .redeem-top{
-    width:38px;height:38px;padding:0;border-radius:50%;
     background:linear-gradient(145deg,#ea580c,#f97316);
-    box-shadow:0 3px 10px rgba(234,88,12,0.25);
+    box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
 /* MAIN CONTAINER */
@@ -167,7 +169,7 @@ button{font:inherit;}
     </div>
     <div class="header-right">
         <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-sack-dollar"></i> <span id="topBalance">₹0</span></button>
+        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-wallet"></i></button>
         <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
@@ -202,26 +204,26 @@ button{font:inherit;}
 <main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
-            <div class="wallet-title">▣ MY WALLET</div>
-            <button class="history-btn" onclick="goHistory()">◷ &nbsp; History</button>
+            <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
+            <button class="history-btn" onclick="goHistory()"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
         </div>
         <div class="balance-label">Total Balance</div>
         <div class="balance">₹<span id="mainBalance">0</span></div>
         <div class="wallet-actions">
             <button class="action-btn add-btn" onclick="goDeposit()">＋ Add Cash</button>
-            <button class="action-btn withdraw-btn" onclick="goWithdraw()">▣ Withdraw</button>
+            <button class="action-btn withdraw-btn" onclick="goWithdraw()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
         </div>
     </section>
 
     <section class="balance-grid">
         <div class="balance-box">
-            <div class="balance-icon">▣</div>
+            <div class="balance-icon"><i class="fa-solid fa-wallet"></i></div>
             <h3>DEPOSIT</h3>
             <div class="balance-value">₹<span id="depositBalance">0</span></div>
             <span class="balance-note">For battles only</span>
         </div>
         <div class="balance-box">
-            <div class="balance-icon">🏆</div>
+            <div class="balance-icon"><i class="fa-solid fa-trophy"></i></div>
             <h3>WINNINGS</h3>
             <div class="balance-value">₹<span id="winningBalance">0</span></div>
             <span class="balance-note">Can withdraw</span>
@@ -243,7 +245,6 @@ button{font:inherit;}
 
 <script>
 let unsubscribeWalletListener = null;
-let unsubscribeDepositsListener = null;
 
 async function loadFirebaseCustomer(){
     try {
@@ -261,19 +262,17 @@ async function loadFirebaseCustomer(){
         }
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
-        const mobile10Digits = cleanMobile.slice(-10); // Extract exact last 10 digits
+        const mobile10Digits = cleanMobile.slice(-10);
         const docIdWith91 = "91" + mobile10Digits;
 
         let userRef = firebaseDB.collection("customers").doc(docIdWith91);
         let snapshot = await userRef.get();
 
-        // Fallback check: Check 10-digit docID if 91-prefixed doc ID doesn't exist
         if(!snapshot.exists) {
             userRef = firebaseDB.collection("customers").doc(mobile10Digits);
             snapshot = await userRef.get();
         }
 
-        // Secondary Fallback: Query by field `mobile`
         if(!snapshot.exists) {
             const querySnap = await firebaseDB.collection("customers")
                 .where("mobile", "in", [mobile10Digits, "+" + mobile10Digits, "+91" + mobile10Digits, docIdWith91])
@@ -287,7 +286,7 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // 1. REAL-TIME CUSTOMER BALANCE LISTENER
+        // REAL-TIME FIRESTORE BALANCE SYNC
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
@@ -295,12 +294,9 @@ async function loadFirebaseCustomer(){
                 const deposit = Number(data.depositBalance || data.deposit || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
                 
-                // Real Calculation
                 let total = deposit + winnings;
 
-                // Sync UI Instantly
                 document.getElementById("mainBalance").textContent = total;
-                document.getElementById("topBalance").textContent = "₹" + total;
                 document.getElementById("depositBalance").textContent = deposit;
                 document.getElementById("winningBalance").textContent = winnings;
 
@@ -308,46 +304,13 @@ async function loadFirebaseCustomer(){
                 if(document.getElementById("menuUsername")) {
                     document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
                 }
-            } else {
-                console.warn("User Document not found in Firestore!");
             }
         }, (error) => {
-            console.error("Wallet Real-time Sync Error:", error);
+            console.error("Wallet Sync Error:", error);
         });
 
-        // 2. AUTOMATIC DEPOSIT APPROVAL SYNC LISTENER
-        // Monitor deposits collection for approved/success status that haven't been processed yet
-        if(unsubscribeDepositsListener) unsubscribeDepositsListener();
-        
-        unsubscribeDepositsListener = firebaseDB.collection("deposits")
-            .where("uid", "in", [mobile10Digits, docIdWith91])
-            .onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(async (change) => {
-                    if (change.type === "modified" || change.type === "added") {
-                        const depData = change.doc.data();
-                        const status = (depData.status || "").toLowerCase();
-                        
-                        // If approved by admin and not yet auto-credited
-                        if ((status === "approved" || status === "success") && !depData.autoSynced) {
-                            const depAmount = Number(depData.amount || 0);
-                            if (depAmount > 0) {
-                                // Auto increment depositBalance & balance in customer doc
-                                await userRef.update({
-                                    depositBalance: firebase.firestore.FieldValue.increment(depAmount),
-                                    balance: firebase.firestore.FieldValue.increment(depAmount)
-                                });
-                                // Mark deposit record as autoSynced
-                                await change.doc.ref.update({ autoSynced: true });
-                            }
-                        }
-                    }
-                });
-            }, (error) => {
-                console.warn("Deposits Auto-sync Listener error:", error);
-            });
-
     } catch(error) { 
-        console.error("Wallet Fetch Error:", error); 
+        console.error("Wallet Error:", error); 
     }
 }
 
