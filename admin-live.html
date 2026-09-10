@@ -249,7 +249,9 @@ function startRealtimeMonitor() {
 
         let onlineCnt = 0;
         let loggedInCnt = 0;
-        let offlineCnt = 0;
+        
+        // Total Registered Users direct snapshot size se calculate hoga
+        const totalRegisteredCnt = snapshot.size;
 
         snapshot.forEach((doc) => {
             const data = doc.data();
@@ -263,7 +265,7 @@ function startRealtimeMonitor() {
             const lastSeenMs = parseTimestamp(data.lastSeenAt) || parseTimestamp(data.lastLoginAt);
             const isRecent = (now - lastSeenMs) <= (5 * 60 * 1000); // Active within last 5 mins
 
-            // Dual Check Logic for Online Status
+            // Check Status
             const isOnline = data.isOnline === true || 
                              String(data.status).toLowerCase() === 'online' || 
                              String(data.status).toLowerCase() === 'active' || 
@@ -272,8 +274,7 @@ function startRealtimeMonitor() {
             const isLoggedIn = lastSeenMs > 0 || isOnline;
 
             if (isOnline) onlineCnt++;
-            else if (isLoggedIn) loggedInCnt++;
-            else offlineCnt++;
+            if (isLoggedIn) loggedInCnt++;
 
             allLiveUsers.push({
                 id: docId,
@@ -287,11 +288,13 @@ function startRealtimeMonitor() {
             });
         });
 
-        // Update Counters
+        const offlineCnt = totalRegisteredCnt - onlineCnt;
+
+        // Dynamic Count Update
         document.getElementById("cntOnline").textContent = onlineCnt;
-        document.getElementById("cntLoggedIn").textContent = loggedInCnt + onlineCnt;
-        document.getElementById("cntOffline").textContent = snapshot.size - (loggedInCnt + onlineCnt);
-        document.getElementById("cntTotal").textContent = snapshot.size;
+        document.getElementById("cntLoggedIn").textContent = loggedInCnt;
+        document.getElementById("cntOffline").textContent = offlineCnt < 0 ? 0 : offlineCnt;
+        document.getElementById("cntTotal").textContent = totalRegisteredCnt; // Realtime Total Sync
 
         document.getElementById("lastSyncTime").textContent = new Date().toLocaleTimeString();
 
@@ -334,7 +337,6 @@ function renderTable() {
         return;
     }
 
-    // Sort by Last Active / Highest Balance
     filtered.sort((a, b) => b.lastSeenMs - a.lastSeenMs);
 
     filtered.forEach(u => {
