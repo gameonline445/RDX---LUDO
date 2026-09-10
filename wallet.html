@@ -46,43 +46,6 @@ html,body{
 }
 button{font:inherit;}
 
-/* PULL TO REFRESH INDICATOR */
-.pull-refresh-indicator {
-    position: fixed;
-    top: 66px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-100%);
-    z-index: 999;
-    background: #ffffff;
-    border: 1.5px solid #7dd3fc;
-    border-radius: 20px;
-    padding: 6px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 750;
-    color: #0284c7;
-    box-shadow: 0 4px 12px rgba(2,132,199,0.15);
-    transition: transform 0.2s ease, opacity 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
-}
-.pull-refresh-indicator.visible {
-    transform: translateX(-50%) translateY(10px);
-    opacity: 1;
-}
-.pull-refresh-indicator i {
-    transition: transform 0.2s ease;
-}
-.pull-refresh-indicator.refreshing i {
-    animation: spinRefresh 0.8s linear infinite;
-}
-@keyframes spinRefresh {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 /* TOP HEADER */
 .top-header{
     position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
@@ -133,12 +96,7 @@ button{font:inherit;}
 }
 
 /* MAIN CONTAINER */
-.container{
-    position:fixed;top:66px;left:0;right:0;bottom:74px;
-    width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;
-    overflow-y:auto;display:flex;flex-direction:column;gap:10px;
-    -webkit-overflow-scrolling:touch;
-}
+.container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
 .wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
@@ -201,12 +159,6 @@ button{font:inherit;}
 
 <body>
 
-<!-- PULL REFRESH INDICATOR -->
-<div class="pull-refresh-indicator" id="pullIndicator">
-    <i class="fa-solid fa-rotate-right" id="pullIcon"></i>
-    <span id="pullText">Pull down to refresh</span>
-</div>
-
 <!-- HEADER -->
 <header class="top-header">
     <div class="header-left">
@@ -249,7 +201,7 @@ button{font:inherit;}
     </div>
 </div>
 
-<main class="container" id="scrollContainer">
+<main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
@@ -292,88 +244,6 @@ button{font:inherit;}
 </nav>
 
 <script>
-// HISTORY / POPSTATE MANAGEMENT
-(function() {
-    window.history.pushState({ page: "wallet" }, "", window.location.href);
-    window.addEventListener("popstate", function() {
-        const panel = document.getElementById("menuPanel");
-        if (panel && panel.classList.contains("open")) {
-            closeMenu();
-            window.history.pushState({ page: "wallet" }, "", window.location.href);
-        } else {
-            window.location.href = "dashboard.html";
-        }
-    });
-})();
-
-// TOUCH & PULL TO REFRESH SYSTEM
-let startY = 0;
-let currentY = 0;
-let isPulling = false;
-let isRefreshing = false;
-
-const scrollContainer = document.getElementById("scrollContainer");
-const pullIndicator = document.getElementById("pullIndicator");
-const pullIcon = document.getElementById("pullIcon");
-const pullText = document.getElementById("pullText");
-
-scrollContainer.addEventListener("touchstart", (e) => {
-    if (scrollContainer.scrollTop === 0 && !isRefreshing) {
-        startY = e.touches[0].pageY;
-        isPulling = true;
-    }
-}, { passive: true });
-
-scrollContainer.addEventListener("touchmove", (e) => {
-    if (!isPulling || isRefreshing) return;
-    currentY = e.touches[0].pageY;
-    let distance = currentY - startY;
-
-    if (distance > 0 && scrollContainer.scrollTop === 0) {
-        if (distance > 60) {
-            pullIndicator.classList.add("visible");
-            pullText.textContent = "Release to refresh";
-            pullIcon.style.transform = "rotate(180deg)";
-        } else {
-            pullIndicator.classList.add("visible");
-            pullText.textContent = "Pull down to refresh";
-            pullIcon.style.transform = "rotate(0deg)";
-        }
-    }
-}, { passive: true });
-
-scrollContainer.addEventListener("touchend", async () => {
-    if (!isPulling || isRefreshing) return;
-    let distance = currentY - startY;
-    isPulling = false;
-
-    if (distance > 60 && scrollContainer.scrollTop === 0) {
-        executeRefresh();
-    } else {
-        resetPullIndicator();
-    }
-});
-
-async function executeRefresh() {
-    isRefreshing = true;
-    pullIndicator.classList.add("visible", "refreshing");
-    pullText.textContent = "Refreshing...";
-    
-    // Refresh Firebase Customer Data
-    await loadFirebaseCustomer();
-    
-    setTimeout(() => {
-        resetPullIndicator();
-        isRefreshing = false;
-    }, 600);
-}
-
-function resetPullIndicator() {
-    pullIndicator.classList.remove("visible", "refreshing");
-    pullIcon.style.transform = "rotate(0deg)";
-    pullText.textContent = "Pull down to refresh";
-}
-
 let unsubscribeWalletListener = null;
 let unsubscribeDepositsListener = null;
 
@@ -396,7 +266,7 @@ async function loadFirebaseCustomer(){
         const mobile10Digits = cleanMobile.slice(-10);
         const docIdWith91 = "91" + mobile10Digits;
 
-        // Fetch User Document Reference
+        // Fetch User Document
         let userRef = firebaseDB.collection("customers").doc(docIdWith91);
         let snapshot = await userRef.get();
 
@@ -432,16 +302,16 @@ async function loadFirebaseCustomer(){
             }
         }
 
-        // Unsubscribe old listener if exists
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // 1. REAL-TIME USER BALANCE LISTENER
+        // REAL-TIME USER BALANCE LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
-            if (doc && doc.exists) {
+            if (doc.exists) {
                 const data = doc.data();
                 
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
+                
                 let total = deposit + winnings;
 
                 document.getElementById("mainBalance").textContent = total;
@@ -457,13 +327,13 @@ async function loadFirebaseCustomer(){
             console.error("Wallet Sync Error:", error);
         });
 
-        // 2. STRICT AUTO-SYNC DEPOSITS TO USER WALLET
+        // STRICT AUTO-SYNC DEPOSITS TO USER WALLET
         if(unsubscribeDepositsListener) unsubscribeDepositsListener();
 
         unsubscribeDepositsListener = firebaseDB.collection("deposits")
             .where("uid", "in", [mobile10Digits, docIdWith91, cleanMobile])
             .onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach((change) => {
+                snapshot.docChanges().forEach(async (change) => {
                     if (change.type === "added" || change.type === "modified") {
                         const depData = change.doc.data();
                         const status = (depData.status || "").toLowerCase();
@@ -472,11 +342,11 @@ async function loadFirebaseCustomer(){
                         if ((status === "approved" || status === "success") && !depData.autoSynced) {
                             const depAmount = Number(depData.amount || 0);
                             if (depAmount > 0) {
-                                userRef.set({
+                                await userRef.set({
                                     depositBalance: firebase.firestore.FieldValue.increment(depAmount)
-                                }, { merge: true }).then(() => {
-                                    change.doc.ref.update({ autoSynced: true });
-                                }).catch(e => console.error("AutoSync Error:", e));
+                                }, { merge: true });
+
+                                await change.doc.ref.update({ autoSynced: true });
                             }
                         }
                     }
