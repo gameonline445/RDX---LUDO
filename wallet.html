@@ -46,41 +46,7 @@ html,body{
 }
 button{font:inherit;}
 
-/* PULL TO REFRESH INDICATOR */
-.pull-refresh-indicator {
-    position: fixed;
-    top: 70px;
-    left: 50%;
-    transform: translateX(-50%) translateY(-100%);
-    z-index: 999;
-    background: #ffffff;
-    border: 1.5px solid #7dd3fc;
-    border-radius: 20px;
-    padding: 6px 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 750;
-    color: #0284c7;
-    box-shadow: 0 4px 12px rgba(2,132,199,0.15);
-    transition: transform 0.2s ease, opacity 0.2s ease;
-    opacity: 0;
-    pointer-events: none;
-}
-.pull-refresh-indicator.visible {
-    transform: translateX(-50%) translateY(10px);
-    opacity: 1;
-}
-.pull-refresh-indicator.refreshing i {
-    animation: spinRefresh 0.8s linear infinite;
-}
-@keyframes spinRefresh {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* TOP HEADER */
+/* TOP HEADER - Fixed at top */
 .top-header{
     position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
     display:flex;align-items:center;justify-content:space-between;padding:0 14px;
@@ -129,13 +95,8 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* MAIN CONTAINER (BETWEEN HEADER AND NAVIGATION BAR) */
-.container{
-    position:fixed;top:66px;left:0;right:0;bottom:74px;
-    width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;
-    overflow-y:auto;display:flex;flex-direction:column;gap:10px;
-    -webkit-overflow-scrolling:touch;
-}
+/* MAIN CONTAINER - Scrollable middle section */
+.container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
 .wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
@@ -182,7 +143,7 @@ button{font:inherit;}
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAV - Fixed at bottom */
 .bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
@@ -197,12 +158,6 @@ button{font:inherit;}
 </head>
 
 <body>
-
-<!-- PULL REFRESH INDICATOR -->
-<div class="pull-refresh-indicator" id="pullIndicator">
-    <i class="fa-solid fa-rotate-right" id="pullIcon"></i>
-    <span id="pullText">Pull down to refresh</span>
-</div>
 
 <!-- HEADER -->
 <header class="top-header">
@@ -246,7 +201,7 @@ button{font:inherit;}
     </div>
 </div>
 
-<main class="container" id="scrollContainer">
+<main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
@@ -289,62 +244,6 @@ button{font:inherit;}
 </nav>
 
 <script>
-// PULL-TO-REFRESH MECHANISM WITH FULL PAGE RELOAD
-let startY = 0;
-let currentY = 0;
-let isPulling = false;
-let isRefreshing = false;
-
-const scrollContainer = document.getElementById("scrollContainer");
-const pullIndicator = document.getElementById("pullIndicator");
-const pullIcon = document.getElementById("pullIcon");
-const pullText = document.getElementById("pullText");
-
-scrollContainer.addEventListener("touchstart", (e) => {
-    if (scrollContainer.scrollTop === 0 && !isRefreshing) {
-        startY = e.touches[0].pageY;
-        isPulling = true;
-    }
-}, { passive: true });
-
-scrollContainer.addEventListener("touchmove", (e) => {
-    if (!isPulling || isRefreshing) return;
-    currentY = e.touches[0].pageY;
-    let distance = currentY - startY;
-
-    if (distance > 0 && scrollContainer.scrollTop === 0) {
-        if (distance > 60) {
-            pullIndicator.classList.add("visible");
-            pullText.textContent = "Release to refresh";
-            pullIcon.style.transform = "rotate(180deg)";
-        } else {
-            pullIndicator.classList.add("visible");
-            pullText.textContent = "Pull down to refresh";
-            pullIcon.style.transform = "rotate(0deg)";
-        }
-    }
-}, { passive: true });
-
-scrollContainer.addEventListener("touchend", () => {
-    if (!isPulling || isRefreshing) return;
-    let distance = currentY - startY;
-    isPulling = false;
-
-    if (distance > 60 && scrollContainer.scrollTop === 0) {
-        isRefreshing = true;
-        pullIndicator.classList.add("visible", "refreshing");
-        pullText.textContent = "Refreshing...";
-        
-        // RELOADS THE WHOLE PAGE
-        setTimeout(() => {
-            window.location.reload();
-        }, 400);
-    } else {
-        pullIndicator.classList.remove("visible");
-        pullIcon.style.transform = "rotate(0deg)";
-    }
-});
-
 let unsubscribeWalletListener = null;
 let unsubscribeDepositsListener = null;
 
