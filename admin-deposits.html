@@ -60,7 +60,6 @@
         .btn-edit { background-color: #edf2f7; color: #2d3748; border: 1px solid #cbd5e0; padding: 4px 8px; border-radius: 4px; font-size: 11px; cursor: pointer; font-weight:700; margin-left: 4px; }
         .btn-revert { background-color: #d97706; color: #ffffff; border: none; padding: 6px 8px; border-radius: 4px; font-size: 11px; font-weight:700; cursor: pointer; margin-left: 4px; }
 
-        /* Modal Custom Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
         .modal-card { background: #ffffff; color: #333; width: 90%; max-width: 450px; padding: 24px; border-radius: 16px; text-align: left; }
         .modal-card h3 { margin-bottom: 15px; color: #1a365d; }
@@ -210,6 +209,7 @@
         let activeUserId = null;
         let activeCurrentAmt = 0;
         let activeOldStatus = "";
+        let activeMobileNo = "";
 
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
@@ -307,10 +307,10 @@
 
                     let actionHTML = "";
                     if (statusLower === "pending") {
-                        actionHTML = `<button class="btn-approve" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', 'Approved')">Approve</button>
-                                     <button class="btn-reject" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', 'Rejected')">Reject</button>`;
+                        actionHTML = `<button class="btn-approve" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}', 'Approved')">Approve</button>
+                                     <button class="btn-reject" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}', 'Rejected')">Reject</button>`;
                     } else {
-                        actionHTML = `<button class="btn-revert" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
+                        actionHTML = `<button class="btn-revert" onclick="openActionModal('${data.id}', '${uid}', ${amt}, '${rawStatus}', '${mobile}')"><i class="fa-solid fa-arrows-rotate"></i> Change Status</button>`;
                     }
 
                     let ssButton = ssUrl ? `<button class="btn-ss" onclick="viewSS('${ssUrl}')">View SS</button>` : `<span style="color:#aaa;">No SS</span>`;
@@ -383,9 +383,10 @@
             });
         }
 
-        function openActionModal(depId, userId, currentAmt, oldStatus, targetStatus = null) {
+        function openActionModal(depId, userId, currentAmt, oldStatus, mobile = "", targetStatus = null) {
             activeDepId = depId;
             activeUserId = userId;
+            activeMobileNo = mobile;
             
             let amtElement = document.getElementById(`amt-val-${depId}`);
             if (amtElement) {
@@ -413,6 +414,46 @@
             document.getElementById("rejectReasonBox").style.display = (val === "Rejected") ? "block" : "none";
         }
 
+        async function findUserDocRef(uid, mobileNo) {
+            // Priority 1: Check Direct Document ID
+            if (uid) {
+                let directDoc = await db.collection("users").doc(uid).get();
+                if (directDoc.exists) return db.collection("users").doc(uid);
+            }
+
+            // Clean up mobile numbers
+            let searchKeys = [];
+            if (uid) searchKeys.push(uid);
+            if (mobileNo) searchKeys.push(mobileNo);
+
+            for (let rawKey of searchKeys) {
+                let cleanKey = String(rawKey).replace("+91", "").trim();
+                let numKey = Number(cleanKey);
+
+                // Build query variations
+                let queries = [
+                    db.collection("users").where("mobile", "==", cleanKey),
+                    db.collection("users").where("phone", "==", cleanKey),
+                    db.collection("users").where("mobile", "==", "+91" + cleanKey),
+                    db.collection("users").where("phone", "==", "+91" + cleanKey)
+                ];
+
+                if (!isNaN(numKey)) {
+                    queries.push(db.collection("users").where("mobile", "==", numKey));
+                    queries.push(db.collection("users").where("phone", "==", numKey));
+                }
+
+                for (let q of queries) {
+                    let snap = await q.get();
+                    if (!snap.empty) {
+                        return db.collection("users").doc(snap.docs[0].id);
+                    }
+                }
+            }
+
+            return null;
+        }
+
         async function submitStatusUpdate() {
             let submitBtn = document.getElementById("submitBtn");
             let newStatus = document.getElementById("modalStatusSelect").value;
@@ -432,11 +473,11 @@
                     rejectReason: (newStatus === "Rejected") ? rejectReason : ""
                 };
 
-                // Step 1: Deposit status update in DB
+                // Step 1: Deposit status update
                 await db.collection("deposits").doc(activeDepId).update(updatePayload);
 
-                // Step 2: Smart User Wallet Reversal Logic
-                if (activeUserId && activeCurrentAmt > 0) {
+                // Step 2: User Wallet Reversal Logic
+                if (activeCurrentAmt > 0) {
                     let oldLower = (activeOldStatus || "").toLowerCase();
                     let newLower = (newStatus || "").toLowerCase();
 
@@ -448,35 +489,13 @@
                     }
 
                     if (amtChange !== 0) {
-                        // Method 1: Check by UID
-                        let userRef = db.collection("users").doc(activeUserId);
-                        let userDoc = await userRef.get();
+                        let matchedUserRef = await findUserDocRef(activeUserId, activeMobileNo);
 
-                        if (userDoc.exists) {
-                            await userRef.update({
+                        if (matchedUserRef) {
+                            await matchedUserRef.update({
                                 wallet: firebase.firestore.FieldValue.increment(amtChange),
                                 depositBalance: firebase.firestore.FieldValue.increment(amtChange)
                             });
-                        } else {
-                            // Method 2: Query by Mobile Number if Document ID isn't UID
-                            let targetMobile = activeUserId.replace("+91", "").trim();
-                            let userQuery = await db.collection("users").where("mobile", "==", targetMobile).get();
-                            if (userQuery.empty) {
-                                userQuery = await db.collection("users").where("phone", "==", targetMobile).get();
-                            }
-                            if (userQuery.empty) {
-                                userQuery = await db.collection("users").where("mobile", "==", activeUserId).get();
-                            }
-
-                            if (!userQuery.empty) {
-                                let matchedDocId = userQuery.docs[0].id;
-                                await db.collection("users").doc(matchedDocId).update({
-                                    wallet: firebase.firestore.FieldValue.increment(amtChange),
-                                    depositBalance: firebase.firestore.FieldValue.increment(amtChange)
-                                });
-                            } else {
-                                alert("Warning: Deposit status update ho gaya, par wallet subtract nahi hua kyunki user document match nahi mila.");
-                            }
                         }
                     }
                 }
