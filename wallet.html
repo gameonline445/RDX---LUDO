@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Prevent Pinch-to-Zoom & Scaled Touch Dragging -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
 <!-- FontAwesome & Firebase SDKs -->
@@ -33,9 +34,25 @@ try {
 </script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{
-    width:100%;height:100dvh;overflow:hidden;position:fixed;inset:0;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+}
+
+/* Prevent whole page scrolling, zooming, and elastic bouncing */
+html, body {
+    width:100%;
+    height:100dvh;
+    height:100vh;
+    overflow:hidden;
+    position:fixed;
+    inset:0;
+    touch-action:manipulation;
+    overscroll-behavior:none;
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     color:#101a38;
     background:
@@ -44,9 +61,10 @@ html,body{
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
 }
+
 button{font:inherit;}
 
-/* TOP HEADER - FIXED */
+/* TOP HEADER - STICKY / FIXED */
 .top-header{
     position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
     display:flex;align-items:center;justify-content:space-between;padding:0 14px;
@@ -95,43 +113,24 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* PULL TO REFRESH UI INDICATOR */
-.pull-refresh-indicator {
-    width: 100%;
-    height: 0px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #0284c7;
-    font-size: 20px;
-    transition: height 0.2s cubic-bezier(0.1, 0.8, 0.3, 1);
-}
-.pull-refresh-indicator.refreshing i {
-    animation: spinRefresh 0.7s linear infinite;
-}
-@keyframes spinRefresh {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* SCROLLABLE MAIN CONTENT CONTAINER INSIDE NAVS */
+/* MAIN CONTAINER WITH INDEPENDENT SCROLLING */
 .container{
     position:fixed;
     top:66px;
     left:0;
     right:0;
-    bottom:calc(74px + env(safe-area-inset-bottom, 0px));
+    bottom:74px;
     width:100%;
     max-width:650px;
     margin:0 auto;
-    padding:10px 14px 20px;
+    padding:14px 14px 10px;
     overflow-y:auto;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
+    -webkit-overflow-scrolling:touch;
+    touch-action:pan-y;
+    overscroll-behavior-y:contain;
     display:flex;
     flex-direction:column;
-    gap:12px;
+    gap:10px;
 }
 
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
@@ -158,7 +157,7 @@ button{font:inherit;}
 /* SIDE MENU */
 .menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:2000;display:none;}
 .menu-overlay.show{display:block;}
-.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
+.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;height:100vh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
 .menu-panel.open{left:0;}
 .menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
 .menu-brand{display:flex;align-items:center;gap:10px;}
@@ -180,17 +179,8 @@ button{font:inherit;}
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV - FIXED */
-.bottom-nav{
-    position:fixed;bottom:0;left:0;width:100%;
-    height:calc(74px + env(safe-area-inset-bottom, 0px));
-    padding-bottom:env(safe-area-inset-bottom, 0px);
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(12px);
-    border-top:1.5px solid #e2e8f0;
-    display:flex;justify-content:space-around;align-items:center;
-    z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);
-}
+/* BOTTOM NAV - STICKY / FIXED */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
@@ -247,13 +237,7 @@ button{font:inherit;}
     </div>
 </div>
 
-<!-- MAIN CONTENT CONTAINER -->
-<main class="container" id="mainContainer">
-    <!-- Pull To Refresh Loader Header -->
-    <div class="pull-refresh-indicator" id="pullRefreshIndicator">
-        <i class="fa-solid fa-arrows-rotate"></i>
-    </div>
-
+<main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
@@ -288,7 +272,6 @@ button{font:inherit;}
     </div>
 </main>
 
-<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -297,6 +280,14 @@ button{font:inherit;}
 </nav>
 
 <script>
+// PREVENT ACCIDENTAL PINCH ZOOM & PULL-TO-REFRESH DRAGS
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
+document.addEventListener('touchmove', function(e) {
+    if (e.scale && e.scale !== 1) {
+        e.preventDefault();
+    }
+}, { passive: false });
+
 let unsubscribeWalletListener = null;
 let unsubscribeDepositsListener = null;
 
@@ -414,51 +405,6 @@ async function loadFirebaseCustomer(){
 }
 
 window.addEventListener("load", loadFirebaseCustomer);
-
-/* PULL TO REFRESH SYSTEM LOGIC */
-const container = document.getElementById("mainContainer");
-const pullIndicator = document.getElementById("pullRefreshIndicator");
-let startY = 0;
-let currentY = 0;
-let isPulling = false;
-
-container.addEventListener("touchstart", (e) => {
-    if (container.scrollTop <= 0) {
-        startY = e.touches[0].pageY;
-        isPulling = true;
-    }
-}, { passive: true });
-
-container.addEventListener("touchmove", (e) => {
-    if (!isPulling) return;
-    currentY = e.touches[0].pageY;
-    let distance = currentY - startY;
-
-    if (distance > 0 && container.scrollTop <= 0) {
-        let pullHeight = Math.min(distance * 0.4, 55);
-        pullIndicator.style.height = pullHeight + "px";
-    }
-}, { passive: true });
-
-container.addEventListener("touchend", () => {
-    if (!isPulling) return;
-    let distance = currentY - startY;
-    if (distance > 80 && container.scrollTop <= 0) {
-        pullIndicator.style.height = "45px";
-        pullIndicator.classList.add("refreshing");
-        
-        // Refresh action
-        loadFirebaseCustomer().then(() => {
-            setTimeout(() => {
-                pullIndicator.style.height = "0px";
-                pullIndicator.classList.remove("refreshing");
-            }, 800);
-        });
-    } else {
-        pullIndicator.style.height = "0px";
-    }
-    isPulling = false;
-});
 
 function openMenu(){ 
     document.getElementById("menuPanel").classList.add("open"); 
