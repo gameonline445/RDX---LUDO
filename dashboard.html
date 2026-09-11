@@ -59,8 +59,9 @@ button{font:inherit;}
     justify-content:center;
     cursor:pointer;
     box-shadow:0 4px 10px rgba(248,113,113,0.3);
+    transition:transform 0.15s ease;
 }
-.menu-btn:active{transform:scale(0.95);}
+.menu-btn:active{transform:scale(0.92);}
 
 /* BRAND LOGO */
 .logo{
@@ -82,7 +83,7 @@ button{font:inherit;}
     object-fit:cover;
 }
 
-/* RIGHT SIDE BUTTONS (MATCHED EXACTLY WITH BOTTOM NAV SHAPE & SIZE) */
+/* RIGHT SIDE HEADER BUTTONS (EXACTLY MATCHING BOTTOM NAV SHAPE & COLORS) */
 .header-right{
     display:flex;
     align-items:center;
@@ -93,7 +94,7 @@ button{font:inherit;}
     width:42px;
     height:42px;
     border:0;
-    border-radius:14px; /* Exact same rounded-square shape as bottom nav */
+    border-radius:14px; /* Matches bottom nav rounded box shape */
     display:flex;
     align-items:center;
     justify-content:center;
@@ -108,7 +109,7 @@ button{font:inherit;}
 
 .bell{background:#6366f1;}
 .cash{background:#22c55e;}
-.gift{background:#f97316;}
+.gift{background:#ea580c;}
 
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
@@ -327,7 +328,7 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAV */
+/* BOTTOM NAVIGATION (SAM TO SAM STYLING LIKE WALLET PAGE) */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -351,10 +352,11 @@ button{font:inherit;}
     align-items:center;
     justify-content:center;
     gap:4px;
-    color:#1e293b;
+    color:#64748b;
     font-size:12px;
     font-weight:700;
     cursor:pointer;
+    transition:color 0.2s ease;
 }
 .nav-icon-box{
     width:42px;
@@ -365,13 +367,24 @@ button{font:inherit;}
     justify-content:center;
     font-size:18px;
     color:#ffffff;
-    transition:transform 0.2s ease;
+    transition:transform 0.2s ease, box-shadow 0.2s ease;
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
+
+/* Active Nav State */
+.nav-item.active {
+    color: #0f172a;
+    font-weight: 850;
+}
+.nav-item.active .nav-icon-box {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
 .icon-home{background:#6366f1;}
 .icon-wallet{background:#22c55e;}
-.icon-support{background:#38bdf8;}
-.icon-profile{background:#f97316;}
+.icon-support{background:#0284c7;}
+.icon-profile{background:#ea580c;}
 </style>
 </head>
 
@@ -489,12 +502,24 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </section>
 </main>
 
-<!-- BOTTOM NAVIGATION -->
+<!-- BOTTOM NAVIGATION (MATCHED SAME TO SAME WITH WALLET) -->
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item active" onclick="window.location.replace('dashboard.html')">
+        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
+        <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')">
+        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
+        <span>Wallet</span>
+    </button>
+    <button class="nav-item" onclick="window.location.replace('support.html')">
+        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
+        <span>Support</span>
+    </button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')">
+        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
+        <span>Profile</span>
+    </button>
 </nav>
 
 <script>
@@ -549,7 +574,7 @@ function loadDashboardDataRealtime() {
             document.getElementById("drawerMobile").textContent = "+" + userId;
         }
     }, (err) => {
-        console.error("Realtime balance update error:", err);
+        console.error("Realtime update error:", err);
     });
 }
 
