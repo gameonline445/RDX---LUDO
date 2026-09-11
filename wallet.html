@@ -40,13 +40,13 @@ try {
     -webkit-tap-highlight-color:transparent;
 }
 
-/* LOCK SCREEN & PREVENT BROWSER PULL-TO-REFRESH */
+/* FULL APP APP-LIKE LAYOUT */
 html, body {
     width: 100%;
     height: 100%;
     height: 100vh;
-    overflow: hidden; /* Prevents whole screen bounce */
-    overscroll-behavior-y: none; /* Disables native pull-to-refresh in Chrome/Safari */
+    overflow: hidden; /* Main window scroll disabled */
+    overscroll-behavior: none;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: #101a38;
     background:
@@ -64,11 +64,11 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transition: transform 0.1s ease;
 }
 
-/* FIXED HEADER */
+/* 1. FIXED TOP HEADER */
 .top-header{
     width: 100%;
     height: 66px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Ensures header height remains fixed */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -106,16 +106,15 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
 .redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* ONLY MIDDLE CONTENT SCROLLS */
+/* 2. SCROLLABLE MIDDLE CONTAINER ONLY */
 .container{
     flex: 1;
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
     padding: 14px;
-    overflow-y: auto; /* Independent Scrolling for Middle Content */
+    overflow-y: auto; /* Scroll sirf beech ke content me chalega */
     -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: contain;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -187,11 +186,11 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* FIXED BOTTOM NAV */
+/* 3. FIXED BOTTOM NAVIGATION */
 .bottom-nav{
     width: 100%;
     height: 70px;
-    flex-shrink: 0;
+    flex-shrink: 0; /* Bottom nav stays locked at the bottom */
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(12px);
     border-top: 1.5px solid #e2e8f0;
@@ -212,6 +211,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 <body>
 
+<!-- FIXED HEADER -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -252,6 +252,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     </div>
 </div>
 
+<!-- SCROLLABLE CONTENT AREA -->
 <main class="container">
     <section class="wallet-card">
         <div class="wallet-top-row">
@@ -287,6 +288,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     </div>
 </main>
 
+<!-- FIXED BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="navigateTo('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item active" onclick="navigateTo('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -296,6 +298,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 <script>
 let unsubscribeWalletListener = null;
+let previousDataHash = "";
 
 function navigateTo(page) {
     closeMenu();
@@ -303,7 +306,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// REALTIME DATA UPDATES WITHOUT PAGE RELOAD
+// FIREBASE REALTIME LISTENER - WITH FULL PAGE RELOAD ON DATA CHANGE
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -338,21 +341,29 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REALTIME LISTENER - UPDATES VALUES LIVE
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
-                
-                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
-                const winnings = Number(data.winnings || data.winningBalance || 0);
-                
-                document.getElementById("mainBalance").textContent = deposit + winnings;
-                document.getElementById("depositBalance").textContent = deposit;
-                document.getElementById("winningBalance").textContent = winnings;
+                const currentDataHash = JSON.stringify(data);
 
-                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
-                if(document.getElementById("menuUsername")) {
-                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                if (previousDataHash === "") {
+                    // First time load
+                    previousDataHash = currentDataHash;
+                    
+                    const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                    const winnings = Number(data.winnings || data.winningBalance || 0);
+                    
+                    document.getElementById("mainBalance").textContent = deposit + winnings;
+                    document.getElementById("depositBalance").textContent = deposit;
+                    document.getElementById("winningBalance").textContent = winnings;
+
+                    let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
+                    if(document.getElementById("menuUsername")) {
+                        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                    }
+                } else if (previousDataHash !== currentDataHash) {
+                    // DATA CHANGED -> FULL PAGE RELOAD
+                    window.location.reload();
                 }
             }
         });
