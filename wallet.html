@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>RDX LUDO - Wallet</title>
 
 <!-- FontAwesome & Firebase SDKs -->
@@ -40,11 +40,13 @@ try {
     -webkit-tap-highlight-color:transparent;
 }
 
+/* LOCK SCREEN & PREVENT BROWSER PULL-TO-REFRESH */
 html, body {
     width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: 100%;
+    height: 100vh;
+    overflow: hidden; /* Prevents whole screen bounce */
+    overscroll-behavior-y: none; /* Disables native pull-to-refresh in Chrome/Safari */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: #101a38;
     background:
@@ -62,10 +64,11 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transition: transform 0.1s ease;
 }
 
-/* TOP HEADER */
+/* FIXED HEADER */
 .top-header{
     width: 100%;
     height: 66px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -73,6 +76,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     background: linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom: 1.5px solid #bae6fd;
     box-shadow: 0 4px 18px rgba(2,132,199,0.08);
+    z-index: 100;
 }
 .header-left{display:flex;align-items:center;gap:10px;}
 .menu-btn{
@@ -102,13 +106,16 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
 .redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* MAIN CONTAINER */
+/* ONLY MIDDLE CONTENT SCROLLS */
 .container{
     flex: 1;
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
-    padding: 14px 14px 90px;
+    padding: 14px;
+    overflow-y: auto; /* Independent Scrolling for Middle Content */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -180,20 +187,18 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV */
+/* FIXED BOTTOM NAV */
 .bottom-nav{
-    position: fixed;
-    bottom: 0;
-    left: 0;
     width: 100%;
     height: 70px;
+    flex-shrink: 0;
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(12px);
     border-top: 1.5px solid #e2e8f0;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    z-index: 1000;
+    z-index: 100;
 }
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;}
@@ -291,16 +296,14 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 <script>
 let unsubscribeWalletListener = null;
-let previousDataHash = "";
 
-// SAFE NAVIGATION FUNCTION (Chrome me page crash nahi hone dega)
 function navigateTo(page) {
     closeMenu();
     if(window.location.pathname.endsWith(page)) return;
     window.location.assign(page);
 }
 
-// FIREBASE REALTIME LISTENER WITH SAFE CHROME RELOAD
+// REALTIME DATA UPDATES WITHOUT PAGE RELOAD
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -335,32 +338,21 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REALTIME LISTENER
+        // REALTIME LISTENER - UPDATES VALUES LIVE
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
-                const currentDataHash = JSON.stringify(data);
+                
+                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                const winnings = Number(data.winnings || data.winningBalance || 0);
+                
+                document.getElementById("mainBalance").textContent = deposit + winnings;
+                document.getElementById("depositBalance").textContent = deposit;
+                document.getElementById("winningBalance").textContent = winnings;
 
-                if (previousDataHash === "") {
-                    // First time load
-                    previousDataHash = currentDataHash;
-                    
-                    const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
-                    const winnings = Number(data.winnings || data.winningBalance || 0);
-                    
-                    document.getElementById("mainBalance").textContent = deposit + winnings;
-                    document.getElementById("depositBalance").textContent = deposit;
-                    document.getElementById("winningBalance").textContent = winnings;
-
-                    let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
-                    if(document.getElementById("menuUsername")) {
-                        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
-                    }
-                } else if (previousDataHash !== currentDataHash) {
-                    // DATA CHANGED -> SAFE RELOAD WITH TIMEOUT TO PREVENT BLANK SCREEN IN CHROME
-                    setTimeout(() => {
-                        window.location.href = window.location.href;
-                    }, 300);
+                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
+                if(document.getElementById("menuUsername")) {
+                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
                 }
             }
         });
@@ -372,7 +364,6 @@ async function loadFirebaseCustomer(){
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-// SIDE DRAWER CONTROLS
 function openMenu(){ 
     document.getElementById("menuPanel").classList.add("open"); 
     document.getElementById("menuOverlay").classList.add("show");
