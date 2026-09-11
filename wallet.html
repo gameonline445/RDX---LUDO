@@ -43,7 +43,7 @@ try {
     -webkit-user-select:none;
 }
 
-/* APP SHELL STYLES: FIXED LAYOUT & PREVENT RELOAD */
+/* APP SHELL STYLES: FIXED LAYOUT & PREVENT MANUAL REFRESH */
 html, body {
     width: 100%;
     height: 100%;
@@ -69,7 +69,7 @@ html, body {
 
 button{font:inherit;}
 
-/* BUTTON PRESS EFFECT (Scales Down) */
+/* BUTTON PRESS EFFECT */
 button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transform: scale(0.95);
     transition: transform 0.1s ease;
@@ -128,7 +128,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* MAIN CONTAINER - PAGE CONTENT SCROLLS HERE */
+/* MAIN CONTAINER - SCROLLABLE */
 .container{
     flex: 1;
     width: 100%;
@@ -166,7 +166,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
 .info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
 
-/* SMOOTH SLIDING SIDE DRAWER & OVERLAY FADE */
+/* SIDE DRAWER & FADE OVERLAY */
 .menu-overlay{
     position: fixed;
     inset: 0;
@@ -221,7 +221,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAVIGATION - FIXED AT BOTTOM */
+/* BOTTOM NAVIGATION - FIXED */
 .bottom-nav{
     width: 100%;
     height: 74px;
@@ -333,27 +333,22 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 </nav>
 
 <script>
-// BACK BUTTON HARDWARE KEY -> DASHBOARD
+// HARDWARE BACK BUTTON -> DASHBOARD
 window.addEventListener('popstate', function(event) {
     window.location.replace("./dashboard.html");
 });
 history.pushState({ page: 1 }, "", "");
 
-// DISABLE PULL-TO-REFRESH & PINCH ZOOM
+// PREVENT PULL-TO-REFRESH MANUALLY
 let touchStartY = 0;
 
 document.addEventListener('touchstart', function(e) {
-    if (e.touches.length > 1) {
-        e.preventDefault();
-    }
+    if (e.touches.length > 1) e.preventDefault();
     touchStartY = e.touches[0].clientY;
 }, { passive: false });
 
 document.addEventListener('touchmove', function(e) {
-    if (e.touches.length > 1) {
-        e.preventDefault();
-        return;
-    }
+    if (e.touches.length > 1) { e.preventDefault(); return; }
     
     let container = document.querySelector('.container');
     let touchY = e.touches[0].clientY;
@@ -364,14 +359,12 @@ document.addEventListener('touchmove', function(e) {
     }
 }, { passive: false });
 
-document.addEventListener('gesturestart', function(e) { 
-    e.preventDefault(); 
-});
+document.addEventListener('gesturestart', function(e) { e.preventDefault(); });
 
 let unsubscribeWalletListener = null;
-let unsubscribeDepositsListener = null;
+let isInitialLoad = true;
 
-// FIREBASE REALTIME DATA SYNC VIA onSnapshot()
+// FIREBASE REALTIME LISTENER WITH FULL PAGE RELOAD
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -428,55 +421,32 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // LIVE REALTIME LISTENER (BINA PAGE RELOAD DATA UPDATE)
+        // REALTIME LISTENER: FIREBASE ME DATA BADALTE HI POORA PAGE RELOAD HOGA
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
-                const data = doc.data();
-                
-                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
-                const winnings = Number(data.winnings || data.winningBalance || 0);
-                
-                let total = deposit + winnings;
+                // Agar pahli baar load ho raha hai to HTML me render karenge
+                if(isInitialLoad) {
+                    const data = doc.data();
+                    const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                    const winnings = Number(data.winnings || data.winningBalance || 0);
+                    
+                    document.getElementById("mainBalance").textContent = deposit + winnings;
+                    document.getElementById("depositBalance").textContent = deposit;
+                    document.getElementById("winningBalance").textContent = winnings;
 
-                document.getElementById("mainBalance").textContent = total;
-                document.getElementById("depositBalance").textContent = deposit;
-                document.getElementById("winningBalance").textContent = winnings;
-
-                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
-                if(document.getElementById("menuUsername")) {
-                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                    let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
+                    if(document.getElementById("menuUsername")) {
+                        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
+                    }
+                    isInitialLoad = false;
+                } else {
+                    // Firebase database me badlav hote hi POORA BROWSER PAGE RELOAD HO JAYEGA
+                    window.location.reload();
                 }
             }
         }, (error) => {
-            console.error("Wallet Realtime Sync Error:", error);
+            console.error("Firebase Listener Error:", error);
         });
-
-        // DEPOSITS REALTIME LISTENER
-        if(unsubscribeDepositsListener) unsubscribeDepositsListener();
-
-        unsubscribeDepositsListener = firebaseDB.collection("deposits")
-            .where("uid", "in", [mobile10Digits, docIdWith91, cleanMobile])
-            .onSnapshot((snapshot) => {
-                snapshot.docChanges().forEach(async (change) => {
-                    if (change.type === "added" || change.type === "modified") {
-                        const depData = change.doc.data();
-                        const status = (depData.status || "").toLowerCase();
-
-                        if ((status === "approved" || status === "success") && !depData.autoSynced) {
-                            const depAmount = Number(depData.amount || 0);
-                            if (depAmount > 0) {
-                                await userRef.set({
-                                    depositBalance: firebase.firestore.FieldValue.increment(depAmount)
-                                }, { merge: true });
-
-                                await change.doc.ref.update({ autoSynced: true });
-                            }
-                        }
-                    }
-                });
-            }, (err) => {
-                console.warn("Deposits Sync Error:", err);
-            });
 
     } catch(error) { 
         console.error("Wallet Error:", error); 
