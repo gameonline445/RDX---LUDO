@@ -1,289 +1,249 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RDX LUDO ADMIN - Strictly Realtime Monitor</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Firebase SDKs (v8) -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
-
+    <title>Active Users Dashboard</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f4f7f6;
+            padding: 20px;
         }
-        .card-bg {
-            background-color: #1e293b;
-            border: 1px solid #334155;
+
+        /* Top 4 Stats Boxes */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
         }
-        .pulse-dot {
-            height: 12px;
-            width: 12px;
-            background-color: #22c55e;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px #22c55e;
-            animation: pulse 1.5s infinite;
+
+        .stat-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
         }
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        /* Active Users Table Section */
+        .dashboard-section {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .dashboard-section h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            color: #555;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background-color: #e6f4ea;
+            color: #137333;
+        }
+
+        /* Controls Panel for Testing */
+        .controls {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 8px;
+        }
+
+        .controls button {
+            padding: 8px 15px;
+            margin-right: 10px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 4px;
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
 
-    <!-- Top Header Navigation -->
-    <header class="flex justify-between items-center pb-6 border-b border-slate-700 mb-6">
-        <div class="flex items-center space-x-3">
-            <span class="bg-blue-600 text-white font-bold px-3 py-1 rounded-full text-sm">RDX</span>
-            <h1 class="text-xl font-bold tracking-wide">RDX LUDO ADMIN</h1>
+    <!-- 1. Top 4 Stats Boxes -->
+    <div class="stats-container">
+        <div class="stat-card">
+            <h3>Active Online Users 🟢</h3>
+            <div class="number" id="activeCount">0</div>
         </div>
-        <button id="logoutBtn" onclick="handleLogout()" class="bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500/30 px-4 py-1.5 rounded-full text-sm font-semibold transition">
-            Logout
-        </button>
-    </header>
-
-    <!-- Main Title & Sync Info -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
-        <div class="flex items-center space-x-3">
-            <span class="pulse-dot"></span>
-            <h2 class="text-2xl font-bold">Strictly Realtime Monitor</h2>
+        <div class="stat-card">
+            <h3>Offline Users ⚪</h3>
+            <div class="number" id="offlineCount">0</div>
         </div>
-        <div class="text-xs text-slate-400">
-            Last sync: <span id="syncTime" class="text-slate-200 font-mono">--:--:-- --</span>
+        <div class="stat-card">
+            <h3>LoggedIn Users 🔑</h3>
+            <div class="number" id="loggedInCount">0</div>
+        </div>
+        <div class="stat-card">
+            <h3>Total Registered Users 👥</h3>
+            <div class="number" id="totalCount">0</div>
         </div>
     </div>
 
-    <!-- Analytics Cards Row -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        
-        <!-- Active Online Users Card -->
-        <div class="card-bg p-5 rounded-2xl">
-            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">ACTIVE ONLINE USERS</p>
-            <h3 id="countOnline" class="text-4xl font-extrabold text-emerald-400">0</h3>
-        </div>
-
-        <!-- Logged In Users Card -->
-        <div class="card-bg p-5 rounded-2xl">
-            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">LOGGED IN USERS</p>
-            <h3 id="countLoggedIn" class="text-4xl font-extrabold text-amber-400">0</h3>
-        </div>
-
-        <!-- Offline Users Card -->
-        <div class="card-bg p-5 rounded-2xl">
-            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">OFFLINE USERS</p>
-            <h3 id="countOffline" class="text-4xl font-extrabold text-rose-400">0</h3>
-        </div>
-
-        <!-- Total Registered Card -->
-        <div class="card-bg p-5 rounded-2xl">
-            <p class="text-xs font-bold tracking-wider text-slate-400 uppercase mb-2">TOTAL REGISTERED</p>
-            <h3 id="countTotal" class="text-4xl font-extrabold text-sky-400">0</h3>
-        </div>
-
+    <!-- 2. Active Users List Table -->
+    <div class="dashboard-section">
+        <h2>Keval Active Users List ⚡</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>User ID</th>
+                    <th>Username</th>
+                    <th>Current Page</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="activeUsersTable">
+                <!-- Active users dynamically insert honge -->
+            </tbody>
+        </table>
     </div>
 
-    <!-- Filter Tabs Only (Search Bar Removed) -->
-    <div class="flex flex-wrap gap-2 mb-6" id="filterTabs">
-        <button onclick="setFilter('all')" id="btn-all" class="px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition">All Users</button>
-        <button onclick="setFilter('online')" id="btn-online" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Online Only</button>
-        <button onclick="setFilter('loggedin')" id="btn-loggedin" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Logged In Only</button>
-        <button onclick="setFilter('offline')" id="btn-offline" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Offline Only</button>
+    <!-- Simulator Controls for Testing Navigation/State -->
+    <div class="controls">
+        <h3>User Actions Simulation (Testing)</h3>
+        <p>Aap dynamic testing ke liye in buttons par click karke dekhein:</p><br>
+        <button onclick="simulatePageChange('Dashboard')">Go to Dashboard</button>
+        <button onclick="simulatePageChange('Battle History')">Go to Battle History</button>
+        <button onclick="simulatePageChange('Profile')">Go to Profile</button>
+        <button onclick="toggleCurrentUserStatus()">Toggle Logout/Inactive</button>
     </div>
 
-    <!-- Live Users Table Section -->
-    <div class="card-bg rounded-2xl overflow-hidden shadow-xl">
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-                <thead>
-                    <tr class="border-b border-slate-700 bg-slate-800/50 text-slate-400 font-semibold text-xs tracking-wider uppercase">
-                        <th class="p-4">USER</th>
-                        <th class="p-4">MOBILE NUMBER</th>
-                        <th class="p-4">STATUS</th>
-                        <th class="p-4">CITY / LOCATION</th>
-                        <th class="p-4">TOTAL BALANCE</th>
-                        <th class="p-4">LAST ACTIVE</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody" class="divide-y divide-slate-800 text-slate-200">
-                    <tr>
-                        <td colspan="6" class="p-8 text-center text-slate-400">Loading user activity data...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Firebase Logic & Realtime Monitoring Script -->
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
-            authDomain: "rdx-ludo.firebaseapp.com",
-            projectId: "rdx-ludo",
-            storageBucket: "rdx-ludo.firebasestorage.app",
-            messagingSenderId: "928340814840",
-            appId: "1:928340814840:web:6eca42a8b76138b268440d"
-        };
+        // Sample Database of Users
+        const usersDatabase = [
+            { id: 101, name: "Desh Boya", page: "Battle History", isLoggedIn: true, isActive: true },
+            { id: 102, name: "Rahul_King", page: "Profile", isLoggedIn: true, isActive: true },
+            { id: 103, name: "Aman_Pro", page: "Home", isLoggedIn: true, isActive: false },
+            { id: 104, name: "Vikas_Gamer", page: "Dashboard", isLoggedIn: false, isActive: false }
+        ];
 
-        // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
-        const db = firebase.firestore();
-        const auth = firebase.auth();
-
-        let usersData = [];
-        let currentFilter = 'all';
-
-        function initRealtimeMonitor() {
-            db.collection("customers").onSnapshot((snapshot) => {
-                const now = Date.now();
-                usersData = [];
-
-                let onlineCount = 0;
-                let loggedInCount = 0;
-                let offlineCount = 0;
-                let totalCount = snapshot.size;
-
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const uid = doc.id;
-
-                    const name = data.name || "User " + uid.substring(0, 4);
-                    const mobile = data.mobile || uid;
-                    const location = data.location || "N/A";
-                    const balance = data.balance !== undefined ? data.balance : 0;
-
-                    // Timestamp parsing
-                    let lastActiveMs = 0;
-                    if (data.lastSeenAt) {
-                        lastActiveMs = data.lastSeenAt.toMillis ? data.lastSeenAt.toMillis() : new Date(data.lastSeenAt).getTime();
-                    } else if (data.lastLoginAt) {
-                        lastActiveMs = data.lastLoginAt.toMillis ? data.lastLoginAt.toMillis() : new Date(data.lastLoginAt).getTime();
-                    }
-
-                    // Strict Active Site Presence Logic:
-                    // User is ACTIVE ONLINE only if isOnline is true AND pinged within 45 seconds
-                    const isOnlineFlag = data.isOnline === true;
-                    const isCurrentlyActiveOnSite = isOnlineFlag && ((now - lastActiveMs) <= 45000);
-
-                    let computedStatus = "offline";
-
-                    if (isCurrentlyActiveOnSite) {
-                        computedStatus = "online";
-                        onlineCount++;
-                    } else if (isOnlineFlag) {
-                        computedStatus = "loggedin";
-                        loggedInCount++;
-                    } else {
-                        computedStatus = "offline";
-                        offlineCount++;
-                    }
-
-                    usersData.push({
-                        id: uid,
-                        name: name,
-                        mobile: mobile,
-                        status: computedStatus,
-                        location: location,
-                        balance: balance,
-                        lastActiveMs: lastActiveMs
-                    });
-                });
-
-                // Update Overview Counters
-                document.getElementById("countOnline").innerText = onlineCount;
-                document.getElementById("countLoggedIn").innerText = loggedInCount;
-                document.getElementById("countOffline").innerText = offlineCount;
-                document.getElementById("countTotal").innerText = totalCount;
-
-                // Sync Time Update
-                document.getElementById("syncTime").innerText = new Date().toLocaleTimeString();
-
-                renderTable();
-            }, (error) => {
-                console.error("Firestore Error:", error);
-            });
-        }
-
-        function renderTable() {
-            const tbody = document.getElementById("usersTableBody");
-            tbody.innerHTML = "";
-
-            let filtered = usersData.filter(user => {
-                if (currentFilter !== 'all' && user.status !== currentFilter) {
-                    return false;
-                }
-                return true;
-            });
-
-            if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No users found for this status.</td></tr>`;
-                return;
+        // System Initialization
+        function initDashboard() {
+            // LocalStorage handling for session persistence
+            if (!localStorage.getItem('currentUser')) {
+                // Default login state set
+                localStorage.setItem('currentUser', JSON.stringify(usersDatabase[0]));
             }
 
-            // Most recently active users on top
-            filtered.sort((a, b) => b.lastActiveMs - a.lastActiveMs);
+            renderDashboard();
+        }
 
-            filtered.forEach(user => {
-                const tr = document.createElement("tr");
-                tr.className = "hover:bg-slate-800/30 transition";
+        function renderDashboard() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-                let statusBadge = "";
-                if (user.status === "online") {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Active Online</span>`;
-                } else if (user.status === "loggedin") {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Logged In</span>`;
+            // Sync database status with active local user
+            let activeOnlineCount = 0;
+            let offlineCount = 0;
+            let loggedInCount = 0;
+            let totalRegistered = usersDatabase.length;
+
+            const tableBody = document.getElementById('activeUsersTable');
+            tableBody.innerHTML = '';
+
+            usersDatabase.forEach(user => {
+                // Update local storage user state in main data
+                if (user.id === currentUser.id) {
+                    user.page = currentUser.page;
+                    user.isActive = currentUser.isActive;
+                    user.isLoggedIn = currentUser.isLoggedIn;
+                }
+
+                // Counters Calculation
+                if (user.isLoggedIn) loggedInCount++;
+                if (user.isActive && user.isLoggedIn) {
+                    activeOnlineCount++;
+                    
+                    // Render ONLY active users in the table
+                    const row = `
+                        <tr>
+                            <td>#${user.id}</td>
+                            <td><strong>${user.name}</strong></td>
+                            <td>${user.page}</td>
+                            <td><span class="status-badge status-active">Active</span></td>
+                        </tr>
+                    `;
+                    tableBody.innerHTML += row;
                 } else {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>Offline</span>`;
+                    offlineCount++;
                 }
-
-                let formattedTime = "N/A";
-                if (user.lastActiveMs > 0) {
-                    formattedTime = new Date(user.lastActiveMs).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                }
-
-                tr.innerHTML = `
-                    <td class="p-4 font-semibold text-slate-100">${user.name}</td>
-                    <td class="p-4 font-mono text-slate-300">${user.mobile}</td>
-                    <td class="p-4">${statusBadge}</td>
-                    <td class="p-4 text-slate-400">${user.location}</td>
-                    <td class="p-4 font-bold text-slate-100">₹${user.balance}</td>
-                    <td class="p-4 text-slate-400 font-mono text-xs">${formattedTime}</td>
-                `;
-
-                tbody.appendChild(tr);
             });
+
+            // Update Top 4 Boxes
+            document.getElementById('activeCount').innerText = activeOnlineCount;
+            document.getElementById('offlineCount').innerText = offlineCount;
+            document.getElementById('loggedInCount').innerText = loggedInCount;
+            document.getElementById('totalCount').innerText = totalRegistered;
         }
 
-        function setFilter(filterType) {
-            currentFilter = filterType;
-            ['all', 'online', 'loggedin', 'offline'].forEach(b => {
-                document.getElementById(`btn-${b}`).className = (b === filterType) 
-                    ? "px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition"
-                    : "px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
-            });
-            renderTable();
+        // Simulate Navigation (Back Le Lene Par Ya Doosre Page Par Jane Par)
+        function simulatePageChange(newPage) {
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            currentUser.page = newPage;
+            currentUser.isActive = true; // Page changes keep user ACTIVE
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            renderDashboard();
         }
 
-        function handleLogout() {
-            auth.signOut().then(() => {
-                window.location.href = "login.html";
-            });
+        // Simulate Logout/Inactive State
+        function toggleCurrentUserStatus() {
+            let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            currentUser.isActive = !currentUser.isActive;
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            
+            renderDashboard();
         }
 
-        window.addEventListener("DOMContentLoaded", () => {
-            initRealtimeMonitor();
-        });
+        // Run application
+        initDashboard();
     </script>
 </body>
 </html>
