@@ -95,8 +95,44 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* MAIN CONTAINER */
-.container{position:fixed;top:66px;left:0;right:0;bottom:74px;width:100%;max-width:650px;margin:0 auto;padding:14px 14px 10px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;}
+/* PULL TO REFRESH LOADER */
+.pull-refresh-indicator {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0284c7;
+    font-size: 18px;
+    transition: height 0.2s ease;
+}
+.pull-refresh-indicator.refreshing i {
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* MAIN CONTAINER WITH PROPER SPACING */
+.container{
+    position:fixed;
+    top:66px;
+    left:0;
+    right:0;
+    bottom:calc(74px + env(safe-area-inset-bottom, 0px));
+    width:100%;
+    max-width:650px;
+    margin:0 auto;
+    padding:14px 14px 20px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling: touch;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
 .wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
@@ -143,8 +179,17 @@ button{font:inherit;}
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:rgba(255,255,255,0.96);backdrop-filter:blur(12px);border-top:1.5px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);}
+/* BOTTOM NAV FIXED WITH SAFE AREA */
+.bottom-nav{
+    position:fixed;bottom:0;left:0;width:100%;
+    height:calc(74px + env(safe-area-inset-bottom, 0px));
+    padding-bottom:env(safe-area-inset-bottom, 0px);
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(12px);
+    border-top:1.5px solid #e2e8f0;
+    display:flex;justify-content:space-around;align-items:center;
+    z-index:200;box-shadow:0 -5px 25px rgba(2,132,199,0.06);
+}
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
@@ -201,7 +246,12 @@ button{font:inherit;}
     </div>
 </div>
 
-<main class="container">
+<main class="container" id="mainContainer">
+    <!-- Pull To Refresh Loader Indicator -->
+    <div class="pull-refresh-indicator" id="pullRefreshIndicator">
+        <i class="fa-solid fa-arrows-rotate"></i>
+    </div>
+
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
@@ -361,6 +411,48 @@ async function loadFirebaseCustomer(){
 }
 
 window.addEventListener("load", loadFirebaseCustomer);
+
+/* PULL-TO-REFRESH LOGIC */
+const container = document.getElementById("mainContainer");
+const pullIndicator = document.getElementById("pullRefreshIndicator");
+let startY = 0;
+let currentY = 0;
+let isPulling = false;
+
+container.addEventListener("touchstart", (e) => {
+    if (container.scrollTop === 0) {
+        startY = e.touches[0].pageY;
+        isPulling = true;
+    }
+}, { passive: true });
+
+container.addEventListener("touchmove", (e) => {
+    if (!isPulling) return;
+    currentY = e.touches[0].pageY;
+    let distance = currentY - startY;
+
+    if (distance > 0 && container.scrollTop === 0) {
+        let pullHeight = Math.min(distance * 0.4, 50);
+        pullIndicator.style.height = pullHeight + "px";
+    }
+}, { passive: true });
+
+container.addEventListener("touchend", () => {
+    if (!isPulling) return;
+    let distance = currentY - startY;
+    if (distance > 80 && container.scrollTop === 0) {
+        pullIndicator.style.height = "45px";
+        pullIndicator.classList.add("refreshing");
+        loadFirebaseCustomer();
+        setTimeout(() => {
+            pullIndicator.style.height = "0px";
+            pullIndicator.classList.remove("refreshing");
+        }, 1000);
+    } else {
+        pullIndicator.style.height = "0px";
+    }
+    isPulling = false;
+});
 
 function openMenu(){ 
     document.getElementById("menuPanel").classList.add("open"); 
