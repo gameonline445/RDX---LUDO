@@ -40,12 +40,11 @@ try {
     -webkit-tap-highlight-color:transparent;
 }
 
-/* PAGE NOT FIXED - ALLOW NORMAL SCROLLING & MOVEMENT */
 html, body {
     width: 100%;
     min-height: 100vh;
     overflow-x: hidden;
-    overflow-y: auto; /* Allow full movement */
+    overflow-y: auto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: #101a38;
     background:
@@ -63,7 +62,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transition: transform 0.1s ease;
 }
 
-/* HEADER */
+/* TOP HEADER */
 .top-header{
     width: 100%;
     height: 66px;
@@ -103,13 +102,13 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
 .redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* MAIN CONTAINER WITH MOVEMENT */
+/* MAIN CONTAINER */
 .container{
     flex: 1;
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
-    padding: 14px 14px 90px; /* Space for bottom navigation */
+    padding: 14px 14px 90px;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -211,14 +210,14 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="goHome()">
+        <div class="logo" onclick="navigateTo('dashboard.html')">
             <img src="logo.png" alt="RDX Logo">
         </div>
     </div>
     <div class="header-right">
-        <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
+        <button class="header-icon notification" onclick="navigateTo('notification.html')"><i class="fa-solid fa-bell"></i></button>
+        <button class="header-icon wallet-top" onclick="navigateTo('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
+        <button class="header-icon redeem-top" onclick="navigateTo('referral.html')"><i class="fa-solid fa-gift"></i></button>
     </div>
 </header>
 
@@ -227,7 +226,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <div class="menu-panel" id="menuPanel">
     <div class="menu-title">
         <div class="menu-brand">
-            <div class="menu-logo" onclick="goHome()">
+            <div class="menu-logo" onclick="navigateTo('dashboard.html')">
                 <img src="logo.png" alt="RDX Logo">
             </div>
             <div class="menu-user">
@@ -238,13 +237,13 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
         <button class="close-menu" onclick="closeMenu()">×</button>
     </div>
     <div class="menu-list">
-        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('dashboard.html')"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('profile.html')"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('wallet.html')"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('referral.html')"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('history.html')"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('notification.html')"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
+        <button class="menu-item" onclick="navigateTo('support.html')"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
     </div>
 </div>
 
@@ -252,13 +251,13 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
-            <button class="history-btn" onclick="goHistory()"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
+            <button class="history-btn" onclick="navigateTo('history.html')"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
         </div>
         <div class="balance-label">Total Balance</div>
         <div class="balance">₹<span id="mainBalance">0</span></div>
         <div class="wallet-actions">
-            <button class="action-btn add-btn" onclick="goDeposit()">＋ Add Cash</button>
-            <button class="action-btn withdraw-btn" onclick="goWithdraw()"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
+            <button class="action-btn add-btn" onclick="navigateTo('deposit.html')">＋ Add Cash</button>
+            <button class="action-btn withdraw-btn" onclick="navigateTo('withdraw.html')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
         </div>
     </section>
 
@@ -284,17 +283,24 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 </main>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="navigateTo('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
+    <button class="nav-item active" onclick="navigateTo('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
+    <button class="nav-item" onclick="navigateTo('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
+    <button class="nav-item" onclick="navigateTo('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
 <script>
 let unsubscribeWalletListener = null;
 let previousDataHash = "";
 
-// FIREBASE LISTENER - AUTOMATIC FULL PAGE RELOAD
+// SAFE NAVIGATION FUNCTION (Chrome me page crash nahi hone dega)
+function navigateTo(page) {
+    closeMenu();
+    if(window.location.pathname.endsWith(page)) return;
+    window.location.assign(page);
+}
+
+// FIREBASE REALTIME LISTENER WITH SAFE CHROME RELOAD
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -329,14 +335,14 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REALTIME LISTENER - FULL BROWSER RELOAD ON CHANGE
+        // REALTIME LISTENER
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
                 const currentDataHash = JSON.stringify(data);
 
                 if (previousDataHash === "") {
-                    // First time page render
+                    // First time load
                     previousDataHash = currentDataHash;
                     
                     const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
@@ -351,8 +357,10 @@ async function loadFirebaseCustomer(){
                         document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
                     }
                 } else if (previousDataHash !== currentDataHash) {
-                    // DATA CHANGED -> HARD RELOAD FULL URL/PAGE
-                    window.location.reload(true);
+                    // DATA CHANGED -> SAFE RELOAD WITH TIMEOUT TO PREVENT BLANK SCREEN IN CHROME
+                    setTimeout(() => {
+                        window.location.href = window.location.href;
+                    }, 300);
                 }
             }
         });
@@ -364,7 +372,7 @@ async function loadFirebaseCustomer(){
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-// NAVIGATION CONTROLS
+// SIDE DRAWER CONTROLS
 function openMenu(){ 
     document.getElementById("menuPanel").classList.add("open"); 
     document.getElementById("menuOverlay").classList.add("show");
@@ -373,16 +381,6 @@ function closeMenu(){
     document.getElementById("menuPanel").classList.remove("open"); 
     document.getElementById("menuOverlay").classList.remove("show");
 }
-
-function goHome(){ window.location.href = "./dashboard.html"; }
-function goWallet(){ window.location.href = "./wallet.html"; }
-function goDeposit(){ window.location.href = "./deposit.html"; }
-function goWithdraw(){ window.location.href = "./withdraw.html"; }
-function goProfile(){ window.location.href = "./profile.html"; }
-function goSupport(){ window.location.href = "./support.html"; }
-function goRedeem(){ window.location.href = "./referral.html"; }
-function goHistory(){ window.location.href = "./history.html"; }
-function goNotifications(){ window.location.href = "./notification.html"; }
 </script>
 </body>
 </html>
