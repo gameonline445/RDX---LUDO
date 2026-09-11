@@ -40,11 +40,11 @@ try {
     -webkit-tap-highlight-color:transparent;
 }
 
+/* 1. Body ko fixed height do taaki window scroll na ho */
 html, body {
     width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: 100vh;
+    overflow: hidden; /* Main window scroll band */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: #101a38;
     background:
@@ -62,10 +62,11 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transition: transform 0.1s ease;
 }
 
-/* TOP HEADER */
+/* 2. TOP HEADER - Fixed at top */
 .top-header{
     width: 100%;
     height: 66px;
+    flex-shrink: 0; /* Header chhota na ho */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -73,7 +74,9 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     background: linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom: 1.5px solid #bae6fd;
     box-shadow: 0 4px 18px rgba(2,132,199,0.08);
+    z-index: 100;
 }
+
 .header-left{display:flex;align-items:center;gap:10px;}
 .menu-btn{
     width:42px;height:42px;border:0;border-radius:14px;
@@ -102,7 +105,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
 .redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* MAIN CONTAINER */
+/* 3. MAIN CONTAINER - Isko scrollable banaya gaya hai */
 .container{
     flex: 1;
     width: 100%;
@@ -112,6 +115,17 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    overflow-y: auto; /* Ab sirf yeh content scroll hoga */
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Dynamic Smooth Scrollbar (Optional) */
+.container::-webkit-scrollbar {
+    width: 4px;
+}
+.container::-webkit-scrollbar-thumb {
+    background: rgba(2, 132, 199, 0.2);
+    border-radius: 4px;
 }
 
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
@@ -203,7 +217,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 .nav-item.active{color:#101a38;font-weight:800;}
 </style>
-</head>
+
 
 <body>
 
