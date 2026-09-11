@@ -8,13 +8,12 @@
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE SDKs (AUTH INCLUDED) -->
+<!-- FIREBASE SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-/* Page is strictly hidden by default until authentication check passes */
 body {
     display: none;
     background:#0b1329;
@@ -147,9 +146,6 @@ body {
 }
 .nav-link.active{
     background:#e0f2fe;
-    color:#0284c7;
-}
-.nav-link.active i{
     color:#0284c7;
 }
 
@@ -287,9 +283,10 @@ body {
     <!-- STATS CARDS GRID -->
     <div class="stats-grid">
         
+        <!-- ✅ ACTIVE ONLINE USERS CARD -->
         <div class="stat-card">
-            <small>ACTIVE LIVE USERS</small>
-            <div class="val val-green" id="activeLiveUsers">0 Live</div>
+            <small>ACTIVE ONLINE USERS</small>
+            <div class="val val-green" id="activeLiveUsers">0 Online</div>
         </div>
 
         <div class="stat-card">
@@ -372,7 +369,7 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
-// 🔒 STRICT SECURITY AUTHENTICATION GUARD
+// STRICT SECURITY AUTHENTICATION GUARD
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
         window.location.href = "admin-login.html";
@@ -411,7 +408,7 @@ function syncDashboardData() {
 
     // 1. SYNC CUSTOMERS / USERS
     const handleUsersSnapshot = (snapshot) => {
-        let liveCount = 0;
+        let onlineCount = 0;
         let totalBal = 0;
         let approvedKycCount = 0;
         let pendingKycCount = 0;
@@ -420,20 +417,18 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             
-            // 🔥 FIXED: Flexible & Smart Active/Online Check (Handles ping timeout or plain boolean)
+            // Check active ping within 45 seconds or active status flag
             let lastPingMs = parseTimestamp(data.lastPing) || parseTimestamp(data.lastSeenAt) || parseTimestamp(data.updatedAt) || parseTimestamp(data.lastActive);
-            const isPingActive = lastPingMs > 0 && (now - lastPingMs) < 300000; // 5-min threshold
-            const isOnlineFlag = data.isOnline === true || String(data.status).toLowerCase() === 'online' || String(data.userStatus).toLowerCase() === 'online';
+            const isPingActive = lastPingMs > 0 && (now - lastPingMs) <= 45000; // 45-sec active window
+            const isOnlineFlag = data.isOnline === true || String(data.status).toLowerCase() === 'online';
 
-            if (isOnlineFlag || isPingActive) {
-                liveCount++;
+            if (isOnlineFlag && isPingActive) {
+                onlineCount++;
             }
 
-            // Universal Balance calculation fallback
-            const bal = Number(data.balance !== undefined ? data.balance : (Number(data.deposit || data.depositBalance || 0) + Number(data.winnings || data.winningBalance || 0)));
+            const bal = Number(data.balance !== undefined ? data.balance : (Number(data.deposit || 0) + Number(data.winnings || 0)));
             totalBal += bal;
 
-            // Universal KYC Status fallback
             const kycStatus = String(data.kycStatus || data.kyc || '').toLowerCase();
             if (kycStatus === 'approved' || kycStatus === 'verified' || data.isKycVerified === true) {
                 approvedKycCount++;
@@ -442,7 +437,8 @@ function syncDashboardData() {
             }
         });
 
-        document.getElementById("activeLiveUsers").textContent = liveCount + " Live";
+        // ✅ Updated Display Text to "Online"
+        document.getElementById("activeLiveUsers").textContent = onlineCount + " Online";
         document.getElementById("totalCustomers").textContent = snapshot.size;
         document.getElementById("totalBalance").textContent = "₹" + totalBal;
         document.getElementById("approvedKYC").textContent = approvedKycCount;
@@ -451,7 +447,6 @@ function syncDashboardData() {
         updateSyncTime();
     };
 
-    // Listen to customers and fallback to users if customers is empty
     firebaseDB.collection("customers").onSnapshot((snapshot) => {
         if (!snapshot.empty) {
             handleUsersSnapshot(snapshot);
@@ -464,8 +459,7 @@ function syncDashboardData() {
     const handleBattlesSnapshot = (snapshot) => {
         let liveBattleCount = 0;
         snapshot.forEach((doc) => {
-            const status = String(doc.data().status || doc.data().battleStatus || doc.data().matchStatus || '').toLowerCase();
-            // 🔥 FIXED: Added 'pending', 'created', 'waiting' to match statuses
+            const status = String(doc.data().status || doc.data().battleStatus || '').toLowerCase();
             if (['running', 'open', 'playing', 'requested', 'active', 'pending', 'created', 'waiting'].includes(status)) {
                 liveBattleCount++;
             }
@@ -491,15 +485,13 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             const status = String(data.status || '').toLowerCase();
-            const amount = Number(data.amount || data.depositAmount || 0);
-            const createdAtMs = parseTimestamp(data.createdAt) || parseTimestamp(data.date) || parseTimestamp(data.timestamp);
+            const amount = Number(data.amount || 0);
+            const createdAtMs = parseTimestamp(data.createdAt);
 
-            if (status === 'approved' || status === 'success' || status === 'paid' || status === 'completed') {
+            if (status === 'approved' || status === 'success' || status === 'completed') {
                 totalPaid += amount;
-                if (createdAtMs >= todayStartMs) {
-                    todayPaid += amount;
-                }
-            } else if (status === 'pending' || status === 'requested') {
+                if (createdAtMs >= todayStartMs) todayPaid += amount;
+            } else if (status === 'pending') {
                 pendingCount++;
             }
         });
@@ -519,15 +511,13 @@ function syncDashboardData() {
         snapshot.forEach((doc) => {
             const data = doc.data();
             const status = String(data.status || '').toLowerCase();
-            const amount = Number(data.amount || data.withdrawAmount || 0);
-            const createdAtMs = parseTimestamp(data.createdAt) || parseTimestamp(data.date) || parseTimestamp(data.timestamp);
+            const amount = Number(data.amount || 0);
+            const createdAtMs = parseTimestamp(data.createdAt);
 
-            if (status === 'approved' || status === 'success' || status === 'paid' || status === 'completed') {
+            if (status === 'approved' || status === 'success' || status === 'completed') {
                 totalPaid += amount;
-                if (createdAtMs >= todayStartMs) {
-                    todayPaid += amount;
-                }
-            } else if (status === 'pending' || status === 'requested') {
+                if (createdAtMs >= todayStartMs) todayPaid += amount;
+            } else if (status === 'pending') {
                 pendingCount++;
             }
         });
