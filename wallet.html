@@ -69,7 +69,13 @@ html, body {
 
 button{font:inherit;}
 
-/* TOP HEADER - FIXED AT TOP */
+/* BUTTON PRESS EFFECT (Scales Down) */
+button:active, .action-btn:active, .menu-item:active, .nav-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+/* TOP HEADER - STICKY AT TOP */
 .top-header{
     width: 100%;
     height: 66px;
@@ -90,7 +96,6 @@ button{font:inherit;}
     color:white;font-size:20px;display:flex;align-items:center;justify-content:center;
     cursor:pointer;box-shadow:0 4px 12px rgba(255,113,101,0.25);
 }
-.menu-btn:active{transform:scale(0.95);}
 
 .logo{
     width:46px;height:46px;border-radius:50%;overflow:hidden;
@@ -109,7 +114,6 @@ button{font:inherit;}
     font-size:16px;color:white;cursor:pointer;padding:0;
     transition:transform 0.15s ease;
 }
-.header-icon:active{transform:scale(0.92);}
 
 .notification{
     background:linear-gradient(145deg,#6366f1,#818cf8);
@@ -124,7 +128,7 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* MAIN CONTAINER - ONLY INTERNAL SCROLLING */
+/* MAIN CONTAINER - PAGE CONTENT SCROLLS HERE */
 .container{
     flex: 1;
     width: 100%;
@@ -162,7 +166,7 @@ button{font:inherit;}
 .info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
 .info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
 
-/* SMOOTH SLIDING SIDE DRAWER */
+/* SMOOTH SLIDING SIDE DRAWER & OVERLAY FADE */
 .menu-overlay{
     position: fixed;
     inset: 0;
@@ -233,7 +237,6 @@ button{font:inherit;}
 }
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
 .icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
 .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
 .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
@@ -330,6 +333,12 @@ button{font:inherit;}
 </nav>
 
 <script>
+// BACK BUTTON HARDWARE KEY -> DASHBOARD
+window.addEventListener('popstate', function(event) {
+    window.location.replace("./dashboard.html");
+});
+history.pushState({ page: 1 }, "", "");
+
 // DISABLE PULL-TO-REFRESH & PINCH ZOOM
 let touchStartY = 0;
 
@@ -362,6 +371,7 @@ document.addEventListener('gesturestart', function(e) {
 let unsubscribeWalletListener = null;
 let unsubscribeDepositsListener = null;
 
+// FIREBASE REALTIME DATA SYNC VIA onSnapshot()
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -418,7 +428,7 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REAL-TIME USER BALANCE LISTENER
+        // LIVE REALTIME LISTENER (BINA PAGE RELOAD DATA UPDATE)
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
@@ -438,10 +448,10 @@ async function loadFirebaseCustomer(){
                 }
             }
         }, (error) => {
-            console.error("Wallet Sync Error:", error);
+            console.error("Wallet Realtime Sync Error:", error);
         });
 
-        // AUTO-SYNC DEPOSITS TO USER WALLET
+        // DEPOSITS REALTIME LISTENER
         if(unsubscribeDepositsListener) unsubscribeDepositsListener();
 
         unsubscribeDepositsListener = firebaseDB.collection("deposits")
@@ -485,6 +495,7 @@ function closeMenu(){
     document.getElementById("menuOverlay").classList.remove("show");
 }
 
+// NAVIGATION FUNCTIONS
 function goHome(){ closeMenu(); window.location.replace("./dashboard.html"); }
 function goWallet(){ closeMenu(); window.location.replace("./wallet.html"); }
 function goDeposit(){ closeMenu(); window.location.replace("./deposit.html"); }
