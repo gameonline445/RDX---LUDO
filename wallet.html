@@ -46,7 +46,7 @@ html,body{
 }
 button{font:inherit;}
 
-/* TOP HEADER */
+/* TOP HEADER - FIXED */
 .top-header{
     position:fixed;top:0;left:0;right:0;width:100%;height:66px;z-index:1000;
     display:flex;align-items:center;justify-content:space-between;padding:0 14px;
@@ -95,27 +95,27 @@ button{font:inherit;}
     box-shadow:0 3px 10px rgba(234,88,12,0.3);
 }
 
-/* PULL TO REFRESH LOADER */
+/* PULL TO REFRESH UI INDICATOR */
 .pull-refresh-indicator {
     width: 100%;
-    height: 0;
+    height: 0px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     color: #0284c7;
-    font-size: 18px;
-    transition: height 0.2s ease;
+    font-size: 20px;
+    transition: height 0.2s cubic-bezier(0.1, 0.8, 0.3, 1);
 }
 .pull-refresh-indicator.refreshing i {
-    animation: spin 0.8s linear infinite;
+    animation: spinRefresh 0.7s linear infinite;
 }
-@keyframes spin {
+@keyframes spinRefresh {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* MAIN CONTAINER WITH PROPER SPACING */
+/* SCROLLABLE MAIN CONTENT CONTAINER INSIDE NAVS */
 .container{
     position:fixed;
     top:66px;
@@ -125,9 +125,10 @@ button{font:inherit;}
     width:100%;
     max-width:650px;
     margin:0 auto;
-    padding:14px 14px 20px;
+    padding:10px 14px 20px;
     overflow-y:auto;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
     display:flex;
     flex-direction:column;
     gap:12px;
@@ -179,7 +180,7 @@ button{font:inherit;}
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAV FIXED WITH SAFE AREA */
+/* BOTTOM NAV - FIXED */
 .bottom-nav{
     position:fixed;bottom:0;left:0;width:100%;
     height:calc(74px + env(safe-area-inset-bottom, 0px));
@@ -246,8 +247,9 @@ button{font:inherit;}
     </div>
 </div>
 
+<!-- MAIN CONTENT CONTAINER -->
 <main class="container" id="mainContainer">
-    <!-- Pull To Refresh Loader Indicator -->
+    <!-- Pull To Refresh Loader Header -->
     <div class="pull-refresh-indicator" id="pullRefreshIndicator">
         <i class="fa-solid fa-arrows-rotate"></i>
     </div>
@@ -286,6 +288,7 @@ button{font:inherit;}
     </div>
 </main>
 
+<!-- BOTTOM NAVIGATION -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="goHome()"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item active" onclick="goWallet()"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -412,7 +415,7 @@ async function loadFirebaseCustomer(){
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-/* PULL-TO-REFRESH LOGIC */
+/* PULL TO REFRESH SYSTEM LOGIC */
 const container = document.getElementById("mainContainer");
 const pullIndicator = document.getElementById("pullRefreshIndicator");
 let startY = 0;
@@ -420,7 +423,7 @@ let currentY = 0;
 let isPulling = false;
 
 container.addEventListener("touchstart", (e) => {
-    if (container.scrollTop === 0) {
+    if (container.scrollTop <= 0) {
         startY = e.touches[0].pageY;
         isPulling = true;
     }
@@ -431,8 +434,8 @@ container.addEventListener("touchmove", (e) => {
     currentY = e.touches[0].pageY;
     let distance = currentY - startY;
 
-    if (distance > 0 && container.scrollTop === 0) {
-        let pullHeight = Math.min(distance * 0.4, 50);
+    if (distance > 0 && container.scrollTop <= 0) {
+        let pullHeight = Math.min(distance * 0.4, 55);
         pullIndicator.style.height = pullHeight + "px";
     }
 }, { passive: true });
@@ -440,14 +443,17 @@ container.addEventListener("touchmove", (e) => {
 container.addEventListener("touchend", () => {
     if (!isPulling) return;
     let distance = currentY - startY;
-    if (distance > 80 && container.scrollTop === 0) {
+    if (distance > 80 && container.scrollTop <= 0) {
         pullIndicator.style.height = "45px";
         pullIndicator.classList.add("refreshing");
-        loadFirebaseCustomer();
-        setTimeout(() => {
-            pullIndicator.style.height = "0px";
-            pullIndicator.classList.remove("refreshing");
-        }, 1000);
+        
+        // Refresh action
+        loadFirebaseCustomer().then(() => {
+            setTimeout(() => {
+                pullIndicator.style.height = "0px";
+                pullIndicator.classList.remove("refreshing");
+            }, 800);
+        });
     } else {
         pullIndicator.style.height = "0px";
     }
