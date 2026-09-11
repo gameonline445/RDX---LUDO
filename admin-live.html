@@ -92,22 +92,12 @@
 
     </div>
 
-    <!-- Controls Row (Filter Buttons & Search Box) -->
-    <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4 mb-6">
-        
-        <!-- Filter Tabs -->
-        <div class="flex flex-wrap gap-2" id="filterTabs">
-            <button onclick="setFilter('all')" id="btn-all" class="px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition">All Users</button>
-            <button onclick="setFilter('online')" id="btn-online" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Online Only</button>
-            <button onclick="setFilter('loggedin')" id="btn-loggedin" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Logged In Only</button>
-            <button onclick="setFilter('offline')" id="btn-offline" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Offline Only</button>
-        </div>
-
-        <!-- Search Input -->
-        <div class="w-full lg:w-80">
-            <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search Name, Phone, City..." class="w-full card-bg text-sm text-slate-100 placeholder-slate-500 px-4 py-2.5 rounded-xl focus:outline-none focus:border-blue-500 transition">
-        </div>
-
+    <!-- Filter Tabs Only (Search Bar Removed) -->
+    <div class="flex flex-wrap gap-2 mb-6" id="filterTabs">
+        <button onclick="setFilter('all')" id="btn-all" class="px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition">All Users</button>
+        <button onclick="setFilter('online')" id="btn-online" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Online Only</button>
+        <button onclick="setFilter('loggedin')" id="btn-loggedin" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Logged In Only</button>
+        <button onclick="setFilter('offline')" id="btn-offline" class="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition">Offline Only</button>
     </div>
 
     <!-- Live Users Table Section -->
@@ -135,7 +125,6 @@
 
     <!-- Firebase Logic & Realtime Monitoring Script -->
     <script>
-        // Real Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
             authDomain: "rdx-ludo.firebaseapp.com",
@@ -152,12 +141,9 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
-        // Global State Array for Users
         let usersData = [];
         let currentFilter = 'all';
-        let searchQuery = '';
 
-        // Realtime Listener Setup
         function initRealtimeMonitor() {
             db.collection("customers").onSnapshot((snapshot) => {
                 const now = Date.now();
@@ -177,7 +163,7 @@
                     const location = data.location || "N/A";
                     const balance = data.balance !== undefined ? data.balance : 0;
 
-                    // Timestamp calculation (lastSeenAt)
+                    // Timestamp parsing
                     let lastActiveMs = 0;
                     if (data.lastSeenAt) {
                         lastActiveMs = data.lastSeenAt.toMillis ? data.lastSeenAt.toMillis() : new Date(data.lastSeenAt).getTime();
@@ -185,16 +171,14 @@
                         lastActiveMs = data.lastLoginAt.toMillis ? data.lastLoginAt.toMillis() : new Date(data.lastLoginAt).getTime();
                     }
 
-                    // Status Logic:
-                    // 1. Online: isOnline is true AND active within last 2 minutes (120,000 ms)
-                    // 2. Logged In: isOnline is true OR active recently, but not in last 2 mins
-                    // 3. Offline: explicitly logged out or inactive
+                    // Strict Active Site Presence Logic:
+                    // User is ACTIVE ONLINE only if isOnline is true AND pinged within 45 seconds
                     const isOnlineFlag = data.isOnline === true;
-                    const isRecentlyActive = (now - lastActiveMs) <= 120000;
+                    const isCurrentlyActiveOnSite = isOnlineFlag && ((now - lastActiveMs) <= 45000);
 
                     let computedStatus = "offline";
 
-                    if (isOnlineFlag && isRecentlyActive) {
+                    if (isCurrentlyActiveOnSite) {
                         computedStatus = "online";
                         onlineCount++;
                     } else if (isOnlineFlag) {
@@ -222,17 +206,15 @@
                 document.getElementById("countOffline").innerText = offlineCount;
                 document.getElementById("countTotal").innerText = totalCount;
 
-                // Update Sync Time
+                // Sync Time Update
                 document.getElementById("syncTime").innerText = new Date().toLocaleTimeString();
 
-                // Render Table View
                 renderTable();
             }, (error) => {
                 console.error("Firestore Error:", error);
             });
         }
 
-        // Render Table Data
         function renderTable() {
             const tbody = document.getElementById("usersTableBody");
             tbody.innerHTML = "";
@@ -241,20 +223,15 @@
                 if (currentFilter !== 'all' && user.status !== currentFilter) {
                     return false;
                 }
-                if (searchQuery.trim() !== "") {
-                    const q = searchQuery.toLowerCase();
-                    return user.name.toLowerCase().includes(q) || 
-                           String(user.mobile).toLowerCase().includes(q) || 
-                           user.location.toLowerCase().includes(q);
-                }
                 return true;
             });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No active users matching criteria.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No users found for this status.</td></tr>`;
                 return;
             }
 
+            // Most recently active users on top
             filtered.sort((a, b) => b.lastActiveMs - a.lastActiveMs);
 
             filtered.forEach(user => {
@@ -263,7 +240,7 @@
 
                 let statusBadge = "";
                 if (user.status === "online") {
-                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Online</span>`;
+                    statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Active Online</span>`;
                 } else if (user.status === "loggedin") {
                     statusBadge = `<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>Logged In</span>`;
                 } else {
@@ -295,11 +272,6 @@
                     ? "px-4 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white transition"
                     : "px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 text-slate-300 hover:bg-slate-700 transition";
             });
-            renderTable();
-        }
-
-        function handleSearch() {
-            searchQuery = document.getElementById("searchInput").value;
             renderTable();
         }
 
