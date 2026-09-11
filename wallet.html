@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RDX LUDO - Wallet</title>
 
 <!-- FontAwesome & Firebase SDKs -->
@@ -38,20 +38,19 @@ try {
     margin:0;
     padding:0;
     -webkit-tap-highlight-color:transparent;
-    user-select:none;
-    -webkit-user-select:none;
 }
 
+/* PAGE NOT FIXED - ALLOW NORMAL SCROLLING & MOVEMENT */
 html, body {
     width: 100%;
-    height: 100%;
-    height: 100dvh;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto; /* Allow full movement */
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: #101a38;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
-        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
     display: flex;
     flex-direction: column;
@@ -59,18 +58,15 @@ html, body {
 
 button{font:inherit;}
 
-/* BUTTON PRESS EFFECT */
 button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transform: scale(0.95);
     transition: transform 0.1s ease;
 }
 
-/* TOP HEADER */
+/* HEADER */
 .top-header{
     width: 100%;
     height: 66px;
-    flex: 0 0 66px;
-    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -97,37 +93,23 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 .header-right{display:flex;align-items:center;gap:8px;}
 
-/* CIRCULAR HEADER ICONS */
 .header-icon{
     width:40px;height:40px;border:0;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
     font-size:16px;color:white;cursor:pointer;padding:0;
-    transition:transform 0.15s ease;
 }
 
-.notification{
-    background:linear-gradient(145deg,#6366f1,#818cf8);
-    box-shadow:0 3px 10px rgba(99,102,241,0.3);
-}
-.wallet-top{
-    background:linear-gradient(145deg,#22c55e,#16a34a);
-    box-shadow:0 3px 10px rgba(22,163,74,0.3);
-}
-.redeem-top{
-    background:linear-gradient(145deg,#ea580c,#f97316);
-    box-shadow:0 3px 10px rgba(234,88,12,0.3);
-}
+.notification{ background:linear-gradient(145deg,#6366f1,#818cf8); }
+.wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
+.redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* MAIN CONTAINER SCROLLABLE */
+/* MAIN CONTAINER WITH MOVEMENT */
 .container{
     flex: 1;
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
-    padding: 14px 14px 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
+    padding: 14px 14px 90px; /* Space for bottom navigation */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -154,40 +136,30 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
 .info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
 
-/* SIDE DRAWER PANEL */
+/* SIDE DRAWER */
 .menu-overlay{
     position: fixed;
     inset: 0;
     background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(2px);
     z-index: 2000;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    display: none;
 }
-.menu-overlay.show{
-    opacity: 1;
-    visibility: visible;
-}
+.menu-overlay.show{ display: block; }
 .menu-panel{
     position: fixed;
     top: 0;
     left: 0;
     width: 78%;
     max-width: 320px;
-    height: 100%;
-    height: 100dvh;
+    height: 100vh;
     background: #ffffff;
     z-index: 2100;
     padding: 20px 16px 80px;
     overflow-y: auto;
     transform: translateX(-100%);
-    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
-    box-shadow: 10px 0 35px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease;
 }
-.menu-panel.open{
-    transform: translateX(0);
-}
+.menu-panel.open{ transform: translateX(0); }
 
 .menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
 .menu-brand{display:flex;align-items:center;gap:10px;}
@@ -198,7 +170,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
 .menu-list{margin-top:16px;}
 .menu-item{width:100%;min-height:52px;border:0;background:transparent;padding:6px 0;border-radius:14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left;color:#334155;cursor:pointer;}
-.menu-item-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.menu-item-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;}
 .menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
 .menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 .menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
@@ -209,28 +181,28 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .menu-item-text{flex:1;font-size:15px;font-weight:750;}
 .menu-arrow{color:#94a3b8;font-size:20px;}
 
-/* BOTTOM NAVIGATION */
+/* BOTTOM NAV */
 .bottom-nav{
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    height: 74px;
-    flex: 0 0 74px;
+    height: 70px;
     background: rgba(255,255,255,0.96);
     backdrop-filter: blur(12px);
     border-top: 1.5px solid #e2e8f0;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    z-index: 200;
-    box-shadow: 0 -5px 25px rgba(2,132,199,0.06);
+    z-index: 1000;
 }
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;position:relative;}
-.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;box-shadow:0 4px 10px rgba(0,0,0,0.08);transition:transform 0.2s ease;}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);box-shadow:0 4px 14px rgba(99,102,241,0.35);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);box-shadow:0 4px 14px rgba(16,185,129,0.35);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);box-shadow:0 4px 14px rgba(6,182,212,0.35);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);box-shadow:0 4px 14px rgba(249,115,22,0.35);}
+.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:11px;font-weight:700;cursor:pointer;}
+.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 .nav-item.active{color:#101a38;font-weight:800;}
-.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#10b981;}
 </style>
 </head>
 
@@ -319,16 +291,10 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 </nav>
 
 <script>
-// HARDWARE BACK BUTTON -> DASHBOARD
-window.addEventListener('popstate', function(event) {
-    window.location.replace("./dashboard.html");
-});
-history.pushState({ page: 1 }, "", "");
-
 let unsubscribeWalletListener = null;
-let lastDataString = "";
+let previousDataHash = "";
 
-// FIREBASE REALTIME LISTENER FOR FULL HARD PAGE RELOAD
+// FIREBASE LISTENER - AUTOMATIC FULL PAGE RELOAD
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -361,22 +327,17 @@ async function loadFirebaseCustomer(){
             snapshot = await userRef.get();
         }
 
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("users").doc(docIdWith91);
-            snapshot = await userRef.get();
-        }
-
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // JAB BHI FIREBASE ME DATA BADLEGA, PURA PAGE FULL BROWSER REFRESH HOGA
+        // REALTIME LISTENER - FULL BROWSER RELOAD ON CHANGE
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc.exists) {
                 const data = doc.data();
-                const currentDataString = JSON.stringify(data);
+                const currentDataHash = JSON.stringify(data);
 
-                if (lastDataString === "") {
-                    // First Load
-                    lastDataString = currentDataString;
+                if (previousDataHash === "") {
+                    // First time page render
+                    previousDataHash = currentDataHash;
                     
                     const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                     const winnings = Number(data.winnings || data.winningBalance || 0);
@@ -389,13 +350,11 @@ async function loadFirebaseCustomer(){
                     if(document.getElementById("menuUsername")) {
                         document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
                     }
-                } else if (lastDataString !== currentDataString) {
-                    // Firebase me update hote hi pura browser URL hard reload hoga
-                    window.location.reload();
+                } else if (previousDataHash !== currentDataHash) {
+                    // DATA CHANGED -> HARD RELOAD FULL URL/PAGE
+                    window.location.reload(true);
                 }
             }
-        }, (error) => {
-            console.error("Firebase Listener Error:", error);
         });
 
     } catch(error) { 
@@ -405,7 +364,7 @@ async function loadFirebaseCustomer(){
 
 window.addEventListener("load", loadFirebaseCustomer);
 
-// SIDE DRAWER CONTROLS
+// NAVIGATION CONTROLS
 function openMenu(){ 
     document.getElementById("menuPanel").classList.add("open"); 
     document.getElementById("menuOverlay").classList.add("show");
@@ -415,16 +374,15 @@ function closeMenu(){
     document.getElementById("menuOverlay").classList.remove("show");
 }
 
-// NAVIGATION FUNCTIONS
-function goHome(){ closeMenu(); window.location.replace("./dashboard.html"); }
-function goWallet(){ closeMenu(); window.location.replace("./wallet.html"); }
-function goDeposit(){ closeMenu(); window.location.replace("./deposit.html"); }
-function goWithdraw(){ closeMenu(); window.location.replace("./withdraw.html"); }
-function goProfile(){ closeMenu(); window.location.replace("./profile.html"); }
-function goSupport(){ closeMenu(); window.location.replace("./support.html"); }
-function goRedeem(){ closeMenu(); window.location.replace("./referral.html"); }
-function goHistory(){ closeMenu(); window.location.replace("./history.html"); }
-function goNotifications(){ closeMenu(); window.location.replace("./notification.html"); }
+function goHome(){ window.location.href = "./dashboard.html"; }
+function goWallet(){ window.location.href = "./wallet.html"; }
+function goDeposit(){ window.location.href = "./deposit.html"; }
+function goWithdraw(){ window.location.href = "./withdraw.html"; }
+function goProfile(){ window.location.href = "./profile.html"; }
+function goSupport(){ window.location.href = "./support.html"; }
+function goRedeem(){ window.location.href = "./referral.html"; }
+function goHistory(){ window.location.href = "./history.html"; }
+function goNotifications(){ window.location.href = "./notification.html"; }
 </script>
 </body>
 </html>
