@@ -260,6 +260,7 @@ body {
     <div class="sidebar-menu">
         <a href="admin.html" class="nav-link active"><i class="fa-solid fa-compass"></i> Dashboard</a>
         <a href="admin-live.html" class="nav-link"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+        <a href="admin-all.html" class="nav-link"><i class="fa-solid fa-user-shield"></i> Admin Security</a>
         <a href="admin-battles.html" class="nav-link"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
         <a href="admin-kyc.html" class="nav-link"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
         <a href="admin-deposits.html" class="nav-link"><i class="fa-solid fa-wallet"></i> Deposits</a>
@@ -369,12 +370,31 @@ const firebaseConfig = {
 if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
+// ADMIN TRACKING FUNCTION
+async function trackCurrentAdmin(user) {
+    try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const data = await res.json();
+        
+        await firebaseDB.collection("admin_sessions").doc(user.uid).set({
+            admin_email: user.email || "Admin",
+            ip_address: data.ip || "Unknown",
+            device_info: navigator.userAgent,
+            is_online: true,
+            last_active: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+    } catch (e) {
+        console.error("Tracking Error:", e);
+    }
+}
+
 // STRICT SECURITY AUTHENTICATION GUARD
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
         window.location.href = "admin-login.html";
     } else {
         document.body.style.display = "block";
+        trackCurrentAdmin(user);
         syncDashboardData();
     }
 });
