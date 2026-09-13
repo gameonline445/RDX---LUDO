@@ -291,16 +291,15 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 <script>
 let unsubscribeWalletListener = null;
-let previousDataHash = "";
 
-// SAFE NAVIGATION FUNCTION (Chrome me page crash nahi hone dega)
+// SAFE NAVIGATION FUNCTION
 function navigateTo(page) {
     closeMenu();
     if(window.location.pathname.endsWith(page)) return;
     window.location.assign(page);
 }
 
-// FIREBASE REALTIME LISTENER WITH SAFE CHROME RELOAD
+// REALTIME LISTENER FOR DYNAMIC BALANCE UPDATE
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -318,16 +317,21 @@ async function loadFirebaseCustomer(){
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         const mobile10Digits = cleanMobile.slice(-10);
-        const docIdWith91 = "91" + mobile10Digits;
+        const docIdWith91 = "+91" + mobile10Digits;
+        const docIdWithPlain91 = "91" + mobile10Digits;
 
-        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
+        // Document Reference Check Priority
+        let userRef = firebaseDB.collection("customers").doc(docIdWithPlain91);
         let snapshot = await userRef.get();
 
+        if(!snapshot.exists) {
+            userRef = firebaseDB.collection("customers").doc(docIdWith91);
+            snapshot = await userRef.get();
+        }
         if(!snapshot.exists) {
             userRef = firebaseDB.collection("customers").doc(mobile10Digits);
             snapshot = await userRef.get();
         }
-
         if(!snapshot.exists) {
             userRef = firebaseDB.collection("users").doc(mobile10Digits);
             snapshot = await userRef.get();
@@ -335,34 +339,26 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // REALTIME LISTENER
+        // PURE REALTIME SNAPSHOT UPDATE
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
-            if (doc.exists) {
+            if (doc && doc.exists) {
                 const data = doc.data();
-                const currentDataHash = JSON.stringify(data);
+                
+                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                const winnings = Number(data.winnings || data.winningBalance || 0);
+                
+                // Live UI DOM updates
+                document.getElementById("mainBalance").textContent = deposit + winnings;
+                document.getElementById("depositBalance").textContent = deposit;
+                document.getElementById("winningBalance").textContent = winnings;
 
-                if (previousDataHash === "") {
-                    // First time load
-                    previousDataHash = currentDataHash;
-                    
-                    const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
-                    const winnings = Number(data.winnings || data.winningBalance || 0);
-                    
-                    document.getElementById("mainBalance").textContent = deposit + winnings;
-                    document.getElementById("depositBalance").textContent = deposit;
-                    document.getElementById("winningBalance").textContent = winnings;
-
-                    let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
-                    if(document.getElementById("menuUsername")) {
-                        document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
-                    }
-                } else if (previousDataHash !== currentDataHash) {
-                    // DATA CHANGED -> SAFE RELOAD WITH TIMEOUT TO PREVENT BLANK SCREEN IN CHROME
-                    setTimeout(() => {
-                        window.location.href = window.location.href;
-                    }, 300);
+                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
+                if(document.getElementById("menuUsername")) {
+                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
                 }
             }
+        }, (err) => {
+            console.error("Snapshot error:", err);
         });
 
     } catch(error) { 
