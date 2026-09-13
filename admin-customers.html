@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Customers List & Balance Manager</title>
+<title>RDX LUDO - Customers List & Advanced Balance Manager</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -206,6 +206,12 @@ body {
     font-weight: 900;
     color: #16a34a;
 }
+.balance-subtext {
+    font-size: 11px;
+    color: #64748b;
+    display: block;
+    margin-top: 2px;
+}
 
 /* EDIT BALANCE BUTTON */
 .btn-edit-balance {
@@ -239,10 +245,12 @@ body {
     background: #ffffff;
     border-radius: 18px;
     width: 100%;
-    max-width: 420px;
+    max-width: 480px;
     padding: 24px;
     color: #0f172a;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+    max-height: 90vh;
+    overflow-y: auto;
 }
 .modal-header {
     display: flex;
@@ -260,7 +268,13 @@ body {
     padding: 12px;
     margin-bottom: 16px;
     font-size: 13px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
 }
+.user-details-box div { word-break: break-all; }
+.full-width { grid-column: span 2; }
+
 .form-group { margin-bottom: 16px; }
 .form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #475569; }
 .form-input {
@@ -272,30 +286,40 @@ body {
     outline: none;
 }
 
+.section-label {
+    font-size: 12px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-top: 14px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+}
+
 .action-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
-.btn-add-money {
-    background: #16a34a;
-    color: #ffffff;
+.btn-action {
     border: none;
     padding: 10px;
     border-radius: 8px;
     font-weight: 800;
+    font-size: 12px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
-.btn-deduct-money {
-    background: #dc2626;
-    color: #ffffff;
-    border: none;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: 800;
-    cursor: pointer;
-}
+.btn-deposit-add { background: #16a34a; color: #ffffff; }
+.btn-deposit-deduct { background: #dc2626; color: #ffffff; }
+.btn-winnings-add { background: #0284c7; color: #ffffff; }
+.btn-winnings-deduct { background: #d97706; color: #ffffff; }
+.btn-transfer { background: #6366f1; color: #ffffff; grid-column: span 2; }
 </style>
 </head>
 
@@ -358,7 +382,7 @@ body {
                 <tr>
                     <th>Mobile Phone 📱</th>
                     <th>Name 👤</th>
-                    <th>Current Balance 💰</th>
+                    <th>Total Balance 💰</th>
                     <th>Action ✏️</th>
                 </tr>
             </thead>
@@ -375,23 +399,54 @@ body {
 <div class="modal-overlay" id="balanceModal">
     <div class="modal-card">
         <div class="modal-header">
-            <div class="modal-title"><i class="fa-solid fa-wallet"></i> Balance Editor</div>
+            <div class="modal-title"><i class="fa-solid fa-wallet"></i> Advanced Balance Manager</div>
             <button class="close-btn" onclick="closeBalanceModal()">&times;</button>
         </div>
+        
         <div class="user-details-box">
-            <div><strong>Mobile:</strong> <span id="modalUserMobile">--</span></div>
-            <div><strong>Current Balance:</strong> ₹<span id="modalUserBalance">0</span></div>
+            <div class="full-width"><strong>Mobile:</strong> <span id="modalUserMobile">--</span></div>
+            <div><strong>Deposit:</strong> ₹<span id="modalUserDeposit">0</span></div>
+            <div><strong>Winnings:</strong> ₹<span id="modalUserWinnings">0</span></div>
+            <div class="full-width" style="color:#16a34a; font-weight:800;">
+                <strong>Total Balance:</strong> ₹<span id="modalUserTotal">0</span>
+            </div>
         </div>
+
         <div class="form-group">
             <label class="form-label">Enter Amount (₹):</label>
             <input type="number" id="editAmountInput" class="form-input" placeholder="e.g. 500" min="1">
         </div>
+
+        <!-- DEPOSIT BALANCE ACTIONS -->
+        <div class="section-label">💳 Deposit Wallet Options</div>
         <div class="action-buttons">
-            <button class="btn-add-money" onclick="updateCustomerBalance('add')">
-                <i class="fa-solid fa-plus"></i> Add Money
+            <button class="btn-action btn-deposit-add" onclick="updateWallet('deposit', 'add')">
+                <i class="fa-solid fa-plus"></i> Add Deposit
             </button>
-            <button class="btn-deduct-money" onclick="updateCustomerBalance('deduct')">
-                <i class="fa-solid fa-minus"></i> Deduct Money
+            <button class="btn-action btn-deposit-deduct" onclick="updateWallet('deposit', 'deduct')">
+                <i class="fa-solid fa-minus"></i> Deduct Deposit
+            </button>
+        </div>
+
+        <!-- WINNINGS BALANCE ACTIONS -->
+        <div class="section-label">🏆 Winnings Wallet Options</div>
+        <div class="action-buttons">
+            <button class="btn-action btn-winnings-add" onclick="updateWallet('winnings', 'add')">
+                <i class="fa-solid fa-plus"></i> Add Winnings
+            </button>
+            <button class="btn-action btn-winnings-deduct" onclick="updateWallet('winnings', 'deduct')">
+                <i class="fa-solid fa-minus"></i> Deduct Winnings
+            </button>
+        </div>
+
+        <!-- TRANSFER OPTIONS -->
+        <div class="section-label">🔄 Inter-Wallet Transfer</div>
+        <div class="action-buttons">
+            <button class="btn-action btn-transfer" onclick="transferBetweenWallets('depToWin')">
+                <i class="fa-solid fa-arrow-right-long"></i> Move Deposit ➔ Winnings
+            </button>
+            <button class="btn-action btn-transfer" onclick="transferBetweenWallets('winToDep')">
+                <i class="fa-solid fa-arrow-left-long"></i> Move Winnings ➔ Deposit
             </button>
         </div>
     </div>
@@ -412,7 +467,7 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 
 let allUsersData = [];
-let selectedUserId = null;
+let selectedUser = null;
 
 // 2. AUTHENTICATION GUARD
 auth.onAuthStateChanged((user) => {
@@ -424,42 +479,37 @@ auth.onAuthStateChanged((user) => {
     }
 });
 
-// 3. FETCH CUSTOMERS SORTED BY HIGHEST BALANCE DESCENDING
+// 3. FETCH CUSTOMERS SORTED BY HIGHEST TOTAL BALANCE DESCENDING
 function fetchCustomersSortedByBalance() {
-    // Collection updated from "users" to "customers"
-    db.collection("customers").orderBy("balance", "desc").onSnapshot((snapshot) => {
+    db.collection("customers").onSnapshot((snapshot) => {
         allUsersData = [];
         snapshot.forEach((doc) => {
             const data = doc.data();
+            const dep = Number(data.depositBalance || 0);
+            const win = Number(data.winnings || 0);
+            const bal = Number(data.balance || 0);
+            
+            // Total Balance sum calculation
+            const totalBalance = dep + win + bal;
+
             allUsersData.push({
                 id: doc.id,
                 mobile: data.mobile || data.phone || data.phoneNumber || "No Mobile",
                 name: data.name || data.userName || "User",
-                balance: Number(data.balance || 0)
+                depositBalance: dep,
+                winnings: win,
+                balanceField: bal,
+                totalBalance: totalBalance
             });
         });
         
-        // Update user counter
+        // Sort descending by total calculated balance
+        allUsersData.sort((a, b) => b.totalBalance - a.totalBalance);
+
         document.getElementById("userCount").innerText = allUsersData.length;
         renderCustomersList(allUsersData);
     }, (error) => {
         console.error("Firestore Error: ", error);
-        // Fallback without orderBy index if index is missing
-        db.collection("customers").get().then((snapshot) => {
-            allUsersData = [];
-            snapshot.forEach((doc) => {
-                const data = doc.data();
-                allUsersData.push({
-                    id: doc.id,
-                    mobile: data.mobile || data.phone || data.phoneNumber || "No Mobile",
-                    name: data.name || data.userName || "User",
-                    balance: Number(data.balance || 0)
-                });
-            });
-            allUsersData.sort((a, b) => b.balance - a.balance);
-            document.getElementById("userCount").innerText = allUsersData.length;
-            renderCustomersList(allUsersData);
-        });
     });
 }
 
@@ -478,9 +528,12 @@ function renderCustomersList(users) {
         tr.innerHTML = `
             <td style="font-weight:700;">${user.mobile}</td>
             <td>${user.name}</td>
-            <td><span class="balance-text">₹${user.balance}</span></td>
             <td>
-                <button class="btn-edit-balance" onclick="openBalanceModal('${user.id}', '${user.mobile}', ${user.balance})">
+                <span class="balance-text">₹${user.totalBalance}</span>
+                <span class="balance-subtext">Dep: ₹${user.depositBalance} | Win: ₹${user.winnings}</span>
+            </td>
+            <td>
+                <button class="btn-edit-balance" onclick="openBalanceModal('${user.id}')">
                     <i class="fa-solid fa-pen-to-square"></i> Edit Balance
                 </button>
             </td>
@@ -499,21 +552,26 @@ function filterByMobileNumber() {
 }
 
 // 6. BALANCE MODAL CONTROL
-function openBalanceModal(userId, mobile, balance) {
-    selectedUserId = userId;
-    document.getElementById("modalUserMobile").innerText = mobile;
-    document.getElementById("modalUserBalance").innerText = balance;
+function openBalanceModal(userId) {
+    selectedUser = allUsersData.find(u => u.id === userId);
+    if (!selectedUser) return;
+
+    document.getElementById("modalUserMobile").innerText = selectedUser.mobile;
+    document.getElementById("modalUserDeposit").innerText = selectedUser.depositBalance;
+    document.getElementById("modalUserWinnings").innerText = selectedUser.winnings;
+    document.getElementById("modalUserTotal").innerText = selectedUser.totalBalance;
     document.getElementById("editAmountInput").value = "";
+    
     document.getElementById("balanceModal").style.display = "flex";
 }
 
 function closeBalanceModal() {
-    selectedUserId = null;
+    selectedUser = null;
     document.getElementById("balanceModal").style.display = "none";
 }
 
-// 7. UPDATE CUSTOMER BALANCE (ADD / DEDUCT)
-async function updateCustomerBalance(actionType) {
+// 7. DIRECT WALLET ADD / DEDUCT (DEPOSIT OR WINNINGS)
+async function updateWallet(targetWallet, actionType) {
     const amountVal = Number(document.getElementById("editAmountInput").value);
 
     if (!amountVal || amountVal <= 0) {
@@ -521,24 +579,83 @@ async function updateCustomerBalance(actionType) {
         return;
     }
 
-    if (!selectedUserId) return;
+    if (!selectedUser) return;
 
     const changeAmount = (actionType === 'add') ? amountVal : -amountVal;
+    const fieldName = (targetWallet === 'deposit') ? 'depositBalance' : 'winnings';
+
+    // Current balance check for deduction
+    if (actionType === 'deduct') {
+        const currentAmount = selectedUser[fieldName];
+        if (amountVal > currentAmount) {
+            alert(`Pariyaapt Balance nahi hai! Current ${targetWallet} balance ₹${currentAmount} hai.`);
+            return;
+        }
+    }
 
     try {
-        // Collection updated from "users" to "customers"
-        await db.collection("customers").doc(selectedUserId).update({
-            balance: firebase.firestore.FieldValue.increment(changeAmount)
-        });
+        const updateObj = {};
+        updateObj[fieldName] = firebase.firestore.FieldValue.increment(changeAmount);
 
-        alert(`Balance successfully ${actionType === 'add' ? 'Added' : 'Deducted'}!`);
+        await db.collection("customers").doc(selectedUser.id).update(updateObj);
+
+        alert(`Successfully ${actionType === 'add' ? 'Added' : 'Deducted'} ₹${amountVal} ${targetWallet.toUpperCase()} balance!`);
         closeBalanceModal();
     } catch (err) {
-        alert("Error updating balance: " + err.message);
+        alert("Error updating wallet: " + err.message);
     }
 }
 
-// 8. NAVIGATION DRAWER & LOGOUT
+// 8. INTER-WALLET TRANSFER (DEPOSIT ➔ WINNINGS AND VICE VERSA)
+async function transferBetweenWallets(direction) {
+    const amountVal = Number(document.getElementById("editAmountInput").value);
+
+    if (!amountVal || amountVal <= 0) {
+        alert("Kripya transfer rashi enter karein!");
+        return;
+    }
+
+    if (!selectedUser) return;
+
+    if (direction === 'depToWin') {
+        // Move from Deposit to Winnings
+        if (amountVal > selectedUser.depositBalance) {
+            alert(`Insufficent Deposit Balance! Current Deposit: ₹${selectedUser.depositBalance}`);
+            return;
+        }
+
+        try {
+            await db.collection("customers").doc(selectedUser.id).update({
+                depositBalance: firebase.firestore.FieldValue.increment(-amountVal),
+                winnings: firebase.firestore.FieldValue.increment(amountVal)
+            });
+            alert(`₹${amountVal} Deposit se Winnings me transfer ho gaye!`);
+            closeBalanceModal();
+        } catch (err) {
+            alert("Transfer error: " + err.message);
+        }
+
+    } else if (direction === 'winToDep') {
+        // Move from Winnings to Deposit
+        if (amountVal > selectedUser.winnings) {
+            alert(`Insufficent Winnings Balance! Current Winnings: ₹${selectedUser.winnings}`);
+            return;
+        }
+
+        try {
+            await db.collection("customers").doc(selectedUser.id).update({
+                winnings: firebase.firestore.FieldValue.increment(-amountVal),
+                depositBalance: firebase.firestore.FieldValue.increment(amountVal)
+            });
+            alert(`₹${amountVal} Winnings se Deposit me transfer ho gaye!`);
+            closeBalanceModal();
+        } catch (err) {
+            alert("Transfer error: " + err.message);
+        }
+    }
+}
+
+// 9. NAVIGATION DRAWER & LOGOUT
 function toggleSidebar() {
     document.getElementById("sidebarNav").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
