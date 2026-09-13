@@ -3,117 +3,307 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Admin Security & Device Tracker</title>
+<title>RDX LUDO - Admin Security & All Active Sessions</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE SDK (Compat) -->
+<!-- FIREBASE SDKs (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;}
-body{background:#f1f5f9;color:#0f172a;padding:20px;}
+/* SECURITY HIDE BODY UNTIL AUTHENTICATED */
+body {
+    display: none;
+    background: #0b1329;
+    color: #f8fafc;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-.admin-card{
-    max-width:800px;
-    margin:auto;
-    background:#ffffff;
-    border-radius:16px;
-    padding:24px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
-    border:1px solid #e2e8f0;
+/* TOP NAVBAR */
+.top-navbar {
+    background: #eef2ff;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #cbd5e1;
 }
-.header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-    padding-bottom:12px;
-    border-bottom:2px solid #f1f5f9;
+.nav-left { display: flex; align-items: center; gap: 12px; }
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 }
-.header h2{font-size:20px;color:#0284c7;display:flex;align-items:center;gap:10px;}
+.brand-logo { display: flex; align-items: center; gap: 10px; }
+.logo-badge {
+    background: #1e3a8a;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 50%;
+}
+.brand-title {
+    color: #1e3a8a;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+.logout-btn {
+    background: #ffe4e6;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
 
-.status-badge{
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:12px;
-    font-weight:800;
-    display:inline-flex;
-    align-items:center;
-    gap:6px;
+/* SIDEBAR DRAWER NAVIGATION */
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
 }
-.status-online{background:#dcfce7;color:#15803d;}
-.status-offline{background:#fee2e2;color:#b91c1c;}
+.drawer-overlay.active { opacity: 1; pointer-events: auto; }
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100%;
+    background: #ffffff;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+.sidebar.active { transform: translateX(0); }
+.sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.sidebar-menu {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+}
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+.nav-link i { width: 20px; font-size: 15px; color: #64748b; text-align: center; }
+.nav-link:hover { background: #f1f5f9; color: #0284c7; }
+.nav-link.active { background: #e0f2fe; color: #0284c7; }
 
-.info-table{
-    width:100%;
-    border-collapse:collapse;
-    margin-top:15px;
+/* MAIN CONTENT CONTAINER */
+.main-content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+.header-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
 }
-.info-table th, .info-table td{
-    padding:12px;
-    text-align:left;
-    border-bottom:1px solid #e2e8f0;
-    font-size:14px;
+.page-title {
+    color: #38bdf8;
+    font-size: 24px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-.info-table th{background:#f8fafc;color:#64748b;font-size:12px;text-transform:uppercase;}
 
-.btn-logout{
-    background:#ef4444;
-    color:white;
-    border:none;
-    padding:10px 18px;
-    border-radius:10px;
-    font-weight:700;
-    cursor:pointer;
-    margin-top:20px;
-    display:flex;
-    align-items:center;
-    gap:8px;
+/* BUTTON STYLES */
+.btn-logout-all {
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+    transition: 0.2s;
 }
-.btn-logout:hover{background:#dc2626;}
+.btn-logout-all:hover { background: #b91c1c; }
+
+/* SESSIONS TABLE CONTAINER */
+.card-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    overflow-x: auto;
+}
+.sessions-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 750px;
+}
+.sessions-table th, .sessions-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    color: #0f172a;
+}
+.sessions-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+.sessions-table td { font-weight: 600; }
+
+.device-text {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 11px;
+    color: #475569;
+}
+
+/* BADGES */
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+.status-online { background: #dcfce7; color: #15803d; }
+.status-offline { background: #fee2e2; color: #b91c1c; }
+
+.btn-action-logout {
+    background: #fee2e2;
+    color: #ef4444;
+    border: 1px solid #fca5a5;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.btn-action-logout:hover { background: #ef4444; color: #ffffff; }
 </style>
 </head>
 
 <body>
 
-<div class="admin-card">
-    <div class="header">
-        <h2><i class="fa-solid fa-user-shield"></i> Admin Security Tracker</h2>
-        <span id="adminStatusBadge" class="status-badge status-offline">● Offline</span>
+<!-- TOP NAVBAR -->
+<div class="top-navbar">
+    <div class="nav-left">
+        <button class="menu-btn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <div class="brand-logo">
+            <span class="logo-badge">RDX</span>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+    </div>
+    <button class="logout-btn" onclick="adminLogout()">Logout</button>
+</div>
+
+<!-- SIDEBAR OVERLAY & MENU DRAWER -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebar()"></div>
+<div class="sidebar" id="sidebarNav">
+    <div class="sidebar-header">
+        <div class="brand-logo">
+            <span class="logo-badge">RDX</span>
+            <span class="brand-title">RDX LUDO ADMIN</span>
+        </div>
+    </div>
+    <div class="sidebar-menu">
+        <a href="admin.html" class="nav-link"><i class="fa-solid fa-compass"></i> Dashboard</a>
+        <a href="admin-all.html" class="nav-link active"><i class="fa-solid fa-user-shield"></i> Admin Security</a>
+        <a href="admin-live.html" class="nav-link"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
+        <a href="admin-battles.html" class="nav-link"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
+        <a href="admin-kyc.html" class="nav-link"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
+        <a href="admin-deposits.html" class="nav-link"><i class="fa-solid fa-wallet"></i> Deposits</a>
+        <a href="admin-withdrawals.html" class="nav-link"><i class="fa-solid fa-money-bill-transfer"></i> Withdrawals</a>
+        <a href="admin-history.html" class="nav-link"><i class="fa-solid fa-rectangle-list"></i> User Complete History</a>
+        <a href="admin-referral.html" class="nav-link"><i class="fa-solid fa-chart-pie"></i> Referral Analytics</a>
+        <a href="admin-customers.html" class="nav-link"><i class="fa-solid fa-users"></i> Customers</a>
+        <a href="admin-block.html" class="nav-link"><i class="fa-solid fa-user-slash"></i> Block & Report</a>
+        <a href="admin-notifications.html" class="nav-link"><i class="fa-solid fa-bell"></i> Notifications</a>
+        <a href="admin-settings.html" class="nav-link"><i class="fa-solid fa-gear"></i> Payment Settings</a>
+    </div>
+</div>
+
+<!-- MAIN CONTENT CONTAINER -->
+<div class="main-content">
+    <div class="header-box">
+        <h1 class="page-title"><i class="fa-solid fa-shield-halved"></i> Active Admin Sessions & Security</h1>
+        <button class="btn-logout-all" onclick="logoutAllAdminSessions()">
+            <i class="fa-solid fa-power-off"></i> Logout All Admins
+        </button>
     </div>
 
-    <p style="color:#64748b; font-size:13px;">Active Admin Device & Real-time IP Details:</p>
-
-    <table class="info-table">
-        <tr>
-            <th>Admin Email 📧</th>
-            <td id="adminEmail">Loading...</td>
-        </tr>
-        <tr>
-            <th>Real IP Address 📍</th>
-            <td id="adminIp">Detecting...</td>
-        </tr>
-        <tr>
-            <th>Device & Browser 📱</th>
-            <td id="adminDevice">Detecting...</td>
-        </tr>
-        <tr>
-            <th>Last Active Time ⏰</th>
-            <td id="adminLastActive">-</td>
-        </tr>
-    </table>
-
-    <button class="btn-logout" onclick="adminLogout()">
-        <i class="fa-solid fa-right-from-bracket"></i> Admin Logout
-    </button>
+    <!-- SESSIONS TABLE CARD -->
+    <div class="card-container">
+        <table class="sessions-table">
+            <thead>
+                <tr>
+                    <th>Admin Email 📧</th>
+                    <th>Real IP 📍</th>
+                    <th>Device & Browser 📱</th>
+                    <th>Last Active ⏰</th>
+                    <th>Status 🟢</th>
+                    <th>Action 🚪</th>
+                </tr>
+            </thead>
+            <tbody id="adminSessionsTable">
+                <tr>
+                    <td colspan="6" style="text-align:center; color:#64748b; padding:20px;">Fetching live admin sessions data...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-// 1. FIREBASE CONFIGURATION
+// 1. FIREBASE INITIALIZATION
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -122,100 +312,169 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-// 2. FETCH REAL IP ADDRESS
-async function getRealIp() {
+let currentAdminUser = null;
+
+// 2. STRICT AUTHENTICATION GUARD & REAL-TIME TRACKING
+auth.onAuthStateChanged(async (user) => {
+    if (!user) {
+        // UN-AUTHENTICATED: REDIRECT TO LOGIN
+        window.location.href = "admin-login.html";
+    } else {
+        currentAdminUser = user;
+        
+        // CHECK IF REMOTE LOGOUT FLAG WAS SET FOR THIS ADMIN
+        const sessionDoc = await db.collection("admin_sessions").doc(user.uid).get();
+        if (sessionDoc.exists && sessionDoc.data().force_logout === true) {
+            // Revoke active session
+            await db.collection("admin_sessions").doc(user.uid).update({ force_logout: false, is_online: false });
+            await auth.signOut();
+            window.location.href = "admin-login.html";
+            return;
+        }
+
+        // AUTHENTICATED: SHOW PAGE & START TRACKING
+        document.body.style.display = "block";
+        await registerCurrentAdminSession(user);
+        listenToAllAdminSessions();
+    }
+});
+
+// 3. FETCH REAL PUBLIC IP ADDRESS
+async function getRealIpAddress() {
     try {
         const response = await fetch('https://api.ipify.org?format=json');
         const data = await response.json();
         return data.ip || "Unknown IP";
-    } catch (e) {
-        console.error("IP Fetch Error:", e);
+    } catch (err) {
         return "Unable to detect IP";
     }
 }
 
-// 3. TRACK & UPDATE ADMIN SESSION IN FIRESTORE
-async function trackAdminSession(user, isOnlineStatus) {
-    if (!user) return;
+// 4. REGISTER / UPDATE CURRENT SESSION IN FIRESTORE
+async function registerCurrentAdminSession(user) {
+    try {
+        const realIp = await getRealIpAddress();
+        const userAgent = navigator.userAgent;
 
-    const realIp = await getRealIp();
-    const userAgent = navigator.userAgent;
-    const sessionDocRef = db.collection("admin_sessions").doc(user.uid);
-
-    const sessionData = {
-        admin_email: user.email || "Admin",
-        ip_address: realIp,
-        device_info: userAgent,
-        is_online: isOnlineStatus,
-        last_active: firebase.firestore.FieldValue.serverTimestamp()
-    };
-
-    // UI Updates
-    document.getElementById("adminEmail").textContent = user.email || "Admin";
-    document.getElementById("adminIp").textContent = realIp;
-    document.getElementById("adminDevice").textContent = userAgent;
-
-    const badge = document.getElementById("adminStatusBadge");
-    if (isOnlineStatus) {
-        badge.className = "status-badge status-online";
-        badge.textContent = "● Online";
-    } else {
-        badge.className = "status-badge status-offline";
-        badge.textContent = "● Offline";
+        await db.collection("admin_sessions").doc(user.uid).set({
+            admin_email: user.email || "Admin",
+            ip_address: realIp,
+            device_info: userAgent,
+            is_online: true,
+            force_logout: false,
+            last_active: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+    } catch (e) {
+        console.error("Error saving session: ", e);
     }
-
-    // Save/Update in Firestore
-    await sessionDocRef.set(sessionData, { merge: true });
 }
 
-// 4. AUTH STATE & REAL-TIME HEARTBEAT
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        trackAdminSession(user, true);
+// 5. LIVE LISTENER FOR ALL ADMIN SESSIONS
+function listenToAllAdminSessions() {
+    db.collection("admin_sessions").onSnapshot((snapshot) => {
+        const tbody = document.getElementById("adminSessionsTable");
+        tbody.innerHTML = "";
 
-        // Realtime Listener for Last Active Time UI
-        db.collection("admin_sessions").doc(user.uid).onSnapshot((doc) => {
-            if (doc.exists && doc.data().last_active) {
-                const date = doc.data().last_active.toDate();
-                document.getElementById("adminLastActive").textContent = date.toLocaleString();
-            }
-        });
-
-        // 5-second Heartbeat
-        setInterval(() => {
-            if (!document.hidden && auth.currentUser) {
-                trackAdminSession(auth.currentUser, true);
-            }
-        }, 5000);
-
-    } else {
-        // Redirect to Login if not logged in
-        alert("Please login as admin first!");
-        window.location.href = "index.html";
-    }
-});
-
-// 5. VISIBILITY & OFFLINE DETECTOR
-document.addEventListener("visibilitychange", () => {
-    if (auth.currentUser) {
-        trackAdminSession(auth.currentUser, !document.hidden);
-    }
-});
-
-// 6. ADMIN LOGOUT FUNCTION
-async function adminLogout() {
-    if (confirm("Kya aap Admin Panel se Logout karna chahte hain?")) {
-        if (auth.currentUser) {
-            await trackAdminSession(auth.currentUser, false);
+        if (snapshot.empty) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#64748b;">No active admin sessions found.</td></tr>`;
+            return;
         }
-        await auth.signOut();
-        window.location.href = "index.html";
+
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            const uid = doc.id;
+            
+            // Check if current user session received a remote logout signal
+            if (currentAdminUser && uid === currentAdminUser.uid && data.force_logout === true) {
+                adminLogout();
+                return;
+            }
+
+            let dateStr = "Just now";
+            if (data.last_active) {
+                const dateVal = data.last_active.toDate ? data.last_active.toDate() : new Date(data.last_active);
+                dateStr = dateVal.toLocaleString();
+            }
+
+            const isOnline = data.is_online === true;
+            const statusBadge = isOnline 
+                ? `<span class="badge-status status-online">● Online</span>` 
+                : `<span class="badge-status status-offline">● Offline</span>`;
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${data.admin_email || 'Admin'}</td>
+                <td>${data.ip_address || 'N/A'}</td>
+                <td><div class="device-text" title="${data.device_info || ''}">${data.device_info || 'Unknown Device'}</div></td>
+                <td>${dateStr}</td>
+                <td>${statusBadge}</td>
+                <td>
+                    <button class="btn-action-logout" onclick="remoteLogoutAdmin('${uid}')">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    });
+}
+
+// 6. REMOTE LOGOUT SINGLE ADMIN SESSION
+async function remoteLogoutAdmin(targetUid) {
+    if (confirm("Kya aap is Admin Session ko logout karna chahte hain?")) {
+        try {
+            await db.collection("admin_sessions").doc(targetUid).update({
+                is_online: false,
+                force_logout: true
+            });
+            alert("Admin Session Remote Logout request send kar di gayi hai!");
+        } catch (err) {
+            alert("Logout error: " + err.message);
+        }
     }
+}
+
+// 7. LOGOUT ALL ADMIN SESSIONS AT ONCE
+async function logoutAllAdminSessions() {
+    if (confirm("Kya aap SABHI Admin Sessions ko logout karna chahte hain?")) {
+        try {
+            const snapshot = await db.collection("admin_sessions").get();
+            const batch = db.batch();
+
+            snapshot.forEach((doc) => {
+                batch.update(doc.ref, {
+                    is_online: false,
+                    force_logout: true
+                });
+            });
+
+            await batch.commit();
+            alert("Sabhi Admin Sessions ko logout kar diya gaya hai!");
+            adminLogout();
+        } catch (err) {
+            alert("Error logging out all sessions: " + err.message);
+        }
+    }
+}
+
+// 8. SIDEBAR TOGGLE & SELF LOGOUT
+function toggleSidebar() {
+    document.getElementById("sidebarNav").classList.toggle("active");
+    document.getElementById("drawerOverlay").classList.toggle("active");
+}
+
+async function adminLogout() {
+    if (auth.currentUser) {
+        await db.collection("admin_sessions").doc(auth.currentUser.uid).update({
+            is_online: false
+        }).catch(() => {});
+    }
+    await auth.signOut();
+    window.location.href = "admin-login.html";
 }
 </script>
 
