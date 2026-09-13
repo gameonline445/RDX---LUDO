@@ -3,88 +3,299 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RDX LUDO - Customers Management</title>
+<title>RDX LUDO - Customers List & Balance Manager</title>
 
 <!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- FIREBASE SDKs -->
+<!-- FIREBASE SDKs (Compat) -->
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
+/* SECURITY HIDE BODY UNTIL AUTHENTICATED */
 body {
     display: none;
-    background:#0b1329;
-    color:#f8fafc;
-    min-height:100vh;
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    margin:0;
+    background: #0b1329;
+    color: #f8fafc;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* TOP ADMIN NAVBAR */
-.top-navbar{
-    background:#eef2ff;
-    padding:12px 16px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border-bottom:1px solid #cbd5e1;
+/* TOP NAVBAR */
+.top-navbar {
+    background: #eef2ff;
+    padding: 12px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #cbd5e1;
 }
-.nav-left{ display:flex; align-items:center; gap:12px; }
-.menu-btn{ background:none; border:none; font-size:20px; color:#1e293b; cursor:pointer; }
-.brand-logo{ display:flex; align-items:center; gap:10px; }
-.logo-badge{ background:#1e3a8a; color:#ffffff; font-weight:900; font-size:12px; padding:6px 8px; border-radius:50%; }
-.brand-title{ color:#1e3a8a; font-weight:900; font-size:16px; }
-.logout-btn{ background:#ffe4e6; color:#e11d48; border:1px solid #fecdd3; padding:6px 14px; border-radius:20px; font-size:12px; font-weight:700; cursor:pointer; }
-
-/* SIDEBAR DRAWER */
-.drawer-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:999; opacity:0; pointer-events:none; transition:0.25s; }
-.drawer-overlay.active{ opacity:1; pointer-events:auto; }
-.sidebar{ position:fixed; top:0; left:0; width:270px; height:100%; background:#ffffff; z-index:1000; transform:translateX(-100%); transition:0.25s; display:flex; flex-direction:column; box-shadow:4px 0 15px rgba(0,0,0,0.1); }
-.sidebar.active{ transform:translateX(0); }
-.sidebar-header{ padding:16px; border-bottom:1px solid #f1f5f9; }
-.sidebar-menu{ padding:12px; display:flex; flex-direction:column; gap:4px; overflow-y:auto; }
-.nav-link{ display:flex; align-items:center; gap:12px; padding:12px 14px; color:#334155; font-size:14px; font-weight:700; text-decoration:none; border-radius:10px; }
-.nav-link i{ width:20px; text-align:center; color:#64748b; }
-.nav-link.active{ background:#e0f2fe; color:#0284c7; }
-.nav-link.active i{ color:#0284c7; }
-
-/* MAIN CONTENT */
-.main-content{ padding:16px; }
-.page-title{ color:#38bdf8; font-size:24px; font-weight:900; margin-bottom:18px; }
-
-/* CONTROL BAR (FILTER & SEARCH) */
-.controls-container{
-    display:flex;
-    flex-wrap:wrap;
-    gap:12px;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:15px;
+.nav-left { display: flex; align-items: center; gap: 12px; }
+.menu-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #1e293b;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
 }
-.search-box{ flex:1; min-width:250px; max-width:400px; }
-.search-box input{ width:100%; padding:10px 14px; border-radius:10px; border:1px solid #334155; background:#1e293b; color:#fff; font-size:14px; outline:none; }
+.brand-logo { display: flex; align-items: center; gap: 10px; }
+.logo-badge {
+    background: #1e3a8a;
+    color: #ffffff;
+    font-weight: 900;
+    font-size: 12px;
+    padding: 6px 8px;
+    border-radius: 50%;
+}
+.brand-title {
+    color: #1e3a8a;
+    font-weight: 900;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+}
+.logout-btn {
+    background: #ffe4e6;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
 
-.filter-btn-group{ display:flex; gap:8px; }
-.filter-btn{ background:#1e293b; color:#94a3b8; border:1px solid #334155; padding:8px 14px; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer; transition:0.2s; }
-.filter-btn.active{ background:#0284c7; color:#ffffff; border-color:#0284c7; }
+/* SIDEBAR DRAWER NAVIGATION */
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.drawer-overlay.active { opacity: 1; pointer-events: auto; }
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 270px;
+    height: 100%;
+    background: #ffffff;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+}
+.sidebar.active { transform: translateX(0); }
+.sidebar-header {
+    padding: 16px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.sidebar-menu {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+}
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: 0.2s;
+}
+.nav-link i { width: 20px; font-size: 15px; color: #64748b; text-align: center; }
+.nav-link:hover { background: #f1f5f9; color: #0284c7; }
+.nav-link.active { background: #e0f2fe; color: #0284c7; }
 
-.table-card{ background:#ffffff; border-radius:18px; padding:16px; color:#0f172a; overflow-x:auto; box-shadow:0 4px 15px rgba(0,0,0,0.15); }
-table{ width:100%; border-collapse:collapse; text-align:left; font-size:13px; }
-th, td{ padding:12px 10px; border-bottom:1px solid #e2e8f0; white-space:nowrap; }
-th{ background:#f8fafc; color:#64748b; font-weight:800; text-transform:uppercase; font-size:11px; }
+/* MAIN CONTENT CONTAINER */
+.main-content { padding: 20px; max-width: 1200px; margin: 0 auto; }
+.header-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.page-title {
+    color: #38bdf8;
+    font-size: 24px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
 
-.badge-online{ background:#dcfce7; color:#15803d; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
-.badge-offline{ background:#f1f5f9; color:#64748b; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
-.badge-active{ background:#e0f2fe; color:#0369a1; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
-.badge-blocked{ background:#ffe4e6; color:#be123c; padding:4px 8px; border-radius:6px; font-weight:700; font-size:11px; }
+/* SEARCH BAR */
+.search-container {
+    margin-bottom: 20px;
+    position: relative;
+    max-width: 450px;
+}
+.search-input {
+    width: 100%;
+    padding: 12px 16px 12px 42px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 12px;
+    color: #ffffff;
+    font-size: 14px;
+    outline: none;
+}
+.search-input::placeholder { color: #94a3b8; }
+.search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+}
 
-.btn-action{ padding:6px 10px; border-radius:6px; font-size:12px; font-weight:700; border:none; cursor:pointer; }
-.btn-block{ background:#fecdd3; color:#e11d48; }
-.btn-unblock{ background:#bbf7d0; color:#15803d; }
+/* CUSTOMERS TABLE CONTAINER */
+.card-container {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    overflow-x: auto;
+}
+.customers-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 700px;
+}
+.customers-table th, .customers-table td {
+    padding: 14px 16px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    color: #0f172a;
+}
+.customers-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+}
+.customers-table td { font-weight: 600; }
+
+.balance-text {
+    font-size: 15px;
+    font-weight: 900;
+    color: #16a34a;
+}
+
+/* EDIT BALANCE BUTTON */
+.btn-edit-balance {
+    background: #0284c7;
+    color: #ffffff;
+    border: none;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: 0.2s;
+}
+.btn-edit-balance:hover { background: #0369a1; }
+
+/* BALANCE EDIT MODAL */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.modal-card {
+    background: #ffffff;
+    border-radius: 18px;
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    color: #0f172a;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+.modal-title { font-size: 18px; font-weight: 800; color: #1e3a8a; }
+.close-btn { background: none; border: none; font-size: 20px; cursor: pointer; color: #64748b; }
+
+.user-details-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; color: #475569; }
+.form-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    outline: none;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+.btn-add-money {
+    background: #16a34a;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+}
+.btn-deduct-money {
+    background: #dc2626;
+    color: #ffffff;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: 800;
+    cursor: pointer;
+}
 </style>
 </head>
 
@@ -102,7 +313,7 @@ th{ background:#f8fafc; color:#64748b; font-weight:800; text-transform:uppercase
     <button class="logout-btn" onclick="adminLogout()">Logout</button>
 </div>
 
-<!-- SIDEBAR -->
+<!-- SIDEBAR OVERLAY & MENU DRAWER -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleSidebar()"></div>
 <div class="sidebar" id="sidebarNav">
     <div class="sidebar-header">
@@ -113,6 +324,7 @@ th{ background:#f8fafc; color:#64748b; font-weight:800; text-transform:uppercase
     </div>
     <div class="sidebar-menu">
         <a href="admin.html" class="nav-link"><i class="fa-solid fa-compass"></i> Dashboard</a>
+        <a href="admin-all.html" class="nav-link"><i class="fa-solid fa-user-shield"></i> Admin Security</a>
         <a href="admin-live.html" class="nav-link"><i class="fa-solid fa-tower-broadcast"></i> Live Users Monitor</a>
         <a href="admin-battles.html" class="nav-link"><i class="fa-solid fa-gamepad"></i> Battles Management</a>
         <a href="admin-kyc.html" class="nav-link"><i class="fa-solid fa-id-card"></i> KYC Requests</a>
@@ -127,42 +339,66 @@ th{ background:#f8fafc; color:#64748b; font-weight:800; text-transform:uppercase
     </div>
 </div>
 
-<!-- MAIN PAGE CONTENT -->
+<!-- MAIN CONTENT CONTAINER -->
 <div class="main-content">
-    <h1 class="page-title">Customers List (<span id="userCount">0</span>)</h1>
-
-    <div class="controls-container">
-        <div class="search-box">
-            <input type="text" id="searchInput" onkeyup="applySearchAndFilter()" placeholder="Search by Mobile, Name, ID...">
-        </div>
-        <div class="filter-btn-group">
-            <button class="filter-btn active" id="filterAll" onclick="setFilter('all')">All Users</button>
-            <button class="filter-btn" id="filterToday" onclick="setFilter('today')">Joined Today 🆕</button>
-        </div>
+    <div class="header-box">
+        <h1 class="page-title"><i class="fa-solid fa-users"></i> Customers List (<span id="userCount">0</span>)</h1>
     </div>
 
-    <div class="table-card">
-        <table>
+    <!-- MOBILE NUMBER ONLY SEARCH BAR -->
+    <div class="search-container">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="mobileSearchInput" class="search-input" placeholder="Search by Mobile Phone Number..." onkeyup="filterByMobileNumber()">
+    </div>
+
+    <!-- CUSTOMERS TABLE CARD -->
+    <div class="card-container">
+        <table class="customers-table">
             <thead>
                 <tr>
-                    <th>User ID / Mobile</th>
-                    <th>Name</th>
-                    <th>Location</th>
-                    <th>Joined Date 📅</th>
-                    <th>Balance 💰</th>
-                    <th>Online Status</th>
-                    <th>Account Status</th>
-                    <th>Action</th>
+                    <th>Mobile Phone 📱</th>
+                    <th>Name 👤</th>
+                    <th>Current Balance 💰</th>
+                    <th>Action ✏️</th>
                 </tr>
             </thead>
             <tbody id="customersTableBody">
-                <tr><td colspan="8" style="text-align:center;">Loading Real Customers Data...</td></tr>
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#64748b; padding:20px;">Fetching customers list sorted by highest balance...</td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
 
+<!-- EDIT BALANCE MODAL DIALOG -->
+<div class="modal-overlay" id="balanceModal">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title"><i class="fa-solid fa-wallet"></i> Balance Editor</div>
+            <button class="close-btn" onclick="closeBalanceModal()">&times;</button>
+        </div>
+        <div class="user-details-box">
+            <div><strong>Mobile:</strong> <span id="modalUserMobile">--</span></div>
+            <div><strong>Current Balance:</strong> ₹<span id="modalUserBalance">0</span></div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Enter Amount (₹):</label>
+            <input type="number" id="editAmountInput" class="form-input" placeholder="e.g. 500" min="1">
+        </div>
+        <div class="action-buttons">
+            <button class="btn-add-money" onclick="updateCustomerBalance('add')">
+                <i class="fa-solid fa-plus"></i> Add Money
+            </button>
+            <button class="btn-deduct-money" onclick="updateCustomerBalance('deduct')">
+                <i class="fa-solid fa-minus"></i> Deduct Money
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+// 1. FIREBASE INITIALIZATION
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -171,149 +407,144 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-const firebaseDB = firebase.firestore();
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-firebase.auth().onAuthStateChanged((user) => {
+let allUsersData = [];
+let selectedUserId = null;
+
+// 2. AUTHENTICATION GUARD
+auth.onAuthStateChanged((user) => {
     if (!user) {
         window.location.href = "admin-login.html";
     } else {
         document.body.style.display = "block";
-        loadCustomersData();
+        fetchCustomersSortedByBalance();
     }
 });
 
+// 3. FETCH CUSTOMERS SORTED BY HIGHEST BALANCE DESCENDING
+function fetchCustomersSortedByBalance() {
+    db.collection("users").orderBy("balance", "desc").onSnapshot((snapshot) => {
+        allUsersData = [];
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            allUsersData.push({
+                id: doc.id,
+                mobile: data.mobile || data.phone || data.phoneNumber || "No Mobile",
+                name: data.name || data.userName || "User",
+                balance: Number(data.balance || 0)
+            });
+        });
+        
+        // Update user counter
+        document.getElementById("userCount").innerText = allUsersData.length;
+        renderCustomersList(allUsersData);
+    }, (error) => {
+        console.error("Firestore Error: ", error);
+        // Fallback without orderBy index if needed
+        db.collection("users").get().then((snapshot) => {
+            allUsersData = [];
+            snapshot.forEach((doc) => {
+                const data = doc.data();
+                allUsersData.push({
+                    id: doc.id,
+                    mobile: data.mobile || data.phone || data.phoneNumber || "No Mobile",
+                    name: data.name || data.userName || "User",
+                    balance: Number(data.balance || 0)
+                });
+            });
+            allUsersData.sort((a, b) => b.balance - a.balance);
+            document.getElementById("userCount").innerText = allUsersData.length;
+            renderCustomersList(allUsersData);
+        });
+    });
+}
+
+// 4. RENDER CUSTOMERS LIST TO TABLE
+function renderCustomersList(users) {
+    const tbody = document.getElementById("customersTableBody");
+    tbody.innerHTML = "";
+
+    if (users.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align:center; color:#64748b; padding:20px;">No customers found.</td></tr>`;
+        return;
+    }
+
+    users.forEach((user) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td style="font-weight:700;">${user.mobile}</td>
+            <td>${user.name}</td>
+            <td><span class="balance-text">₹${user.balance}</span></td>
+            <td>
+                <button class="btn-edit-balance" onclick="openBalanceModal('${user.id}', '${user.mobile}', ${user.balance})">
+                    <i class="fa-solid fa-pen-to-square"></i> Edit Balance
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// 5. SEARCH FILTER BY MOBILE PHONE NUMBER ONLY
+function filterByMobileNumber() {
+    const searchTerm = document.getElementById("mobileSearchInput").value.trim().toLowerCase();
+    const filteredUsers = allUsersData.filter(user => 
+        String(user.mobile).toLowerCase().includes(searchTerm)
+    );
+    renderCustomersList(filteredUsers);
+}
+
+// 6. BALANCE MODAL CONTROL
+function openBalanceModal(userId, mobile, balance) {
+    selectedUserId = userId;
+    document.getElementById("modalUserMobile").innerText = mobile;
+    document.getElementById("modalUserBalance").innerText = balance;
+    document.getElementById("editAmountInput").value = "";
+    document.getElementById("balanceModal").style.display = "flex";
+}
+
+function closeBalanceModal() {
+    selectedUserId = null;
+    document.getElementById("balanceModal").style.display = "none";
+}
+
+// 7. UPDATE CUSTOMER BALANCE (ADD / DEDUCT)
+async function updateCustomerBalance(actionType) {
+    const amountVal = Number(document.getElementById("editAmountInput").value);
+
+    if (!amountVal || amountVal <= 0) {
+        alert("Kripya valid amount enter karein!");
+        return;
+    }
+
+    if (!selectedUserId) return;
+
+    const changeAmount = (actionType === 'add') ? amountVal : -amountVal;
+
+    try {
+        await db.collection("users").doc(selectedUserId).update({
+            balance: firebase.firestore.FieldValue.increment(changeAmount)
+        });
+
+        alert(`Balance successfully ${actionType === 'add' ? 'Added' : 'Deducted'}!`);
+        closeBalanceModal();
+    } catch (err) {
+        alert("Error updating balance: " + err.message);
+    }
+}
+
+// 8. NAVIGATION DRAWER & LOGOUT
 function toggleSidebar() {
     document.getElementById("sidebarNav").classList.toggle("active");
     document.getElementById("drawerOverlay").classList.toggle("active");
 }
 
-function adminLogout() {
-    firebase.auth().signOut().then(() => window.location.href = "admin-login.html");
-}
-
-let allCustomersList = [];
-let currentFilter = 'all';
-
-function parseTimestamp(val) {
-    if (!val) return 0;
-    if (typeof val === 'number') return val;
-    if (val.toDate && typeof val.toDate === 'function') return val.toDate().getTime();
-    if (val.seconds) return val.seconds * 1000;
-    const parsed = new Date(val).getTime();
-    return isNaN(parsed) ? 0 : parsed;
-}
-
-function formatDate(ms) {
-    if (!ms) return "N/A";
-    const d = new Date(ms);
-    return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-}
-
-function loadCustomersData() {
-    firebaseDB.collection("customers").onSnapshot((snapshot) => {
-        allCustomersList = [];
-
-        snapshot.forEach((doc) => {
-            const data = doc.data();
-            const docId = doc.id;
-
-            // Total balance calculation
-            const balance = Number(data.balance !== undefined ? data.balance : (Number(data.depositBalance || 0) + Number(data.winnings || 0)));
-            const joinedMs = parseTimestamp(data.createdAt) || parseTimestamp(data.joinedAt) || parseTimestamp(data.timestamp);
-
-            allCustomersList.push({
-                id: docId,
-                mobile: data.mobile || docId,
-                name: data.name || "N/A",
-                location: data.location || "N/A",
-                balance: balance,
-                joinedMs: joinedMs,
-                isOnline: data.isOnline === true || String(data.status).toLowerCase() === 'online',
-                isBlocked: String(data.status).toLowerCase() === 'blocked' || data.isBlocked === true,
-                rawStatus: data.status
-            });
-        });
-
-        // 🔥 SORTING: Highest Balance Top Par
-        allCustomersList.sort((a, b) => b.balance - a.balance);
-
-        applySearchAndFilter();
-    });
-}
-
-function setFilter(type) {
-    currentFilter = type;
-    document.getElementById("filterAll").classList.toggle("active", type === 'all');
-    document.getElementById("filterToday").classList.toggle("active", type === 'today');
-    applySearchAndFilter();
-}
-
-function applySearchAndFilter() {
-    const tbody = document.getElementById("customersTableBody");
-    tbody.innerHTML = "";
-
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    
-    const todayStart = new Date();
-    todayStart.setHours(0,0,0,0);
-    const todayStartMs = todayStart.getTime();
-
-    // Filter Logic
-    let filtered = allCustomersList.filter(user => {
-        const matchesSearch = user.mobile.toLowerCase().includes(query) || 
-                              user.name.toLowerCase().includes(query) || 
-                              user.id.toLowerCase().includes(query);
-
-        if (!matchesSearch) return false;
-
-        if (currentFilter === 'today') {
-            return user.joinedMs >= todayStartMs;
-        }
-        return true;
-    });
-
-    document.getElementById("userCount").textContent = filtered.length;
-
-    if (filtered.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No Matching Customers Found!</td></tr>';
-        return;
-    }
-
-    filtered.forEach(user => {
-        const onlineBadge = user.isOnline ? '<span class="badge-online">🟢 Online</span>' : '<span class="badge-offline">⚪ Offline</span>';
-        const statusBadge = user.isBlocked ? '<span class="badge-blocked">Blocked</span>' : '<span class="badge-active">Active</span>';
-
-        const actionBtn = user.isBlocked ? 
-            `<button class="btn-action btn-unblock" onclick="toggleUserBlock('${user.id}', false)">Unblock</button>` : 
-            `<button class="btn-action btn-block" onclick="toggleUserBlock('${user.id}', true)">Block</button>`;
-
-        const row = `
-            <tr>
-                <td><b>${user.mobile}</b></td>
-                <td>${user.name}</td>
-                <td>${user.location}</td>
-                <td>${formatDate(user.joinedMs)}</td>
-                <td><b>₹${user.balance}</b></td>
-                <td>${onlineBadge}</td>
-                <td>${statusBadge}</td>
-                <td>${actionBtn}</td>
-            </tr>
-        `;
-        tbody.innerHTML += row;
-    });
-}
-
-function toggleUserBlock(userId, blockStatus) {
-    const newStatus = blockStatus ? "blocked" : "active";
-    firebaseDB.collection("customers").doc(userId).update({
-        status: newStatus,
-        isBlocked: blockStatus
-    }).then(() => {
-        alert("User status updated successfully!");
-    }).catch((err) => {
-        alert("Error: " + err.message);
-    });
+async function adminLogout() {
+    await auth.signOut();
+    window.location.href = "admin-login.html";
 }
 </script>
 
