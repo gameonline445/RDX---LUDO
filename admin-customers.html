@@ -426,7 +426,8 @@ auth.onAuthStateChanged((user) => {
 
 // 3. FETCH CUSTOMERS SORTED BY HIGHEST BALANCE DESCENDING
 function fetchCustomersSortedByBalance() {
-    db.collection("users").orderBy("balance", "desc").onSnapshot((snapshot) => {
+    // Collection updated from "users" to "customers"
+    db.collection("customers").orderBy("balance", "desc").onSnapshot((snapshot) => {
         allUsersData = [];
         snapshot.forEach((doc) => {
             const data = doc.data();
@@ -443,8 +444,8 @@ function fetchCustomersSortedByBalance() {
         renderCustomersList(allUsersData);
     }, (error) => {
         console.error("Firestore Error: ", error);
-        // Fallback without orderBy index if needed
-        db.collection("users").get().then((snapshot) => {
+        // Fallback without orderBy index if index is missing
+        db.collection("customers").get().then((snapshot) => {
             allUsersData = [];
             snapshot.forEach((doc) => {
                 const data = doc.data();
@@ -525,7 +526,8 @@ async function updateCustomerBalance(actionType) {
     const changeAmount = (actionType === 'add') ? amountVal : -amountVal;
 
     try {
-        await db.collection("users").doc(selectedUserId).update({
+        // Collection updated from "users" to "customers"
+        await db.collection("customers").doc(selectedUserId).update({
             balance: firebase.firestore.FieldValue.increment(changeAmount)
         });
 
