@@ -34,7 +34,7 @@ button{font:inherit;}
     border-bottom:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
-    justify-style:space-between;
+    justify-content:space-between;
     padding:0 14px;
     position:sticky;
     top:0;
@@ -83,7 +83,7 @@ button{font:inherit;}
     object-fit:cover;
 }
 
-/* RIGHT SIDE HEADER BUTTONS (EXACTLY MATCHING BOTTOM NAV SHAPE & COLORS) */
+/* RIGHT SIDE HEADER BUTTONS */
 .header-right{
     display:flex;
     align-items:center;
@@ -94,7 +94,7 @@ button{font:inherit;}
     width:42px;
     height:42px;
     border:0;
-    border-radius:14px; /* Matches bottom nav rounded box shape */
+    border-radius:14px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -107,9 +107,9 @@ button{font:inherit;}
 }
 .header-icon:active{transform:scale(0.92);}
 
-.bell{background:#6366f1;}
-.cash{background:#22c55e;}
-.gift{background:#ea580c;}
+.notification-icon{background:#6366f1;}
+.wallet-icon{background:#22c55e;}
+.gift-icon{background:#ea580c;}
 
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
@@ -225,7 +225,7 @@ button{font:inherit;}
 .soon-info p{color:#64748b;font-size:12px;margin-top:2px;}
 .soon-tag{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;padding:5px 10px;border-radius:12px;font-size:10px;font-weight:800;}
 
-/* SIDE DRAWER */
+/* SIDE DRAWER STYLING */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -328,7 +328,7 @@ button{font:inherit;}
 .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
-/* BOTTOM NAVIGATION (SAM TO SAM STYLING LIKE WALLET PAGE) */
+/* BOTTOM NAVIGATION */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -338,7 +338,7 @@ button{font:inherit;}
     background:#ffffff;
     border-top:1px solid #e2e8f0;
     display:flex;
-    justify-style:space-around;
+    justify-space:around;
     align-items:center;
     z-index:200;
 }
@@ -390,73 +390,9 @@ button{font:inherit;}
 
 <body>
 
-<script>
-window.addEventListener("pageshow", function (event) {
-    if (event.persisted || (performance && performance.navigation.type === 2)) {
-        window.location.reload();
-    }
-});
-
-if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("index.html");
-}
-
-(function() {
-    history.pushState(null, null, location.href);
-    window.addEventListener("popstate", function() {
-        const drawer = document.getElementById("sideDrawer");
-        if (drawer && drawer.classList.contains("active")) {
-            toggleMenu();
-        }
-        history.pushState(null, null, location.href);
-    });
-})();
-</script>
-
-<!-- SIDE DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">
-                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
-            </div>
-            <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
-        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
-        <button class="drawer-item" onclick="window.location.replace('notification.html')"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
-        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
-    </div>
-</div>
-
-<!-- TOP HEADER -->
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="window.location.replace('dashboard.html')">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
-    </div>
-    
-    <!-- RIGHT ALIGNED MATCHING BUTTONS -->
-    <div class="header-right">
-        <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
-    </div>
-</header>
+<!-- DYNAMIC COMPONENT CONTAINERS -->
+<div id="header-container"></div>
+<div id="drawer-container"></div>
 
 <main class="container">
     <section class="welcome-box">
@@ -502,27 +438,34 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </section>
 </main>
 
-<!-- BOTTOM NAVIGATION (MATCHED SAME TO SAME WITH WALLET) -->
-<nav class="bottom-nav">
-    <button class="nav-item active" onclick="window.location.replace('dashboard.html')">
-        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
-        <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')">
-        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
-        <span>Wallet</span>
-    </button>
-    <button class="nav-item" onclick="window.location.replace('support.html')">
-        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
-        <span>Support</span>
-    </button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')">
-        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
-        <span>Profile</span>
-    </button>
-</nav>
+<!-- BOTTOM NAVIGATION CONTAINER WITH ACTIVE TAB -->
+<div id="nav-container" data-active="home"></div>
+
+<!-- COMPONENTS SCRIPT -->
+<script src="components.js"></script>
 
 <script>
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (performance && performance.navigation.type === 2)) {
+        window.location.reload();
+    }
+});
+
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("index.html");
+}
+
+(function() {
+    history.pushState(null, null, location.href);
+    window.addEventListener("popstate", function() {
+        const drawer = document.getElementById("sideDrawer");
+        if (drawer && drawer.classList.contains("active")) {
+            toggleMenu();
+        }
+        history.pushState(null, null, location.href);
+    });
+})();
+
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
     authDomain: "rdx-ludo.firebaseapp.com",
@@ -539,11 +482,6 @@ function getCleanUserId() {
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
-
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
 
 function loadDashboardDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
@@ -569,9 +507,13 @@ function loadDashboardDataRealtime() {
             const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
             const firstName = fullName.split(" ")[0] || "User";
 
-            document.getElementById("userName").textContent = firstName;
-            document.getElementById("drawerName").textContent = fullName;
-            document.getElementById("drawerMobile").textContent = "+" + userId;
+            const userElem = document.getElementById("userName");
+            const drawerNameElem = document.getElementById("drawerName");
+            const drawerMobileElem = document.getElementById("drawerMobile");
+
+            if (userElem) userElem.textContent = firstName;
+            if (drawerNameElem) drawerNameElem.textContent = fullName;
+            if (drawerMobileElem) drawerMobileElem.textContent = "+" + userId;
         }
     }, (err) => {
         console.error("Realtime update error:", err);
