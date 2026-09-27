@@ -41,165 +41,6 @@
         }
         button{font:inherit;}
 
-        /* TOP HEADER STYLING */
-        .top-header{
-            height:66px;
-            background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-            border-bottom:1.5px solid #bae6fd;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:0 14px;
-            position:sticky;
-            top:0;
-            z-index:100;
-            box-shadow:0 4px 18px rgba(2,132,199,0.08);
-        }
-        .header-left{display:flex;align-items:center;gap:10px;}
-        .menu-btn{
-            width:42px;
-            height:42px;
-            border:0;
-            border-radius:14px;
-            background:linear-gradient(145deg,#ff7165,#ff8a70);
-            color:white;
-            font-size:20px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            box-shadow:0 4px 12px rgba(255,113,101,0.25);
-        }
-        .logo{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            overflow:hidden;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            border:1.5px solid #bae6fd;
-            background:#ffffff;
-            box-shadow:0 4px 12px rgba(2,132,199,0.15);
-        }
-        .logo img{width:100%;height:100%;object-fit:cover;}
-        .header-right{display:flex;align-items:center;gap:10px;}
-        .header-icon-btn{
-            width:42px;
-            height:42px;
-            border:0;
-            border-radius:50%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:18px;
-            color:white;
-            cursor:pointer;
-            box-shadow:0 4px 12px rgba(0,0,0,0.1);
-        }
-        .btn-notif{background:linear-gradient(145deg,#6366f1,#818cf8);}
-        .btn-wallet{background:linear-gradient(145deg,#22c55e,#16a34a);}
-        .btn-refer{background:linear-gradient(145deg,#f97316,#ea580c);}
-
-        /* SIDE DRAWER STYLING */
-        .drawer-overlay{
-            position:fixed;
-            inset:0;
-            background:rgba(15,23,42,0.45);
-            backdrop-filter:blur(4px);
-            z-index:999;
-            opacity:0;
-            pointer-events:none;
-            transition:opacity 0.25s ease;
-        }
-        .drawer-overlay.active{opacity:1;pointer-events:auto;}
-        .drawer{
-            position:fixed;
-            top:0;
-            left:0;
-            width:280px;
-            height:100%;
-            background:#ffffff;
-            z-index:1000;
-            box-shadow:4px 0 25px rgba(2,132,199,0.15);
-            transform:translateX(-100%);
-            transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-            display:flex;
-            flex-direction:column;
-        }
-        .drawer.active{transform:translateX(0);}
-        .drawer-header{
-            padding:20px 16px;
-            background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-            border-bottom:1.5px solid #bae6fd;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-        }
-        .drawer-user{display:flex;align-items:center;gap:10px;}
-        .drawer-avatar{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            overflow:hidden;
-            background:#ffffff;
-            border:1.5px solid #bae6fd;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-        .drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-        .drawer-close{
-            width:34px;
-            height:34px;
-            border-radius:50%;
-            border:1.5px solid #bae6fd;
-            background:#ffffff;
-            color:#0c4a6e;
-            font-size:16px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-        }
-        .drawer-links{flex:1;overflow-y:auto;padding:12px;}
-        .drawer-item{
-            width:100%;
-            padding:10px 14px;
-            border:0;
-            border-radius:14px;
-            background:transparent;
-            display:flex;
-            align-items:center;
-            gap:12px;
-            font-size:14px;
-            font-weight:750;
-            color:#334155;
-            cursor:pointer;
-            margin-bottom:6px;
-        }
-        .drawer-item:hover{background:#f0f9ff;color:#0284c7;}
-        .drawer-item-icon{
-            width:36px;
-            height:36px;
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:16px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.08);
-        }
-        .menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-        .menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-        .menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-        .menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-        .menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-        .menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-        .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-        .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
-
         /* MAIN CONTAINER */
         .container{width:100%;max-width:650px;margin:auto;padding:0 14px;}
         .page-heading{padding:18px 4px 12px;display:flex;justify-content:space-between;align-items:center;}
@@ -221,7 +62,7 @@
         .notif-time{font-size:11px;color:#94a3b8;font-weight:600;}
         .notif-body{font-size:13px;color:#475569;line-height:1.4;font-weight:600;}
 
-        /* BOTTOM NAV BAR */
+        /* BOTTOM NAV BAR (EXACT 4 ITEMS LIKE DASHBOARD) */
         .bottom-nav{
             position:fixed;
             bottom:0;
@@ -238,7 +79,7 @@
             box-shadow:0 -5px 25px rgba(2,132,199,0.06);
         }
         .nav-item{
-            width:20%;
+            width:25%;
             height:100%;
             border:0;
             background:transparent;
@@ -246,20 +87,20 @@
             flex-direction:column;
             align-items:center;
             justify-content:center;
-            gap:4px;
+            gap:5px;
             color:#64748b;
-            font-size:11px;
+            font-size:12px;
             font-weight:700;
             cursor:pointer;
         }
         .nav-icon-box{
-            width:40px;
-            height:40px;
-            border-radius:14px;
+            width:44px;
+            height:44px;
+            border-radius:16px;
             display:flex;
             align-items:center;
             justify-content:center;
-            font-size:17px;
+            font-size:19px;
             color:#ffffff;
             box-shadow:0 4px 10px rgba(0,0,0,0.08);
         }
@@ -267,13 +108,12 @@
         .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
         .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
         .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-        .icon-notif{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
         .nav-item.active{color:#101a38;font-weight:900;}
     </style>
 </head>
 <body>
 
-<!-- COMPONENTS.JS CONTAINERS -->
+<!-- COMPONENTS.JS LOAD CONTAINERS -->
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
@@ -287,7 +127,7 @@
     </section>
 </main>
 
-<!-- BOTTOM NAV BAR WITH SUPPORT -->
+<!-- BOTTOM NAV BAR (4 ITEMS) -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.replace('dashboard.html')">
         <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
@@ -300,10 +140,6 @@
     <button class="nav-item" onclick="window.location.replace('support.html')">
         <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
         <span>Support</span>
-    </button>
-    <button class="nav-item active" onclick="window.location.replace('notification.html')">
-        <div class="nav-icon-box icon-notif"><i class="fa-solid fa-bell"></i></div>
-        <span>Alerts</span>
     </button>
     <button class="nav-item" onclick="window.location.replace('profile.html')">
         <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
