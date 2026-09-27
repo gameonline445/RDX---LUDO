@@ -12,6 +12,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
+<!-- COMPONENTS LOADER SCRIPT -->
+<script src="components.js"></script>
+
 <script>
 // Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
@@ -191,7 +194,7 @@ button,input{font:inherit;}
     margin-bottom:10px;
     box-shadow:0 4px 12px rgba(2,132,199,0.04);
     display:flex;
-    justify-content:space-between;
+    justify-space:between;
     align-items:center;
 }
 .history-left{display:flex;align-items:center;gap:12px;}
@@ -263,7 +266,7 @@ button,input{font:inherit;}
 }
 .empty-state i{font-size:36px;color:#bae6fd;margin-bottom:10px;}
 
-/* SIDE DRAWER (EXACT DESIGN MATCH) */
+/* SIDE DRAWER STYLES */
 .drawer-overlay{
     position:fixed;
     inset:0;
@@ -359,7 +362,7 @@ button,input{font:inherit;}
     flex-shrink:0;
 }
 
-/* SIDE MENU ICON COLORS (EXACT MATCH TO SCREENSHOTS) */
+/* SIDE MENU ICON COLORS */
 .m-home{ background: #5c67f2; }
 .m-profile{ background: #e86a2c; }
 .m-wallet{ background: #42be65; }
@@ -380,7 +383,7 @@ button,input{font:inherit;}
     backdrop-filter:blur(12px);
     border-top:1.5px solid #e2e8f0;
     display:flex;
-    justify-space:around;
+    justify-content:space-around;
     align-items:center;
     z-index:200;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
@@ -421,78 +424,9 @@ button,input{font:inherit;}
 
 <body>
 
-<!-- SIDE DRAWER (EXACT SAME MENU ITEMS) -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">
-                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
-            </div>
-            <div>
-                <h4 style="font-size:14px; font-weight:800; color:#0c4a6e;" id="drawerName">Jai shree shyam</h4>
-                <small style="color:#64748b; font-weight:700; text-decoration:underline;" id="drawerMobile">+917878852370</small>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.replace('dashboard.html')">
-            <div class="drawer-item-icon m-home"><i class="fa-solid fa-house"></i></div>
-            <span>Home</span>
-        </button>
-        
-        <button class="drawer-item" onclick="window.location.replace('profile.html')">
-            <div class="drawer-item-icon m-profile"><i class="fa-solid fa-user"></i></div>
-            <span>My Profile</span>
-        </button>
-        
-        <button class="drawer-item" onclick="window.location.replace('wallet.html')">
-            <div class="drawer-item-icon m-wallet"><i class="fa-solid fa-wallet"></i></div>
-            <span>My Wallet</span>
-        </button>
-        
-        <button class="drawer-item" onclick="window.location.replace('referral.html')">
-            <div class="drawer-item-icon m-refer"><i class="fa-solid fa-gift"></i></div>
-            <span>Refer & Earn</span>
-        </button>
-        
-        <button class="drawer-item" onclick="window.location.replace('history.html')">
-            <div class="drawer-item-icon m-history"><i class="fa-solid fa-clock-rotate-left"></i></div>
-            <span>History</span>
-        </button>
-        
-        <button class="drawer-item" onclick="window.location.replace('notification.html')">
-            <div class="drawer-item-icon m-notif"><i class="fa-solid fa-bell"></i></div>
-            <span>Notifications</span>
-        </button>
-        
-        <button class="drawer-item" onclick="window.location.replace('support.html')">
-            <div class="drawer-item-icon m-support"><i class="fa-solid fa-headset"></i></div>
-            <span>Support</span>
-        </button>
-
-        <button class="drawer-item" onclick="handleLogout()">
-            <div class="drawer-item-icon m-logout"><i class="fa-solid fa-right-from-bracket"></i></div>
-            <span>Logout</span>
-        </button>
-    </div>
-</div>
-
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="window.location.replace('dashboard.html')">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
-    </div>
-    <div class="header-right">
-        <button class="header-icon notification" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon redeem-top" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
-    </div>
-</header>
+<!-- DYNAMIC COMPONENTS CONTAINERS -->
+<div id="component-sidebar"></div>
+<div id="component-header"></div>
 
 <main class="container">
 
@@ -521,12 +455,7 @@ button,input{font:inherit;}
 
 </main>
 
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
-</nav>
+<div id="component-bottomnav"></div>
 
 <script>
 history.pushState({ page: 1 }, "", "");
@@ -557,16 +486,6 @@ let battlesData = [];
 let depositsData = [];
 let withdrawalsData = [];
 
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
-
-function handleLogout() {
-    localStorage.clear();
-    window.location.replace("index.html");
-}
-
 function parseItemTime(ts) {
     if (!ts) return { dateObj: new Date(0), formatted: "—" };
     let d;
@@ -589,9 +508,13 @@ async function loadHeaderUserData() {
         if (snap.exists) {
             const d = snap.data();
             const displayName = d.name || ("User " + userId.slice(-4));
-            document.getElementById("drawerName").textContent = displayName;
-            document.getElementById("drawerAvatar").innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
-            document.getElementById("drawerMobile").textContent = "+" + userId;
+            const nameEl = document.getElementById("drawerName");
+            const avatarEl = document.getElementById("drawerAvatar");
+            const mobileEl = document.getElementById("drawerMobile");
+
+            if(nameEl) nameEl.textContent = displayName;
+            if(avatarEl) avatarEl.innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
+            if(mobileEl) mobileEl.textContent = "+" + userId;
         }
     } catch(err) { console.error(err); }
 }
