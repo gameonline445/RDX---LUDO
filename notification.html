@@ -284,7 +284,11 @@
 </head>
 <body>
 
-<!-- SIDE DRAWER -->
+<!-- DYNAMIC CONTAINERS FOR COMPONENTS.JS -->
+<div id="header-container"></div>
+<div id="drawer-container"></div>
+
+<!-- FALLBACK STATIC STRUCTURE (Agar components.js load hone mein time le ya execute ho) -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
@@ -312,7 +316,6 @@
     </div>
 </div>
 
-<!-- TOP HEADER WITH 3 ROUND ICON BUTTONS -->
 <header class="top-header">
     <div class="header-left">
         <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
@@ -337,7 +340,8 @@
     </section>
 </main>
 
-<!-- BOTTOM NAV BAR -->
+<div id="bottom-nav-container"></div>
+
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
     <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
@@ -345,13 +349,15 @@
     <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
-<!-- External Components Script -->
+<!-- EXTERNAL COMPONENTS SCRIPT -->
 <script src="components.js"></script>
 
 <script>
 function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
+    const drawer = document.getElementById("sideDrawer");
+    const overlay = document.getElementById("drawerOverlay");
+    if(drawer) drawer.classList.toggle("active");
+    if(overlay) overlay.classList.toggle("active");
 }
 </script>
 
@@ -389,8 +395,13 @@ function listenUserData() {
             if (snap.exists()) {
                 const d = snap.data();
                 const userName = d.name || ("User " + userId.slice(-4));
-                document.getElementById("drawerName").textContent = userName;
-                document.getElementById("drawerMobile").textContent = "+" + userId;
+                
+                // Safe element updates for both static and components.js generated elements
+                const nameEls = document.querySelectorAll("#drawerName");
+                const mobileEls = document.querySelectorAll("#drawerMobile");
+                
+                nameEls.forEach(el => el.textContent = userName);
+                mobileEls.forEach(el => el.textContent = "+" + userId);
             }
         });
     } catch(err) {
@@ -421,6 +432,8 @@ function listenNotifs() {
         });
 
         const container = document.getElementById("notif-list");
+        if(!container) return;
+
         if(!list.length) { 
             container.innerHTML = "<div style='text-align:center;padding:40px;color:#64748b;font-weight:700;'>Koi notification nahi hai.</div>"; 
             return; 
@@ -447,7 +460,10 @@ function listenNotifs() {
         }).join("");
     }, (e) => {
         console.error("Error loading notifications:", e);
-        document.getElementById("notif-list").innerHTML = "<div style='text-align:center;padding:40px;color:#ef4444;font-weight:700;'>Notifications load karne mein error aayi.</div>";
+        const container = document.getElementById("notif-list");
+        if(container) {
+            container.innerHTML = "<div style='text-align:center;padding:40px;color:#ef4444;font-weight:700;'>Notifications load karne mein error aayi.</div>";
+        }
     });
 }
 
