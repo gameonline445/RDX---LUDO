@@ -38,7 +38,8 @@
                 linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
             color:#101a38;
             min-height:100vh;
-            padding-bottom:85px;
+            padding-top: 70px;
+            padding-bottom: 85px;
         }
 
         .container{width:100%;max-width:560px;margin:auto;padding:16px 14px;}
@@ -58,8 +59,8 @@
 </head>
 <body>
 
-    <!-- Dynamic Layout Containers loaded from components.js -->
-    <div id="sidebar-container"></div>
+    <!-- Dynamic Layout Containers required by components.js -->
+    <div id="drawer-container"></div>
     <div id="header-container"></div>
 
     <main class="container">
@@ -94,10 +95,10 @@
         </div>
     </main>
 
-    <!-- Bottom Navigation loaded dynamically from components.js -->
-    <div id="bottom-nav-container"></div>
+    <!-- Bottom Nav Container required by components.js -->
+    <div id="nav-container"></div>
 
-    <!-- Include Shared Components JS -->
+    <!-- Include Centralized Components System -->
     <script src="components.js"></script>
 
     <script>
