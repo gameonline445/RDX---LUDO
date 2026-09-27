@@ -62,7 +62,7 @@
         .notif-time{font-size:11px;color:#94a3b8;font-weight:600;}
         .notif-body{font-size:13px;color:#475569;line-height:1.4;font-weight:600;}
 
-        /* BOTTOM NAV BAR (UNIFORM SAME COLOR FOR ALL ICONS) */
+        /* BOTTOM NAV BAR (4 ITEMS WITH SIDE DRAWER MATCHING COLORS) */
         .bottom-nav{
             position:fixed;
             bottom:0;
@@ -103,9 +103,14 @@
             font-size:19px;
             color:#ffffff;
             box-shadow:0 4px 10px rgba(0,0,0,0.08);
-            /* Saare icons ka background ek jaisa (Uniform Blue Gradient matching dashboard theme) */
-            background: linear-gradient(135deg, #0284c7, #0369a1);
         }
+        
+        /* Exact Colors Matching Side Drawer Menu Icons */
+        .icon-home { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .icon-wallet { background: linear-gradient(135deg, #10b981, #059669); }
+        .icon-support { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+        .icon-profile { background: linear-gradient(135deg, #f97316, #ea580c); }
+
         .nav-item.active{color:#101a38;font-weight:900;}
     </style>
 </head>
@@ -125,22 +130,22 @@
     </section>
 </main>
 
-<!-- BOTTOM NAV BAR (4 ITEMS WITH SAME UNIFORM COLOR) -->
+<!-- BOTTOM NAV BAR (4 ITEMS WITH DRAWER MATCHED COLORS) -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.replace('dashboard.html')">
-        <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div>
+        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
         <span>Home</span>
     </button>
     <button class="nav-item" onclick="window.location.replace('wallet.html')">
-        <div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div>
+        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
         <span>Wallet</span>
     </button>
     <button class="nav-item" onclick="window.location.replace('support.html')">
-        <div class="nav-icon-box"><i class="fa-solid fa-headset"></i></div>
+        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
         <span>Support</span>
     </button>
     <button class="nav-item" onclick="window.location.replace('profile.html')">
-        <div class="nav-icon-box"><i class="fa-solid fa-user"></i></div>
+        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
         <span>Profile</span>
     </button>
 </nav>
