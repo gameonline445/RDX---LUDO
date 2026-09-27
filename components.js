@@ -79,24 +79,25 @@ function loadSyncedComponents() {
         </nav>
     `;
 
-    // DOM Render
-    if(document.getElementById('header-container')) {
-        document.getElementById('header-container').innerHTML = headerHTML;
-    }
-    if(document.getElementById('drawer-container')) {
-        document.getElementById('drawer-container').innerHTML = drawerHTML;
-    }
-    if(document.getElementById('bottom-nav-container')) {
-        document.getElementById('bottom-nav-container').innerHTML = bottomNavHTML;
-    }
+    // HTML elements ko safely set karna
+    const headerEl = document.getElementById('header-container');
+    const drawerEl = document.getElementById('drawer-container');
+    const bottomEl = document.getElementById('bottom-nav-container');
+
+    if (headerEl) headerEl.innerHTML = headerHTML;
+    if (drawerEl) drawerEl.innerHTML = drawerHTML;
+    if (bottomEl) bottomEl.innerHTML = bottomNavHTML;
 }
 
-// Side Drawer Open/Close Function
+// Drawer Open/Close toggle function
 function toggleDrawer() {
     const drawer = document.getElementById('sideDrawer');
     const overlay = document.getElementById('drawerOverlay');
-    if(drawer && overlay) {
+    if (drawer && overlay) {
         drawer.classList.toggle('open');
         overlay.classList.toggle('open');
     }
 }
+
+// Page fully load hone par apne aap run ho
+document.addEventListener('DOMContentLoaded', loadSyncedComponents);
