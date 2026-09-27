@@ -90,7 +90,7 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Har Button ka Alag Active Color)
+// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Permanently Colored Icons)
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
@@ -123,7 +123,6 @@ function loadBottomNav() {
                 cursor: pointer;
                 flex: 1;
                 text-decoration: none;
-                color: #64748b;
                 font-size: 12px;
                 font-weight: 600;
                 gap: 4px;
@@ -132,30 +131,34 @@ function loadBottomNav() {
                 width: 38px;
                 height: 38px;
                 border-radius: 12px;
-                background: #f1f5f9;
-                color: #475569;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 16px;
-                transition: all 0.2s ease;
+                color: #ffffff !important;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
-            /* 🔵 Home Button Active Color (Blue) */
-            .nav-item.nav-home.active { color: #2563eb; }
-            .nav-item.nav-home.active .nav-icon-box { background: #2563eb !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(37,99,235,0.4); }
+            /* 🔵 Permanent Colors for Nav Icons */
+            .nav-home .nav-icon-box { background: #2563eb !important; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
+            .nav-wallet .nav-icon-box { background: #00b894 !important; box-shadow: 0 2px 6px rgba(0,184,148,0.3); }
+            .nav-support .nav-icon-box { background: #6c5ce7 !important; box-shadow: 0 2px 6px rgba(108,92,231,0.3); }
+            .nav-profile .nav-icon-box { background: #e17055 !important; box-shadow: 0 2px 6px rgba(225,112,85,0.3); }
 
-            /* 🟢 Wallet Button Active Color (Green) */
-            .nav-item.nav-wallet.active { color: #00b894; }
-            .nav-item.nav-wallet.active .nav-icon-box { background: #00b894 !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(0,184,148,0.4); }
+            /* Text Colors */
+            .nav-home { color: #2563eb; }
+            .nav-wallet { color: #00b894; }
+            .nav-support { color: #6c5ce7; }
+            .nav-profile { color: #e17055; }
 
-            /* 🟣 Support Button Active Color (Purple) */
-            .nav-item.nav-support.active { color: #6c5ce7; }
-            .nav-item.nav-support.active .nav-icon-box { background: #6c5ce7 !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(108,92,231,0.4); }
-
-            /* 🟠 Profile Button Active Color (Orange) */
-            .nav-item.nav-profile.active { color: #e17055; }
-            .nav-item.nav-profile.active .nav-icon-box { background: #e17055 !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(225,112,85,0.4); }
+            /* Highlight active page icon with slight zoom & stronger shadow */
+            .nav-item.active .nav-icon-box {
+                transform: scale(1.1);
+                box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            }
+            .nav-item.active span {
+                font-weight: 800;
+            }
         </style>
         <nav class="bottom-nav">
             <button class="nav-item nav-home ${pathName === 'dashboard.html' || pathName === 'index.html' || pathName === '' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
