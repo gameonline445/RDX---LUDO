@@ -41,7 +41,7 @@
         }
         button{font:inherit;}
 
-        /* TOP HEADER WITH 3 ROUND ICON BUTTONS */
+        /* TOP HEADER STYLING */
         .top-header{
             height:66px;
             background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -70,8 +70,6 @@
             cursor:pointer;
             box-shadow:0 4px 12px rgba(255,113,101,0.25);
         }
-        .menu-btn:active{transform:scale(0.95);}
-
         .logo{
             width:46px;
             height:46px;
@@ -86,7 +84,6 @@
             box-shadow:0 4px 12px rgba(2,132,199,0.15);
         }
         .logo img{width:100%;height:100%;object-fit:cover;}
-
         .header-right{display:flex;align-items:center;gap:10px;}
         .header-icon-btn{
             width:42px;
@@ -100,15 +97,12 @@
             color:white;
             cursor:pointer;
             box-shadow:0 4px 12px rgba(0,0,0,0.1);
-            transition:transform 0.15s ease;
         }
-        .header-icon-btn:active{transform:scale(0.92);}
-        
         .btn-notif{background:linear-gradient(145deg,#6366f1,#818cf8);}
         .btn-wallet{background:linear-gradient(145deg,#22c55e,#16a34a);}
         .btn-refer{background:linear-gradient(145deg,#f97316,#ea580c);}
 
-        /* SIDE DRAWER */
+        /* SIDE DRAWER STYLING */
         .drawer-overlay{
             position:fixed;
             inset:0;
@@ -185,7 +179,7 @@
             cursor:pointer;
             margin-bottom:6px;
         }
-        .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+        .drawer-item:hover{background:#f0f9ff;color:#0284c7;}
         .drawer-item-icon{
             width:36px;
             height:36px;
@@ -221,9 +215,7 @@
             flex-direction:column;
             gap:6px;
             box-shadow:0 4px 14px rgba(2,132,199,0.06);
-            transition:transform 0.15s ease;
         }
-        .notif-card:active{transform:scale(0.99);}
         .notif-header{display:flex;justify-content:space-between;align-items:center;}
         .notif-title{color:#0284c7;font-size:15px;font-weight:800;}
         .notif-time{font-size:11px;color:#94a3b8;font-weight:600;}
@@ -270,65 +262,19 @@
             font-size:19px;
             color:#ffffff;
             box-shadow:0 4px 10px rgba(0,0,0,0.08);
-            transition:transform 0.15s ease;
         }
-        .nav-item:active .nav-icon-box{transform:scale(0.92);}
-        
         .icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
         .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
         .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
         .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-        
         .nav-item.active{color:#101a38;font-weight:900;}
     </style>
 </head>
 <body>
 
-<!-- SIDE DRAWER & HEADER CONTAINERS FOR COMPONENTS.JS -->
+<!-- COMPONENTS.JS CONTAINERS (HEADER & DRAWER REMOVED DUPLICATION) -->
 <div id="header-container"></div>
 <div id="drawer-container"></div>
-
-<!-- FALLBACK STATIC STRUCTURE -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar">
-                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
-            </div>
-            <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
-        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
-        <button class="drawer-item" onclick="window.location.replace('notification.html')"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
-        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
-    </div>
-</div>
-
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="window.location.replace('dashboard.html')">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
-    </div>
-    <div class="header-right">
-        <button class="header-icon-btn btn-notif" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon-btn btn-wallet" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon-btn btn-refer" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
-    </div>
-</header>
 
 <main class="container">
     <div class="page-heading">
@@ -340,10 +286,7 @@
     </section>
 </main>
 
-<!-- COMPONENTS.JS TARGET CONTAINER -->
-<div id="bottom-nav-container"></div>
-
-<!-- UPDATED BOTTOM NAV BAR (WITH NOTIFICATION ACTIVE/CORRECT LINKS) -->
+<!-- BOTTOM NAV BAR -->
 <nav class="bottom-nav">
     <button class="nav-item" onclick="window.location.replace('dashboard.html')">
         <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
@@ -437,7 +380,6 @@ function listenNotifs() {
             }
         });
 
-        // Sort latest notifications first
         list.sort((a, b) => {
             const tA = a.timestamp || a.createdAt || 0;
             const tB = b.timestamp || b.createdAt || 0;
