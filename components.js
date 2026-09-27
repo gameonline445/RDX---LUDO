@@ -10,7 +10,6 @@ function loadHeader() {
     headerContainer.innerHTML = `
         <header class="top-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #ffffff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
             <div class="header-left" style="display: flex; align-items: center; gap: 10px;">
-                <!-- Menu Bar Button (Reddish Pink) -->
                 <button class="menu-btn" onclick="toggleDrawer()" style="background: #ff7675 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(255,118,117,0.4);">
                     <i class="fa-solid fa-bars" style="font-size: 18px; color: #ffffff !important;"></i>
                 </button>
@@ -19,15 +18,12 @@ function loadHeader() {
                 </div>
             </div>
             <div class="header-right" style="display: flex; align-items: center; gap: 10px;">
-                <!-- Notification Button (Blue-Purple) -->
                 <button class="header-icon-btn btn-notif" onclick="window.location.href='notification.html'" style="background: #6c5ce7 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(108,92,231,0.4);">
                     <i class="fa-solid fa-bell" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
-                <!-- Wallet Button (Green) -->
                 <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
                     <i class="fa-solid fa-wallet" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
-                <!-- Refer Button (Orange) -->
                 <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'" style="background: #e17055 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(225,112,85,0.4);">
                     <i class="fa-solid fa-gift" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
@@ -94,12 +90,11 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Uniform Style & Colors)
+// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Har Button ka Alag Active Color)
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
 
-    // URL se current page name check karna
     const pathName = window.location.pathname.split("/").pop() || "dashboard.html";
 
     navContainer.innerHTML = `
@@ -128,7 +123,7 @@ function loadBottomNav() {
                 cursor: pointer;
                 flex: 1;
                 text-decoration: none;
-                color: #64748b; /* Common Inactive Text Color */
+                color: #64748b;
                 font-size: 12px;
                 font-weight: 600;
                 gap: 4px;
@@ -137,38 +132,45 @@ function loadBottomNav() {
                 width: 38px;
                 height: 38px;
                 border-radius: 12px;
-                background: #f1f5f9; /* Sabhi Inactive Icons ke liye Same Light Grey BG */
-                color: #475569; /* Sabhi Inactive Icons ke liye Same Icon Color */
+                background: #f1f5f9;
+                color: #475569;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 16px;
                 transition: all 0.2s ease;
             }
-            /* Active State Style (Same Blue Color for Selected Tab) */
-            .nav-item.active {
-                color: #2563eb;
-            }
-            .nav-item.active .nav-icon-box {
-                background: #2563eb !important; /* Uniform Active Color for All Buttons */
-                color: #ffffff !important;
-                box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
-            }
+
+            /* 🔵 Home Button Active Color (Blue) */
+            .nav-item.nav-home.active { color: #2563eb; }
+            .nav-item.nav-home.active .nav-icon-box { background: #2563eb !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(37,99,235,0.4); }
+
+            /* 🟢 Wallet Button Active Color (Green) */
+            .nav-item.nav-wallet.active { color: #00b894; }
+            .nav-item.nav-wallet.active .nav-icon-box { background: #00b894 !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(0,184,148,0.4); }
+
+            /* 🟣 Support Button Active Color (Purple) */
+            .nav-item.nav-support.active { color: #6c5ce7; }
+            .nav-item.nav-support.active .nav-icon-box { background: #6c5ce7 !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(108,92,231,0.4); }
+
+            /* 🟠 Profile Button Active Color (Orange) */
+            .nav-item.nav-profile.active { color: #e17055; }
+            .nav-item.nav-profile.active .nav-icon-box { background: #e17055 !important; color: #ffffff !important; box-shadow: 0 3px 8px rgba(225,112,85,0.4); }
         </style>
         <nav class="bottom-nav">
-            <button class="nav-item ${pathName === 'dashboard.html' || pathName === 'index.html' || pathName === '' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
+            <button class="nav-item nav-home ${pathName === 'dashboard.html' || pathName === 'index.html' || pathName === '' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
                 <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div>
                 <span>Home</span>
             </button>
-            <button class="nav-item ${pathName === 'wallet.html' ? 'active' : ''}" onclick="window.location.href='wallet.html'">
+            <button class="nav-item nav-wallet ${pathName === 'wallet.html' ? 'active' : ''}" onclick="window.location.href='wallet.html'">
                 <div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div>
                 <span>Wallet</span>
             </button>
-            <button class="nav-item ${pathName === 'support.html' ? 'active' : ''}" onclick="window.location.href='support.html'">
+            <button class="nav-item nav-support ${pathName === 'support.html' ? 'active' : ''}" onclick="window.location.href='support.html'">
                 <div class="nav-icon-box"><i class="fa-solid fa-headset"></i></div>
                 <span>Support</span>
             </button>
-            <button class="nav-item ${pathName === 'profile.html' ? 'active' : ''}" onclick="window.location.href='profile.html'">
+            <button class="nav-item nav-profile ${pathName === 'profile.html' ? 'active' : ''}" onclick="window.location.href='profile.html'">
                 <div class="nav-icon-box"><i class="fa-solid fa-user"></i></div>
                 <span>Profile</span>
             </button>
