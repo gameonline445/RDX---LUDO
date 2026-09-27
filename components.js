@@ -13,8 +13,8 @@ function loadHeader() {
                 <button class="menu-btn" onclick="toggleDrawer()">
                     <i class="fa-solid fa-bars"></i>
                 </button>
-                <div class="logo" onclick="window.location.href='dashboard.html'">
-                    <img src="logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/46'">
+                <div class="logo" onclick="window.location.href='dashboard.html'" style="display: flex; align-items: center; cursor: pointer;">
+                    <img src="logo.png" alt="Logo" style="width: 42px; height: 42px; object-fit: contain; display: block;" onerror="this.src='https://via.placeholder.com/42'">
                 </div>
             </div>
             <div class="header-right">
@@ -43,11 +43,11 @@ function loadDrawer() {
             <div class="drawer-header">
                 <div class="drawer-user">
                     <div class="drawer-avatar" id="drawerAvatar">
-                        <img src="logo.png" alt="Logo" onerror="this.style.display='none'">
+                        <img src="logo.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.style.display='none'">
                     </div>
                     <div>
-                        <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e;">User</h4>
-                        <p id="drawerMobile" style="font-size:11px; color:#64748b; font-weight:700;">+91**********</p>
+                        <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e; margin:0;">User</h4>
+                        <p id="drawerMobile" style="font-size:11px; color:#64748b; font-weight:700; margin:0;">+91**********</p>
                     </div>
                 </div>
                 <button class="drawer-close" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
@@ -95,7 +95,7 @@ function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
 
-    // Current page URL se page name nikalna
+    // URL se current page name pata karna
     const pathName = window.location.pathname.split("/").pop() || "dashboard.html";
 
     navContainer.innerHTML = `
