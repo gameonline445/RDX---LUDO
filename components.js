@@ -38,12 +38,122 @@ function loadDrawer() {
     if (!drawerContainer) return;
 
     drawerContainer.innerHTML = `
+        <style>
+            .drawer-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 1050;
+                display: none;
+            }
+            .drawer-overlay.active {
+                display: block;
+            }
+            .drawer {
+                position: fixed;
+                top: 0;
+                left: -280px;
+                width: 280px;
+                height: 100%;
+                background: #ffffff;
+                z-index: 1100;
+                transition: left 0.3s ease;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+                overflow-y: auto;
+            }
+            .drawer.active {
+                left: 0;
+            }
+            .drawer-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 15px;
+                background: #f0f9ff;
+                border-bottom: 1px solid #e2e8f0;
+            }
+            .drawer-user {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .drawer-avatar {
+                width: 45px;
+                height: 45px;
+                border-radius: 50%;
+                background: #e2e8f0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+            }
+            .drawer-close {
+                background: #ffffff;
+                border: 1px solid #cbd5e1;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                color: #64748b;
+            }
+            .drawer-links {
+                padding: 15px 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .drawer-item {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                padding: 10px 15px;
+                border: none;
+                background: transparent;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+                border-radius: 10px;
+                font-size: 15px;
+                font-weight: 700;
+                color: #334155;
+            }
+            .drawer-item:hover {
+                background: #f8fafc;
+            }
+            .drawer-item-icon {
+                width: 38px;
+                height: 38px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                color: #ffffff !important;
+            }
+            
+            /* Sidebar Colored Icons */
+            .menu-home { background: #6c5ce7 !important; }
+            .menu-profile { background: #e17055 !important; }
+            .menu-wallet { background: #00b894 !important; }
+            .menu-refer { background: #e17055 !important; }
+            .menu-history { background: #6c5ce7 !important; }
+            .menu-notification { background: #0984e3 !important; }
+            .menu-support { background: #00cec9 !important; }
+            .menu-logout { background: #d63031 !important; }
+        </style>
+
         <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
         <div class="drawer" id="sideDrawer">
             <div class="drawer-header">
                 <div class="drawer-user">
                     <div class="drawer-avatar" id="drawerAvatar">
-                        <img src="logo.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.style.display='none'">
+                        <img src="logo.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/40'">
                     </div>
                     <div>
                         <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e; margin:0;">User</h4>
@@ -139,7 +249,7 @@ function loadBottomNav() {
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
-            /* 🔵 Permanent Colors for Nav Icons */
+            /* Permanent Colors for Bottom Nav Icons */
             .nav-home .nav-icon-box { background: #2563eb !important; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
             .nav-wallet .nav-icon-box { background: #00b894 !important; box-shadow: 0 2px 6px rgba(0,184,148,0.3); }
             .nav-support .nav-icon-box { background: #6c5ce7 !important; box-shadow: 0 2px 6px rgba(108,92,231,0.3); }
@@ -151,7 +261,7 @@ function loadBottomNav() {
             .nav-support { color: #6c5ce7; }
             .nav-profile { color: #e17055; }
 
-            /* Highlight active page icon with slight zoom & stronger shadow */
+            /* Active State Styling */
             .nav-item.active .nav-icon-box {
                 transform: scale(1.1);
                 box-shadow: 0 4px 10px rgba(0,0,0,0.25);
