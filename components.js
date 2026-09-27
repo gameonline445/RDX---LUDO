@@ -94,15 +94,14 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Fixed Same-Color Buttons)
+// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Uniform Style & Colors)
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
 
-    // URL se current page name pata karna
+    // URL se current page name check karna
     const pathName = window.location.pathname.split("/").pop() || "dashboard.html";
 
-    // Sabhi buttons ke liye ek jaisa theme color (Primary Blue: #2563eb)
     navContainer.innerHTML = `
         <style>
             .bottom-nav {
@@ -129,7 +128,7 @@ function loadBottomNav() {
                 cursor: pointer;
                 flex: 1;
                 text-decoration: none;
-                color: #64748b; /* Common Inactive Color */
+                color: #64748b; /* Common Inactive Text Color */
                 font-size: 12px;
                 font-weight: 600;
                 gap: 4px;
@@ -138,26 +137,26 @@ function loadBottomNav() {
                 width: 38px;
                 height: 38px;
                 border-radius: 12px;
-                background: #f1f5f9; /* Same Light Grey Background for All */
-                color: #475569; /* Same Icon Color for All */
+                background: #f1f5f9; /* Sabhi Inactive Icons ke liye Same Light Grey BG */
+                color: #475569; /* Sabhi Inactive Icons ke liye Same Icon Color */
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 16px;
                 transition: all 0.2s ease;
             }
-            /* Active Button Style (Same Blue Color for Selected Tab) */
+            /* Active State Style (Same Blue Color for Selected Tab) */
             .nav-item.active {
                 color: #2563eb;
             }
             .nav-item.active .nav-icon-box {
-                background: #2563eb; /* Primary Blue for Active Icon Box */
-                color: #ffffff;
+                background: #2563eb !important; /* Uniform Active Color for All Buttons */
+                color: #ffffff !important;
                 box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
             }
         </style>
         <nav class="bottom-nav">
-            <button class="nav-item ${pathName === 'dashboard.html' || pathName === 'index.html' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
+            <button class="nav-item ${pathName === 'dashboard.html' || pathName === 'index.html' || pathName === '' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
                 <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div>
                 <span>Home</span>
             </button>
