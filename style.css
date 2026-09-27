@@ -1,0 +1,166 @@
+/* ==========================================
+   1. GLOBAL RESET & BASE STYLES
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: #f4f6f9;
+    color: #333333;
+}
+
+/* ==========================================
+   2. ALL ICONS & COLORS SYNC 🎨
+   ========================================== */
+.icon-bg-home    { background-color: #6c5ce7 !important; color: #ffffff !important; } /* Home - Purple 💜 */
+.icon-bg-wallet  { background-color: #00b894 !important; color: #ffffff !important; } /* Wallet - Green 💚 */
+.icon-bg-support { background-color: #0984e3 !important; color: #ffffff !important; } /* Support - Blue 💙 */
+.icon-bg-profile { background-color: #e17055 !important; color: #ffffff !important; } /* Profile - Orange 🧡 */
+.icon-bg-notif   { background-color: #6c5ce7 !important; color: #ffffff !important; } /* Notification - Purple 💜 */
+.icon-bg-refer   { background-color: #fdcb6e !important; color: #ffffff !important; } /* Refer - Yellow 💛 */
+
+/* Base Icon Box Design */
+.app-icon-box {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1) !important;
+    cursor: pointer;
+}
+
+.app-icon-box i {
+    font-size: 18px !important;
+    color: #ffffff !important;
+}
+
+/* ==========================================
+   3. FIXED NAVIGATION & SCROLL AREA 📌
+   ========================================== */
+/* Header Bar Fixed */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: #ffffff !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    z-index: 1000;
+}
+
+.header-left, .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Bottom Nav Fixed */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: #ffffff !important;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -2px 8px rgba(0,0,0,0.08);
+    z-index: 1000;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666666;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.nav-item .app-icon-box {
+    margin-bottom: 3px;
+}
+
+/* Main Content Area (Header aur Bottom Nav ke beech me scroll hoga) */
+.main-content {
+    padding-top: 70px !important;     /* Header ke niche space */
+    padding-bottom: 75px !important;  /* Bottom Nav ke upar space */
+    min-height: 100vh;
+}
+
+/* ==========================================
+   4. SIDE DRAWER MENU STYLES
+   ========================================== */
+.drawer-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    z-index: 1001;
+}
+
+.drawer-overlay.open {
+    display: block;
+}
+
+.side-drawer {
+    position: fixed;
+    top: 0;
+    left: -280px;
+    width: 280px;
+    height: 100%;
+    background: #ffffff;
+    z-index: 1002;
+    transition: left 0.3s ease;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+.side-drawer.open {
+    left: 0;
+}
+
+.drawer-header {
+    background: #6c5ce7;
+    color: #ffffff;
+    padding: 20px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawer-menu {
+    list-style: none;
+    padding: 15px 0;
+}
+
+.drawer-menu li {
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.drawer-menu li:hover {
+    background-color: #f8f9fa;
+}
