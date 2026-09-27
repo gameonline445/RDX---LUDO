@@ -12,6 +12,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
+<!-- DYNAMIC COMPONENTS LOAD -->
+<script src="components.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
@@ -29,79 +32,6 @@ body{
 }
 
 button{font:inherit;}
-
-/* TOP HEADER */
-.top-header{
-    height:66px;
-    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 14px;
-    position:sticky;
-    top:0;
-    z-index:100;
-    box-shadow:0 4px 18px rgba(2,132,199,0.08);
-}
-
-.header-left{display:flex;align-items:center;gap:10px;}
-
-.menu-btn{
-    width:42px;
-    height:42px;
-    border:0;
-    border-radius:14px;
-    background:linear-gradient(145deg,#ff7165,#ff8a70);
-    color:white;
-    font-size:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(255,113,101,0.25);
-}
-.menu-btn:active{transform:scale(0.95);}
-
-.logo{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    box-shadow:0 4px 12px rgba(2,132,199,0.15);
-}
-.logo img{width:100%;height:100%;object-fit:cover;}
-
-.header-right{display:flex;align-items:center;gap:8px;}
-
-/* THREE HEADER ICONS (Notification, Wallet, Redeem - Same Size & Style) */
-.header-icon{
-    width:38px;
-    height:38px;
-    border:0;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    font-size:13px;
-    font-weight:800;
-    color:white;
-    cursor:pointer;
-    padding:0;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-}
-.header-icon:active{transform:scale(0.95);}
-
-.notification{background:linear-gradient(145deg,#6366f1,#818cf8);}
-.wallet-top{background:linear-gradient(145deg,#16a34a,#22c55e);}
-.redeem-top{background:linear-gradient(145deg,#ea580c,#f97316);}
 
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
@@ -216,156 +146,6 @@ button{font:inherit;}
 }
 .transfer-btn:active { transform: scale(0.96); }
 
-/* SIDE DRAWER */
-.drawer-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.45);
-    backdrop-filter:blur(4px);
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.25s ease;
-}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{
-    position:fixed;
-    top:0;
-    left:0;
-    width:280px;
-    height:100%;
-    background:#ffffff;
-    z-index:1000;
-    box-shadow:4px 0 25px rgba(2,132,199,0.15);
-    transform:translateX(-100%);
-    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-    display:flex;
-    flex-direction:column;
-}
-.drawer.active{transform:translateX(0);}
-.drawer-header{
-    padding:20px 16px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    background:linear-gradient(145deg,#0284c7,#0369a1);
-    color:white;
-    font-size:18px;
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-    border:1.5px solid #93c5fd;
-}
-.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-.drawer-close{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    background:#ffffff;
-    border:1px solid #bae6fd;
-    color:#0c4a6e;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{
-    width:100%;
-    padding:12px 14px;
-    border:0;
-    border-radius:14px;
-    background:transparent;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:14px;
-    font-weight:750;
-    color:#334155;
-    cursor:pointer;
-    margin-bottom:4px;
-}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item-icon{
-    width:36px;
-    height:36px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
-
-/* BOTTOM NAV */
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:74px;
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(12px);
-    border-top:1.5px solid #e2e8f0;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    z-index:200;
-    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
-}
-.nav-item{
-    width:25%;
-    height:100%;
-    border:0;
-    background:transparent;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    color:#64748b;
-    font-size:11px;
-    font-weight:700;
-    cursor:pointer;
-    position:relative;
-    text-decoration:none;
-}
-.nav-icon-box{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    color:#ffffff;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-
 /* REDEEM MODAL POPUP */
 .modal-overlay {
     display: none;
@@ -469,57 +249,9 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 }
 </script>
 
-<!-- SIDE DRAWER OVERLAY & MENU -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar" id="drawerAvatar">
-                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
-            </div>
-            <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.href='dashboard.html'"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="window.location.href='profile.html'"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="window.location.href='wallet.html'"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.href='referral.html'"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn</span></button>
-        <button class="drawer-item" onclick="window.location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History</span></button>
-        <button class="drawer-item" onclick="window.location.href='notification.html'"><div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><span>Notifications</span></button>
-        <button class="drawer-item" onclick="window.location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fa-solid fa-right-from-bracket"></i></div><span>Logout</span></button>
-    </div>
-</div>
-
-<!-- TOP HEADER -->
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="window.location.href='dashboard.html'">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
-    </div>
-    <div class="header-right">
-        <!-- Notification Icon -->
-        <button class="header-icon notification" onclick="window.location.href='notification.html'">
-            <i class="fa-solid fa-bell"></i>
-        </button>
-        <!-- Wallet Icon -->
-        <button class="header-icon wallet-top" onclick="window.location.href='wallet.html'">
-            <i class="fa-solid fa-wallet"></i>
-        </button>
-        <!-- Referral/Gift Icon -->
-        <button class="header-icon redeem-top" onclick="window.location.href='referral.html'">
-            <i class="fa-solid fa-gift"></i>
-        </button>
-    </div>
-</header>
+<!-- DYNAMIC COMPONENTS PLACEHOLDERS -->
+<div id="top-header"></div>
+<div id="side-drawer"></div>
 
 <main class="container">
     <!-- REFERRAL CARD -->
@@ -576,25 +308,8 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </div>
 </div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.href='dashboard.html'">
-        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
-        <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="window.location.href='wallet.html'">
-        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
-        <span>Wallet</span>
-    </button>
-    <button class="nav-item" onclick="window.location.href='support.html'">
-        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
-        <span>Support</span>
-    </button>
-    <button class="nav-item" onclick="window.location.href='profile.html'">
-        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
-        <span>Profile</span>
-    </button>
-</nav>
+<!-- DYNAMIC BOTTOM NAVIGATION PLACEHOLDER -->
+<div id="bottom-nav"></div>
 
 <div id="toast"></div>
 
@@ -620,11 +335,6 @@ function getCleanUserId() {
 const userId = getCleanUserId();
 let currentReferralBalance = 0;
 
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
-
 function loadReferralDataRealtime() {
     if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
@@ -634,8 +344,12 @@ function loadReferralDataRealtime() {
             const data = snap.data();
             
             const fullName = String(data.name || ("User " + userId.slice(-4))).trim();
-            document.getElementById("drawerName").textContent = fullName;
-            document.getElementById("drawerMobile").textContent = "+" + userId;
+            
+            // Drawer text updates (if components loaded)
+            const drawerNameEl = document.getElementById("drawerName");
+            const drawerMobileEl = document.getElementById("drawerMobile");
+            if (drawerNameEl) drawerNameEl.textContent = fullName;
+            if (drawerMobileEl) drawerMobileEl.textContent = "+" + userId;
 
             // Referral Wallet Balance
             currentReferralBalance = Number(data.referralBalance || data.referralWallet || 0);
@@ -704,53 +418,6 @@ function processRedeemInFirestore() {
     });
 }
 
-// GAME WIN HONEY PAR REFERRAL KO 2% NET PROFIT ADD KARNE KA AUTOMATIC LOGIC
-async function processReferralBonusOnWin(winnerUserId, entryFee, totalPrize) {
-    try {
-        const cleanWinnerId = String(winnerUserId).replace(/\D/g, "");
-        const winnerDocId = cleanWinnerId.length === 10 ? "91" + cleanWinnerId : cleanWinnerId;
-
-        const winnerDoc = await firebaseDB.collection("customers").doc(winnerDocId).get();
-        if (!winnerDoc.exists) return;
-
-        const winnerData = winnerDoc.data();
-        const referrerCode = winnerData.referredBy;
-
-        if (!referrerCode) return;
-
-        const netProfit = totalPrize - entryFee;
-        if (netProfit <= 0) return;
-
-        const referralBonus = (netProfit * 2) / 100;
-
-        const referrerQuery = await firebaseDB.collection("customers")
-            .where("referralCode", "==", referrerCode)
-            .limit(1)
-            .get();
-
-        if (referrerQuery.empty) return;
-
-        const referrerDoc = referrerQuery.docs[0];
-        const referrerRef = firebaseDB.collection("customers").doc(referrerDoc.id);
-
-        await firebaseDB.runTransaction(async (transaction) => {
-            const rDoc = await transaction.get(referrerRef);
-            if (!rDoc.exists) return;
-
-            const rData = rDoc.data();
-            const currentRefBal = Number(rData.referralBalance || rData.referralWallet || 0);
-            const newRefBal = currentRefBal + referralBonus;
-
-            transaction.update(referrerRef, {
-                referralBalance: newRefBal,
-                referralWallet: newRefBal
-            });
-        });
-    } catch (err) {
-        console.error("Error processing referral bonus:", err);
-    }
-}
-
 function openRedeemModal() {
     document.getElementById("redeemModal").style.display = "flex";
 }
@@ -799,16 +466,6 @@ function shareOnWhatsApp() {
     window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(text), "_blank");
 }
 
-function logout() {
-    if (!confirm("Kya aap Logout karna chahte hain?")) return;
-    if (userId) {
-        const docId = userId.length === 10 ? "91" + userId : userId;
-        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
-    }
-    localStorage.clear();
-    window.location.replace("index.html");
-}
-
 function showToast(msg) {
     const toast = document.getElementById("toast");
     toast.innerText = msg;
@@ -816,7 +473,15 @@ function showToast(msg) {
     setTimeout(() => { toast.className = ""; }, 3000);
 }
 
-window.addEventListener("load", loadReferralDataRealtime);
+// INITIALIZATION
+window.addEventListener("load", () => {
+    // Render shared components dynamically
+    if (typeof renderTopHeader === "function") renderTopHeader();
+    if (typeof renderSideDrawer === "function") renderSideDrawer();
+    if (typeof renderBottomNav === "function") renderBottomNav("referral");
+
+    loadReferralDataRealtime();
+});
 </script>
 
 </body>
