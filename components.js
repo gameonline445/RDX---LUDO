@@ -1,6 +1,5 @@
-// Function to load all components on any page
-function loadNavigationComponents(activePage) {
-    // 1. Top Header HTML
+function renderSyncedNavigation(activePage) {
+    // 1. TOP HEADER
     const headerHTML = `
         <header class="app-header">
             <div class="header-left">
@@ -23,97 +22,70 @@ function loadNavigationComponents(activePage) {
         </header>
     `;
 
-    // 2. Side Drawer Menu HTML
+    // 2. SIDE DRAWER MENU
     const drawerHTML = `
         <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
         <div id="sideDrawer" class="side-drawer">
             <div class="drawer-header">
-                <div class="user-info">
-                    <img src="avatar.png" alt="User" class="user-avatar">
-                    <div>
-                        <h4>Jai shree shyam</h4>
-                        <p>+917878852370</p>
-                    </div>
+                <div>
+                    <h4 style="margin:0;">Jai shree shyam</h4>
+                    <small>+917878852370</small>
                 </div>
-                <button class="close-btn" onclick="toggleDrawer()">×</button>
+                <button onclick="toggleDrawer()" style="border:none;background:none;font-size:24px;cursor:pointer;">×</button>
             </div>
             <ul class="drawer-menu">
                 <li onclick="location.href='home.html'">
-                    <span class="app-icon-box icon-bg-home"><i class="fas fa-home"></i></span> Home
+                    <div class="app-icon-box icon-bg-home"><i class="fas fa-home"></i></div> Home
                 </li>
                 <li onclick="location.href='profile.html'">
-                    <span class="app-icon-box icon-bg-profile"><i class="fas fa-user"></i></span> My Profile
+                    <div class="app-icon-box icon-bg-profile"><i class="fas fa-user"></i></div> My Profile
                 </li>
                 <li onclick="location.href='wallet.html'">
-                    <span class="app-icon-box icon-bg-wallet"><i class="fas fa-wallet"></i></span> My Wallet
+                    <div class="app-icon-box icon-bg-wallet"><i class="fas fa-wallet"></i></div> My Wallet
                 </li>
                 <li onclick="location.href='refer.html'">
-                    <span class="app-icon-box icon-bg-refer"><i class="fas fa-gift"></i></span> Refer & Earn
-                </li>
-                <li onclick="location.href='history.html'">
-                    <span class="app-icon-box icon-bg-notif"><i class="fas fa-history"></i></span> History
+                    <div class="app-icon-box icon-bg-refer"><i class="fas fa-gift"></i></div> Refer & Earn
                 </li>
                 <li onclick="location.href='notifications.html'">
-                    <span class="app-icon-box icon-bg-notif"><i class="fas fa-bell"></i></span> Notifications
+                    <div class="app-icon-box icon-bg-notif"><i class="fas fa-bell"></i></div> Notifications
                 </li>
                 <li onclick="location.href='support.html'">
-                    <span class="app-icon-box icon-bg-support"><i class="fas fa-headset"></i></span> Support
-                </li>
-                <li onclick="location.href='logout.html'">
-                    <span class="app-icon-box icon-bg-profile"><i class="fas fa-sign-out-alt"></i></span> Logout
+                    <div class="app-icon-box icon-bg-support"><i class="fas fa-headset"></i></div> Support
                 </li>
             </ul>
         </div>
     `;
 
-    // 3. Bottom Navigation Bar HTML
+    // 3. BOTTOM NAVIGATION BAR
     const bottomNavHTML = `
         <nav class="bottom-nav">
-            <a href="home.html" class="nav-item ${activePage === 'home' ? 'active' : ''}">
-                <div class="app-icon-box icon-bg-home">
-                    <i class="fas fa-home"></i>
-                </div>
+            <a href="home.html" class="nav-item">
+                <div class="app-icon-box icon-bg-home"><i class="fas fa-home"></i></div>
                 <span>Home</span>
             </a>
-            <a href="wallet.html" class="nav-item ${activePage === 'wallet' ? 'active' : ''}">
-                <div class="app-icon-box icon-bg-wallet">
-                    <i class="fas fa-wallet"></i>
-                </div>
+            <a href="wallet.html" class="nav-item">
+                <div class="app-icon-box icon-bg-wallet"><i class="fas fa-wallet"></i></div>
                 <span>Wallet</span>
             </a>
-            <a href="support.html" class="nav-item ${activePage === 'support' ? 'active' : ''}">
-                <div class="app-icon-box icon-bg-support">
-                    <i class="fas fa-headset"></i>
-                </div>
+            <a href="support.html" class="nav-item">
+                <div class="app-icon-box icon-bg-support"><i class="fas fa-headset"></i></div>
                 <span>Support</span>
             </a>
-            <a href="profile.html" class="nav-item ${activePage === 'profile' ? 'active' : ''}">
-                <div class="app-icon-box icon-bg-profile">
-                    <i class="fas fa-user"></i>
-                </div>
+            <a href="profile.html" class="nav-item">
+                <div class="app-icon-box icon-bg-profile"><i class="fas fa-user"></i></div>
                 <span>Profile</span>
             </a>
         </nav>
     `;
 
-    // Render into containers
-    if(document.getElementById('header-container')) {
-        document.getElementById('header-container').innerHTML = headerHTML;
-    }
-    if(document.getElementById('drawer-container')) {
-        document.getElementById('drawer-container').innerHTML = drawerHTML;
-    }
-    if(document.getElementById('bottom-nav-container')) {
-        document.getElementById('bottom-nav-container').innerHTML = bottomNavHTML;
-    }
+    // Inject into DOM
+    if(document.getElementById('header-container')) document.getElementById('header-container').innerHTML = headerHTML;
+    if(document.getElementById('drawer-container')) document.getElementById('drawer-container').innerHTML = drawerHTML;
+    if(document.getElementById('bottom-nav-container')) document.getElementById('bottom-nav-container').innerHTML = bottomNavHTML;
 }
 
 // Drawer Toggle Function
 function toggleDrawer() {
-    const drawer = document.getElementById('sideDrawer');
-    const overlay = document.getElementById('drawerOverlay');
-    if(drawer && overlay) {
-        drawer.classList.toggle('open');
-        overlay.classList.toggle('open');
-    }
+    document.getElementById('sideDrawer').classList.toggle('open');
+    document.getElementById('drawerOverlay').classList.toggle('open');
 }
