@@ -30,7 +30,7 @@ body{
 }
 button{font:inherit;}
 
-/* UNIFIED TOP HEADER STYLING */
+/* FIXED TOP HEADER STYLING (Always Stays on Top) */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -39,9 +39,11 @@ button{font:inherit;}
     align-items:center;
     justify-content:space-between;
     padding:0 14px;
-    position:sticky;
+    position:fixed;
     top:0;
-    z-index:100;
+    left:0;
+    width:100%;
+    z-index:500; /* Content ke hamesha upar rahega */
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
 .header-left{display:flex;align-items:center;gap:10px;}
@@ -95,8 +97,14 @@ button{font:inherit;}
 .wallet-icon{ background:linear-gradient(145deg,#16a34a,#22c55e); }
 .gift-icon{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* CONTAINER */
-.container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
+/* MAIN CONTAINER (Added margin-top so content scrolls under fixed header) */
+.container{
+    width:100%;
+    max-width:650px;
+    margin:0 auto;
+    padding:16px 14px;
+    margin-top:66px; /* Prevents overlap on load */
+}
 
 /* PROFILE CARD */
 .profile-card{
@@ -408,7 +416,7 @@ button{font:inherit;}
     display:flex;
     justify-content:space-around;
     align-items:center;
-    z-index:200;
+    z-index:500;
     box-shadow:0 -5px 25px rgba(2,132,199,0.06);
 }
 .nav-item{
