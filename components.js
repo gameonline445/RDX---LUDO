@@ -1,6 +1,6 @@
-// Function jo sabhi pages par Navbars load karega
+// Function jo saare navigation components ko render aur sync karegi
 function loadSyncedComponents() {
-    // 1. TOP HEADER
+    // 1. TOP HEADER (Colors aur Icons strictly synced)
     const headerHTML = `
         <header class="app-header">
             <div class="header-left">
@@ -23,7 +23,7 @@ function loadSyncedComponents() {
         </header>
     `;
 
-    // 2. SIDE DRAWER MENU
+    // 2. SIDE DRAWER MENU (Saare buttons ke colors sync hain)
     const drawerHTML = `
         <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
         <div id="sideDrawer" class="side-drawer">
@@ -47,17 +47,23 @@ function loadSyncedComponents() {
                 <li onclick="location.href='refer.html'">
                     <div class="app-icon-box icon-bg-refer"><i class="fas fa-gift"></i></div> Refer & Earn
                 </li>
+                <li onclick="location.href='history.html'">
+                    <div class="app-icon-box icon-bg-notif"><i class="fas fa-history"></i></div> History
+                </li>
                 <li onclick="location.href='notifications.html'">
                     <div class="app-icon-box icon-bg-notif"><i class="fas fa-bell"></i></div> Notifications
                 </li>
                 <li onclick="location.href='support.html'">
                     <div class="app-icon-box icon-bg-support"><i class="fas fa-headset"></i></div> Support
                 </li>
+                <li onclick="location.href='logout.html'">
+                    <div class="app-icon-box icon-bg-profile"><i class="fas fa-sign-out-alt"></i></div> Logout
+                </li>
             </ul>
         </div>
     `;
 
-    // 3. BOTTOM NAVIGATION
+    // 3. BOTTOM NAVIGATION (Bottom Nav ke icons ke colors bhi bilkul same hain)
     const bottomNavHTML = `
         <nav class="bottom-nav">
             <a href="home.html" class="nav-item">
@@ -79,17 +85,17 @@ function loadSyncedComponents() {
         </nav>
     `;
 
-    // HTML elements ko safely set karna
-    const headerEl = document.getElementById('header-container');
-    const drawerEl = document.getElementById('drawer-container');
-    const bottomEl = document.getElementById('bottom-nav-container');
+    // DOM Elements me safely render karna
+    const headerContainer = document.getElementById('header-container');
+    const drawerContainer = document.getElementById('drawer-container');
+    const bottomContainer = document.getElementById('bottom-nav-container');
 
-    if (headerEl) headerEl.innerHTML = headerHTML;
-    if (drawerEl) drawerEl.innerHTML = drawerHTML;
-    if (bottomEl) bottomEl.innerHTML = bottomNavHTML;
+    if (headerContainer) headerContainer.innerHTML = headerHTML;
+    if (drawerContainer) drawerContainer.innerHTML = drawerHTML;
+    if (bottomContainer) bottomContainer.innerHTML = bottomNavHTML;
 }
 
-// Drawer Open/Close toggle function
+// Drawer Open/Close Toggle Function
 function toggleDrawer() {
     const drawer = document.getElementById('sideDrawer');
     const overlay = document.getElementById('drawerOverlay');
@@ -99,5 +105,9 @@ function toggleDrawer() {
     }
 }
 
-// Page fully load hone par apne aap run ho
-document.addEventListener('DOMContentLoaded', loadSyncedComponents);
+// Ensure execution after full DOM load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadSyncedComponents);
+} else {
+    loadSyncedComponents();
+}
