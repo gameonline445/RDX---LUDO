@@ -11,20 +11,6 @@
     if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
         window.location.replace("index.html");
     }
-
-    // Mobile Back Button Trap
-    (function() {
-        window.history.pushState({ page: "notification" }, "", window.location.href);
-        window.addEventListener("popstate", function() {
-            const panel = document.getElementById("sideDrawer");
-            if (panel && panel.classList.contains("active")) {
-                toggleMenu();
-                window.history.pushState({ page: "notification" }, "", window.location.href);
-            } else {
-                window.location.href = "dashboard.html";
-            }
-        });
-    })();
     </script>
 
     <style>
@@ -40,173 +26,6 @@
             padding-bottom:95px;
         }
         button{font:inherit;}
-
-        /* TOP HEADER WITH 3 ROUND ICON BUTTONS */
-        .top-header{
-            height:66px;
-            background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-            border-bottom:1.5px solid #bae6fd;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            padding:0 14px;
-            position:sticky;
-            top:0;
-            z-index:100;
-            box-shadow:0 4px 18px rgba(2,132,199,0.08);
-        }
-        .header-left{display:flex;align-items:center;gap:10px;}
-        .menu-btn{
-            width:42px;
-            height:42px;
-            border:0;
-            border-radius:14px;
-            background:linear-gradient(145deg,#ff7165,#ff8a70);
-            color:white;
-            font-size:20px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            box-shadow:0 4px 12px rgba(255,113,101,0.25);
-        }
-        .menu-btn:active{transform:scale(0.95);}
-
-        .logo{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            overflow:hidden;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-            border:1.5px solid #bae6fd;
-            background:#ffffff;
-            box-shadow:0 4px 12px rgba(2,132,199,0.15);
-        }
-        .logo img{width:100%;height:100%;object-fit:cover;}
-
-        .header-right{display:flex;align-items:center;gap:10px;}
-        .header-icon-btn{
-            width:42px;
-            height:42px;
-            border:0;
-            border-radius:50%;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:18px;
-            color:white;
-            cursor:pointer;
-            box-shadow:0 4px 12px rgba(0,0,0,0.1);
-            transition:transform 0.15s ease;
-        }
-        .header-icon-btn:active{transform:scale(0.92);}
-        
-        .btn-notif{background:linear-gradient(145deg,#6366f1,#818cf8);}
-        .btn-wallet{background:linear-gradient(145deg,#22c55e,#16a34a);}
-        .btn-refer{background:linear-gradient(145deg,#f97316,#ea580c);}
-
-        /* SIDE DRAWER */
-        .drawer-overlay{
-            position:fixed;
-            inset:0;
-            background:rgba(15,23,42,0.45);
-            backdrop-filter:blur(4px);
-            z-index:999;
-            opacity:0;
-            pointer-events:none;
-            transition:opacity 0.25s ease;
-        }
-        .drawer-overlay.active{opacity:1;pointer-events:auto;}
-        .drawer{
-            position:fixed;
-            top:0;
-            left:0;
-            width:280px;
-            height:100%;
-            background:#ffffff;
-            z-index:1000;
-            box-shadow:4px 0 25px rgba(2,132,199,0.15);
-            transform:translateX(-100%);
-            transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-            display:flex;
-            flex-direction:column;
-        }
-        .drawer.active{transform:translateX(0);}
-        .drawer-header{
-            padding:20px 16px;
-            background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-            border-bottom:1.5px solid #bae6fd;
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-        }
-        .drawer-user{display:flex;align-items:center;gap:10px;}
-        .drawer-avatar{
-            width:46px;
-            height:46px;
-            border-radius:50%;
-            overflow:hidden;
-            background:#ffffff;
-            border:1.5px solid #bae6fd;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-        }
-        .drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-        .drawer-close{
-            width:34px;
-            height:34px;
-            border-radius:50%;
-            border:1.5px solid #bae6fd;
-            background:#ffffff;
-            color:#0c4a6e;
-            font-size:16px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            cursor:pointer;
-        }
-        .drawer-links{flex:1;overflow-y:auto;padding:12px;}
-        .drawer-item{
-            width:100%;
-            padding:10px 14px;
-            border:0;
-            border-radius:14px;
-            background:transparent;
-            display:flex;
-            align-items:center;
-            gap:12px;
-            font-size:14px;
-            font-weight:750;
-            color:#334155;
-            cursor:pointer;
-            margin-bottom:6px;
-        }
-        .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-        .drawer-item-icon{
-            width:36px;
-            height:36px;
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            color:white;
-            font-size:16px;
-            box-shadow:0 4px 10px rgba(0,0,0,0.08);
-        }
-        .menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-        .menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-        .menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-        .menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-        .menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-        .menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-        .menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-        .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
-
-        /* MAIN CONTAINER */
         .container{width:100%;max-width:650px;margin:auto;padding:0 14px;}
         .page-heading{padding:18px 4px 12px;display:flex;justify-content:space-between;align-items:center;}
         .page-heading h2{font-size:20px;font-weight:900;color:#0c4a6e;}
@@ -221,111 +40,23 @@
             flex-direction:column;
             gap:6px;
             box-shadow:0 4px 14px rgba(2,132,199,0.06);
-            transition:transform 0.15s ease;
         }
-        .notif-card:active{transform:scale(0.99);}
         .notif-header{display:flex;justify-content:space-between;align-items:center;}
         .notif-title{color:#0284c7;font-size:15px;font-weight:800;}
         .notif-time{font-size:11px;color:#94a3b8;font-weight:600;}
         .notif-body{font-size:13px;color:#475569;line-height:1.4;font-weight:600;}
-
-        /* BOTTOM NAV BAR */
-        .bottom-nav{
-            position:fixed;
-            bottom:0;
-            left:0;
-            width:100%;
-            height:76px;
-            background:rgba(255,255,255,0.96);
-            backdrop-filter:blur(12px);
-            border-top:1.5px solid #e2e8f0;
-            display:flex;
-            justify-content:space-around;
-            align-items:center;
-            z-index:200;
-            box-shadow:0 -5px 25px rgba(2,132,199,0.06);
-        }
-        .nav-item{
-            width:25%;
-            height:100%;
-            border:0;
-            background:transparent;
-            display:flex;
-            flex-direction:column;
-            align-items:center;
-            justify-content:center;
-            gap:5px;
-            color:#64748b;
-            font-size:12px;
-            font-weight:700;
-            cursor:pointer;
-        }
-        .nav-icon-box{
-            width:44px;
-            height:44px;
-            border-radius:16px;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            font-size:19px;
-            color:#ffffff;
-            box-shadow:0 4px 10px rgba(0,0,0,0.08);
-            transition:transform 0.15s ease;
-        }
-        .nav-item:active .nav-icon-box{transform:scale(0.92);}
-        
-        .icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-        .icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-        .icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-        .icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-        
-        .nav-item.active{color:#101a38;font-weight:900;}
     </style>
 </head>
 <body>
 
-<!-- SIDE DRAWER & OVERLAY -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=rdx" alt="Avatar"></div>
-            <div>
-                <div id="drawerName" style="font-size:15px;font-weight:900;color:#0c4a6e;">Loading...</div>
-                <div id="drawerMobile" style="font-size:12px;color:#0284c7;font-weight:700;">+91...</div>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.href='dashboard.html'"><div class="drawer-item-icon menu-home"><i class="fas fa-home"></i></div>Home</button>
-        <button class="drawer-item" onclick="window.location.href='profile.html'"><div class="drawer-item-icon menu-profile"><i class="fas fa-user"></i></div>Profile</button>
-        <button class="drawer-item" onclick="window.location.href='wallet.html'"><div class="drawer-item-icon menu-wallet"><i class="fas fa-wallet"></i></div>Wallet</button>
-        <button class="drawer-item" onclick="window.location.href='referral.html'"><div class="drawer-item-icon menu-refer"><i class="fas fa-users"></i></div>Refer & Earn</button>
-        <button class="drawer-item" onclick="window.location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fas fa-history"></i></div>History</button>
-        <button class="drawer-item" onclick="window.location.href='notifications.html'"><div class="drawer-item-icon menu-notification"><i class="fas fa-bell"></i></div>Notifications</button>
-        <button class="drawer-item" onclick="window.location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fas fa-headset"></i></div>Support</button>
-        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fas fa-sign-out-alt"></i></div>Logout</button>
-    </div>
-</div>
-
-<!-- TOP HEADER -->
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
-        <div class="logo" onclick="window.location.href='dashboard.html'"><img src="logo.png" alt="Logo" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=RDX'"></div>
-    </div>
-    <div class="header-right">
-        <button class="header-icon-btn btn-notif" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i></button>
-        <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'"><i class="fas fa-wallet"></i></button>
-        <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'"><i class="fas fa-share-alt"></i></button>
-    </div>
-</header>
+<!-- COMPONENTS CONTAINER (Header, Drawer, Bottom Nav yahan load honge agar components.js inhein inject karta hai) -->
+<div id="header-container"></div>
+<div id="drawer-container"></div>
 
 <!-- MAIN CONTENT -->
 <main class="container">
     <div class="page-heading">
-        <h2>Notifications</h2>
+        <h2>Notifications 🔔</h2>
     </div>
 
     <section id="notif-list">
@@ -333,36 +64,14 @@
     </section>
 </main>
 
-<!-- BOTTOM NAVIGATION BAR -->
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.href='dashboard.html'">
-        <div class="nav-icon-box icon-home"><i class="fas fa-home"></i></div>
-        <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="window.location.href='wallet.html'">
-        <div class="nav-icon-box icon-wallet"><i class="fas fa-wallet"></i></div>
-        <span>Wallet</span>
-    </button>
-    <button class="nav-item" onclick="window.location.href='support.html'">
-        <div class="nav-icon-box icon-support"><i class="fas fa-headset"></i></div>
-        <span>Support</span>
-    </button>
-    <button class="nav-item" onclick="window.location.href='profile.html'">
-        <div class="nav-icon-box icon-profile"><i class="fas fa-user"></i></div>
-        <span>Profile</span>
-    </button>
-</nav>
+<div id="bottom-nav-container"></div>
 
-<script>
-function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
-}
-</script>
+<!-- External Components Script -->
+<script src="components.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, collection, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -381,29 +90,8 @@ function getCleanUserId() {
     return String(raw).replace(/\D/g, "");
 }
 const userId = getCleanUserId();
-let userSnapshotUnsubscribe = null;
 
-// Fetch Live User Profile
-function listenUserData() {
-    if (!userId) return;
-    const docId = userId.length === 10 ? "91" + userId : userId;
-
-    try {
-        const userRef = doc(db, "customers", docId);
-        userSnapshotUnsubscribe = onSnapshot(userRef, (snap) => {
-            if (snap.exists()) {
-                const d = snap.data();
-                const userName = d.name || ("User " + userId.slice(-4));
-                document.getElementById("drawerName").textContent = userName;
-                document.getElementById("drawerMobile").textContent = "+" + userId;
-            }
-        });
-    } catch(err) {
-        console.error("Error loading user profile:", err);
-    }
-}
-
-// Realtime Listener for Notifications
+// Realtime Listener for Notifications 📱
 function listenNotifs() {
     const notifRef = collection(db, "notifications");
     onSnapshot(notifRef, (snap) => {
@@ -418,7 +106,6 @@ function listenNotifs() {
             }
         });
 
-        // Sort latest notifications first
         list.sort((a, b) => {
             const tA = a.timestamp || a.createdAt || 0;
             const tB = b.timestamp || b.createdAt || 0;
@@ -450,27 +137,9 @@ function listenNotifs() {
                 </div>
             `;
         }).join("");
-    }, (e) => {
-        console.error("Error loading notifications:", e);
-        document.getElementById("notif-list").innerHTML = "<div style='text-align:center;padding:40px;color:#ef4444;font-weight:700;'>Notifications load karne mein error aayi.</div>";
     });
 }
 
-window.logout = async () => {
-    if (!confirm("Kya aap Logout karna chahte hain?")) return;
-    if (userId) {
-        const docId = userId.length === 10 ? "91" + userId : userId;
-        try {
-            await setDoc(doc(db, "customers", docId), { isOnline: false }, { merge: true });
-        } catch(e) { console.error(e); }
-    }
-    if (userSnapshotUnsubscribe) userSnapshotUnsubscribe();
-    localStorage.clear();
-    sessionStorage.clear();
-    window.location.replace("index.html");
-};
-
-listenUserData();
 listenNotifs();
 </script>
 
