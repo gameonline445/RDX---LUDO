@@ -8,27 +8,28 @@ function loadHeader() {
     if (!headerContainer) return;
 
     headerContainer.innerHTML = `
-        <header class="top-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #ffffff; box-shadow: 0 2px 5px rgba(0,0,0,0.08); position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
+        <header class="top-header" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; background: #ffffff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.08); position: fixed; top: 0; left: 0; right: 0; z-index: 1000;">
             <div class="header-left" style="display: flex; align-items: center; gap: 10px;">
-                <button class="menu-btn" onclick="toggleDrawer()" style="background: #ff7675; border: none; width: 40px; height: 40px; border-radius: 12px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-bars" style="font-size: 18px; color: #ffffff;"></i>
+                <!-- Menu Bar Button (Reddish Pink) -->
+                <button class="menu-btn" onclick="toggleDrawer()" style="background: #ff7675 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(255,118,117,0.4);">
+                    <i class="fa-solid fa-bars" style="font-size: 18px; color: #ffffff !important;"></i>
                 </button>
                 <div class="logo" onclick="window.location.href='dashboard.html'" style="display: flex; align-items: center; cursor: pointer;">
-                    <img src="logo.png" alt="Logo" style="width: 42px; height: 42px; object-fit: contain; display: block;" onerror="this.src='https://via.placeholder.com/42'">
+                    <img src="logo.png" alt="Logo" style="width: 42px !important; height: 42px !important; object-fit: contain; display: block;" onerror="this.src='https://via.placeholder.com/42'">
                 </div>
             </div>
-            <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
-                <!-- Notification Button (Purple Color) -->
-                <button class="header-icon-btn btn-notif" onclick="window.location.href='notification.html'" style="background: #6c5ce7; border: none; width: 38px; height: 38px; border-radius: 12px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-bell" style="font-size: 16px; color: #ffffff;"></i>
+            <div class="header-right" style="display: flex; align-items: center; gap: 10px;">
+                <!-- Notification Button (Blue-Purple) -->
+                <button class="header-icon-btn btn-notif" onclick="window.location.href='notification.html'" style="background: #6c5ce7 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(108,92,231,0.4);">
+                    <i class="fa-solid fa-bell" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
-                <!-- Wallet Button (Green Color) -->
-                <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894; border: none; width: 38px; height: 38px; border-radius: 12px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-wallet" style="font-size: 16px; color: #ffffff;"></i>
+                <!-- Wallet Button (Green) -->
+                <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
+                    <i class="fa-solid fa-wallet" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
-                <!-- Refer Button (Orange Color) -->
-                <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'" style="background: #e17055; border: none; width: 38px; height: 38px; border-radius: 12px; color: #ffffff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-gift" style="font-size: 16px; color: #ffffff;"></i>
+                <!-- Refer Button (Orange) -->
+                <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'" style="background: #e17055 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(225,112,85,0.4);">
+                    <i class="fa-solid fa-gift" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
             </div>
         </header>
