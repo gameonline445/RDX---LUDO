@@ -1,91 +1,87 @@
-function renderSyncedNavigation(activePage) {
-    // 1. TOP HEADER
-    const headerHTML = `
-        <header class="app-header">
-            <div class="header-left">
-                <button class="app-icon-box icon-bg-notif" onclick="toggleDrawer()">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <img src="logo.png" alt="RDX Ludo" class="app-logo">
-            </div>
-            <div class="header-right">
-                <button class="app-icon-box icon-bg-notif" onclick="location.href='notifications.html'">
-                    <i class="fas fa-bell"></i>
-                </button>
-                <button class="app-icon-box icon-bg-wallet" onclick="location.href='wallet.html'">
-                    <i class="fas fa-wallet"></i>
-                </button>
-                <button class="app-icon-box icon-bg-refer" onclick="location.href='refer.html'">
-                    <i class="fas fa-gift"></i>
-                </button>
-            </div>
-        </header>
-    `;
+/* Color Palette & Icon Sync */
+.icon-bg-home    { background-color: #6c5ce7 !important; color: #ffffff !important; }
+.icon-bg-wallet  { background-color: #00b894 !important; color: #ffffff !important; }
+.icon-bg-support { background-color: #0984e3 !important; color: #ffffff !important; }
+.icon-bg-profile { background-color: #e17055 !important; color: #ffffff !important; }
+.icon-bg-notif   { background-color: #6c5ce7 !important; color: #ffffff !important; }
+.icon-bg-refer   { background-color: #e17055 !important; color: #ffffff !important; }
 
-    // 2. SIDE DRAWER MENU
-    const drawerHTML = `
-        <div id="drawerOverlay" class="drawer-overlay" onclick="toggleDrawer()"></div>
-        <div id="sideDrawer" class="side-drawer">
-            <div class="drawer-header">
-                <div>
-                    <h4 style="margin:0;">Jai shree shyam</h4>
-                    <small>+917878852370</small>
-                </div>
-                <button onclick="toggleDrawer()" style="border:none;background:none;font-size:24px;cursor:pointer;">×</button>
-            </div>
-            <ul class="drawer-menu">
-                <li onclick="location.href='home.html'">
-                    <div class="app-icon-box icon-bg-home"><i class="fas fa-home"></i></div> Home
-                </li>
-                <li onclick="location.href='profile.html'">
-                    <div class="app-icon-box icon-bg-profile"><i class="fas fa-user"></i></div> My Profile
-                </li>
-                <li onclick="location.href='wallet.html'">
-                    <div class="app-icon-box icon-bg-wallet"><i class="fas fa-wallet"></i></div> My Wallet
-                </li>
-                <li onclick="location.href='refer.html'">
-                    <div class="app-icon-box icon-bg-refer"><i class="fas fa-gift"></i></div> Refer & Earn
-                </li>
-                <li onclick="location.href='notifications.html'">
-                    <div class="app-icon-box icon-bg-notif"><i class="fas fa-bell"></i></div> Notifications
-                </li>
-                <li onclick="location.href='support.html'">
-                    <div class="app-icon-box icon-bg-support"><i class="fas fa-headset"></i></div> Support
-                </li>
-            </ul>
-        </div>
-    `;
-
-    // 3. BOTTOM NAVIGATION BAR
-    const bottomNavHTML = `
-        <nav class="bottom-nav">
-            <a href="home.html" class="nav-item">
-                <div class="app-icon-box icon-bg-home"><i class="fas fa-home"></i></div>
-                <span>Home</span>
-            </a>
-            <a href="wallet.html" class="nav-item">
-                <div class="app-icon-box icon-bg-wallet"><i class="fas fa-wallet"></i></div>
-                <span>Wallet</span>
-            </a>
-            <a href="support.html" class="nav-item">
-                <div class="app-icon-box icon-bg-support"><i class="fas fa-headset"></i></div>
-                <span>Support</span>
-            </a>
-            <a href="profile.html" class="nav-item">
-                <div class="app-icon-box icon-bg-profile"><i class="fas fa-user"></i></div>
-                <span>Profile</span>
-            </a>
-        </nav>
-    `;
-
-    // Inject into DOM
-    if(document.getElementById('header-container')) document.getElementById('header-container').innerHTML = headerHTML;
-    if(document.getElementById('drawer-container')) document.getElementById('drawer-container').innerHTML = drawerHTML;
-    if(document.getElementById('bottom-nav-container')) document.getElementById('bottom-nav-container').innerHTML = bottomNavHTML;
+/* Icon Box Styling */
+.app-icon-box {
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border: none !important;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1) !important;
+    cursor: pointer;
 }
 
-// Drawer Toggle Function
-function toggleDrawer() {
-    document.getElementById('sideDrawer').classList.toggle('open');
-    document.getElementById('drawerOverlay').classList.toggle('open');
+.app-icon-box i {
+    font-size: 18px !important;
+    color: #ffffff !important;
+}
+
+/* Base Body Style */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fe;
+    font-family: Arial, sans-serif;
+}
+
+/* FIXED HEADER (Top navigation screen par fix rahegi) */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: #ffffff !important; /* Solid background taaki niche ka content scroll hote hue na dikhe */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    z-index: 1000; /* Buttons content ke upar rahenge */
+}
+
+/* FIXED BOTTOM NAV (Bottom navigation screen par fix rahegi) */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: #ffffff !important; /* Solid background */
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    z-index: 1000;
+}
+
+/* MAIN CONTENT AREA (Content navigation ke peeche se scroll hoga) */
+.main-content {
+    padding-top: 75px !important;    /* Header ke liye top margin */
+    padding-bottom: 85px !important; /* Bottom nav ke liye bottom margin */
+    min-height: 100vh;
+    box-sizing: border-box;
+    overflow-y: auto;                 /* Normal Scrolling Enabled */
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: #666;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.nav-item span {
+    margin-top: 4px;
 }
