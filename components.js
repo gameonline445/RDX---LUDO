@@ -16,13 +16,15 @@ function loadHeader() {
                 </div>
             </div>
             <div class="header-right">
-                <button class="header-icon notification-icon" onclick="window.location.href='notifications.html'">
+                <!-- Corrected to notification.html -->
+                <button class="header-icon notification-icon" onclick="window.location.href='notification.html'">
                     <i class="fa-solid fa-bell"></i>
                 </button>
                 <button class="header-icon wallet-icon" onclick="window.location.href='wallet.html'">
                     <i class="fa-solid fa-wallet"></i>
                 </button>
-                <button class="header-icon gift-icon" onclick="window.location.href='refer.html'">
+                <!-- Corrected to referral.html -->
+                <button class="header-icon gift-icon" onclick="window.location.href='referral.html'">
                     <i class="fa-solid fa-gift"></i>
                 </button>
             </div>
@@ -58,15 +60,15 @@ function loadDrawer() {
                 <button class="drawer-item" onclick="window.location.href='wallet.html'">
                     <div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div> Wallet
                 </button>
-                <!-- NEW: Refer & Earn Button -->
-                <button class="drawer-item" onclick="window.location.href='refer.html'">
-                    <div class="drawer-item-icon menu-refer"><i class="fa-solid fa-users"></i></div> Refer & Earn
+                <!-- Corrected to referral.html -->
+                <button class="drawer-item" onclick="window.location.href='referral.html'">
+                    <div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div> Refer & Earn
                 </button>
                 <button class="drawer-item" onclick="window.location.href='history.html'">
                     <div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div> History
                 </button>
-                <!-- NEW: Notification Button -->
-                <button class="drawer-item" onclick="window.location.href='notifications.html'">
+                <!-- Corrected to notification.html -->
+                <button class="drawer-item" onclick="window.location.href='notification.html'">
                     <div class="drawer-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div> Notification
                 </button>
                 <button class="drawer-item" onclick="window.location.href='support.html'">
