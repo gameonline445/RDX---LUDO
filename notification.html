@@ -284,10 +284,45 @@
 </head>
 <body>
 
-<!-- COMPONENT MOUNT POINTS -->
-<div id="drawer-container"></div>
-<div id="header-container"></div>
+<!-- SIDE DRAWER & OVERLAY -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
+<div class="drawer" id="sideDrawer">
+    <div class="drawer-header">
+        <div class="drawer-user">
+            <div class="drawer-avatar"><img src="https://api.dicebear.com/7.x/bottts/svg?seed=rdx" alt="Avatar"></div>
+            <div>
+                <div id="drawerName" style="font-size:15px;font-weight:900;color:#0c4a6e;">Loading...</div>
+                <div id="drawerMobile" style="font-size:12px;color:#0284c7;font-weight:700;">+91...</div>
+            </div>
+        </div>
+        <button class="drawer-close" onclick="toggleMenu()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="drawer-links">
+        <button class="drawer-item" onclick="window.location.href='dashboard.html'"><div class="drawer-item-icon menu-home"><i class="fas fa-home"></i></div>Home</button>
+        <button class="drawer-item" onclick="window.location.href='profile.html'"><div class="drawer-item-icon menu-profile"><i class="fas fa-user"></i></div>Profile</button>
+        <button class="drawer-item" onclick="window.location.href='wallet.html'"><div class="drawer-item-icon menu-wallet"><i class="fas fa-wallet"></i></div>Wallet</button>
+        <button class="drawer-item" onclick="window.location.href='referral.html'"><div class="drawer-item-icon menu-refer"><i class="fas fa-users"></i></div>Refer & Earn</button>
+        <button class="drawer-item" onclick="window.location.href='history.html'"><div class="drawer-item-icon menu-history"><i class="fas fa-history"></i></div>History</button>
+        <button class="drawer-item" onclick="window.location.href='notifications.html'"><div class="drawer-item-icon menu-notification"><i class="fas fa-bell"></i></div>Notifications</button>
+        <button class="drawer-item" onclick="window.location.href='support.html'"><div class="drawer-item-icon menu-support"><i class="fas fa-headset"></i></div>Support</button>
+        <button class="drawer-item" onclick="logout()"><div class="drawer-item-icon menu-logout"><i class="fas fa-sign-out-alt"></i></div>Logout</button>
+    </div>
+</div>
 
+<!-- TOP HEADER -->
+<header class="top-header">
+    <div class="header-left">
+        <button class="menu-btn" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+        <div class="logo" onclick="window.location.href='dashboard.html'"><img src="logo.png" alt="Logo" onerror="this.src='https://api.dicebear.com/7.x/identicon/svg?seed=RDX'"></div>
+    </div>
+    <div class="header-right">
+        <button class="header-icon-btn btn-notif" onclick="window.location.href='notifications.html'"><i class="fas fa-bell"></i></button>
+        <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'"><i class="fas fa-wallet"></i></button>
+        <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'"><i class="fas fa-share-alt"></i></button>
+    </div>
+</header>
+
+<!-- MAIN CONTENT -->
 <main class="container">
     <div class="page-heading">
         <h2>Notifications</h2>
@@ -298,7 +333,25 @@
     </section>
 </main>
 
-<div id="bottom-nav-container"></div>
+<!-- BOTTOM NAVIGATION BAR -->
+<nav class="bottom-nav">
+    <button class="nav-item" onclick="window.location.href='dashboard.html'">
+        <div class="nav-icon-box icon-home"><i class="fas fa-home"></i></div>
+        <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='wallet.html'">
+        <div class="nav-icon-box icon-wallet"><i class="fas fa-wallet"></i></div>
+        <span>Wallet</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='support.html'">
+        <div class="nav-icon-box icon-support"><i class="fas fa-headset"></i></div>
+        <span>Support</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='profile.html'">
+        <div class="nav-icon-box icon-profile"><i class="fas fa-user"></i></div>
+        <span>Profile</span>
+    </button>
+</nav>
 
 <script>
 function toggleMenu() {
@@ -308,14 +361,8 @@ function toggleMenu() {
 </script>
 
 <script type="module">
-import { renderHeader, renderDrawer, renderBottomNav } from './components.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import { getFirestore, collection, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
-
-// Render UI Components
-document.getElementById('drawer-container').innerHTML = renderDrawer();
-document.getElementById('header-container').innerHTML = renderHeader();
-document.getElementById('bottom-nav-container').innerHTML = renderBottomNav();
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
