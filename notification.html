@@ -284,11 +284,11 @@
 </head>
 <body>
 
-<!-- DYNAMIC CONTAINERS FOR COMPONENTS.JS -->
+<!-- SIDE DRAWER & HEADER CONTAINERS FOR COMPONENTS.JS -->
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
-<!-- FALLBACK STATIC STRUCTURE (Agar components.js load hone mein time le ya execute ho) -->
+<!-- FALLBACK STATIC STRUCTURE -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
 <div class="drawer" id="sideDrawer">
     <div class="drawer-header">
@@ -340,13 +340,27 @@
     </section>
 </main>
 
+<!-- COMPONENTS.JS TARGET CONTAINER -->
 <div id="bottom-nav-container"></div>
 
+<!-- UPDATED BOTTOM NAV BAR (WITH NOTIFICATION ACTIVE/CORRECT LINKS) -->
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
+    <button class="nav-item" onclick="window.location.replace('dashboard.html')">
+        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
+        <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.replace('wallet.html')">
+        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
+        <span>Wallet</span>
+    </button>
+    <button class="nav-item active" onclick="window.location.replace('notification.html')">
+        <div class="nav-icon-box" style="background:linear-gradient(145deg,#3b82f6,#1d4ed8);"><i class="fa-solid fa-bell"></i></div>
+        <span>Notification</span>
+    </button>
+    <button class="nav-item" onclick="window.location.replace('profile.html')">
+        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
+        <span>Profile</span>
+    </button>
 </nav>
 
 <!-- EXTERNAL COMPONENTS SCRIPT -->
@@ -396,7 +410,6 @@ function listenUserData() {
                 const d = snap.data();
                 const userName = d.name || ("User " + userId.slice(-4));
                 
-                // Safe element updates for both static and components.js generated elements
                 const nameEls = document.querySelectorAll("#drawerName");
                 const mobileEls = document.querySelectorAll("#drawerMobile");
                 
