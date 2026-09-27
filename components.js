@@ -137,13 +137,13 @@ function loadDrawer() {
                 color: #ffffff !important;
             }
             
-            /* Sidebar Colored Icons */
-            .menu-home { background: #6c5ce7 !important; }
+            /* Sidebar Uniform Colors (Matching Everywhere) */
+            .menu-home { background: #2563eb !important; }
             .menu-profile { background: #e17055 !important; }
             .menu-wallet { background: #00b894 !important; }
             .menu-refer { background: #e17055 !important; }
             .menu-history { background: #6c5ce7 !important; }
-            .menu-notification { background: #0984e3 !important; }
+            .menu-notification { background: #6c5ce7 !important; }
             .menu-support { background: #00cec9 !important; }
             .menu-logout { background: #d63031 !important; }
         </style>
@@ -200,7 +200,7 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Permanently Colored Icons)
+// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Matching Uniform Colors)
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
@@ -249,19 +249,19 @@ function loadBottomNav() {
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
-            /* Permanent Colors for Bottom Nav Icons */
+            /* Uniform Colors for Bottom Nav Icons */
             .nav-home .nav-icon-box { background: #2563eb !important; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
             .nav-wallet .nav-icon-box { background: #00b894 !important; box-shadow: 0 2px 6px rgba(0,184,148,0.3); }
-            .nav-support .nav-icon-box { background: #6c5ce7 !important; box-shadow: 0 2px 6px rgba(108,92,231,0.3); }
+            .nav-support .nav-icon-box { background: #00cec9 !important; box-shadow: 0 2px 6px rgba(0,206,201,0.3); }
             .nav-profile .nav-icon-box { background: #e17055 !important; box-shadow: 0 2px 6px rgba(225,112,85,0.3); }
 
             /* Text Colors */
             .nav-home { color: #2563eb; }
             .nav-wallet { color: #00b894; }
-            .nav-support { color: #6c5ce7; }
+            .nav-support { color: #00cec9; }
             .nav-profile { color: #e17055; }
 
-            /* Active State Styling */
+            /* Active State Highlight */
             .nav-item.active .nav-icon-box {
                 transform: scale(1.1);
                 box-shadow: 0 4px 10px rgba(0,0,0,0.25);
