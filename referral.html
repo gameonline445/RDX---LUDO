@@ -28,6 +28,7 @@ body{
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
     color:#101a38;
     min-height:100vh;
+    padding-top: 70px;
     padding-bottom:95px;
 }
 
@@ -153,7 +154,7 @@ button{font:inherit;}
     inset: 0;
     background: rgba(15, 23, 42, 0.5);
     backdrop-filter: blur(4px);
-    z-index: 999;
+    z-index: 9999;
     align-items: center;
     justify-content: center;
     padding: 16px;
@@ -249,9 +250,9 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 }
 </script>
 
-<!-- DYNAMIC COMPONENTS PLACEHOLDERS -->
-<div id="top-header"></div>
-<div id="side-drawer"></div>
+<!-- DYNAMIC COMPONENTS CONTAINERS (MATCHING COMPONENTS.JS) -->
+<div id="header-container"></div>
+<div id="drawer-container"></div>
 
 <main class="container">
     <!-- REFERRAL CARD -->
@@ -308,8 +309,8 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
     </div>
 </div>
 
-<!-- DYNAMIC BOTTOM NAVIGATION PLACEHOLDER -->
-<div id="bottom-nav"></div>
+<!-- DYNAMIC BOTTOM NAVIGATION CONTAINER (MATCHING COMPONENTS.JS) -->
+<div id="nav-container"></div>
 
 <div id="toast"></div>
 
@@ -345,7 +346,7 @@ function loadReferralDataRealtime() {
             
             const fullName = String(data.name || ("User " + userId.slice(-4))).trim();
             
-            // Drawer text updates (if components loaded)
+            // Side Drawer details update
             const drawerNameEl = document.getElementById("drawerName");
             const drawerMobileEl = document.getElementById("drawerMobile");
             if (drawerNameEl) drawerNameEl.textContent = fullName;
@@ -475,11 +476,6 @@ function showToast(msg) {
 
 // INITIALIZATION
 window.addEventListener("load", () => {
-    // Render shared components dynamically
-    if (typeof renderTopHeader === "function") renderTopHeader();
-    if (typeof renderSideDrawer === "function") renderSideDrawer();
-    if (typeof renderBottomNav === "function") renderBottomNav("referral");
-
     loadReferralDataRealtime();
 });
 </script>
