@@ -94,7 +94,7 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓
+// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Fixed Same-Color Buttons)
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
@@ -102,22 +102,75 @@ function loadBottomNav() {
     // URL se current page name pata karna
     const pathName = window.location.pathname.split("/").pop() || "dashboard.html";
 
+    // Sabhi buttons ke liye ek jaisa theme color (Primary Blue: #2563eb)
     navContainer.innerHTML = `
+        <style>
+            .bottom-nav {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 65px;
+                background: #ffffff;
+                display: flex;
+                justify-content: space-around;
+                align-items: center;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+                z-index: 1000;
+                padding: 0 5px;
+            }
+            .nav-item {
+                background: transparent;
+                border: none;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                flex: 1;
+                text-decoration: none;
+                color: #64748b; /* Common Inactive Color */
+                font-size: 12px;
+                font-weight: 600;
+                gap: 4px;
+            }
+            .nav-icon-box {
+                width: 38px;
+                height: 38px;
+                border-radius: 12px;
+                background: #f1f5f9; /* Same Light Grey Background for All */
+                color: #475569; /* Same Icon Color for All */
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 16px;
+                transition: all 0.2s ease;
+            }
+            /* Active Button Style (Same Blue Color for Selected Tab) */
+            .nav-item.active {
+                color: #2563eb;
+            }
+            .nav-item.active .nav-icon-box {
+                background: #2563eb; /* Primary Blue for Active Icon Box */
+                color: #ffffff;
+                box-shadow: 0 3px 8px rgba(37, 99, 235, 0.3);
+            }
+        </style>
         <nav class="bottom-nav">
-            <button class="nav-item ${pathName === 'dashboard.html' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
-                <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
+            <button class="nav-item ${pathName === 'dashboard.html' || pathName === 'index.html' ? 'active' : ''}" onclick="window.location.href='dashboard.html'">
+                <div class="nav-icon-box"><i class="fa-solid fa-house"></i></div>
                 <span>Home</span>
             </button>
             <button class="nav-item ${pathName === 'wallet.html' ? 'active' : ''}" onclick="window.location.href='wallet.html'">
-                <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
+                <div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div>
                 <span>Wallet</span>
             </button>
             <button class="nav-item ${pathName === 'support.html' ? 'active' : ''}" onclick="window.location.href='support.html'">
-                <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
+                <div class="nav-icon-box"><i class="fa-solid fa-headset"></i></div>
                 <span>Support</span>
             </button>
             <button class="nav-item ${pathName === 'profile.html' ? 'active' : ''}" onclick="window.location.href='profile.html'">
-                <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
+                <div class="nav-icon-box"><i class="fa-solid fa-user"></i></div>
                 <span>Profile</span>
             </button>
         </nav>
