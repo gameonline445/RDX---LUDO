@@ -153,7 +153,7 @@ button{font:inherit;}
     margin-top:10px;
 }
 
-/* BOTTOM NAV CSS */
+/* BOTTOM NAVIGATION BAR DESIGN */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -165,7 +165,7 @@ button{font:inherit;}
     display:flex;
     justify-content:space-around;
     align-items:center;
-    z-index:200;
+    z-index:9999;
 }
 .nav-item{
     width:25%;
@@ -196,7 +196,7 @@ button{font:inherit;}
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
 
-/* Matching Drawer Colors */
+/* EXACT INDIVIDUAL COLORS FOR ICONS */
 .icon-home { background: linear-gradient(145deg, #3b82f6, #1d4ed8); }      /* Blue */
 .icon-wallet { background: linear-gradient(145deg, #10b981, #059669); }    /* Green */
 .icon-support { background: linear-gradient(145deg, #06b6d4, #0284c7); }   /* Cyan */
@@ -239,8 +239,25 @@ button{font:inherit;}
 
 </main>
 
-<!-- Bottom Nav Container injected from components.js -->
-<div id="bottom-nav-container"></div>
+<!-- BOTTOM NAVIGATION BAR (Directly added here so it never disappears) -->
+<nav class="bottom-nav">
+    <button class="nav-item" onclick="goHome()">
+        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
+        <span>Home</span>
+    </button>
+    <button class="nav-item" onclick="goWallet()">
+        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
+        <span>Wallet</span>
+    </button>
+    <button class="nav-item" onclick="goSupport()">
+        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
+        <span>Support</span>
+    </button>
+    <button class="nav-item" onclick="goProfile()">
+        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
+        <span>Profile</span>
+    </button>
+</nav>
 
 <!-- EXTERNAL COMPONENTS SCRIPT -->
 <script src="components.js"></script>
@@ -351,6 +368,11 @@ async function loadUserData() {
 }
 
 window.addEventListener("load", loadUserData);
+
+function goHome(){ window.location.href = "dashboard.html"; }
+function goProfile(){ window.location.href = "profile.html"; }
+function goWallet(){ window.location.href = "wallet.html"; }
+function goSupport(){ window.location.href = "support.html"; }
 </script>
 
 </body>
