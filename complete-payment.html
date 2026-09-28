@@ -24,81 +24,10 @@ body{
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
     color:#101a38;
     min-height:100vh;
+    padding-top:70px;
     padding-bottom:95px;
 }
 button{font:inherit;}
-
-/* TOP HEADER - Matches Image 12 */
-.top{
-    height:66px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 14px;
-    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-    border-bottom:1.5px solid #bae6fd;
-    position:sticky;
-    top:0;
-    z-index:1000;
-    box-shadow:0 4px 18px rgba(2,132,199,0.08);
-}
-.header-left{display:flex;align-items:center;gap:10px;}
-.menu{
-    width:42px;
-    height:42px;
-    border:0;
-    border-radius:14px;
-    background:#f87171;
-    color:#fff;
-    font-size:18px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 4px 10px rgba(248,113,113,0.3);
-}
-.menu:active{transform:scale(0.95);}
-
-.logo{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    box-shadow:0 4px 12px rgba(2,132,199,0.15);
-}
-.logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{
-    width:38px;
-    height:38px;
-    border:0;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:15px;
-    color:white;
-    cursor:pointer;
-    padding:0;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    transition:transform 0.15s ease;
-}
-.header-icon:active{transform:scale(0.95);}
-
-.bell{background:#6366f1;}
-.cash{background:#22c55e;}
-.gift{background:#f97316;}
 
 /* MAIN CONTENT */
 main{padding:14px;}
@@ -206,203 +135,14 @@ input:focus{
     cursor:pointer;
     box-shadow:0 6px 16px rgba(2,132,199,0.3);
 }
-
-/* SIDE DRAWER */
-.drawer-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.45);
-    backdrop-filter:blur(4px);
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.25s ease;
-}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{
-    position:fixed;
-    top:0;
-    left:0;
-    width:280px;
-    height:100%;
-    background:#ffffff;
-    z-index:1000;
-    box-shadow:4px 0 25px rgba(2,132,199,0.15);
-    transform:translateX(-100%);
-    transition:transform 0.2s cubic-bezier(0.4,0,0.2,1);
-    display:flex;
-    flex-direction:column;
-}
-.drawer.active{transform:translateX(0);}
-.drawer-header{
-    padding:20px 16px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.drawer-avatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-.drawer-close{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    border:1px solid #bae6fd;
-    background:#ffffff;
-    color:#0c4a6e;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{
-    width:100%;
-    padding:10px 14px;
-    border:0;
-    border-radius:14px;
-    background:transparent;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:14px;
-    font-weight:750;
-    color:#334155;
-    cursor:pointer;
-    margin-bottom:6px;
-    transition:background 0.2s ease;
-}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item-icon{
-    width:36px;
-    height:36px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-deposit{background:linear-gradient(145deg,#0284c7,#0369a1);}
-.menu-withdraw{background:linear-gradient(145deg,#059669,#047857);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-
-/* BOTTOM NAV - Matches Image 13 */
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:74px;
-    background:#ffffff;
-    border-top:1px solid #e2e8f0;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    z-index:200;
-}
-.nav-item{
-    width:25%;
-    height:100%;
-    border:0;
-    background:transparent;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    color:#1e293b;
-    font-size:12px;
-    font-weight:700;
-    cursor:pointer;
-}
-.nav-icon-box{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    color:#ffffff;
-    transition:transform 0.2s ease;
-}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:#6366f1;}
-.icon-wallet{background:#22c55e;}
-.icon-support{background:#38bdf8;}
-.icon-profile{background:#f97316;}
 </style>
 </head>
 
 <body>
-<div class="app">
 
-<!-- SIDE DRAWER -->
-<div class="drawer-overlay" id="drawerOverlay" onclick="toggleMenu()"></div>
-<div class="drawer" id="sideDrawer">
-    <div class="drawer-header">
-        <div class="drawer-user">
-            <div class="drawer-avatar">
-                <img src="logo.png" alt="RDX Logo" onerror="this.style.display='none'">
-            </div>
-            <div>
-                <h4 style="font-size:14px; font-weight:900; color:#0c4a6e;" id="drawerName">User</h4>
-                <small style="color:#64748b; font-weight:700;" id="drawerMobile">+91**********</small>
-            </div>
-        </div>
-        <button class="drawer-close" onclick="toggleMenu()"><i class="fa-solid fa-xmark"></i></button>
-    </div>
-
-    <div class="drawer-links">
-        <button class="drawer-item" onclick="window.location.replace('dashboard.html')"><div class="drawer-item-icon menu-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-        <button class="drawer-item" onclick="window.location.replace('profile.html')"><div class="drawer-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><span>My Profile</span></button>
-        <button class="drawer-item" onclick="window.location.replace('wallet.html')"><div class="drawer-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><span>My Wallet</span></button>
-        <button class="drawer-item" onclick="window.location.replace('deposit.html')"><div class="drawer-item-icon menu-deposit"><i class="fa-solid fa-money-bill-wave"></i></div><span>Add Cash</span></button>
-        <button class="drawer-item" onclick="window.location.replace('withdraw.html')"><div class="drawer-item-icon menu-withdraw"><i class="fa-solid fa-money-bill-transfer"></i></div><span>Withdraw Cash</span></button>
-        <button class="drawer-item" onclick="window.location.replace('history.html')"><div class="drawer-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><span>History & Logs</span></button>
-        <button class="drawer-item" onclick="window.location.replace('referral.html')"><div class="drawer-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><span>Refer & Earn 2%</span></button>
-        <button class="drawer-item" onclick="window.location.replace('support.html')"><div class="drawer-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><span>24/7 Support</span></button>
-    </div>
-</div>
-
-<!-- TOP HEADER -->
-<header class="top">
-    <div class="header-left">
-        <button class="menu" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="window.location.replace('dashboard.html')">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
-    </div>
-    <div class="header-right">
-        <button class="header-icon bell" onclick="window.location.replace('notification.html')"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon cash" onclick="window.location.replace('wallet.html')"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon gift" onclick="window.location.replace('referral.html')"><i class="fa-solid fa-gift"></i></button>
-    </div>
-</header>
+<!-- COMPONENTS.JS CONTAINERS -->
+<div id="header-container"></div>
+<div id="drawer-container"></div>
 
 <main>
 <div class="wrap">
@@ -435,13 +175,11 @@ input:focus{
 </div>
 </main>
 
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="window.location.replace('dashboard.html')"><div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="window.location.replace('wallet.html')"><div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="window.location.replace('support.html')"><div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="window.location.replace('profile.html')"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
-</nav>
-</div>
+<!-- BOTTOM NAV CONTAINER -->
+<div id="nav-container"></div>
+
+<!-- EXTERNAL COMPONENTS SCRIPT -->
+<script src="components.js"></script>
 
 <script>
 history.pushState({ page: 1 }, "", "");
@@ -450,8 +188,10 @@ window.addEventListener("popstate", function (event) {
 });
 
 function toggleMenu() {
-    document.getElementById("sideDrawer").classList.toggle("active");
-    document.getElementById("drawerOverlay").classList.toggle("active");
+    const drawer = document.getElementById("sideDrawer");
+    const overlay = document.getElementById("drawerOverlay");
+    if(drawer) drawer.classList.toggle("active");
+    if(overlay) overlay.classList.toggle("active");
 }
 
 function handleFilePreview(e) {
@@ -529,8 +269,11 @@ async function loadSettings() {
                     cachedUserName = uData.name || uData.fullName || uData.username || localStorage.getItem("rdxUsername") || ("User " + userId.slice(-4));
                     cachedUserMobile = "+" + userId;
                     
-                    if(document.getElementById("drawerName")) document.getElementById("drawerName").textContent = cachedUserName;
-                    if(document.getElementById("drawerMobile")) document.getElementById("drawerMobile").textContent = cachedUserMobile;
+                    const nameEls = document.querySelectorAll("#drawerName");
+                    const mobileEls = document.querySelectorAll("#drawerMobile");
+                    
+                    nameEls.forEach(el => el.textContent = cachedUserName);
+                    mobileEls.forEach(el => el.textContent = cachedUserMobile);
                 }
             }, (err) => console.error("Realtime Balance Sync Error:", err));
         }
