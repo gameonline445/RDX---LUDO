@@ -47,78 +47,6 @@ body{
 }
 button{font:inherit;}
 
-/* TOP HEADER - Matches Image 13 */
-.top-header{
-    height:66px;
-    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 14px;
-    position:sticky;
-    top:0;
-    z-index:1000;
-    box-shadow:0 4px 18px rgba(2,132,199,0.08);
-}
-.header-left{display:flex;align-items:center;gap:10px;}
-.menu-btn{
-    width:42px;
-    height:42px;
-    border:0;
-    border-radius:14px;
-    background:#f87171;
-    color:white;
-    font-size:18px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow:0 4px 10px rgba(248,113,113,0.3);
-}
-.menu-btn:active{transform:scale(0.95);}
-
-.logo{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    box-shadow:0 4px 12px rgba(2,132,199,0.15);
-}
-.logo img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-}
-
-.header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{
-    width:38px;
-    height:38px;
-    border:0;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:15px;
-    color:white;
-    cursor:pointer;
-    padding:0;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    transition:transform 0.15s ease;
-}
-.header-icon:active{transform:scale(0.95);}
-
-.notification{background:#6366f1;}
-.wallet-top{background:#22c55e;}
-.redeem-top{background:#f97316;}
-
 /* CONTAINER */
 .container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
 
@@ -225,32 +153,7 @@ button{font:inherit;}
     margin-top:10px;
 }
 
-/* SIDE DRAWER */
-.menu-overlay{position:fixed;inset:0;background:rgba(15,23,42,.35);backdrop-filter:blur(2px);z-index:2000;display:none;}
-.menu-overlay.show{display:block;}
-.menu-panel{position:fixed;top:0;left:-100%;width:75%;max-width:360px;height:100dvh;background:#ffffff;z-index:2100;padding:20px 16px 100px;overflow-y:auto;transition:left .3s ease;box-shadow:10px 0 35px rgba(0,0,0,.16);}
-.menu-panel.open{left:0;}
-.menu-title{display:flex;align-items:center;justify-content:space-between;padding-bottom:16px;border-bottom:1px solid #e2e8f0;}
-.menu-brand{display:flex;align-items:center;gap:10px;}
-.menu-logo{width:46px;height:46px;border-radius:50%;overflow:hidden;border:2px solid #7dd3fc;display:flex;align-items:center;justify-content:center;background:#ffffff;cursor:pointer;}
-.menu-logo img{width:100%;height:100%;object-fit:cover;}
-.menu-user h2{font-size:17px;font-weight:850;}
-.menu-user p{margin-top:2px;color:#64748b;font-size:12px;}
-.close-menu{border:0;background:#f1f5f9;width:38px;height:38px;border-radius:50%;font-size:22px;color:#64748b;cursor:pointer;}
-.menu-list{margin-top:16px;}
-.menu-item{width:100%;min-height:52px;border:0;background:transparent;padding:6px 0;border-radius:14px;margin-bottom:6px;display:flex;align-items:center;gap:12px;text-align:left;color:#334155;cursor:pointer;}
-.menu-item-icon{width:36px;height:36px;flex:0 0 36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-item-text{flex:1;font-size:15px;font-weight:750;}
-.menu-arrow{color:#94a3b8;font-size:20px;}
-
-/* BOTTOM NAV - Matches Image 14 */
+/* BOTTOM NAV - Matching Menu Icon Colors */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -289,57 +192,21 @@ button{font:inherit;}
     font-size:18px;
     color:#ffffff;
     transition:transform 0.2s ease;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:#6366f1;}
-.icon-wallet{background:#22c55e;}
-.icon-support{background:#38bdf8;}
-.icon-profile{background:#f97316;}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
 </style>
 </head>
 
 <body>
 
-<!-- SIDE DRAWER -->
-<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
-<div class="menu-panel" id="menuPanel">
-    <div class="menu-title">
-        <div class="menu-brand">
-            <div class="menu-logo" onclick="goHome()">
-                <img src="logo.png" alt="RDX Logo">
-            </div>
-            <div class="menu-user">
-                <h2 id="menuUsername">RDX LUDO</h2>
-                <p>Play · Win · Earn</p>
-            </div>
-        </div>
-        <button class="close-menu" onclick="closeMenu()">×</button>
-    </div>
-    <div class="menu-list">
-        <button class="menu-item" onclick="goHome()"><div class="menu-item-icon menu-home"><i class="fa-solid fa-house"></i></div><div class="menu-item-text">Home</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goProfile()"><div class="menu-item-icon menu-profile"><i class="fa-solid fa-user"></i></div><div class="menu-item-text">My Profile</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goWallet()"><div class="menu-item-icon menu-wallet"><i class="fa-solid fa-wallet"></i></div><div class="menu-item-text">My Wallet</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goRedeem()"><div class="menu-item-icon menu-refer"><i class="fa-solid fa-gift"></i></div><div class="menu-item-text">Refer & Earn</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goHistory()"><div class="menu-item-icon menu-history"><i class="fa-solid fa-clock-rotate-left"></i></div><div class="menu-item-text">History</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goNotifications()"><div class="menu-item-icon menu-notification"><i class="fa-solid fa-bell"></i></div><div class="menu-item-text">Notifications</div><div class="menu-arrow">›</div></button>
-        <button class="menu-item" onclick="goSupport()"><div class="menu-item-icon menu-support"><i class="fa-solid fa-headset"></i></div><div class="menu-item-text">Support</div><div class="menu-arrow">›</div></button>
-    </div>
-</div>
-
-<!-- TOP HEADER -->
-<header class="top-header">
-    <div class="header-left">
-        <button class="menu-btn" onclick="openMenu()"><i class="fa-solid fa-bars"></i></button>
-        <div class="logo" onclick="goHome()">
-            <img src="logo.png" alt="RDX Logo">
-        </div>
-    </div>
-    <div class="header-right">
-        <button class="header-icon notification" onclick="goNotifications()"><i class="fa-solid fa-bell"></i></button>
-        <button class="header-icon wallet-top" onclick="goWallet()"><i class="fa-solid fa-wallet"></i></button>
-        <button class="header-icon redeem-top" onclick="goRedeem()"><i class="fa-solid fa-gift"></i></button>
-    </div>
-</header>
+<!-- COMPONENTS.JS CONTAINERS -->
+<div id="header-container"></div>
+<div id="drawer-container"></div>
 
 <main class="container">
 
@@ -377,16 +244,29 @@ button{font:inherit;}
     <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
 </nav>
 
+<!-- EXTERNAL COMPONENTS SCRIPT -->
+<script src="components.js"></script>
+
 <script>
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
-    window.location.href = "dashboard.html";
+    const panel = document.getElementById("sideDrawer");
+    if (panel && panel.classList.contains("active")) {
+        toggleMenu();
+        history.pushState({ page: 1 }, "", "");
+    } else {
+        window.location.href = "dashboard.html";
+    }
 });
 
 let unsubscribeWalletListener = null;
 
-function openMenu(){ document.getElementById("menuPanel").classList.add("open"); document.getElementById("menuOverlay").classList.add("show"); }
-function closeMenu(){ document.getElementById("menuPanel").classList.remove("open"); document.getElementById("menuOverlay").classList.remove("show"); }
+function toggleMenu() {
+    const drawer = document.getElementById("sideDrawer");
+    const overlay = document.getElementById("drawerOverlay");
+    if(drawer) drawer.classList.toggle("active");
+    if(overlay) overlay.classList.toggle("active");
+}
 
 const amountInput = document.getElementById("depositAmountInput");
 const btnProceed = document.getElementById("btnProceed");
@@ -460,9 +340,12 @@ async function loadUserData() {
             if (doc.exists) {
                 const data = doc.data();
                 let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(doc.id).slice(-4));
-                if(document.getElementById("menuUsername")) {
-                    document.getElementById("menuUsername").textContent = fullName.split(" ")[0];
-                }
+                
+                const nameEls = document.querySelectorAll("#drawerName");
+                const mobileEls = document.querySelectorAll("#drawerMobile");
+                
+                nameEls.forEach(el => el.textContent = fullName);
+                mobileEls.forEach(el => el.textContent = "+" + cleanMobile);
             }
         }, (err) => { console.error("Real-time Wallet Sync Error:", err); });
 
@@ -471,13 +354,13 @@ async function loadUserData() {
 
 window.addEventListener("load", loadUserData);
 
-function goHome(){ closeMenu(); window.location.href = "dashboard.html"; }
-function goProfile(){ closeMenu(); window.location.href = "profile.html"; }
-function goWallet(){ closeMenu(); window.location.href = "wallet.html"; }
-function goRedeem(){ closeMenu(); window.location.href = "referral.html"; }
-function goHistory(){ closeMenu(); window.location.href = "history.html"; }
-function goNotifications(){ closeMenu(); window.location.href = "notification.html"; }
-function goSupport(){ closeMenu(); window.location.href = "support.html"; }
+function goHome(){ window.location.href = "dashboard.html"; }
+function goProfile(){ window.location.href = "profile.html"; }
+function goWallet(){ window.location.href = "wallet.html"; }
+function goRedeem(){ window.location.href = "referral.html"; }
+function goHistory(){ window.location.href = "history.html"; }
+function goNotifications(){ window.location.href = "notification.html"; }
+function goSupport(){ window.location.href = "support.html"; }
 </script>
 
 </body>
