@@ -153,7 +153,7 @@ button{font:inherit;}
     margin-top:10px;
 }
 
-/* BOTTOM NAV - Uniform color for all 4 navigation icons */
+/* BOTTOM NAV - Individual Colors Matching Drawer Menu */
 .bottom-nav{
     position:fixed;
     bottom:0;
@@ -193,15 +193,20 @@ button{font:inherit;}
     color:#ffffff;
     transition:transform 0.2s ease;
     box-shadow:0 4px 10px rgba(0,0,0,0.08);
-    background:linear-gradient(145deg,#3b82f6,#1d4ed8);
 }
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
+
+/* Matching Drawer Colors */
+.icon-home { background: linear-gradient(145deg, #3b82f6, #1d4ed8); }      /* Blue */
+.icon-wallet { background: linear-gradient(145deg, #10b981, #059669); }    /* Green */
+.icon-support { background: linear-gradient(145deg, #06b6d4, #0284c7); }   /* Cyan / Light Blue */
+.icon-profile { background: linear-gradient(145deg, #f97316, #ea580c); }   /* Orange */
 </style>
 </head>
 
 <body>
 
-<!-- COMPONENTS.JS CONTAINERS -->
+<!-- COMPONENTS CONTAINERS -->
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
@@ -234,12 +239,8 @@ button{font:inherit;}
 
 </main>
 
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()"><div class="nav-icon-box"><i class="fa-solid fa-house"></i></div><span>Home</span></button>
-    <button class="nav-item" onclick="goWallet()"><div class="nav-icon-box"><i class="fa-solid fa-wallet"></i></div><span>Wallet</span></button>
-    <button class="nav-item" onclick="goSupport()"><div class="nav-icon-box"><i class="fa-solid fa-headset"></i></div><span>Support</span></button>
-    <button class="nav-item" onclick="goProfile()"><div class="nav-icon-box"><i class="fa-solid fa-user"></i></div><span>Profile</span></button>
-</nav>
+<!-- Bottom Nav Container injected from components.js -->
+<div id="bottom-nav-container"></div>
 
 <!-- EXTERNAL COMPONENTS SCRIPT -->
 <script src="components.js"></script>
@@ -350,14 +351,6 @@ async function loadUserData() {
 }
 
 window.addEventListener("load", loadUserData);
-
-function goHome(){ window.location.href = "dashboard.html"; }
-function goProfile(){ window.location.href = "profile.html"; }
-function goWallet(){ window.location.href = "wallet.html"; }
-function goRedeem(){ window.location.href = "referral.html"; }
-function goHistory(){ window.location.href = "history.html"; }
-function goNotifications(){ window.location.href = "notification.html"; }
-function goSupport(){ window.location.href = "support.html"; }
 </script>
 
 </body>
