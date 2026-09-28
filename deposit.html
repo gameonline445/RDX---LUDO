@@ -43,6 +43,7 @@ body{
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
     color:#101a38;
     min-height:100vh;
+    padding-top:70px;
     padding-bottom:95px;
 }
 button{font:inherit;}
@@ -152,61 +153,12 @@ button{font:inherit;}
     font-weight:700;
     margin-top:10px;
 }
-
-/* BOTTOM NAVIGATION BAR DESIGN */
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:74px;
-    background:#ffffff;
-    border-top:1px solid #e2e8f0;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    z-index:9999;
-}
-.nav-item{
-    width:25%;
-    height:100%;
-    border:0;
-    background:transparent;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    color:#1e293b;
-    font-size:12px;
-    font-weight:700;
-    cursor:pointer;
-}
-.nav-icon-box{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    color:#ffffff;
-    transition:transform 0.2s ease;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-
-/* EXACT INDIVIDUAL COLORS FOR ICONS */
-.icon-home { background: linear-gradient(145deg, #3b82f6, #1d4ed8); }      /* Blue */
-.icon-wallet { background: linear-gradient(145deg, #10b981, #059669); }    /* Green */
-.icon-support { background: linear-gradient(145deg, #06b6d4, #0284c7); }   /* Cyan */
-.icon-profile { background: linear-gradient(145deg, #f97316, #ea580c); }   /* Orange */
 </style>
 </head>
 
 <body>
 
-<!-- COMPONENTS CONTAINERS -->
+<!-- COMPONENTS CONTAINERS (Matching components.js IDs) -->
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
@@ -239,25 +191,8 @@ button{font:inherit;}
 
 </main>
 
-<!-- BOTTOM NAVIGATION BAR (Directly added here so it never disappears) -->
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="goHome()">
-        <div class="nav-icon-box icon-home"><i class="fa-solid fa-house"></i></div>
-        <span>Home</span>
-    </button>
-    <button class="nav-item" onclick="goWallet()">
-        <div class="nav-icon-box icon-wallet"><i class="fa-solid fa-wallet"></i></div>
-        <span>Wallet</span>
-    </button>
-    <button class="nav-item" onclick="goSupport()">
-        <div class="nav-icon-box icon-support"><i class="fa-solid fa-headset"></i></div>
-        <span>Support</span>
-    </button>
-    <button class="nav-item" onclick="goProfile()">
-        <div class="nav-icon-box icon-profile"><i class="fa-solid fa-user"></i></div>
-        <span>Profile</span>
-    </button>
-</nav>
+<!-- Bottom Nav Container matching components.js loadBottomNav() -->
+<div id="nav-container"></div>
 
 <!-- EXTERNAL COMPONENTS SCRIPT -->
 <script src="components.js"></script>
@@ -267,7 +202,7 @@ history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     const panel = document.getElementById("sideDrawer");
     if (panel && panel.classList.contains("active")) {
-        toggleMenu();
+        toggleDrawer();
         history.pushState({ page: 1 }, "", "");
     } else {
         window.location.href = "dashboard.html";
@@ -275,13 +210,6 @@ window.addEventListener("popstate", function (event) {
 });
 
 let unsubscribeWalletListener = null;
-
-function toggleMenu() {
-    const drawer = document.getElementById("sideDrawer");
-    const overlay = document.getElementById("drawerOverlay");
-    if(drawer) drawer.classList.toggle("active");
-    if(overlay) overlay.classList.toggle("active");
-}
 
 const amountInput = document.getElementById("depositAmountInput");
 const btnProceed = document.getElementById("btnProceed");
@@ -368,11 +296,6 @@ async function loadUserData() {
 }
 
 window.addEventListener("load", loadUserData);
-
-function goHome(){ window.location.href = "dashboard.html"; }
-function goProfile(){ window.location.href = "profile.html"; }
-function goWallet(){ window.location.href = "wallet.html"; }
-function goSupport(){ window.location.href = "support.html"; }
 </script>
 
 </body>
