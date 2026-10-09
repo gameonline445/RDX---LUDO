@@ -38,24 +38,18 @@ html, body {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 button { font: inherit; }
 
-/* 🔄 पुल-टू-रिफ्रेश लोडिंग लाइन (शीर्ष पर छिपी हुई) */
+/* 🔄 पुल-टू-रिफ्रेश केवल एक साफ़-सुथरी लाइन के रूप में */
 #refresh-indicator {
     position: absolute;
     top: 66px;
     left: 0;
     width: 100%;
     height: 0px;
-    background: linear-gradient(90deg, #0284c7, #38bdf8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 12px;
-    font-weight: 800;
+    background: linear-gradient(90deg, #0284c7, #38bdf8, #22c55e);
     overflow: hidden;
     transition: height 0.2s ease;
     z-index: 150;
-    box-shadow: 0 2px 8px rgba(2,132,199,0.2);
+    box-shadow: 0 2px 8px rgba(2,132,199,0.3);
 }
 
 /* TOP HEADER - अपनी जगह पर बिल्कुल स्थिर रहेगा */
@@ -439,8 +433,8 @@ main.container {
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
-<!-- 🔄 पुल-टू-रिफ्रेश लोडिंग लाइन -->
-<div id="refresh-indicator"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp;Refreshing RDX Ludo...</div>
+<!-- 🔄 केवल रंगीन प्रोग्रेस लाइन (बिना किसी टेक्स्ट के) -->
+<div id="refresh-indicator"></div>
 
 <main class="container" id="scrollContainer">
     <section class="welcome-box">
@@ -500,7 +494,7 @@ document.addEventListener('touchmove', function(event) {
     }
 }, { passive: false });
 
-/* 🔄 पुल-टू-रिफ्रेश और लोडिंग लाइन का जावास्क्रिप्ट लॉजिक */
+/* 🔄 पुल-टू-रिफ्रेश और केवल ऊपर लोडिंग लाइन का जावास्क्रिप्ट लॉजिक */
 let startY = 0;
 const container = document.getElementById('scrollContainer');
 const indicator = document.getElementById('refresh-indicator');
@@ -525,10 +519,10 @@ container.addEventListener('touchend', function(e) {
     if (container.scrollTop === 0 && startY > 0) {
         let finalHeight = indicator.offsetHeight;
         if (finalHeight > 50) {
-            indicator.style.height = '45px';
+            indicator.style.height = '4px';
             setTimeout(() => {
                 window.location.reload();
-            }, 400);
+            }, 300);
         } else {
             indicator.style.height = '0px';
         }
