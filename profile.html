@@ -43,7 +43,7 @@ button{font:inherit;}
     top:0;
     left:0;
     width:100%;
-    z-index:500;
+    z-index:500; /* Content ke hamesha upar rahega */
     box-shadow:0 4px 18px rgba(2,132,199,0.08);
 }
 .header-left{display:flex;align-items:center;gap:10px;}
@@ -97,13 +97,13 @@ button{font:inherit;}
 .wallet-icon{ background:linear-gradient(145deg,#16a34a,#22c55e); }
 .gift-icon{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* MAIN CONTAINER */
+/* MAIN CONTAINER (Added margin-top so content scrolls under fixed header) */
 .container{
     width:100%;
     max-width:650px;
     margin:0 auto;
     padding:16px 14px;
-    margin-top:66px;
+    margin-top:66px; /* Prevents overlap on load */
 }
 
 /* PROFILE CARD */
@@ -305,6 +305,155 @@ button{font:inherit;}
     gap:8px;
 }
 
+/* SIDE DRAWER */
+.drawer-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.45);
+    backdrop-filter:blur(4px);
+    z-index:999;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.25s ease;
+}
+.drawer-overlay.active{opacity:1;pointer-events:auto;}
+.drawer{
+    position:fixed;
+    top:0;
+    left:0;
+    width:280px;
+    height:100%;
+    background:#ffffff;
+    z-index:1000;
+    box-shadow:4px 0 25px rgba(2,132,199,0.15);
+    transform:translateX(-100%);
+    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    display:flex;
+    flex-direction:column;
+}
+.drawer.active{transform:translateX(0);}
+.drawer-header{
+    padding:20px 16px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.drawer-user{display:flex;align-items:center;gap:10px;}
+.drawer-avatar{
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
+.drawer-close{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    border:1.5px solid #bae6fd;
+    background:#ffffff;
+    color:#0c4a6e;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.drawer-links{flex:1;overflow-y:auto;padding:12px;}
+.drawer-item{
+    width:100%;
+    padding:10px 14px;
+    border:0;
+    border-radius:14px;
+    background:transparent;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-size:14px;
+    font-weight:750;
+    color:#334155;
+    cursor:pointer;
+    margin-bottom:6px;
+}
+.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
+.drawer-item-icon{
+    width:36px;
+    height:36px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:16px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
+
+/* BOTTOM NAV */
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    width:100%;
+    height:74px;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(12px);
+    border-top:1.5px solid #e2e8f0;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+    z-index:500;
+    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
+}
+.nav-item{
+    width:25%;
+    height:100%;
+    border:0;
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px;
+    color:#64748b;
+    font-size:11px;
+    font-weight:700;
+    cursor:pointer;
+    position:relative;
+}
+.nav-icon-box{
+    width:42px;
+    height:42px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    color:#ffffff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.08);
+}
+.nav-item:active .nav-icon-box{transform:scale(0.92);}
+.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.nav-item.active{color:#101a38;font-weight:800;}
+.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#f97316;}
+
 /* DOCUMENT KYC MODAL */
 .modal-overlay{
     position:fixed;
@@ -398,8 +547,7 @@ button{font:inherit;}
 <!-- DYNAMIC HEADER CONTAINER -->
 <div id="header-container"></div>
 
-<!-- MAIN CONTAINER -->
-<main class="container" id="scrollContainer">
+<main class="container">
 
     <!-- PROFILE CARD -->
     <div class="profile-card">
@@ -517,31 +665,6 @@ button{font:inherit;}
 <script src="components.js"></script>
 
 <script>
-let startY = 0;
-const scrollContainer = document.getElementById('scrollContainer');
-
-if (scrollContainer) {
-    scrollContainer.addEventListener('touchstart', function(e) {
-        if (scrollContainer.scrollTop === 0) {
-            startY = e.touches[0].clientY;
-        }
-    });
-
-    scrollContainer.addEventListener('touchmove', function(e) {
-        if (scrollContainer.scrollTop === 0 && startY > 0) {
-            let currentY = e.touches[0].clientY;
-            if (currentY - startY > 100) {
-                startY = 0;
-                window.location.reload();
-            }
-        }
-    });
-
-    scrollContainer.addEventListener('touchend', function(e) {
-        startY = 0;
-    });
-}
-
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
