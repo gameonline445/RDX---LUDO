@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RDX LUDO - Wallet</title>
 
 <!-- FontAwesome & Firebase SDKs -->
@@ -11,7 +11,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// Authentication Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -33,30 +32,26 @@ try {
 </script>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-    -webkit-tap-highlight-color:transparent;
-}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
+/* 🔒 Screen lock */
 html, body {
     width: 100%;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     color: #101a38;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-    display: flex;
-    flex-direction: column;
+    -webkit-touch-callout: none;
 }
 
 button{font:inherit;}
-
 button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transform: scale(0.95);
     transition: transform 0.1s ease;
@@ -64,6 +59,9 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 /* TOP HEADER STYLES */
 .top-header{
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 66px;
     display: flex;
@@ -73,6 +71,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     background: linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
     border-bottom: 1.5px solid #bae6fd;
     box-shadow: 0 4px 18px rgba(2,132,199,0.08);
+    z-index: 100;
 }
 .header-left{display:flex;align-items:center;gap:10px;}
 .menu-btn{
@@ -91,7 +90,6 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .logo img{width:100%;height:100%;object-fit:cover;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
-
 .header-icon{
     width:40px;height:40px;border:0;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
@@ -102,13 +100,19 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
 .redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
 
-/* MAIN CONTAINER */
+/* MAIN CONTAINER (Fixed between header and bottom nav) */
 .container{
-    flex: 1;
+    position: absolute;
+    top: 66px;
+    bottom: 74px;
+    left: 0;
+    right: 0;
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
-    padding: 14px 14px 90px;
+    padding: 14px 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -159,7 +163,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
 /* BOTTOM NAV STYLES */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:74px;background:#ffffff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;}
+.bottom-nav{position:absolute;bottom:0;left:0;width:100%;height:74px;background:#ffffff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;}
 .nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:12px;font-weight:700;cursor:pointer;transition:color 0.2s ease;}
 .nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;transition:transform 0.2s ease, box-shadow 0.2s ease;}
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
@@ -178,7 +182,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
-<main class="container">
+<main class="container" id="scrollContainer">
     <section class="wallet-card">
         <div class="wallet-top-row">
             <div class="wallet-title"><i class="fa-solid fa-wallet"></i> MY WALLET</div>
@@ -220,9 +224,39 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <script src="components.js"></script>
 
 <script>
+/* 🛡️ Touch move blocker for outer window */
+document.addEventListener('touchmove', function(event) {
+    if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
+/* 🔄 Pull-to-refresh logic without line/icons */
+let startY = 0;
+const container = document.getElementById('scrollContainer');
+
+container.addEventListener('touchstart', function(e) {
+    if (container.scrollTop === 0) {
+        startY = e.touches[0].clientY;
+    }
+});
+
+container.addEventListener('touchmove', function(e) {
+    if (container.scrollTop === 0 && startY > 0) {
+        let currentY = e.touches[0].clientY;
+        if (currentY - startY > 100) {
+            startY = 0;
+            window.location.reload();
+        }
+    }
+});
+
+container.addEventListener('touchend', function(e) {
+    startY = 0;
+});
+
 let unsubscribeWalletListener = null;
 
-// SAFE NAVIGATION FUNCTION
 function navigateTo(page) {
     if (typeof toggleMenu === "function") {
         const drawer = document.getElementById("sideDrawer");
@@ -234,7 +268,6 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// REALTIME LISTENER FOR DYNAMIC BALANCE UPDATE
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -255,7 +288,6 @@ async function loadFirebaseCustomer(){
         const docIdWith91 = "+91" + mobile10Digits;
         const docIdWithPlain91 = "91" + mobile10Digits;
 
-        // Document Reference Check Priority
         let userRef = firebaseDB.collection("customers").doc(docIdWithPlain91);
         let snapshot = await userRef.get();
 
@@ -274,7 +306,6 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // PURE REALTIME SNAPSHOT UPDATE
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc && doc.exists) {
                 const data = doc.data();
@@ -282,7 +313,6 @@ async function loadFirebaseCustomer(){
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                 const winnings = Number(data.winnings || data.winningBalance || 0);
                 
-                // Live UI DOM updates
                 const mainBal = document.getElementById("mainBalance");
                 const depBal = document.getElementById("depositBalance");
                 const winBal = document.getElementById("winningBalance");
