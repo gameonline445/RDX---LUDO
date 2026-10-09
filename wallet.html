@@ -310,14 +310,16 @@ async function loadFirebaseCustomer(){
             if (doc && doc.exists) {
                 const data = doc.data();
                 
+                // Updated balance mapping to properly catch wallet / balance / deposit fields
+                const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
-                const winnings = Number(data.winnings || data.winningBalance || 0);
+                const winnings = Number(data.winningBalance || data.winnings || 0);
                 
                 const mainBal = document.getElementById("mainBalance");
                 const depBal = document.getElementById("depositBalance");
                 const winBal = document.getElementById("winningBalance");
                 
-                if (mainBal) mainBal.textContent = deposit + winnings;
+                if (mainBal) mainBal.textContent = totalWallet;
                 if (depBal) depBal.textContent = deposit;
                 if (winBal) winBal.textContent = winnings;
 
