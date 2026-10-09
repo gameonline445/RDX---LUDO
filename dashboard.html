@@ -38,6 +38,26 @@ html, body {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 button { font: inherit; }
 
+/* 🔄 पुल-टू-रिफ्रेश लोडिंग लाइन (शीर्ष पर छिपी हुई) */
+#refresh-indicator {
+    position: absolute;
+    top: 66px;
+    left: 0;
+    width: 100%;
+    height: 0px;
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    overflow: hidden;
+    transition: height 0.2s ease;
+    z-index: 150;
+    box-shadow: 0 2px 8px rgba(2,132,199,0.2);
+}
+
 /* TOP HEADER - अपनी जगह पर बिल्कुल स्थिर रहेगा */
 .top-header {
     position: absolute;
@@ -419,7 +439,10 @@ main.container {
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
-<main class="container">
+<!-- 🔄 पुल-टू-रिफ्रेश लोडिंग लाइन -->
+<div id="refresh-indicator"><i class="fa-solid fa-spinner fa-spin"></i> &nbsp;Refreshing RDX Ludo...</div>
+
+<main class="container" id="scrollContainer">
     <section class="welcome-box">
         <h1>Hey, <span id="userName">User</span></h1>
         <p>Welcome to RDX LUDO</p>
@@ -476,6 +499,42 @@ document.addEventListener('touchmove', function(event) {
         event.preventDefault();
     }
 }, { passive: false });
+
+/* 🔄 पुल-टू-रिफ्रेश और लोडिंग लाइन का जावास्क्रिप्ट लॉजिक */
+let startY = 0;
+const container = document.getElementById('scrollContainer');
+const indicator = document.getElementById('refresh-indicator');
+
+container.addEventListener('touchstart', function(e) {
+    if (container.scrollTop === 0) {
+        startY = e.touches[0].clientY;
+    }
+});
+
+container.addEventListener('touchmove', function(e) {
+    if (container.scrollTop === 0 && startY > 0) {
+        let currentY = e.touches[0].clientY;
+        let diff = currentY - startY;
+        if (diff > 0 && diff < 120) {
+            indicator.style.height = diff + 'px';
+        }
+    }
+});
+
+container.addEventListener('touchend', function(e) {
+    if (container.scrollTop === 0 && startY > 0) {
+        let finalHeight = indicator.offsetHeight;
+        if (finalHeight > 50) {
+            indicator.style.height = '45px';
+            setTimeout(() => {
+                window.location.reload();
+            }, 400);
+        } else {
+            indicator.style.height = '0px';
+        }
+        startY = 0;
+    }
+});
 
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
