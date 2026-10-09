@@ -636,8 +636,6 @@ function listenUserProfile() {
                 const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
                 document.getElementById("referredByCode").textContent = refCode;
 
-None
-
                 document.getElementById("winnings").textContent = "₹" + winBal;
                 document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
 
