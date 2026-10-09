@@ -13,23 +13,39 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-    background:
+/* पूरी स्क्रीन को लॉक और स्थिर रखने के लिए */
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* पेज को पूरे ब्राउज़र में बाहर भागने से रोकता है */
+    -webkit-tap-highlight-color: transparent;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: 
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-    color:#101a38;
-    min-height:100vh;
-    padding-top: 70px !important;    /* फिक्स्ड हेडर के लिए ऊपर स्पेस */
-    padding-bottom: 95px !important; /* फिक्स्ड बॉटम नेविगेशन के लिए नीचे स्पेस */
+    color: #101a38;
 }
-button{font:inherit;}
 
-/* CONTAINER */
-.container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
+button { font: inherit; }
+
+/* बीच का मुख्य हिस्सा जो सिर्फ अपने अंदर स्क्रॉल होगा, लेआउट नहीं हिलेगा */
+main.container {
+    position: absolute;
+    top: 70px;    /* फिक्स्ड हेडर के ठीक नीचे से शुरू होगा */
+    bottom: 75px; /* फिक्स्ड बॉटम नेविगेशन के ऊपर खत्म होगा */
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 16px 14px;
+    overflow-y: auto; /* सिर्फ अंदर का कंटेंट स्क्रॉल होगा */
+    -webkit-overflow-scrolling: touch;
+}
 
 /* WELCOME BANNER */
 .welcome-box{margin-bottom:14px;}
