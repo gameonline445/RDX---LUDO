@@ -2,708 +2,527 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>RDX LUDO - My Profile</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>RDX LUDO - Dashboard</title>
 
-<!-- FontAwesome for Icons -->
+<!-- FontAwesome Icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<script>
-// Authentication Security Check
-if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
-    window.location.replace("index.html");
-}
-</script>
+<!-- FIREBASE SDK (Compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+/* 🔒 पूरी स्क्रीन और बॉडी को मोबाइल पर भी पूरी तरह लॉक करने के लिए */
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
         radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-    color:#101a38;
-    min-height:100vh;
-    padding-bottom:95px;
-}
-button{font:inherit;}
-
-/* FIXED TOP HEADER STYLING (Always Stays on Top) */
-.top-header{
-    height:66px;
-    background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 14px;
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    z-index:500; /* Content ke hamesha upar rahega */
-    box-shadow:0 4px 18px rgba(2,132,199,0.08);
-}
-.header-left{display:flex;align-items:center;gap:10px;}
-.menu-btn{
-    width:42px;
-    height:42px;
-    border:0;
-    border-radius:14px;
-    background:linear-gradient(145deg,#ff7165,#ff8a70);
-    color:white;
-    font-size:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow:0 4px 12px rgba(255,113,101,0.25);
-}
-.menu-btn:active{transform:scale(0.95);}
-
-.logo{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    overflow:hidden;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    box-shadow:0 4px 12px rgba(2,132,199,0.15);
-}
-.logo img{width:100%;height:100%;object-fit:cover;}
-
-.header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{
-    height:38px;
-    width:38px;
-    border:0;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:16px;
-    color:white;
-    cursor:pointer;
-    padding:0;
-    box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-.notification-icon{ background:linear-gradient(145deg,#6366f1,#818cf8); }
-.wallet-icon{ background:linear-gradient(145deg,#16a34a,#22c55e); }
-.gift-icon{ background:linear-gradient(145deg,#ea580c,#f97316); }
-
-/* MAIN CONTAINER (Added margin-top so content scrolls under fixed header) */
-.container{
-    width:100%;
-    max-width:650px;
-    margin:0 auto;
-    padding:16px 14px;
-    margin-top:66px; /* Prevents overlap on load */
+    color: #101a38;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
 }
 
-/* PROFILE CARD */
-.profile-card{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:24px;
-    padding:20px 18px;
-    box-shadow:0 6px 20px rgba(2,132,199,0.08);
-    position:relative;
-}
-.badge-top{
-    display:inline-block;
-    padding:4px 10px;
-    border-radius:12px;
-    background:#e0f2fe;
-    color:#0284c7;
-    font-size:11px;
-    font-weight:850;
-    letter-spacing:0.5px;
-}
-.edit-btn{
-    position:absolute;
-    top:18px;
-    right:18px;
-    border:1px solid #bae6fd;
-    background:#f0f9ff;
-    color:#0284c7;
-    padding:6px 14px;
-    border-radius:16px;
-    font-size:12px;
-    font-weight:800;
-    cursor:pointer;
-}
-.user-row{display:flex;align-items:center;gap:14px;margin-top:14px;}
-.avatar{
-    width:64px;
-    height:64px;
-    border-radius:50%;
-    background:linear-gradient(145deg,#0284c7,#0369a1);
-    color:white;
-    font-size:26px;
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    box-shadow:0 4px 14px rgba(2,132,199,0.25);
-}
-.user-details h2{font-size:20px;font-weight:900;color:#0c4a6e;}
-.user-details p{color:#64748b;font-size:13px;font-weight:700;margin-top:2px;}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+button { font: inherit; }
 
-.kyc-btn{
-    margin-top:8px;
-    background:linear-gradient(100deg,#0284c7,#0369a1);
-    color:#fff;
-    border:0;
-    padding:6px 14px;
-    border-radius:14px;
-    font-size:11px;
-    font-weight:850;
-    cursor:pointer;
-    display:inline-flex;
-    align-items:center;
-    gap:5px;
+/* TOP HEADER - अपनी जगह पर बिल्कुल स्थिर रहेगा */
+.top-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 66px;
+    background: linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom: 1.5px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    z-index: 100;
+    box-shadow: 0 4px 18px rgba(2,132,199,0.08);
 }
-.kyc-pending-badge{
-    margin-top:8px;
-    background:#fef3c7;
-    color:#b45309;
-    border:1px solid #fde68a;
-    padding:5px 12px;
-    border-radius:14px;
-    font-size:11px;
-    font-weight:850;
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-.kyc-verified-badge{
-    margin-top:8px;
-    background:#dcfce7;
-    color:#15803d;
-    border:1px solid #86efac;
-    padding:5px 12px;
-    border-radius:14px;
-    font-size:11px;
-    font-weight:850;
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
+.menu-btn {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 14px;
+    background: #f87171;
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(248,113,113,0.3);
+    transition: transform 0.15s ease;
 }
-.kyc-rejected-badge{
-    margin-top:8px;
-    background:#fee2e2;
-    color:#b91c1c;
-    border:1px solid #fca5a5;
-    padding:5px 12px;
-    border-radius:14px;
-    font-size:11px;
-    font-weight:850;
-    display:inline-flex;
-    align-items:center;
-    gap:4px;
-    cursor:pointer;
+.menu-btn:active { transform: scale(0.92); }
+
+/* BRAND LOGO */
+.logo {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: 1.5px solid #bae6fd;
+    background: #ffffff;
+    box-shadow: 0 4px 12px rgba(2,132,199,0.15);
+}
+.logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
-/* REFERRAL BOX */
-.ref-box{
-    margin-top:16px;
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:20px;
-    padding:16px;
-    box-shadow:0 4px 14px rgba(2,132,199,0.06);
+/* RIGHT SIDE HEADER BUTTONS */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
 }
-.ref-title-row{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
-.ref-title-row small{color:#64748b;font-size:11px;font-weight:600;}
-.ref-pill{
-    background:#f8fafc;
-    border:1.5px solid #cbd5e1;
-    border-radius:14px;
-    padding:10px 14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.header-icon {
+    width: 42px;
+    height: 42px;
+    border: 0;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    transition: transform 0.15s ease;
 }
-.ref-pill strong{font-size:16px;font-weight:900;color:#0c4a6e;letter-spacing:1px;}
-.ref-pill i{color:#16a34a;font-size:18px;}
+.header-icon:active { transform: scale(0.92); }
 
-/* STATS */
-.section-label{font-size:11px;font-weight:850;color:#64748b;letter-spacing:1px;margin:18px 0 8px;text-transform:uppercase;}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.stat-item{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:18px;
-    padding:14px 10px;
-    text-align:center;
-    box-shadow:0 4px 12px rgba(2,132,199,0.04);
-}
-.stat-icon{
-    width:36px;
-    height:36px;
-    border-radius:10px;
-    background:#f0f9ff;
-    color:#0284c7;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    margin:0 auto 8px;
-    font-size:15px;
-}
-.stat-item small{display:block;font-size:10px;font-weight:800;color:#64748b;text-transform:uppercase;}
-.stat-item strong{display:block;font-size:16px;font-weight:900;color:#0c4a6e;margin-top:2px;}
+.notification-icon { background: #6366f1; }
+.wallet-icon { background: #22c55e; }
+.gift-icon { background: #ea580c; }
 
-/* ACTIONS */
-.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.action-card{
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    border-radius:18px;
-    padding:14px;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    box-shadow:0 4px 12px rgba(2,132,199,0.04);
-}
-.action-left{display:flex;align-items:center;gap:10px;}
-.action-icon{
-    width:34px;
-    height:34px;
-    border-radius:10px;
-    background:#f0f9ff;
-    color:#0284c7;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:15px;
-}
-.action-text h4{font-size:13px;font-weight:850;color:#0f172a;}
-.action-text p{font-size:11px;color:#64748b;}
-
-/* LOGOUT */
-.logout-btn{
-    width:100%;
-    height:46px;
-    border:1.5px solid #fecdd3;
-    border-radius:20px;
-    background:#fff1f2;
-    color:#be123c;
-    font-size:14px;
-    font-weight:850;
-    cursor:pointer;
-    margin-top:20px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
+/* 📜 मुख्य कंटेनर - यह फिक्स्ड हेडर और बॉटम नेविगेशन के बीच फिक्स रहेगा और केवल यही अंदर से स्क्रॉल होगा */
+main.container {
+    position: absolute;
+    top: 66px;
+    bottom: 74px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 16px 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
-/* SIDE DRAWER */
-.drawer-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.45);
-    backdrop-filter:blur(4px);
-    z-index:999;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity 0.25s ease;
-}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{
-    position:fixed;
-    top:0;
-    left:0;
-    width:280px;
-    height:100%;
-    background:#ffffff;
-    z-index:1000;
-    box-shadow:4px 0 25px rgba(2,132,199,0.15);
-    transform:translateX(-100%);
-    transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);
-    display:flex;
-    flex-direction:column;
-}
-.drawer.active{transform:translateX(0);}
-.drawer-header{
-    padding:20px 16px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-.drawer-close{
-    width:34px;
-    height:34px;
-    border-radius:50%;
-    border:1.5px solid #bae6fd;
-    background:#ffffff;
-    color:#0c4a6e;
-    font-size:16px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{
-    width:100%;
-    padding:10px 14px;
-    border:0;
-    border-radius:14px;
-    background:transparent;
-    display:flex;
-    align-items:center;
-    gap:12px;
-    font-size:14px;
-    font-weight:750;
-    color:#334155;
-    cursor:pointer;
-    margin-bottom:6px;
-}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item-icon{
-    width:36px;
-    height:36px;
-    border-radius:12px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    color:white;
-    font-size:16px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
+/* WELCOME BANNER */
+.welcome-box { margin-bottom: 14px; }
+.welcome-box h1 { font-size: 24px; font-weight: 900; color: #0c4a6e; }
+.welcome-box p { color: #64748b; font-size: 13px; font-weight: 600; margin-top: 2px; }
 
-/* BOTTOM NAV */
-.bottom-nav{
-    position:fixed;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:74px;
-    background:rgba(255,255,255,0.96);
-    backdrop-filter:blur(12px);
-    border-top:1.5px solid #e2e8f0;
-    display:flex;
-    justify-content:space-around;
-    align-items:center;
-    z-index:500;
-    box-shadow:0 -5px 25px rgba(2,132,199,0.06);
+/* REFER BANNER */
+.refer-banner {
+    border: 1.5px solid #7dd3fc;
+    border-radius: 22px;
+    padding: 16px 18px;
+    background: radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(2,132,199,0.08);
+    margin-bottom: 20px;
 }
-.nav-item{
-    width:25%;
-    height:100%;
-    border:0;
-    background:transparent;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    gap:4px;
-    color:#64748b;
-    font-size:11px;
-    font-weight:700;
-    cursor:pointer;
-    position:relative;
+.refer-banner small { color: #0284c7; font-weight: 850; font-size: 11px; letter-spacing: 0.8px; }
+.refer-banner h3 { font-size: 22px; font-weight: 900; color: #0c4a6e; margin-top: 2px; }
+.refer-banner p { color: #64748b; font-size: 12px; margin-top: 2px; }
+.refer-arrow {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #0284c7;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 4px 12px rgba(2,132,199,0.3);
 }
-.nav-icon-box{
-    width:42px;
-    height:42px;
-    border-radius:14px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    color:#ffffff;
-    box-shadow:0 4px 10px rgba(0,0,0,0.08);
-}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.icon-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.icon-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.icon-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.icon-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.nav-item.active{color:#101a38;font-weight:800;}
-.nav-item.active::after{content:"";position:absolute;bottom:6px;width:5px;height:5px;border-radius:50%;background:#f97316;}
 
-/* DOCUMENT KYC MODAL */
-.modal-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(15,23,42,0.6);
-    backdrop-filter:blur(4px);
-    z-index:9999;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:14px;
+/* GAMES SECTION */
+.section-label { font-size: 11px; font-weight: 850; color: #64748b; letter-spacing: 1px; margin-bottom: 4px; text-transform: uppercase; }
+.section-title { font-size: 18px; font-weight: 900; color: #0f172a; margin-bottom: 12px; }
+
+/* LUDO CARD */
+.game-card {
+    width: 100%;
+    height: 200px;
+    border-radius: 22px;
+    overflow: hidden;
+    position: relative;
+    background: #111;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.16);
+    cursor: pointer;
+    margin-bottom: 12px;
 }
-.modal-box{
-    width:100%;
-    max-width:440px;
-    background:#ffffff;
-    border-radius:24px;
-    border:1.5px solid #bae6fd;
-    box-shadow:0 20px 50px rgba(2,132,199,0.2);
-    overflow:hidden;
-    max-height:90vh;
-    display:flex;
-    flex-direction:column;
+.game-card img { width: 100%; height: 100%; object-fit: cover; }
+.game-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,rgba(0,0,0,0.1) 0%,rgba(0,0,0,0.8) 100%);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: white;
 }
-.modal-header{
-    padding:16px 20px;
-    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
-    border-bottom:1.5px solid #bae6fd;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
+@keyframes slowPulse {
+    0%, 100% { opacity: 1; transform: scale(1); box-shadow: 0 0 10px rgba(34,197,94,0.95); }
+    50% { opacity: 0.4; transform: scale(0.96); box-shadow: 0 0 2px rgba(34,197,94,0.2); }
 }
-.modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
-.modal-close{
-    width:32px;
-    height:32px;
-    border-radius:50%;
-    background:#ffffff;
-    border:1.5px solid #bae6fd;
-    color:#0c4a6e;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
+.live-badge {
+    align-self: flex-start;
+    background: #16a34a;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 850;
+    animation: slowPulse 1.8s ease-in-out infinite;
 }
-.modal-body{padding:18px 20px;overflow-y:auto;flex:1;}
-.modal-body label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin:10px 0 5px;letter-spacing:0.5px;}
-.modal-body input[type="text"]{
-    width:100%;
-    height:44px;
-    border-radius:12px;
-    border:1.5px solid #bae6fd;
-    background:#f8fafc;
-    font-size:14px;
-    font-weight:700;
-    padding:0 12px;
-    outline:none;
+.game-card-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
 }
-.modal-body input[type="file"]{
-    width:100%;
-    padding:8px;
-    border:1.5px dashed #bae6fd;
-    border-radius:12px;
-    background:#f8fafc;
-    font-size:12px;
-    color:#334155;
-    outline:none;
+.game-card-bottom h2 { font-size: 22px; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.6); }
+.game-card-bottom p { font-size: 12px; color: #cbd5e1; }
+.play-btn {
+    background: linear-gradient(100deg,#0284c7,#0369a1);
+    color: white;
+    border: 0;
+    padding: 8px 20px;
+    border-radius: 18px;
+    font-size: 13px;
+    font-weight: 850;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(2,132,199,0.35);
 }
-.btn-kyc-action{
-    width:100%;
-    height:46px;
-    border:0;
-    border-radius:23px;
-    background:linear-gradient(100deg,#0284c7,#0369a1);
-    color:white;
-    font-size:14px;
-    font-weight:850;
-    cursor:pointer;
-    box-shadow:0 4px 14px rgba(2,132,199,0.3);
-    margin-top:16px;
+
+/* COMING SOON CARD */
+.soon-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 14px rgba(30,60,120,0.03);
 }
-.btn-kyc-action:disabled{opacity:0.6;cursor:not-allowed;}
+.soon-card img { width: 60px; height: 60px; border-radius: 14px; object-fit: cover; }
+.soon-info { flex: 1; }
+.soon-info h4 { font-size: 15px; font-weight: 850; color: #0f172a; }
+.soon-info p { color: #64748b; font-size: 12px; margin-top: 2px; }
+.soon-tag { background: #f8fafc; border: 1px solid #e2e8f0; color: #64748b; padding: 5px 10px; border-radius: 12px; font-size: 10px; font-weight: 800; }
+
+/* SIDE DRAWER STYLING */
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.45);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+.drawer-overlay.active { opacity: 1; pointer-events: auto; }
+.drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100%;
+    background: #ffffff;
+    z-index: 1000;
+    box-shadow: 4px 0 25px rgba(2,132,199,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+}
+.drawer.active { transform: translateX(0); }
+.drawer-header {
+    padding: 20px 16px;
+    background: linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom: 1.5px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.drawer-user { display: flex; align-items: center; gap: 10px; }
+.drawer-avatar {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border: 1.5px solid #bae6fd;
+}
+.drawer-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.drawer-close {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1.5px solid #bae6fd;
+    color: #0c4a6e;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+.drawer-links { flex: 1; overflow-y: auto; padding: 12px; }
+.drawer-item {
+    width: 100%;
+    padding: 12px 14px;
+    border: 0;
+    border-radius: 14px;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 750;
+    color: #334155;
+    cursor: pointer;
+    margin-bottom: 4px;
+    transition: background 0.2s ease;
+}
+.drawer-item:hover, .drawer-item:active { background: #f0f9ff; color: #0284c7; }
+.drawer-item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+.menu-home { background: linear-gradient(145deg,#6366f1,#8b5cf6); }
+.menu-profile { background: linear-gradient(145deg,#f97316,#ea580c); }
+.menu-wallet { background: linear-gradient(145deg,#10b981,#059669); }
+.menu-refer { background: linear-gradient(145deg,#f59e0b,#d97706); }
+.menu-history { background: linear-gradient(145deg,#8b5cf6,#6d28d9); }
+.menu-notification { background: linear-gradient(145deg,#3b82f6,#1d4ed8); }
+.menu-support { background: linear-gradient(145deg,#06b6d4,#0284c7); }
+.menu-logout { background: linear-gradient(145deg,#ef4444,#dc2626); margin-top: 10px; }
+
+/* BOTTOM NAVIGATION - अपनी जगह पर बिल्कुल फिक्स रहेगा */
+.bottom-nav {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 74px;
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 200;
+}
+.nav-item {
+    width: 25%;
+    height: 100%;
+    border: 0;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #64748b;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+.nav-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #ffffff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.nav-item:active .nav-icon-box { transform: scale(0.92); }
+
+/* Active Nav State */
+.nav-item.active {
+    color: #0f172a;
+    font-weight: 850;
+}
+.nav-item.active .nav-icon-box {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.icon-home { background: #6366f1; }
+.icon-wallet { background: #22c55e; }
+.icon-support { background: #0284c7; }
+.icon-profile { background: #ea580c; }
 </style>
 </head>
 
 <body>
 
-<!-- DYNAMIC SIDE DRAWER CONTAINER -->
+<!-- DYNAMIC COMPONENT CONTAINERS -->
+<div id="header-container"></div>
 <div id="drawer-container"></div>
 
-<!-- DYNAMIC HEADER CONTAINER -->
-<div id="header-container"></div>
+<main class="container" id="scrollContainer">
+    <section class="welcome-box">
+        <h1>Hey, <span id="userName">User</span></h1>
+        <p>Welcome to RDX LUDO</p>
+    </section>
 
-<main class="container">
+    <section class="refer-banner" onclick="window.location.replace('referral.html')">
+        <div>
+            <small>REFER & EARN</small>
+            <h3>2% Refer Bonus</h3>
+            <p>Invite friends and earn lifetime rewards</p>
+        </div>
+        <div class="refer-arrow">↗</div>
+    </section>
 
-    <!-- PROFILE CARD -->
-    <div class="profile-card">
-        <span class="badge-top">MY PROFILE</span>
-        <button class="edit-btn" onclick="editName()"><i class="fa-solid fa-pen"></i> Edit</button>
+    <div class="section-label">GAMES</div>
+    <h2 class="section-title">Play Your Game</h2>
 
-        <div class="user-row">
-            <div class="avatar" id="avatarText">U</div>
-            <div class="user-details">
-                <h2 id="profileName">Loading...</h2>
-                <p><i class="fa-solid fa-phone" style="font-size:11px;"></i> <span id="profileMobile">+91**********</span></p>
-                <div id="kycContainer">
-                    <!-- Default State rendered dynamically -->
+    <article class="game-card" onclick="window.location.replace('battles.html')">
+        <img src="ludo-classic.jpg" alt="Ludo Classic" onerror="this.src='https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=600&auto=format&fit=crop';">
+        <div class="game-overlay">
+            <span class="live-badge">● LIVE</span>
+            <div class="game-card-bottom">
+                <div>
+                    <h2>Ludo Classic</h2>
+                    <p>Classic 2-Player Battle</p>
                 </div>
+                <button class="play-btn" onclick="event.stopPropagation(); window.location.replace('battles.html');">
+                    ▶ Play
+                </button>
             </div>
         </div>
-    </div>
+    </article>
 
-    <!-- REFERRAL BOX -->
-    <div class="ref-box">
-        <div class="ref-title-row">
-            <div style="font-size:16px;">🎟️</div>
-            <div>
-                <h3 style="font-size:13px; font-weight:850; color:#0c4a6e;">Referral Applied</h3>
-                <small>Locked to your account</small>
-            </div>
+    <section class="soon-card">
+        <img src="ludo-1-goti.jpg" alt="1 Goti Ludo" onerror="this.src='https://images.unsplash.com/photo-1511512578047-dfb367046420?w=200&auto=format&fit=crop';">
+        <div class="soon-info">
+            <h4>1 Goti Quick Ludo</h4>
+            <p>Fast paced 1-Token match</p>
         </div>
-        <div class="ref-pill">
-            <strong id="referredByCode">DIRECT</strong>
-            <i class="fa-solid fa-circle-check"></i>
-        </div>
-    </div>
-
-    <!-- STATS -->
-    <div class="section-label">YOUR STATS</div>
-    <div class="stats-grid">
-        <div class="stat-item">
-            <div class="stat-icon"><i class="fa-solid fa-trophy"></i></div>
-            <small>COIN WON</small>
-            <strong id="winnings">₹0</strong>
-        </div>
-        <div class="stat-item">
-            <div class="stat-icon"><i class="fa-solid fa-gamepad"></i></div>
-            <small>PLAYED</small>
-            <strong id="matchesPlayed">0</strong>
-        </div>
-        <div class="stat-item">
-            <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-            <small>REFERRAL</small>
-            <strong id="totalReferrals">0</strong>
-        </div>
-    </div>
-
-    <!-- ACTIONS -->
-    <div class="section-label">QUICK ACTIONS</div>
-    <div class="action-grid">
-        <div class="action-card" onclick="window.location.replace('history.html')">
-            <div class="action-left">
-                <div class="action-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
-                <div class="action-text">
-                    <h4>History</h4>
-                    <p>Battles & logs</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-angle-right" style="color:#94a3b8; font-size:12px;"></i>
-        </div>
-
-        <div class="action-card" onclick="window.location.replace('support.html')">
-            <div class="action-left">
-                <div class="action-icon"><i class="fa-solid fa-headset"></i></div>
-                <div class="action-text">
-                    <h4>Support</h4>
-                    <p>Chat & help</p>
-                </div>
-            </div>
-            <i class="fa-solid fa-angle-right" style="color:#94a3b8; font-size:12px;"></i>
-        </div>
-    </div>
-
-    <!-- LOGOUT -->
-    <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-
+        <span class="soon-tag">🔒 SOON</span>
+    </section>
 </main>
 
-<!-- DYNAMIC BOTTOM NAV CONTAINER -->
-<div id="nav-container" data-active="profile"></div>
+<!-- BOTTOM NAVIGATION CONTAINER WITH ACTIVE TAB -->
+<div id="nav-container" data-active="home"></div>
 
-<!-- DOCUMENT KYC MODAL -->
-<div class="modal-overlay" id="kycModal">
-    <div class="modal-box">
-        <div class="modal-header">
-            <h3><i class="fa-solid fa-id-card"></i> Document KYC Verification</h3>
-            <button class="modal-close" onclick="closeKycModal()"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div class="modal-body">
-            <label>ENTER 12-DIGIT ID NUMBER</label>
-            <input type="text" id="kycDocNumber" placeholder="Enter 12-Digit Number" maxlength="12" inputmode="numeric">
-
-            <label>ID FRONT PHOTO</label>
-            <input type="file" id="kycFrontFile" accept="image/*">
-
-            <label>ID BACK PHOTO</label>
-            <input type="file" id="kycBackFile" accept="image/*">
-
-            <p style="font-size:11px; color:#64748b; margin-top:10px; line-height:1.4;">
-                Photos saaf honi chahiye. Details submit karne ke baad Admin dwara verify ki jayengi.
-            </p>
-
-            <button class="btn-kyc-action" id="btnSubmitKyc" onclick="submitManualKyc()">Submit Document For Verification</button>
-        </div>
-    </div>
-</div>
-
-<!-- DYNAMIC LAYOUT COMPONENTS SCRIPT -->
+<!-- COMPONENTS SCRIPT -->
 <script src="components.js"></script>
 
 <script>
-history.pushState({ page: 1 }, "", "");
-window.addEventListener("popstate", function (event) {
-    window.location.href = "dashboard.html";
+/* 🛡️ मोबाइल ब्राउज़र के पूरे पेज वाले बाउंस/स्क्रॉल को रोकने के लिए ग्लोबल प्रिवेंटर */
+document.addEventListener('touchmove', function(event) {
+    if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
+/* 🔄 शुद्ध पुल-टू-रिफ्रेश लॉजिक (बिना किसी टेक्स्ट/आइकॉन लाइन के केवल शुद्ध रिफ्रेश) */
+let startY = 0;
+const scrollContainer = document.getElementById('scrollContainer');
+
+if (scrollContainer) {
+    scrollContainer.addEventListener('touchstart', function(e) {
+        if (scrollContainer.scrollTop === 0) {
+            startY = e.touches[0].clientY;
+        }
+    });
+
+    scrollContainer.addEventListener('touchmove', function(e) {
+        if (scrollContainer.scrollTop === 0 && startY > 0) {
+            let currentY = e.touches[0].clientY;
+            if (currentY - startY > 100) {
+                startY = 0;
+                window.location.reload();
+            }
+        }
+    });
+
+    scrollContainer.addEventListener('touchend', function(e) {
+        startY = 0;
+    });
+}
+
+window.addEventListener("pageshow", function (event) {
+    if (event.persisted || (performance && performance.navigation.type === 2)) {
+        window.location.reload();
+    }
 });
 
-function openKycModal() {
-    document.getElementById("kycDocNumber").value = "";
-    document.getElementById("kycFrontFile").value = "";
-    document.getElementById("kycBackFile").value = "";
-    document.getElementById("kycModal").style.display = "flex";
+if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
+    window.location.replace("index.html");
 }
 
-function closeKycModal() {
-    document.getElementById("kycModal").style.display = "none";
-}
-
-function renderKycBadge(status) {
-    const kycContainer = document.getElementById("kycContainer");
-    if(!kycContainer) return;
-    const cleanStatus = String(status || "").toLowerCase();
-
-    if (cleanStatus === "verified") {
-        kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
-    } else if (cleanStatus === "pending") {
-        kycContainer.innerHTML = `<span class="kyc-pending-badge"><i class="fa-solid fa-clock"></i> KYC Under Review</span>`;
-    } else if (cleanStatus === "rejected") {
-        kycContainer.innerHTML = `<button class="kyc-rejected-badge" onclick="openKycModal()"><i class="fa-solid fa-circle-xmark"></i> KYC Rejected (Resubmit)</button>`;
-    } else {
-        kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
-    }
-}
-
-const cachedKycStatus = localStorage.getItem("rdxCachedKycStatus") || "";
-renderKycBadge(cachedKycStatus);
-</script>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-import { getFirestore, doc, onSnapshot, setDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+(function() {
+    history.pushState(null, null, location.href);
+    window.addEventListener("popstate", function() {
+        const drawer = document.getElementById("sideDrawer");
+        if (drawer && drawer.classList.contains("active")) {
+            toggleMenu();
+        }
+        history.pushState(null, null, location.href);
+    });
+})();
 
 const firebaseConfig = {
     apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
@@ -713,9 +532,8 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+const firebaseDB = firebase.firestore();
 
 function getCleanUserId() {
     const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
@@ -723,174 +541,108 @@ function getCleanUserId() {
 }
 const userId = getCleanUserId();
 
-let userSnapshotUnsubscribe = null;
-
-function listenUserProfile() {
-    if (!userId) {
-        window.location.replace("index.html");
-        return;
-    }
+function loadDashboardDataRealtime() {
+    if (!userId) { window.location.replace("index.html"); return; }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
-    try {
-        const userRef = doc(db, "customers", docId);
-        
-        userSnapshotUnsubscribe = onSnapshot(userRef, async (snap) => {
-            if (snap.exists()) {
-                const d = snap.data();
-                const userName = d.name || ("User " + userId.slice(-4));
-                
-                const winBal = Number(d.winningBalance || d.winnings || 0);
+    firebaseDB.collection("customers").doc(docId).onSnapshot((snap) => {
+        if (snap.exists) {
+            const d = snap.data();
 
-                document.getElementById("profileName").textContent = userName;
-                document.getElementById("avatarText").textContent = userName.charAt(0).toUpperCase();
-                document.getElementById("profileMobile").textContent = "+" + userId;
-                
-                const drawerName = document.getElementById("drawerName");
-                if(drawerName) drawerName.textContent = userName;
-                
-                const drawerAvatar = document.getElementById("drawerAvatar");
-                if(drawerAvatar) drawerAvatar.innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
-                
-                const drawerMobile = document.getElementById("drawerMobile");
-                if(drawerMobile) drawerMobile.textContent = "+" + userId;
-                
-                const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
-                document.getElementById("referredByCode").textContent = refCode;
+            const isUserBlocked = d.isBlocked === true || 
+                                  d.isBlock === true || 
+                                  d.blocked === true || 
+                                  String(d.status).toLowerCase() === 'blocked';
 
-                document.getElementById("winnings").textContent = "₹" + winBal;
-                document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
-
-                const myRefCode = String(d.referralCode || ("RDX" + userId.slice(-4))).toUpperCase();
-                const q = query(collection(db, "customers"), where("referredBy", "==", myRefCode));
-                const refQuerySnap = await getDocs(q);
-                document.getElementById("totalReferrals").textContent = refQuerySnap.size;
-
-                const realKycStatus = d.kycStatus || "unverified";
-                localStorage.setItem("rdxCachedKycStatus", realKycStatus);
-                renderKycBadge(realKycStatus);
+            if (isUserBlocked) {
+                localStorage.clear();
+                sessionStorage.clear();
+                alert("Aapka account admin dwara block kar diya gaya hai.");
+                window.location.replace("index.html");
+                return;
             }
-        }, (error) => {
-            console.error("Realtime Listen Error:", error);
-        });
-    } catch(err) {
-        console.error("Profile load error:", err);
-    }
-}
 
-function compressImageFile(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const img = new Image();
-            img.src = event.target.result;
-            img.onload = () => {
-                const canvas = document.createElement("canvas");
-                let width = img.width;
-                let height = img.height;
-                const maxDim = 800;
+            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
+            const firstName = fullName.split(" ")[0] || "User";
 
-                if (width > height && width > maxDim) {
-                    height = Math.round((height * maxDim) / width);
-                    width = maxDim;
-                } else if (height > maxDim) {
-                    width = Math.round((width * maxDim) / height);
-                    height = maxDim;
-                }
+            const userElem = document.getElementById("userName");
+            const drawerNameElem = document.getElementById("drawerName");
+            const drawerMobileElem = document.getElementById("drawerName");
 
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0, width, height);
-
-                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
-                resolve(compressedBase64);
-            };
-            img.onerror = err => reject(err);
-        };
-        reader.onerror = err => reject(err);
+            if (userElem) userElem.textContent = firstName;
+            if (drawerNameElem) drawerNameElem.textContent = fullName;
+        }
+    }, (err) => {
+        console.error("Realtime update error:", err);
     });
 }
 
-window.submitManualKyc = async () => {
-    const docNumber = document.getElementById("kycDocNumber").value.replace(/\D/g, "");
-    const frontFile = document.getElementById("kycFrontFile").files[0];
-    const backFile = document.getElementById("kycBackFile").files[0];
-
-    if (docNumber.length !== 12) {
-        alert("Kripya sahi 12-digit ID number daalein.");
-        return;
-    }
-    if (!frontFile || !backFile) {
-        alert("Kripya dono photos (Front aur Back) upload karein.");
-        return;
-    }
-
-    const btn = document.getElementById("btnSubmitKyc");
-    btn.disabled = true;
-    btn.textContent = "Compressing & Uploading...";
-
-    try {
-        const frontBase64 = await compressImageFile(frontFile);
-        const backBase64 = await compressImageFile(backFile);
-
-        const docId = userId.length === 10 ? "91" + userId : userId;
-
-        await setDoc(doc(db, "kycRequests", docId), {
-            uid: docId,
-            mobile: "+" + userId,
-            docNumber: docNumber,
-            frontImage: frontBase64,
-            backImage: backBase64,
-            status: "pending",
-            submittedAt: serverTimestamp()
-        });
-
-        await setDoc(doc(db, "customers", docId), {
-            kycStatus: "pending",
-            kycDocNumber: docNumber,
-            kycSubmittedAt: serverTimestamp()
-        }, { merge: true });
-
-        localStorage.setItem("rdxCachedKycStatus", "pending");
-        renderKycBadge("pending");
-
-        alert("✅ KYC Documents successfully submit ho gaye hain! Admin dwara check hote hi verify ho jayega.");
-        closeKycModal();
-    } catch(err) {
-        alert("Upload error: " + err.message);
-    }
-    btn.disabled = false;
-    btn.textContent = "Submit Document For Verification";
-};
-
-window.editName = async () => {
-    const newName = prompt("Apna Naya Naam Likhein:");
-    if (!newName || !newName.trim()) return;
+async function startPresenceHeartbeat() {
+    if (!userId) return;
     const docId = userId.length === 10 ? "91" + userId : userId;
-    
-    try {
-        await setDoc(doc(db, "customers", docId), { name: newName.trim() }, { merge: true });
-        alert("✅ Naam Update Ho Gaya!");
-    } catch(e) { alert("Error: " + e.message); }
-};
+    const userRef = firebaseDB.collection("customers").doc(docId);
 
-window.logout = async () => {
+    let userCity = "Unknown";
+    let userState = "Unknown";
+
+    try {
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        if (data && data.city) {
+            userCity = data.city;
+            userState = data.region || data.region_code || "Unknown";
+        }
+    } catch(e) {
+        console.log("Location fetch error:", e);
+    }
+
+    const sendHeartbeat = (isOnlineStatus) => {
+        const payload = {
+            isOnline: isOnlineStatus,
+            lastPing: firebase.firestore.FieldValue.serverTimestamp(),
+            lastSeenAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        if (userCity !== "Unknown") payload.city = userCity;
+        if (userState !== "Unknown") payload.state = userState;
+
+    userRef.set(payload, { merge: true }).catch(err => console.error("Presence error:", err));
+    };
+
+    sendHeartbeat(true);
+
+    setInterval(() => {
+        if (!document.hidden) {
+            sendHeartbeat(true);
+        } else {
+            sendHeartbeat(false);
+        }
+    }, 5000);
+
+    document.addEventListener("visibilitychange", () => {
+        sendHeartbeat(!document.hidden);
+    });
+
+    window.addEventListener("blur", () => sendHeartbeat(false));
+    window.addEventListener("focus", () => sendHeartbeat(true));
+    window.addEventListener("pagehide", () => sendHeartbeat(false));
+    window.addEventListener("beforeunload", () => sendHeartbeat(false));
+}
+
+function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
     if (userId) {
         const docId = userId.length === 10 ? "91" + userId : userId;
-        try {
-            await setDoc(doc(db, "customers", docId), { isOnline: false }, { merge: true });
-        } catch(e) { console.error(e); }
+        firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
     }
-    if (userSnapshotUnsubscribe) userSnapshotUnsubscribe();
     localStorage.clear();
     sessionStorage.clear();
     window.location.replace("index.html");
-};
+}
 
-listenUserProfile();
+window.addEventListener("load", () => {
+    loadDashboardDataRealtime();
+    startPresenceHeartbeat();
+});
 </script>
 
 </body>
