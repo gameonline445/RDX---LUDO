@@ -13,21 +13,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-/* 🔒 मोबाइल और डेस्कटॉप दोनों पर पेज को पूरी तरह एक जगह स्थिर (lock) करने के लिए */
-html {
+/* 🔒 पूरी स्क्रीन और बॉडी को मोबाइल पर भी पूरी तरह लॉक करने के लिए */
+html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    position: fixed;
-}
-
-body {
-    width: 100%;
-    height: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    overflow: hidden;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -45,7 +38,7 @@ body {
 * { box-sizing: border-box; margin: 0; padding: 0; }
 button { font: inherit; }
 
-/* TOP HEADER - अपनी जगह पर बिल्कुल फिक्स रहेगा */
+/* TOP HEADER - अपनी जगह पर बिल्कुल स्थिर रहेगा */
 .top-header {
     position: absolute;
     top: 0;
@@ -131,7 +124,7 @@ button { font: inherit; }
 .wallet-icon { background: #22c55e; }
 .gift-icon { background: #ea580c; }
 
-/* 📜 मुख्य कंटेनर - यह फिक्स्ड हेडर (66px) और फिक्स्ड बॉटम नेविगेशन (74px) के बीच में रहेगा और केवल यही अंदर से स्क्रॉल होगा */
+/* 📜 मुख्य कंटेनर - यह फिक्स्ड हेडर और बॉटम नेविगेशन के बीच फिक्स रहेगा और केवल यही अंदर से स्क्रॉल होगा */
 main.container {
     position: absolute;
     top: 66px;
@@ -477,6 +470,13 @@ main.container {
 <script src="components.js"></script>
 
 <script>
+/* 🛡️ मोबाइल ब्राउज़र के पूरे पेज वाले बाउंस/स्क्रॉल को रोकने के लिए ग्लोबल प्रिवेंटर */
+document.addEventListener('touchmove', function(event) {
+    if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
         window.location.reload();
