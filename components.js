@@ -2,6 +2,41 @@
 // Centralized Components System (components.js)
 // ==========================================
 
+// 0. TOP LOADING PROGRESS BAR (रिफ्रेश या पेज लोड होने पर ऊपर चलने वाली लाइन) 🚀
+function initProgressBar() {
+    // अगर पहले से बार मौजूद नहीं है, तो उसे बनाएं
+    if (!document.getElementById("top-progress-bar")) {
+        const progressBar = document.createElement("div");
+        progressBar.id = "top-progress-bar";
+        progressBar.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+            z-index: 99999;
+            transition: width 0.4s ease-out, opacity 0.3s ease;
+        `;
+        document.body.prepend(progressBar);
+    }
+
+    const bar = document.getElementById("top-progress-bar");
+    bar.style.width = "0%";
+    bar.style.opacity = "1";
+
+    // तुरंत थोड़ा आगे बढ़ाएं
+    setTimeout(() => { bar.style.width = "70%"; }, 50);
+
+    // पेज पूरी तरह लोड होने पर पूरा भर कर गायब कर दें
+    window.addEventListener("load", () => {
+        bar.style.width = "100%";
+        setTimeout(() => {
+            bar.style.opacity = "0";
+        }, 300);
+    });
+}
+
 // 1. TOP HEADER GENERATOR 🔝
 function loadHeader() {
     const headerContainer = document.getElementById("header-container");
@@ -137,7 +172,7 @@ function loadDrawer() {
                 color: #ffffff !important;
             }
             
-            /* Sidebar Uniform Colors (Matching Everywhere) */
+            /* Sidebar Uniform Colors */
             .menu-home { background: #2563eb !important; }
             .menu-profile { background: #e17055 !important; }
             .menu-wallet { background: #00b894 !important; }
@@ -200,7 +235,7 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Matching Uniform Colors)
+// 3. BOTTOM NAVIGATION GENERATOR ⚓
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
@@ -318,6 +353,7 @@ window.handleLogout = function() {
 
 // AUTO RUN ON PAGE LOAD 🚀
 document.addEventListener("DOMContentLoaded", () => {
+    initProgressBar();
     loadHeader();
     loadDrawer();
     loadBottomNav();
