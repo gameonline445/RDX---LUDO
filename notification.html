@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>RDX LUDO - Notifications</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     
@@ -29,22 +29,58 @@
 
     <style>
         *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-tap-highlight-color:transparent;}
-        body{
+
+        /* 🔒 पूरी स्क्रीन और बॉडी को मोबाइल पर पूरी तरह लॉक करने के लिए */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
             background:
                 radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
                 radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
                 radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
                 linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
             color:#101a38;
-            min-height:100vh;
-            padding-top:70px;
-            padding-bottom:95px;
+            -webkit-touch-callout: none;
         }
         button{font:inherit;}
 
-        /* MAIN CONTAINER */
-        .container{width:100%;max-width:650px;margin:auto;padding:0 14px;}
-        .page-heading{padding:18px 4px 12px;display:flex;justify-content:space-between;align-items:center;}
+/* TOP HEADER STYLES */
+.top-header{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 66px;
+    background: linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
+    border-bottom: 1.5px solid #bae6fd;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    z-index: 100;
+    box-shadow: 0 4px 18px rgba(2,132,199,0.08);
+}
+
+        /* MAIN CONTAINER (हेडर और बॉटम नेविगेशन के बीच फिक्स और स्क्रॉलएबल) */
+        .container{
+            position: absolute;
+            top: 66px;
+            bottom: 74px;
+            left: 0;
+            right: 0;
+            width: 100%;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 16px 14px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .page-heading{padding:6px 4px 12px;display:flex;justify-content:space-between;align-items:center;}
         .page-heading h2{font-size:20px;font-weight:900;color:#0c4a6e;}
 
         .notif-card{
@@ -62,6 +98,57 @@
         .notif-title{color:#0284c7;font-size:15px;font-weight:800;}
         .notif-time{font-size:11px;color:#94a3b8;font-weight:600;}
         .notif-body{font-size:13px;color:#475569;line-height:1.4;font-weight:600;}
+
+        /* SIDE DRAWER STYLING */
+        .drawer-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.25s ease;}
+        .drawer-overlay.active{opacity:1;pointer-events:auto;}
+        .drawer{position:fixed;top:0;left:0;width:280px;height:100%;background:#ffffff;z-index:1000;box-shadow:4px 0 25px rgba(2,132,199,0.15);transform:translateX(-100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;}
+        .drawer.active{transform:translateX(0);}
+
+        /* BOTTOM NAV CONTAINER STYLES */
+        .bottom-nav{
+            position:absolute;
+            bottom:0;
+            left:0;
+            width:100%;
+            height:74px;
+            background:#ffffff;
+            border-top:1px solid #e2e8f0;
+            display:flex;
+            justify-content:space-around;
+            align-items:center;
+            z-index:200;
+        }
+        .nav-item{
+            width:25%;
+            height:100%;
+            border:0;
+            background:transparent;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            gap:4px;
+            color:#64748b;
+            font-size:12px;
+            font-weight:700;
+            cursor:pointer;
+        }
+        .nav-icon-box{
+            width:42px;
+            height:42px;
+            border-radius:14px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:18px;
+            color:#ffffff;
+        }
+        .nav-item.active {color:#0f172a;font-weight:850;}
+        .icon-home{background:#6366f1;}
+        .icon-wallet{background:#22c55e;}
+        .icon-support{background:#0284c7;}
+        .icon-profile{background:#ea580c;}
     </style>
 </head>
 <body>
@@ -70,7 +157,7 @@
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
-<main class="container">
+<main class="container" id="scrollContainer">
     <div class="page-heading">
         <h2>Notifications</h2>
     </div>
@@ -81,12 +168,43 @@
 </main>
 
 <!-- BOTTOM NAV CONTAINER -->
-<div id="nav-container"></div>
+<div id="nav-container" data-active="notification"></div>
 
 <!-- EXTERNAL COMPONENTS SCRIPT -->
 <script src="components.js"></script>
 
 <script>
+/* 🛡️ मोबाइल बाउंस रोकने के लिए टच प्रिवेंटर */
+document.addEventListener('touchmove', function(event) {
+    if (!event.target.closest('.container') && !event.target.closest('.drawer')) {
+        event.preventDefault();
+    }
+}, { passive: false });
+
+/* 🔄 शुद्ध पुल-टू-रिफ्रेश लॉजिक */
+let startY = 0;
+const scrollContainer = document.getElementById('scrollContainer');
+
+scrollContainer.addEventListener('touchstart', function(e) {
+    if (scrollContainer.scrollTop === 0) {
+        startY = e.touches[0].clientY;
+    }
+});
+
+scrollContainer.addEventListener('touchmove', function(e) {
+    if (scrollContainer.scrollTop === 0 && startY > 0) {
+        let currentY = e.touches[0].clientY;
+        if (currentY - startY > 100) {
+            startY = 0;
+            window.location.reload();
+        }
+    }
+});
+
+scrollContainer.addEventListener('touchend', function(e) {
+    startY = 0;
+});
+
 function toggleMenu() {
     const drawer = document.getElementById("sideDrawer");
     const overlay = document.getElementById("drawerOverlay");
@@ -200,7 +318,7 @@ function listenNotifs() {
 }
 
 window.logout = async () => {
-    if (!confirm("Kya aap Logout करना चाहते हैं?")) return;
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
     if (userId) {
         const docId = userId.length === 10 ? "91" + userId : userId;
         try {
