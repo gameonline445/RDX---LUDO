@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
+// Authentication Security Check
 if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") !== "true") {
     window.location.replace("index.html");
 }
@@ -29,7 +30,7 @@ body{
 }
 button{font:inherit;}
 
-/* TOP HEADER */
+/* FIXED TOP HEADER STYLING (Always Stays on Top) */
 .top-header{
     height:66px;
     background:linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
@@ -60,6 +61,8 @@ button{font:inherit;}
     cursor:pointer;
     box-shadow:0 4px 12px rgba(255,113,101,0.25);
 }
+.menu-btn:active{transform:scale(0.95);}
+
 .logo{
     width:46px;
     height:46px;
@@ -68,14 +71,33 @@ button{font:inherit;}
     display:flex;
     align-items:center;
     justify-content:center;
+    cursor:pointer;
     border:1.5px solid #bae6fd;
     background:#ffffff;
     box-shadow:0 4px 12px rgba(2,132,199,0.15);
 }
 .logo img{width:100%;height:100%;object-fit:cover;}
-.header-right{display:flex;align-items:center;gap:8px;}
 
-/* CONTAINER */
+.header-right{display:flex;align-items:center;gap:8px;}
+.header-icon{
+    height:38px;
+    width:38px;
+    border:0;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:16px;
+    color:white;
+    cursor:pointer;
+    padding:0;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+.notification-icon{ background:linear-gradient(145deg,#6366f1,#818cf8); }
+.wallet-icon{ background:linear-gradient(145deg,#16a34a,#22c55e); }
+.gift-icon{ background:linear-gradient(145deg,#ea580c,#f97316); }
+
+/* MAIN CONTAINER */
 .container{
     width:100%;
     max-width:650px;
@@ -173,6 +195,20 @@ button{font:inherit;}
     align-items:center;
     gap:4px;
 }
+.kyc-rejected-badge{
+    margin-top:8px;
+    background:#fee2e2;
+    color:#b91c1c;
+    border:1px solid #fca5a5;
+    padding:5px 12px;
+    border-radius:14px;
+    font-size:11px;
+    font-weight:850;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    cursor:pointer;
+}
 
 /* REFERRAL BOX */
 .ref-box{
@@ -268,24 +304,121 @@ button{font:inherit;}
     justify-content:center;
     gap:8px;
 }
+
+/* DOCUMENT KYC MODAL */
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.6);
+    backdrop-filter:blur(4px);
+    z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:14px;
+}
+.modal-box{
+    width:100%;
+    max-width:440px;
+    background:#ffffff;
+    border-radius:24px;
+    border:1.5px solid #bae6fd;
+    box-shadow:0 20px 50px rgba(2,132,199,0.2);
+    overflow:hidden;
+    max-height:90vh;
+    display:flex;
+    flex-direction:column;
+}
+.modal-header{
+    padding:16px 20px;
+    background:linear-gradient(135deg,#e0f2fe,#f0f9ff);
+    border-bottom:1.5px solid #bae6fd;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+.modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
+.modal-close{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:#ffffff;
+    border:1.5px solid #bae6fd;
+    color:#0c4a6e;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+}
+.modal-body{padding:18px 20px;overflow-y:auto;flex:1;}
+.modal-body label{display:block;font-size:11px;font-weight:800;color:#0284c7;margin:10px 0 5px;letter-spacing:0.5px;}
+.modal-body input[type="text"]{
+    width:100%;
+    height:44px;
+    border-radius:12px;
+    border:1.5px solid #bae6fd;
+    background:#f8fafc;
+    font-size:14px;
+    font-weight:700;
+    padding:0 12px;
+    outline:none;
+}
+.modal-body input[type="file"]{
+    width:100%;
+    padding:8px;
+    border:1.5px dashed #bae6fd;
+    border-radius:12px;
+    background:#f8fafc;
+    font-size:12px;
+    color:#334155;
+    outline:none;
+}
+.btn-kyc-action{
+    width:100%;
+    height:46px;
+    border:0;
+    border-radius:23px;
+    background:linear-gradient(100deg,#0284c7,#0369a1);
+    color:white;
+    font-size:14px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 4px 14px rgba(2,132,199,0.3);
+    margin-top:16px;
+}
+.btn-kyc-action:disabled{opacity:0.6;cursor:not-allowed;}
 </style>
 </head>
+
 <body>
 
+<!-- DYNAMIC SIDE DRAWER CONTAINER -->
+<div id="drawer-container"></div>
+
+<!-- DYNAMIC HEADER CONTAINER -->
+<div id="header-container"></div>
+
+<!-- MAIN CONTAINER -->
 <main class="container" id="scrollContainer">
+
+    <!-- PROFILE CARD -->
     <div class="profile-card">
         <span class="badge-top">MY PROFILE</span>
         <button class="edit-btn" onclick="editName()"><i class="fa-solid fa-pen"></i> Edit</button>
+
         <div class="user-row">
             <div class="avatar" id="avatarText">U</div>
             <div class="user-details">
                 <h2 id="profileName">Loading...</h2>
                 <p><i class="fa-solid fa-phone" style="font-size:11px;"></i> <span id="profileMobile">+91**********</span></p>
-                <div id="kycContainer"></div>
+                <div id="kycContainer">
+                    <!-- Default State rendered dynamically -->
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- REFERRAL BOX -->
     <div class="ref-box">
         <div class="ref-title-row">
             <div style="font-size:16px;">🎟️</div>
@@ -300,6 +433,7 @@ button{font:inherit;}
         </div>
     </div>
 
+    <!-- STATS -->
     <div class="section-label">YOUR STATS</div>
     <div class="stats-grid">
         <div class="stat-item">
@@ -319,6 +453,7 @@ button{font:inherit;}
         </div>
     </div>
 
+    <!-- ACTIONS -->
     <div class="section-label">QUICK ACTIONS</div>
     <div class="action-grid">
         <div class="action-card" onclick="window.location.replace('history.html')">
@@ -344,21 +479,295 @@ button{font:inherit;}
         </div>
     </div>
 
+    <!-- LOGOUT -->
     <button class="logout-btn" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+
 </main>
 
+<!-- DYNAMIC BOTTOM NAV CONTAINER -->
+<div id="nav-container" data-active="profile"></div>
+
+<!-- DOCUMENT KYC MODAL -->
+<div class="modal-overlay" id="kycModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3><i class="fa-solid fa-id-card"></i> Document KYC Verification</h3>
+            <button class="modal-close" onclick="closeKycModal()"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-body">
+            <label>ENTER 12-DIGIT ID NUMBER</label>
+            <input type="text" id="kycDocNumber" placeholder="Enter 12-Digit Number" maxlength="12" inputmode="numeric">
+
+            <label>ID FRONT PHOTO</label>
+            <input type="file" id="kycFrontFile" accept="image/*">
+
+            <label>ID BACK PHOTO</label>
+            <input type="file" id="kycBackFile" accept="image/*">
+
+            <p style="font-size:11px; color:#64748b; margin-top:10px; line-height:1.4;">
+                Photos saaf honi chahiye. Details submit karne ke baad Admin dwara verify ki jayengi.
+            </p>
+
+            <button class="btn-kyc-action" id="btnSubmitKyc" onclick="submitManualKyc()">Submit Document For Verification</button>
+        </div>
+    </div>
+</div>
+
+<!-- DYNAMIC LAYOUT COMPONENTS SCRIPT -->
+<script src="components.js"></script>
+
 <script>
-function editName() {
-    const newName = prompt("Apna Naya Naam Likhein:");
-    if (!newName || !newName.trim()) return;
-    alert("Naam Update Ho Gaya!");
+let startY = 0;
+const scrollContainer = document.getElementById('scrollContainer');
+
+if (scrollContainer) {
+    scrollContainer.addEventListener('touchstart', function(e) {
+        if (scrollContainer.scrollTop === 0) {
+            startY = e.touches[0].clientY;
+        }
+    });
+
+    scrollContainer.addEventListener('touchmove', function(e) {
+        if (scrollContainer.scrollTop === 0 && startY > 0) {
+            let currentY = e.touches[0].clientY;
+            if (currentY - startY > 100) {
+                startY = 0;
+                window.location.reload();
+            }
+        }
+    });
+
+    scrollContainer.addEventListener('touchend', function(e) {
+        startY = 0;
+    });
 }
-function logout() {
-    if (confirm("Kya aap Logout karna chahte hain?")) {
-        localStorage.clear();
-        window.location.replace("index.html");
+
+history.pushState({ page: 1 }, "", "");
+window.addEventListener("popstate", function (event) {
+    window.location.href = "dashboard.html";
+});
+
+function openKycModal() {
+    document.getElementById("kycDocNumber").value = "";
+    document.getElementById("kycFrontFile").value = "";
+    document.getElementById("kycBackFile").value = "";
+    document.getElementById("kycModal").style.display = "flex";
+}
+
+function closeKycModal() {
+    document.getElementById("kycModal").style.display = "none";
+}
+
+function renderKycBadge(status) {
+    const kycContainer = document.getElementById("kycContainer");
+    if(!kycContainer) return;
+    const cleanStatus = String(status || "").toLowerCase();
+
+    if (cleanStatus === "verified") {
+        kycContainer.innerHTML = `<span class="kyc-verified-badge"><i class="fa-solid fa-circle-check"></i> KYC Verified</span>`;
+    } else if (cleanStatus === "pending") {
+        kycContainer.innerHTML = `<span class="kyc-pending-badge"><i class="fa-solid fa-clock"></i> KYC Under Review</span>`;
+    } else if (cleanStatus === "rejected") {
+        kycContainer.innerHTML = `<button class="kyc-rejected-badge" onclick="openKycModal()"><i class="fa-solid fa-circle-xmark"></i> KYC Rejected (Resubmit)</button>`;
+    } else {
+        kycContainer.innerHTML = `<button class="kyc-btn" id="btnOpenKyc" onclick="openKycModal()"><i class="fa-solid fa-id-card"></i> Complete KYC</button>`;
     }
 }
+
+const cachedKycStatus = localStorage.getItem("rdxCachedKycStatus") || "";
+renderKycBadge(cachedKycStatus);
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import { getFirestore, doc, onSnapshot, setDoc, collection, query, where, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyAsGWpMcC2WtMpv3_498me_8ydjL8wN1Qc",
+    authDomain: "rdx-ludo.firebaseapp.com",
+    projectId: "rdx-ludo",
+    storageBucket: "rdx-ludo.firebasestorage.app",
+    messagingSenderId: "928340814840",
+    appId: "1:928340814840:web:6eca42a8b76138b268440d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function getCleanUserId() {
+    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
+    return String(raw).replace(/\D/g, "");
+}
+const userId = getCleanUserId();
+
+let userSnapshotUnsubscribe = null;
+
+function listenUserProfile() {
+    if (!userId) {
+        window.location.replace("index.html");
+        return;
+    }
+    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    try {
+        const userRef = doc(db, "customers", docId);
+        
+        userSnapshotUnsubscribe = onSnapshot(userRef, async (snap) => {
+            if (snap.exists()) {
+                const d = snap.data();
+                const userName = d.name || ("User " + userId.slice(-4));
+                
+                const winBal = Number(d.winningBalance || d.winnings || 0);
+
+                document.getElementById("profileName").textContent = userName;
+                document.getElementById("avatarText").textContent = userName.charAt(0).toUpperCase();
+                document.getElementById("profileMobile").textContent = "+" + userId;
+                
+                const drawerName = document.getElementById("drawerName");
+                if(drawerName) drawerName.textContent = userName;
+                
+                const drawerAvatar = document.getElementById("drawerAvatar");
+                if(drawerAvatar) drawerAvatar.innerHTML = `<img src="logo.png" alt="Logo" onerror="this.style.display='none'">`;
+                
+                const drawerMobile = document.getElementById("drawerMobile");
+                if(drawerMobile) drawerMobile.textContent = "+" + userId;
+                
+                const refCode = d.referredBy || localStorage.getItem("rdxReferredBy") || "DIRECT";
+                document.getElementById("referredByCode").textContent = refCode;
+
+                document.getElementById("winnings").textContent = "₹" + winBal;
+                document.getElementById("matchesPlayed").textContent = (d.matchesPlayed || 0);
+
+                const myRefCode = String(d.referralCode || ("RDX" + userId.slice(-4))).toUpperCase();
+                const q = query(collection(db, "customers"), where("referredBy", "==", myRefCode));
+                const refQuerySnap = await getDocs(q);
+                document.getElementById("totalReferrals").textContent = refQuerySnap.size;
+
+                const realKycStatus = d.kycStatus || "unverified";
+                localStorage.setItem("rdxCachedKycStatus", realKycStatus);
+                renderKycBadge(realKycStatus);
+            }
+        }, (error) => {
+            console.error("Realtime Listen Error:", error);
+        });
+    } catch(err) {
+        console.error("Profile load error:", err);
+    }
+}
+
+function compressImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+                const maxDim = 800;
+
+                if (width > height && width > maxDim) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                } else if (height > maxDim) {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+                resolve(compressedBase64);
+            };
+            img.onerror = err => reject(err);
+        };
+        reader.onerror = err => reject(err);
+    });
+}
+
+window.submitManualKyc = async () => {
+    const docNumber = document.getElementById("kycDocNumber").value.replace(/\D/g, "");
+    const frontFile = document.getElementById("kycFrontFile").files[0];
+    const backFile = document.getElementById("kycBackFile").files[0];
+
+    if (docNumber.length !== 12) {
+        alert("Kripya sahi 12-digit ID number daalein.");
+        return;
+    }
+    if (!frontFile || !backFile) {
+        alert("Kripya dono photos (Front aur Back) upload karein.");
+        return;
+    }
+
+    const btn = document.getElementById("btnSubmitKyc");
+    btn.disabled = true;
+    btn.textContent = "Compressing & Uploading...";
+
+    try {
+        const frontBase64 = await compressImageFile(frontFile);
+        const backBase64 = await compressImageFile(backFile);
+
+        const docId = userId.length === 10 ? "91" + userId : userId;
+
+        await setDoc(doc(db, "kycRequests", docId), {
+            uid: docId,
+            mobile: "+" + userId,
+            docNumber: docNumber,
+            frontImage: frontBase64,
+            backImage: backBase64,
+            status: "pending",
+            submittedAt: serverTimestamp()
+        });
+
+        await setDoc(doc(db, "customers", docId), {
+            kycStatus: "pending",
+            kycDocNumber: docNumber,
+            kycSubmittedAt: serverTimestamp()
+        }, { merge: true });
+
+        localStorage.setItem("rdxCachedKycStatus", "pending");
+        renderKycBadge("pending");
+
+        alert("✅ KYC Documents successfully submit ho gaye hain! Admin dwara check hote hi verify ho jayega.");
+        closeKycModal();
+    } catch(err) {
+        alert("Upload error: " + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "Submit Document For Verification";
+};
+
+window.editName = async () => {
+    const newName = prompt("Apna Naya Naam Likhein:");
+    if (!newName || !newName.trim()) return;
+    const docId = userId.length === 10 ? "91" + userId : userId;
+    
+    try {
+        await setDoc(doc(db, "customers", docId), { name: newName.trim() }, { merge: true });
+        alert("✅ Naam Update Ho Gaya!");
+    } catch(e) { alert("Error: " + e.message); }
+};
+
+window.logout = async () => {
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (userId) {
+        const docId = userId.length === 10 ? "91" + userId : userId;
+        try {
+            await setDoc(doc(db, "customers", docId), { isOnline: false }, { merge: true });
+        } catch(e) { console.error(e); }
+    }
+    if (userSnapshotUnsubscribe) userSnapshotUnsubscribe();
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("index.html");
+};
+
+listenUserProfile();
 </script>
 
 </body>
