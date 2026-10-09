@@ -13,13 +13,13 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <style>
-/* पूरी स्क्रीन को लॉक और स्थिर रखने के लिए */
+/* पूरी स्क्रीन और बॉडी को यहाँ लॉक कर दिया गया है ताकि लेआउट बिल्कुल न हिले */
 html, body {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* पेज को पूरे ब्राउज़र में बाहर भागने से रोकता है */
+    overflow: hidden;
     -webkit-tap-highlight-color: transparent;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     background: 
@@ -32,18 +32,18 @@ html, body {
 
 button { font: inherit; }
 
-/* बीच का मुख्य हिस्सा जो सिर्फ अपने अंदर स्क्रॉल होगा, लेआउट नहीं हिलेगा */
+/* बीच का मुख्य कंटेनर जो फिक्स्ड हेडर और बॉटम बार के बीच में स्थिर रहेगा */
 main.container {
     position: absolute;
-    top: 70px;    /* फिक्स्ड हेडर के ठीक नीचे से शुरू होगा */
-    bottom: 75px; /* फिक्स्ड बॉटम नेविगेशन के ऊपर खत्म होगा */
+    top: 66px;    /* फिक्स्ड हेडर की सटीक ऊँचाई */
+    bottom: 74px; /* फिक्स्ड बॉटम नेविगेशन की सटीक ऊँचाई */
     left: 0;
     right: 0;
     width: 100%;
     max-width: 650px;
     margin: 0 auto;
     padding: 16px 14px;
-    overflow-y: auto; /* सिर्फ अंदर का कंटेंट स्क्रॉल होगा */
+    overflow-y: auto; /* सिर्फ अंदर का डेटा ऊपर-नीचे स्क्रॉल होगा, लेआउट नहीं */
     -webkit-overflow-scrolling: touch;
 }
 
