@@ -196,7 +196,8 @@ button,input{font:inherit;}
 <!-- 2. TOP HEADER CONTAINER -->
 <header id="header-container"></header>
 
-<main class="container">
+<!-- मुख्य कंटेनर में id="scrollContainer" जोड़ा गया है -->
+<main class="container" id="scrollContainer">
 
     <div class="page-title">
         <i class="fa-solid fa-clock-rotate-left" style="color:#0284c7;"></i> History & Activity Logs
@@ -230,6 +231,32 @@ button,input{font:inherit;}
 <script src="components.js"></script>
 
 <script>
+/* 🔄 शुद्ध पुल-टू-रिफ्रेश लॉजिक */
+let startY = 0;
+const scrollContainer = document.getElementById('scrollContainer');
+
+if (scrollContainer) {
+    scrollContainer.addEventListener('touchstart', function(e) {
+        if (scrollContainer.scrollTop === 0) {
+            startY = e.touches[0].clientY;
+        }
+    });
+
+    scrollContainer.addEventListener('touchmove', function(e) {
+        if (scrollContainer.scrollTop === 0 && startY > 0) {
+            let currentY = e.touches[0].clientY;
+            if (currentY - startY > 100) {
+                startY = 0;
+                window.location.reload();
+            }
+        }
+    });
+
+    scrollContainer.addEventListener('touchend', function(e) {
+        startY = 0;
+    });
+}
+
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
     window.location.href = "dashboard.html";
