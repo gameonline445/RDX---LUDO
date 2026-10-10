@@ -268,7 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// AUTOMATIC BACKGROUND SYNC FOR SUCCESSFUL DEPOSITS
+// FIXED AUTO-SYNC FOR DEPOSITS MATCHING YOUR FIRESTORE FIELDS
 async function autoSyncDeposits(mobile10Digits, userRef) {
     try {
         const depositsRef = firebaseDB.collection("deposits");
@@ -282,9 +282,10 @@ async function autoSyncDeposits(mobile10Digits, userRef) {
             const data = docSnap.data();
             const uId = String(data.userId || data.uid || "");
             const status = String(data.status || "").toLowerCase();
+            const isUpdated = data.isWalletUpdated; // boolean check
 
-            // Check if deposit belongs to user, is success/approved, and not yet added to wallet
-            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved") && !data.isWalletUpdated) {
+            // Match user mobile and check if status is success/approved/active and NOT yet updated
+            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved" || status === "active") && !isUpdated) {
                 const amount = Number(data.amount || 0);
                 if (amount > 0) {
                     totalToAdd += amount;
@@ -300,7 +301,7 @@ async function autoSyncDeposits(mobile10Digits, userRef) {
                 depositBalance: firebase.firestore.FieldValue.increment(totalToAdd)
             });
             await batch.commit();
-            console.log("Auto-synced successfully added amount:", totalToAdd);
+            console.log("Successfully auto-added deposits amount:", totalToAdd);
         }
     } catch (e) {
         console.error("Auto-sync error:", e);
@@ -343,7 +344,7 @@ async function loadFirebaseCustomer(){
             snapshot = await userRef.get();
         }
 
-        // Background check to automatically add success payments to wallet balance
+        // Run auto-sync to push success/approved deposit amounts to customer wallet
         await autoSyncDeposits(mobile10Digits, userRef);
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
@@ -352,7 +353,6 @@ async function loadFirebaseCustomer(){
             if (doc && doc.exists) {
                 const data = doc.data();
                 
-                // Updated balance mapping to properly catch wallet / balance / deposit fields
                 const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
