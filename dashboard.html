@@ -565,6 +565,17 @@ function loadDashboardDataRealtime() {
             const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
             const firstName = fullName.split(" ")[0] || "User";
 
+            // 💰 Deposit aur Winnings ka bilkul sahi aur mistake-free jod (Total Balance)
+            const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
+            const winnings = Number(d.winningBalance || d.winnings || 0);
+            const totalWallet = deposit + winnings;
+
+            // ⚡ Header wale wallet balance ko update karna बिना किसी गलती के
+            const headerBalElem = document.getElementById("headerWalletBalance");
+            if (headerBalElem) {
+                headerBalElem.textContent = "₹" + totalWallet;
+            }
+
             const userElem = document.getElementById("userName");
             const drawerNameElem = document.getElementById("drawerName");
             const drawerMobileElem = document.getElementById("drawerName");
