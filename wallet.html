@@ -268,7 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// FIXED AUTO-SYNC FOR DEPOSITS MATCHING YOUR FIRESTORE FIELDS
+// ROBUST AUTO-SYNC FOR SUCCESSFUL DEPOSITS
 async function autoSyncDeposits(mobile10Digits, userRef) {
     try {
         const depositsRef = firebaseDB.collection("deposits");
@@ -281,10 +281,10 @@ async function autoSyncDeposits(mobile10Digits, userRef) {
         snapshot.forEach((docSnap) => {
             const data = docSnap.data();
             const uId = String(data.userId || data.uid || "");
-            const status = String(data.status || "").toLowerCase();
-            const isUpdated = data.isWalletUpdated; // boolean check
+            const status = String(data.status || "").trim().toLowerCase();
+            const isUpdated = data.isWalletUpdated; // can be boolean or undefined/false
 
-            // Match user mobile and check if status is success/approved/active and NOT yet updated
+            // Match mobile number and check if status is success/approved/active and NOT yet updated
             if (uId.includes(mobile10Digits) && (status === "success" || status === "approved" || status === "active") && !isUpdated) {
                 const amount = Number(data.amount || 0);
                 if (amount > 0) {
@@ -301,7 +301,7 @@ async function autoSyncDeposits(mobile10Digits, userRef) {
                 depositBalance: firebase.firestore.FieldValue.increment(totalToAdd)
             });
             await batch.commit();
-            console.log("Successfully auto-added deposits amount:", totalToAdd);
+            console.log("Successfully auto-synced deposit amount:", totalToAdd);
         }
     } catch (e) {
         console.error("Auto-sync error:", e);
@@ -344,7 +344,7 @@ async function loadFirebaseCustomer(){
             snapshot = await userRef.get();
         }
 
-        // Run auto-sync to push success/approved deposit amounts to customer wallet
+        // Run auto-sync to check and push success/approved deposit amounts to customer wallet
         await autoSyncDeposits(mobile10Digits, userRef);
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
