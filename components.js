@@ -17,13 +17,17 @@ function loadHeader() {
                     <img src="logo.png" alt="Logo" style="width: 42px !important; height: 42px !important; object-fit: contain; display: block;" onerror="this.src='https://via.placeholder.com/42'">
                 </div>
             </div>
-            <div class="header-right" style="display: flex; align-items: center; gap: 10px;">
+            <div class="header-right" style="display: flex; align-items: center; gap: 8px;">
                 <button class="header-icon-btn btn-notif" onclick="window.location.href='notification.html'" style="background: #6c5ce7 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(108,92,231,0.4);">
                     <i class="fa-solid fa-bell" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
-                <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
-                    <i class="fa-solid fa-wallet" style="font-size: 17px; color: #ffffff !important;"></i>
+                
+                <!-- Wallet button with icon and live total balance display -->
+                <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; padding: 0 12px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
+                    <i class="fa-solid fa-wallet" style="font-size: 15px; color: #ffffff !important;"></i>
+                    <span id="headerWalletBalance" style="font-size: 13px; font-weight: 800; color: #ffffff !important;">₹0</span>
                 </button>
+
                 <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'" style="background: #e17055 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(225,112,85,0.4);">
                     <i class="fa-solid fa-gift" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
@@ -137,7 +141,6 @@ function loadDrawer() {
                 color: #ffffff !important;
             }
             
-            /* Sidebar Uniform Colors (Matching Everywhere) */
             .menu-home { background: #2563eb !important; }
             .menu-profile { background: #e17055 !important; }
             .menu-wallet { background: #00b894 !important; }
@@ -200,7 +203,7 @@ function loadDrawer() {
     `;
 }
 
-// 3. BOTTOM NAVIGATION GENERATOR ⚓ (Matching Uniform Colors)
+// 3. BOTTOM NAVIGATION GENERATOR ⚓
 function loadBottomNav() {
     const navContainer = document.getElementById("nav-container");
     if (!navContainer) return;
@@ -249,19 +252,16 @@ function loadBottomNav() {
                 transition: transform 0.2s ease, box-shadow 0.2s ease;
             }
 
-            /* Uniform Colors for Bottom Nav Icons */
             .nav-home .nav-icon-box { background: #2563eb !important; box-shadow: 0 2px 6px rgba(37,99,235,0.3); }
             .nav-wallet .nav-icon-box { background: #00b894 !important; box-shadow: 0 2px 6px rgba(0,184,148,0.3); }
             .nav-support .nav-icon-box { background: #00cec9 !important; box-shadow: 0 2px 6px rgba(0,206,201,0.3); }
             .nav-profile .nav-icon-box { background: #e17055 !important; box-shadow: 0 2px 6px rgba(225,112,85,0.3); }
 
-            /* Text Colors */
             .nav-home { color: #2563eb; }
             .nav-wallet { color: #00b894; }
             .nav-support { color: #00cec9; }
             .nav-profile { color: #e17055; }
 
-            /* Active State Highlight */
             .nav-item.active .nav-icon-box {
                 transform: scale(1.1);
                 box-shadow: 0 4px 10px rgba(0,0,0,0.25);
