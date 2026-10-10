@@ -129,9 +129,6 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#0284c7,#0369a1);box-shadow:0 6px 16px rgba(2,132,199,.3);}
 .withdraw-btn{color:#0c4a6e;border:1.5px solid #7dd3fc;background:#ffffff;}
 
-.claim-box{background:#e0f2fe;border:1.5px solid #7dd3fc;padding:10px;border-radius:16px;text-align:center;}
-.claim-btn{background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;padding:8px 16px;border-radius:18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(34,197,94,0.3);}
-
 .balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .balance-box{border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;padding:14px;box-shadow:0 4px 12px rgba(2,132,199,0.05);}
 .balance-icon{width:36px;height:36px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0284c7;}
@@ -198,12 +195,6 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
             <button class="action-btn withdraw-btn" onclick="navigateTo('withdraw.html')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
         </div>
     </section>
-
-    <!-- MANUAL CLAIM SUCCESSFUL BALANCE BUTTON -->
-    <div class="claim-box">
-        <p style="font-size:11px;color:#0369a1;margin-bottom:6px;font-weight:750;">Payment success but balance not showing?</p>
-        <button class="claim-btn" onclick="manualClaimBalance()"><i class="fa-solid fa-rotate-right"></i> Claim Success Balance</button>
-    </div>
 
     <section class="balance-grid">
         <div class="balance-box">
@@ -277,68 +268,6 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-function getStoredMobile() {
-    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                 localStorage.getItem("rdxVerifiedMobile") || 
-                 localStorage.getItem("rdxUserMobile") || 
-                 localStorage.getItem("rdxMobile") ||
-                 localStorage.getItem("userMobile");
-    if(!mobile) return null;
-    return String(mobile).replace(/\D/g,"").slice(-10);
-}
-
-// MANUAL CLAIM FUNCTION TO FORCE ADD SUCCESSFUL DEPOSITS TO WALLET
-async function manualClaimBalance() {
-    try {
-        const mobile10Digits = getStoredMobile();
-        if(!mobile10Digits) {
-            alert("User mobile not found! Please login again.");
-            return;
-        }
-
-        alert("Checking successful deposits...");
-
-        const depositsRef = firebaseDB.collection("deposits");
-        const snapshot = await depositsRef.get();
-
-        let totalToAdd = 0;
-        const batch = firebaseDB.batch();
-        let found = false;
-
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const uId = String(data.userId || data.uid || "");
-            const status = String(data.status || "").toLowerCase();
-
-            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved") && !data.isWalletUpdated) {
-                const amount = Number(data.amount || 0);
-                if (amount > 0) {
-                    totalToAdd += amount;
-                    batch.update(docSnap.ref, { isWalletUpdated: true });
-                    found = true;
-                }
-            }
-        });
-
-        if (found && totalToAdd > 0) {
-            const userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
-            batch.update(userRef, {
-                balance: firebase.firestore.FieldValue.increment(totalToAdd),
-                depositBalance: firebase.firestore.FieldValue.increment(totalToAdd)
-            });
-
-            await batch.commit();
-            alert(`Success! ₹${totalToAdd} added to your wallet.`);
-            location.reload();
-        } else {
-            alert("No new successful deposits found to add. All are already claimed.");
-        }
-    } catch (error) {
-        console.error("Claim error:", error);
-        alert("Error: " + error.message);
-    }
-}
-
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -381,6 +310,7 @@ async function loadFirebaseCustomer(){
             if (doc && doc.exists) {
                 const data = doc.data();
                 
+                // Updated balance mapping to properly catch wallet / balance / deposit fields
                 const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
