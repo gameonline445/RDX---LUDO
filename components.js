@@ -291,22 +291,49 @@ function loadBottomNav() {
     `;
 }
 
-// 4. GLOBAL REALTIME WALLET SYNC ACROSS ALL PAGES 🔄
-function initGlobalHeaderWallet() {
+// 4. ROBUST GLOBAL REALTIME WALLET SYNC (ACROSS ALL FORMATS & PAGES) 🔄
+let globalWalletUnsubscribe = null;
+
+async function initGlobalHeaderWallet() {
     if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
     
-    const rawMobile = localStorage.getItem("rdxFirebaseUserId") || 
-                      localStorage.getItem("rdxVerifiedMobile") || 
-                      localStorage.getItem("rdxMobile") || "";
+    let rawMobile = localStorage.getItem("rdxFirebaseUserId") || 
+                    localStorage.getItem("rdxVerifiedMobile") || 
+                    localStorage.getItem("rdxUserMobile") || 
+                    localStorage.getItem("rdxMobile") || 
+                    localStorage.getItem("userMobile") || "";
+
     const cleanMobile = String(rawMobile).replace(/\D/g, "");
     if (!cleanMobile) return;
 
-    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+    const mobile10Digits = cleanMobile.slice(-10);
+    const docIdWithPlain91 = "91" + mobile10Digits;
+    const docIdWithPlus91 = "+91" + mobile10Digits;
+
     const db = firebase.firestore();
 
-    db.collection("customers").doc(docId).onSnapshot((snap) => {
-        if (snap.exists) {
-            const d = snap.data();
+    let userRef = db.collection("customers").doc(docIdWithPlain91);
+    let snapshot = await userRef.get();
+
+    if (!snapshot.exists) {
+        userRef = db.collection("customers").doc(docIdWithPlus91);
+        snapshot = await userRef.get();
+    }
+    if (!snapshot.exists) {
+        userRef = db.collection("customers").doc(mobile10Digits);
+        snapshot = await userRef.get();
+    }
+    if (!snapshot.exists) {
+        userRef = db.collection("users").doc(mobile10Digits);
+        snapshot = await userRef.get();
+    }
+
+    if (globalWalletUnsubscribe) globalWalletUnsubscribe();
+
+    globalWalletUnsubscribe = userRef.onSnapshot((doc) => {
+        if (doc && doc.exists) {
+            const d = doc.data();
+            
             const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
             const winnings = Number(d.winningBalance || d.winnings || 0);
             const totalWallet = deposit + winnings;
@@ -316,12 +343,12 @@ function initGlobalHeaderWallet() {
                 headerBalElem.textContent = "₹" + totalWallet;
             }
 
-            const fullName = String(d.name || ("User " + cleanMobile.slice(-4))).trim();
+            const fullName = String(d.name || d.fullName || ("User " + mobile10Digits.slice(-4))).trim();
             const drawerNameElem = document.getElementById("drawerName");
             const drawerMobileElem = document.getElementById("drawerMobile");
 
             if (drawerNameElem) drawerNameElem.textContent = fullName;
-            if (drawerMobileElem) drawerMobileElem.textContent = "+" + cleanMobile.slice(-10);
+            if (drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
         }
     }, (err) => {
         console.error("Global Header Sync Error:", err);
@@ -358,5 +385,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadDrawer();
     loadBottomNav();
-    setTimeout(initGlobalHeaderWallet, 500);
+    setTimeout(initGlobalHeaderWallet, 400);
 });
