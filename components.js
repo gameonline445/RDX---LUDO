@@ -291,7 +291,7 @@ function loadBottomNav() {
     `;
 }
 
-// 4. ROBUST GLOBAL REALTIME WALLET SYNC (ACROSS ALL FORMATS & PAGES) 🔄
+// 4. BULLETPROOF REALTIME WALLET & USER SYNC 🔄
 let globalWalletUnsubscribe = null;
 
 async function initGlobalHeaderWallet() {
@@ -304,29 +304,45 @@ async function initGlobalHeaderWallet() {
                     localStorage.getItem("userMobile") || "";
 
     const cleanMobile = String(rawMobile).replace(/\D/g, "");
-    if (!cleanMobile) return;
-
-    const mobile10Digits = cleanMobile.slice(-10);
-    const docIdWithPlain91 = "91" + mobile10Digits;
-    const docIdWithPlus91 = "+91" + mobile10Digits;
-
     const db = firebase.firestore();
+    let userRef = null;
 
-    let userRef = db.collection("customers").doc(docIdWithPlain91);
-    let snapshot = await userRef.get();
+    if (cleanMobile.length >= 10) {
+        const mobile10Digits = cleanMobile.slice(-10);
+        const possibleIds = [
+            mobile10Digits,
+            "91" + mobile10Digits,
+            "+91" + mobile10Digits
+        ];
 
-    if (!snapshot.exists) {
-        userRef = db.collection("customers").doc(docIdWithPlus91);
-        snapshot = await userRef.get();
+        for (let id of possibleIds) {
+            let docSnap = await db.collection("customers").doc(id).get();
+            if (docSnap.exists) {
+                userRef = db.collection("customers").doc(id);
+                break;
+            }
+        }
+
+        if (!userRef) {
+            // Fallback to query by mobile field if document ID doesn't match directly
+            try {
+                let querySnap = await db.collection("customers").where("mobile", "==", "+91" + mobile10Digits).get();
+                if (querySnap.empty) {
+                    querySnap = await db.collection("customers").where("mobile", "==", "91" + mobile10Digits).get();
+                }
+                if (querySnap.empty) {
+                    querySnap = await db.collection("customers").where("mobile", "==", mobile10Digits).get();
+                }
+                if (!querySnap.empty) {
+                    userRef = querySnap.docs[0].ref;
+                }
+            } catch (e) {
+                console.error("Query fallback error:", e);
+            }
+        }
     }
-    if (!snapshot.exists) {
-        userRef = db.collection("customers").doc(mobile10Digits);
-        snapshot = await userRef.get();
-    }
-    if (!snapshot.exists) {
-        userRef = db.collection("users").doc(mobile10Digits);
-        snapshot = await userRef.get();
-    }
+
+    if (!userRef) return;
 
     if (globalWalletUnsubscribe) globalWalletUnsubscribe();
 
@@ -343,12 +359,12 @@ async function initGlobalHeaderWallet() {
                 headerBalElem.textContent = "₹" + totalWallet;
             }
 
-            const fullName = String(d.name || d.fullName || ("User " + mobile10Digits.slice(-4))).trim();
+            const fullName = String(d.name || d.fullName || "User").trim();
             const drawerNameElem = document.getElementById("drawerName");
             const drawerMobileElem = document.getElementById("drawerMobile");
 
             if (drawerNameElem) drawerNameElem.textContent = fullName;
-            if (drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
+            if (drawerMobileElem && cleanMobile) drawerMobileElem.textContent = "+" + cleanMobile.slice(-10);
         }
     }, (err) => {
         console.error("Global Header Sync Error:", err);
