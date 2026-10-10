@@ -297,52 +297,61 @@ let globalWalletUnsubscribe = null;
 async function initGlobalHeaderWallet() {
     if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
     
+    // Sabhi possible localStorage keys ko check karega taki mobile number mil jaye
     let rawMobile = localStorage.getItem("rdxFirebaseUserId") || 
                     localStorage.getItem("rdxVerifiedMobile") || 
                     localStorage.getItem("rdxUserMobile") || 
                     localStorage.getItem("rdxMobile") || 
-                    localStorage.getItem("userMobile") || "";
+                    localStorage.getItem("userMobile") || 
+                    localStorage.getItem("mobile") || "";
 
     const cleanMobile = String(rawMobile).replace(/\D/g, "");
+    if (!cleanMobile) {
+        console.warn("Global Header: LocalStorage me mobile number nahi mila!");
+        return;
+    }
+
     const db = firebase.firestore();
     let userRef = null;
+    const mobile10Digits = cleanMobile.slice(-10);
 
-    if (cleanMobile.length >= 10) {
-        const mobile10Digits = cleanMobile.slice(-10);
-        const possibleIds = [
-            mobile10Digits,
-            "91" + mobile10Digits,
-            "+91" + mobile10Digits
-        ];
+    // 1st: Direct Document ID check karenge (jaise 917878852370, +91..., ya 10 digit)
+    const possibleIds = [
+        mobile10Digits,
+        "91" + mobile10Digits,
+        "+91" + mobile10Digits
+    ];
 
-        for (let id of possibleIds) {
-            let docSnap = await db.collection("customers").doc(id).get();
-            if (docSnap.exists) {
-                userRef = db.collection("customers").doc(id);
-                break;
-            }
-        }
-
-        if (!userRef) {
-            // Fallback to query by mobile field if document ID doesn't match directly
-            try {
-                let querySnap = await db.collection("customers").where("mobile", "==", "+91" + mobile10Digits).get();
-                if (querySnap.empty) {
-                    querySnap = await db.collection("customers").where("mobile", "==", "91" + mobile10Digits).get();
-                }
-                if (querySnap.empty) {
-                    querySnap = await db.collection("customers").where("mobile", "==", mobile10Digits).get();
-                }
-                if (!querySnap.empty) {
-                    userRef = querySnap.docs[0].ref;
-                }
-            } catch (e) {
-                console.error("Query fallback error:", e);
-            }
+    for (let id of possibleIds) {
+        let docSnap = await db.collection("customers").doc(id).get();
+        if (docSnap.exists) {
+            userRef = db.collection("customers").doc(id);
+            break;
         }
     }
 
-    if (!userRef) return;
+    // 2nd: Agar direct ID nahi mili, toh 'mobile' field par query chalayenge
+    if (!userRef) {
+        try {
+            let querySnap = await db.collection("customers").where("mobile", "==", "+91" + mobile10Digits).get();
+            if (querySnap.empty) {
+                querySnap = await db.collection("customers").where("mobile", "==", "91" + mobile10Digits).get();
+            }
+            if (querySnap.empty) {
+                querySnap = await db.collection("customers").where("mobile", "==", mobile10Digits).get();
+            }
+            if (!querySnap.empty) {
+                userRef = querySnap.docs[0].ref;
+            }
+        } catch (e) {
+            console.error("Firestore Query Error:", e);
+        }
+    }
+
+    if (!userRef) {
+        console.warn("Global Header: Firebase me customer document nahi mila is mobile ke liye:", mobile10Digits);
+        return;
+    }
 
     if (globalWalletUnsubscribe) globalWalletUnsubscribe();
 
@@ -350,6 +359,7 @@ async function initGlobalHeaderWallet() {
         if (doc && doc.exists) {
             const d = doc.data();
             
+            // Sabhi possible balance fields ko check karke total calculate karenge
             const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
             const winnings = Number(d.winningBalance || d.winnings || 0);
             const totalWallet = deposit + winnings;
@@ -364,7 +374,7 @@ async function initGlobalHeaderWallet() {
             const drawerMobileElem = document.getElementById("drawerMobile");
 
             if (drawerNameElem) drawerNameElem.textContent = fullName;
-            if (drawerMobileElem && cleanMobile) drawerMobileElem.textContent = "+" + cleanMobile.slice(-10);
+            if (drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
         }
     }, (err) => {
         console.error("Global Header Sync Error:", err);
@@ -401,5 +411,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadDrawer();
     loadBottomNav();
-    setTimeout(initGlobalHeaderWallet, 400);
+    setTimeout(initGlobalHeaderWallet, 300);
 });
