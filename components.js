@@ -34,6 +34,9 @@ function loadHeader() {
             </div>
         </header>
     `;
+    
+    // Header turant load hone ke baad wallet sync trigger karein
+    setTimeout(initGlobalHeaderWallet, 100);
 }
 
 // 2. SIDE DRAWER MENU GENERATOR 📱
@@ -297,7 +300,6 @@ let globalWalletUnsubscribe = null;
 async function initGlobalHeaderWallet() {
     if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
     
-    // Sabhi possible localStorage keys ko check karega taki mobile number mil jaye
     let rawMobile = localStorage.getItem("rdxFirebaseUserId") || 
                     localStorage.getItem("rdxVerifiedMobile") || 
                     localStorage.getItem("rdxUserMobile") || 
@@ -306,16 +308,12 @@ async function initGlobalHeaderWallet() {
                     localStorage.getItem("mobile") || "";
 
     const cleanMobile = String(rawMobile).replace(/\D/g, "");
-    if (!cleanMobile) {
-        console.warn("Global Header: LocalStorage me mobile number nahi mila!");
-        return;
-    }
+    if (!cleanMobile) return;
 
     const db = firebase.firestore();
     let userRef = null;
     const mobile10Digits = cleanMobile.slice(-10);
 
-    // 1st: Direct Document ID check karenge (jaise 917878852370, +91..., ya 10 digit)
     const possibleIds = [
         mobile10Digits,
         "91" + mobile10Digits,
@@ -323,14 +321,15 @@ async function initGlobalHeaderWallet() {
     ];
 
     for (let id of possibleIds) {
-        let docSnap = await db.collection("customers").doc(id).get();
-        if (docSnap.exists) {
-            userRef = db.collection("customers").doc(id);
-            break;
-        }
+        try {
+            let docSnap = await db.collection("customers").doc(id).get();
+            if (docSnap.exists) {
+                userRef = db.collection("customers").doc(id);
+                break;
+            }
+        } catch(e) {}
     }
 
-    // 2nd: Agar direct ID nahi mili, toh 'mobile' field par query chalayenge
     if (!userRef) {
         try {
             let querySnap = await db.collection("customers").where("mobile", "==", "+91" + mobile10Digits).get();
@@ -343,15 +342,10 @@ async function initGlobalHeaderWallet() {
             if (!querySnap.empty) {
                 userRef = querySnap.docs[0].ref;
             }
-        } catch (e) {
-            console.error("Firestore Query Error:", e);
-        }
+        } catch (e) {}
     }
 
-    if (!userRef) {
-        console.warn("Global Header: Firebase me customer document nahi mila is mobile ke liye:", mobile10Digits);
-        return;
-    }
+    if (!userRef) return;
 
     if (globalWalletUnsubscribe) globalWalletUnsubscribe();
 
@@ -359,7 +353,6 @@ async function initGlobalHeaderWallet() {
         if (doc && doc.exists) {
             const d = doc.data();
             
-            // Sabhi possible balance fields ko check karke total calculate karenge
             const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
             const winnings = Number(d.winningBalance || d.winnings || 0);
             const totalWallet = deposit + winnings;
@@ -376,9 +369,7 @@ async function initGlobalHeaderWallet() {
             if (drawerNameElem) drawerNameElem.textContent = fullName;
             if (drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
         }
-    }, (err) => {
-        console.error("Global Header Sync Error:", err);
-    });
+    }, (err) => {});
 }
 
 // TOGGLE DRAWER FUNCTIONS 🔄
@@ -411,5 +402,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadDrawer();
     loadBottomNav();
-    setTimeout(initGlobalHeaderWallet, 300);
+    initGlobalHeaderWallet();
 });
