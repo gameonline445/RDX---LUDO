@@ -96,6 +96,10 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     font-size:16px;color:white;cursor:pointer;padding:0;
 }
 
+.notification{ background:linear-gradient(145deg,#6366f1,#818cf8); }
+.wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
+.redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
+
 /* MAIN CONTAINER (Fixed between header and bottom nav) */
 .container{
     position: absolute;
@@ -116,8 +120,8 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 .wallet-card{width:100%;border:1.5px solid #7dd3fc;border-radius:22px;padding:18px 20px;background:radial-gradient(circle at 100% 0%,#bae6fd 0%,transparent 50%),linear-gradient(135deg,#e0f2fe 0%,#ffffff 100%);box-shadow:0 8px 22px rgba(2,132,199,0.10);}
 .wallet-top-row{width:100%;display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1.5px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
-.history-btn{border:1.5px solid #bae6fd;background:#ffffff;color:#0c4a6e;padding:6px 14px;border-radius:20px;font-weight:750;font-size:12px;cursor:pointer;}
+.wallet-title{display:inline-flex;align-items:center;gap:6px;color:#0284c7;border:1px solid #7dd3fc;background:#ffffff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:850;}
+.history-btn{border:1px solid #bae6fd;background:#ffffff;color:#0c4a6e;padding:6px 14px;border-radius:20px;font-weight:750;font-size:12px;cursor:pointer;}
 .balance-label{color:#64748b;font-size:14px;margin-bottom:2px;}
 .balance{color:#0c4a6e;font-size:42px;line-height:1;font-weight:900;letter-spacing:-1.5px;}
 .wallet-actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;}
@@ -132,7 +136,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .balance-value{margin-top:3px;font-size:20px;font-weight:900;color:#0f172a;}
 .balance-note{display:block;margin-top:3px;color:#94a3b8;font-size:11px;}
 
-.info-box{border:1.5px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
+.info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
 .info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
 
 /* SIDE DRAWER STYLES */
@@ -149,6 +153,14 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .drawer-item{width:100%;padding:12px 14px;border:0;border-radius:14px;background:transparent;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:750;color:#334155;cursor:pointer;margin-bottom:4px;transition:background 0.2s ease;}
 .drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
 .drawer-item-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
+.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
+.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
+.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
+.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
+.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
+.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
+.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
+.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
 
 /* BOTTOM NAV STYLES */
 .bottom-nav{position:absolute;bottom:0;left:0;width:100%;height:74px;background:#ffffff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;}
@@ -157,6 +169,10 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .nav-item:active .nav-icon-box{transform:scale(0.92);}
 .nav-item.active {color:#0f172a;font-weight:850;}
 .nav-item.active .nav-icon-box {transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.15);}
+.icon-home{background:#6366f1;}
+.icon-wallet{background:#22c55e;}
+.icon-support{background:#0284c7;}
+.icon-profile{background:#ea580c;}
 </style>
 </head>
 
@@ -173,7 +189,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
             <button class="history-btn" onclick="navigateTo('history.html')"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
         </div>
         <div class="balance-label">Total Balance</div>
-        <div class="balance">₹<span id="mainBalance">100</span></div>
+        <div class="balance">₹<span id="mainBalance">0</span></div>
         <div class="wallet-actions">
             <button class="action-btn add-btn" onclick="navigateTo('deposit.html')">＋ Add Cash</button>
             <button class="action-btn withdraw-btn" onclick="navigateTo('withdraw.html')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
@@ -184,7 +200,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
         <div class="balance-box">
             <div class="balance-icon"><i class="fa-solid fa-wallet"></i></div>
             <h3>DEPOSIT</h3>
-            <div class="balance-value">₹<span id="depositBalance">100</span></div>
+            <div class="balance-value">₹<span id="depositBalance">0</span></div>
             <span class="balance-note">For battles only</span>
         </div>
         <div class="balance-box">
@@ -215,6 +231,7 @@ document.addEventListener('touchmove', function(event) {
     }
 }, { passive: false });
 
+/* 🔄 Pull-to-refresh logic without line/icons */
 let startY = 0;
 const container = document.getElementById('scrollContainer');
 
@@ -255,47 +272,65 @@ async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
 
-        const fixedDocId = "917878852370";
-        let userRef = firebaseDB.collection("customers").doc(fixedDocId);
+        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                     localStorage.getItem("rdxVerifiedMobile") || 
+                     localStorage.getItem("rdxUserMobile") || 
+                     localStorage.getItem("rdxMobile") ||
+                     localStorage.getItem("userMobile");
+
+        if(!mobile) {
+            window.location.replace("index.html");
+            return;
+        }
+
+        const cleanMobile = String(mobile).replace(/\D/g,"");
+        const mobile10Digits = cleanMobile.slice(-10);
+        const docIdWith91 = "+91" + mobile10Digits;
+        const docIdWithPlain91 = "91" + mobile10Digits;
+
+        let userRef = firebaseDB.collection("customers").doc(docIdWithPlain91);
+        let snapshot = await userRef.get();
+
+        if(!snapshot.exists) {
+            userRef = firebaseDB.collection("customers").doc(docIdWith91);
+            snapshot = await userRef.get();
+        }
+        if(!snapshot.exists) {
+            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+            snapshot = await userRef.get();
+        }
+        if(!snapshot.exists) {
+            userRef = firebaseDB.collection("users").doc(mobile10Digits);
+            snapshot = await userRef.get();
+        }
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
-            let deposit = 100; // Guaranteed sync with header
-            let winnings = 0;
-            let fullName = "Jai shree";
-
             if (doc && doc.exists) {
                 const data = doc.data();
-                const dbDeposit = Number(data.depositBalance || data.deposit || data.wallet || data.realBalance || 0);
-                if (dbDeposit > 0) {
-                    deposit = dbDeposit;
-                }
-                winnings = Number(data.winningBalance || data.winnings || data.winningCash || 0);
-                fullName = data.name || data.fullName || "Jai shree";
+                
+                // Updated balance mapping to properly catch wallet / balance / deposit fields
+                const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
+                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                const winnings = Number(data.winningBalance || data.winnings || 0);
+                
+                const mainBal = document.getElementById("mainBalance");
+                const depBal = document.getElementById("depositBalance");
+                const winBal = document.getElementById("winningBalance");
+                
+                if (mainBal) mainBal.textContent = totalWallet;
+                if (depBal) depBal.textContent = deposit;
+                if (winBal) winBal.textContent = winnings;
+
+                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
+                
+                const drawerNameElem = document.getElementById("drawerName");
+                const drawerMobileElem = document.getElementById("drawerMobile");
+                
+                if(drawerNameElem) drawerNameElem.textContent = fullName;
+                if(drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
             }
-
-            const totalWallet = deposit + winnings;
-            
-            const mainBal = document.getElementById("mainBalance");
-            const depBal = document.getElementById("depositBalance");
-            const winBal = document.getElementById("winningBalance");
-            
-            if (mainBal) mainBal.textContent = totalWallet;
-            if (depBal) depBal.textContent = deposit;
-            if (winBal) winBal.textContent = winnings;
-
-            const headerBalElem = document.getElementById("headerWalletBalance");
-            if (headerBalElem) {
-                headerBalElem.textContent = "₹" + totalWallet;
-            }
-
-            const drawerNameElem = document.getElementById("drawerName");
-            const drawerMobileElem = document.getElementById("drawerMobile");
-            
-            if(drawerNameElem) drawerNameElem.textContent = fullName;
-            if(drawerMobileElem) drawerMobileElem.textContent = "+917878852370";
-
         }, (err) => {
             console.error("Snapshot error:", err);
         });
