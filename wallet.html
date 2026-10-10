@@ -326,8 +326,8 @@ async function loadFirebaseCustomer(){
                 const data = doc.data();
                 
                 // 💰 Deposit aur Winnings ka bilkul sahi aur mistake-free jod (Total Balance)
-                const deposit = Number(data.depositBalance || data.deposit || 0);
-                const winnings = Number(data.winningBalance || data.winnings || 0);
+                const deposit = Number(data.depositBalance || data.deposit || data.wallet || data.realBalance || 0);
+                const winnings = Number(data.winningBalance || data.winnings || data.winningCash || 0);
                 const totalWallet = deposit + winnings;
                 
                 const mainBal = document.getElementById("mainBalance");
