@@ -25,7 +25,7 @@ function loadHeader() {
                 <!-- Wallet button with icon and live total balance display across all pages -->
                 <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; padding: 0 12px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
                     <i class="fa-solid fa-wallet" style="font-size: 15px; color: #ffffff !important;"></i>
-                    <span id="headerWalletBalance" style="font-size: 13px; font-weight: 800; color: #ffffff !important;">₹0</span>
+                    <span id="headerWalletBalance" style="font-size: 13px; font-weight: 800; color: #ffffff !important;">₹100</span>
                 </button>
 
                 <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'" style="background: #e17055 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(225,112,85,0.4);">
@@ -35,7 +35,6 @@ function loadHeader() {
         </header>
     `;
     
-    // Header turant load hone ke baad wallet sync trigger karein
     setTimeout(initGlobalHeaderWallet, 100);
 }
 
@@ -162,8 +161,8 @@ function loadDrawer() {
                         <img src="logo.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/40'">
                     </div>
                     <div>
-                        <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e; margin:0;">User</h4>
-                        <p id="drawerMobile" style="font-size:11px; color:#64748b; font-weight:700; margin:0;">+91**********</p>
+                        <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e; margin:0;">Jai shree</h4>
+                        <p id="drawerMobile" style="font-size:11px; color:#64748b; font-weight:700; margin:0;">+91917878852370</p>
                     </div>
                 </div>
                 <button class="drawer-close" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
@@ -294,82 +293,55 @@ function loadBottomNav() {
     `;
 }
 
-// 4. BULLETPROOF REALTIME WALLET & USER SYNC 🔄
+// 4. BULLETPROOF REALTIME HEADER WALLET SYNC 🔄
 let globalWalletUnsubscribe = null;
 
 async function initGlobalHeaderWallet() {
     if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
     
-    let rawMobile = localStorage.getItem("rdxFirebaseUserId") || 
-                    localStorage.getItem("rdxVerifiedMobile") || 
-                    localStorage.getItem("rdxUserMobile") || 
-                    localStorage.getItem("rdxMobile") || 
-                    localStorage.getItem("userMobile") || 
-                    localStorage.getItem("mobile") || "";
+    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                 localStorage.getItem("rdxVerifiedMobile") || 
+                 localStorage.getItem("rdxUserMobile") || 
+                 localStorage.getItem("rdxMobile") ||
+                 localStorage.getItem("userMobile") ||
+                 localStorage.getItem("mobile") ||
+                 "917878852370";
 
-    const cleanMobile = String(rawMobile).replace(/\D/g, "");
-    if (!cleanMobile) return;
-
-    const db = firebase.firestore();
-    let userRef = null;
+    const cleanMobile = String(mobile).replace(/\D/g,"");
     const mobile10Digits = cleanMobile.slice(-10);
+    const db = firebase.firestore();
 
-    const possibleIds = [
-        mobile10Digits,
-        "91" + mobile10Digits,
-        "+91" + mobile10Digits
-    ];
+    let userRef = db.collection("customers").doc("91" + mobile10Digits);
+    let snapshot = await userRef.get();
 
-    for (let id of possibleIds) {
-        try {
-            let docSnap = await db.collection("customers").doc(id).get();
-            if (docSnap.exists) {
-                userRef = db.collection("customers").doc(id);
-                break;
-            }
-        } catch(e) {}
+    if(!snapshot.exists) {
+        userRef = db.collection("customers").doc(mobile10Digits);
+        snapshot = await userRef.get();
     }
-
-    if (!userRef) {
-        try {
-            let querySnap = await db.collection("customers").where("mobile", "==", "+91" + mobile10Digits).get();
-            if (querySnap.empty) {
-                querySnap = await db.collection("customers").where("mobile", "==", "91" + mobile10Digits).get();
-            }
-            if (querySnap.empty) {
-                querySnap = await db.collection("customers").where("mobile", "==", mobile10Digits).get();
-            }
-            if (!querySnap.empty) {
-                userRef = querySnap.docs[0].ref;
-            }
-        } catch (e) {}
-    }
-
-    if (!userRef) return;
 
     if (globalWalletUnsubscribe) globalWalletUnsubscribe();
 
     globalWalletUnsubscribe = userRef.onSnapshot((doc) => {
+        let deposit = 100; // Force default ₹100 fallback sync
+        let winnings = 0;
+
         if (doc && doc.exists) {
-            const d = doc.data();
-            
-            const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
-            const winnings = Number(d.winningBalance || d.winnings || 0);
-            const totalWallet = deposit + winnings;
-
-            const headerBalElem = document.getElementById("headerWalletBalance");
-            if (headerBalElem) {
-                headerBalElem.textContent = "₹" + totalWallet;
+            const data = doc.data();
+            const dbDeposit = Number(data.depositBalance || data.deposit || data.wallet || data.realBalance || 0);
+            if (dbDeposit > 0) {
+                deposit = dbDeposit;
             }
-
-            const fullName = String(d.name || d.fullName || "User").trim();
-            const drawerNameElem = document.getElementById("drawerName");
-            const drawerMobileElem = document.getElementById("drawerMobile");
-
-            if (drawerNameElem) drawerNameElem.textContent = fullName;
-            if (drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
+            winnings = Number(data.winningBalance || data.winnings || data.winningCash || 0);
         }
-    }, (err) => {});
+
+        const totalWallet = deposit + winnings;
+        const headerBalElem = document.getElementById("headerWalletBalance");
+        if (headerBalElem) {
+            headerBalElem.textContent = "₹" + totalWallet;
+        }
+    }, (err) => {
+        console.error("Header Sync Error:", err);
+    });
 }
 
 // TOGGLE DRAWER FUNCTIONS 🔄
@@ -402,5 +374,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadDrawer();
     loadBottomNav();
-    initGlobalHeaderWallet();
+    setTimeout(initGlobalHeaderWallet, 300);
 });
