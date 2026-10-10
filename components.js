@@ -22,7 +22,7 @@ function loadHeader() {
                     <i class="fa-solid fa-bell" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
                 
-                <!-- Wallet button with icon and live total balance display -->
+                <!-- Wallet button with icon and live total balance display across all pages -->
                 <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; padding: 0 12px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
                     <i class="fa-solid fa-wallet" style="font-size: 15px; color: #ffffff !important;"></i>
                     <span id="headerWalletBalance" style="font-size: 13px; font-weight: 800; color: #ffffff !important;">₹0</span>
@@ -291,6 +291,43 @@ function loadBottomNav() {
     `;
 }
 
+// 4. GLOBAL REALTIME WALLET SYNC ACROSS ALL PAGES 🔄
+function initGlobalHeaderWallet() {
+    if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
+    
+    const rawMobile = localStorage.getItem("rdxFirebaseUserId") || 
+                      localStorage.getItem("rdxVerifiedMobile") || 
+                      localStorage.getItem("rdxMobile") || "";
+    const cleanMobile = String(rawMobile).replace(/\D/g, "");
+    if (!cleanMobile) return;
+
+    const docId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
+    const db = firebase.firestore();
+
+    db.collection("customers").doc(docId).onSnapshot((snap) => {
+        if (snap.exists) {
+            const d = snap.data();
+            const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
+            const winnings = Number(d.winningBalance || d.winnings || 0);
+            const totalWallet = deposit + winnings;
+
+            const headerBalElem = document.getElementById("headerWalletBalance");
+            if (headerBalElem) {
+                headerBalElem.textContent = "₹" + totalWallet;
+            }
+
+            const fullName = String(d.name || ("User " + cleanMobile.slice(-4))).trim();
+            const drawerNameElem = document.getElementById("drawerName");
+            const drawerMobileElem = document.getElementById("drawerMobile");
+
+            if (drawerNameElem) drawerNameElem.textContent = fullName;
+            if (drawerMobileElem) drawerMobileElem.textContent = "+" + cleanMobile.slice(-10);
+        }
+    }, (err) => {
+        console.error("Global Header Sync Error:", err);
+    });
+}
+
 // TOGGLE DRAWER FUNCTIONS 🔄
 window.toggleDrawer = function() {
     const drawer = document.getElementById("sideDrawer");
@@ -321,4 +358,5 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadDrawer();
     loadBottomNav();
+    setTimeout(initGlobalHeaderWallet, 500);
 });
