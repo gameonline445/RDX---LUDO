@@ -136,7 +136,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .balance-value{margin-top:3px;font-size:20px;font-weight:900;color:#0f172a;}
 .balance-note{display:block;margin-top:3px;color:#94a3b8;font-size:11px;}
 
-.info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
+.info-box{border:1.5px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
 .info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
 
 /* SIDE DRAWER STYLES */
@@ -276,7 +276,8 @@ async function loadFirebaseCustomer(){
                      localStorage.getItem("rdxVerifiedMobile") || 
                      localStorage.getItem("rdxUserMobile") || 
                      localStorage.getItem("rdxMobile") ||
-                     localStorage.getItem("userMobile");
+                     localStorage.getItem("userMobile") ||
+                     localStorage.getItem("mobile");
 
         if(!mobile) {
             window.location.replace("index.html");
@@ -285,23 +286,37 @@ async function loadFirebaseCustomer(){
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         const mobile10Digits = cleanMobile.slice(-10);
-        const docIdWith91 = "+91" + mobile10Digits;
-        const docIdWithPlain91 = "91" + mobile10Digits;
+        
+        let userRef = null;
+        const possibleIds = [
+            mobile10Digits,
+            "91" + mobile10Digits,
+            "+91" + mobile10Digits
+        ];
 
-        let userRef = firebaseDB.collection("customers").doc(docIdWithPlain91);
-        let snapshot = await userRef.get();
+        for (let id of possibleIds) {
+            let docSnap = await firebaseDB.collection("customers").doc(id).get();
+            if (docSnap.exists) {
+                userRef = firebaseDB.collection("customers").doc(id);
+                break;
+            }
+        }
 
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("customers").doc(docIdWith91);
-            snapshot = await userRef.get();
+        if (!userRef) {
+            let querySnap = await firebaseDB.collection("customers").where("mobile", "==", "+91" + mobile10Digits).get();
+            if (querySnap.empty) {
+                querySnap = await firebaseDB.collection("customers").where("mobile", "==", "91" + mobile10Digits).get();
+            }
+            if (querySnap.empty) {
+                querySnap = await firebaseDB.collection("customers").where("mobile", "==", mobile10Digits).get();
+            }
+            if (!querySnap.empty) {
+                userRef = querySnap.docs[0].ref;
+            }
         }
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-            snapshot = await userRef.get();
-        }
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("users").doc(mobile10Digits);
-            snapshot = await userRef.get();
+
+        if(!userRef) {
+            userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
         }
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
@@ -311,7 +326,7 @@ async function loadFirebaseCustomer(){
                 const data = doc.data();
                 
                 // 💰 Deposit aur Winnings ka bilkul sahi aur mistake-free jod (Total Balance)
-                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                const deposit = Number(data.depositBalance || data.deposit || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
                 const totalWallet = deposit + winnings;
                 
