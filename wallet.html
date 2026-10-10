@@ -268,6 +268,45 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
+// AUTOMATIC BACKGROUND SYNC FOR SUCCESSFUL DEPOSITS
+async function autoSyncDeposits(mobile10Digits, userRef) {
+    try {
+        const depositsRef = firebaseDB.collection("deposits");
+        const snapshot = await depositsRef.get();
+
+        let totalToAdd = 0;
+        const batch = firebaseDB.batch();
+        let hasNewSuccess = false;
+
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const uId = String(data.userId || data.uid || "");
+            const status = String(data.status || "").toLowerCase();
+
+            // Check if deposit belongs to user, is success/approved, and not yet added to wallet
+            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved") && !data.isWalletUpdated) {
+                const amount = Number(data.amount || 0);
+                if (amount > 0) {
+                    totalToAdd += amount;
+                    batch.update(docSnap.ref, { isWalletUpdated: true });
+                    hasNewSuccess = true;
+                }
+            }
+        });
+
+        if (hasNewSuccess && totalToAdd > 0) {
+            batch.update(userRef, {
+                balance: firebase.firestore.FieldValue.increment(totalToAdd),
+                depositBalance: firebase.firestore.FieldValue.increment(totalToAdd)
+            });
+            await batch.commit();
+            console.log("Auto-synced successfully added amount:", totalToAdd);
+        }
+    } catch (e) {
+        console.error("Auto-sync error:", e);
+    }
+}
+
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -303,6 +342,9 @@ async function loadFirebaseCustomer(){
             userRef = firebaseDB.collection("users").doc(mobile10Digits);
             snapshot = await userRef.get();
         }
+
+        // Background check to automatically add success payments to wallet balance
+        await autoSyncDeposits(mobile10Digits, userRef);
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
