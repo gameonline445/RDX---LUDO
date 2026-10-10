@@ -34,7 +34,6 @@ try {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
-/* 🔒 Screen lock */
 html, body {
     width: 100%;
     height: 100%;
@@ -57,50 +56,6 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     transition: transform 0.1s ease;
 }
 
-/* TOP HEADER STYLES */
-.top-header{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 66px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 14px;
-    background: linear-gradient(110deg,#e0f2fe 0%,#f0f9ff 45%,#ffffff 100%);
-    border-bottom: 1.5px solid #bae6fd;
-    box-shadow: 0 4px 18px rgba(2,132,199,0.08);
-    z-index: 100;
-}
-.header-left{display:flex;align-items:center;gap:10px;}
-.menu-btn{
-    width:42px;height:42px;border:0;border-radius:14px;
-    background:linear-gradient(145deg,#ff7165,#ff8a70);
-    color:white;font-size:20px;display:flex;align-items:center;justify-content:center;
-    cursor:pointer;box-shadow:0 4px 12px rgba(255,113,101,0.25);
-}
-
-.logo{
-    width:46px;height:46px;border-radius:50%;overflow:hidden;
-    display:flex;align-items:center;justify-content:center;cursor:pointer;
-    border:1.5px solid #bae6fd;background:#ffffff;
-    box-shadow:0 4px 12px rgba(2,132,199,0.15);
-}
-.logo img{width:100%;height:100%;object-fit:cover;}
-
-.header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{
-    width:40px;height:40px;border:0;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:16px;color:white;cursor:pointer;padding:0;
-}
-
-.notification{ background:linear-gradient(145deg,#6366f1,#818cf8); }
-.wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
-.redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
-
-/* MAIN CONTAINER (Fixed between header and bottom nav) */
 .container{
     position: absolute;
     top: 66px;
@@ -136,51 +91,29 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .balance-value{margin-top:3px;font-size:20px;font-weight:900;color:#0f172a;}
 .balance-note{display:block;margin-top:3px;color:#94a3b8;font-size:11px;}
 
-.info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
-.info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
-
-/* SIDE DRAWER STYLES */
-.drawer-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.25s ease;}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{position:fixed;top:0;left:0;width:280px;height:100%;background:#ffffff;z-index:1000;box-shadow:4px 0 25px rgba(2,132,199,0.15);transform:translateX(-100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;}
-.drawer.active{transform:translateX(0);}
-.drawer-header{padding:20px 16px;background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{width:46px;height:46px;border-radius:50%;background:#ffffff;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1.5px solid #bae6fd;}
-.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-.drawer-close{width:34px;height:34px;border-radius:50%;background:#ffffff;border:1.5px solid #bae6fd;color:#0c4a6e;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{width:100%;padding:12px 14px;border:0;border-radius:14px;background:transparent;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:750;color:#334155;cursor:pointer;margin-bottom:4px;transition:background 0.2s ease;}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
-
-/* BOTTOM NAV STYLES */
-.bottom-nav{position:absolute;bottom:0;left:0;width:100%;height:74px;background:#ffffff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;}
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:12px;font-weight:700;cursor:pointer;transition:color 0.2s ease;}
-.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;transition:transform 0.2s ease, box-shadow 0.2s ease;}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.nav-item.active {color:#0f172a;font-weight:850;}
-.nav-item.active .nav-icon-box {transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.15);}
-.icon-home{background:#6366f1;}
-.icon-wallet{background:#22c55e;}
-.icon-support{background:#0284c7;}
-.icon-profile{background:#ea580c;}
+.claim-box {
+    margin-top: 10px;
+    background: #e0f2fe;
+    border: 1px solid #7dd3fc;
+    padding: 12px;
+    border-radius: 14px;
+    text-align: center;
+}
+.claim-btn {
+    background: #16a34a;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0 4px 12px rgba(22,163,74,0.3);
+}
 </style>
 </head>
 
 <body>
-
-<!-- DYNAMIC COMPONENT CONTAINERS -->
-<div id="header-container"></div>
-<div id="drawer-container"></div>
 
 <main class="container" id="scrollContainer">
     <section class="wallet-card">
@@ -196,6 +129,12 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
         </div>
     </section>
 
+    <!-- Check & Claim Approved Deposits Button -->
+    <div class="claim-box">
+        <p style="font-size: 13px; color: #0369a1; margin-bottom: 8px; font-weight: 700;">Admin approved payment not showing?</p>
+        <button class="claim-btn" onclick="checkAndClaimDeposits()"><i class="fa-solid fa-rotate-right"></i> Check & Update Balance</button>
+    </div>
+
     <section class="balance-grid">
         <div class="balance-box">
             <div class="balance-icon"><i class="fa-solid fa-wallet"></i></div>
@@ -210,97 +149,47 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
             <span class="balance-note">Can withdraw</span>
         </div>
     </section>
-
-    <div class="info-box">
-        <div class="info-icon">i</div>
-        <div>Deposit balance is for playing only. Winnings can be withdrawn to bank or UPI.</div>
-    </div>
 </main>
 
-<!-- BOTTOM NAVIGATION CONTAINER (ACTIVE: WALLET) -->
-<div id="nav-container" data-active="wallet"></div>
-
-<!-- COMPONENTS SCRIPT -->
-<script src="components.js"></script>
-
 <script>
-/* 🛡️ Touch move blocker for outer window */
-document.addEventListener('touchmove', function(event) {
-    if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
-        event.preventDefault();
-    }
-}, { passive: false });
-
-/* 🔄 Pull-to-refresh logic without line/icons */
-let startY = 0;
-const container = document.getElementById('scrollContainer');
-
-container.addEventListener('touchstart', function(e) {
-    if (container.scrollTop === 0) {
-        startY = e.touches[0].clientY;
-    }
-});
-
-container.addEventListener('touchmove', function(e) {
-    if (container.scrollTop === 0 && startY > 0) {
-        let currentY = e.touches[0].clientY;
-        if (currentY - startY > 100) {
-            startY = 0;
-            window.location.reload();
-        }
-    }
-});
-
-container.addEventListener('touchend', function(e) {
-    startY = 0;
-});
-
 let unsubscribeWalletListener = null;
 
 function navigateTo(page) {
-    if (typeof toggleMenu === "function") {
-        const drawer = document.getElementById("sideDrawer");
-        if (drawer && drawer.classList.contains("active")) {
-            toggleMenu();
-        }
-    }
     if(window.location.pathname.endsWith(page)) return;
     window.location.assign(page);
+}
+
+function getValidatedMobile() {
+    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                 localStorage.getItem("rdxVerifiedMobile") || 
+                 localStorage.getItem("rdxUserMobile") || 
+                 localStorage.getItem("rdxMobile") ||
+                 localStorage.getItem("userMobile");
+    if(!mobile) return null;
+    const cleanMobile = String(mobile).replace(/\D/g,"");
+    return cleanMobile.slice(-10);
 }
 
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
+        const mobile10Digits = getValidatedMobile();
 
-        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                     localStorage.getItem("rdxVerifiedMobile") || 
-                     localStorage.getItem("rdxUserMobile") || 
-                     localStorage.getItem("rdxMobile") ||
-                     localStorage.getItem("userMobile");
-
-        if(!mobile) {
+        if(!mobile10Digits) {
             window.location.replace("index.html");
             return;
         }
 
-        const cleanMobile = String(mobile).replace(/\D/g,"");
-        const mobile10Digits = cleanMobile.slice(-10);
-        const docIdWith91 = "+91" + mobile10Digits;
         const docIdWithPlain91 = "91" + mobile10Digits;
-
         let userRef = firebaseDB.collection("customers").doc(docIdWithPlain91);
         let snapshot = await userRef.get();
 
         if(!snapshot.exists) {
-            userRef = firebaseDB.collection("customers").doc(docIdWith91);
+            userRef = firebaseDB.collection("customers").doc("+91" + mobile10Digits);
             snapshot = await userRef.get();
         }
         if(!snapshot.exists) {
             userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-            snapshot = await userRef.get();
-        }
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("users").doc(mobile10Digits);
             snapshot = await userRef.get();
         }
 
@@ -309,34 +198,64 @@ async function loadFirebaseCustomer(){
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc && doc.exists) {
                 const data = doc.data();
-                
-                // Updated balance mapping to properly catch wallet / balance / deposit fields
-                const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
-                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                const totalWallet = Number(data.balance || data.depositBalance || 0);
+                const deposit = Number(data.depositBalance || data.balance || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
                 
-                const mainBal = document.getElementById("mainBalance");
-                const depBal = document.getElementById("depositBalance");
-                const winBal = document.getElementById("winningBalance");
-                
-                if (mainBal) mainBal.textContent = totalWallet;
-                if (depBal) depBal.textContent = deposit;
-                if (winBal) winBal.textContent = winnings;
-
-                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
-                
-                const drawerNameElem = document.getElementById("drawerName");
-                const drawerMobileElem = document.getElementById("drawerMobile");
-                
-                if(drawerNameElem) drawerNameElem.textContent = fullName;
-                if(drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
+                document.getElementById("mainBalance").textContent = totalWallet;
+                document.getElementById("depositBalance").textContent = deposit;
+                document.getElementById("winningBalance").textContent = winnings;
             }
-        }, (err) => {
-            console.error("Snapshot error:", err);
         });
-
     } catch(error) { 
         console.error("Wallet Error:", error); 
+    }
+}
+
+// FIX: Check approved deposits and update wallet automatically
+async function checkAndClaimDeposits() {
+    try {
+        const mobile10Digits = getValidatedMobile();
+        if(!mobile10Digits) return;
+
+        alert("Checking approved payments...");
+
+        // Deposits collection mein check karein jahan user ka mobile match ho aur status approved ho
+        const depositsRef = firebaseDB.collection("deposits");
+        const query = depositsRef.where("userId", "==", mobile10Digits);
+        const snapshot = await query.get();
+
+        let addedAmount = 0;
+        const batch = firebaseDB.batch();
+
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            // Check karein ki status approved hai ya nahi, aur kya yeh wallet mein update ho chuka hai ya nahi
+            if ((data.status === "approved" || data.status === "Success" || data.status === "success") && !data.isWalletUpdated) {
+                addedAmount += Number(data.amount || 0);
+                
+                // Mark this deposit as updated so it won't be added twice
+                batch.update(docSnap.ref, { isWalletUpdated: true });
+            }
+        });
+
+        if (addedAmount > 0) {
+            const userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
+            
+            // Customer balance me amount plus karein
+            batch.update(userRef, {
+                balance: firebase.firestore.FieldValue.increment(addedAmount),
+                depositBalance: firebase.firestore.FieldValue.increment(addedAmount)
+            });
+
+            await batch.commit();
+            alert(`Success! ₹${addedAmount} added to your wallet.`);
+        } else {
+            alert("No new approved deposits found to claim.");
+        }
+    } catch (e) {
+        console.error("Claim error:", e);
+        alert("Error updating balance. Please try again.");
     }
 }
 
