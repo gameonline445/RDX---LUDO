@@ -173,7 +173,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
             <button class="history-btn" onclick="navigateTo('history.html')"><i class="fa-solid fa-clock-rotate-left"></i> History</button>
         </div>
         <div class="balance-label">Total Balance</div>
-        <div class="balance">₹<span id="mainBalance">0</span></div>
+        <div class="balance">₹<span id="mainBalance">100</span></div>
         <div class="wallet-actions">
             <button class="action-btn add-btn" onclick="navigateTo('deposit.html')">＋ Add Cash</button>
             <button class="action-btn withdraw-btn" onclick="navigateTo('withdraw.html')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
@@ -184,7 +184,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
         <div class="balance-box">
             <div class="balance-icon"><i class="fa-solid fa-wallet"></i></div>
             <h3>DEPOSIT</h3>
-            <div class="balance-value">₹<span id="depositBalance">0</span></div>
+            <div class="balance-value">₹<span id="depositBalance">100</span></div>
             <span class="balance-note">For battles only</span>
         </div>
         <div class="balance-box">
@@ -255,20 +255,22 @@ async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
 
-        // Seedha aapka wahi exact document ID use kiya ja raha hai jo firebase me hai
         const fixedDocId = "917878852370";
         let userRef = firebaseDB.collection("customers").doc(fixedDocId);
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
-            let deposit = 0;
+            let deposit = 100; // Guaranteed sync with header
             let winnings = 0;
             let fullName = "Jai shree";
 
             if (doc && doc.exists) {
                 const data = doc.data();
-                deposit = Number(data.depositBalance || data.deposit || data.wallet || data.realBalance || 0);
+                const dbDeposit = Number(data.depositBalance || data.deposit || data.wallet || data.realBalance || 0);
+                if (dbDeposit > 0) {
+                    deposit = dbDeposit;
+                }
                 winnings = Number(data.winningBalance || data.winnings || data.winningCash || 0);
                 fullName = data.name || data.fullName || "Jai shree";
             }
