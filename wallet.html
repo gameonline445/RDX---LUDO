@@ -129,6 +129,9 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .add-btn{color:#ffffff;border:0;background:linear-gradient(100deg,#0284c7,#0369a1);box-shadow:0 6px 16px rgba(2,132,199,.3);}
 .withdraw-btn{color:#0c4a6e;border:1.5px solid #7dd3fc;background:#ffffff;}
 
+.claim-box{background:#e0f2fe;border:1.5px solid #7dd3fc;padding:10px;border-radius:16px;text-align:center;}
+.claim-btn{background:linear-gradient(135deg,#22c55e,#16a34a);color:white;border:none;padding:8px 16px;border-radius:18px;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 4px 12px rgba(34,197,94,0.3);}
+
 .balance-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 .balance-box{border:1.5px solid #bae6fd;border-radius:18px;background:#ffffff;padding:14px;box-shadow:0 4px 12px rgba(2,132,199,0.05);}
 .balance-icon{width:36px;height:36px;border-radius:12px;background:#e0f2fe;display:flex;align-items:center;justify-content:center;font-size:16px;color:#0284c7;}
@@ -195,6 +198,12 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
             <button class="action-btn withdraw-btn" onclick="navigateTo('withdraw.html')"><i class="fa-solid fa-arrow-up-from-bracket"></i> Withdraw</button>
         </div>
     </section>
+
+    <!-- MANUAL CLAIM SUCCESSFUL BALANCE BUTTON -->
+    <div class="claim-box">
+        <p style="font-size:11px;color:#0369a1;margin-bottom:6px;font-weight:750;">Payment success but balance not showing?</p>
+        <button class="claim-btn" onclick="manualClaimBalance()"><i class="fa-solid fa-rotate-right"></i> Claim Success Balance</button>
+    </div>
 
     <section class="balance-grid">
         <div class="balance-box">
@@ -268,50 +277,65 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// AUTO-CLAIM APPROVED DEPOSITS FUNCTION
-async function autoClaimApprovedDeposits(mobile10Digits, userRef) {
+function getStoredMobile() {
+    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
+                 localStorage.getItem("rdxVerifiedMobile") || 
+                 localStorage.getItem("rdxUserMobile") || 
+                 localStorage.getItem("rdxMobile") ||
+                 localStorage.getItem("userMobile");
+    if(!mobile) return null;
+    return String(mobile).replace(/\D/g,"").slice(-10);
+}
+
+// MANUAL CLAIM FUNCTION TO FORCE ADD SUCCESSFUL DEPOSITS TO WALLET
+async function manualClaimBalance() {
     try {
+        const mobile10Digits = getStoredMobile();
+        if(!mobile10Digits) {
+            alert("User mobile not found! Please login again.");
+            return;
+        }
+
+        alert("Checking successful deposits...");
+
         const depositsRef = firebaseDB.collection("deposits");
-        // Check both userId formats just to be safe
-        const query1 = depositsRef.where("userId", "==", mobile10Digits);
-        const snapshot1 = await query1.get();
+        const snapshot = await depositsRef.get();
 
-        const query2 = depositsRef.where("userId", "==", "91" + mobile10Digits);
-        const snapshot2 = await query2.get();
-
-        let addedAmount = 0;
+        let totalToAdd = 0;
         const batch = firebaseDB.batch();
-        let hasChanges = false;
+        let found = false;
 
-        const processDocs = (snapshot) => {
-            snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const status = String(data.status || "").toLowerCase();
-                // Agar status approved/success hai aur wallet mein update nahi hua hai
-                if ((status === "approved" || status === "success" || status === "active") && !data.isWalletUpdated) {
-                    const amt = Number(data.amount || 0);
-                    if (amt > 0) {
-                        addedAmount += amt;
-                        batch.update(docSnap.ref, { isWalletUpdated: true });
-                        hasChanges = true;
-                    }
+        snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            const uId = String(data.userId || data.uid || "");
+            const status = String(data.status || "").toLowerCase();
+
+            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved") && !data.isWalletUpdated) {
+                const amount = Number(data.amount || 0);
+                if (amount > 0) {
+                    totalToAdd += amount;
+                    batch.update(docSnap.ref, { isWalletUpdated: true });
+                    found = true;
                 }
-            });
-        };
+            }
+        });
 
-        processDocs(snapshot1);
-        processDocs(snapshot2);
-
-        if (hasChanges && addedAmount > 0) {
+        if (found && totalToAdd > 0) {
+            const userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
             batch.update(userRef, {
-                balance: firebase.firestore.FieldValue.increment(addedAmount),
-                depositBalance: firebase.firestore.FieldValue.increment(addedAmount)
+                balance: firebase.firestore.FieldValue.increment(totalToAdd),
+                depositBalance: firebase.firestore.FieldValue.increment(totalToAdd)
             });
+
             await batch.commit();
-            console.log(`Successfully auto-credited ₹${addedAmount} to wallet.`);
+            alert(`Success! ₹${totalToAdd} added to your wallet.`);
+            location.reload();
+        } else {
+            alert("No new successful deposits found to add. All are already claimed.");
         }
     } catch (error) {
-        console.error("Auto-claim error:", error);
+        console.error("Claim error:", error);
+        alert("Error: " + error.message);
     }
 }
 
@@ -350,9 +374,6 @@ async function loadFirebaseCustomer(){
             userRef = firebaseDB.collection("users").doc(mobile10Digits);
             snapshot = await userRef.get();
         }
-
-        // Pehle check karein aur approved deposits ko balance mein add karein
-        await autoClaimApprovedDeposits(mobile10Digits, userRef);
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
