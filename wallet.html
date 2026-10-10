@@ -310,10 +310,10 @@ async function loadFirebaseCustomer(){
             if (doc && doc.exists) {
                 const data = doc.data();
                 
-                // Updated balance mapping to properly catch wallet / balance / deposit fields
-                const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
+                // 💰 Deposit aur Winnings ka bilkul sahi aur mistake-free jod (Total Balance)
                 const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
+                const totalWallet = deposit + winnings;
                 
                 const mainBal = document.getElementById("mainBalance");
                 const depBal = document.getElementById("depositBalance");
@@ -322,6 +322,12 @@ async function loadFirebaseCustomer(){
                 if (mainBal) mainBal.textContent = totalWallet;
                 if (depBal) depBal.textContent = deposit;
                 if (winBal) winBal.textContent = winnings;
+
+                // ⚡ Header wale wallet balance ko bhi update karna
+                const headerBalElem = document.getElementById("headerWalletBalance");
+                if (headerBalElem) {
+                    headerBalElem.textContent = "₹" + totalWallet;
+                }
 
                 let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
                 
