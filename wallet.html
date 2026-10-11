@@ -268,7 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// 100% ROBUST REAL-TIME CUSTOMER WALLET READER
+// SMART AUTO-SYNC: READS CUSTOMER WALLET + AUTOMATICALLY SUMS UP SUCCESSFUL DEPOSITS FROM DEPOSITS COLLECTION
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -294,48 +294,77 @@ async function loadFirebaseCustomer(){
         ];
 
         let userRef = null;
-        let snapshot = null;
+        let customerData = {};
 
         for (let docId of possibleDocIds) {
             let ref = firebaseDB.collection("customers").doc(docId);
             let snap = await ref.get();
             if (snap.exists) {
                 userRef = ref;
-                snapshot = snap;
+                customerData = snap.data();
                 break;
             }
         }
 
-        if (!userRef || !snapshot.exists) {
+        if (!userRef) {
             userRef = firebaseDB.collection("customers").doc(mobile10Digits);
         }
 
+        // Fetch successful deposits directly and sum them up automatically
+        let totalApprovedDeposits = 0;
+        try {
+            const depositsSnap = await firebaseDB.collection("deposits").get();
+            depositsSnap.forEach(doc => {
+                const dData = doc.data();
+                const uId = String(dData.userId || dData.uid || "");
+                const status = String(dData.status || "").trim().toLowerCase();
+                
+                if (uId.includes(mobile10Digits) && (status === "success" || status === "approved" || status === "active")) {
+                    const amt = Number(dData.amount || dData.amt || 0);
+                    totalApprovedDeposits += amt;
+                }
+            });
+        } catch(e) {
+            console.error("Deposits fetch error:", e);
+        }
+
+        // Combine manual wallet balance and auto-calculated deposit history
+        const manualWallet = Number(customerData.wallet || customerData.balance || customerData.depositBalance || customerData.deposit || customerData.depositCash || customerData.realBalance || 0);
+        
+        const finalDeposit = Math.max(totalApprovedDeposits, manualWallet);
+        const winnings = Number(customerData.winningBalance || customerData.winnings || 0);
+        const finalTotal = finalDeposit + winnings;
+
+        // Render on UI
+        const mainBal = document.getElementById("mainBalance");
+        const depBal = document.getElementById("depositBalance");
+        const winBal = document.getElementById("winningBalance");
+        
+        if (mainBal) mainBal.textContent = finalTotal;
+        if (depBal) depBal.textContent = finalDeposit;
+        if (winBal) winBal.textContent = winnings;
+
+        let fullName = customerData.name || customerData.fullName || customerData.username || localStorage.getItem("rdxUsername") || "User";
+        const drawerNameElem = document.getElementById("drawerName");
+        const drawerMobileElem = document.getElementById("drawerMobile");
+        
+        if(drawerNameElem) drawerNameElem.textContent = fullName;
+        if(drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
+
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
+        // Real-time listener for future updates
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc && doc.exists) {
                 const data = doc.data();
+                const win = Number(data.winningBalance || data.winnings || 0);
+                const manWal = Number(data.wallet || data.balance || data.depositBalance || data.deposit || data.depositCash || data.realBalance || 0);
+                const dep = Math.max(totalApprovedDeposits, manWal);
+                const tot = dep + win;
                 
-                // Universal fallback checking all possible fields for balance and deposits
-                const totalWallet = Number(data.wallet || data.deposit || data.balance || data.depositBalance || data.depositCash || data.realBalance || 0);
-                const deposit = Number(data.deposit || data.wallet || data.depositBalance || data.balance || data.depositCash || data.realBalance || 0);
-                const winnings = Number(data.winningBalance || data.winnings || 0);
-                
-                const mainBal = document.getElementById("mainBalance");
-                const depBal = document.getElementById("depositBalance");
-                const winBal = document.getElementById("winningBalance");
-                
-                if (mainBal) mainBal.textContent = totalWallet;
-                if (depBal) depBal.textContent = deposit;
-                if (winBal) winBal.textContent = winnings;
-
-                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
-                
-                const drawerNameElem = document.getElementById("drawerName");
-                const drawerMobileElem = document.getElementById("drawerMobile");
-                
-                if(drawerNameElem) drawerNameElem.textContent = fullName;
-                if(drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
+                if (mainBal) mainBal.textContent = tot;
+                if (depBal) depBal.textContent = dep;
+                if (winBal) winBal.textContent = win;
             }
         }, (err) => {
             console.error("Snapshot error:", err);
