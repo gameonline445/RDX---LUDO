@@ -231,7 +231,7 @@ document.addEventListener('touchmove', function(event) {
     }
 }, { passive: false });
 
-/* 🔄 Pull-to-refresh logic without line/icons */
+/* 🔄 Pull-to-refresh logic */
 let startY = 0;
 const container = document.getElementById('scrollContainer');
 
@@ -268,7 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// CLEAN & FAST WALLET BALANCE READER (Directly reads from customers collection)
+// SECURE REAL-TIME CUSTOMER WALLET READER
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -287,7 +287,7 @@ async function loadFirebaseCustomer(){
         const cleanMobile = String(mobile).replace(/\D/g,"");
         const mobile10Digits = cleanMobile.slice(-10);
 
-        // Try different document ID formats to find the customer document
+        // All possible Firestore document ID formats for customers collection
         const possibleDocIds = [
             mobile10Digits,
             "91" + mobile10Digits,
@@ -308,16 +308,17 @@ async function loadFirebaseCustomer(){
         }
 
         if (!userRef || !snapshot.exists) {
-            // Fallback to plain 91 format if not found
-            userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
+            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
         }
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
+        // Real-time listener on customer document to instantly catch balance updates from admin
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc && doc.exists) {
                 const data = doc.data();
                 
+                // Flexible field mapping matching your Firestore schema
                 const totalWallet = Number(data.balance || data.depositBalance || data.wallet || 0);
                 const deposit = Number(data.depositBalance || data.balance || data.wallet || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
