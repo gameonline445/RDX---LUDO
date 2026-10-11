@@ -268,7 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// SECURE REAL-TIME CUSTOMER WALLET READER
+// 100% UNIVERSAL FIELD READER FOR FIREBASE CUSTOMER WALLET
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -287,7 +287,6 @@ async function loadFirebaseCustomer(){
         const cleanMobile = String(mobile).replace(/\D/g,"");
         const mobile10Digits = cleanMobile.slice(-10);
 
-        // All possible Firestore document ID formats for customers collection
         const possibleDocIds = [
             mobile10Digits,
             "91" + mobile10Digits,
@@ -313,14 +312,13 @@ async function loadFirebaseCustomer(){
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // Real-time listener on customer document to instantly catch balance updates from admin
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc && doc.exists) {
                 const data = doc.data();
                 
-                // Flexible field mapping matching your Firestore schema
-                const totalWallet = Number(data.balance || data.depositBalance || data.wallet || 0);
-                const deposit = Number(data.depositBalance || data.balance || data.wallet || 0);
+                // Checks ALL possible field names in Firestore database
+                const totalWallet = Number(data.balance || data.deposit || data.depositBalance || data.depositCash || data.wallet || data.realBalance || 0);
+                const deposit = Number(data.deposit || data.depositBalance || data.balance || data.depositCash || data.wallet || data.realBalance || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
                 
                 const mainBal = document.getElementById("mainBalance");
