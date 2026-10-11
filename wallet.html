@@ -268,7 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// 100% UNIVERSAL FIELD READER FOR FIREBASE CUSTOMER WALLET
+// 100% ROBUST REAL-TIME CUSTOMER WALLET READER
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -316,9 +316,9 @@ async function loadFirebaseCustomer(){
             if (doc && doc.exists) {
                 const data = doc.data();
                 
-                // Checks ALL possible field names in Firestore database
-                const totalWallet = Number(data.balance || data.deposit || data.depositBalance || data.depositCash || data.wallet || data.realBalance || 0);
-                const deposit = Number(data.deposit || data.depositBalance || data.balance || data.depositCash || data.wallet || data.realBalance || 0);
+                // Universal fallback checking all possible fields for balance and deposits
+                const totalWallet = Number(data.wallet || data.deposit || data.balance || data.depositBalance || data.depositCash || data.realBalance || 0);
+                const deposit = Number(data.deposit || data.wallet || data.depositBalance || data.balance || data.depositCash || data.realBalance || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
                 
                 const mainBal = document.getElementById("mainBalance");
