@@ -268,46 +268,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// ROBUST AUTO-SYNC FOR SUCCESSFUL DEPOSITS
-async function autoSyncDeposits(mobile10Digits, userRef) {
-    try {
-        const depositsRef = firebaseDB.collection("deposits");
-        const snapshot = await depositsRef.get();
-
-        let totalToAdd = 0;
-        const batch = firebaseDB.batch();
-        let hasNewSuccess = false;
-
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const uId = String(data.userId || data.uid || "");
-            const status = String(data.status || "").trim().toLowerCase();
-            const isUpdated = data.isWalletUpdated; // can be boolean or undefined/false
-
-            // Match mobile number and check if status is success/approved/active and NOT yet updated
-            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved" || status === "active") && !isUpdated) {
-                const amount = Number(data.amount || 0);
-                if (amount > 0) {
-                    totalToAdd += amount;
-                    batch.update(docSnap.ref, { isWalletUpdated: true });
-                    hasNewSuccess = true;
-                }
-            }
-        });
-
-        if (hasNewSuccess && totalToAdd > 0) {
-            batch.update(userRef, {
-                balance: firebase.firestore.FieldValue.increment(totalToAdd),
-                depositBalance: firebase.firestore.FieldValue.increment(totalToAdd)
-            });
-            await batch.commit();
-            console.log("Successfully auto-synced deposit amount:", totalToAdd);
-        }
-    } catch (e) {
-        console.error("Auto-sync error:", e);
-    }
-}
-
+// CLEAN & FAST WALLET BALANCE READER (Directly reads from customers collection)
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -325,27 +286,31 @@ async function loadFirebaseCustomer(){
 
         const cleanMobile = String(mobile).replace(/\D/g,"");
         const mobile10Digits = cleanMobile.slice(-10);
-        const docIdWith91 = "+91" + mobile10Digits;
-        const docIdWithPlain91 = "91" + mobile10Digits;
 
-        let userRef = firebaseDB.collection("customers").doc(docIdWithPlain91);
-        let snapshot = await userRef.get();
+        // Try different document ID formats to find the customer document
+        const possibleDocIds = [
+            mobile10Digits,
+            "91" + mobile10Digits,
+            "+91" + mobile10Digits
+        ];
 
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("customers").doc(docIdWith91);
-            snapshot = await userRef.get();
-        }
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-            snapshot = await userRef.get();
-        }
-        if(!snapshot.exists) {
-            userRef = firebaseDB.collection("users").doc(mobile10Digits);
-            snapshot = await userRef.get();
+        let userRef = null;
+        let snapshot = null;
+
+        for (let docId of possibleDocIds) {
+            let ref = firebaseDB.collection("customers").doc(docId);
+            let snap = await ref.get();
+            if (snap.exists) {
+                userRef = ref;
+                snapshot = snap;
+                break;
+            }
         }
 
-        // Run auto-sync to check and push success/approved deposit amounts to customer wallet
-        await autoSyncDeposits(mobile10Digits, userRef);
+        if (!userRef || !snapshot.exists) {
+            // Fallback to plain 91 format if not found
+            userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
+        }
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
@@ -353,8 +318,8 @@ async function loadFirebaseCustomer(){
             if (doc && doc.exists) {
                 const data = doc.data();
                 
-                const totalWallet = Number(data.wallet || data.balance || data.depositBalance || data.deposit || 0);
-                const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                const totalWallet = Number(data.balance || data.depositBalance || data.wallet || 0);
+                const deposit = Number(data.depositBalance || data.balance || data.wallet || 0);
                 const winnings = Number(data.winningBalance || data.winnings || 0);
                 
                 const mainBal = document.getElementById("mainBalance");
