@@ -25,7 +25,7 @@ function loadHeader() {
                 <!-- Wallet button with icon and live total balance display across all pages -->
                 <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; padding: 0 12px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
                     <i class="fa-solid fa-wallet" style="font-size: 15px; color: #ffffff !important;"></i>
-                    <span id="headerWalletBalance" style="font-size: 13px; font-weight: 800; color: #ffffff !important;">₹100</span>
+                    <span id="headerWalletBalance" style="font-size: 13px; font-weight: 800; color: #ffffff !important;">₹0</span>
                 </button>
 
                 <button class="header-icon-btn btn-refer" onclick="window.location.href='referral.html'" style="background: #e17055 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(225,112,85,0.4);">
@@ -311,30 +311,60 @@ async function initGlobalHeaderWallet() {
     const mobile10Digits = cleanMobile.slice(-10);
     const db = firebase.firestore();
 
-    let userRef = db.collection("customers").doc("91" + mobile10Digits);
-    let snapshot = await userRef.get();
+    const possibleDocIds = [
+        mobile10Digits,
+        "91" + mobile10Digits,
+        "+91" + mobile10Digits
+    ];
 
-    if(!snapshot.exists) {
+    let userRef = null;
+    let snapshot = null;
+
+    for (let docId of possibleDocIds) {
+        let ref = db.collection("customers").doc(docId);
+        let snap = await ref.get();
+        if (snap.exists) {
+            userRef = ref;
+            snapshot = snap;
+            break;
+        }
+    }
+
+    if (!userRef || !snapshot.exists) {
         userRef = db.collection("customers").doc(mobile10Digits);
-        snapshot = await userRef.get();
+    }
+
+    // Also fetch successful deposits to keep header fully synced with auto-calculated deposits
+    let totalApprovedDeposits = 0;
+    try {
+        const depositsSnap = await db.collection("deposits").get();
+        depositsSnap.forEach(doc => {
+            const dData = doc.data();
+            const uId = String(dData.userId || dData.uid || "");
+            const status = String(dData.status || "").trim().toLowerCase();
+            
+            if (uId.includes(mobile10Digits) && (status === "success" || status === "approved" || status === "active")) {
+                const amt = Number(dData.amount || dData.amt || 0);
+                totalApprovedDeposits += amt;
+            }
+        });
+    } catch(e) {
+        console.error("Global Header Deposits Fetch Error:", e);
     }
 
     if (globalWalletUnsubscribe) globalWalletUnsubscribe();
 
     globalWalletUnsubscribe = userRef.onSnapshot((doc) => {
-        let deposit = 100; // Force default ₹100 fallback sync
-        let winnings = 0;
-
+        let customerData = {};
         if (doc && doc.exists) {
-            const data = doc.data();
-            const dbDeposit = Number(data.depositBalance || data.deposit || data.wallet || data.realBalance || 0);
-            if (dbDeposit > 0) {
-                deposit = dbDeposit;
-            }
-            winnings = Number(data.winningBalance || data.winnings || data.winningCash || 0);
+            customerData = doc.data();
         }
 
-        const totalWallet = deposit + winnings;
+        const manualWallet = Number(customerData.wallet || customerData.balance || customerData.depositBalance || customerData.deposit || customerData.depositCash || customerData.realBalance || 0);
+        const finalDeposit = Math.max(totalApprovedDeposits, manualWallet);
+        const winnings = Number(customerData.winningBalance || customerData.winnings || 0);
+        const totalWallet = finalDeposit + winnings;
+
         const headerBalElem = document.getElementById("headerWalletBalance");
         if (headerBalElem) {
             headerBalElem.textContent = "₹" + totalWallet;
