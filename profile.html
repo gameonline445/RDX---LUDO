@@ -438,7 +438,7 @@ button{font:inherit;}
     <!-- ACTIONS -->
     <div class="section-label">QUICK ACTIONS</div>
     <div class="action-grid">
-        <div class="action-card" onclick="window.location.replace('history.html')">
+        <div class="action-card" onclick="window.location.assign('history.html')">
             <div class="action-left">
                 <div class="action-icon"><i class="fa-solid fa-clock-rotate-left"></i></div>
                 <div class="action-text">
@@ -449,7 +449,7 @@ button{font:inherit;}
             <i class="fa-solid fa-angle-right" style="color:#94a3b8; font-size:12px;"></i>
         </div>
 
-        <div class="action-card" onclick="window.location.replace('support.html')">
+        <div class="action-card" onclick="window.location.assign('support.html')">
             <div class="action-left">
                 <div class="action-icon"><i class="fa-solid fa-headset"></i></div>
                 <div class="action-text">
@@ -499,11 +499,6 @@ button{font:inherit;}
 <script src="components.js"></script>
 
 <script>
-history.pushState({ page: 1 }, "", "");
-window.addEventListener("popstate", function (event) {
-    window.location.href = "dashboard.html";
-});
-
 function openKycModal() {
     document.getElementById("kycDocNumber").value = "";
     document.getElementById("kycFrontFile").value = "";
