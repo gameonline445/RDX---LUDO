@@ -567,7 +567,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <script src="components.js"></script>
 
 <script>
-/* Progress Loading Line Animation Trigger */
+/* Progress Loading Line Animation Trigger & Pull-to-Refresh */
 function showProgressBar() {
     const bar = document.getElementById("topProgressBar");
     if (!bar) return;
@@ -596,7 +596,31 @@ window.addEventListener("load", () => {
     hideProgressBar();
 });
 
-/* Touch move blocker for outer window stability */
+/* Touch move blocker for outer window and Pull-to-Refresh implementation */
+let startY = 0;
+const container = document.getElementById('scrollContainer');
+
+container.addEventListener('touchstart', function(e) {
+    if (container.scrollTop === 0) {
+        startY = e.touches[0].clientY;
+    }
+});
+
+container.addEventListener('touchmove', function(e) {
+    if (container.scrollTop === 0 && startY > 0) {
+        let currentY = e.touches[0].clientY;
+        if (currentY - startY > 100) {
+            startY = 0;
+            showProgressBar();
+            window.location.reload();
+        }
+    }
+});
+
+container.addEventListener('touchend', function(e) {
+    startY = 0;
+});
+
 document.addEventListener('touchmove', function(event) {
     if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
         event.preventDefault();
