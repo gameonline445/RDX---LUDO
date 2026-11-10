@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>RDX LUDO - History & Logs</title>
 
 <!-- FontAwesome for Icons -->
@@ -21,27 +21,48 @@ if (!localStorage.getItem("rdxLoggedIn") || localStorage.getItem("rdxLoggedIn") 
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-body{
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+
+/* Screen Lock & Background matching other pages */
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    color: #101a38;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
-        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-    color:#101a38;
-    min-height:100vh;
-    padding-top:75px; /* Top header overlap fix */
-    padding-bottom:95px;
+    -webkit-touch-callout: none;
 }
 button,input{font:inherit;}
 
-.container{width:100%;max-width:650px;margin:auto;padding:16px 14px;}
+/* MAIN CONTAINER (Fixed between header and bottom nav) */
+.container{
+    position: absolute;
+    top: 66px;
+    bottom: 74px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    max-width: 650px;
+    margin: 0 auto;
+    padding: 14px 14px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
 .page-title{
     font-size:20px;
     font-weight:900;
     color:#0c4a6e;
-    margin-bottom:12px;
+    margin-bottom:4px;
     display:flex;
     align-items:center;
     gap:8px;
@@ -50,7 +71,7 @@ button,input{font:inherit;}
 /* SEARCH BAR */
 .search-box-wrap{
     position:relative;
-    margin-bottom:12px;
+    margin-bottom:6px;
 }
 .search-icon{
     position:absolute;
@@ -83,7 +104,7 @@ button,input{font:inherit;}
     gap:8px;
     overflow-x:auto;
     scrollbar-width:none;
-    margin-bottom:16px;
+    margin-bottom:6px;
 }
 .filter-scroll::-webkit-scrollbar{display:none;}
 .tab-btn{
@@ -111,7 +132,7 @@ button,input{font:inherit;}
     border:1.5px solid #bae6fd;
     border-radius:18px;
     padding:14px 16px;
-    margin-bottom:10px;
+    margin-bottom:4px;
     box-shadow:0 4px 12px rgba(2,132,199,0.04);
     display:flex;
     justify-content:space-between;
@@ -194,9 +215,8 @@ button,input{font:inherit;}
 <div id="drawer-container"></div>
 
 <!-- 2. TOP HEADER CONTAINER -->
-<header id="header-container"></header>
+<div id="header-container"></div>
 
-<!-- मुख्य कंटेनर में id="scrollContainer" जोड़ा गया है -->
 <main class="container" id="scrollContainer">
 
     <div class="page-title">
@@ -225,13 +245,13 @@ button,input{font:inherit;}
 </main>
 
 <!-- 3. BOTTOM NAVIGATION CONTAINER -->
-<div id="nav-container"></div>
+<div id="nav-container" data-active="history"></div>
 
 <!-- COMPONENTS SYSTEM SCRIPT -->
 <script src="components.js"></script>
 
 <script>
-/* 🔄 शुद्ध पुल-टू-रिफ्रेश लॉजिक */
+/* 🔄 Pull-to-refresh logic matching other pages */
 let startY = 0;
 const scrollContainer = document.getElementById('scrollContainer');
 
@@ -256,6 +276,12 @@ if (scrollContainer) {
         startY = 0;
     });
 }
+
+document.addEventListener('touchmove', function(event) {
+    if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
+        event.preventDefault();
+    }
+}, { passive: false });
 
 history.pushState({ page: 1 }, "", "");
 window.addEventListener("popstate", function (event) {
@@ -285,27 +311,12 @@ let battlesData = [];
 let depositsData = [];
 let withdrawalsData = [];
 
-// FETCH USER DATA FOR DRAWER DYNAMICALLY
-async function loadHeaderUserData() {
-    if (!userId) { window.location.replace("index.html"); return; }
-    const docId = userId.length === 10 ? "91" + userId : userId;
-
-    try {
-        const snap = await firebaseDB.collection("customers").doc(docId).get();
-        if (snap.exists) {
-            const d = snap.data();
-            const displayName = d.name || ("User " + userId.slice(-4));
-            const nameEl = document.getElementById("drawerName");
-            const mobileEl = document.getElementById("drawerMobile");
-            if (nameEl) nameEl.textContent = displayName;
-            if (mobileEl) mobileEl.textContent = "+" + userId;
-        }
-    } catch(err) { console.error(err); }
-}
-
 // REAL-TIME LISTENER FOR ALL LOGS
 function startRealtimeLogsListener() {
-    if (!userId) return;
+    if (!userId) {
+        window.location.replace("index.html");
+        return;
+    }
     const docId = userId.length === 10 ? "91" + userId : userId;
 
     // 1. Battles Real-Time Listener
@@ -358,8 +369,8 @@ function startRealtimeLogsListener() {
         let list = [];
         snap.forEach(doc => {
             const d = doc.data();
-            const cleanUid = String(d.uid || d.userId).replace(/\D/g, "");
-            if (cleanUid === userId) {
+            const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "");
+            if (cleanUid.includes(userId)) {
                 const timeInfo = parseItemTime(d.createdAt || d.date);
                 const rawStatus = String(d.status || "pending").toLowerCase();
                 const utrVal = d.utr ? String(d.utr).trim() : "";
@@ -387,8 +398,8 @@ function startRealtimeLogsListener() {
         let list = [];
         snap.forEach(doc => {
             const w = doc.data();
-            const cleanUid = String(w.uid || w.mobile).replace(/\D/g, "");
-            if (cleanUid === userId) {
+            const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "");
+            if (cleanUid.includes(userId)) {
                 const timeInfo = parseItemTime(w.createdAt || w.date);
                 const rawStatus = String(w.status || "pending").toLowerCase();
                 const modeVal = w.mode === "BANK" ? `Bank: ${w.accountNumber || ''}` : `UPI: ${w.upiId || ''}`;
@@ -560,7 +571,6 @@ function setFilter(type, btnEl) {
 }
 
 window.addEventListener("load", () => {
-    loadHeaderUserData();
     startRealtimeLogsListener();
 });
 </script>
