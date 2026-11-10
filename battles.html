@@ -67,19 +67,6 @@ html, body {
 }
 button,input{font:inherit;}
 
-/* PROGRESS / REFRESH LOADING LINE */
-#topProgressBar {
-    position: fixed;
-    top: 66px;
-    left: 0;
-    width: 0%;
-    height: 3px;
-    background: linear-gradient(90deg, #0284c7, #38bdf8, #22c55e);
-    z-index: 1000;
-    transition: width 0.4s ease, opacity 0.3s ease;
-    opacity: 0;
-}
-
 /* MAIN CONTAINER (Fixed between header and bottom nav) */
 .container{
     position: absolute;
@@ -403,9 +390,6 @@ button,input{font:inherit;}
 <div id="drawer-container"></div>
 <div id="header-container"></div>
 
-<!-- REFRESH LOADING LINE -->
-<div id="topProgressBar"></div>
-
 <main class="container" id="scrollContainer">
 
     <!-- VIEW 1: BATTLE LOBBY -->
@@ -528,34 +512,6 @@ button,input{font:inherit;}
 <script src="components.js"></script>
 
 <script>
-/* Progress Loading Line Animation */
-function showProgressBar() {
-    const bar = document.getElementById("topProgressBar");
-    if (!bar) return;
-    bar.style.opacity = "1";
-    bar.style.width = "20%";
-    setTimeout(() => { bar.style.width = "60%"; }, 200);
-    setTimeout(() => { bar.style.width = "90%"; }, 500);
-}
-
-function hideProgressBar() {
-    const bar = document.getElementById("topProgressBar");
-    if (!bar) return;
-    bar.style.width = "100%";
-    setTimeout(() => {
-        bar.style.opacity = "0";
-        setTimeout(() => { bar.style.width = "0%"; }, 300);
-    }, 200);
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-    showProgressBar();
-});
-
-window.addEventListener("load", () => {
-    hideProgressBar();
-});
-
 /* Pull-to-Refresh & Touch blocker logic */
 let startY = 0;
 const scrollContainer = document.getElementById('scrollContainer');
@@ -572,7 +528,6 @@ if (scrollContainer) {
             let currentY = e.touches[0].clientY;
             if (currentY - startY > 100) {
                 startY = 0;
-                showProgressBar();
                 window.location.reload();
             }
         }
@@ -656,7 +611,7 @@ async function createBattle() {
 
     const amt = Number(document.getElementById("battleAmountInput").value);
     if(isNaN(amt) || amt < 100){
-        alert("Kam se kam ₹100 का मैच सेट करें।");
+        alert("Kam se kam ₹100 ka match set karein.");
         return;
     }
     if(myCurrentBalance < amt){
@@ -669,7 +624,6 @@ async function createBattle() {
     const prize = Math.round(amt * 1.90);
 
     try {
-        showProgressBar();
         await firebaseDB.collection("battles").add({
             creatorUid: docId,
             creatorName: myUserName,
@@ -686,8 +640,6 @@ async function createBattle() {
         document.getElementById("battleAmountInput").value = "";
     } catch(err) {
         alert("Error: " + err.message);
-    } finally {
-        hideProgressBar();
     }
 }
 
@@ -785,16 +737,12 @@ function listenBattles() {
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
         document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
-        
-        hideProgressBar();
     });
 }
 
 async function deleteBattle(bId) {
     if(!confirm("Battle delete karein?")) return;
-    showProgressBar();
     await firebaseDB.collection("battles").doc(bId).delete();
-    hideProgressBar();
 }
 
 async function requestPlayBattle(bId, amt) {
@@ -809,37 +757,31 @@ async function requestPlayBattle(bId, amt) {
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
     const docId = "91" + cleanMobile;
 
-    showProgressBar();
     await firebaseDB.collection("battles").doc(bId).update({
         status: "requested",
         acceptedUid: docId,
         acceptedName: myUserName,
         requestTime: firebase.firestore.FieldValue.serverTimestamp()
     });
-    hideProgressBar();
 }
 
 async function cancelMyPlayRequest(bId) {
     if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
-    showProgressBar();
     await firebaseDB.collection("battles").doc(bId).update({
         status: "open",
         acceptedUid: null,
         acceptedName: null,
         requestTime: null
     });
-    hideProgressBar();
 }
 
 async function rejectBattleRequest(bId) {
-    showProgressBar();
     await firebaseDB.collection("battles").doc(bId).update({
         status: "open",
         acceptedUid: null,
         acceptedName: null,
         requestTime: null
     });
-    hideProgressBar();
 }
 
 function deductFromBalance(deposit, winnings, amt) {
@@ -869,7 +811,6 @@ async function startBattle(bId, amt, oppUid) {
     const p2DocId = oppUid;
 
     try {
-        showProgressBar();
         await firebaseDB.runTransaction(async t => {
             let p1Ref = firebaseDB.collection("customers").doc(p1DocId);
             let p2Ref = firebaseDB.collection("customers").doc(p2DocId);
@@ -915,8 +856,6 @@ async function startBattle(bId, amt, oppUid) {
         });
     } catch(err) {
         alert(err.message);
-    } finally {
-        hideProgressBar();
     }
 }
 
@@ -960,9 +899,7 @@ function renderRoomView(b, isCreator) {
 async function submitRoomCode() {
     const code = document.getElementById("manualRoomCodeInput").value.trim();
     if(!code){ alert("Room code likhein."); return; }
-    showProgressBar();
     await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
-    hideProgressBar();
 }
 
 function copyRoomCode() {
@@ -1034,7 +971,6 @@ async function uploadProofAndSubmit() {
     const btn = document.getElementById("btnSubmitProof");
     btn.disabled = true;
     btn.textContent = "Uploading Proof...";
-    showProgressBar();
 
     try {
         let proofBase64 = null;
@@ -1053,7 +989,6 @@ async function uploadProofAndSubmit() {
     } catch(err) {
         alert("Error: " + err.message);
     }
-    hideProgressBar();
     btn.disabled = false;
     btn.textContent = "Submit Proof & Claim";
 }
