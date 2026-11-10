@@ -635,7 +635,6 @@ async function createBattle() {
         return;
     }
 
-    // Direct live balance check from Firestore to prevent any sync delay
     const currentBal = await fetchLatestBalance();
     if(currentBal < amt){
         showErrorModal("Insufficient balance");
@@ -666,7 +665,7 @@ async function createBattle() {
     }
 }
 
-// 2. REAL-TIME BATTLES LISTENER
+// 2. REAL-TIME BATTLES LISTENER + PERMANENT DUMMY RUNNING BATTLES
 function listenBattles() {
     if(!userId) return;
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
@@ -756,10 +755,38 @@ function listenBattles() {
             }
         });
 
+        // PERMANENT DUMMY RUNNING BATTLES (₹100, ₹300, ₹500, ₹2200, ₹8000)
+        const dummyBattles = [
+            { amount: 100, prize: 190, p1: "Rahul Gamer", p2: "Aman King" },
+            { amount: 300, prize: 570, p1: "Vikash Rajput", p2: "Deepak Sharma" },
+            { amount: 500, prize: 950, p1: "Rohit Ludo", p2: "Amit Meena" },
+            { amount: 2200, prize: 4180, p1: "RDX King", p2: "Royal Player" },
+            { amount: 8000, prize: 15200, p1: "HighRoller", p2: "Master Ludo" }
+        ];
+
+        dummyBattles.forEach(d => {
+            runningHTML += `
+                <div class="battle-card">
+                    <div class="card-top">
+                        <span class="badge-tag tag-live">● LIVE</span>
+                    </div>
+                    <div class="battle-meta">
+                        <div class="meta-col"><small>ENTRY</small><strong>₹${d.amount}</strong></div>
+                        <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${d.prize}</strong></div>
+                    </div>
+                    <div class="vs-row">
+                        <div class="player-box"><span class="player-name">${d.p1}</span></div>
+                        <div class="vs-circle">VS</div>
+                        <div class="player-box"><span class="player-name">${d.p2}</span></div>
+                    </div>
+                </div>
+            `;
+        });
+
         myActiveBattlesCount = userBattleCount;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
+        document.getElementById("runningBattlesList").innerHTML = runningHTML;
     });
 }
 
