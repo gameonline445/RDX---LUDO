@@ -554,7 +554,6 @@ function getCleanUserId() {
 }
 
 const userId = getCleanUserId();
-let myCurrentBalance = 0;
 let myUserName = "User";
 let activeBattleId = null;
 let myActiveBattlesCount = 0;
@@ -577,30 +576,50 @@ async function loadUserData() {
     const mobile10Digits = cleanMobile.slice(-10);
     const docIdWith91 = "91" + mobile10Digits;
 
-    let userRef = firebaseDB.collection("customers").doc(docIdWith91);
-    let snap = await userRef.get();
+    try {
+        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
+        let snap = await userRef.get();
 
-    if(!snap.exists){
-        userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-        snap = await userRef.get();
-    }
+        if(!snap.exists){
+            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+            snap = await userRef.get();
+        }
 
-    if(snap.exists){
-        userRef.onSnapshot(doc => {
-            if(doc.exists){
-                const d = doc.data();
-                // Universal fallback checking all possible fields for balance and deposits
-                const dep = Number(d.wallet || d.deposit || d.balance || d.depositBalance || d.depositCash || d.realBalance || 0);
-                const win = Number(d.winningBalance || d.winnings || 0);
-                
-                myCurrentBalance = dep + win;
-                myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
-            }
-        });
-    } else {
-        localStorage.clear();
-        window.location.replace("index.html");
+        if(snap.exists){
+            const d = snap.data();
+            myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
+        }
+    } catch(err) {
+        console.error("Load user data error:", err);
     }
+}
+
+// FRESH LIVE BALANCE CHECKER FROM FIREBASE (DIRECT & RELIABLE)
+async function fetchLatestBalance() {
+    if(!userId) return 0;
+    const cleanMobile = String(userId).replace(/\D/g,"");
+    const mobile10Digits = cleanMobile.slice(-10);
+    const docIdWith91 = "91" + mobile10Digits;
+
+    try {
+        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
+        let snap = await userRef.get();
+
+        if(!snap.exists){
+            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+            snap = await userRef.get();
+        }
+
+        if(snap.exists){
+            const d = snap.data();
+            const dep = Number(d.wallet || d.deposit || d.balance || d.depositBalance || d.depositCash || d.realBalance || 0);
+            const win = Number(d.winningBalance || d.winnings || 0);
+            return dep + win;
+        }
+    } catch(err) {
+        console.error("Fetch balance error:", err);
+    }
+    return 0;
 }
 
 // 1. CREATE BATTLE (STRICT LIMIT: MAXIMUM 1 OPEN/ACTIVE BATTLE PER USER)
@@ -615,7 +634,10 @@ async function createBattle() {
         alert("Kam se kam ₹100 ka match set karein.");
         return;
     }
-    if(myCurrentBalance < amt){
+
+    // Direct live balance check from Firestore to prevent any sync delay
+    const currentBal = await fetchLatestBalance();
+    if(currentBal < amt){
         showErrorModal("Insufficient balance");
         return;
     }
@@ -751,7 +773,8 @@ async function requestPlayBattle(bId, amt) {
         alert("Aap ek waqt me sirf 1 battle hi khel sakte hain.");
         return;
     }
-    if(myCurrentBalance < amt){
+    const currentBal = await fetchLatestBalance();
+    if(currentBal < amt){
         showErrorModal("Insufficient balance");
         return;
     }
