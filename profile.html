@@ -91,6 +91,19 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 .header-right{display:flex;align-items:center;gap:8px;}
 
+/* PROGRESS / REFRESH LOADING LINE */
+#topProgressBar {
+    position: fixed;
+    top: 66px;
+    left: 0;
+    width: 0%;
+    height: 3px;
+    background: linear-gradient(90deg, #0284c7, #38bdf8, #22c55e);
+    z-index: 1000;
+    transition: width 0.4s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
 /* MAIN CONTAINER (Fixed between header and bottom nav) */
 .container{
     position: absolute;
@@ -372,7 +385,7 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     border-bottom:1.5px solid #bae6fd;
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:between;
 }
 .modal-header h3{font-size:16px;font-weight:900;color:#0c4a6e;}
 .modal-close{
@@ -430,8 +443,11 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <body>
 
 <!-- DYNAMIC COMPONENTS CONTAINERS -->
-<div id="header-container"></div>
 <div id="drawer-container"></div>
+<div id="header-container"></div>
+
+<!-- REFRESH LOADING LINE -->
+<div id="topProgressBar"></div>
 
 <main class="container" id="scrollContainer">
 
@@ -551,6 +567,35 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 <script src="components.js"></script>
 
 <script>
+/* Progress Loading Line Animation Trigger */
+function showProgressBar() {
+    const bar = document.getElementById("topProgressBar");
+    if (!bar) return;
+    bar.style.opacity = "1";
+    bar.style.width = "20%";
+    setTimeout(() => { bar.style.width = "60%"; }, 200);
+    setTimeout(() => { bar.style.width = "90%"; }, 500);
+}
+
+function hideProgressBar() {
+    const bar = document.getElementById("topProgressBar");
+    if (!bar) return;
+    bar.style.width = "100%";
+    setTimeout(() => {
+        bar.style.opacity = "0";
+        setTimeout(() => { bar.style.width = "0%"; }, 300);
+    }, 200);
+}
+
+// Trigger loading on page load
+window.addEventListener("DOMContentLoaded", () => {
+    showProgressBar();
+});
+
+window.addEventListener("load", () => {
+    hideProgressBar();
+});
+
 /* Touch move blocker for outer window stability */
 document.addEventListener('touchmove', function(event) {
     if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
@@ -559,6 +604,7 @@ document.addEventListener('touchmove', function(event) {
 }, { passive: false });
 
 function navigateTo(page) {
+    showProgressBar();
     if (typeof toggleMenu === "function") {
         const drawer = document.getElementById("sideDrawer");
         if (drawer && drawer.classList.contains("active")) {
@@ -664,12 +710,17 @@ function listenUserProfile() {
                 const realKycStatus = d.kycStatus || "unverified";
                 localStorage.setItem("rdxCachedKycStatus", realKycStatus);
                 renderKycBadge(realKycStatus);
+
+                // Hide progress bar once loaded
+                hideProgressBar();
             }
         }, (error) => {
             console.error("Realtime Listen Error:", error);
+            hideProgressBar();
         });
     } catch(err) {
         console.error("Profile load error:", err);
+        hideProgressBar();
     }
 }
 
@@ -725,6 +776,7 @@ window.submitManualKyc = async () => {
     const btn = document.getElementById("btnSubmitKyc");
     btn.disabled = true;
     btn.textContent = "Compressing & Uploading...";
+    showProgressBar();
 
     try {
         const frontBase64 = await compressImageFile(frontFile);
@@ -756,6 +808,7 @@ window.submitManualKyc = async () => {
     } catch(err) {
         alert("Upload error: " + err.message);
     }
+    hideProgressBar();
     btn.disabled = false;
     btn.textContent = "Submit Document For Verification";
 };
@@ -766,13 +819,19 @@ window.editName = async () => {
     const docId = userId.length === 10 ? "91" + userId : userId;
     
     try {
+        showProgressBar();
         await firebaseDB.collection("customers").doc(docId).set({ name: newName.trim() }, { merge: true });
         alert("✅ Naam Update Ho Gaya!");
-    } catch(e) { alert("Error: " + e.message); }
+    } catch(e) { 
+        alert("Error: " + e.message); 
+    } finally {
+        hideProgressBar();
+    }
 };
 
 window.logout = async () => {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    showProgressBar();
     if (userId) {
         const docId = userId.length === 10 ? "91" + userId : userId;
         try {
