@@ -589,8 +589,9 @@ async function loadUserData() {
         userRef.onSnapshot(doc => {
             if(doc.exists){
                 const d = doc.data();
-                const dep = Number(d.depositBalance || d.deposit || 0);
-                const win = Number(d.winnings || d.winningBalance || 0);
+                // Universal fallback checking all possible fields for balance and deposits
+                const dep = Number(d.wallet || d.deposit || d.balance || d.depositBalance || d.depositCash || d.realBalance || 0);
+                const win = Number(d.winningBalance || d.winnings || 0);
                 
                 myCurrentBalance = dep + win;
                 myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
@@ -799,9 +800,11 @@ function deductFromBalance(deposit, winnings, amt) {
     }
     return {
         depositBalance: newDeposit,
+        deposit: newDeposit,
+        wallet: newDeposit + newWinnings,
+        balance: newDeposit + newWinnings,
         winnings: newWinnings,
-        winningBalance: newWinnings,
-        balance: newDeposit + newWinnings
+        winningBalance: newWinnings
     };
 }
 
@@ -830,11 +833,11 @@ async function startBattle(bId, amt, oppUid) {
             const p1Data = p1Snap.data() || {};
             const p2Data = p2Snap.data() || {};
 
-            const p1Dep = Number(p1Data.depositBalance || p1Data.deposit || 0);
+            const p1Dep = Number(p1Data.wallet || p1Data.deposit || p1Data.balance || p1Data.depositBalance || p1Data.depositCash || p1Data.realBalance || 0);
             const p1Win = Number(p1Data.winnings || p1Data.winningBalance || 0);
             const p1Total = p1Dep + p1Win;
 
-            const p2Dep = Number(p2Data.depositBalance || p2Data.deposit || 0);
+            const p2Dep = Number(p2Data.wallet || p2Data.deposit || p2Data.balance || p2Data.depositBalance || p2Data.depositCash || p2Data.realBalance || 0);
             const p2Win = Number(p2Data.winnings || p2Data.winningBalance || 0);
             const p2Total = p2Dep + p2Win;
 
@@ -1033,7 +1036,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 }
 
                 const wData = winnerSnap.data() || {};
-                const currentDep = Number(wData.depositBalance || wData.deposit || 0);
+                const currentDep = Number(wData.wallet || wData.deposit || wData.balance || wData.depositBalance || 0);
                 const currentWin = Number(wData.winnings || wData.winningBalance || 0);
                 const currentPlayed = Number(wData.matchesPlayed || 0);
 
@@ -1041,7 +1044,9 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 const newTotal = currentDep + newWinnings;
 
                 t.update(winnerRef, {
+                    wallet: newTotal,
                     balance: newTotal,
+                    depositBalance: currentDep,
                     winnings: newWinnings,
                     winningBalance: newWinnings,
                     matchesPlayed: currentPlayed + 1
