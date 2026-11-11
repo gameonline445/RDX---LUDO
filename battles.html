@@ -739,4 +739,411 @@ function listenBattles() {
                 runningHTML += `
                     <div class="battle-card" ${(isCreator || isAccepter) ? `onclick="openRunningMatch('${bId}')" style="cursor:pointer;"` : ''}>
                         <div class="card-top">
-                            <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${
+                            <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
+                        </div>
+                        <div class="battle-meta">
+                            <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
+                            <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
+                        </div>
+                        <div class="vs-row">
+                            <div class="player-box"><span class="player-name">${b.creatorName || 'Player 1'}</span></div>
+                            <div class="vs-circle">VS</div>
+                            <div class="player-box"><span class="player-name">${b.acceptedName || 'Player 2'}</span></div>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+
+        // PERMANENT DUMMY RUNNING BATTLES (₹100, ₹300, ₹500, ₹2200, ₹8000)
+        const dummyBattles = [
+            { amount: 100, prize: 190, p1: "Rahul Gamer", p2: "Aman King" },
+            { amount: 300, prize: 570, p1: "Vikash Rajput", p2: "Deepak Sharma" },
+            { amount: 500, prize: 950, p1: "Rohit Ludo", p2: "Amit Meena" },
+            { amount: 2200, prize: 4180, p1: "RDX King", p2: "Royal Player" },
+            { amount: 8000, prize: 15200, p1: "HighRoller", p2: "Master Ludo" }
+        ];
+
+        dummyBattles.forEach(d => {
+            runningHTML += `
+                <div class="battle-card">
+                    <div class="card-top">
+                        <span class="badge-tag tag-live">● LIVE</span>
+                    </div>
+                    <div class="battle-meta">
+                        <div class="meta-col"><small>ENTRY</small><strong>₹${d.amount}</strong></div>
+                        <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${d.prize}</strong></div>
+                    </div>
+                    <div class="vs-row">
+                        <div class="player-box"><span class="player-name">${d.p1}</span></div>
+                        <div class="vs-circle">VS</div>
+                        <div class="player-box"><span class="player-name">${d.p2}</span></div>
+                    </div>
+                </div>
+            `;
+        });
+
+        myActiveBattlesCount = userBattleCount;
+
+        document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
+        document.getElementById("runningBattlesList").innerHTML = runningHTML;
+    });
+}
+
+async function deleteBattle(bId) {
+    if(!confirm("Battle delete karein?")) return;
+    await firebaseDB.collection("battles").doc(bId).delete();
+}
+
+async function requestPlayBattle(bId, amt) {
+    if(myActiveBattlesCount >= 1) {
+        alert("Aap ek waqt me sirf 1 battle hi khel sakte hain.");
+        return;
+    }
+    const currentBal = await fetchLatestBalance();
+    if(currentBal < amt){
+        showErrorModal("Insufficient balance");
+        return;
+    }
+    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+    const docId = "91" + cleanMobile;
+
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "requested",
+        acceptedUid: docId,
+        acceptedName: myUserName,
+        requestTime: firebase.firestore.FieldValue.serverTimestamp()
+    });
+}
+
+async function cancelMyPlayRequest(bId) {
+    if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "open",
+        acceptedUid: null,
+        acceptedName: null,
+        requestTime: null
+    });
+}
+
+async function rejectBattleRequest(bId) {
+    await firebaseDB.collection("battles").doc(bId).update({
+        status: "open",
+        acceptedUid: null,
+        acceptedName: null,
+        requestTime: null
+    });
+}
+
+function deductFromBalance(deposit, winnings, amt) {
+    let newDeposit = deposit;
+    let newWinnings = winnings;
+    let remaining = amt;
+
+    if (newDeposit >= remaining) {
+        newDeposit -= remaining;
+        remaining = 0;
+    } else {
+        remaining -= newDeposit;
+        newDeposit = 0;
+        newWinnings = Math.max(0, newWinnings - remaining);
+    }
+    return {
+        wallet: newDeposit + newWinnings,
+        balance: newDeposit + newWinnings,
+        depositBalance: newDeposit,
+        deposit: newDeposit,
+        winnings: newWinnings,
+        winningBalance: newWinnings
+    };
+}
+
+// SECURE TRANSACTION TO DEDUCT EXACT ENTRY FEE ONCE FROM BOTH USERS
+async function startBattle(bId, amt, oppUid) {
+    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+    const p1DocId = "91" + cleanMobile;
+    const p2DocId = oppUid;
+
+    try {
+        await firebaseDB.runTransaction(async t => {
+            const bRef = firebaseDB.collection("battles").doc(bId);
+            const bSnap = await t.get(bRef);
+            if(!bSnap.exists) throw new Error("Battle not found.");
+            const bData = bSnap.data();
+            if(bData.status !== "requested") throw new Error("Match already started or invalid status.");
+
+            let p1Ref = firebaseDB.collection("customers").doc(p1DocId);
+            let p2Ref = firebaseDB.collection("customers").doc(p2DocId);
+
+            let p1Snap = await t.get(p1Ref);
+            if(!p1Snap.exists){
+                p1Ref = firebaseDB.collection("customers").doc(cleanMobile);
+                p1Snap = await t.get(p1Ref);
+            }
+
+            let p2Snap = await t.get(p2Ref);
+            if(!p2Snap.exists){
+                p2Ref = firebaseDB.collection("customers").doc(p2DocId.replace(/^91/,""));
+                p2Snap = await t.get(p2Ref);
+            }
+
+            const p1Data = p1Snap.data() || {};
+            const p2Data = p2Snap.data() || {};
+
+            const p1Dep = Number(p1Data.wallet || p1Data.deposit || p1Data.balance || p1Data.depositBalance || 0);
+            const p1Win = Number(p1Data.winnings || p1Data.winningBalance || 0);
+            const p1Total = p1Dep + p1Win;
+
+            const p2Dep = Number(p2Data.wallet || p2Data.deposit || p2Data.balance || p2Data.depositBalance || 0);
+            const p2Win = Number(p2Data.winnings || p2Data.winningBalance || 0);
+            const p2Total = p2Dep + p2Win;
+
+            if(p1Total < amt || p2Total < amt){
+                throw new Error("Dono players mein se kisi ke paas paryaapt balance nahi hai.");
+            }
+
+            const p1Updates = deductFromBalance(p1Dep, p1Win, amt);
+            const p2Updates = deductFromBalance(p2Dep, p2Win, amt);
+
+            t.update(p1Ref, p1Updates);
+            t.update(p2Ref, p2Updates);
+
+            t.update(bRef, {
+                status: "live",
+                startedAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
+        alert("✅ Match successfully start ho gaya aur dono users ka payment cut ho gaya!");
+    } catch(err) {
+        alert("Error: " + err.message);
+    }
+}
+
+function renderRoomView(b, isCreator) {
+    document.getElementById("lobbyView").style.display = "none";
+    document.getElementById("roomView").style.display = "block";
+
+    document.getElementById("roomEntryFee").textContent = "₹" + b.amount;
+    document.getElementById("roomPrizeFee").textContent = "₹" + b.prize;
+    document.getElementById("roomP1Name").textContent = b.creatorName;
+    document.getElementById("roomP2Name").textContent = b.acceptedName;
+    document.getElementById("roomP1Avatar").textContent = (b.creatorName || "P").charAt(0).toUpperCase();
+    document.getElementById("roomP2Avatar").textContent = (b.acceptedName || "P").charAt(0).toUpperCase();
+
+    if(b.status === "conflict") {
+        document.getElementById("roomLiveBadge").className = "badge-tag tag-conflict";
+        document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT (Under Admin Review)";
+    } else {
+        document.getElementById("roomLiveBadge").className = "badge-tag tag-live";
+        document.getElementById("roomLiveBadge").textContent = "● LIVE MATCH";
+    }
+
+    if(b.roomCode){
+        document.getElementById("setRoomCodeWrap").style.display = "none";
+        document.getElementById("waitingForCodeWrap").style.display = "none";
+        document.getElementById("showRoomCodeWrap").style.display = "flex";
+        document.getElementById("displayRoomCode").textContent = b.roomCode;
+    } else {
+        if(isCreator){
+            document.getElementById("setRoomCodeWrap").style.display = "block";
+            document.getElementById("waitingForCodeWrap").style.display = "none";
+            document.getElementById("showRoomCodeWrap").style.display = "none";
+        } else {
+            document.getElementById("setRoomCodeWrap").style.display = "none";
+            document.getElementById("waitingForCodeWrap").style.display = "block";
+            document.getElementById("showRoomCodeWrap").style.display = "none";
+        }
+    }
+}
+
+async function submitRoomCode() {
+    const code = document.getElementById("manualRoomCodeInput").value.trim();
+    if(!code){ alert("Room code likhein."); return; }
+    await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
+}
+
+function copyRoomCode() {
+    const code = document.getElementById("displayRoomCode").textContent;
+    navigator.clipboard.writeText(code);
+    alert("Room Code Copied: " + code);
+}
+
+function openProofBox(type) {
+    selectedResultType = type;
+    document.getElementById("proofUploadBox").style.display = "block";
+    const label = document.getElementById("proofBoxLabel");
+    const btn = document.getElementById("btnSubmitProof");
+
+    if(type === 'won') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof`;
+        btn.textContent = "Submit Proof & Win Claim";
+    } else if(type === 'lost') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional / Dispute Proof)`;
+        btn.textContent = "Submit Loss Claim";
+    } else if(type === 'cancel') {
+        label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Cancel / Dispute Proof Screenshot`;
+        btn.textContent = "Submit Cancel Claim";
+    }
+}
+
+function compressImageFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+            const img = new Image();
+            img.src = event.target.result;
+            img.onload = () => {
+                const canvas = document.createElement("canvas");
+                let width = img.width;
+                let height = img.height;
+                const maxDim = 800;
+
+                if (width > height && width > maxDim) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                } else if (height > maxDim) {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, width, height);
+
+                const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
+                resolve(compressedBase64);
+            };
+            img.onerror = err => reject(err);
+        };
+        reader.onerror = err => reject(err);
+    });
+}
+
+async function uploadProofAndSubmit() {
+    const file = document.getElementById("winProofFile").files[0];
+    if(selectedResultType === 'won' && !file) {
+        alert("Kripya winning screenshot upload karein.");
+        return;
+    }
+
+    const btn = document.getElementById("btnSubmitProof");
+    btn.disabled = true;
+    btn.textContent = "Uploading Proof...";
+
+    try {
+        let proofBase64 = null;
+        if(file) {
+            proofBase64 = await compressImageFile(file);
+        }
+        const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
+        const docId = "91" + cleanMobile;
+
+        await processResultWithAutoSettlement(docId, selectedResultType, proofBase64);
+
+        document.getElementById("proofUploadBox").style.display = "none";
+        document.getElementById("resultBtnGrid").style.display = "none";
+        document.getElementById("resultSubmittedMsg").style.display = "block";
+        alert("✅ Claim & Proof Submitted! Agar dono users ka result match hua toh winnings automatically credit ho jayengi, warna conflict admin ke paas jayega.");
+    } catch(err) {
+        alert("Error: " + err.message);
+    }
+    btn.disabled = false;
+    btn.textContent = "Submit Proof & Claim";
+}
+
+// AUTO-SETTLEMENT ON MATCH RESULTS
+async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
+    await firebaseDB.runTransaction(async t => {
+        const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
+        const battleDoc = await t.get(battleRef);
+        if(!battleDoc.exists) return;
+
+        const b = battleDoc.data();
+        if(b.status === "completed" || b.status === "cancelled") return;
+
+        const p1Uid = b.creatorUid;
+        const p2Uid = b.acceptedUid;
+        const prizeAmt = Number(b.prize || 0);
+
+        const otherUid = (myUid === p1Uid) ? p2Uid : p1Uid;
+        const myResult = myType;
+        const otherResult = b[`result_${otherUid}`] || null;
+
+        let updates = {
+            [`result_${myUid}`]: myResult
+        };
+        if(proofBase64) {
+            updates[`proof_${myUid}`] = proofBase64;
+        }
+
+        if(myResult === "cancel" || otherResult === "cancel") {
+            updates.status = "conflict";
+            updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
+        }
+        else if(otherResult !== null) {
+            if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
+                const winnerUid = (myResult === "won") ? myUid : otherUid;
+                let winnerRef = firebaseDB.collection("customers").doc(winnerUid);
+                let winnerSnap = await t.get(winnerRef);
+
+                if(!winnerSnap.exists){
+                    winnerRef = firebaseDB.collection("customers").doc(winnerUid.replace(/^91/,""));
+                    winnerSnap = await t.get(winnerRef);
+                }
+
+                const wData = winnerSnap.data() || {};
+                const currentDep = Number(wData.wallet || wData.deposit || wData.balance || wData.depositBalance || 0);
+                const currentWin = Number(wData.winnings || wData.winningBalance || 0);
+                const currentPlayed = Number(wData.matchesPlayed || 0);
+
+                const newWinnings = currentWin + prizeAmt;
+                const newTotal = currentDep + newWinnings;
+
+                t.update(winnerRef, {
+                    wallet: newTotal,
+                    balance: newTotal,
+                    depositBalance: currentDep,
+                    winnings: newWinnings,
+                    winningBalance: newWinnings,
+                    matchesPlayed: currentPlayed + 1
+                });
+
+                updates.status = "completed";
+                updates.winnerUid = winnerUid;
+                updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
+                updates.resolvedBy = "auto";
+            }
+            else {
+                // If both selected 'won' or both selected 'lost', send to admin conflict review
+                updates.status = "conflict";
+                updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
+        } else {
+            updates.status = "conflict";
+        }
+
+        t.update(battleRef, updates);
+    });
+}
+
+function showLobbyView() {
+    document.getElementById("roomView").style.display = "none";
+    document.getElementById("lobbyView").style.display = "block";
+}
+
+function openRunningMatch(bId) {
+    activeBattleId = bId;
+    document.getElementById("lobbyView").style.display = "none";
+    document.getElementById("roomView").style.display = "block";
+}
+
+window.addEventListener("load", () => {
+    loadUserData();
+    listenBattles();
+});
+</script>
+
+</body>
+</html>
