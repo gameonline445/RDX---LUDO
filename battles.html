@@ -410,7 +410,7 @@ button,input{font:inherit;}
 
     <!-- VIEW 2: ACTIVE MATCH ROOM -->
     <div id="roomView">
-        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back</button>
+        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back to Lobby</button>
 
         <div class="battle-card" style="margin-bottom:10px;">
             <span class="badge-tag tag-live" id="roomLiveBadge">● LIVE MATCH</span>
@@ -665,7 +665,7 @@ async function createBattle() {
     }
 }
 
-// 2. REAL-TIME BATTLES LISTENER + PERMANENT DUMMY RUNNING BATTLES
+// 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
     if(!userId) return;
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
@@ -686,7 +686,7 @@ function listenBattles() {
             const isCreator = creatorClean === myClean10;
             const isAccepter = accepterClean === myClean10;
 
-            // Ignore completed or cancelled matches for active count & room view
+            // Ignore completed or cancelled matches from active room view
             if(b.status === "completed" || b.status === "cancelled") {
                 return;
             }
@@ -766,7 +766,7 @@ function listenBattles() {
             }
         });
 
-        // If user was in room view but match became completed/cancelled, return to lobby automatically
+        // If user was in room view but match became completed/cancelled/resolved, return to lobby automatically
         if(!isUserInActiveLiveMatch && document.getElementById("roomView").style.display === "block") {
             showLobbyView();
         }
@@ -1096,10 +1096,9 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // IF EITHER USER OR BOTH SELECT CANCEL
+        // IF EITHER USER OR BOTH SELECT CANCEL -> REFUND BOTH ENTRY FEES AND MARK CANCELLED
         if(myResult === "cancel" || otherResult === "cancel") {
             if(otherResult !== null) {
-                // If both submitted, refund both entry fees back to their wallets and mark cancelled
                 let p1Ref = firebaseDB.collection("customers").doc(p1Uid);
                 let p2Ref = firebaseDB.collection("customers").doc(p2Uid);
 
