@@ -622,7 +622,7 @@ async function fetchLatestBalance() {
     return 0;
 }
 
-// 1. CREATE BATTLE
+// 1. CREATE BATTLE (DOES NOT DEDUCT BALANCE YET)
 async function createBattle() {
     if(myActiveBattlesCount >= 1) {
         alert("Aap ek waqt me sirf 1 battle hi laga sakte hain.");
@@ -851,7 +851,25 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-// SECURE DEDUCTION HELPER
+// ROBUST CUSTOMER FINDER HELPER FOR TRANSACTIONS
+async function getCustomerDoc(t, uidStr) {
+    const clean = String(uidStr || "").replace(/\D/g, "");
+    const ten = clean.slice(-10);
+    const possibleIds = [ten, "91" + ten, "+91" + ten, clean];
+    
+    for (let id of possibleIds) {
+        if (!id) continue;
+        let ref = firebaseDB.collection("customers").doc(id);
+        let snap = await t.get(ref);
+        if (snap.exists) {
+            return { ref, snap, data: snap.data() };
+        }
+    }
+    let defaultRef = firebaseDB.collection("customers").doc("91" + ten);
+    let defaultSnap = await t.get(defaultRef);
+    return { ref: defaultRef, snap: defaultSnap, data: defaultSnap.exists ? defaultSnap.data() : {} };
+}
+
 function deductFromBalance(deposit, winnings, amt) {
     let newDeposit = deposit;
     let newWinnings = winnings;
@@ -875,7 +893,7 @@ function deductFromBalance(deposit, winnings, amt) {
     };
 }
 
-// 3. START BATTLE & DEDUCT EXACT ENTRY FEE ONCE FROM BOTH USERS
+// 3. START BATTLE & DEDUCT EXACT ENTRY FEE ONCE FROM BOTH USERS' WALLETS
 async function startBattle(bId, amt, oppUid) {
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
     const p1DocId = "91" + cleanMobile;
@@ -889,23 +907,11 @@ async function startBattle(bId, amt, oppUid) {
             const bData = bSnap.data();
             if(bData.status !== "requested") throw new Error("Match already started or invalid status.");
 
-            let p1Ref = firebaseDB.collection("customers").doc(p1DocId);
-            let p2Ref = firebaseDB.collection("customers").doc(p2DocId);
+            const p1Obj = await getCustomerDoc(t, p1DocId);
+            const p2Obj = await getCustomerDoc(t, p2DocId);
 
-            let p1Snap = await t.get(p1Ref);
-            if(!p1Snap.exists){
-                p1Ref = firebaseDB.collection("customers").doc(cleanMobile);
-                p1Snap = await t.get(p1Ref);
-            }
-
-            let p2Snap = await t.get(p2Ref);
-            if(!p2Snap.exists){
-                p2Ref = firebaseDB.collection("customers").doc(p2DocId.replace(/^91/,""));
-                p2Snap = await t.get(p2Ref);
-            }
-
-            const p1Data = p1Snap.data() || {};
-            const p2Data = p2Snap.data() || {};
+            const p1Data = p1Obj.data;
+            const p2Data = p2Obj.data;
 
             const p1Dep = Number(p1Data.wallet || p1Data.deposit || p1Data.balance || p1Data.depositBalance || 0);
             const p1Win = Number(p1Data.winnings || p1Data.winningBalance || 0);
@@ -922,15 +928,15 @@ async function startBattle(bId, amt, oppUid) {
             const p1Updates = deductFromBalance(p1Dep, p1Win, amt);
             const p2Updates = deductFromBalance(p2Dep, p2Win, amt);
 
-            t.update(p1Ref, p1Updates);
-            t.update(p2Ref, p2Updates);
+            t.update(p1Obj.ref, p1Updates);
+            t.update(p2Obj.ref, p2Updates);
 
             t.update(bRef, {
                 status: "live",
                 startedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
-        alert("✅ Match successfully start ho gaya aur dono users ka payment cut ho gaya!");
+        alert("✅ Match successfully start ho gaya aur dono users ka payment deduct ho gaya!");
     } catch(err) {
         alert("Error: " + err.message);
     }
@@ -1062,7 +1068,7 @@ async function uploadProofAndSubmit() {
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
-        alert("✅ Claim & Proof Submitted! Agar dono users ka result match hua toh winnings automatically credit ho jayengi, warna conflict admin ke paas jayega.");
+        alert("✅ Claim & Proof Submitted! Agar dono users ka result match hua toh winnings automatically credit ho jayengi, ya cancel par refund mil jayega.");
     } catch(err) {
         alert("Error: " + err.message);
     }
@@ -1070,7 +1076,7 @@ async function uploadProofAndSubmit() {
     btn.textContent = "Submit Proof & Claim";
 }
 
-// 4. AUTO-SETTLEMENT ON MATCH RESULTS (REFUND ON CANCEL / WIN CREDITING)
+// 4. AUTO-SETTLEMENT ON MATCH RESULTS (REFUND ENTRY FEE ON MUTUAL CANCEL)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -1096,25 +1102,21 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // IF EITHER USER OR BOTH SELECT CANCEL -> REFUND BOTH ENTRY FEES AND MARK CANCELLED
+        // IF EITHER USER OR BOTH SELECT CANCEL
         if(myResult === "cancel" || otherResult === "cancel") {
             if(otherResult !== null) {
-                let p1Ref = firebaseDB.collection("customers").doc(p1Uid);
-                let p2Ref = firebaseDB.collection("customers").doc(p2Uid);
+                // Both users submitted results, and at least one is cancel -> REFUND BOTH ENTRY FEES
+                const p1Obj = await getCustomerDoc(t, p1Uid);
+                const p2Obj = await getCustomerDoc(t, p2Uid);
 
-                let p1Snap = await t.get(p1Ref);
-                if(!p1Snap.exists) p1Ref = firebaseDB.collection("customers").doc(p1Uid.replace(/^91/,""));
-                let p2Snap = await t.get(p2Ref);
-                if(!p2Snap.exists) p2Ref = firebaseDB.collection("customers").doc(p2Uid.replace(/^91/,""));
-
-                const p1D = p1Snap.data() || {};
-                const p2D = p2Snap.data() || {};
+                const p1D = p1Obj.data;
+                const p2D = p2Obj.data;
 
                 const p1Wallet = Number(p1D.wallet || p1D.balance || p1D.depositBalance || 0) + entryAmt;
                 const p2Wallet = Number(p2D.wallet || p2D.balance || p2D.depositBalance || 0) + entryAmt;
 
-                t.update(p1Ref, { wallet: p1Wallet, balance: p1Wallet, depositBalance: p1Wallet });
-                t.update(p2Ref, { wallet: p2Wallet, balance: p2Wallet, depositBalance: p2Wallet });
+                t.update(p1Obj.ref, { wallet: p1Wallet, balance: p1Wallet, depositBalance: p1Wallet });
+                t.update(p2Obj.ref, { wallet: p2Wallet, balance: p2Wallet, depositBalance: p2Wallet });
 
                 updates.status = "cancelled";
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -1126,15 +1128,9 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
         else if(otherResult !== null) {
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
-                let winnerRef = firebaseDB.collection("customers").doc(winnerUid);
-                let winnerSnap = await t.get(winnerRef);
+                const winnerObj = await getCustomerDoc(t, winnerUid);
 
-                if(!winnerSnap.exists){
-                    winnerRef = firebaseDB.collection("customers").doc(winnerUid.replace(/^91/,""));
-                    winnerSnap = await t.get(winnerRef);
-                }
-
-                const wData = winnerSnap.data() || {};
+                const wData = winnerObj.data;
                 const currentDep = Number(wData.wallet || wData.deposit || wData.balance || wData.depositBalance || 0);
                 const currentWin = Number(wData.winnings || wData.winningBalance || 0);
                 const currentPlayed = Number(wData.matchesPlayed || 0);
@@ -1142,7 +1138,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 const newWinnings = currentWin + prizeAmt;
                 const newTotal = currentDep + newWinnings;
 
-                t.update(winnerRef, {
+                t.update(winnerObj.ref, {
                     wallet: newTotal,
                     balance: newTotal,
                     depositBalance: currentDep,
