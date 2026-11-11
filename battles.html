@@ -675,6 +675,7 @@ function listenBattles() {
         let openHTML = "";
         let runningHTML = "";
         let userBattleCount = 0;
+        let isUserInActiveLiveMatch = false;
 
         snap.forEach(doc => {
             const b = doc.data();
@@ -685,11 +686,21 @@ function listenBattles() {
             const isCreator = creatorClean === myClean10;
             const isAccepter = accepterClean === myClean10;
 
+            // Ignore completed or cancelled matches for active count & room view
+            if(b.status === "completed" || b.status === "cancelled") {
+                return;
+            }
+
             if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 userBattleCount++;
             }
 
-            if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+            if(b.status === "live" && (isCreator || isAccepter)){
+                isUserInActiveLiveMatch = true;
+                activeBattleId = bId;
+                renderRoomView(b, isCreator);
+            } else if(b.status === "conflict" && (isCreator || isAccepter)){
+                isUserInActiveLiveMatch = true;
                 activeBattleId = bId;
                 renderRoomView(b, isCreator);
             }
@@ -754,6 +765,11 @@ function listenBattles() {
                 `;
             }
         });
+
+        // If user was in room view but match became completed/cancelled, return to lobby automatically
+        if(!isUserInActiveLiveMatch && document.getElementById("roomView").style.display === "block") {
+            showLobbyView();
+        }
 
         // PERMANENT DUMMY RUNNING BATTLES (₹100, ₹300, ₹500, ₹2200, ₹8000)
         const dummyBattles = [
@@ -835,6 +851,7 @@ async function rejectBattleRequest(bId) {
     });
 }
 
+// SECURE DEDUCTION HELPER
 function deductFromBalance(deposit, winnings, amt) {
     let newDeposit = deposit;
     let newWinnings = winnings;
@@ -858,7 +875,7 @@ function deductFromBalance(deposit, winnings, amt) {
     };
 }
 
-// SECURE TRANSACTION TO DEDUCT EXACT ENTRY FEE ONCE FROM BOTH USERS
+// 3. START BATTLE & DEDUCT EXACT ENTRY FEE ONCE FROM BOTH USERS
 async function startBattle(bId, amt, oppUid) {
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
     const p1DocId = "91" + cleanMobile;
@@ -1053,7 +1070,7 @@ async function uploadProofAndSubmit() {
     btn.textContent = "Submit Proof & Claim";
 }
 
-// AUTO-SETTLEMENT ON MATCH RESULTS
+// 4. AUTO-SETTLEMENT ON MATCH RESULTS (REFUND ON CANCEL / WIN CREDITING)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -1065,6 +1082,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 
         const p1Uid = b.creatorUid;
         const p2Uid = b.acceptedUid;
+        const entryAmt = Number(b.amount || 0);
         const prizeAmt = Number(b.prize || 0);
 
         const otherUid = (myUid === p1Uid) ? p2Uid : p1Uid;
@@ -1078,9 +1096,33 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
+        // IF EITHER USER OR BOTH SELECT CANCEL
         if(myResult === "cancel" || otherResult === "cancel") {
-            updates.status = "conflict";
-            updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
+            if(otherResult !== null) {
+                // If both submitted, refund both entry fees back to their wallets and mark cancelled
+                let p1Ref = firebaseDB.collection("customers").doc(p1Uid);
+                let p2Ref = firebaseDB.collection("customers").doc(p2Uid);
+
+                let p1Snap = await t.get(p1Ref);
+                if(!p1Snap.exists) p1Ref = firebaseDB.collection("customers").doc(p1Uid.replace(/^91/,""));
+                let p2Snap = await t.get(p2Ref);
+                if(!p2Snap.exists) p2Ref = firebaseDB.collection("customers").doc(p2Uid.replace(/^91/,""));
+
+                const p1D = p1Snap.data() || {};
+                const p2D = p2Snap.data() || {};
+
+                const p1Wallet = Number(p1D.wallet || p1D.balance || p1D.depositBalance || 0) + entryAmt;
+                const p2Wallet = Number(p2D.wallet || p2D.balance || p2D.depositBalance || 0) + entryAmt;
+
+                t.update(p1Ref, { wallet: p1Wallet, balance: p1Wallet, depositBalance: p1Wallet });
+                t.update(p2Ref, { wallet: p2Wallet, balance: p2Wallet, depositBalance: p2Wallet });
+
+                updates.status = "cancelled";
+                updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
+            } else {
+                updates.status = "conflict";
+                updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
         }
         else if(otherResult !== null) {
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
@@ -1116,7 +1158,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 updates.resolvedBy = "auto";
             }
             else {
-                // If both selected 'won' or both selected 'lost', send to admin conflict review
+                // Conflicting results (e.g. both won or both lost) -> Send to Admin Conflict Review
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
             }
