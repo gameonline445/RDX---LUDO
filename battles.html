@@ -13,14 +13,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
-// BFCache Reload Guard
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
         window.location.reload();
     }
 });
 
-// Authentication Security Check
 (function checkAuth() {
     const isLoggedIn = localStorage.getItem("rdxLoggedIn");
     if (!isLoggedIn || isLoggedIn !== "true") {
@@ -49,7 +47,6 @@ try {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
-/* Screen Lock & Background matching other pages */
 html, body {
     width: 100%;
     height: 100%;
@@ -67,7 +64,6 @@ html, body {
 }
 button,input{font:inherit;}
 
-/* MAIN CONTAINER (Fixed between header and bottom nav) */
 .container{
     position: absolute;
     top: 66px;
@@ -85,7 +81,6 @@ button,input{font:inherit;}
     gap: 12px;
 }
 
-/* SET BATTLE CARD */
 .set-card{
     background:#ffffff;
     border:1.5px solid #7dd3fc;
@@ -123,7 +118,6 @@ button,input{font:inherit;}
     box-shadow:0 4px 14px rgba(37,99,235,0.3);
 }
 
-/* SECTION TITLES */
 .section-head{
     display:flex;
     align-items:center;
@@ -134,7 +128,6 @@ button,input{font:inherit;}
     margin:12px 0 8px;
 }
 
-/* BATTLE CARDS */
 .battle-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
@@ -217,7 +210,6 @@ button,input{font:inherit;}
 .btn-reject{background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-cancel-req{background:#f1f5f9;border:1.5px solid #cbd5e1;color:#475569;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;cursor:pointer;}
 
-/* MATCH ROOM VIEW */
 #roomView{display:none;}
 .back-top-btn{
     display:inline-flex;
@@ -286,7 +278,6 @@ button,input{font:inherit;}
     margin-bottom:6px;
 }
 
-/* WIN, LOST, CANCEL BUTTONS */
 .status-update-grid-3{
     display:grid;
     grid-template-columns:1fr 1fr 1fr;
@@ -297,7 +288,6 @@ button,input{font:inherit;}
 .btn-lost{background:#dc2626;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
 .btn-cancel{background:#64748b;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
 
-/* PROOF UPLOAD BOX */
 .proof-upload-box{
     background:#f8fafc;
     border:1.5px dashed #bae6fd;
@@ -320,7 +310,6 @@ button,input{font:inherit;}
     cursor:pointer;
 }
 
-/* INSUFFICIENT BALANCE MODAL */
 .modal-overlay{
     position:fixed;
     inset:0;
@@ -386,13 +375,11 @@ button,input{font:inherit;}
 
 <body>
 
-<!-- DYNAMIC HEADER & DRAWER CONTAINERS -->
 <div id="drawer-container"></div>
 <div id="header-container"></div>
 
 <main class="container" id="scrollContainer">
 
-    <!-- VIEW 1: BATTLE LOBBY -->
     <div id="lobbyView">
         <div class="set-card">
             <input type="number" id="battleAmountInput" class="bet-input" placeholder="Enter Amount (Min ₹100)" min="100">
@@ -408,7 +395,6 @@ button,input{font:inherit;}
         <div id="runningBattlesList"></div>
     </div>
 
-    <!-- VIEW 2: ACTIVE MATCH ROOM -->
     <div id="roomView">
         <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back to Lobby</button>
 
@@ -431,7 +417,6 @@ button,input{font:inherit;}
             </div>
         </div>
 
-        <!-- ROOM CODE BOX -->
         <div class="room-box">
             <h4 style="font-size:14px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-key"></i> Room Code</h4>
             <small style="color:#64748b; font-weight:600;">Share & join in Ludo King</small>
@@ -465,7 +450,6 @@ button,input{font:inherit;}
             <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
-        <!-- WIN, LOST, CANCEL OPTIONS -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
@@ -476,7 +460,6 @@ button,input{font:inherit;}
                 <button class="btn-cancel" onclick="openProofBox('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
-            <!-- PROOF UPLOAD (FOR WIN, LOST, CANCEL) -->
             <div class="proof-upload-box" id="proofUploadBox">
                 <label id="proofBoxLabel"><i class="fa-solid fa-image"></i> Upload Screenshot / Video Proof</label>
                 <input type="file" id="winProofFile" accept="image/*,video/*">
@@ -493,7 +476,6 @@ button,input{font:inherit;}
 
 </main>
 
-<!-- INSUFFICIENT BALANCE MODAL -->
 <div class="modal-overlay" id="errorModal">
     <div class="modal-box">
         <button class="modal-close-btn" onclick="closeErrorModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -505,14 +487,10 @@ button,input{font:inherit;}
     </div>
 </div>
 
-<!-- DYNAMIC BOTTOM NAVIGATION CONTAINER -->
 <div id="nav-container" data-active="battle"></div>
-
-<!-- COMPONENTS JS LINK -->
 <script src="components.js"></script>
 
 <script>
-/* Pull-to-Refresh & Touch blocker logic */
 let startY = 0;
 const scrollContainer = document.getElementById('scrollContainer');
 
@@ -574,47 +552,39 @@ async function loadUserData() {
     }
     const cleanMobile = String(userId).replace(/\D/g,"");
     const mobile10Digits = cleanMobile.slice(-10);
-    const docIdWith91 = "91" + mobile10Digits;
+    const possibleIds = [mobile10Digits, "91" + mobile10Digits, "+91" + mobile10Digits];
 
     try {
-        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
-        let snap = await userRef.get();
-
-        if(!snap.exists){
-            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-            snap = await userRef.get();
-        }
-
-        if(snap.exists){
-            const d = snap.data();
-            myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
+        for (let id of possibleIds) {
+            let ref = firebaseDB.collection("customers").doc(id);
+            let snap = await ref.get();
+            if(snap.exists) {
+                const d = snap.data();
+                myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
+                break;
+            }
         }
     } catch(err) {
         console.error("Load user data error:", err);
     }
 }
 
-// FRESH LIVE BALANCE CHECKER FROM FIREBASE
 async function fetchLatestBalance() {
     if(!userId) return 0;
     const cleanMobile = String(userId).replace(/\D/g,"");
     const mobile10Digits = cleanMobile.slice(-10);
-    const docIdWith91 = "91" + mobile10Digits;
+    const possibleIds = [mobile10Digits, "91" + mobile10Digits, "+91" + mobile10Digits];
 
     try {
-        let userRef = firebaseDB.collection("customers").doc(docIdWith91);
-        let snap = await userRef.get();
-
-        if(!snap.exists){
-            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-            snap = await userRef.get();
-        }
-
-        if(snap.exists){
-            const d = snap.data();
-            const dep = Number(d.wallet || d.deposit || d.balance || d.depositBalance || d.depositCash || d.realBalance || 0);
-            const win = Number(d.winningBalance || d.winnings || 0);
-            return dep + win;
+        for (let id of possibleIds) {
+            let ref = firebaseDB.collection("customers").doc(id);
+            let snap = await ref.get();
+            if(snap.exists) {
+                const d = snap.data();
+                const dep = Number(d.depositBalance || d.balance || 0);
+                const win = Number(d.winnings || 0);
+                return dep + win;
+            }
         }
     } catch(err) {
         console.error("Fetch balance error:", err);
@@ -622,7 +592,6 @@ async function fetchLatestBalance() {
     return 0;
 }
 
-// 1. CREATE BATTLE (DOES NOT DEDUCT BALANCE YET)
 async function createBattle() {
     if(myActiveBattlesCount >= 1) {
         alert("Aap ek waqt me sirf 1 battle hi laga sakte hain.");
@@ -665,7 +634,6 @@ async function createBattle() {
     }
 }
 
-// 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
     if(!userId) return;
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
@@ -686,7 +654,6 @@ function listenBattles() {
             const isCreator = creatorClean === myClean10;
             const isAccepter = accepterClean === myClean10;
 
-            // Ignore completed or cancelled matches from active room view
             if(b.status === "completed" || b.status === "cancelled") {
                 return;
             }
@@ -766,12 +733,10 @@ function listenBattles() {
             }
         });
 
-        // If user was in room view but match became completed/cancelled/resolved, return to lobby automatically
         if(!isUserInActiveLiveMatch && document.getElementById("roomView").style.display === "block") {
             showLobbyView();
         }
 
-        // PERMANENT DUMMY RUNNING BATTLES (₹100, ₹300, ₹500, ₹2200, ₹8000)
         const dummyBattles = [
             { amount: 100, prize: 190, p1: "Rahul Gamer", p2: "Aman King" },
             { amount: 300, prize: 570, p1: "Vikash Rajput", p2: "Deepak Sharma" },
@@ -851,8 +816,7 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-// ROBUST CUSTOMER FINDER HELPER FOR TRANSACTIONS
-async function getCustomerDoc(t, uidStr) {
+async function getCustomerDocByUid(t, uidStr) {
     const clean = String(uidStr || "").replace(/\D/g, "");
     const ten = clean.slice(-10);
     const possibleIds = [ten, "91" + ten, "+91" + ten, clean];
@@ -870,6 +834,7 @@ async function getCustomerDoc(t, uidStr) {
     return { ref: defaultRef, snap: defaultSnap, data: defaultSnap.exists ? defaultSnap.data() : {} };
 }
 
+// STRICT DEDUCTION FROM depositBalance & winnings
 function deductFromBalance(deposit, winnings, amt) {
     let newDeposit = deposit;
     let newWinnings = winnings;
@@ -884,16 +849,12 @@ function deductFromBalance(deposit, winnings, amt) {
         newWinnings = Math.max(0, newWinnings - remaining);
     }
     return {
-        wallet: newDeposit + newWinnings,
-        balance: newDeposit + newWinnings,
         depositBalance: newDeposit,
-        deposit: newDeposit,
-        winnings: newWinnings,
-        winningBalance: newWinnings
+        balance: newDeposit,
+        winnings: newWinnings
     };
 }
 
-// 3. START BATTLE & DEDUCT EXACT ENTRY FEE ONCE FROM BOTH USERS' WALLETS
 async function startBattle(bId, amt, oppUid) {
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
     const p1DocId = "91" + cleanMobile;
@@ -907,18 +868,18 @@ async function startBattle(bId, amt, oppUid) {
             const bData = bSnap.data();
             if(bData.status !== "requested") throw new Error("Match already started or invalid status.");
 
-            const p1Obj = await getCustomerDoc(t, p1DocId);
-            const p2Obj = await getCustomerDoc(t, p2DocId);
+            const p1Obj = await getCustomerDocByUid(t, p1DocId);
+            const p2Obj = await getCustomerDocByUid(t, p2DocId);
 
             const p1Data = p1Obj.data;
             const p2Data = p2Obj.data;
 
-            const p1Dep = Number(p1Data.wallet || p1Data.deposit || p1Data.balance || p1Data.depositBalance || 0);
-            const p1Win = Number(p1Data.winnings || p1Data.winningBalance || 0);
+            const p1Dep = Number(p1Data.depositBalance || p1Data.balance || 0);
+            const p1Win = Number(p1Data.winnings || 0);
             const p1Total = p1Dep + p1Win;
 
-            const p2Dep = Number(p2Data.wallet || p2Data.deposit || p2Data.balance || p2Data.depositBalance || 0);
-            const p2Win = Number(p2Data.winnings || p2Data.winningBalance || 0);
+            const p2Dep = Number(p2Data.depositBalance || p2Data.balance || 0);
+            const p2Win = Number(p2Data.winnings || 0);
             const p2Total = p2Dep + p2Win;
 
             if(p1Total < amt || p2Total < amt){
@@ -1068,7 +1029,7 @@ async function uploadProofAndSubmit() {
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
-        alert("✅ Claim & Proof Submitted! Agar dono users ka result match hua toh winnings automatically credit ho jayengi, ya cancel par refund mil jayega.");
+        alert("✅ Claim & Proof Submitted!");
     } catch(err) {
         alert("Error: " + err.message);
     }
@@ -1076,7 +1037,6 @@ async function uploadProofAndSubmit() {
     btn.textContent = "Submit Proof & Claim";
 }
 
-// 4. AUTO-SETTLEMENT ON MATCH RESULTS (REFUND ENTRY FEE ON MUTUAL CANCEL)
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
     await firebaseDB.runTransaction(async t => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
@@ -1102,21 +1062,19 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        // IF EITHER USER OR BOTH SELECT CANCEL
         if(myResult === "cancel" || otherResult === "cancel") {
             if(otherResult !== null) {
-                // Both users submitted results, and at least one is cancel -> REFUND BOTH ENTRY FEES
-                const p1Obj = await getCustomerDoc(t, p1Uid);
-                const p2Obj = await getCustomerDoc(t, p2Uid);
+                const p1Obj = await getCustomerDocByUid(t, p1Uid);
+                const p2Obj = await getCustomerDocByUid(t, p2Uid);
 
                 const p1D = p1Obj.data;
                 const p2D = p2Obj.data;
 
-                const p1Wallet = Number(p1D.wallet || p1D.balance || p1D.depositBalance || 0) + entryAmt;
-                const p2Wallet = Number(p2D.wallet || p2D.balance || p2D.depositBalance || 0) + entryAmt;
+                const p1Dep = Number(p1D.depositBalance || p1D.balance || 0) + entryAmt;
+                const p2Dep = Number(p2D.depositBalance || p2D.balance || 0) + entryAmt;
 
-                t.update(p1Obj.ref, { wallet: p1Wallet, balance: p1Wallet, depositBalance: p1Wallet });
-                t.update(p2Obj.ref, { wallet: p2Wallet, balance: p2Wallet, depositBalance: p2Wallet });
+                t.update(p1Obj.ref, { depositBalance: p1Dep, balance: p1Dep });
+                t.update(p2Obj.ref, { depositBalance: p2Dep, balance: p2Dep });
 
                 updates.status = "cancelled";
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
@@ -1128,20 +1086,15 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
         else if(otherResult !== null) {
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
-                const winnerObj = await getCustomerDoc(t, winnerUid);
+                const winnerObj = await getCustomerDocByUid(t, winnerUid);
 
                 const wData = winnerObj.data;
-                const currentDep = Number(wData.wallet || wData.deposit || wData.balance || wData.depositBalance || 0);
-                const currentWin = Number(wData.winnings || wData.winningBalance || 0);
+                const currentWin = Number(wData.winnings || 0);
                 const currentPlayed = Number(wData.matchesPlayed || 0);
 
                 const newWinnings = currentWin + prizeAmt;
-                const newTotal = currentDep + newWinnings;
 
                 t.update(winnerObj.ref, {
-                    wallet: newTotal,
-                    balance: newTotal,
-                    depositBalance: currentDep,
                     winnings: newWinnings,
                     winningBalance: newWinnings,
                     matchesPlayed: currentPlayed + 1
@@ -1153,7 +1106,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 updates.resolvedBy = "auto";
             }
             else {
-                // Conflicting results (e.g. both won or both lost) -> Send to Admin Conflict Review
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
             }
