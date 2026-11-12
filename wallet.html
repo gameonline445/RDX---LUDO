@@ -34,7 +34,6 @@ try {
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 
-/* 🔒 Screen lock */
 html, body {
     width: 100%;
     height: 100%;
@@ -90,17 +89,8 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 .logo img{width:100%;height:100%;object-fit:cover;}
 
 .header-right{display:flex;align-items:center;gap:8px;}
-.header-icon{
-    width:40px;height:40px;border:0;border-radius:50%;
-    display:flex;align-items:center;justify-content:center;
-    font-size:16px;color:white;cursor:pointer;padding:0;
-}
 
-.notification{ background:linear-gradient(145deg,#6366f1,#818cf8); }
-.wallet-top{ background:linear-gradient(145deg,#22c55e,#16a34a); }
-.redeem-top{ background:linear-gradient(145deg,#ea580c,#f97316); }
-
-/* MAIN CONTAINER (Fixed between header and bottom nav) */
+/* MAIN CONTAINER */
 .container{
     position: absolute;
     top: 66px;
@@ -138,47 +128,11 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
 
 .info-box{border:1px solid #bae6fd;border-radius:16px;background:rgba(255,255,255,.9);padding:12px 14px;display:flex;align-items:center;gap:10px;color:#64748b;font-size:12px;line-height:1.4;}
 .info-icon{width:24px;height:24px;flex:0 0 24px;border:1.5px solid #0284c7;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0284c7;font-size:12px;font-weight:800;}
-
-/* SIDE DRAWER STYLES */
-.drawer-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.45);backdrop-filter:blur(4px);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.25s ease;}
-.drawer-overlay.active{opacity:1;pointer-events:auto;}
-.drawer{position:fixed;top:0;left:0;width:280px;height:100%;background:#ffffff;z-index:1000;box-shadow:4px 0 25px rgba(2,132,199,0.15);transform:translateX(-100%);transition:transform 0.25s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;}
-.drawer.active{transform:translateX(0);}
-.drawer-header{padding:20px 16px;background:linear-gradient(135deg,#e0f2fe,#f0f9ff);border-bottom:1.5px solid #bae6fd;display:flex;align-items:center;justify-content:space-between;}
-.drawer-user{display:flex;align-items:center;gap:10px;}
-.drawer-avatar{width:46px;height:46px;border-radius:50%;background:#ffffff;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1.5px solid #bae6fd;}
-.drawer-avatar img{width:100%;height:100%;object-fit:cover;}
-.drawer-close{width:34px;height:34px;border-radius:50%;background:#ffffff;border:1.5px solid #bae6fd;color:#0c4a6e;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;}
-.drawer-links{flex:1;overflow-y:auto;padding:12px;}
-.drawer-item{width:100%;padding:12px 14px;border:0;border-radius:14px;background:transparent;display:flex;align-items:center;gap:12px;font-size:14px;font-weight:750;color:#334155;cursor:pointer;margin-bottom:4px;transition:background 0.2s ease;}
-.drawer-item:hover, .drawer-item:active{background:#f0f9ff;color:#0284c7;}
-.drawer-item-icon{width:36px;height:36px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;box-shadow:0 4px 10px rgba(0,0,0,0.08);}
-.menu-home{background:linear-gradient(145deg,#6366f1,#8b5cf6);}
-.menu-profile{background:linear-gradient(145deg,#f97316,#ea580c);}
-.menu-wallet{background:linear-gradient(145deg,#10b981,#059669);}
-.menu-refer{background:linear-gradient(145deg,#f59e0b,#d97706);}
-.menu-history{background:linear-gradient(145deg,#8b5cf6,#6d28d9);}
-.menu-notification{background:linear-gradient(145deg,#3b82f6,#1d4ed8);}
-.menu-support{background:linear-gradient(145deg,#06b6d4,#0284c7);}
-.menu-logout{background:linear-gradient(145deg,#ef4444,#dc2626);margin-top:10px;}
-
-/* BOTTOM NAV STYLES */
-.bottom-nav{position:absolute;bottom:0;left:0;width:100%;height:74px;background:#ffffff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:200;}
-.nav-item{width:25%;height:100%;border:0;background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#64748b;font-size:12px;font-weight:700;cursor:pointer;transition:color 0.2s ease;}
-.nav-icon-box{width:42px;height:42px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:18px;color:#ffffff;transition:transform 0.2s ease, box-shadow 0.2s ease;}
-.nav-item:active .nav-icon-box{transform:scale(0.92);}
-.nav-item.active {color:#0f172a;font-weight:850;}
-.nav-item.active .nav-icon-box {transform:scale(1.05);box-shadow:0 4px 12px rgba(0,0,0,0.15);}
-.icon-home{background:#6366f1;}
-.icon-wallet{background:#22c55e;}
-.icon-support{background:#0284c7;}
-.icon-profile{background:#ea580c;}
 </style>
 </head>
 
 <body>
 
-<!-- DYNAMIC COMPONENT CONTAINERS -->
 <div id="header-container"></div>
 <div id="drawer-container"></div>
 
@@ -217,21 +171,16 @@ button:active, .action-btn:active, .menu-item:active, .nav-item:active {
     </div>
 </main>
 
-<!-- BOTTOM NAVIGATION CONTAINER (ACTIVE: WALLET) -->
 <div id="nav-container" data-active="wallet"></div>
-
-<!-- COMPONENTS SCRIPT -->
 <script src="components.js"></script>
 
 <script>
-/* 🛡️ Touch move blocker for outer window */
 document.addEventListener('touchmove', function(event) {
     if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
         event.preventDefault();
     }
 }, { passive: false });
 
-/* 🔄 Pull-to-refresh logic */
 let startY = 0;
 const container = document.getElementById('scrollContainer');
 
@@ -268,7 +217,7 @@ function navigateTo(page) {
     window.location.assign(page);
 }
 
-// REAL-TIME DIRECT CUSTOMER WALLET READER (FIXED TO READ LIVE FIRESTORE DATA ACCURATELY)
+// DIRECT FIREBASE CUSTOMER LISTENER USING EXACT FIELDS (depositBalance & winnings)
 async function loadFirebaseCustomer(){
     try {
         if(!firebaseDB) return;
@@ -307,13 +256,13 @@ async function loadFirebaseCustomer(){
         }
 
         if (!userRef) {
-            userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+            userRef = firebaseDB.collection("customers").doc("91" + mobile10Digits);
         }
 
-        // Render UI helper
         function updateWalletUI(data) {
-            const deposit = Number(data.wallet || data.depositBalance || data.deposit || data.balance || data.depositCash || data.realBalance || 0);
-            const winnings = Number(data.winningBalance || data.winnings || 0);
+            // STRICT MAPPING TO FIREBASE FIELDS: depositBalance & winnings
+            const deposit = Number(data.depositBalance || data.balance || data.wallet || 0);
+            const winnings = Number(data.winnings || data.winningBalance || 0);
             const total = deposit + winnings;
 
             const mainBal = document.getElementById("mainBalance");
@@ -324,7 +273,7 @@ async function loadFirebaseCustomer(){
             if (depBal) depBal.textContent = deposit;
             if (winBal) winBal.textContent = winnings;
 
-            let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || "User";
+            let fullName = data.name || data.fullName || data.username || "User " + mobile10Digits.slice(-4);
             const drawerNameElem = document.getElementById("drawerName");
             const drawerMobileElem = document.getElementById("drawerMobile");
             
@@ -332,12 +281,10 @@ async function loadFirebaseCustomer(){
             if(drawerMobileElem) drawerMobileElem.textContent = "+" + mobile10Digits;
         }
 
-        // Initial render
         updateWalletUI(customerData);
 
         if(unsubscribeWalletListener) unsubscribeWalletListener();
 
-        // Real-time Firestore live listener
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
             if (doc && doc.exists) {
                 updateWalletUI(doc.data());
