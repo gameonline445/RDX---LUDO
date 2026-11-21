@@ -39,10 +39,10 @@ const firebaseConfig = {
 
 let firebaseDB = null;
 try {
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     firebaseDB = firebase.firestore();
-} catch(error){ 
-    console.error("Firebase Init Error:", error); 
+} catch (error) {
+    console.error("Firebase Init Error:", error);
 }
 </script>
 
@@ -513,98 +513,140 @@ if (scrollContainer) {
         }
     });
 
-    scrollContainer.addEventListener('touchend', function(e) {
+    scrollContainer.addEventListener('touchend', function() {
         startY = 0;
     });
 }
 
 function getCleanUserId() {
-    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                 localStorage.getItem("rdxVerifiedMobile") || 
-                 localStorage.getItem("rdxUserMobile") || 
-                 localStorage.getItem("rdxMobile") ||
-                 localStorage.getItem("userMobile");
+    const mobile =
+        localStorage.getItem("rdxFirebaseUserId") ||
+        localStorage.getItem("rdxVerifiedMobile") ||
+        localStorage.getItem("rdxUserMobile") ||
+        localStorage.getItem("rdxMobile") ||
+        localStorage.getItem("userMobile");
     return String(mobile || "").replace(/\D/g, "");
 }
 
+function formatPhoneDisplay(rawPhone, fallbackDigits) {
+    const digits = String(rawPhone || fallbackDigits || "").replace(/\D/g, "");
+    if (!digits) return "";
+    return digits.startsWith("91") ? "+" + digits : "+91" + digits;
+}
+
 const userId = getCleanUserId();
+const mobile10Digits = userId ? userId.slice(-10) : "";
+const primaryDocId = mobile10Digits ? ("91" + mobile10Digits) : "";
+
 let myCurrentBalance = 0;
-let myUserName = "User";
+let myUserName = mobile10Digits ? ("User " + mobile10Digits.slice(-4)) : "User";
 let activeBattleId = null;
 let myActiveBattlesCount = 0;
 let selectedResultType = "won";
+let battlesUnsubscribe = null;
+
+function updateHeaderAndDrawerProfile(fullName, formattedPhone, balanceVal) {
+    const cleanName = String(fullName || myUserName).trim();
+    const drawerNameElem = document.getElementById("drawerName");
+    const drawerMobileElem =
+        document.getElementById("drawerMobile") ||
+        document.getElementById("drawerPhone") ||
+        document.getElementById("userMobile") ||
+        document.getElementById("userPhone");
+
+    if (drawerNameElem) drawerNameElem.textContent = cleanName;
+    if (drawerMobileElem && formattedPhone) drawerMobileElem.textContent = formattedPhone;
+
+    if (typeof balanceVal === "number") {
+        const topBalanceEl = document.getElementById("topBalance");
+        const headerBalElem = document.getElementById("headerWalletBalance");
+        if (topBalanceEl) topBalanceEl.textContent = "₹" + balanceVal;
+        if (headerBalElem) headerBalElem.textContent = "₹" + balanceVal;
+    }
+}
 
 function showErrorModal(msg) {
     document.getElementById("errorModalMsg").textContent = msg;
     document.getElementById("errorModal").style.display = "flex";
 }
+
 function closeErrorModal() {
     document.getElementById("errorModal").style.display = "none";
 }
 
+function bindCustomerSnapshot(targetDocId) {
+    const fallbackPhone = formatPhoneDisplay(targetDocId, mobile10Digits);
+    updateHeaderAndDrawerProfile(myUserName, fallbackPhone);
+
+    return firebaseDB.collection("customers").doc(targetDocId).onSnapshot((doc) => {
+        if (!doc.exists) return;
+        const d = doc.data() || {};
+        const dep = Number(d.depositBalance || d.deposit || 0);
+        const win = Number(d.winnings || d.winningBalance || 0);
+
+        myCurrentBalance = dep + win;
+        myUserName = String(d.name || d.username || ("User " + mobile10Digits.slice(-4))).trim();
+
+        const rawPhone = d.phone || d.mobile || d.mobileNumber || d.phoneNumber || targetDocId;
+        const formattedPhone = formatPhoneDisplay(rawPhone, targetDocId);
+
+        updateHeaderAndDrawerProfile(myUserName, formattedPhone, myCurrentBalance);
+    }, (err) => {
+        console.error("Customer snapshot error:", err);
+    });
+}
+
 async function loadUserData() {
-    if(!userId){ 
-        window.location.replace("index.html");
-        return; 
-    }
-    const cleanMobile = String(userId).replace(/\D/g,"");
-    const mobile10Digits = cleanMobile.slice(-10);
-    const docIdWith91 = "91" + mobile10Digits;
-
-    let userRef = firebaseDB.collection("customers").doc(docIdWith91);
-    let snap = await userRef.get();
-
-    if(!snap.exists){
-        userRef = firebaseDB.collection("customers").doc(mobile10Digits);
-        snap = await userRef.get();
-    }
-
-    if(snap.exists){
-        userRef.onSnapshot(doc => {
-            if(doc.exists){
-                const d = doc.data();
-                const dep = Number(d.depositBalance || d.deposit || 0);
-                const win = Number(d.winnings || d.winningBalance || 0);
-                
-                myCurrentBalance = dep + win;
-                myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
-                
-                const topBalanceEl = document.getElementById("topBalance");
-                if (topBalanceEl) topBalanceEl.textContent = "₹" + myCurrentBalance;
-            }
-        });
-    } else {
+    if (!firebaseDB || !userId || !mobile10Digits) {
         localStorage.clear();
         window.location.replace("index.html");
+        return;
     }
+
+    const ref91 = firebaseDB.collection("customers").doc(primaryDocId);
+    const snap91 = await ref91.get();
+
+    if (snap91.exists) {
+        bindCustomerSnapshot(primaryDocId);
+        return;
+    }
+
+    const ref10 = firebaseDB.collection("customers").doc(mobile10Digits);
+    const snap10 = await ref10.get();
+
+    if (snap10.exists) {
+        bindCustomerSnapshot(mobile10Digits);
+        return;
+    }
+
+    localStorage.clear();
+    window.location.replace("index.html");
 }
 
 // 1. CREATE BATTLE (STRICT LIMIT: MAXIMUM 1 OPEN/ACTIVE BATTLE PER USER)
 async function createBattle() {
-    if(myActiveBattlesCount >= 1) {
+    if (myActiveBattlesCount >= 1) {
         alert("Aap ek waqt me sirf 1 battle hi laga sakte hain.");
         return;
     }
 
     const amt = Number(document.getElementById("battleAmountInput").value);
-    if(isNaN(amt) || amt < 100){
+    if (isNaN(amt) || amt < 100) {
         alert("Kam se kam ₹100 का मैच सेट करें।");
         return;
     }
-    if(myCurrentBalance < amt){
+    if (myCurrentBalance < amt) {
         showErrorModal("Insufficient balance");
         return;
     }
 
-    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
-    const docId = "91" + cleanMobile;
     const prize = Math.round(amt * 1.90);
 
     try {
         await firebaseDB.collection("battles").add({
-            creatorUid: docId,
+            creatorUid: primaryDocId,
             creatorName: myUserName,
-            creatorMobile: "+" + cleanMobile,
+            creatorMobile: "+91" + mobile10Digits,
             amount: amt,
             prize: prize,
             status: "open",
@@ -615,42 +657,40 @@ async function createBattle() {
             requestTime: null
         });
         document.getElementById("battleAmountInput").value = "";
-    } catch(err) {
+    } catch (err) {
         alert("Error: " + err.message);
     }
 }
 
 // 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
-    if(!userId) return;
-    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
-    const myClean10 = cleanMobile;
+    if (!firebaseDB || !mobile10Digits || battlesUnsubscribe) return;
 
-    firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot(snap => {
+    battlesUnsubscribe = firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot((snap) => {
         let openHTML = "";
         let runningHTML = "";
         let userBattleCount = 0;
 
-        snap.forEach(doc => {
+        snap.forEach((doc) => {
             const b = doc.data();
             const bId = doc.id;
             const creatorClean = String(b.creatorUid || "").replace(/\D/g, "").slice(-10);
             const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "").slice(-10);
 
-            const isCreator = creatorClean === myClean10;
-            const isAccepter = accepterClean === myClean10;
+            const isCreator = creatorClean === mobile10Digits;
+            const isAccepter = accepterClean === mobile10Digits;
 
-            if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+            if ((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
                 userBattleCount++;
             }
 
-            if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
+            if ((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
                 activeBattleId = bId;
                 renderRoomView(b, isCreator);
             }
 
-            if(b.status === "open" || b.status === "requested"){
-                if(b.status === "open"){
+            if (b.status === "open" || b.status === "requested") {
+                if (b.status === "open") {
                     openHTML += `
                         <div class="battle-card">
                             <div class="card-top">
@@ -666,7 +706,7 @@ function listenBattles() {
                             </div>
                         </div>
                     `;
-                } else if(b.status === "requested"){
+                } else if (b.status === "requested") {
                     openHTML += `
                         <div class="battle-card">
                             <div class="card-top">
@@ -690,7 +730,7 @@ function listenBattles() {
                 }
             }
 
-            if(b.status === "live" || b.status === "conflict"){
+            if (b.status === "live" || b.status === "conflict") {
                 runningHTML += `
                     <div class="battle-card" ${(isCreator || isAccepter) ? `onclick="openRunningMatch('${bId}')" style="cursor:pointer;"` : ''}>
                         <div class="card-top">
@@ -718,32 +758,30 @@ function listenBattles() {
 }
 
 async function deleteBattle(bId) {
-    if(!confirm("Battle delete karein?")) return;
+    if (!confirm("Battle delete karein?")) return;
     await firebaseDB.collection("battles").doc(bId).delete();
 }
 
 async function requestPlayBattle(bId, amt) {
-    if(myActiveBattlesCount >= 1) {
+    if (myActiveBattlesCount >= 1) {
         alert("Aap ek waqt me sirf 1 battle hi khel sakte hain.");
         return;
     }
-    if(myCurrentBalance < amt){
+    if (myCurrentBalance < amt) {
         showErrorModal("Insufficient balance");
         return;
     }
-    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
-    const docId = "91" + cleanMobile;
 
     await firebaseDB.collection("battles").doc(bId).update({
         status: "requested",
-        acceptedUid: docId,
+        acceptedUid: primaryDocId,
         acceptedName: myUserName,
         requestTime: firebase.firestore.FieldValue.serverTimestamp()
     });
 }
 
 async function cancelMyPlayRequest(bId) {
-    if(!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
+    if (!confirm("Kya aap apni play request cancel karna chahte hain?")) return;
     await firebaseDB.collection("battles").doc(bId).update({
         status: "open",
         acceptedUid: null,
@@ -783,24 +821,23 @@ function deductFromBalance(deposit, winnings, amt) {
 }
 
 async function startBattle(bId, amt, oppUid) {
-    const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
-    const p1DocId = "91" + cleanMobile;
+    const p1DocId = primaryDocId;
     const p2DocId = oppUid;
 
     try {
-        await firebaseDB.runTransaction(async t => {
+        await firebaseDB.runTransaction(async (t) => {
             let p1Ref = firebaseDB.collection("customers").doc(p1DocId);
             let p2Ref = firebaseDB.collection("customers").doc(p2DocId);
 
             let p1Snap = await t.get(p1Ref);
-            if(!p1Snap.exists){
-                p1Ref = firebaseDB.collection("customers").doc(cleanMobile);
+            if (!p1Snap.exists) {
+                p1Ref = firebaseDB.collection("customers").doc(mobile10Digits);
                 p1Snap = await t.get(p1Ref);
             }
 
             let p2Snap = await t.get(p2Ref);
-            if(!p2Snap.exists){
-                p2Ref = firebaseDB.collection("customers").doc(p2DocId.replace(/^91/,""));
+            if (!p2Snap.exists) {
+                p2Ref = firebaseDB.collection("customers").doc(String(p2DocId || "").replace(/^91/, ""));
                 p2Snap = await t.get(p2Ref);
             }
 
@@ -815,7 +852,7 @@ async function startBattle(bId, amt, oppUid) {
             const p2Win = Number(p2Data.winnings || p2Data.winningBalance || 0);
             const p2Total = p2Dep + p2Win;
 
-            if(p1Total < amt || p2Total < amt){
+            if (p1Total < amt || p2Total < amt) {
                 throw new Error("Kisi player ke paas balance kam hai.");
             }
 
@@ -831,7 +868,7 @@ async function startBattle(bId, amt, oppUid) {
                 startedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
-    } catch(err) {
+    } catch (err) {
         alert(err.message);
     }
 }
@@ -847,7 +884,7 @@ function renderRoomView(b, isCreator) {
     document.getElementById("roomP1Avatar").textContent = (b.creatorName || "P").charAt(0).toUpperCase();
     document.getElementById("roomP2Avatar").textContent = (b.acceptedName || "P").charAt(0).toUpperCase();
 
-    if(b.status === "conflict") {
+    if (b.status === "conflict") {
         document.getElementById("roomLiveBadge").className = "badge-tag tag-conflict";
         document.getElementById("roomLiveBadge").textContent = "⚠️ MATCH CONFLICT (Under Admin Review)";
     } else {
@@ -855,27 +892,25 @@ function renderRoomView(b, isCreator) {
         document.getElementById("roomLiveBadge").textContent = "● LIVE MATCH";
     }
 
-    if(b.roomCode){
+    if (b.roomCode) {
         document.getElementById("setRoomCodeWrap").style.display = "none";
         document.getElementById("waitingForCodeWrap").style.display = "none";
         document.getElementById("showRoomCodeWrap").style.display = "flex";
         document.getElementById("displayRoomCode").textContent = b.roomCode;
+    } else if (isCreator) {
+        document.getElementById("setRoomCodeWrap").style.display = "block";
+        document.getElementById("waitingForCodeWrap").style.display = "none";
+        document.getElementById("showRoomCodeWrap").style.display = "none";
     } else {
-        if(isCreator){
-            document.getElementById("setRoomCodeWrap").style.display = "block";
-            document.getElementById("waitingForCodeWrap").style.display = "none";
-            document.getElementById("showRoomCodeWrap").style.display = "none";
-        } else {
-            document.getElementById("setRoomCodeWrap").style.display = "none";
-            document.getElementById("waitingForCodeWrap").style.display = "block";
-            document.getElementById("showRoomCodeWrap").style.display = "none";
-        }
+        document.getElementById("setRoomCodeWrap").style.display = "none";
+        document.getElementById("waitingForCodeWrap").style.display = "block";
+        document.getElementById("showRoomCodeWrap").style.display = "none";
     }
 }
 
 async function submitRoomCode() {
     const code = document.getElementById("manualRoomCodeInput").value.trim();
-    if(!code){ alert("Room code likhein."); return; }
+    if (!code) { alert("Room code likhein."); return; }
     await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
 }
 
@@ -891,13 +926,13 @@ function openProofBox(type) {
     const label = document.getElementById("proofBoxLabel");
     const btn = document.getElementById("btnSubmitProof");
 
-    if(type === 'won') {
+    if (type === "won") {
         label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Winning Screenshot / Video Proof`;
         btn.textContent = "Submit Proof & Win Claim";
-    } else if(type === 'lost') {
+    } else if (type === "lost") {
         label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Loss Proof (Optional / Dispute Proof)`;
         btn.textContent = "Submit Loss Claim";
-    } else if(type === 'cancel') {
+    } else if (type === "cancel") {
         label.innerHTML = `<i class="fa-solid fa-image"></i> Upload Cancel / Dispute Proof Screenshot`;
         btn.textContent = "Submit Cancel Claim";
     }
@@ -932,15 +967,15 @@ function compressImageFile(file) {
                 const compressedBase64 = canvas.toDataURL("image/jpeg", 0.6);
                 resolve(compressedBase64);
             };
-            img.onerror = err => reject(err);
+            img.onerror = (err) => reject(err);
         };
-        reader.onerror = err => reject(err);
+        reader.onerror = (err) => reject(err);
     });
 }
 
 async function uploadProofAndSubmit() {
     const file = document.getElementById("winProofFile").files[0];
-    if(selectedResultType === 'won' && !file) {
+    if (selectedResultType === "won" && !file) {
         alert("Kripya winning screenshot upload karein.");
         return;
     }
@@ -951,19 +986,17 @@ async function uploadProofAndSubmit() {
 
     try {
         let proofBase64 = null;
-        if(file) {
+        if (file) {
             proofBase64 = await compressImageFile(file);
         }
-        const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
-        const docId = "91" + cleanMobile;
 
-        await processResultWithAutoSettlement(docId, selectedResultType, proofBase64);
+        await processResultWithAutoSettlement(primaryDocId, selectedResultType, proofBase64);
 
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
         alert("✅ Claim & Proof Submitted! Admin ya auto-settlement से process होगा।");
-    } catch(err) {
+    } catch (err) {
         alert("Error: " + err.message);
     }
     btn.disabled = false;
@@ -971,13 +1004,13 @@ async function uploadProofAndSubmit() {
 }
 
 async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
-    await firebaseDB.runTransaction(async t => {
+    await firebaseDB.runTransaction(async (t) => {
         const battleRef = firebaseDB.collection("battles").doc(activeBattleId);
         const battleDoc = await t.get(battleRef);
-        if(!battleDoc.exists) return;
+        if (!battleDoc.exists) return;
 
         const b = battleDoc.data();
-        if(b.status === "completed" || b.status === "cancelled") return;
+        if (b.status === "completed" || b.status === "cancelled") return;
 
         const p1Uid = b.creatorUid;
         const p2Uid = b.acceptedUid;
@@ -987,25 +1020,24 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
         const myResult = myType;
         const otherResult = b[`result_${otherUid}`] || null;
 
-        let updates = {
+        const updates = {
             [`result_${myUid}`]: myResult
         };
-        if(proofBase64) {
+        if (proofBase64) {
             updates[`proof_${myUid}`] = proofBase64;
         }
 
-        if(myResult === "cancel" || otherResult === "cancel") {
+        if (myResult === "cancel" || otherResult === "cancel") {
             updates.status = "conflict";
             updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
-        }
-        else if(otherResult !== null) {
-            if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
+        } else if (otherResult !== null) {
+            if ((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
                 let winnerRef = firebaseDB.collection("customers").doc(winnerUid);
                 let winnerSnap = await t.get(winnerRef);
 
-                if(!winnerSnap.exists){
-                    winnerRef = firebaseDB.collection("customers").doc(winnerUid.replace(/^91/,""));
+                if (!winnerSnap.exists) {
+                    winnerRef = firebaseDB.collection("customers").doc(String(winnerUid || "").replace(/^91/, ""));
                     winnerSnap = await t.get(winnerRef);
                 }
 
@@ -1028,8 +1060,7 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
                 updates.winnerUid = winnerUid;
                 updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
                 updates.resolvedBy = "auto";
-            }
-            else {
+            } else {
                 updates.status = "conflict";
                 updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
             }
@@ -1052,7 +1083,17 @@ function openRunningMatch(bId) {
     document.getElementById("roomView").style.display = "block";
 }
 
-window.addEventListener("load", () => {
+function logout() {
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (firebaseDB && primaryDocId) {
+        firebaseDB.collection("customers").doc(primaryDocId).set({ isOnline: false }, { merge: true }).catch(() => {});
+    }
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("index.html");
+}
+
+window.addEventListener("DOMContentLoaded", () => {
     loadUserData();
     listenBattles();
 });
