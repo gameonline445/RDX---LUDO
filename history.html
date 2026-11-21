@@ -272,7 +272,7 @@ if (scrollContainer) {
         }
     });
 
-    scrollContainer.addEventListener('touchend', function(e) {
+    scrollContainer.addEventListener('touchend', function() {
         startY = 0;
     });
 }
@@ -284,7 +284,7 @@ document.addEventListener('touchmove', function(event) {
 }, { passive: false });
 
 history.pushState({ page: 1 }, "", "");
-window.addEventListener("popstate", function (event) {
+window.addEventListener("popstate", function () {
     window.location.href = "dashboard.html";
 });
 
@@ -296,14 +296,30 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
 function getCleanUserId() {
-    const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
+    const raw =
+        localStorage.getItem("rdxFirebaseUserId") ||
+        localStorage.getItem("rdxVerifiedMobile") ||
+        localStorage.getItem("rdxUserMobile") ||
+        localStorage.getItem("rdxMobile") ||
+        localStorage.getItem("userMobile") ||
+        "";
     return String(raw).replace(/\D/g, "");
 }
+
+function formatPhoneDisplay(rawPhone, fallbackDocId) {
+    const digits = String(rawPhone || fallbackDocId || "").replace(/\D/g, "");
+    if (!digits) return "";
+    return digits.startsWith("91") ? "+" + digits : "+91" + digits;
+}
+
 const userId = getCleanUserId();
+const mobile10Digits = userId ? userId.slice(-10) : "";
+const primaryDocId = mobile10Digits ? ("91" + mobile10Digits) : "";
+
 let allLogs = [];
 let activeTab = "all";
 
@@ -311,22 +327,69 @@ let battlesData = [];
 let depositsData = [];
 let withdrawalsData = [];
 
+function updateHeaderAndDrawerProfile(fullName, formattedPhone, totalWallet) {
+    const drawerNameElem = document.getElementById("drawerName");
+    const drawerMobileElem =
+        document.getElementById("drawerMobile") ||
+        document.getElementById("drawerPhone") ||
+        document.getElementById("userMobile") ||
+        document.getElementById("userPhone");
+
+    if (drawerNameElem && fullName) drawerNameElem.textContent = fullName;
+    if (drawerMobileElem && formattedPhone) drawerMobileElem.textContent = formattedPhone;
+
+    if (typeof totalWallet === "number") {
+        const headerBalElem = document.getElementById("headerWalletBalance");
+        const topBalanceEl = document.getElementById("topBalance");
+        if (headerBalElem) headerBalElem.textContent = "₹" + totalWallet;
+        if (topBalanceEl) topBalanceEl.textContent = "₹" + totalWallet;
+    }
+}
+
+function startCustomerProfileListener() {
+    if (!primaryDocId) return;
+
+    const fallbackName = "User " + mobile10Digits.slice(-4);
+    const fallbackPhone = formatPhoneDisplay(primaryDocId, primaryDocId);
+    updateHeaderAndDrawerProfile(fallbackName, fallbackPhone);
+
+    firebaseDB.collection("customers").doc(primaryDocId).onSnapshot((snap) => {
+        if (!snap.exists) return;
+        const d = snap.data() || {};
+        const fullName = String(d.name || d.fullName || fallbackName).trim();
+        const rawPhone = d.phone || d.mobile || d.mobileNumber || d.phoneNumber || primaryDocId;
+        const formattedPhone = formatPhoneDisplay(rawPhone, primaryDocId);
+
+        const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
+        const winnings = Number(d.winningBalance || d.winnings || 0);
+        const totalWallet = deposit + winnings;
+
+        updateHeaderAndDrawerProfile(fullName, formattedPhone, totalWallet);
+    }, (err) => {
+        console.error("Customer profile listener error:", err);
+    });
+}
+
 // REAL-TIME LISTENER FOR ALL LOGS
 function startRealtimeLogsListener() {
-    if (!userId) {
+    if (!userId || !primaryDocId) {
         window.location.replace("index.html");
         return;
     }
-    const docId = userId.length === 10 ? "91" + userId : userId;
+
+    startCustomerProfileListener();
 
     // 1. Battles Real-Time Listener
-    firebaseDB.collection("battles").onSnapshot(snap => {
-        let list = [];
-        snap.forEach(doc => {
+    firebaseDB.collection("battles").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
             const b = doc.data();
-            if (b.creatorUid === docId || b.acceptedUid === docId) {
+            const creatorClean = String(b.creatorUid || "").replace(/\D/g, "").slice(-10);
+            const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "").slice(-10);
+
+            if (creatorClean === mobile10Digits || accepterClean === mobile10Digits) {
                 const timeInfo = parseItemTime(b.resolvedAt || b.startedAt || b.createdAt);
-                const isCreator = b.creatorUid === docId;
+                const isCreator = creatorClean === mobile10Digits;
                 const oppName = isCreator ? (b.acceptedName || "Opponent") : (b.creatorName || "Creator");
 
                 let battleStatus = "Live";
@@ -334,7 +397,7 @@ function startRealtimeLogsListener() {
                 let isCancelled = false;
 
                 if (b.status === "completed") {
-                    if (b.winnerUid === docId) {
+                    if (String(b.winnerUid || "").replace(/\D/g, "").slice(-10) === mobile10Digits) {
                         battleStatus = "Won";
                         isWon = true;
                     } else {
@@ -365,12 +428,12 @@ function startRealtimeLogsListener() {
     });
 
     // 2. Deposits Real-Time Listener
-    firebaseDB.collection("deposits").onSnapshot(snap => {
-        let list = [];
-        snap.forEach(doc => {
+    firebaseDB.collection("deposits").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
             const d = doc.data();
-            const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "");
-            if (cleanUid.includes(userId)) {
+            const cleanUid = String(d.uid || d.userId || "").replace(/\D/g, "").slice(-10);
+            if (cleanUid === mobile10Digits) {
                 const timeInfo = parseItemTime(d.createdAt || d.date);
                 const rawStatus = String(d.status || "pending").toLowerCase();
                 const utrVal = d.utr ? String(d.utr).trim() : "";
@@ -394,12 +457,12 @@ function startRealtimeLogsListener() {
     });
 
     // 3. Withdrawals Real-Time Listener
-    firebaseDB.collection("withdrawals").onSnapshot(snap => {
-        let list = [];
-        snap.forEach(doc => {
+    firebaseDB.collection("withdrawals").onSnapshot((snap) => {
+        const list = [];
+        snap.forEach((doc) => {
             const w = doc.data();
-            const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "");
-            if (cleanUid.includes(userId)) {
+            const cleanUid = String(w.uid || w.mobile || "").replace(/\D/g, "").slice(-10);
+            if (cleanUid === mobile10Digits) {
                 const timeInfo = parseItemTime(w.createdAt || w.date);
                 const rawStatus = String(w.status || "pending").toLowerCase();
                 const modeVal = w.mode === "BANK" ? `Bank: ${w.accountNumber || ''}` : `UPI: ${w.upiId || ''}`;
@@ -570,7 +633,17 @@ function setFilter(type, btnEl) {
     renderLogs();
 }
 
-window.addEventListener("load", () => {
+function logout() {
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (primaryDocId) {
+        firebaseDB.collection("customers").doc(primaryDocId).set({ isOnline: false }, { merge: true }).catch(() => {});
+    }
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("index.html");
+}
+
+window.addEventListener("DOMContentLoaded", () => {
     startRealtimeLogsListener();
 });
 </script>
