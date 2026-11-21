@@ -518,32 +518,41 @@ if (scrollContainer) {
     });
 }
 
-// PERMANENT DUMMY BATTLES BET AMOUNTS IN EXACT ORDER
-const PERMANENT_DUMMY_BETS = [
+// PERMANENT DUMMY RUNNING BATTLES BET AMOUNTS IN EXACT ORDER
+const PERMANENT_RUNNING_BETS = [
     100, 300, 800, 200, 5000, 12000, 18000, 15000, 400, 700, 100, 300, 900
 ];
 
-const PERMANENT_DUMMY_NAMES = [
-    "Aarav Sharma", "Rohan Verma", "Vikram Singh", "Kabir Patel",
-    "Aditya Rao", "Arjun Mehta", "Devansh Nair", "Karan Joshi",
-    "Siddharth Roy", "Nikhil Gupta", "Pranav Yadav", "harshvardhan",
-    "Manish Tiwari"
+const PERMANENT_RUNNING_PAIRS = [
+    ["Aarav Sharma", "Rohan Verma"],
+    ["Vikram Singh", "Kabir Patel"],
+    ["Aditya Rao", "Arjun Mehta"],
+    ["Devansh Nair", "Karan Joshi"],
+    ["Siddharth Roy", "Nikhil Gupta"],
+    ["Pranav Yadav", "Manish Tiwari"],
+    ["Harsh Vardhan", "Ankit Dubey"],
+    ["Yash Raj", "Deepak Kumar"],
+    ["Vivek Pandey", "Rahul Mishra"],
+    ["Saurabh Jain", "Gaurav Kapoor"],
+    ["Kunal Thakur", "Abhishek Sen"],
+    ["Tushar Malhotra", "Pankaj Chauhan"],
+    ["Varun Sethi", "Mohit Chawla"]
 ];
 
-function getPermanentDummyBattles() {
-    return PERMANENT_DUMMY_BETS.map((amt, idx) => {
-        const hostName = PERMANENT_DUMMY_NAMES[idx] || ("Player " + (idx + 1));
+function getPermanentRunningBattles() {
+    return PERMANENT_RUNNING_BETS.map((amt, idx) => {
+        const pair = PERMANENT_RUNNING_PAIRS[idx] || ["Player " + (idx * 2 + 1), "Player " + (idx * 2 + 2)];
         return {
-            id: "dummy_battle_" + (idx + 1),
+            id: "dummy_running_" + (idx + 1),
             isDummy: true,
-            creatorUid: "dummy_creator_" + (idx + 1),
-            creatorName: hostName,
+            creatorUid: "dummy_p1_" + (idx + 1),
+            acceptedUid: "dummy_p2_" + (idx + 1),
+            creatorName: pair[0],
+            acceptedName: pair[1],
             amount: amt,
             prize: Math.round(amt * 1.90),
-            status: "open",
-            acceptedUid: null,
-            acceptedName: null,
-            roomCode: null
+            status: "live",
+            roomCode: "RM" + String(1000 + idx * 73)
         };
     });
 }
@@ -778,21 +787,22 @@ function renderBattlesCombined() {
         }
     });
 
-    // Append permanent dummy open battles in exact order (never count toward userBattleCount)
-    const dummyBattles = getPermanentDummyBattles();
-    dummyBattles.forEach((d) => {
-        openHTML += `
+    // Append permanent dummy running battles in exact order
+    const dummyRunningBattles = getPermanentRunningBattles();
+    dummyRunningBattles.forEach((r) => {
+        runningHTML += `
             <div class="battle-card">
                 <div class="card-top">
-                    <span class="badge-tag tag-open">⚔ OPEN</span>
-                    <span class="user-tag">FROM <strong>${d.creatorName}</strong></span>
+                    <span class="badge-tag tag-live">● LIVE</span>
                 </div>
                 <div class="battle-meta">
-                    <div class="meta-col"><small>ENTRY</small><strong>₹${d.amount}</strong></div>
-                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${d.prize}</strong></div>
+                    <div class="meta-col"><small>ENTRY</small><strong>₹${r.amount}</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${r.prize}</strong></div>
                 </div>
-                <div class="card-actions">
-                    <button class="btn-play" onclick="playDummyBattle('${d.id}', ${d.amount}, ${d.prize}, '${d.creatorName.replace(/'/g, "\\'")}')">Play</button>
+                <div class="vs-row">
+                    <div class="player-box"><span class="player-name">${r.creatorName}</span></div>
+                    <div class="vs-circle">VS</div>
+                    <div class="player-box"><span class="player-name">${r.acceptedName}</span></div>
                 </div>
             </div>
         `;
@@ -802,23 +812,6 @@ function renderBattlesCombined() {
 
     document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
     document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
-}
-
-function playDummyBattle(dummyId, amt, prize, hostName) {
-    if (myCurrentBalance < amt) {
-        showErrorModal("Insufficient balance");
-        return;
-    }
-    activeBattleId = dummyId;
-    isDummyActiveRoom = true;
-    renderRoomView({
-        amount: amt,
-        prize: prize,
-        creatorName: hostName,
-        acceptedName: myUserName,
-        status: "live",
-        roomCode: "LUDO" + String(amt).slice(-2) + "77"
-    }, false);
 }
 
 // 2. REAL-TIME BATTLES LISTENER
