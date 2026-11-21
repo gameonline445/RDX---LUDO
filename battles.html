@@ -518,6 +518,36 @@ if (scrollContainer) {
     });
 }
 
+// PERMANENT DUMMY BATTLES BET AMOUNTS IN EXACT ORDER
+const PERMANENT_DUMMY_BETS = [
+    100, 300, 800, 200, 5000, 12000, 18000, 15000, 400, 700, 100, 300, 900
+];
+
+const PERMANENT_DUMMY_NAMES = [
+    "Aarav Sharma", "Rohan Verma", "Vikram Singh", "Kabir Patel",
+    "Aditya Rao", "Arjun Mehta", "Devansh Nair", "Karan Joshi",
+    "Siddharth Roy", "Nikhil Gupta", "Pranav Yadav", "harshvardhan",
+    "Manish Tiwari"
+];
+
+function getPermanentDummyBattles() {
+    return PERMANENT_DUMMY_BETS.map((amt, idx) => {
+        const hostName = PERMANENT_DUMMY_NAMES[idx] || ("Player " + (idx + 1));
+        return {
+            id: "dummy_battle_" + (idx + 1),
+            isDummy: true,
+            creatorUid: "dummy_creator_" + (idx + 1),
+            creatorName: hostName,
+            amount: amt,
+            prize: Math.round(amt * 1.90),
+            status: "open",
+            acceptedUid: null,
+            acceptedName: null,
+            roomCode: null
+        };
+    });
+}
+
 function getCleanUserId() {
     const mobile =
         localStorage.getItem("rdxFirebaseUserId") ||
@@ -541,9 +571,11 @@ const primaryDocId = mobile10Digits ? ("91" + mobile10Digits) : "";
 let myCurrentBalance = 0;
 let myUserName = mobile10Digits ? ("User " + mobile10Digits.slice(-4)) : "User";
 let activeBattleId = null;
+let isDummyActiveRoom = false;
 let myActiveBattlesCount = 0;
 let selectedResultType = "won";
 let battlesUnsubscribe = null;
+let latestRealDocs = [];
 
 function updateHeaderAndDrawerProfile(fullName, formattedPhone, balanceVal) {
     const cleanName = String(fullName || myUserName).trim();
@@ -662,98 +694,148 @@ async function createBattle() {
     }
 }
 
-// 2. REAL-TIME BATTLES LISTENER
-function listenBattles() {
-    if (!firebaseDB || !mobile10Digits || battlesUnsubscribe) return;
+function renderBattlesCombined() {
+    let openHTML = "";
+    let runningHTML = "";
+    let userBattleCount = 0;
 
-    battlesUnsubscribe = firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot((snap) => {
-        let openHTML = "";
-        let runningHTML = "";
-        let userBattleCount = 0;
+    latestRealDocs.forEach((doc) => {
+        const b = doc.data();
+        const bId = doc.id;
+        const creatorClean = String(b.creatorUid || "").replace(/\D/g, "").slice(-10);
+        const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "").slice(-10);
 
-        snap.forEach((doc) => {
-            const b = doc.data();
-            const bId = doc.id;
-            const creatorClean = String(b.creatorUid || "").replace(/\D/g, "").slice(-10);
-            const accepterClean = String(b.acceptedUid || "").replace(/\D/g, "").slice(-10);
+        const isCreator = creatorClean === mobile10Digits;
+        const isAccepter = accepterClean === mobile10Digits;
 
-            const isCreator = creatorClean === mobile10Digits;
-            const isAccepter = accepterClean === mobile10Digits;
+        if ((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
+            userBattleCount++;
+        }
 
-            if ((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
-                userBattleCount++;
-            }
+        if (!isDummyActiveRoom && (b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
+            activeBattleId = bId;
+            renderRoomView(b, isCreator);
+        }
 
-            if ((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)) {
-                activeBattleId = bId;
-                renderRoomView(b, isCreator);
-            }
-
-            if (b.status === "open" || b.status === "requested") {
-                if (b.status === "open") {
-                    openHTML += `
-                        <div class="battle-card">
-                            <div class="card-top">
-                                <span class="badge-tag tag-open">⚔ OPEN</span>
-                                <span class="user-tag">FROM <strong>${b.creatorName}</strong></span>
-                            </div>
-                            <div class="battle-meta">
-                                <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
-                                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
-                            </div>
-                            <div class="card-actions">
-                                ${isCreator ? `<button class="btn-delete" onclick="deleteBattle('${bId}')"><i class="fa-solid fa-trash"></i> Delete</button>` : `<button class="btn-play" onclick="requestPlayBattle('${bId}',${b.amount})">Play</button>`}
-                            </div>
-                        </div>
-                    `;
-                } else if (b.status === "requested") {
-                    openHTML += `
-                        <div class="battle-card">
-                            <div class="card-top">
-                                <span class="badge-tag tag-req">⚔ REQUESTED</span>
-                                <span class="user-tag">FROM <strong>${b.creatorName}</strong> ACCEPTED <strong>${b.acceptedName}</strong></span>
-                            </div>
-                            <div class="battle-meta">
-                                <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
-                                <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
-                            </div>
-                            <div class="card-actions">
-                                ${isCreator ? `
-                                    <button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Start</button>
-                                    <button class="btn-reject" onclick="rejectBattleRequest('${bId}')">✕ Reject</button>
-                                ` : (isAccepter ? `
-                                    <button class="btn-cancel-req" onclick="cancelMyPlayRequest('${bId}')">Cancel Request</button>
-                                ` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Waiting for Creator...</span>`)}
-                            </div>
-                        </div>
-                    `;
-                }
-            }
-
-            if (b.status === "live" || b.status === "conflict") {
-                runningHTML += `
-                    <div class="battle-card" ${(isCreator || isAccepter) ? `onclick="openRunningMatch('${bId}')" style="cursor:pointer;"` : ''}>
+        if (b.status === "open" || b.status === "requested") {
+            if (b.status === "open") {
+                openHTML += `
+                    <div class="battle-card">
                         <div class="card-top">
-                            <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
+                            <span class="badge-tag tag-open">⚔ OPEN</span>
+                            <span class="user-tag">FROM <strong>${b.creatorName}</strong></span>
                         </div>
                         <div class="battle-meta">
                             <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
                             <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
                         </div>
-                        <div class="vs-row">
-                            <div class="player-box"><span class="player-name">${b.creatorName || 'Player 1'}</span></div>
-                            <div class="vs-circle">VS</div>
-                            <div class="player-box"><span class="player-name">${b.acceptedName || 'Player 2'}</span></div>
+                        <div class="card-actions">
+                            ${isCreator ? `<button class="btn-delete" onclick="deleteBattle('${bId}')"><i class="fa-solid fa-trash"></i> Delete</button>` : `<button class="btn-play" onclick="requestPlayBattle('${bId}',${b.amount})">Play</button>`}
+                        </div>
+                    </div>
+                `;
+            } else if (b.status === "requested") {
+                openHTML += `
+                    <div class="battle-card">
+                        <div class="card-top">
+                            <span class="badge-tag tag-req">⚔ REQUESTED</span>
+                            <span class="user-tag">FROM <strong>${b.creatorName}</strong> ACCEPTED <strong>${b.acceptedName}</strong></span>
+                        </div>
+                        <div class="battle-meta">
+                            <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
+                            <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
+                        </div>
+                        <div class="card-actions">
+                            ${isCreator ? `
+                                <button class="btn-start" onclick="startBattle('${bId}', ${b.amount}, '${b.acceptedUid}')">Start</button>
+                                <button class="btn-reject" onclick="rejectBattleRequest('${bId}')">✕ Reject</button>
+                            ` : (isAccepter ? `
+                                <button class="btn-cancel-req" onclick="cancelMyPlayRequest('${bId}')">Cancel Request</button>
+                            ` : `<span style="font-size:12px;color:#d97706;font-weight:800;">Waiting for Creator...</span>`)}
                         </div>
                     </div>
                 `;
             }
+        }
+
+        if (b.status === "live" || b.status === "conflict") {
+            runningHTML += `
+                <div class="battle-card" ${(isCreator || isAccepter) ? `onclick="openRunningMatch('${bId}')" style="cursor:pointer;"` : ''}>
+                    <div class="card-top">
+                        <span class="badge-tag ${b.status === 'live' ? 'tag-live' : 'tag-conflict'}">● ${b.status === 'live' ? 'LIVE' : 'CONFLICT'}</span>
+                    </div>
+                    <div class="battle-meta">
+                        <div class="meta-col"><small>ENTRY</small><strong>₹${b.amount}</strong></div>
+                        <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${b.prize}</strong></div>
+                    </div>
+                    <div class="vs-row">
+                        <div class="player-box"><span class="player-name">${b.creatorName || 'Player 1'}</span></div>
+                        <div class="vs-circle">VS</div>
+                        <div class="player-box"><span class="player-name">${b.acceptedName || 'Player 2'}</span></div>
+                    </div>
+                </div>
+            `;
+        }
+    });
+
+    // Append permanent dummy open battles in exact order (never count toward userBattleCount)
+    const dummyBattles = getPermanentDummyBattles();
+    dummyBattles.forEach((d) => {
+        openHTML += `
+            <div class="battle-card">
+                <div class="card-top">
+                    <span class="badge-tag tag-open">⚔ OPEN</span>
+                    <span class="user-tag">FROM <strong>${d.creatorName}</strong></span>
+                </div>
+                <div class="battle-meta">
+                    <div class="meta-col"><small>ENTRY</small><strong>₹${d.amount}</strong></div>
+                    <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${d.prize}</strong></div>
+                </div>
+                <div class="card-actions">
+                    <button class="btn-play" onclick="playDummyBattle('${d.id}', ${d.amount}, ${d.prize}, '${d.creatorName.replace(/'/g, "\\'")}')">Play</button>
+                </div>
+            </div>
+        `;
+    });
+
+    myActiveBattlesCount = userBattleCount;
+
+    document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
+    document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
+}
+
+function playDummyBattle(dummyId, amt, prize, hostName) {
+    if (myCurrentBalance < amt) {
+        showErrorModal("Insufficient balance");
+        return;
+    }
+    activeBattleId = dummyId;
+    isDummyActiveRoom = true;
+    renderRoomView({
+        amount: amt,
+        prize: prize,
+        creatorName: hostName,
+        acceptedName: myUserName,
+        status: "live",
+        roomCode: "LUDO" + String(amt).slice(-2) + "77"
+    }, false);
+}
+
+// 2. REAL-TIME BATTLES LISTENER
+function listenBattles() {
+    if (!firebaseDB || !mobile10Digits || battlesUnsubscribe) return;
+
+    renderBattlesCombined();
+
+    battlesUnsubscribe = firebaseDB.collection("battles").orderBy("createdAt", "desc").onSnapshot((snap) => {
+        latestRealDocs = [];
+        snap.forEach((doc) => {
+            latestRealDocs.push(doc);
         });
-
-        myActiveBattlesCount = userBattleCount;
-
-        document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
+        renderBattlesCombined();
+    }, (err) => {
+        console.error("Battles listener error:", err);
+        renderBattlesCombined();
     });
 }
 
@@ -880,7 +962,7 @@ function renderRoomView(b, isCreator) {
     document.getElementById("roomEntryFee").textContent = "₹" + b.amount;
     document.getElementById("roomPrizeFee").textContent = "₹" + b.prize;
     document.getElementById("roomP1Name").textContent = b.creatorName;
-    document.getElementById("roomP2Name").textContent = b.acceptedName;
+    document.getElementById("roomP2Name").textContent = b.acceptedName || "Player 2";
     document.getElementById("roomP1Avatar").textContent = (b.creatorName || "P").charAt(0).toUpperCase();
     document.getElementById("roomP2Avatar").textContent = (b.acceptedName || "P").charAt(0).toUpperCase();
 
@@ -911,6 +993,13 @@ function renderRoomView(b, isCreator) {
 async function submitRoomCode() {
     const code = document.getElementById("manualRoomCodeInput").value.trim();
     if (!code) { alert("Room code likhein."); return; }
+    if (isDummyActiveRoom) {
+        document.getElementById("setRoomCodeWrap").style.display = "none";
+        document.getElementById("waitingForCodeWrap").style.display = "none";
+        document.getElementById("showRoomCodeWrap").style.display = "flex";
+        document.getElementById("displayRoomCode").textContent = code;
+        return;
+    }
     await firebaseDB.collection("battles").doc(activeBattleId).update({ roomCode: code });
 }
 
@@ -990,7 +1079,9 @@ async function uploadProofAndSubmit() {
             proofBase64 = await compressImageFile(file);
         }
 
-        await processResultWithAutoSettlement(primaryDocId, selectedResultType, proofBase64);
+        if (!isDummyActiveRoom) {
+            await processResultWithAutoSettlement(primaryDocId, selectedResultType, proofBase64);
+        }
 
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
@@ -1073,12 +1164,14 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 }
 
 function showLobbyView() {
+    isDummyActiveRoom = false;
     document.getElementById("roomView").style.display = "none";
     document.getElementById("lobbyView").style.display = "block";
 }
 
 function openRunningMatch(bId) {
     activeBattleId = bId;
+    isDummyActiveRoom = false;
     document.getElementById("lobbyView").style.display = "none";
     document.getElementById("roomView").style.display = "block";
 }
