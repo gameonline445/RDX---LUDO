@@ -13,12 +13,14 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore-compat.js"></script>
 
 <script>
+// BFCache Reload Guard
 window.addEventListener("pageshow", function (event) {
     if (event.persisted || (performance && performance.navigation.type === 2)) {
         window.location.reload();
     }
 });
 
+// Authentication Security Check
 (function checkAuth() {
     const isLoggedIn = localStorage.getItem("rdxLoggedIn");
     if (!isLoggedIn || isLoggedIn !== "true") {
@@ -46,41 +48,23 @@ try {
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-
-html, body {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: fixed;
-    top: 0;
-    left: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    color: #101a38;
+body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
     background:
         radial-gradient(circle at 5% 5%, rgba(14, 165, 233, 0.22) 0%, transparent 35%),
         radial-gradient(circle at 95% 15%, rgba(2, 132, 199, 0.18) 0%, transparent 32%),
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.12) 0%, transparent 45%),
         linear-gradient(180deg, #f0f7ff 0%, #ffffff 40%, #eaf4ff 100%);
-    -webkit-touch-callout: none;
+    color:#101a38;
+    min-height:100vh;
+    padding-top:70px;
+    padding-bottom:100px;
 }
 button,input{font:inherit;}
 
-.container{
-    position: absolute;
-    top: 66px;
-    bottom: 74px;
-    left: 0;
-    right: 0;
-    width: 100%;
-    max-width: 650px;
-    margin: 0 auto;
-    padding: 14px 14px;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
+.container{width:100%;max-width:650px;margin:auto;padding:14px;}
 
+/* SET BATTLE CARD */
 .set-card{
     background:#ffffff;
     border:1.5px solid #7dd3fc;
@@ -90,7 +74,7 @@ button,input{font:inherit;}
     display:flex;
     gap:10px;
     align-items:center;
-    margin-bottom:10px;
+    margin-bottom:20px;
 }
 .bet-input{
     flex:1;
@@ -118,6 +102,7 @@ button,input{font:inherit;}
     box-shadow:0 4px 14px rgba(37,99,235,0.3);
 }
 
+/* SECTION TITLES */
 .section-head{
     display:flex;
     align-items:center;
@@ -125,15 +110,16 @@ button,input{font:inherit;}
     font-size:17px;
     font-weight:900;
     color:#0c4a6e;
-    margin:12px 0 8px;
+    margin:18px 0 10px;
 }
 
+/* BATTLE CARDS */
 .battle-card{
     background:#ffffff;
     border:1.5px solid #bae6fd;
     border-radius:20px;
     padding:14px 16px;
-    margin-bottom:10px;
+    margin-bottom:12px;
     box-shadow:0 4px 14px rgba(2,132,199,0.05);
 }
 .card-top{
@@ -150,10 +136,10 @@ button,input{font:inherit;}
     letter-spacing:0.5px;
     text-transform:uppercase;
 }
-.tag-open{background:#e0f2fe;color:#0284c7;border:1.5px solid #bae6fd;}
-.tag-req{background:#fef3c7;color:#b45309;border:1.5px solid #fde68a;}
-.tag-live{background:#dcfce7;color:#15803d;border:1.5px solid #86efac;}
-.tag-conflict{background:#fee2e2;color:#be123c;border:1.5px solid #fca5a5;}
+.tag-open{background:#e0f2fe;color:#0284c7;border:1px solid #bae6fd;}
+.tag-req{background:#fef3c7;color:#b45309;border:1px solid #fde68a;}
+.tag-live{background:#dcfce7;color:#15803d;border:1px solid #86efac;}
+.tag-conflict{background:#fee2e2;color:#be123c;border:1px solid #fca5a5;}
 
 .user-tag{font-size:11px;font-weight:700;color:#64748b;}
 .user-tag strong{color:#0c4a6e;}
@@ -205,11 +191,12 @@ button,input{font:inherit;}
 
 .card-actions{display:flex;justify-content:flex-end;gap:8px;align-items:center;}
 .btn-play{background:linear-gradient(100deg,#2563eb,#1d4ed8);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
-.btn-delete{background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-delete{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
 .btn-start{background:linear-gradient(100deg,#16a34a,#15803d);color:white;border:0;padding:8px 20px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
-.btn-reject{background:#fff1f2;border:1.5px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
-.btn-cancel-req{background:#f1f5f9;border:1.5px solid #cbd5e1;color:#475569;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;cursor:pointer;}
+.btn-reject{background:#fff1f2;border:1px solid #fecdd3;color:#be123c;padding:8px 16px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;}
+.btn-cancel-req{background:#f1f5f9;border:1px solid #cbd5e1;color:#475569;padding:8px 14px;border-radius:12px;font-weight:800;font-size:12px;cursor:pointer;}
 
+/* MATCH ROOM VIEW */
 #roomView{display:none;}
 .back-top-btn{
     display:inline-flex;
@@ -223,14 +210,14 @@ button,input{font:inherit;}
     font-size:13px;
     font-weight:850;
     cursor:pointer;
-    margin-bottom:10px;
+    margin-bottom:14px;
 }
 .room-box{
     background:#ffffff;
     border:1.5px solid #bae6fd;
     border-radius:20px;
     padding:16px;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 .room-code-display{
     background:#f0f9ff;
@@ -258,14 +245,14 @@ button,input{font:inherit;}
     justify-content:center;
     gap:8px;
     cursor:default;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 .rules-box{
     background:#ffffff;
     border:1.5px solid #bae6fd;
     border-radius:20px;
     padding:16px;
-    margin-bottom:10px;
+    margin-bottom:12px;
 }
 .rule-item{
     background:#f0f9ff;
@@ -278,6 +265,7 @@ button,input{font:inherit;}
     margin-bottom:6px;
 }
 
+/* WIN, LOST, CANCEL BUTTONS */
 .status-update-grid-3{
     display:grid;
     grid-template-columns:1fr 1fr 1fr;
@@ -288,6 +276,7 @@ button,input{font:inherit;}
 .btn-lost{background:#dc2626;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
 .btn-cancel{background:#64748b;color:white;border:0;padding:12px 8px;border-radius:12px;font-weight:850;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;}
 
+/* PROOF UPLOAD BOX */
 .proof-upload-box{
     background:#f8fafc;
     border:1.5px dashed #bae6fd;
@@ -310,6 +299,7 @@ button,input{font:inherit;}
     cursor:pointer;
 }
 
+/* INSUFFICIENT BALANCE MODAL */
 .modal-overlay{
     position:fixed;
     inset:0;
@@ -375,11 +365,14 @@ button,input{font:inherit;}
 
 <body>
 
-<div id="drawer-container"></div>
+<!-- DYNAMIC HEADER & DRAWER CONTAINERS -->
 <div id="header-container"></div>
+<div id="drawer-container"></div>
 
+<!-- मुख्य कंटेनर में id="scrollContainer" जोड़ा गया है -->
 <main class="container" id="scrollContainer">
 
+    <!-- VIEW 1: BATTLE LOBBY -->
     <div id="lobbyView">
         <div class="set-card">
             <input type="number" id="battleAmountInput" class="bet-input" placeholder="Enter Amount (Min ₹100)" min="100">
@@ -395,10 +388,11 @@ button,input{font:inherit;}
         <div id="runningBattlesList"></div>
     </div>
 
+    <!-- VIEW 2: ACTIVE MATCH ROOM -->
     <div id="roomView">
-        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back to Lobby</button>
+        <button class="back-top-btn" onclick="showLobbyView()"><i class="fa-solid fa-arrow-left"></i> Back</button>
 
-        <div class="battle-card" style="margin-bottom:10px;">
+        <div class="battle-card" style="margin-bottom:12px;">
             <span class="badge-tag tag-live" id="roomLiveBadge">● LIVE MATCH</span>
             <div class="battle-meta" style="margin-top:8px;">
                 <div class="meta-col"><small>ENTRY</small><strong id="roomEntryFee">₹100</strong></div>
@@ -417,6 +411,7 @@ button,input{font:inherit;}
             </div>
         </div>
 
+        <!-- ROOM CODE BOX -->
         <div class="room-box">
             <h4 style="font-size:14px; font-weight:850; color:#0c4a6e;"><i class="fa-solid fa-key"></i> Room Code</h4>
             <small style="color:#64748b; font-weight:600;">Share & join in Ludo King</small>
@@ -450,6 +445,7 @@ button,input{font:inherit;}
             <div class="rule-item">• Result not updated → Penalty ₹25</div>
         </div>
 
+        <!-- WIN, LOST, CANCEL OPTIONS -->
         <div class="room-box">
             <h4 style="font-size:13px; font-weight:850; color:#0c4a6e; margin-bottom:8px;"><i class="fa-solid fa-trophy"></i> Update Game Status</h4>
             <small style="color:#64748b; font-weight:600;">Submit result after the match</small>
@@ -460,6 +456,7 @@ button,input{font:inherit;}
                 <button class="btn-cancel" onclick="openProofBox('cancel')"><i class="fa-solid fa-ban"></i> Cancel</button>
             </div>
 
+            <!-- PROOF UPLOAD (FOR WIN, LOST, CANCEL) -->
             <div class="proof-upload-box" id="proofUploadBox">
                 <label id="proofBoxLabel"><i class="fa-solid fa-image"></i> Upload Screenshot / Video Proof</label>
                 <input type="file" id="winProofFile" accept="image/*,video/*">
@@ -476,6 +473,7 @@ button,input{font:inherit;}
 
 </main>
 
+<!-- INSUFFICIENT BALANCE MODAL -->
 <div class="modal-overlay" id="errorModal">
     <div class="modal-box">
         <button class="modal-close-btn" onclick="closeErrorModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -487,10 +485,14 @@ button,input{font:inherit;}
     </div>
 </div>
 
-<div id="nav-container" data-active="battle"></div>
+<!-- DYNAMIC BOTTOM NAVIGATION CONTAINER -->
+<div id="nav-container"></div>
+
+<!-- COMPONENTS JS LINK -->
 <script src="components.js"></script>
 
 <script>
+/* 🔄 शुद्ध पुल-टू-रिफ्रेश लॉजिक (केवल टॉप स्क्रॉल पर रीलोड) */
 let startY = 0;
 const scrollContainer = document.getElementById('scrollContainer');
 
@@ -516,12 +518,6 @@ if (scrollContainer) {
     });
 }
 
-document.addEventListener('touchmove', function(event) {
-    if (!event.target.closest('main.container') && !event.target.closest('.drawer')) {
-        event.preventDefault();
-    }
-}, { passive: false });
-
 function getCleanUserId() {
     let mobile = localStorage.getItem("rdxFirebaseUserId") || 
                  localStorage.getItem("rdxVerifiedMobile") || 
@@ -532,6 +528,7 @@ function getCleanUserId() {
 }
 
 const userId = getCleanUserId();
+let myCurrentBalance = 0;
 let myUserName = "User";
 let activeBattleId = null;
 let myActiveBattlesCount = 0;
@@ -552,46 +549,37 @@ async function loadUserData() {
     }
     const cleanMobile = String(userId).replace(/\D/g,"");
     const mobile10Digits = cleanMobile.slice(-10);
-    const possibleIds = [mobile10Digits, "91" + mobile10Digits, "+91" + mobile10Digits];
+    const docIdWith91 = "91" + mobile10Digits;
 
-    try {
-        for (let id of possibleIds) {
-            let ref = firebaseDB.collection("customers").doc(id);
-            let snap = await ref.get();
-            if(snap.exists) {
-                const d = snap.data();
+    let userRef = firebaseDB.collection("customers").doc(docIdWith91);
+    let snap = await userRef.get();
+
+    if(!snap.exists){
+        userRef = firebaseDB.collection("customers").doc(mobile10Digits);
+        snap = await userRef.get();
+    }
+
+    if(snap.exists){
+        userRef.onSnapshot(doc => {
+            if(doc.exists){
+                const d = doc.data();
+                const dep = Number(d.depositBalance || d.deposit || 0);
+                const win = Number(d.winnings || d.winningBalance || 0);
+                
+                myCurrentBalance = dep + win;
                 myUserName = d.name || d.username || ("User " + mobile10Digits.slice(-4));
-                break;
+                
+                const topBalanceEl = document.getElementById("topBalance");
+                if (topBalanceEl) topBalanceEl.textContent = "₹" + myCurrentBalance;
             }
-        }
-    } catch(err) {
-        console.error("Load user data error:", err);
+        });
+    } else {
+        localStorage.clear();
+        window.location.replace("index.html");
     }
 }
 
-async function fetchLatestBalance() {
-    if(!userId) return 0;
-    const cleanMobile = String(userId).replace(/\D/g,"");
-    const mobile10Digits = cleanMobile.slice(-10);
-    const possibleIds = [mobile10Digits, "91" + mobile10Digits, "+91" + mobile10Digits];
-
-    try {
-        for (let id of possibleIds) {
-            let ref = firebaseDB.collection("customers").doc(id);
-            let snap = await ref.get();
-            if(snap.exists) {
-                const d = snap.data();
-                const dep = Number(d.depositBalance || d.balance || 0);
-                const win = Number(d.winnings || 0);
-                return dep + win;
-            }
-        }
-    } catch(err) {
-        console.error("Fetch balance error:", err);
-    }
-    return 0;
-}
-
+// 1. CREATE BATTLE (STRICT LIMIT: MAXIMUM 1 OPEN/ACTIVE BATTLE PER USER)
 async function createBattle() {
     if(myActiveBattlesCount >= 1) {
         alert("Aap ek waqt me sirf 1 battle hi laga sakte hain.");
@@ -600,12 +588,10 @@ async function createBattle() {
 
     const amt = Number(document.getElementById("battleAmountInput").value);
     if(isNaN(amt) || amt < 100){
-        alert("Kam se kam ₹100 ka match set karein.");
+        alert("Kam se kam ₹100 का मैच सेट करें।");
         return;
     }
-
-    const currentBal = await fetchLatestBalance();
-    if(currentBal < amt){
+    if(myCurrentBalance < amt){
         showErrorModal("Insufficient balance");
         return;
     }
@@ -634,6 +620,7 @@ async function createBattle() {
     }
 }
 
+// 2. REAL-TIME BATTLES LISTENER
 function listenBattles() {
     if(!userId) return;
     const cleanMobile = String(userId).replace(/\D/g,"").slice(-10);
@@ -643,7 +630,6 @@ function listenBattles() {
         let openHTML = "";
         let runningHTML = "";
         let userBattleCount = 0;
-        let isUserInActiveLiveMatch = false;
 
         snap.forEach(doc => {
             const b = doc.data();
@@ -654,20 +640,11 @@ function listenBattles() {
             const isCreator = creatorClean === myClean10;
             const isAccepter = accepterClean === myClean10;
 
-            if(b.status === "completed" || b.status === "cancelled") {
-                return;
-            }
-
             if((b.status === "open" || b.status === "requested" || b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 userBattleCount++;
             }
 
-            if(b.status === "live" && (isCreator || isAccepter)){
-                isUserInActiveLiveMatch = true;
-                activeBattleId = bId;
-                renderRoomView(b, isCreator);
-            } else if(b.status === "conflict" && (isCreator || isAccepter)){
-                isUserInActiveLiveMatch = true;
+            if((b.status === "live" || b.status === "conflict") && (isCreator || isAccepter)){
                 activeBattleId = bId;
                 renderRoomView(b, isCreator);
             }
@@ -733,41 +710,10 @@ function listenBattles() {
             }
         });
 
-        if(!isUserInActiveLiveMatch && document.getElementById("roomView").style.display === "block") {
-            showLobbyView();
-        }
-
-        const dummyBattles = [
-            { amount: 100, prize: 190, p1: "Rahul Gamer", p2: "Aman King" },
-            { amount: 300, prize: 570, p1: "Vikash Rajput", p2: "Deepak Sharma" },
-            { amount: 500, prize: 950, p1: "Rohit Ludo", p2: "Amit Meena" },
-            { amount: 2200, prize: 4180, p1: "RDX King", p2: "Royal Player" },
-            { amount: 8000, prize: 15200, p1: "HighRoller", p2: "Master Ludo" }
-        ];
-
-        dummyBattles.forEach(d => {
-            runningHTML += `
-                <div class="battle-card">
-                    <div class="card-top">
-                        <span class="badge-tag tag-live">● LIVE</span>
-                    </div>
-                    <div class="battle-meta">
-                        <div class="meta-col"><small>ENTRY</small><strong>₹${d.amount}</strong></div>
-                        <div class="meta-col" style="text-align:right;"><small>PRIZE</small><strong style="color:#16a34a;">₹${d.prize}</strong></div>
-                    </div>
-                    <div class="vs-row">
-                        <div class="player-box"><span class="player-name">${d.p1}</span></div>
-                        <div class="vs-circle">VS</div>
-                        <div class="player-box"><span class="player-name">${d.p2}</span></div>
-                    </div>
-                </div>
-            `;
-        });
-
         myActiveBattlesCount = userBattleCount;
 
         document.getElementById("openBattlesList").innerHTML = openHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No open battles right now.</p>`;
-        document.getElementById("runningBattlesList").innerHTML = runningHTML;
+        document.getElementById("runningBattlesList").innerHTML = runningHTML || `<p style="text-align:center; color:#64748b; font-size:12px; padding:15px;">No live battles running.</p>`;
     });
 }
 
@@ -781,8 +727,7 @@ async function requestPlayBattle(bId, amt) {
         alert("Aap ek waqt me sirf 1 battle hi khel sakte hain.");
         return;
     }
-    const currentBal = await fetchLatestBalance();
-    if(currentBal < amt){
+    if(myCurrentBalance < amt){
         showErrorModal("Insufficient balance");
         return;
     }
@@ -816,25 +761,6 @@ async function rejectBattleRequest(bId) {
     });
 }
 
-async function getCustomerDocByUid(t, uidStr) {
-    const clean = String(uidStr || "").replace(/\D/g, "");
-    const ten = clean.slice(-10);
-    const possibleIds = [ten, "91" + ten, "+91" + ten, clean];
-    
-    for (let id of possibleIds) {
-        if (!id) continue;
-        let ref = firebaseDB.collection("customers").doc(id);
-        let snap = await t.get(ref);
-        if (snap.exists) {
-            return { ref, snap, data: snap.data() };
-        }
-    }
-    let defaultRef = firebaseDB.collection("customers").doc("91" + ten);
-    let defaultSnap = await t.get(defaultRef);
-    return { ref: defaultRef, snap: defaultSnap, data: defaultSnap.exists ? defaultSnap.data() : {} };
-}
-
-// STRICT DEDUCTION FROM depositBalance & winnings
 function deductFromBalance(deposit, winnings, amt) {
     let newDeposit = deposit;
     let newWinnings = winnings;
@@ -850,8 +776,9 @@ function deductFromBalance(deposit, winnings, amt) {
     }
     return {
         depositBalance: newDeposit,
-        balance: newDeposit,
-        winnings: newWinnings
+        winnings: newWinnings,
+        winningBalance: newWinnings,
+        balance: newDeposit + newWinnings
     };
 }
 
@@ -862,44 +789,50 @@ async function startBattle(bId, amt, oppUid) {
 
     try {
         await firebaseDB.runTransaction(async t => {
-            const bRef = firebaseDB.collection("battles").doc(bId);
-            const bSnap = await t.get(bRef);
-            if(!bSnap.exists) throw new Error("Battle not found.");
-            const bData = bSnap.data();
-            if(bData.status !== "requested") throw new Error("Match already started or invalid status.");
+            let p1Ref = firebaseDB.collection("customers").doc(p1DocId);
+            let p2Ref = firebaseDB.collection("customers").doc(p2DocId);
 
-            const p1Obj = await getCustomerDocByUid(t, p1DocId);
-            const p2Obj = await getCustomerDocByUid(t, p2DocId);
+            let p1Snap = await t.get(p1Ref);
+            if(!p1Snap.exists){
+                p1Ref = firebaseDB.collection("customers").doc(cleanMobile);
+                p1Snap = await t.get(p1Ref);
+            }
 
-            const p1Data = p1Obj.data;
-            const p2Data = p2Obj.data;
+            let p2Snap = await t.get(p2Ref);
+            if(!p2Snap.exists){
+                p2Ref = firebaseDB.collection("customers").doc(p2DocId.replace(/^91/,""));
+                p2Snap = await t.get(p2Ref);
+            }
 
-            const p1Dep = Number(p1Data.depositBalance || p1Data.balance || 0);
-            const p1Win = Number(p1Data.winnings || 0);
+            const p1Data = p1Snap.data() || {};
+            const p2Data = p2Snap.data() || {};
+
+            const p1Dep = Number(p1Data.depositBalance || p1Data.deposit || 0);
+            const p1Win = Number(p1Data.winnings || p1Data.winningBalance || 0);
             const p1Total = p1Dep + p1Win;
 
-            const p2Dep = Number(p2Data.depositBalance || p2Data.balance || 0);
-            const p2Win = Number(p2Data.winnings || 0);
+            const p2Dep = Number(p2Data.depositBalance || p2Data.deposit || 0);
+            const p2Win = Number(p2Data.winnings || p2Data.winningBalance || 0);
             const p2Total = p2Dep + p2Win;
 
             if(p1Total < amt || p2Total < amt){
-                throw new Error("Dono players mein se kisi ke paas paryaapt balance nahi hai.");
+                throw new Error("Kisi player ke paas balance kam hai.");
             }
 
             const p1Updates = deductFromBalance(p1Dep, p1Win, amt);
             const p2Updates = deductFromBalance(p2Dep, p2Win, amt);
 
-            t.update(p1Obj.ref, p1Updates);
-            t.update(p2Obj.ref, p2Updates);
+            t.update(p1Ref, p1Updates);
+            t.update(p2Ref, p2Updates);
 
+            const bRef = firebaseDB.collection("battles").doc(bId);
             t.update(bRef, {
                 status: "live",
                 startedAt: firebase.firestore.FieldValue.serverTimestamp()
             });
         });
-        alert("✅ Match successfully start ho gaya aur dono users ka payment deduct ho gaya!");
     } catch(err) {
-        alert("Error: " + err.message);
+        alert(err.message);
     }
 }
 
@@ -1029,7 +962,7 @@ async function uploadProofAndSubmit() {
         document.getElementById("proofUploadBox").style.display = "none";
         document.getElementById("resultBtnGrid").style.display = "none";
         document.getElementById("resultSubmittedMsg").style.display = "block";
-        alert("✅ Claim & Proof Submitted!");
+        alert("✅ Claim & Proof Submitted! Admin ya auto-settlement से process होगा।");
     } catch(err) {
         alert("Error: " + err.message);
     }
@@ -1048,7 +981,6 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
 
         const p1Uid = b.creatorUid;
         const p2Uid = b.acceptedUid;
-        const entryAmt = Number(b.amount || 0);
         const prizeAmt = Number(b.prize || 0);
 
         const otherUid = (myUid === p1Uid) ? p2Uid : p1Uid;
@@ -1063,38 +995,30 @@ async function processResultWithAutoSettlement(myUid, myType, proofBase64) {
         }
 
         if(myResult === "cancel" || otherResult === "cancel") {
-            if(otherResult !== null) {
-                const p1Obj = await getCustomerDocByUid(t, p1Uid);
-                const p2Obj = await getCustomerDocByUid(t, p2Uid);
-
-                const p1D = p1Obj.data;
-                const p2D = p2Obj.data;
-
-                const p1Dep = Number(p1D.depositBalance || p1D.balance || 0) + entryAmt;
-                const p2Dep = Number(p2D.depositBalance || p2D.balance || 0) + entryAmt;
-
-                t.update(p1Obj.ref, { depositBalance: p1Dep, balance: p1Dep });
-                t.update(p2Obj.ref, { depositBalance: p2Dep, balance: p2Dep });
-
-                updates.status = "cancelled";
-                updates.resolvedAt = firebase.firestore.FieldValue.serverTimestamp();
-            } else {
-                updates.status = "conflict";
-                updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
-            }
+            updates.status = "conflict";
+            updates.conflictAt = firebase.firestore.FieldValue.serverTimestamp();
         }
         else if(otherResult !== null) {
             if((myResult === "won" && otherResult === "lost") || (myResult === "lost" && otherResult === "won")) {
                 const winnerUid = (myResult === "won") ? myUid : otherUid;
-                const winnerObj = await getCustomerDocByUid(t, winnerUid);
+                let winnerRef = firebaseDB.collection("customers").doc(winnerUid);
+                let winnerSnap = await t.get(winnerRef);
 
-                const wData = winnerObj.data;
-                const currentWin = Number(wData.winnings || 0);
+                if(!winnerSnap.exists){
+                    winnerRef = firebaseDB.collection("customers").doc(winnerUid.replace(/^91/,""));
+                    winnerSnap = await t.get(winnerRef);
+                }
+
+                const wData = winnerSnap.data() || {};
+                const currentDep = Number(wData.depositBalance || wData.deposit || 0);
+                const currentWin = Number(wData.winnings || wData.winningBalance || 0);
                 const currentPlayed = Number(wData.matchesPlayed || 0);
 
                 const newWinnings = currentWin + prizeAmt;
+                const newTotal = currentDep + newWinnings;
 
-                t.update(winnerObj.ref, {
+                t.update(winnerRef, {
+                    balance: newTotal,
                     winnings: newWinnings,
                     winningBalance: newWinnings,
                     matchesPlayed: currentPlayed + 1
