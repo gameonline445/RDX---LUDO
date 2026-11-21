@@ -23,9 +23,9 @@
     };
     let firebaseDB = null;
     try {
-        if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         firebaseDB = firebase.firestore();
-    } catch(error){ console.error(error); }
+    } catch (error) { console.error(error); }
     </script>
 
     <style>
@@ -217,14 +217,40 @@
             }
         });
 
-        scrollContainer.addEventListener('touchend', function(e) {
+        scrollContainer.addEventListener('touchend', function() {
             startY = 0;
         });
 
+        function formatPhoneDisplay(rawPhone, fallbackDigits) {
+            const digits = String(rawPhone || fallbackDigits || "").replace(/\D/g, "");
+            if (!digits) return "";
+            return digits.startsWith("91") ? "+" + digits : "+91" + digits;
+        }
+
         let currentMode = "upi";
         let userDocId = "";
+        let mobile10Digits = "";
         let currentWinnings = 0;
         let currentTotalBalance = 0;
+
+        function updateHeaderAndDrawerProfile(fullName, formattedPhone, totalWallet) {
+            const drawerNameElem = document.getElementById("drawerName");
+            const drawerMobileElem =
+                document.getElementById("drawerMobile") ||
+                document.getElementById("drawerPhone") ||
+                document.getElementById("userMobile") ||
+                document.getElementById("userPhone");
+
+            if (drawerNameElem && fullName) drawerNameElem.textContent = fullName;
+            if (drawerMobileElem && formattedPhone) drawerMobileElem.textContent = formattedPhone;
+
+            if (typeof totalWallet === "number") {
+                const headerBalElem = document.getElementById("headerWalletBalance");
+                const topBalanceEl = document.getElementById("topBalance");
+                if (headerBalElem) headerBalElem.textContent = "₹" + totalWallet;
+                if (topBalanceEl) topBalanceEl.textContent = "₹" + totalWallet;
+            }
+        }
 
         window.switchMode = function(m) {
             currentMode = m;
@@ -239,6 +265,9 @@
             if (!amount || amount < 300) {
                 return alert("Minimum withdrawal amount ₹300 hai!");
             }
+            if (amount > 100000) {
+                return alert("Maximum withdrawal amount ₹1,00,000 hai!");
+            }
             if (amount > currentWinnings) {
                 return alert(`Aapke paas withdraw karne ke liye sirf ₹${currentWinnings} winnings balance hai!`);
             }
@@ -247,19 +276,19 @@
                 return alert("User session not found. Please login again.");
             }
 
-            let payload = { 
-                uid: userDocId, 
-                amount: amount, 
-                mode: currentMode.toUpperCase(), 
-                status: "pending", 
-                createdAt: firebase.firestore.FieldValue.serverTimestamp() 
+            const payload = {
+                uid: userDocId,
+                amount: amount,
+                mode: currentMode.toUpperCase(),
+                status: "pending",
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
             };
 
             if (currentMode === "upi") {
                 const holderName = document.getElementById("upiHolderName").value.trim();
                 const upiId = document.getElementById("upiId").value.trim();
-                
-                if(!holderName || !upiId) {
+
+                if (!holderName || !upiId) {
                     return alert("Kripya Holder Name aur UPI ID dono bharein!");
                 }
                 payload.holderName = holderName;
@@ -270,7 +299,7 @@
                 const accountNumber = document.getElementById("accountNumber").value.trim();
                 const ifsc = document.getElementById("ifscCode").value.trim().toUpperCase();
 
-                if(!holderName || !bankName || !accountNumber || !ifsc) {
+                if (!holderName || !bankName || !accountNumber || !ifsc) {
                     return alert("Kripya Bank ki sabhi details dhyan se bharein!");
                 }
 
@@ -282,11 +311,11 @@
 
             try {
                 const userRef = firebaseDB.collection("customers").doc(userDocId);
-                
+
                 await firebaseDB.runTransaction(async (transaction) => {
                     const snap = await transaction.get(userRef);
                     if (!snap.exists) throw new Error("User does not exist!");
-                    
+
                     const data = snap.data();
                     const winNow = Number(data.winnings || data.winningBalance || 0);
                     const balNow = Number(data.balance || 0);
@@ -308,45 +337,70 @@
                 await firebaseDB.collection("withdrawals").add(payload);
                 alert("✅ Withdrawal request successfully submit ho gayi hai aur rashi winnings se cut kar li gayi hai!");
                 window.location.replace("history.html");
-            } catch(e) {
+            } catch (e) {
                 alert("Withdrawal Error: " + e.message);
             }
         };
 
         async function init() {
             try {
-                if(!firebaseDB) return;
-                let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                             localStorage.getItem("rdxVerifiedMobile") || 
-                             localStorage.getItem("rdxUserMobile") || 
-                             localStorage.getItem("rdxMobile") ||
-                             localStorage.getItem("userMobile");
+                if (!firebaseDB) return;
+                const mobile =
+                    localStorage.getItem("rdxFirebaseUserId") ||
+                    localStorage.getItem("rdxVerifiedMobile") ||
+                    localStorage.getItem("rdxUserMobile") ||
+                    localStorage.getItem("rdxMobile") ||
+                    localStorage.getItem("userMobile");
 
-                if(!mobile) {
+                if (!mobile) {
                     window.location.replace("index.html");
                     return;
                 }
-                const cleanMobile = String(mobile).replace(/\D/g,"");
+                const cleanMobile = String(mobile).replace(/\D/g, "");
+                mobile10Digits = cleanMobile.slice(-10);
                 userDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
-                const userRef = firebaseDB.collection("customers").doc(userDocId);
+                const fallbackName = "User " + mobile10Digits.slice(-4);
+                const fallbackPhone = formatPhoneDisplay(userDocId, mobile10Digits);
+                updateHeaderAndDrawerProfile(fallbackName, fallbackPhone);
+
+                let userRef = firebaseDB.collection("customers").doc(userDocId);
                 let snapshot = await userRef.get();
-                if(!snapshot.exists) {
-                    userDocId = cleanMobile;
-                    snapshot = await firebaseDB.collection("customers").doc(userDocId).get();
+                if (!snapshot.exists && mobile10Digits) {
+                    userDocId = mobile10Digits;
+                    userRef = firebaseDB.collection("customers").doc(userDocId);
+                    snapshot = await userRef.get();
                 }
 
-                if(snapshot.exists) {
-                    const data = snapshot.data();
+                if (snapshot.exists) {
+                    const data = snapshot.data() || {};
+                    const fullName = String(data.name || data.fullName || fallbackName).trim();
+                    const rawPhone = data.phone || data.mobile || data.mobileNumber || data.phoneNumber || userDocId;
+                    const formattedPhone = formatPhoneDisplay(rawPhone, mobile10Digits);
+
                     currentWinnings = Number(data.winnings || data.winningBalance || 0);
-                    currentTotalBalance = Number(data.balance || 0);
+                    const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+                    currentTotalBalance = Number(data.balance || (deposit + currentWinnings));
+
                     document.getElementById("winningBalance").textContent = currentWinnings;
+                    updateHeaderAndDrawerProfile(fullName, formattedPhone, currentTotalBalance);
                 }
-            } catch(err) {
+            } catch (err) {
                 console.error("Init Error:", err);
             }
         }
-        window.addEventListener("load", init);
+
+        function logout() {
+            if (!confirm("Kya aap Logout karna chahte hain?")) return;
+            if (firebaseDB && userDocId) {
+                firebaseDB.collection("customers").doc(userDocId).set({ isOnline: false }, { merge: true }).catch(() => {});
+            }
+            localStorage.clear();
+            sessionStorage.clear();
+            window.location.replace("index.html");
+        }
+
+        window.addEventListener("DOMContentLoaded", init);
     </script>
 </body>
 </html>
