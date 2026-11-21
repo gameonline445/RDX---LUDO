@@ -2,6 +2,25 @@
 // Centralized Components System (components.js)
 // ==========================================
 
+function getCleanMobileDigits() {
+    const raw =
+        localStorage.getItem("rdxFirebaseUserId") ||
+        localStorage.getItem("rdxVerifiedMobile") ||
+        localStorage.getItem("rdxUserMobile") ||
+        localStorage.getItem("rdxMobile") ||
+        localStorage.getItem("userMobile") ||
+        localStorage.getItem("mobile") ||
+        "";
+    return String(raw).replace(/\D/g, "");
+}
+
+function formatIndianPhone(rawPhone, fallbackDigits) {
+    const digits = String(rawPhone || fallbackDigits || "").replace(/\D/g, "");
+    if (!digits) return "";
+    const tenDigits = digits.slice(-10);
+    return tenDigits.length === 10 ? "+91" + tenDigits : "+" + digits;
+}
+
 // 1. TOP HEADER GENERATOR 🔝
 function loadHeader() {
     const headerContainer = document.getElementById("header-container");
@@ -21,7 +40,7 @@ function loadHeader() {
                 <button class="header-icon-btn btn-notif" onclick="window.location.href='notification.html'" style="background: #6c5ce7 !important; border: none !important; width: 40px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 5px rgba(108,92,231,0.4);">
                     <i class="fa-solid fa-bell" style="font-size: 17px; color: #ffffff !important;"></i>
                 </button>
-                
+
                 <!-- Wallet button with icon and live total balance display across all pages -->
                 <button class="header-icon-btn btn-wallet" onclick="window.location.href='wallet.html'" style="background: #00b894 !important; border: none !important; padding: 0 12px !important; height: 40px !important; border-radius: 12px !important; color: #ffffff !important; cursor: pointer; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 5px rgba(0,184,148,0.4);">
                     <i class="fa-solid fa-wallet" style="font-size: 15px; color: #ffffff !important;"></i>
@@ -34,7 +53,7 @@ function loadHeader() {
             </div>
         </header>
     `;
-    
+
     setTimeout(initGlobalHeaderWallet, 100);
 }
 
@@ -42,6 +61,11 @@ function loadHeader() {
 function loadDrawer() {
     const drawerContainer = document.getElementById("drawer-container");
     if (!drawerContainer) return;
+
+    const cleanMobile = getCleanMobileDigits();
+    const mobile10Digits = cleanMobile.slice(-10);
+    const initialName = localStorage.getItem("rdxUsername") || (mobile10Digits ? "User " + mobile10Digits.slice(-4) : "User");
+    const initialPhone = formatIndianPhone(cleanMobile, mobile10Digits);
 
     drawerContainer.innerHTML = `
         <style>
@@ -142,7 +166,7 @@ function loadDrawer() {
                 font-size: 16px;
                 color: #ffffff !important;
             }
-            
+
             .menu-home { background: #2563eb !important; }
             .menu-profile { background: #e17055 !important; }
             .menu-wallet { background: #00b894 !important; }
@@ -161,8 +185,8 @@ function loadDrawer() {
                         <img src="logo.png" alt="Logo" style="width: 40px; height: 40px; object-fit: contain;" onerror="this.src='https://via.placeholder.com/40'">
                     </div>
                     <div>
-                        <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e; margin:0;">Jai shree</h4>
-                        <p id="drawerMobile" style="font-size:11px; color:#64748b; font-weight:700; margin:0;">+91917878852370</p>
+                        <h4 id="drawerName" style="font-size:14px; font-weight:900; color:#0c4a6e; margin:0;">${initialName}</h4>
+                        <p id="drawerMobile" style="font-size:11px; color:#64748b; font-weight:700; margin:0;">${initialPhone}</p>
                     </div>
                 </div>
                 <button class="drawer-close" onclick="toggleDrawer()"><i class="fa-solid fa-xmark"></i></button>
@@ -203,6 +227,8 @@ function loadDrawer() {
             </div>
         </div>
     `;
+
+    setTimeout(initGlobalDrawerProfile, 100);
 }
 
 // 3. BOTTOM NAVIGATION GENERATOR ⚓
@@ -293,62 +319,88 @@ function loadBottomNav() {
     `;
 }
 
-// 4. BULLETPROOF REALTIME HEADER WALLET SYNC 🔄
+// 4. BULLETPROOF REALTIME HEADER WALLET & DRAWER PROFILE SYNC 🔄
 let globalWalletUnsubscribe = null;
+let globalDrawerUnsubscribe = null;
 
-async function initGlobalHeaderWallet() {
-    if (typeof firebase === 'undefined' || !firebase.apps || !firebase.apps.length) return;
-    
-    let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                 localStorage.getItem("rdxVerifiedMobile") || 
-                 localStorage.getItem("rdxUserMobile") || 
-                 localStorage.getItem("rdxMobile") ||
-                 localStorage.getItem("userMobile") ||
-                 localStorage.getItem("mobile") ||
-                 "917878852370";
-
-    const cleanMobile = String(mobile).replace(/\D/g,"");
-    const mobile10Digits = cleanMobile.slice(-10);
-    const db = firebase.firestore();
-
+async function resolveCustomerDocRef(db, mobile10Digits) {
     const possibleDocIds = [
-        mobile10Digits,
         "91" + mobile10Digits,
+        mobile10Digits,
         "+91" + mobile10Digits
     ];
 
-    let userRef = null;
-    let snapshot = null;
-
-    for (let docId of possibleDocIds) {
-        let ref = db.collection("customers").doc(docId);
-        let snap = await ref.get();
+    for (const docId of possibleDocIds) {
+        const ref = db.collection("customers").doc(docId);
+        const snap = await ref.get();
         if (snap.exists) {
-            userRef = ref;
-            snapshot = snap;
-            break;
+            return ref;
         }
     }
+    return db.collection("customers").doc("91" + mobile10Digits);
+}
 
-    if (!userRef || !snapshot.exists) {
-        userRef = db.collection("customers").doc(mobile10Digits);
-    }
+async function initGlobalDrawerProfile() {
+    if (typeof firebase === "undefined" || !firebase.apps || !firebase.apps.length) return;
+
+    const cleanMobile = getCleanMobileDigits();
+    const mobile10Digits = cleanMobile.slice(-10);
+    if (!mobile10Digits || mobile10Digits.length < 10) return;
+
+    const db = firebase.firestore();
+    const userRef = await resolveCustomerDocRef(db, mobile10Digits);
+
+    if (globalDrawerUnsubscribe) globalDrawerUnsubscribe();
+
+    globalDrawerUnsubscribe = userRef.onSnapshot((doc) => {
+        const drawerNameEl = document.getElementById("drawerName");
+        const drawerMobileEl = document.getElementById("drawerMobile");
+        const data = doc && doc.exists ? (doc.data() || {}) : {};
+
+        const fallbackName = "User " + mobile10Digits.slice(-4);
+        const fullName = String(
+            data.name ||
+            data.fullName ||
+            data.username ||
+            localStorage.getItem("rdxUsername") ||
+            fallbackName
+        ).trim();
+
+        const rawPhone = data.phone || data.mobile || data.mobileNumber || data.phoneNumber || doc.id;
+        const formattedPhone = formatIndianPhone(rawPhone, mobile10Digits);
+
+        if (drawerNameEl) drawerNameEl.textContent = fullName;
+        if (drawerMobileEl && formattedPhone) drawerMobileEl.textContent = formattedPhone;
+    }, (err) => {
+        console.error("Drawer Profile Sync Error:", err);
+    });
+}
+
+async function initGlobalHeaderWallet() {
+    if (typeof firebase === "undefined" || !firebase.apps || !firebase.apps.length) return;
+
+    const cleanMobile = getCleanMobileDigits();
+    const mobile10Digits = cleanMobile.slice(-10);
+    if (!mobile10Digits || mobile10Digits.length < 10) return;
+
+    const db = firebase.firestore();
+    const userRef = await resolveCustomerDocRef(db, mobile10Digits);
 
     // Also fetch successful deposits to keep header fully synced with auto-calculated deposits
     let totalApprovedDeposits = 0;
     try {
         const depositsSnap = await db.collection("deposits").get();
-        depositsSnap.forEach(doc => {
+        depositsSnap.forEach((doc) => {
             const dData = doc.data();
             const uId = String(dData.userId || dData.uid || "");
             const status = String(dData.status || "").trim().toLowerCase();
-            
+
             if (uId.includes(mobile10Digits) && (status === "success" || status === "approved" || status === "active")) {
                 const amt = Number(dData.amount || dData.amt || 0);
                 totalApprovedDeposits += amt;
             }
         });
-    } catch(e) {
+    } catch (e) {
         console.error("Global Header Deposits Fetch Error:", e);
     }
 
@@ -390,12 +442,10 @@ window.toggleMenu = window.toggleDrawer;
 window.handleLogout = function() {
     if (typeof window.logout === "function") {
         window.logout();
-    } else {
-        if (confirm("Kya aap Logout karna chahte hain?")) {
-            localStorage.clear();
-            sessionStorage.clear();
-            window.location.replace("index.html");
-        }
+    } else if (confirm("Kya aap Logout karna chahte hain?")) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.replace("index.html");
     }
 };
 
@@ -404,5 +454,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadHeader();
     loadDrawer();
     loadBottomNav();
-    setTimeout(initGlobalHeaderWallet, 300);
+    setTimeout(() => {
+        initGlobalHeaderWallet();
+        initGlobalDrawerProfile();
+    }, 300);
 });
