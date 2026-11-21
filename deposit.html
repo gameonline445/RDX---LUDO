@@ -27,9 +27,9 @@ const firebaseConfig = {
 };
 let firebaseDB = null;
 try {
-    if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     firebaseDB = firebase.firestore();
-} catch(error){ console.error(error); }
+} catch (error) { console.error(error); }
 </script>
 
 <style>
@@ -313,12 +313,12 @@ scrollContainer.addEventListener('touchmove', function(e) {
     }
 });
 
-scrollContainer.addEventListener('touchend', function(e) {
+scrollContainer.addEventListener('touchend', function() {
     startY = 0;
 });
 
 history.pushState({ page: 1 }, "", "");
-window.addEventListener("popstate", function (event) {
+window.addEventListener("popstate", function () {
     const panel = document.getElementById("sideDrawer");
     if (panel && panel.classList.contains("active")) {
         toggleDrawer();
@@ -329,9 +329,20 @@ window.addEventListener("popstate", function (event) {
 });
 
 let unsubscribeWalletListener = null;
+let activeDocId = "";
 
 const amountInput = document.getElementById("depositAmountInput");
 const btnProceed = document.getElementById("btnProceed");
+
+function formatPhoneDisplay(rawPhone, fallbackDigits) {
+    const digits = String(rawPhone || fallbackDigits || "").replace(/\D/g, "");
+    if (!digits) return "";
+    if (digits.startsWith("91") && digits.length >= 12) {
+        return "+" + digits.slice(0, 12);
+    }
+    const tenDigits = digits.slice(-10);
+    return tenDigits ? "+91" + tenDigits : "+" + digits;
+}
 
 function updateProceedButton() {
     const val = Number(amountInput.value) || 0;
@@ -341,7 +352,7 @@ function updateProceedButton() {
 function setAmount(amt) {
     amountInput.value = amt;
     document.querySelectorAll(".quick-btn").forEach(b => {
-        if(b.textContent.includes(amt.toLocaleString('en-IN'))) {
+        if (b.textContent.includes(amt.toLocaleString("en-IN"))) {
             b.classList.add("active");
         } else {
             b.classList.remove("active");
@@ -375,43 +386,81 @@ function proceedToPayment() {
 
 async function loadUserData() {
     try {
-        if(!firebaseDB) return;
+        if (!firebaseDB) return;
 
-        let mobile = localStorage.getItem("rdxFirebaseUserId") || 
-                     localStorage.getItem("rdxVerifiedMobile") || 
-                     localStorage.getItem("rdxUserMobile") || 
-                     localStorage.getItem("rdxMobile") ||
-                     localStorage.getItem("userMobile");
+        const mobile =
+            localStorage.getItem("rdxFirebaseUserId") ||
+            localStorage.getItem("rdxVerifiedMobile") ||
+            localStorage.getItem("rdxUserMobile") ||
+            localStorage.getItem("rdxMobile") ||
+            localStorage.getItem("userMobile");
 
-        if (!mobile) { window.location.replace("index.html"); return; }
+        if (!mobile) {
+            window.location.replace("index.html");
+            return;
+        }
 
         const cleanMobile = String(mobile).replace(/\D/g, "");
+        const tenDigits = cleanMobile.slice(-10);
         let firebaseDocId = cleanMobile.length === 10 ? "91" + cleanMobile : cleanMobile;
 
         let userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         let snapshot = await userRef.get();
-        
-        if(!snapshot.exists) {
-            firebaseDocId = cleanMobile;
+
+        if (!snapshot.exists && tenDigits) {
+            firebaseDocId = tenDigits;
             userRef = firebaseDB.collection("customers").doc(firebaseDocId);
         }
 
-        if(unsubscribeWalletListener) unsubscribeWalletListener();
+        activeDocId = firebaseDocId;
+
+        if (unsubscribeWalletListener) unsubscribeWalletListener();
 
         unsubscribeWalletListener = userRef.onSnapshot((doc) => {
-            if (doc.exists) {
-                const data = doc.data();
-                let fullName = data.name || data.fullName || data.username || localStorage.getItem("rdxUsername") || ("User " + String(doc.id).slice(-4));
-                
-                const nameEls = document.querySelectorAll("#drawerName");
-                const mobileEls = document.querySelectorAll("#drawerMobile");
-                
-                nameEls.forEach(el => el.textContent = fullName);
-                mobileEls.forEach(el => el.textContent = "+" + cleanMobile);
-            }
-        }, (err) => { console.error("Real-time Wallet Sync Error:", err); });
+            if (!doc.exists) return;
+            const data = doc.data() || {};
+            const fullName = String(
+                data.name ||
+                data.fullName ||
+                data.username ||
+                localStorage.getItem("rdxUsername") ||
+                ("User " + String(doc.id).slice(-4))
+            ).trim();
 
-    } catch(err) { console.error("Load User Data Error:", err); }
+            const rawPhone = data.phone || data.mobile || data.mobileNumber || data.phoneNumber || doc.id;
+            const formattedPhone = formatPhoneDisplay(rawPhone, cleanMobile);
+
+            const deposit = Number(data.depositBalance || data.deposit || data.wallet || 0);
+            const winnings = Number(data.winningBalance || data.winnings || 0);
+            const totalWallet = Number(data.balance ?? (deposit + winnings));
+
+            const nameEls = document.querySelectorAll("#drawerName");
+            const mobileEls = document.querySelectorAll("#drawerMobile");
+            const headerBalElem = document.getElementById("headerWalletBalance");
+            const topBalanceEl = document.getElementById("topBalance");
+
+            nameEls.forEach(el => { el.textContent = fullName; });
+            if (formattedPhone) {
+                mobileEls.forEach(el => { el.textContent = formattedPhone; });
+            }
+            if (headerBalElem) headerBalElem.textContent = "₹" + totalWallet;
+            if (topBalanceEl) topBalanceEl.textContent = "₹" + totalWallet;
+        }, (err) => {
+            console.error("Real-time Wallet Sync Error:", err);
+        });
+    } catch (err) {
+        console.error("Load User Data Error:", err);
+    }
+}
+
+function logout() {
+    if (!confirm("Kya aap Logout karna chahte hain?")) return;
+    if (firebaseDB && activeDocId) {
+        firebaseDB.collection("customers").doc(activeDocId).set({ isOnline: false }, { merge: true }).catch(() => {});
+    }
+    localStorage.clear();
+    sessionStorage.clear();
+    window.location.replace("index.html");
 }
 
 window.addEventListener("load", loadUserData);
