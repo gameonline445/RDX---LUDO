@@ -532,78 +532,108 @@ const firebaseConfig = {
     messagingSenderId: "928340814840",
     appId: "1:928340814840:web:6eca42a8b76138b268440d"
 };
-if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const firebaseDB = firebase.firestore();
 
 function getCleanUserId() {
     const raw = localStorage.getItem("rdxFirebaseUserId") || localStorage.getItem("rdxVerifiedMobile") || "";
     return String(raw).replace(/\D/g, "");
 }
+
 const userId = getCleanUserId();
+const docId = userId ? (userId.length === 10 ? "91" + userId : userId) : "";
+
+function formatPhoneDisplay(rawPhone, fallbackDocId) {
+    const digits = String(rawPhone || fallbackDocId || "").replace(/\D/g, "");
+    if (!digits) return "";
+    return digits.startsWith("91") ? "+" + digits : "+91" + digits;
+}
+
+function updateProfileUI(fullName, formattedPhone, totalWallet) {
+    const firstName = String(fullName || "User").trim().split(" ")[0] || "User";
+
+    const headerBalElem = document.getElementById("headerWalletBalance");
+    if (headerBalElem && typeof totalWallet === "number") {
+        headerBalElem.textContent = "₹" + totalWallet;
+    }
+
+    const userElem = document.getElementById("userName");
+    const drawerNameElem = document.getElementById("drawerName");
+    const drawerMobileElem =
+        document.getElementById("drawerMobile") ||
+        document.getElementById("drawerPhone") ||
+        document.getElementById("userMobile") ||
+        document.getElementById("userPhone");
+
+    if (userElem) userElem.textContent = firstName;
+    if (drawerNameElem) drawerNameElem.textContent = fullName || ("User " + (docId.slice(-4) || ""));
+    if (drawerMobileElem && formattedPhone) {
+        drawerMobileElem.textContent = formattedPhone;
+    }
+}
 
 function loadDashboardDataRealtime() {
-    if (!userId) { window.location.replace("index.html"); return; }
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    if (!userId || !docId) {
+        window.location.replace("index.html");
+        return;
+    }
+
+    // Immediate baseline from active logged-in user's docId (never hardcode a personal number)
+    const fallbackName = "User " + docId.slice(-4);
+    const fallbackPhone = formatPhoneDisplay(docId, docId);
+    updateProfileUI(fallbackName, fallbackPhone);
 
     firebaseDB.collection("customers").doc(docId).onSnapshot((snap) => {
-        if (snap.exists) {
-            const d = snap.data();
-
-            const isUserBlocked = d.isBlocked === true || 
-                                  d.isBlock === true || 
-                                  d.blocked === true || 
-                                  String(d.status).toLowerCase() === 'blocked';
-
-            if (isUserBlocked) {
-                localStorage.clear();
-                sessionStorage.clear();
-                alert("Aapka account admin dwara block kar diya gaya hai.");
-                window.location.replace("index.html");
-                return;
-            }
-
-            const fullName = String(d.name || ("User " + userId.slice(-4))).trim();
-            const firstName = fullName.split(" ")[0] || "User";
-
-            // 💰 Deposit aur Winnings ka bilkul sahi aur mistake-free jod (Total Balance)
-            const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
-            const winnings = Number(d.winningBalance || d.winnings || 0);
-            const totalWallet = deposit + winnings;
-
-            // ⚡ Header wale wallet balance ko update karna बिना किसी गलती के
-            const headerBalElem = document.getElementById("headerWalletBalance");
-            if (headerBalElem) {
-                headerBalElem.textContent = "₹" + totalWallet;
-            }
-
-            const userElem = document.getElementById("userName");
-            const drawerNameElem = document.getElementById("drawerName");
-            const drawerMobileElem = document.getElementById("drawerName");
-
-            if (userElem) userElem.textContent = firstName;
-            if (drawerNameElem) drawerNameElem.textContent = fullName;
+        if (!snap.exists) {
+            updateProfileUI(fallbackName, fallbackPhone);
+            return;
         }
+
+        const d = snap.data() || {};
+
+        const isUserBlocked =
+            d.isBlocked === true ||
+            d.isBlock === true ||
+            d.blocked === true ||
+            String(d.status || "").toLowerCase() === "blocked";
+
+        if (isUserBlocked) {
+            localStorage.clear();
+            sessionStorage.clear();
+            alert("Aapka account admin dwara block kar diya gaya hai.");
+            window.location.replace("index.html");
+            return;
+        }
+
+        const fullName = String(d.name || d.fullName || fallbackName).trim();
+        const rawCustomerPhone = d.phone || d.mobile || d.mobileNumber || d.phoneNumber || docId;
+        const formattedPhone = formatPhoneDisplay(rawCustomerPhone, docId);
+
+        const deposit = Number(d.depositBalance || d.deposit || d.wallet || 0);
+        const winnings = Number(d.winningBalance || d.winnings || 0);
+        const totalWallet = deposit + winnings;
+
+        updateProfileUI(fullName, formattedPhone, totalWallet);
     }, (err) => {
         console.error("Realtime update error:", err);
     });
 }
 
 async function startPresenceHeartbeat() {
-    if (!userId) return;
-    const docId = userId.length === 10 ? "91" + userId : userId;
+    if (!userId || !docId) return;
     const userRef = firebaseDB.collection("customers").doc(docId);
 
     let userCity = "Unknown";
     let userState = "Unknown";
 
     try {
-        const res = await fetch('https://ipapi.co/json/');
+        const res = await fetch("https://ipapi.co/json/");
         const data = await res.json();
         if (data && data.city) {
             userCity = data.city;
             userState = data.region || data.region_code || "Unknown";
         }
-    } catch(e) {
+    } catch (e) {
         console.log("Location fetch error:", e);
     }
 
@@ -641,8 +671,7 @@ async function startPresenceHeartbeat() {
 
 function logout() {
     if (!confirm("Kya aap Logout karna chahte hain?")) return;
-    if (userId) {
-        const docId = userId.length === 10 ? "91" + userId : userId;
+    if (userId && docId) {
         firebaseDB.collection("customers").doc(docId).set({ isOnline: false }, { merge: true });
     }
     localStorage.clear();
@@ -650,7 +679,7 @@ function logout() {
     window.location.replace("index.html");
 }
 
-window.addEventListener("load", () => {
+window.addEventListener("DOMContentLoaded", () => {
     loadDashboardDataRealtime();
     startPresenceHeartbeat();
 });
